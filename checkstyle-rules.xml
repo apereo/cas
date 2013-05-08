@@ -7,7 +7,7 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -75,11 +75,17 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="NoWhitespaceAfter">
         <property name="severity" value="error"/>
     </module>
-    <module name="NoWhitespaceBefore"/>
-    <module name="OperatorWrap"/>
+    <module name="NoWhitespaceBefore">
+        <property name="severity" value="error"/>
+    </module>
+    <module name="OperatorWrap">
+        <property name="severity" value="error"/>
+    </module>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
-    <module name="WhitespaceAfter"/>
+    <module name="WhitespaceAfter">
+        <property name="severity" value="error"/>
+    </module>
     <module name="ModifierOrder">
       <property name="severity" value="error"/>
     </module>
@@ -123,7 +129,9 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="FinalParameters">
       <property name="severity" value="error"/>
     </module>
-    <module name="TodoComment"/>
+    <module name="TodoComment">
+      <property name="severity" value="error"/>
+    </module>
     <module name="UpperEll"/>
     <module name="MissingOverride">
       <property name="severity" value="error"/>
