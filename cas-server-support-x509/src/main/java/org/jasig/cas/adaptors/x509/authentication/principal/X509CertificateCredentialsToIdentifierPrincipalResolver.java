@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The following class is deprecated in favor of
+ * @deprecated The following class is deprecated in favor of
  * {@link X509CertificateCredentialsToSubjectPrinciplalResolver}.
  *
  * @author Anders Svensson

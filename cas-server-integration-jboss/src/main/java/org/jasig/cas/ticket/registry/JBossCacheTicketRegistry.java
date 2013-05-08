@@ -80,6 +80,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     }
 
     /**
+     * {@inheritDoc}
      * Returns a proxied instance.
      *
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)

@@ -83,6 +83,7 @@ final int serviceTicketTimeOut) {
      * @param serviceTicketTimeOut ST timeout in milliseconds.
      * @param hostnames  Array of memcached hosts where each element is of the form host:port.
      * @see MemCacheTicketRegistry#MemCacheTicketRegistry(String[], int, int)
+     * @deprecated This has been deprecated
      */
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
@@ -156,6 +157,7 @@ final int serviceTicketTimeOut) {
     }
 
     /**
+     * {@inheritDoc}
      * This operation is not supported.
      *
      * @throws UnsupportedOperationException if you try and call this operation.
@@ -169,10 +171,10 @@ final int serviceTicketTimeOut) {
     }
 
     /**
-     * As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
+     * @deprecated As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
      */
     @Deprecated
-    public void setSynchronizeUpdatesToRegistry(final boolean b) { /* NOOP */ }
+    public void setSynchronizeUpdatesToRegistry(final boolean b) {}
 
     @Override
     protected boolean needsCallback() {

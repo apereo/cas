@@ -71,6 +71,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     /**
+     * {@inheritDoc}
      * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
     @Override
