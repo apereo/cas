@@ -34,7 +34,8 @@ import org.junit.Test;
 public class X509CertificateCredentialsToSerialNumberPrincipalResolverTests
 extends AbstractX509CertificateTests {
 
-    private final X509CertificateCredentialsToSerialNumberPrincipalResolver resolver = new X509CertificateCredentialsToSerialNumberPrincipalResolver();
+    private final X509CertificateCredentialsToSerialNumberPrincipalResolver resolver =
+            new X509CertificateCredentialsToSerialNumberPrincipalResolver();
 
     @Test
     public void testResolvePrincipalInternal() {

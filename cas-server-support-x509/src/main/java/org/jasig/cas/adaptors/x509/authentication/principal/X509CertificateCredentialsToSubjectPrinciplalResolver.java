@@ -101,11 +101,12 @@ extends AbstractX509CertificateCredentialsToPrincipalResolver {
      *
      * @param certificate X.509 certificate credential.
      * @return Resolved principal ID.
-     * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateCredentialsToPrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
+     * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateCredentialsToPrincipalResolver
+     * #resolvePrincipalInternal(java.security.cert.X509Certificate)
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        log.debug("Resolving principal for {}", certificate);
+        logger.debug("Resolving principal for {}", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
