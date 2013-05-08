@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     ArgumentExtractor {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
@@ -61,9 +61,9 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
         final WebApplicationService service = extractServiceInternal(request);
 
         if (service == null) {
-            log.debug("Extractor did not generate service.");
+            logger.debug("Extractor did not generate service.");
         } else {
-            log.debug("Extractor generated service for: {}", service.getId());
+            logger.debug("Extractor generated service for: {}", service.getId());
         }
 
         return service;
