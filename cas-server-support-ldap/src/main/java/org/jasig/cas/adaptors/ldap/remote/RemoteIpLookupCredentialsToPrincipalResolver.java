@@ -119,7 +119,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
                  */
                 String networkAddress = "\\31\\23";
                 // Turn ip (192.168.0.1) into a byte array, covert each into a byte String
-                String[] octets = formattedAddress.replace('.','_').split("_");
+                String[] octets = formattedAddress.replace('.', '_').split("_");
 
                 for (String octet : octets) {
                     networkAddress += "\\" + getHexadecimal(octet);
@@ -129,7 +129,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
 
             return formattedAddress;
         } catch (final UnknownHostException e) {
-            log.error(e.toString(),e);
+            log.error(e.toString(), e);
             return null;
         }
     }
