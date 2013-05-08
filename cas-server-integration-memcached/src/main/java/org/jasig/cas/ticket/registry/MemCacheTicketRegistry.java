@@ -106,37 +106,39 @@ final int serviceTicketTimeOut) {
     }
 
     protected void updateTicket(final Ticket ticket) {
-        log.debug("Updating ticket {}", ticket);
+        logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                log.error("Failed updating {}", ticket);
+                logger.error("Failed updating {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async replace operation for ticket {}. Cannot determine whether update was successful.", ticket);
+            logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
+                        + "Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
-            log.error("Failed updating {}", ticket, e);
+            logger.error("Failed updating {}", ticket, e);
         }
     }
 
     public void addTicket(final Ticket ticket) {
-        log.debug("Adding ticket {}", ticket);
+        logger.debug("Adding ticket {}", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                log.error("Failed adding {}", ticket);
+                logger.error("Failed adding {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async add operation for ticket {}. Cannot determine whether add was successful.", ticket);
+            logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
+                    + "Cannot determine whether add was successful.", ticket);
         } catch (final Exception e) {
-            log.error("Failed adding {}", ticket, e);
+            logger.error("Failed adding {}", ticket, e);
         }
     }
 
     public boolean deleteTicket(final String ticketId) {
-        log.debug("Deleting ticket {}", ticketId);
+        logger.debug("Deleting ticket {}", ticketId);
         try {
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
-            log.error("Failed deleting {}", ticketId, e);
+            logger.error("Failed deleting {}", ticketId, e);
         }
         return false;
     }
@@ -148,7 +150,7 @@ final int serviceTicketTimeOut) {
                 return getProxiedTicketInstance(t);
             }
         } catch (final Exception e) {
-            log.error("Failed fetching {} ", ticketId, e);
+            logger.error("Failed fetching {} ", ticketId, e);
         }
         return null;
     }
