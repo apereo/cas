@@ -63,7 +63,7 @@ public final class ClientAction extends AbstractAction {
     /**
      * The logger.
      */
-    private final Logger log = LoggerFactory.getLogger(ClientAction.class);
+    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
     /**
      * Constant for the service parameter.
@@ -121,7 +121,7 @@ public final class ClientAction extends AbstractAction {
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
-        log.debug("clientName : {}", clientName);
+        logger.debug("clientName : {}", clientName);
 
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
@@ -129,7 +129,7 @@ public final class ClientAction extends AbstractAction {
             final BaseClient<org.pac4j.core.credentials.Credentials, CommonProfile> client =
                     (BaseClient<org.pac4j.core.credentials.Credentials, CommonProfile>) this.clients
                     .findClient(clientName);
-            log.debug("client : {}", client);
+            logger.debug("client : {}", client);
 
             // HTTP protocol not allowed
             if (client.getProtocol() == Protocol.HTTP) {
@@ -140,9 +140,9 @@ public final class ClientAction extends AbstractAction {
             final org.pac4j.core.credentials.Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                log.debug("credentials : {}", credentials);
+                logger.debug("credentials : {}", credentials);
             } catch (final RequiresHttpAction e) {
-                log.info("requires http action : {}", e);
+                logger.info("requires http action : {}", e);
                 response.flushBuffer();
                 ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
@@ -200,7 +200,7 @@ public final class ClientAction extends AbstractAction {
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
             final String redirectionUrl = client.getRedirectionUrl(webContext);
-            log.debug("{} -> {}", key, redirectionUrl);
+            logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }
     }
