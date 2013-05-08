@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public RegisteredServiceRegexAttributeFilter(final String regex) {
         this.pattern = Pattern.compile(regex);
@@ -72,7 +72,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
 
-            log.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
+            logger.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
                 if (attributeValue instanceof Collection) {
                     final String[] filteredAttributes = filterArrayAttributes(
@@ -97,7 +97,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             }
         }
 
-        log.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
+        logger.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
                 attributesToRelease.size());
         return attributesToRelease;
     }
@@ -130,7 +130,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     }
 
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        log.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
+        logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
 }

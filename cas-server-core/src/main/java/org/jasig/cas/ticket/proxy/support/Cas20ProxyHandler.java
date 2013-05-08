@@ -42,7 +42,7 @@ import javax.validation.constraints.NotNull;
 public final class Cas20ProxyHandler implements ProxyHandler {
 
     /** The Commons Logging instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
@@ -79,11 +79,11 @@ public final class Cas20ProxyHandler implements ProxyHandler {
         stringBuffer.append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            log.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
+            logger.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
             return proxyIou;
         }
 
-        log.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
+        logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
         return null;
     }
 
