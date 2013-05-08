@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
+public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
+          extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     @Override
     protected String constructKey(final HttpServletRequest request) {

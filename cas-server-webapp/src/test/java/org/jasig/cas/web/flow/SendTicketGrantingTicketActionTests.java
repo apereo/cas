@@ -58,7 +58,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void testNoTgtToSet() throws Exception {
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         assertEquals("success", this.action.execute(this.context).getId());
     }
