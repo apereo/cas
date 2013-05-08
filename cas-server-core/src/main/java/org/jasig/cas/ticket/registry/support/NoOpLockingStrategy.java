@@ -31,6 +31,7 @@ package org.jasig.cas.ticket.registry.support;
 public class NoOpLockingStrategy implements LockingStrategy {
 
     /**
+     * {@inheritDoc}
      * @see org.jasig.cas.ticket.registry.support.LockingStrategy#acquire()
      */
     public boolean acquire() {
