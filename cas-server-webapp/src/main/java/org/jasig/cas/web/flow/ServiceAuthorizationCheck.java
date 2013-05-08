@@ -42,7 +42,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
     @NotNull
     private final ServicesManager servicesManager;
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
@@ -58,12 +58,12 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            log.warn(
+            logger.warn(
                     "Unauthorized Service Access for Service: [ {} ] - service is not defined in the service registry.",
                     service.getId());
             throw new UnauthorizedServiceException();
         } else if (!registeredService.isEnabled()) {
-            log.warn(
+            logger.warn(
                     "Unauthorized Service Access for Service: [ {} ] - service is not enabled in the service registry.",
                     service.getId());
             throw new UnauthorizedServiceException();
