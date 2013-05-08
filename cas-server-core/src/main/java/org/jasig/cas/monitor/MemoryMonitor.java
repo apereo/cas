@@ -47,12 +47,14 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
 
 
     /** {@inheritDoc} */
+    @Override
     public String getName() {
         return MemoryMonitor.class.getSimpleName();
     }
 
 
     /** {@inheritDoc} */
+    @Override
     public MemoryStatus observe() {
         final StatusCode code;
         final long free = Runtime.getRuntime().freeMemory();

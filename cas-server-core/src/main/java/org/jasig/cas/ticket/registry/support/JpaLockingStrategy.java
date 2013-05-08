@@ -108,6 +108,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 
     /** {@inheritDoc} */
+    @Override
     @Transactional(readOnly = false)
     public boolean acquire() {
         Lock lock;
@@ -140,6 +141,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 
     /** {@inheritDoc} */
+    @Override
     @Transactional(readOnly = false)
     public void release() {
         final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);

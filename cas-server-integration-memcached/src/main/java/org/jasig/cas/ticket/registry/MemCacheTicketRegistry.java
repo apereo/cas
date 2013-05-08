@@ -162,6 +162,7 @@ final int serviceTicketTimeOut) {
      *
      * @throws UnsupportedOperationException if you try and call this operation.
      */
+    @Override
     public Collection<Ticket> getTickets() {
         throw new UnsupportedOperationException("GetTickets not supported.");
     }
