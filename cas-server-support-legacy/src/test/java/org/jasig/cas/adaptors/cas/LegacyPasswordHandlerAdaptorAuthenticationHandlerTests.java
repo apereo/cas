@@ -51,7 +51,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
     /**
      * Test that throws UnsupportedCredentialsException for a known unsupported
      * credential.
-     * @throws AuthenticationException as a failure modality
+     * @throws UnsupportedCredentialsException as a failure modality
      */
     @Test
     public void testAuthenticateUnsupported() {
