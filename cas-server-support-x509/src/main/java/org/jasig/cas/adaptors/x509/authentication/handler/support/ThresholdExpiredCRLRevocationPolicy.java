@@ -40,7 +40,7 @@ import javax.validation.constraints.Min;
 public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
@@ -68,9 +68,8 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
             if (CertUtils.isExpired(crl, cutoff.getTime())) {
                 throw new ExpiredCRLException(crl.toString(), cutoff.getTime(), this.threshold);
             }
-            log.info(
-                    String.format("CRL expired on %s but is within threshold period, %s seconds.",
-                            crl.getNextUpdate(), this.threshold));
+            logger.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
+                        crl.getNextUpdate(), this.threshold));
         }
     }
 

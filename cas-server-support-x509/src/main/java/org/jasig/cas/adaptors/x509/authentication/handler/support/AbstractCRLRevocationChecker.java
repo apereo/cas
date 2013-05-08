@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Policy to apply when CRL data is unavailable. */
     @NotNull
@@ -54,15 +54,15 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         if (cert == null) {
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
-        log.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
+        logger.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
         final X509CRL crl = getCRL(cert);
         if (crl == null) {
-            log.warn("CRL data is not available for {}", CertUtils.toString(cert));
+            logger.warn("CRL data is not available for {}", CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
         if (CertUtils.isExpired(crl)) {
-            log.warn("CRL data expired on ", crl.getNextUpdate());
+            logger.warn("CRL data expired on ", crl.getNextUpdate());
             this.expiredCRLPolicy.apply(crl);
         }
         final X509CRLEntry entry = crl.getRevokedCertificate(cert);
