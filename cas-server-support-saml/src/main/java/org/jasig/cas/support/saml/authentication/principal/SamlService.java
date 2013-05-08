@@ -76,6 +76,7 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     /**
+     * {@inheritDoc}
      * This always returns true because a SAML Service does not receive the TARGET value on validation.
      */
     @Override
