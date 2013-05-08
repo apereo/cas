@@ -134,6 +134,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     }
 
     /**
+     * {@inheritDoc}
      * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
     @Override

@@ -7,8 +7,7 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented
-at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -17,6 +16,8 @@ at https://wiki.jasig.org/display/CAS/Code+Conventions
     <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
       <property name="severity" value="info"/>
+      <property name="allowUndeclaredRTE" value="true"/>
+      <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
     </module>
     <module name="JavadocType">
@@ -41,8 +42,8 @@ at https://wiki.jasig.org/display/CAS/Code+Conventions
     <module name="PackageName"/>
     <module name="ParameterName"/>
     <module name="StaticVariableName">
-        <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
+      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
     </module>
     <module name="TypeName"/>
     <module name="AvoidStarImport">
@@ -98,7 +99,9 @@ at https://wiki.jasig.org/display/CAS/Code+Conventions
     <module name="EqualsHashCode"/>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
-    <module name="MissingSwitchDefault"/>
+    <module name="MissingSwitchDefault">
+      <property name="severity" value="error"/>
+    </module>
     <module name="RedundantThrows">
       <property name="suppressLoadErrors" value="true"/>
     </module>
@@ -122,6 +125,12 @@ at https://wiki.jasig.org/display/CAS/Code+Conventions
     </module>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
+    <module name="MissingOverride">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="MissingDeprecated">
+      <property name="severity" value="error"/>
+    </module>
   </module>
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml, properties, txt"/>
