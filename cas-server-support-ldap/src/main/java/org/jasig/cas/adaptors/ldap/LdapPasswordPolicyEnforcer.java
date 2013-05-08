@@ -391,6 +391,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * Converts the numbers in Active Directory date fields for pwdLastSet, accountExpires,
      * lastLogonTimestamp, lastLogon, and badPasswordTime to a common date format.
      * @param dateValue
+     * @return {@link DateTime} converted to AD format
      */
     private DateTime convertDateToActiveDirectoryFormat(final String dateValue) {
         final long l = NumberUtils.toLong(dateValue.trim());

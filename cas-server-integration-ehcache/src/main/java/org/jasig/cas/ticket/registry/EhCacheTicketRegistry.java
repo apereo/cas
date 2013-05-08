@@ -200,6 +200,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     /**
+     * {@inheritDoc}
      * @see Cache#getKeysWithExpiryCheck()
      */
     @Override
@@ -209,6 +210,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     /**
+     * {@inheritDoc}
      * @see Cache#getKeysWithExpiryCheck()
      */
     @Override
