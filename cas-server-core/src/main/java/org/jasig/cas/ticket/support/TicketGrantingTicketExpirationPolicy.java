@@ -56,7 +56,10 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
-    /** Convenient virtual property setter to set time in seconds. */
+    /**
+     * Convenient virtual property setter to set time in seconds.
+     * @param maxTimeToLiveInSeconds max number of seconds for the tickets to stay alive
+     **/
     public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds){
         if(this.maxTimeToLiveInMilliSeconds == 0L) {
             this.maxTimeToLiveInMilliSeconds = TimeUnit.SECONDS.toMillis(maxTimeToLiveInSeconds);

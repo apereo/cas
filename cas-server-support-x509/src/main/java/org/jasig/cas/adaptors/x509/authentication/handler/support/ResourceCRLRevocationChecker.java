@@ -98,7 +98,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         }
     }
 
-    /** Initializes the process that periodically fetches CRL data. */
+    /**
+     * {@inheritDoc}
+     * Initializes the process that periodically fetches CRL data. */
     @Override
     public void afterPropertiesSet() throws Exception {
         // Fetch CRL data synchronously and throw exception to abort if any fail

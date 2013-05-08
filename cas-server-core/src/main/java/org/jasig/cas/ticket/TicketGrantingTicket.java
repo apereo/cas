@@ -49,6 +49,7 @@ public interface TicketGrantingTicket extends Ticket {
      *
      * @param id The unique identifier for this ticket.
      * @param service The service for which we are granting a ticket
+     * @param credentialsProvided whether or not credentials are provided already
      * @return the service ticket granted to a specific service for the
      * principal of the TicketGrantingTicket
      */
