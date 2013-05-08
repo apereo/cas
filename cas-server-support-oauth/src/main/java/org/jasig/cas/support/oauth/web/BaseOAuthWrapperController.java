@@ -68,7 +68,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /**
      * Return the method to call according to the url.
      *
-     * @param request
+     * @param request the incoming http request
      * @return the method to call according to the url
      */
     private String getMethod(final HttpServletRequest request) {

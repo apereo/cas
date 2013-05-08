@@ -198,6 +198,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     /**
+     * {@inheritDoc}
      * @return Number of days left to the expiration date, or {@value #PASSWORD_STATUS_PASS}
      */
     @Override
@@ -441,8 +442,8 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * Calculates the number of days left to the expiration date based on the
      * {@code expireDate} parameter.
-     * @param expireDate
-     * @param userId
+     * @param expireDate password expiration date
+     * @param userId the authenticating user id
      * @return number of days left to the expiration date, or {@value #PASSWORD_STATUS_PASS}
      */
     private long getDaysToExpirationDate(final String userId, final DateTime expireDate)
