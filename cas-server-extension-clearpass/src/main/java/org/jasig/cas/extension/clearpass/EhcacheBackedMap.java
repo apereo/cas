@@ -36,7 +36,7 @@ import net.sf.ehcache.Element;
  * @author Scott Battaglia
  * @since 1.0
  */
-public final class EhcacheBackedMap implements Map<String,String> {
+public final class EhcacheBackedMap implements Map<String, String> {
 
     @NotNull
     private final Cache cache;
@@ -120,7 +120,7 @@ public final class EhcacheBackedMap implements Map<String,String> {
     @Override
     public Set<Entry<String, String>> entrySet() {
         final Set<String> keys = keySet();
-        final Set<Entry<String, String>> entries = new HashSet<Entry<String,String>>();
+        final Set<Entry<String, String>> entries = new HashSet<Entry<String, String>>();
 
         for (final String key : keys) {
             final Element element = this.cache.get(key);
@@ -134,7 +134,7 @@ public final class EhcacheBackedMap implements Map<String,String> {
 
     }
 
-    protected final class ElementMapEntry implements Map.Entry<String,String> {
+    protected final class ElementMapEntry implements Map.Entry<String, String> {
 
         private final Element element;
 
