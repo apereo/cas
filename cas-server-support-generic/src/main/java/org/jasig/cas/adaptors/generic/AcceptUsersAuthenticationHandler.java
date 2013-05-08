@@ -54,7 +54,7 @@ public class AcceptUsersAuthenticationHandler extends
         final String cachedPassword = this.users.get(transformedUsername);
 
         if (cachedPassword == null) {
-           log.debug("The user [{}] was not found in the map.", transformedUsername);
+           logger.debug("The user [{}] was not found in the map.", transformedUsername);
            return false;
         }
 

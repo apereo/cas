@@ -49,7 +49,7 @@ import javax.validation.constraints.NotNull;
  *
  */
 public final class TicketGrantingTicketResource extends ServerResource {
-    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -89,7 +89,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
         } catch (final InvalidTicketException e) {
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }
