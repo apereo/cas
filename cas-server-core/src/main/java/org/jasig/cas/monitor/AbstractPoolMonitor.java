@@ -67,6 +67,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
 
     /** {@inheritDoc} */
+    @Override
     public PoolStatus observe() {
         final Future<StatusCode> result = this.executor.submit(new Validator());
         StatusCode code;
