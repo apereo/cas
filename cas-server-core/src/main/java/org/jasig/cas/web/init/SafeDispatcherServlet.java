@@ -64,7 +64,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
 
     /** Instance of Commons Logging. */
-    private static final Logger log = LoggerFactory.getLogger(SafeDispatcherServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SafeDispatcherServlet.class);
 
     /** The actual DispatcherServlet to which we will delegate to. */
     private DispatcherServlet delegate = new DispatcherServlet();
@@ -93,7 +93,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
                 + "But for our having caught this error, the servlet would not have initialized.";
 
             // log it via Commons Logging
-            log.error(message, t);
+            LOGGER.error(message, t);
 
             // log it to System.err
             System.err.println(message);
@@ -127,8 +127,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
         if (this.initSuccess) {
             this.delegate.service(req, resp);
         } else {
-            throw new ApplicationContextException(
-                "Unable to initialize application context.");
+            throw new ApplicationContextException("Unable to initialize application context.");
         }
     }
 }
