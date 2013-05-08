@@ -42,7 +42,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
 
     /**
      * Sets the ticket registry that exposes state information that may be queried by this monitor.
-     * @param state
+     * @param state the ticket registry state instance
      */
     public void setTicketRegistry(final TicketRegistryState state) {
         this.registryState = state;

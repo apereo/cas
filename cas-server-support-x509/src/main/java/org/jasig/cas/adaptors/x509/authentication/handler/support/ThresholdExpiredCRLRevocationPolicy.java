@@ -51,6 +51,7 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
 
 
     /**
+     * {@inheritDoc}
      * The CRL next update time is compared against the current time with the threshold
      * applied and rejected if and only if the next update time is in the past.
      *
