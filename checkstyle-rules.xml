@@ -7,7 +7,8 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented
+at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -31,7 +32,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     </module>
     <module name="ConstantName">
       <property name="severity" value="error"/>
-      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)|(log)"/>
+      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
     </module>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -39,7 +40,10 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="MethodName"/>
     <module name="PackageName"/>
     <module name="ParameterName"/>
-    <module name="StaticVariableName"/>
+    <module name="StaticVariableName">
+        <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
+        <property name="severity" value="error"/>
+    </module>
     <module name="TypeName"/>
     <module name="AvoidStarImport">
       <property name="severity" value="error"/>
@@ -57,14 +61,16 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
     <module name="LineLength">
-      <property name="max" value="120"/>
+      <property name="max" value="140"/>
       <property name="tabWidth" value="4"/>
     </module>
     <module name="EmptyForIteratorPad"/>
     <module name="MethodParamPad">
       <property name="severity" value="error"/>
     </module>
-    <module name="NoWhitespaceAfter"/>
+    <module name="NoWhitespaceAfter">
+        <property name="severity" value="error"/>
+    </module>
     <module name="NoWhitespaceBefore"/>
     <module name="OperatorWrap"/>
     <module name="ParenPad"/>
@@ -130,15 +136,15 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <module name="RegexpSingleline">
-    <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;log&quot;"/>
+    <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
     <property name="severity" value="error"/>
-    <property name="format" value="\s+(static\s)*(final\s)*(static\s)*Logger\s+(LOGGER|logger|LOG)"/>
-    <property name="message" value="The Logger object must only be called &quot;log&quot;"/>
+    <property name="format" value="\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG)\b"/>
+    <property name="message" value="The Logger object must only be called &quot;logger&quot; or &quot;LOGGER&quot;"/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Qualifying logger with the &quot;this&quot; keyword"/>
     <property name="severity" value="error"/>
-    <property name="format" value="((this\.log)|(super\.log))\.\w+\("/>
+    <property name="format" value="((this\.logger)|(super\.logger))\.\w+\("/>
     <property name="message" value="The Logger object need not be qualified with the &quot;this&quot; keyword"/>
   </module>
   <module name="RegexpSingleline">
