@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
+    protected final Logger logger = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
@@ -61,8 +61,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
          *  then the pair must not be null.
          */
         final Principal p = pair.getSecond();
-        log.info("Authenticated {} with credential {}.", p, credentials);
-        log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
+        logger.info("Authenticated {} with credential {}.", p, credentials);
+        logger.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
 
         Authentication authentication = new MutableAuthentication(p);
 
@@ -97,7 +97,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @return the pair of authentication handler and principal.  CANNOT be NULL.
      * @throws AuthenticationException if there is an error authenticating.
      */
-    protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(
+    protected abstract Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
             final Credentials credentials) throws AuthenticationException;
 
 
@@ -112,14 +112,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             final Exception e) {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
-            log.info("{} failed authenticating {}", handlerName, credentials);
+            logger.info("{} failed authenticating {}", handlerName, credentials);
         } else {
-            log.error("{} threw error authenticating {}", handlerName, credentials, e);
+            logger.error("{} threw error authenticating {}", handlerName, credentials, e);
         }
     }
 
 
-    protected static class Pair<A,B> {
+    protected static class Pair<A, B> {
 
         private final A first;
 

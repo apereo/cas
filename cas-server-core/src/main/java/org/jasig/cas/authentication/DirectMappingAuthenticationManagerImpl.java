@@ -70,17 +70,17 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         }
 
         if (!authenticated) {
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
             throw authException;
         }
-        log.info("{} successfully authenticated {}", handlerName, credentials);
+        logger.info("{} successfully authenticated {}", handlerName, credentials);
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
 
-        return new Pair<AuthenticationHandler,Principal>(d.getAuthenticationHandler(), p);
+        return new Pair<AuthenticationHandler, Principal>(d.getAuthenticationHandler(), p);
     }
 
-    public final void setCredentialsMapping(
+    public void setCredentialsMapping(
         final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
@@ -98,7 +98,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
             // nothing to do
         }
 
-        public final AuthenticationHandler getAuthenticationHandler() {
+        public AuthenticationHandler getAuthenticationHandler() {
             return this.authenticationHandler;
         }
 
