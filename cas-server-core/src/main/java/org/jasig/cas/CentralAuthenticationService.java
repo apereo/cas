@@ -54,8 +54,7 @@ public interface CentralAuthenticationService {
      * @return The String identifier of the ticket (may not be null).
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials credentials)
-        throws TicketException;
+    String createTicketGrantingTicket(Credentials credentials) throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -65,8 +64,7 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service)
-        throws TicketException;
+    String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service *if* the principal resolved from the
@@ -80,9 +78,8 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
-        throws TicketException;
+    String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials)
+            throws TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -92,8 +89,7 @@ public interface CentralAuthenticationService {
      * @return ServiceTicket if valid for the service
      * @throws TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId,
-        final Service service) throws TicketException;
+    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket. This has the effect of invalidating any
@@ -115,6 +111,6 @@ public interface CentralAuthenticationService {
      * authentication.
      * @throws TicketException if there was an error creating the ticket
      */
-    String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws TicketException;
+    String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
+            throws TicketException;
 }

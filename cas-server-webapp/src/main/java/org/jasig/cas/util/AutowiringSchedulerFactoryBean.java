@@ -39,14 +39,15 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.3.4
  **/
-public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware, InitializingBean {
+public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware,
+        InitializingBean {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private ApplicationContext applicationContext;
 
     public void afterPropertiesSet() throws Exception {
-        final Map<String,Trigger> triggers = this.applicationContext.getBeansOfType(Trigger.class);
+        final Map<String, Trigger> triggers = this.applicationContext.getBeansOfType(Trigger.class);
         super.setTriggers(triggers.values().toArray(new Trigger[triggers.size()]));
 
         log.debug("Autowired the following triggers defined in application context: {}", triggers.keySet().toString());

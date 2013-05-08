@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
  */
-public class AcceptUsersAuthenticationHandlerTests  {
+public class AcceptUsersAuthenticationHandlerTests {
 
     private final Map<String, String> users;
 
@@ -73,8 +73,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
-            assertFalse(this.authenticationHandler
-                .supports(new HttpBasedServiceCredentials(new URL(
+            assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -126,7 +125,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test
-    public void testFailsNullPassword() throws AuthenticationException{
+    public void testFailsNullPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("scott");
