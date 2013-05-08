@@ -66,6 +66,7 @@ public final class ProxyController extends AbstractController {
     }
 
     /**
+     * {@inheritDoc}
      * @return ModelAndView containing a view name of either
      * <code>casProxyFailureView</code> or <code>casProxySuccessView</code>
      */

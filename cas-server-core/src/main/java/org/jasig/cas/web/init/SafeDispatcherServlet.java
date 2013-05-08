@@ -113,9 +113,11 @@ public final class SafeDispatcherServlet extends HttpServlet {
     }
 
     /**
+     * {@inheritDoc}
      * @throws ApplicationContextException if the DispatcherServlet does not
      * initialize properly, but the servlet attempts to process a request.
      */
+    @Override
     public void service(final ServletRequest req, final ServletResponse resp)
         throws ServletException, IOException {
         /*
