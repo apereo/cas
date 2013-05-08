@@ -71,14 +71,20 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if given invalid credentials
      */
+    @Override
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
@@ -86,17 +92,27 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the credentials are invalid.
      */
+    @Override
     public String delegateTicketGrantingTicket(final String serviceTicketId,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);

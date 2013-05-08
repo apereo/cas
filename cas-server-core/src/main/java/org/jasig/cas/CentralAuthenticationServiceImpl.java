@@ -141,6 +141,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
 
     /**
+     * {@inheritDoc}
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
      * and removes it from the TicketRegistry.
      *
@@ -152,6 +153,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
+    @Override
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
@@ -334,6 +336,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the ServiceTicketId or the Service
      * are null.
      */
@@ -343,6 +346,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
+    @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");

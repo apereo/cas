@@ -123,6 +123,7 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Sets the relative evaluation order of this service when determining
      * matches.
+     * @param evaluationOrder the service evaluation order
      */
     void setEvaluationOrder(final int evaluationOrder);
 

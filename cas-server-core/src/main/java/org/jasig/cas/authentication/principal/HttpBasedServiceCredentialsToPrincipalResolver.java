@@ -30,19 +30,23 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {
 
     /**
+     * {@inheritDoc}
      * Method to return a simple Service Principal with the identifier set to be
      * the callback url.
      * @return the resolved principal object
      */
+    @Override
     public Principal resolvePrincipal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         return new SimpleWebApplicationServiceImpl(serviceCredentials.getCallbackUrl().toExternalForm());
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credentials provided are not null and are assignable
      * from HttpBasedServiceCredentials, otherwise returns false.
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
