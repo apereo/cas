@@ -63,6 +63,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
+    @Override
     public String createTicketGrantingTicket(final Credentials credentials) throws TicketException {
         Assert.notNull(credentials, "credentials cannot be null");
         checkForErrors(credentials);
