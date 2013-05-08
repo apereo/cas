@@ -135,7 +135,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      *  <li><code>null</code> indicating the default username</li>
      * </ul>
      */
-    public String getUsernameAttribute();
+    String getUsernameAttribute();
 
     /**
      * Returns whether the service matches the registered service.
