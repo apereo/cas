@@ -29,7 +29,6 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public abstract class AbstractRegistryCleanerTests {
@@ -38,9 +37,6 @@ public abstract class AbstractRegistryCleanerTests {
 
     private TicketRegistry ticketRegistry;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
