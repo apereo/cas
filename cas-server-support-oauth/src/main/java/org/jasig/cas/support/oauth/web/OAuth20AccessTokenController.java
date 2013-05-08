@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20AccessTokenController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
 
     private final ServicesManager servicesManager;
 
@@ -65,34 +65,34 @@ public final class OAuth20AccessTokenController extends AbstractController {
             throws Exception {
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        log.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        LOGGER.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        log.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+        LOGGER.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
 
         final String code = request.getParameter(OAuthConstants.CODE);
-        log.debug("{} : {}", OAuthConstants.CODE, code);
+        LOGGER.debug("{} : {}", OAuthConstants.CODE, code);
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            log.error("Missing {}", OAuthConstants.CLIENT_ID);
+            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            log.error("Missing {}", OAuthConstants.REDIRECT_URI);
+            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // clientSecret is required
         if (StringUtils.isBlank(clientSecret)) {
-            log.error("Missing {}", OAuthConstants.CLIENT_SECRET);
+            LOGGER.error("Missing {}", OAuthConstants.CLIENT_SECRET);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // code is required
         if (StringUtils.isBlank(code)) {
-            log.error("Missing {}", OAuthConstants.CODE);
+            LOGGER.error("Missing {}", OAuthConstants.CODE);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
@@ -106,28 +106,28 @@ public final class OAuth20AccessTokenController extends AbstractController {
             }
         }
         if (service == null) {
-            log.error("Unknown clientId : {}", clientId);
+            LOGGER.error("Unknown clientId : {}", clientId);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
         final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
-            log.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
+            LOGGER.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
         // description of the service should be the secret
         final String serviceDescription = service.getDescription();
         if (!StringUtils.equals(serviceDescription, clientSecret)) {
-            log.error("Wrong client secret for service description : {}", serviceDescription);
+            LOGGER.error("Wrong client secret for service description : {}", serviceDescription);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            log.error("Code expired : {}", code);
+            LOGGER.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, 400);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
@@ -138,11 +138,11 @@ public final class OAuth20AccessTokenController extends AbstractController {
         final int expires = (int) (timeout - (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000);
 
         final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
-        log.debug("text : {}", text);
+        LOGGER.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
     }
 
     static void setLogger(final Logger aLogger) {
-        log = aLogger;
+        LOGGER = aLogger;
     }
 }
