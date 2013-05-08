@@ -63,18 +63,4 @@ public class WebUtilTests {
 
         assertNull(service);
     }
-    /*
-     * public void testStripJsessionWithoutQueryStringParameters() {
-     * assertEquals("test", WebUtils.stripJsessionFromUrl("test"));
-     * assertEquals("http://www.cnn.com",
-     * WebUtils.stripJsessionFromUrl("http://www.cnn.com;jsession=fsfsadfsdfsafsd")); }
-     * public void testStripJsessionWithQueryStringParameters() {
-     * assertEquals("test", WebUtils.stripJsessionFromUrl("test"));
-     * assertEquals("http://localhost:8080/WebModule2/jsplevel0.jsp?action=test",
-     * WebUtils.stripJsessionFromUrl("http://localhost:8080/WebModule2/jsplevel0.jsp;jsessionid=CC80B7CC9D62689578A99DB90B187A62?action=test")); }
-     * public void testStripJsessionWithQueryStringParametersBeforeJsession() {
-     * assertEquals("test", WebUtils.stripJsessionFromUrl("test"));
-     * assertEquals("http://localhost:8080/WebModule2/jsplevel0.jsp?action=test",
-     * WebUtils.stripJsessionFromUrl("http://localhost:8080/WebModule2/jsplevel0.jsp?action=test;jsessionid=CC80B7CC9D62689578A99DB90B187A62")); }
-     */
 }

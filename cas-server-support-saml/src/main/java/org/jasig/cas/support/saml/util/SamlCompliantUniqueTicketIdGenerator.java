@@ -42,7 +42,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     private static final int ASSERTION_HANDLE_SIZE = 20;
 
     /** SAML 2 Type 0004 endpoint ID is 0x0001. */
-    private static final byte[] ENDPOINT_ID = { 0, 1 };
+    private static final byte[] ENDPOINT_ID = {0, 1};
 
     /** SAML defines the source id as the server name. */
     private final byte[] sourceIdDigest;

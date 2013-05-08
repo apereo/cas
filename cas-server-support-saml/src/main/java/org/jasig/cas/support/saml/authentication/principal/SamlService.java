@@ -42,7 +42,7 @@ import org.springframework.util.StringUtils;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Logger log = LoggerFactory.getLogger(SamlService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -124,10 +124,10 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
-        log.debug("Attempted to extract Request from HttpServletRequest. Results:");
-        log.debug(String.format("Request Body: %s", requestBody));
-        log.debug(String.format("Extracted ArtifactId: %s", artifactId));
-        log.debug(String.format("Extracted Request Id: %s", requestId));
+        LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
+        LOGGER.debug(String.format("Request Body: %s", requestBody));
+        LOGGER.debug(String.format("Extracted ArtifactId: %s", artifactId));
+        LOGGER.debug(String.format("Extracted Request Id: %s", requestId));
 
         return new SamlService(id, service, artifactId, httpClient, requestId);
     }
@@ -153,7 +153,7 @@ public final class SamlService extends AbstractWebApplicationService {
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
-            log.debug("Exception parsing RequestID from request.", e);
+            LOGGER.debug("Exception parsing RequestID from request.", e);
             return null;
         }
     }
