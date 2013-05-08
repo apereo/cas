@@ -69,9 +69,11 @@ public class SmartOpenIdControllerTest {
     @Test
     public void testGetAssociationResponse() {
         request.addParameter("openid.mode", "associate");
-        request.addParameter("openid.session_type","DH-SHA1");
-        request.addParameter("openid.assoc_type","HMAC-SHA1");
-        request.addParameter("openid.dh_consumer_public","NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBbQRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
+        request.addParameter("openid.session_type", "DH-SHA1");
+        request.addParameter("openid.assoc_type", "HMAC-SHA1");
+        request.addParameter("openid.dh_consumer_public",
+                "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
+                + "QRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
         Map<String, String> assocResponse = smartOpenIdController.getAssociationResponse(request);
         assertTrue(assocResponse.containsKey("assoc_handle"));
         assertTrue(assocResponse.containsKey("expires_in"));
