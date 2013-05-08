@@ -34,6 +34,8 @@ public final class SpringLdapUtils {
     public static final String LDAP_BOOLEAN_TRUE = "TRUE";
     public static final String LDAP_BOOLEAN_FALSE = "FALSE";
 
+    private SpringLdapUtils() {}
+
     /**
      * Reads a Boolean value from the DirContextAdapter.
      *

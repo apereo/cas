@@ -67,7 +67,6 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
 
-
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
     @Size(min = 1)
@@ -99,9 +98,9 @@ public final class HttpClient implements Serializable, DisposableBean {
      * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
-     * @param executorService
+     * @param executorService The executor service to send messages to end points.
      */
-    public void setExecutorService(final ExecutorService executorService) {
+    public void setExecutorService(@NotNull final ExecutorService executorService) {
         Assert.notNull(executorService);
         EXECUTOR_SERVICE = executorService;
     }
@@ -174,16 +173,18 @@ public final class HttpClient implements Serializable, DisposableBean {
                 }
             }
 
-            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}", responseCode);
+            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}",
+                    responseCode);
 
             // if the response code is an error and we don't find that error acceptable above:
             if (responseCode == 500) {
                 is = connection.getInputStream();
                 final String value = IOUtils.toString(is);
-                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
+                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
+                        value);
             }
         } catch (final IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(is);
             if (connection != null) {
@@ -199,14 +200,22 @@ public final class HttpClient implements Serializable, DisposableBean {
      *
      * @param acceptableCodes an array of status code integers.
      */
-    public final void setAcceptableCodes(final int[] acceptableCodes) {
+    public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when opening the endpoint url.
+     * @param connectionTimeout specified timeout value in milliseconds
+     */
     public void setConnectionTimeout(final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when reading from the endpoint url.
+     * @param readTimeout specified timeout value in milliseconds
+     */
     public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
     }
@@ -240,6 +249,9 @@ public final class HttpClient implements Serializable, DisposableBean {
         this.hostnameVerifier = verifier;
     }
 
+    /**
+     * Shutdown the executor service.
+     */
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }
