@@ -21,7 +21,6 @@ package org.jasig.cas.services.support;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,15 +47,15 @@ public class RegisteredServiceDefaultAttributeFilterTests {
     private RegisteredService registeredService;
 
     public RegisteredServiceDefaultAttributeFilterTests() {
-       this.filter = new RegisteredServiceDefaultAttributeFilter();
+        this.filter = new RegisteredServiceDefaultAttributeFilter();
 
-       this.givenAttributesMap = new HashMap<String, Object>();
-       this.givenAttributesMap.put("uid", "loggedInTestUid");
-       this.givenAttributesMap.put("phone", "1234567890");
-       this.givenAttributesMap.put("familyName", "Smith");
-       this.givenAttributesMap.put("givenName", "John");
-       this.givenAttributesMap.put("employeeId", "E1234");
-       this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
+        this.givenAttributesMap = new HashMap<String, Object>();
+        this.givenAttributesMap.put("uid", "loggedInTestUid");
+        this.givenAttributesMap.put("phone", "1234567890");
+        this.givenAttributesMap.put("familyName", "Smith");
+        this.givenAttributesMap.put("givenName", "John");
+        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
     }
 
     @Before
@@ -65,8 +64,8 @@ public class RegisteredServiceDefaultAttributeFilterTests {
 
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("uid",
-                "givenName", "memberOf", "isNotAllowed"));
+        when(this.registeredService.getAllowedAttributes()).thenReturn(
+                Arrays.asList("uid", "givenName", "memberOf", "isNotAllowed"));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class RegisteredServiceDefaultAttributeFilterTests {
 
         @SuppressWarnings("unchecked")
         final List<String> memberOfAttr = (List<String>) map.get("memberOf");
-        assertEquals(memberOfAttr.size(), ((List<?>)this.givenAttributesMap.get("memberOf")).size());
+        assertEquals(memberOfAttr.size(), ((List<?>) this.givenAttributesMap.get("memberOf")).size());
     }
 
 }

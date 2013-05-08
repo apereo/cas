@@ -58,7 +58,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     /** @see #setSupportRegistryState(boolean)*/
     private boolean supportRegistryState = true;
 
-    public EhCacheTicketRegistry() {}
+    public EhCacheTicketRegistry() {
+    }
 
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
         super();
@@ -66,7 +67,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
     }
 
-    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache, final boolean supportRegistryState) {
+    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache,
+            final boolean supportRegistryState) {
         this(serviceTicketsCache, ticketGrantingTicketsCache);
         setSupportRegistryState(supportRegistryState);
     }
@@ -78,7 +80,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
             log.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
-            log.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(), this.ticketGrantingTicketsCache.getName());
+            log.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(),
+                    this.ticketGrantingTicketsCache.getName());
             this.ticketGrantingTicketsCache.put(element);
         } else {
             throw new IllegalArgumentException("Invalid ticket type " + ticket);
@@ -146,7 +149,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     @Override
-    protected boolean needsCallback(){
+    protected boolean needsCallback() {
         return false;
     }
 
@@ -189,8 +192,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
             log.debug("ticketGrantingTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
             log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
             log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
-            log.debug("ticketGrantingTicketsCache.cacheManager={}",
-                    this.ticketGrantingTicketsCache.getCacheManager().getName());
+            log.debug("ticketGrantingTicketsCache.cacheManager={}", this.ticketGrantingTicketsCache.getCacheManager()
+                    .getName());
         }
     }
 
@@ -199,8 +202,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      */
     @Override
     public int sessionCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState,
-                this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
+        return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
+                .getKeysWithExpiryCheck().size(), super.sessionCount());
     }
 
     /**
@@ -208,7 +211,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      */
     @Override
     public int serviceTicketCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState,
-                this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
+        return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck()
+                .size(), super.serviceTicketCount());
     }
 }

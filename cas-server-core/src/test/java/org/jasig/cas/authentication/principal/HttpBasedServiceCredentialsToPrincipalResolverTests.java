@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
-
 /**
  * @author Scott Battaglia
 
@@ -45,14 +44,12 @@ public final class HttpBasedServiceCredentialsToPrincipalResolverTests {
 
     @Test
     public void testValidSupportsCredentials() {
-        assertTrue(this.resolver.supports(TestUtils
-            .getHttpBasedServiceCredentials()));
+        assertTrue(this.resolver.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
     public void testValidCredentials() {
-        assertEquals(this.resolver.resolvePrincipal(
-            TestUtils.getHttpBasedServiceCredentials()).getId(), TestUtils
-            .getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
+        assertEquals(this.resolver.resolvePrincipal(TestUtils.getHttpBasedServiceCredentials()).getId(), TestUtils
+                .getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }
 }

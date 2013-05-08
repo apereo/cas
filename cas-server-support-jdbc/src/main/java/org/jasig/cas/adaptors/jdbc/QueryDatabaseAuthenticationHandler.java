@@ -40,11 +40,11 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+            throws AuthenticationException {
         final String username = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
-        final String encryptedPassword = this.getPasswordEncoder().encode(
-                password);
+        final String encryptedPassword = this.getPasswordEncoder().encode(password);
 
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);

@@ -39,7 +39,6 @@ public class Cas10ProxyHandlerTests {
 
     @Test
     public void testCredentialsAndProxy() {
-        assertNull(this.proxyHandler.handle(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), "test"));
+        assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), "test"));
     }
 }
