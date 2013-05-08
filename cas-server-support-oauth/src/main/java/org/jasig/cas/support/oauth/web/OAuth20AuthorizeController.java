@@ -60,20 +60,22 @@ public final class OAuth20AuthorizeController extends AbstractController {
             throws Exception {
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        log.debug("clientId : {}", clientId);
+        log.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        log.debug("redirect_uri : {}", redirectUri);
+        log.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+
         final String state = request.getParameter(OAuthConstants.STATE);
-        log.debug("state : {}", state);
+        log.debug("{} : {}", OAuthConstants.STATE, state);
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            log.error("missing clientId");
+            log.error("Missing {}", OAuthConstants.CLIENT_ID);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            log.error("missing redirectUri");
+            log.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -87,14 +89,14 @@ public final class OAuth20AuthorizeController extends AbstractController {
             }
         }
         if (service == null) {
-            log.error("Unknown clientId : {}", clientId);
+            log.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
-            log.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
+            log.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -106,7 +108,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
                 .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-        log.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
+        log.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
 
         final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
                 callbackAuthorizeUrl);
