@@ -47,14 +47,14 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
     /** The service this ticket is valid for. */
     @Lob
-    @Column(name="SERVICE",nullable=false)
+    @Column(name="SERVICE", nullable=false)
     private Service service;
 
     /** Is this service ticket the result of a new login. */
-    @Column(name="FROM_NEW_LOGIN",nullable=false)
+    @Column(name="FROM_NEW_LOGIN", nullable=false)
     private boolean fromNewLogin;
 
-    @Column(name="TICKET_ALREADY_GRANTED",nullable=false)
+    @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = false;
 
     public ServiceTicketImpl() {
@@ -126,7 +126,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return null;
     }
 
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null
             || !(object instanceof ServiceTicket)) {
             return false;
