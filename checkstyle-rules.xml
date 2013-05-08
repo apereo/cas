@@ -89,7 +89,9 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="ModifierOrder">
       <property name="severity" value="error"/>
     </module>
-    <module name="RedundantModifier"/>
+    <module name="RedundantModifier">
+        <property name="severity" value="error"/>
+    </module>
     <module name="AvoidNestedBlocks"/>
     <module name="EmptyBlock">
       <property name="severity" value="error"/>
