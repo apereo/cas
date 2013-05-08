@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20AuthorizeController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
 
     private final String loginUrl;
 
@@ -60,22 +60,22 @@ public final class OAuth20AuthorizeController extends AbstractController {
             throws Exception {
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        log.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+        LOGGER.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        log.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        LOGGER.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String state = request.getParameter(OAuthConstants.STATE);
-        log.debug("{} : {}", OAuthConstants.STATE, state);
+        LOGGER.debug("{} : {}", OAuthConstants.STATE, state);
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            log.error("Missing {}", OAuthConstants.CLIENT_ID);
+            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            log.error("Missing {}", OAuthConstants.REDIRECT_URI);
+            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -89,14 +89,14 @@ public final class OAuth20AuthorizeController extends AbstractController {
             }
         }
         if (service == null) {
-            log.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
+            LOGGER.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
-            log.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            LOGGER.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -108,15 +108,15 @@ public final class OAuth20AuthorizeController extends AbstractController {
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
                 .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-        log.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
+        LOGGER.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
 
         final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
                 callbackAuthorizeUrl);
-        log.debug("loginUrlWithService : {}", loginUrlWithService);
+        LOGGER.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }
 
     static void setLogger(final Logger aLogger) {
-        log = aLogger;
+        LOGGER = aLogger;
     }
 }

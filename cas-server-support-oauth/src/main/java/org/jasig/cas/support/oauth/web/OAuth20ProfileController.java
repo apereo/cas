@@ -47,7 +47,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public final class OAuth20ProfileController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
 
     private static final String ID = "id";
 
@@ -64,7 +64,7 @@ public final class OAuth20ProfileController extends AbstractController {
             throws Exception {
 
         final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
-        log.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
+        LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
         final JsonFactory jsonFactory = new JsonFactory();
         final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
@@ -74,7 +74,7 @@ public final class OAuth20ProfileController extends AbstractController {
 
             // accessToken is required
             if (StringUtils.isBlank(accessToken)) {
-                log.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+                LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
@@ -84,7 +84,7 @@ public final class OAuth20ProfileController extends AbstractController {
             final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
                     .getTicket(accessToken);
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-                log.error("expired accessToken : {}", accessToken);
+                LOGGER.error("expired accessToken : {}", accessToken);
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
@@ -111,6 +111,6 @@ public final class OAuth20ProfileController extends AbstractController {
     }
 
     static void setLogger(final Logger aLogger) {
-        log = aLogger;
+        LOGGER = aLogger;
     }
 }
