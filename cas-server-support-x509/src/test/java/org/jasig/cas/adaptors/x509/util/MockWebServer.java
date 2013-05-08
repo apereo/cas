@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
     private Worker worker;
@@ -152,7 +152,7 @@ public class MockWebServer {
             try {
                 this.serverSocket.close();
             } catch (IOException e) {
-                log.trace("Exception when closing the server socket: {}", e.getMessage());
+                logger.trace("Exception when closing the server socket: {}", e.getMessage());
             }
         }
 
