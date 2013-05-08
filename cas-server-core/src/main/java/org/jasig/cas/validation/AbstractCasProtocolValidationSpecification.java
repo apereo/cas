@@ -69,6 +69,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     /**
      * Template method to allow for additional checks by subclassed methods
      * without needing to call super.isSatisfiedBy(...).
+     * @param assertion the assertion
      * @return true, if the subclass implementation is satisfied by the assertion
      */
     protected abstract boolean isSatisfiedByInternal(final Assertion assertion);
