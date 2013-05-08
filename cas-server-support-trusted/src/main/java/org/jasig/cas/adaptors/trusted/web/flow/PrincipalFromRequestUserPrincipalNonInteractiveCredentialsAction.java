@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.RequestContext;
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected Credentials constructCredentialsFromRequest(
@@ -55,12 +55,12 @@ public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAct
 
         if (principal != null) {
 
-            log.debug("UserPrincipal [{}] found in HttpServletRequest", principal.getName());
+            logger.debug("UserPrincipal [{}] found in HttpServletRequest", principal.getName());
             return new PrincipalBearingCredentials(new SimplePrincipal(
                     principal.getName()));
         }
 
-        log.debug("UserPrincipal not found in HttpServletRequest.");
+        logger.debug("UserPrincipal not found in HttpServletRequest.");
         return null;
     }
 }
