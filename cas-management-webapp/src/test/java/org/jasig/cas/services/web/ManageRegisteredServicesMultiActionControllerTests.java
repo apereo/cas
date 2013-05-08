@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  */
 public class ManageRegisteredServicesMultiActionControllerTests {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ManageRegisteredServicesMultiActionController controller;
 
@@ -147,7 +147,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
         } catch (IllegalArgumentException e) {
             //Exception expected; service id cannot be found
-            log.debug(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
         }
     }
 
@@ -169,7 +169,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
         } catch (IllegalArgumentException e) {
             //Exception expected; evaluation order is invalid
-            log.debug(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
         }
     }
 
