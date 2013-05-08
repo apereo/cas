@@ -40,7 +40,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
 
     /** Log instance. */
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private boolean returnNullIfNoAttributes = false;
 
@@ -49,7 +49,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
     public final Principal resolvePrincipal(final Credentials credentials) {
-        log.debug("Attempting to resolve a principal...");
+        logger.debug("Attempting to resolve a principal...");
 
         final String principalId = extractPrincipalId(credentials);
 
@@ -57,7 +57,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
             return null;
         }
 
-        log.debug("Creating SimplePrincipal for [{}]", principalId);
+        logger.debug("Creating SimplePrincipal for [{}]", principalId);
 
         final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
         final Map<String, List<Object>> attributes;
