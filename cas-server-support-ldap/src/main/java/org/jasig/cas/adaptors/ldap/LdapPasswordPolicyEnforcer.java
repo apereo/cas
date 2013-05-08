@@ -208,36 +208,36 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         final LdapPasswordPolicyResult ldapResult = getEnforcedPasswordPolicy(userId);
 
         if (ldapResult == null) {
-            log.debug("Ldap password policy cannot be established for [{}]. Skipping all checks...", userId);
+            logger.debug("Ldap password policy cannot be established for [{}]. Skipping all checks...", userId);
             return PASSWORD_STATUS_PASS;
         }
 
         if (StringUtils.isBlank(ldapResult.getDateResult())) {
-            log.debug("Ldap password policy could not determine the date value for {}. Skipping all checks for [{}]...",
+            logger.debug("Ldap password policy could not determine the date value for {}. Skipping all checks for [{}]...",
                     this.dateAttribute, userId);
             return PASSWORD_STATUS_PASS;
         }
 
         if (!StringUtils.isEmpty(this.noWarnAttribute)) {
-            log.debug("No warning attribute value for {} is set to ",
+            logger.debug("No warning attribute value for {} is set to ",
                     this.noWarnAttribute, ldapResult.getNoWarnAttributeResult());
         }
 
         if (isPasswordSetToNeverExpire(ldapResult.getNoWarnAttributeResult())) {
-            log.debug("Account password will never expire. Skipping password warning check...");
+            logger.debug("Account password will never expire. Skipping password warning check...");
 
             return PASSWORD_STATUS_PASS;
         }
 
         if (StringUtils.isEmpty(ldapResult.getWarnDaysResult())) {
-            log.debug("No warning days value is found for {}. Using system default of {}",
+            logger.debug("No warning days value is found for {}. Using system default of {}",
                     userId, this.warningDays);
         } else {
             this.warningDays = Integer.parseInt(ldapResult.getWarnDaysResult());
         }
 
         if (StringUtils.isEmpty(ldapResult.getValidDaysResult())) {
-            log.debug("No maximum password valid days found for {}. Using system default of {} days",
+            logger.debug("No maximum password valid days found for {}. Using system default of {} days",
                     ldapResult.getUserId(), this.validDays);
         } else {
             this.validDays = Integer.parseInt(ldapResult.getValidDaysResult());
@@ -249,7 +249,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             msgToLog = "Expiration date cannot be determined for date " + ldapResult.getDateResult();
 
             final LdapPasswordPolicyEnforcementException exc = new LdapPasswordPolicyEnforcementException(msgToLog);
-            log.error(msgToLog, exc);
+            logger.error(msgToLog, exc);
 
             throw exc;
         }
@@ -271,7 +271,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setDateAttribute(final String dateAttribute) {
         this.dateAttribute = dateAttribute;
-        log.debug("Date attribute: {}", dateAttribute);
+        logger.debug("Date attribute: {}", dateAttribute);
     }
 
     /**
@@ -280,7 +280,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setDateFormat(final String dateFormat) {
         this.dateFormat = dateFormat;
-        log.debug("Date format: {}", dateFormat);
+        logger.debug("Date format: {}", dateFormat);
     }
 
     /**
@@ -289,7 +289,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     public void setFilter(final String filter) {
         this.filter = filter;
 
-        log.debug("Search filter: {}", filter);
+        logger.debug("Search filter: {}", filter);
     }
 
     public void setIgnorePartialResultException(final boolean ignorePartialResultException) {
@@ -309,7 +309,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     public void setNoWarnAttribute(final String noWarnAttribute) {
         this.noWarnAttribute = noWarnAttribute;
 
-        log.debug("Attribute to flag warning bypass: {}", noWarnAttribute);
+        logger.debug("Attribute to flag warning bypass: {}", noWarnAttribute);
     }
 
     /**
@@ -318,7 +318,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     public void setNoWarnValues(final List<String> noWarnValues) {
         this.noWarnValues = noWarnValues;
 
-        log.debug("Value to flag warning bypass: {}", noWarnValues.toString());
+        logger.debug("Value to flag warning bypass: {}", noWarnValues.toString());
     }
 
     /**
@@ -333,7 +333,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
-        log.debug("Search base: {}", searchBase);
+        logger.debug("Search base: {}", searchBase);
     }
 
     /**
@@ -341,7 +341,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setTimeout(final int timeout) {
         this.timeout = timeout;
-        log.debug("Timeout: {}", this.timeout);
+        logger.debug("Timeout: {}", this.timeout);
     }
 
     /**
@@ -350,7 +350,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setValidDays(final int validDays) {
         this.validDays = validDays;
-        log.debug("Password valid days: {}", validDays);
+        logger.debug("Password valid days: {}", validDays);
     }
 
     /**
@@ -358,7 +358,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setValidDaysAttribute(final String validDaysAttribute) {
         this.validDaysAttribute = validDaysAttribute;
-        log.debug("Valid days attribute: {}", validDaysAttribute);
+        logger.debug("Valid days attribute: {}", validDaysAttribute);
     }
 
     /**
@@ -366,7 +366,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setWarnAll(final Boolean warnAll) {
         this.warnAll = warnAll;
-        log.debug("warnAll: {}", warnAll);
+        logger.debug("warnAll: {}", warnAll);
     }
 
     /**
@@ -376,7 +376,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setWarningDays(final int warningDays) {
         this.warningDays = warningDays;
-        log.debug("Default warningDays: {}", warningDays);
+        logger.debug("Default warningDays: {}", warningDays);
     }
 
     /**
@@ -384,7 +384,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setWarningDaysAttribute(final String warnDays) {
         this.warningDaysAttribute = warnDays;
-        log.debug("Warning days attribute: {}", warnDays);
+        logger.debug("Warning days attribute: {}", warnDays);
     }
 
     /***
@@ -400,7 +400,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
         final DateTime dt = new DateTime(totalSecondsSince1970 * 1000, DEFAULT_TIME_ZONE);
 
-        log.info("Recalculated {} {} attribute to {}",
+        logger.info("Recalculated {} {} attribute to {}",
                 this.dateFormat, this.dateAttribute, dt.toString());
 
         return dt;
@@ -431,7 +431,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         }
 
         DateTime expireDate = dateValue.plusDays(this.validDays);
-        log.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}",
+        logger.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}",
                 dateValue.toString(), this.dateAttribute, this.validDays, expireDate.toString());
 
         return expireDate;
@@ -447,11 +447,11 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     private long getDaysToExpirationDate(final String userId, final DateTime expireDate)
             throws LdapPasswordPolicyEnforcementException {
 
-        log.debug("Calculating number of days left to the expiration date for user {}", userId);
+        logger.debug("Calculating number of days left to the expiration date for user {}", userId);
 
         final DateTime currentTime = new DateTime(DEFAULT_TIME_ZONE);
 
-        log.info("Current date is {}, expiration date is {}", currentTime.toString(), expireDate.toString());
+        logger.info("Current date is {}, expiration date is {}", currentTime.toString(), expireDate.toString());
 
         final Days d = Days.daysBetween(currentTime, expireDate);
         int daysToExpirationDate = d.getDays();
@@ -466,7 +466,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             final LdapPasswordPolicyEnforcementException exc =
                     new LdapPasswordPolicyEnforcementException(fmt.toString());
 
-            log.error(fmt.toString(), exc);
+            logger.error(fmt.toString(), exc);
             IOUtils.closeQuietly(fmt);
             throw exc;
         }
@@ -477,14 +477,14 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), DEFAULT_TIME_ZONE);
 
         warnPeriod = warnPeriod.minusDays(this.warningDays);
-        log.info("Warning period begins on {}", warnPeriod.toString());
+        logger.info("Warning period begins on {}", warnPeriod.toString());
 
         if (this.warnAll) {
-            log.info("Warning all. The password for {} will expire in {} days.", userId, daysToExpirationDate);
+            logger.info("Warning all. The password for {} will expire in {} days.", userId, daysToExpirationDate);
         } else if (currentTime.equals(warnPeriod) || currentTime.isAfter(warnPeriod)) {
-            log.info("Password will expire in {} days.", daysToExpirationDate);
+            logger.info("Password will expire in {} days.", daysToExpirationDate);
         } else {
-            log.info("Password is not expiring. {} days left to the warning", daysToExpirationDate);
+            logger.info("Password is not expiring. {} days left to the warning", daysToExpirationDate);
             daysToExpirationDate = PASSWORD_STATUS_PASS;
         }
 
@@ -494,7 +494,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     private LdapPasswordPolicyResult getEnforcedPasswordPolicy(final String userId) {
         final LdapPasswordPolicyResult ldapResult = getResultsFromLdap(userId);
         if (ldapResult == null) {
-            log.warn("Ldap password policy could not be established for user {}.", userId);
+            logger.warn("Ldap password policy could not be established for user {}.", userId);
         }
         return ldapResult;
     }
@@ -528,7 +528,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
         final String searchFilter = LdapUtils.getFilterWithValues(this.filter, userId);
 
-        log.debug("Starting search with searchFilter: {}", searchFilter);
+        logger.debug("Starting search with searchFilter: {}", searchFilter);
 
         String attributeListLog = attributeIds[0];
 
@@ -536,7 +536,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             attributeListLog = attributeListLog.concat(":" + attributeIds[i]);
         }
 
-        log.debug("Returning attributes {}", attributeListLog);
+        logger.debug("Returning attributes {}", attributeListLog);
 
         try {
             final AttributesMapper mapper = new AttributesMapper() {
@@ -584,7 +584,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
                 return (LdapPasswordPolicyResult) resultList.get(0);
             }
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         return null;
 
