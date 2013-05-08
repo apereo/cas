@@ -44,7 +44,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Before
     public void setUp() throws Exception {
@@ -65,17 +65,17 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
         // Ensure that repeated logins BELOW threshold rate are allowed
         // Wait 7% more than threshold period
-        int wait = (int)(1000.0 * 1.07 / rate);
+        int wait = (int) (1000.0 * 1.07 / rate);
         failLoop(3, wait, 200);
 
         // Ensure that repeated logins ABOVE threshold rate are throttled
         // Wait 7% less than threshold period
-        wait = (int)(1000.0 * 0.93 / rate);
+        wait = (int) (1000.0 * 0.93 / rate);
         failLoop(3, wait, 403);
 
         // Ensure that slowing down relieves throttle
         // Wait 7% more than threshold period
-        wait = (int)(1000.0 * 1.07 / rate);
+        wait = (int) (1000.0 * 1.07 / rate);
         Thread.sleep(wait);
         failLoop(3, wait, 200);
     }
@@ -85,7 +85,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4").getStatus();
         for (int i = 0; i < trials; i++) {
-            log.debug("Waiting for {} ms", period);
+            logger.debug("Waiting for {} ms", period);
             Thread.sleep(period);
             assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         }

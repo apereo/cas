@@ -47,7 +47,8 @@ import org.springframework.jdbc.core.RowMapper;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
+public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
+            extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
 
@@ -63,15 +64,16 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
 
-    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager, final DataSource dataSource) {
+    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
+            final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
     protected boolean exceedsThreshold(final HttpServletRequest request) {
-        final String query = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? " +
-                "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
+        final String query = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
+                + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
         final String userToUse = constructUsername(request, getUsernameParameter());
         final Calendar cutoff = Calendar.getInstance();
         cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
