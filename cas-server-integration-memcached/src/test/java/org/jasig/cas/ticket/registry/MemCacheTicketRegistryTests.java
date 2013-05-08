@@ -55,7 +55,7 @@ public class MemCacheTicketRegistryTests {
 
     private final boolean binaryProtocol;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;
@@ -76,7 +76,7 @@ public class MemCacheTicketRegistryTests {
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
-            log.warn("Aborting test since no memcached server is available on localhost.");
+            logger.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
 
