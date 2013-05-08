@@ -49,8 +49,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  */
 public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
-    /** Instance of a log. */
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    /** Instance of a logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private String modelKey = "exception.message";
@@ -69,9 +69,9 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
          * because redirecting to the requested URI with this exception may cause an infinite
          * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
          */
-        if (!(exception instanceof FlowExecutionRepositoryException) ||
-              exception instanceof BadlyFormattedFlowExecutionKeyException) {
-            log.debug("Ignoring the received exception due to a type mismatch", exception);
+        if (!(exception instanceof FlowExecutionRepositoryException)
+              || exception instanceof BadlyFormattedFlowExecutionKeyException) {
+            logger.debug("Ignoring the received exception due to a type mismatch", exception);
             return null;
         }
 
@@ -79,7 +79,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
                 + (request.getQueryString() != null ? "?"
                 + request.getQueryString() : "");
 
-        log.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
+        logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml(exception.getMessage()));
 

@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public final class StatisticsController extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
@@ -67,12 +67,16 @@ public final class StatisticsController extends AbstractController {
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
+                throws Exception {
         final ModelAndView modelAndView = new ModelAndView("viewStatisticsView");
         modelAndView.addObject("startTime", this.upTimeStartDate);
         final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
 
-        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR, NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)), new LinkedList<String>(Arrays.asList("day","hour","minute","second","millisecond"))));
+        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(
+                        Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
+                        NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
+                        new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
         modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / 1024 / 1024);
         modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
         modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
@@ -105,7 +109,7 @@ public final class StatisticsController extends AbstractController {
                 }
             }
         } catch (final UnsupportedOperationException e) {
-            log.trace("The ticket registry doesn't support this information.");
+            logger.trace("The ticket registry doesn't support this information.");
         }
 
         final Collection<GraphingStatisticsAppender> appenders = GraphingStatisticsAppender.getAllGraphingStatisticsAppenders();

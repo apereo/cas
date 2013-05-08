@@ -46,7 +46,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
@@ -75,7 +75,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-            response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter) + " from IP Address [" + request.getRemoteAddr() + "]");
+            response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter)
+                                + " from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
 
@@ -83,7 +84,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Override
-    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) throws Exception {
+    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                                 final Object o, final ModelAndView modelAndView) throws Exception {
         if (!"POST".equals(request.getMethod())) {
             return;
         }
@@ -132,7 +134,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     protected void recordThrottle(final HttpServletRequest request) {
-        log.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
+        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
                 new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
     }
 
