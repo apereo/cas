@@ -152,8 +152,8 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
             }
         }
 
-        log.debug("No error definition could be matched against the error. Throwing default error for {}", e.getMessage());
-
+        log.debug("No error definition could be matched against the error. Throwing default error for {}",
+                e.getMessage());
         return BadCredentialsAuthenticationException.ERROR;
     }
 }
