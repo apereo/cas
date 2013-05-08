@@ -47,8 +47,8 @@ public final class LdapUtils {
      * Utility method to replace the placeholders in the filter with the proper
      * values from the userName.
      *
-     * @param filter
-     * @param userName
+     * @param filter search filter
+     * @param userName ldap userName used by the filter
      * @return the filtered string populated with the username
      */
     public static String getFilterWithValues(final String filter,

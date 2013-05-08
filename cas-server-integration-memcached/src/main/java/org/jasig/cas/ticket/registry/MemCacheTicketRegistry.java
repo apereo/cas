@@ -172,10 +172,11 @@ final int serviceTicketTimeOut) {
     }
 
     /**
+     * @param sync set to true, if updates to registry are to be synchronized
      * @deprecated As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
      */
     @Deprecated
-    public void setSynchronizeUpdatesToRegistry(final boolean b) {}
+    public void setSynchronizeUpdatesToRegistry(final boolean sync) {}
 
     @Override
     protected boolean needsCallback() {
