@@ -72,7 +72,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * org.springframework.web.bind.ServletRequestDataBinder)
      */
     @Override
-    protected final void initBinder(final HttpServletRequest request,
+    protected void initBinder(final HttpServletRequest request,
             final ServletRequestDataBinder binder) throws Exception {
         binder.setRequiredFields(new String[] {"description", "serviceId",
                 "name", "allowedToProxy", "enabled", "ssoEnabled",
@@ -89,7 +89,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * org.springframework.validation.BindException)
      */
     @Override
-    protected final ModelAndView onSubmit(final HttpServletRequest request,
+    protected ModelAndView onSubmit(final HttpServletRequest request,
             final HttpServletResponse response, final Object command,
             final BindException errors) throws Exception {
         RegisteredService service = (RegisteredService) command;
@@ -150,7 +150,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    protected final Map referenceData(final HttpServletRequest request) throws Exception {
+    protected Map referenceData(final HttpServletRequest request) throws Exception {
 
         final Map<String, Object> model = new HashMap<String, Object>();
 
