@@ -69,6 +69,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     }
 
     /**
+     * {@inheritDoc}
      * We ignore prefixes for SAML compliance.
      */
     @Override

@@ -168,6 +168,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
+     * {@inheritDoc}
      * Service does not support Single Log Out.
      *
      * @see org.jasig.cas.authentication.principal.WebApplicationService#logOutOfService(java.lang.String)
