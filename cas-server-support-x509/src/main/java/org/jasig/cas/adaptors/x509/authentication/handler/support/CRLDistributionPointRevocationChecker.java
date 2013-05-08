@@ -76,7 +76,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     protected X509CRL getCRL(final X509Certificate cert) {
         final URL[] urls = getDistributionPoints(cert);
-        log.debug(String.format(
+        logger.debug(String.format(
                 "Distribution points for %s: %s.",
                 CertUtils.toString(cert), Arrays.asList(urls)));
 
@@ -84,7 +84,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         for (URL url : urls) {
             item = this.crlCache.get(url);
             if (item != null) {
-                log.debug("Found CRL in cache for {}", CertUtils.toString(cert));
+                logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
                 return (X509CRL) item.getObjectValue();
             }
         }
@@ -92,13 +92,13 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         // Try all distribution points and stop at first fetch that succeeds
         X509CRL crl = null;
         for (int i = 0; i < urls.length && crl == null; i++) {
-            log.info("Attempting to fetch CRL at {}", urls[i]);
+            logger.info("Attempting to fetch CRL at {}", urls[i]);
             try {
                 crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
-                log.info("Success. Caching fetched CRL.");
+                logger.info("Success. Caching fetched CRL.");
                 this.crlCache.put(new Element(urls[i], crl));
             } catch (Exception e) {
-                log.error("Error fetching CRL at {}", urls[i], e);
+                logger.error("Error fetching CRL at {}", urls[i], e);
             }
         }
 
@@ -110,7 +110,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
-            log.error(
+            logger.error(
                     "Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
             return new URL[0];
         }
@@ -125,7 +125,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     addURL(urls, gn.getName());
                 }
             } else {
-                log.warn("{} not supported. String or GeneralNameList expected.", location);
+                logger.warn("{} not supported. String or GeneralNameList expected.", location);
             }
         }
 
@@ -140,7 +140,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             list.add(uri.toURL());
         } catch (final Exception e) {
-            log.warn("{} is not a valid distribution point URI.", uriString);
+            logger.warn("{} is not a valid distribution point URI.", uriString);
         }
     }
 }

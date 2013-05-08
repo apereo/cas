@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class AllowRevocationPolicy implements RevocationPolicy<Void> {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     /**
@@ -46,6 +46,6 @@ public final class AllowRevocationPolicy implements RevocationPolicy<Void> {
      */
     @Override
     public void apply(final Void data) throws GeneralSecurityException {
-        log.info("Continuing since AllowRevocationPolicy is in effect.");
+        logger.info("Continuing since AllowRevocationPolicy is in effect.");
     }
 }
