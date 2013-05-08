@@ -65,7 +65,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
@@ -111,7 +111,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock.release();
             assertNull(getOwner(appId));
         } catch (Exception e) {
-            log.debug("testAcquireAndRelease produced an error", e);
+            logger.debug("testAcquireAndRelease produced an error", e);
             fail("testAcquireAndRelease failed");
         }
     }
@@ -136,7 +136,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock.release();
             assertNull(getOwner(appId));
         } catch (Exception e) {
-            log.debug("testLockExpiration produced an error", e);
+            logger.debug("testLockExpiration produced an error", e);
             fail("testLockExpiration failed");
         }
     }
@@ -156,7 +156,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock.release();
             assertNull(getOwner(appId));
         } catch (Exception e) {
-            log.debug("testNonReentrantBehavior produced an error", e);
+            logger.debug("testNonReentrantBehavior produced an error", e);
             fail("testNonReentrantBehavior failed.");
         }
     }
@@ -171,7 +171,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         try {
             testConcurrency(executor, getConcurrentLocks("concurrent-new"));
         } catch (Exception e) {
-            log.debug("testConcurrentAcquireAndRelease produced an error", e);
+            logger.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
         } finally {
             executor.shutdownNow();
@@ -191,7 +191,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         try {
             testConcurrency(executor, locks);
         } catch (Exception e) {
-            log.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
+            logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
         } finally {
             executor.shutdownNow();
@@ -272,7 +272,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
                     try {
                         final Object result = method.invoke(jpaLock, args);
                         jpaLock.entityManager.flush();
-                        log.debug("Performed {} on {}", method.getName(), jpaLock);
+                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
                         return result;
                         // Force result of transaction to database
                     } catch (Exception e) {
@@ -297,7 +297,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             try {
                 return lock.acquire();
             } catch (Exception e) {
-                log.debug("{} failed to acquire lock", lock, e);
+                logger.debug("{} failed to acquire lock", lock, e);
                 return false;
             }
         }
@@ -318,7 +318,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
                 lock.release();
                 return true;
             } catch (Exception e) {
-                log.debug("{} failed to release lock", lock, e);
+                logger.debug("{} failed to release lock", lock, e);
                 return false;
             }
         }
