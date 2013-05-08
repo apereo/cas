@@ -145,6 +145,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
+     * {@inheritDoc}
      * Returns the attributes, page title, and command name.
      *
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)

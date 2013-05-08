@@ -59,6 +59,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
