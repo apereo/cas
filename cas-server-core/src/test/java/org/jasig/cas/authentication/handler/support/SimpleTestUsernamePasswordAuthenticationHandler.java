@@ -34,9 +34,8 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        log
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+                this.getClass().getName());
     }
 
     public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
@@ -45,11 +44,11 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            log.debug("User [{}] was successfully authenticated.", username);
+            logger.debug("User [{}] was successfully authenticated.", username);
             return true;
         }
 
-        log.debug("User [{}] failed authentication", username);
+        logger.debug("User [{}] failed authentication", username);
 
         return false;
     }
