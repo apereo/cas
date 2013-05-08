@@ -97,7 +97,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
     }
 
     @Override
-    protected DirContextAdapter doMapToContext(final RegisteredService service,final  DirContextAdapter ctx) {
+    protected DirContextAdapter doMapToContext(final RegisteredService service, final DirContextAdapter ctx) {
         ctx.setAttributeValue(this.idAttribute, String.valueOf(service.getId()));
         ctx.setAttributeValue(this.serviceIdAttribute, service.getServiceId());
         SpringLdapUtils.setBoolean(ctx, this.serviceEnabledAttribute, service.isEnabled());
@@ -105,7 +105,8 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         SpringLdapUtils.setBoolean(ctx, this.serviceAnonymousAccessAttribute, service.isAnonymousAccess());
         SpringLdapUtils.setBoolean(ctx, this.serviceSsoEnabledAttribute, service.isSsoEnabled());
         ctx.setAttributeValue(this.serviceThemeAttribute, service.getTheme());
-        ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes().toArray(new String[service.getAllowedAttributes().size()]), false);
+        ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes().toArray(
+                new String[service.getAllowedAttributes().size()]), false);
         ctx.setAttributeValue(this.serviceDescriptionAttribute, service.getDescription());
         if (!SpringLdapUtils.containsObjectClass(ctx, this.objectclass)) {
             ctx.addAttributeValue(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);

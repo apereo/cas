@@ -20,13 +20,16 @@ package org.jasig.cas.adaptors.ldap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.authentication.AbstractPasswordPolicyEnforcer;
 import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
 import org.jasig.cas.util.LdapUtils;
@@ -45,7 +48,7 @@ import org.springframework.util.Assert;
  * Based on AccountStatusGetter by Bart Ophelders & Johan Peeters.
  *
  * @author Eric Pierce
- *
+ * @author Misagh Moayyed
  */
 public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
@@ -190,8 +193,8 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
                 return;
             }
         }
-        throw new IllegalStateException("You must set a valid scope. Valid scope values are: " +
-                    Arrays.toString(VALID_SCOPE_VALUES));
+        throw new IllegalStateException("You must set a valid scope. Valid scope values are: "
+                    + Arrays.toString(VALID_SCOPE_VALUES));
     }
 
     /**
@@ -257,14 +260,14 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * Method to set the data source and generate a LDAPTemplate.
      *
-     * @param dataSource the data source to use.
+     * @param contextSource the data source to use.
      */
     public void setContextSource(final ContextSource contextSource) {
         this.ldapTemplate = new LdapTemplate(contextSource);
     }
 
     /**
-     * @param DateAttribute The DateAttribute to set.
+     * @param dateAttribute The DateAttribute to set.
      */
     public void setDateAttribute(final String dateAttribute) {
         this.dateAttribute = dateAttribute;
@@ -310,7 +313,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     /**
-     * @param noWarnAttribute The noWarnAttribute to set.
+     * @param noWarnValues The noWarnAttribute to set.
      */
     public void setNoWarnValues(final List<String> noWarnValues) {
         this.noWarnValues = noWarnValues;
@@ -319,7 +322,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     /**
-     * @param filter The scope to set.
+     * @param scope The scope to set.
      */
     public void setScope(final int scope) {
         this.scope = scope;
@@ -351,7 +354,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     /**
-     * @param ValidDaysAttribute The ValidDaysAttribute to set.
+     * @param validDaysAttribute The ValidDaysAttribute to set.
      */
     public void setValidDaysAttribute(final String validDaysAttribute) {
         this.validDaysAttribute = validDaysAttribute;
@@ -377,7 +380,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     /**
-     * @param WarningDaysAttribute The WarningDaysAttribute to set.
+     * @param warnDays The WarningDaysAttribute to set.
      */
     public void setWarningDaysAttribute(final String warnDays) {
         this.warningDaysAttribute = warnDays;
@@ -387,10 +390,10 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /***
      * Converts the numbers in Active Directory date fields for pwdLastSet, accountExpires,
      * lastLogonTimestamp, lastLogon, and badPasswordTime to a common date format.
-     * @param pswValue
+     * @param dateValue
      */
-    private DateTime convertDateToActiveDirectoryFormat(final String pswValue) {
-        final long l = Long.parseLong(pswValue.trim());
+    private DateTime convertDateToActiveDirectoryFormat(final String dateValue) {
+        final long l = NumberUtils.toLong(dateValue.trim());
 
         final long totalSecondsSince1601 = l / 10000000;
         final long totalSecondsSince1970 = totalSecondsSince1601 - TOTAL_SECONDS_FROM_1601_1970;
@@ -417,7 +420,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * Determines the expiration date to use based on the settings.
      * @param ldapDateResult
-     * @return Constructed the {@link #org.joda.time.DateTime DateTime}  object which indicates the expiration date
+     * @return Constructed {@link #org.joda.time.DateTime DateTime} object which indicates the expiration date
      */
     private DateTime getExpirationDateToUse(final String ldapDateResult) {
         DateTime dateValue = null;
@@ -454,16 +457,17 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         int daysToExpirationDate = d.getDays();
 
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
-            String msgToLog = "Authentication failed because account password has expired with "
-                            + daysToExpirationDate + " to expiration date. ";
-            msgToLog += "Verify the value of the " + this.dateAttribute +
-                    " attribute and make sure it's not before the current date, which is "
-                    + currentTime.toString();
+            final Formatter fmt = new Formatter();
 
-            final LdapPasswordPolicyEnforcementException exc = new LdapPasswordPolicyEnforcementException(msgToLog);
+            fmt.format("Authentication failed because account password has expired with %s ", daysToExpirationDate)
+               .format("to expiration date. Verify the value of the %s attribute ", this.dateAttribute)
+               .format("and ensure it's not before the current date, which is %s", currentTime.toString());
 
-            log.error(msgToLog, exc);
+            final LdapPasswordPolicyEnforcementException exc =
+                    new LdapPasswordPolicyEnforcementException(fmt.toString());
 
+            log.error(fmt.toString(), exc);
+            IOUtils.closeQuietly(fmt);
             throw exc;
         }
 
@@ -573,11 +577,11 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
                 }
             };
 
-            final List<?> LdapResultList = this.ldapTemplate.search(this.searchBase,
+            final List<?> resultList = this.ldapTemplate.search(this.searchBase,
                     searchFilter, getSearchControls(attributeIds), mapper);
 
-            if (LdapResultList.size() > 0) {
-                return (LdapPasswordPolicyResult) LdapResultList.get(0);
+            if (resultList.size() > 0) {
+                return (LdapPasswordPolicyResult) resultList.get(0);
             }
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
