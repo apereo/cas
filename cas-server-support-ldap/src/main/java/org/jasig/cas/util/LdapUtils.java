@@ -37,7 +37,7 @@ import org.springframework.ldap.core.LdapEncoder;
  */
 public final class LdapUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
     private LdapUtils() {
         // private constructor so that no one can instantiate.
@@ -93,7 +93,7 @@ public final class LdapUtils {
             try {
                 context.close();
             } catch (NamingException ex) {
-                log.warn("Could not close context", ex);
+                LOGGER.warn("Could not close context", ex);
             }
         }
     }

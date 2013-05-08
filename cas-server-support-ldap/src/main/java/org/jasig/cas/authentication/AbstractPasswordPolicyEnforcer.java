@@ -31,5 +31,5 @@ import org.springframework.beans.factory.InitializingBean;
  *
  */
 public abstract class AbstractPasswordPolicyEnforcer implements PasswordPolicyEnforcer, InitializingBean {
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 }
