@@ -114,6 +114,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * impact the ticket expiration policy in that, depending on the policy
      * configuration, the ticket may be considered expired.
      */
+    @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided) {
