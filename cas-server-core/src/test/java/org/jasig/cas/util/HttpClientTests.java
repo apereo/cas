@@ -85,7 +85,7 @@ public class HttpClientTests  {
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
         };
         final SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, new TrustManager[] { trm }, null);
+        sc.init(null, new TrustManager[] {trm}, null);
         return sc.getSocketFactory();
     }
 }
