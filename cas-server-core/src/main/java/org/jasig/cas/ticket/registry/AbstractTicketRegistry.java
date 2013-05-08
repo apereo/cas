@@ -40,6 +40,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @throws IllegalArgumentException if class is null.
      * @throws ClassCastException if class does not match requested ticket
      * class.
+     * @return specified ticket from the registry
      */
     public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
