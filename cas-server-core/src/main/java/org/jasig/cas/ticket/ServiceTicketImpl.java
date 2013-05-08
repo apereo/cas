@@ -102,6 +102,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * policy in that, depending on the policy configuration, the ticket
      * may be considered expired.
      */
+    @Override
     public boolean isValidFor(final Service serviceToValidate) {
         updateState();
         return serviceToValidate.matches(this.service);

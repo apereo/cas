@@ -214,6 +214,7 @@ public class JpaTicketRegistryTests {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {
