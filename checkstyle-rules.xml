@@ -59,7 +59,10 @@ at https://wiki.jasig.org/display/CAS/Code+Conventions
       <property name="severity" value="error"/>
     </module>
     <module name="MethodLength"/>
-    <module name="ParameterNumber"/>
+    <module name="ParameterNumber">
+        <property name="max" value="10" />
+        <property name="severity" value="error"/>
+    </module>
     <module name="LineLength">
       <property name="max" value="140"/>
       <property name="tabWidth" value="4"/>
