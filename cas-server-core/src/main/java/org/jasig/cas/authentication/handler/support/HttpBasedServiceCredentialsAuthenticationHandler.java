@@ -49,7 +49,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     private boolean requireSecure = true;
 
     /** Log instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
     @NotNull
@@ -60,12 +60,10 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
-            log.debug("Authentication failed because url was not secure.");
+            logger.debug("Authentication failed because url was not secure.");
             return false;
         }
-        log
-            .debug("Attempting to resolve credentials for "
-                + serviceCredentials);
+        logger.debug("Attempting to resolve credentials for {}", serviceCredentials);
 
         return this.httpClient.isValidEndPoint(serviceCredentials
             .getCallbackUrl());

@@ -46,7 +46,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
     private final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers;
 
     public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(
-            final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
+            final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers) {
         this.linkedHandlers = linkedHandlers;
     }
 
@@ -76,11 +76,11 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
             }
 
             if (authenticated) {
-                log.info("{} successfully authenticated {}", handlerName, credentials);
+                logger.info("{} successfully authenticated {}", handlerName, credentials);
                 final Principal p = this.linkedHandlers.get(authenticationHandler).resolvePrincipal(credentials);
-                return new Pair<AuthenticationHandler,Principal>(authenticationHandler, p);
+                return new Pair<AuthenticationHandler, Principal>(authenticationHandler, p);
             }
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
         }
 
         if (foundOneThatWorks) {

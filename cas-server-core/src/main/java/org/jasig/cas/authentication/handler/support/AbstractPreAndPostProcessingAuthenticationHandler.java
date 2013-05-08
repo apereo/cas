@@ -39,7 +39,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     implements NamedAuthenticationHandler {
 
     /** Instance of logging for subclasses. */
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The name of the authentication handler. */
     @NotNull
