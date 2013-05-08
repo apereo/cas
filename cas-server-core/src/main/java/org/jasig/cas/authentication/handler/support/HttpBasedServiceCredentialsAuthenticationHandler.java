@@ -70,6 +70,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credentials provided are not null and the credentials
      * are a subclass of (or equal to) HttpBasedServiceCredentials.
      */

@@ -65,6 +65,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
+     * {@inheritDoc}
      * Sets the require fields and the disallowed fields from the
      * HttpServletRequest.
      *
@@ -82,6 +83,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
+     * {@inheritDoc}
      * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
      *
      * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest,
