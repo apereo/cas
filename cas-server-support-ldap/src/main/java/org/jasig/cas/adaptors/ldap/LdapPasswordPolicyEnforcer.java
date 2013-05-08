@@ -391,7 +391,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /***
      * Converts the numbers in Active Directory date fields for pwdLastSet, accountExpires,
      * lastLogonTimestamp, lastLogon, and badPasswordTime to a common date format.
-     * @param dateValue
+     * @param dateValue date value to convert
      * @return {@link DateTime} converted to AD format
      */
     private DateTime convertDateToActiveDirectoryFormat(final String dateValue) {
@@ -410,7 +410,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
     /**
      * Parses and formats the retrieved date value from Ldap.
-     * @param ldapResult
+     * @param ldapResult the date result retrieved from ldap
      * @return newly constructed date object whose value was passed
      */
     private DateTime formatDateByPattern(final String ldapResult) {
@@ -421,7 +421,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
     /**
      * Determines the expiration date to use based on the settings.
-     * @param ldapDateResult
+     * @param ldapDateResult date result retrieved from ldap
      * @return Constructed {@link #org.joda.time.DateTime DateTime} object which indicates the expiration date
      */
     private DateTime getExpirationDateToUse(final String ldapDateResult) {
@@ -445,6 +445,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @param expireDate password expiration date
      * @param userId the authenticating user id
      * @return number of days left to the expiration date, or {@value #PASSWORD_STATUS_PASS}
+     * @throws LdapPasswordPolicyEnforcementException if authentication fails as the result of a date mismatch
      */
     private long getDaysToExpirationDate(final String userId, final DateTime expireDate)
             throws LdapPasswordPolicyEnforcementException {
@@ -503,7 +504,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
     /**
      * Retrieves the password policy results from the configured ldap repository based on the attributes defined.
-     * @param userId
+     * @param userId authenticating user id
      * @return {@code null} if the user id cannot be found, or the {@code LdapPasswordPolicyResult} instance.
      */
     private LdapPasswordPolicyResult getResultsFromLdap(final String userId) {
@@ -608,6 +609,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * It will check the value against the previously defined list of {@link #noWarnValues}.
      * If that fails, checks the value against {@link #PASSWORD_STATUS_NEVER_EXPIRE}
      *
+     * @param pswValue retrieved password value
      * @return boolean that indicates whether  or not password warning should proceed.
      */
     private boolean isPasswordSetToNeverExpire(final String pswValue) {

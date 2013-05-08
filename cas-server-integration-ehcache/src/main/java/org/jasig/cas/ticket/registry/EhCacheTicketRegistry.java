@@ -164,6 +164,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      * settings, reporting statistics
      * can be set to false and disabled.</p>
      *
+     * @param supportRegistryState true, if the registry is to support registry state
      * @see #sessionCount()
      * @see #serviceTicketCount()
      * @see org.jasig.cas.monitor.SessionMonitor
