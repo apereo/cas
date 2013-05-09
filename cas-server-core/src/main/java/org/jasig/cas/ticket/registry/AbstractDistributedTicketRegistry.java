@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
@@ -26,6 +27,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketedService;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -131,21 +133,24 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             super(ticketRegistry, serviceTicket, callback);
         }
 
-
+        @Override
         public Service getService() {
             return getTicket().getService();
         }
 
+        @Override
         public boolean isFromNewLogin() {
             return getTicket().isFromNewLogin();
         }
 
+        @Override
         public boolean isValidFor(final Service service) {
             final boolean b = this.getTicket().isValidFor(service);
             updateTicket();
             return b;
         }
 
+        @Override
         public TicketGrantingTicket grantTicketGrantingTicket(final String id,
                 final Authentication authentication, final ExpirationPolicy expirationPolicy) {
             final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
@@ -165,10 +170,12 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             super(ticketRegistry, ticketGrantingTicket, callback);
         }
 
+        @Override
         public Authentication getAuthentication() {
             return getTicket().getAuthentication();
         }
 
+        @Override
         public ServiceTicket grantServiceTicket(final String id, final Service service,
                 final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
             final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
@@ -177,17 +184,30 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return t;
         }
 
-        public void expire() {
-            this.getTicket().expire();
+        @Override
+        public void setExpired() {
+            this.getTicket().setExpired();
             updateTicket();
         }
 
+        @Override
         public boolean isRoot() {
             return getTicket().isRoot();
         }
 
+        @Override
         public List<Authentication> getChainedAuthentications() {
             return getTicket().getChainedAuthentications();
+        }
+
+        @Override
+        public Collection<TicketedService> getServices() {
+            return this.getTicket().getServices();
+        }
+
+        @Override
+        public void removeAllServices() {
+            this.getTicket().removeAllServices();
         }
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
@@ -49,6 +50,8 @@ public interface TicketGrantingTicket extends Ticket {
      *
      * @param id The unique identifier for this ticket.
      * @param service The service for which we are granting a ticket
+     * @param expirationPolicy the expiration policy.
+     * @param credentialsProvided if the credentials are provided.
      * @return the service ticket granted to a specific service for the
      * principal of the TicketGrantingTicket
      */
@@ -56,11 +59,22 @@ public interface TicketGrantingTicket extends Ticket {
         ExpirationPolicy expirationPolicy, boolean credentialsProvided);
 
     /**
-     * Explicitly expire a ticket.  This method will log out of any service associated with the
-     * Ticket Granting Ticket.
+     * Gets an immutable collection of services accessed by this ticket-granting ticket.
+     *
+     * @return Immutable collection of accessed services.
+    */
+    Collection<TicketedService> getServices();
+
+    /**
+     * Remove all services of the TGT (at logout).
+     */
+    void removeAllServices();
+
+    /**
+     * Explicitly expire a ticket.
      *
      */
-    void expire();
+    void setExpired();
 
     /**
      * Convenience method to determine if the TicketGrantingTicket is the root

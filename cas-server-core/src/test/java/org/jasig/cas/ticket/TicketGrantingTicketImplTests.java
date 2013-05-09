@@ -21,6 +21,7 @@ package org.jasig.cas.ticket;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jasig.cas.TestUtils;
@@ -152,14 +153,32 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testWebApplicationSignOut() {
+    public void testWebApplicationServices() {
         final MockService testService = new MockService("test");
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false);
-        t.expire();
-        assertTrue(testService.isLoggedOut());
+        Collection<TicketedService> services = t.getServices();
+        assertEquals(1, services.size());
+        TicketedService service = services.iterator().next();
+        assertEquals(testService, service.getService());
+        t.removeAllServices();
+        services = t.getServices();
+        assertEquals(0, services.size());
+    }
+
+    @Test
+    public void testWebApplicationExpire() {
+        final MockService testService = new MockService("test");
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), testService,
+            new NeverExpiresExpirationPolicy(), false);
+        assertFalse(t.isExpired());
+        t.setExpired();
+        assertTrue(t.isExpired());
     }
 }
