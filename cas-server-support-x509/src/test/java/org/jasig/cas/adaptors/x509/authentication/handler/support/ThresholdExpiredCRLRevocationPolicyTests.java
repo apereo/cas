@@ -128,7 +128,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
             if (this.expected != null) {
                 Assert.fail("Expected exception of type " + this.expected.getClass());
             }
-        } catch (GeneralSecurityException e) {
+        } catch (final GeneralSecurityException e) {
             if (this.expected == null) {
                 e.printStackTrace();
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);

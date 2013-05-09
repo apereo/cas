@@ -206,7 +206,7 @@ public class X509CredentialsAuthenticationHandlerTests {
     public void testAuthenticate() {
         try {
             Assert.assertEquals(this.expectedAuthenticate, this.handler.authenticate(this.credentials));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (this.handler.supports(this.credentials)) {
                 e.printStackTrace();
                 Assert.fail("Unexpected authentication error: " + e);
@@ -230,7 +230,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             try {
                 certs[i++] = (X509Certificate) CryptReader
                         .readCertificate(new ClassPathResource(file).getInputStream());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Error creating certificate at " + file, e);
             }
         }
