@@ -145,7 +145,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
             request.addParameter("evaluationOrder", "1000");
 
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             //Exception expected; service id cannot be found
             logger.debug(e.getMessage(), e);
         }
@@ -167,7 +167,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         try {
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             //Exception expected; evaluation order is invalid
             logger.debug(e.getMessage(), e);
         }

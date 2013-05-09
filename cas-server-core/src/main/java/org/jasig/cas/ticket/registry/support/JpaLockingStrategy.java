@@ -114,7 +114,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         Lock lock;
         try {
             lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
-        } catch (PersistenceException e) {
+        } catch (final PersistenceException e) {
             logger.debug("{} failed querying for {} lock.", new Object[] {uniqueId, applicationId, e});
             return false;
         }
