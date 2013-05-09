@@ -49,6 +49,7 @@ public abstract class AuthenticationException extends RootCasException {
      * @param type The type of the error message that caused the exception to be thrown. By default,
      * all errors are considered of <code>error</code>.
      * @param code the exception code
+     * @param msg the error message
      */
     public AuthenticationException(final String code, final String msg, final String type) {
         this(code, msg);
