@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -80,7 +81,7 @@ public abstract class AbstractRegistryCleanerTests {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
-            ticket.expire();
+            ticket.setExpired();
             this.ticketRegistry.addTicket(ticket);
         }
     }

@@ -18,10 +18,13 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.registry.AbstractRegistryCleanerTests;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -33,7 +36,8 @@ public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTe
     public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
         DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
         cleaner.setTicketRegistry(ticketRegistry);
-
+        LogoutManager logoutManager = mock(LogoutManager.class);
+        cleaner.setLogoutManager(logoutManager);
         return cleaner;
     }
 

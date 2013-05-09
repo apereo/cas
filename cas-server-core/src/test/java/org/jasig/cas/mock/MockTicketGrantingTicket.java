@@ -25,9 +25,11 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -75,10 +77,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return new MockServiceTicket(id, service, this);
     }
 
-    public void expire() {
-        expired = true;
-    }
-
     public boolean isRoot() {
         return true;
     }
@@ -105,5 +103,19 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public int getCountOfUses() {
         return usageCount;
+    }
+
+    @Override
+    public Collection<TicketedService> getServices() {
+        return null;
+    }
+
+    @Override
+    public void removeAllServices() {
+    }
+
+    @Override
+    public void setExpired() {
+        expired = true;
     }
 }

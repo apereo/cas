@@ -18,9 +18,12 @@
  */
 package org.jasig.cas;
 
+import java.util.Iterator;
+
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.validation.Assertion;
 
 /**
@@ -92,12 +95,14 @@ public interface CentralAuthenticationService {
     Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
     /**
-     * Destroy a TicketGrantingTicket. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed.
+     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
+     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
+     * @return the front channel logout services.
      */
-    void destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    Iterator<TicketedService> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication

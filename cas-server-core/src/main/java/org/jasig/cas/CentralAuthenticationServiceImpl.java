@@ -31,6 +31,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServicesManager;
@@ -46,6 +47,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
+import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
@@ -58,6 +60,7 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -140,19 +143,24 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** The default attribute filter to match principal attributes against that of a registered service. **/
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
 
+    /** The logout manager. **/
+    private LogoutManager logoutManager;
+
     /**
-     * Implementation of destoryTicketGrantingTicket expires the ticket provided
-     * and removes it from the TicketRegistry.
+     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
+     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
-     * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
+     * @param ticketGrantingTicketId the id of the ticket we want to destroy
+     * @return the front channel logout services.
      */
     @Audit(
         action="TICKET_GRANTING_TICKET_DESTROYED",
         actionResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET",logFailuresSeparately = false)
+    @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Iterator<TicketedService> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
         log.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
@@ -161,12 +169,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (ticket == null) {
             log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            return;
+            return null;
         }
 
-        log.debug("Ticket found. Expiring and then deleting.");
-        ticket.expire();
+        log.debug("Ticket found. Performing back channel logout and then deleting.");
+        Iterator<TicketedService> servicesIterator = logoutManager.performLogout(ticket);
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
+        return servicesIterator;
     }
 
     /**
@@ -544,5 +554,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public void setPersistentIdGenerator(
         final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
+    }
+
+    /**
+     * Set the logout manager.
+     * @param logoutManager the logout manager.
+     */
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
     }
 }
