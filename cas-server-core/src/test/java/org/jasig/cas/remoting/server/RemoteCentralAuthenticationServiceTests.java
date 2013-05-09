@@ -53,7 +53,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                     TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
             fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return;
         }
     }
@@ -64,7 +64,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                     TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("TicketException expected.");
-        } catch (TicketException e) {
+        } catch (final TicketException e) {
             return;
         }
     }
@@ -117,7 +117,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
                 ticketGrantingTicketId, TestUtils.getService(), TestUtils
                     .getCredentialsWithDifferentUsernameAndPassword("", ""));
             fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return;
         }
     }
@@ -160,7 +160,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
                 .delegateTicketGrantingTicket(serviceTicket, TestUtils
                     .getCredentialsWithDifferentUsernameAndPassword("", ""));
             fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return;
         }
 

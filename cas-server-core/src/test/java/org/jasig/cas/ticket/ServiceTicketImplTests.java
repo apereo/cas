@@ -129,7 +129,7 @@ public class ServiceTicketImplTests {
             s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                     new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return;
         }
     }
