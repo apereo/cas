@@ -93,7 +93,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -103,7 +103,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     public void testGetNullTicket() {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
@@ -113,7 +113,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     public void testGetNonExistingTicket() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
@@ -125,7 +125,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -137,7 +137,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             return;
         }
         fail("ClassCastException expected.");
@@ -147,7 +147,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     public void testGetNullTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket(null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
@@ -157,7 +157,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     public void testGetNonExistingTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
@@ -169,7 +169,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -181,7 +181,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -193,7 +193,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -205,7 +205,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -216,7 +216,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         try {
             final int size = this.ticketRegistry.getTickets().size();
             assertEquals("The size of the empty registry is not zero.", size, 0);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -247,7 +247,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
                     fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }

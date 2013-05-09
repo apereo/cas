@@ -106,7 +106,7 @@ public class AttributeMapSerializerTests {
         buffer.get(bytes);
         try {
             logger.debug(new String(bytes, "UTF-8"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error printing buffer as string.");
         }
         buffer.rewind();
