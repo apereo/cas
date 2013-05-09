@@ -56,7 +56,7 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
             getAuthenticationManager().authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("Authentication should have failed.");
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             return;
         }
     }
@@ -70,7 +70,7 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
                 // there is nothing to do here
             });
             fail("Authentication should have failed.");
-        } catch (UnsupportedCredentialsException e) {
+        } catch (final UnsupportedCredentialsException e) {
             return;
         }
     }
