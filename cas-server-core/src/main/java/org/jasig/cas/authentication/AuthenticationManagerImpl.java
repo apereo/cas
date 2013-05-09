@@ -100,10 +100,10 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                         authenticated = true;
                         break;
                     }
-                } catch (AuthenticationException e) {
+                } catch (final AuthenticationException e) {
                     unAuthSupportedHandlerException = e;
                     logAuthenticationHandlerError(handlerName, credentials, e);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logAuthenticationHandlerError(handlerName, credentials, e);
                 }
             }

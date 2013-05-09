@@ -73,7 +73,7 @@ public final class SafeContextLoaderListener implements ServletContextListener {
     public void contextInitialized(final ServletContextEvent sce) {
         try {
             this.delegate.contextInitialized(sce);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             /*
              * no matter what went wrong, our role is to capture this error and
              * prevent it from blocking initialization of the context. logging
