@@ -93,7 +93,7 @@ public class OpenIdServiceTests {
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 60);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Could not generate association");
         }
         when(context.getBean("serverManager")).thenReturn(manager);
@@ -102,7 +102,7 @@ public class OpenIdServiceTests {
         final Response response = this.openIdService.getResponse("test");
         try {
             verify(cas).validateServiceTicket("test", openIdService);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Error while validating ticket");
         }
 
@@ -121,7 +121,7 @@ public class OpenIdServiceTests {
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 2);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail("Could not generate association");
         }
         when(context.getBean("serverManager")).thenReturn(manager);
@@ -130,7 +130,7 @@ public class OpenIdServiceTests {
         synchronized (this) {
             try {
                 this.wait(3000);
-            } catch (InterruptedException ie) {
+            } catch (final InterruptedException ie) {
                 fail("Could not wait long enough to check association expiry date");
             }
         }

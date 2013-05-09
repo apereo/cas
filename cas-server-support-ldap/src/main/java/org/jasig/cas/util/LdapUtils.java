@@ -92,7 +92,7 @@ public final class LdapUtils {
         if (context != null) {
             try {
                 context.close();
-            } catch (NamingException ex) {
+            } catch (final NamingException ex) {
                 LOGGER.warn("Could not close context", ex);
             }
         }

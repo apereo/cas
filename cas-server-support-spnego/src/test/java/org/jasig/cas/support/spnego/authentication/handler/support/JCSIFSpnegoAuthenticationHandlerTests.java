@@ -69,7 +69,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
         try {
             this.authenticationHandler.authenticate(credentials);
             fail("An AuthenticationException should have been thrown");
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }

@@ -68,7 +68,7 @@ AbstractUsernamePasswordAuthenticationHandler {
                 }
 
                 logger.debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (!this.failoverOnException) {
                     logger.warn("Failover disabled. Returning false for authentication request.");
                 } else {
