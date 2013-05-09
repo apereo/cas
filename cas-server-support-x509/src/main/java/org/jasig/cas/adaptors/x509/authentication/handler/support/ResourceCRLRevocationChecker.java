@@ -193,7 +193,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
                 logger.debug("Fetching CRL data from {}", r);
                 try {
                     addCrl(CertUtils.fetchCRL(r));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     if (throwOnError) {
                         throw new RuntimeException("Error fetching CRL from " + r, e);
                     }
