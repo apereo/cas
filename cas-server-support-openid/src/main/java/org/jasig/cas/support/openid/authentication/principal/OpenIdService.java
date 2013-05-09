@@ -100,7 +100,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
                     }
                 }
-            } catch (MessageException me) {
+            } catch (final MessageException me) {
                 LOGGER.error("Message exception : {}", me.getMessage(), me);
             }
 

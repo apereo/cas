@@ -71,7 +71,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
                 principal = this.authentication.getPrincipal();
                 nextToken = this.authentication.getNextToken();
             }
-        } catch (jcifs.spnego.AuthenticationException e) {
+        } catch (final jcifs.spnego.AuthenticationException e) {
             throw new BadCredentialsAuthenticationException(e);
         }
         // evaluate jcifs response
