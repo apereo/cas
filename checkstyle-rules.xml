@@ -15,7 +15,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
-      <property name="severity" value="info"/>
+      <property name="severity" value="info"/>  
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
@@ -118,8 +118,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="DesignForExtension">
       <property name="severity" value="info"/>
     </module>
-    <module name="FinalClass"/>
-    <module name="HideUtilityClassConstructor"/>
+    <module name="FinalClass">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="HideUtilityClassConstructor">
+      <property name="severity" value="error"/>
+    </module>
     <module name="InterfaceIsType"/>
     <module name="VisibilityModifier">
       <property name="severity" value="error"/>
@@ -130,6 +134,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     </module>
     <module name="FinalParameters">
       <property name="severity" value="error"/>
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH"/>
     </module>
     <module name="TodoComment">
       <property name="severity" value="error"/>
