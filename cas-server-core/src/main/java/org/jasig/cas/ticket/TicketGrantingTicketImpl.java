@@ -19,10 +19,10 @@
 package org.jasig.cas.ticket;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,8 +31,6 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -51,8 +49,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
-
-    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
@@ -131,25 +127,47 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return serviceTicket;
     }
 
-    private void logOutOfServices() {
-        for (final Entry<String, Service> entry : this.services.entrySet()) {
-
-            if (!entry.getValue().logOutOfService(entry.getKey())) {
-                log.warn("Logout message not sent to [[]]; Continuing processing...",
-                        entry.getValue().getId());
-            }
+    /**
+     * Gets an immutable collection of services accessed by this ticket-granting ticket.
+     *
+     * @return Immutable collection of accessed services.
+    */
+    public synchronized Collection<TicketedService> getServices() {
+        final List<TicketedService> list = new ArrayList<TicketedService>(services.size());
+        for (String ticket : services.keySet()) {
+            list.add(new TicketedService(ticket, services.get(ticket)));
         }
+        return Collections.unmodifiableCollection(list);
     }
 
+    /**
+     * Remove all services of the TGT (at logout).
+     */
+    public void removeAllServices() {
+        services.clear();
+    }
+
+    /**
+     * Return if the TGT has no parent.
+     *
+     * @return if the TGT has no parent.
+     */
     public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
-    public synchronized void expire() {
+    /**
+     * Set the TGT expired.
+     */
+    public void setExpired() {
         this.expired = true;
-        logOutOfServices();
     }
 
+    /**
+     * Return if the TGT is expired.
+     *
+     * @return if the TGT is expired.
+     */
     public boolean isExpiredInternal() {
         return this.expired;
     }
@@ -178,6 +196,4 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         return ticket.getId().equals(this.getId());
     }
-
-
 }
