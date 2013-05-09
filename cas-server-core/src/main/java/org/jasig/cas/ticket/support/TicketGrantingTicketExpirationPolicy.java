@@ -66,7 +66,10 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
         }
     }
 
-    /** Convenient virtual property setter to set time in seconds. */
+    /**
+     * @param timeToKillInSeconds time for the ticket to stay active in seconds
+     * Convenient virtual property setter to set time in seconds.
+     **/
     public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
         if(this.timeToKillInMilliSeconds == 0L) {
             this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(timeToKillInSeconds);

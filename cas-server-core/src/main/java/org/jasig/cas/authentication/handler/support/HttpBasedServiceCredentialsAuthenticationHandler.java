@@ -81,7 +81,10 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
                 .getClass());
     }
 
-    /** Sets the HttpClient which will do all of the connection stuff. */
+    /**
+     * Sets the HttpClient which will do all of the connection stuff.
+     * @param httpClient http client instance to use
+     **/
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
