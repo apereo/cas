@@ -57,7 +57,7 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
      *
      * @param crl CRL instance to evaluate.
      *
-     * @throws ExpiredCRLException On expired CRL data.
+     * @throws GeneralSecurityException On expired CRL data. Check the exception type for exact details
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
