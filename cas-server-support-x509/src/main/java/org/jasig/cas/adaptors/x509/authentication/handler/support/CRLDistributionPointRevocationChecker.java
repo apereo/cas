@@ -98,7 +98,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
                 logger.info("Success. Caching fetched CRL.");
                 this.crlCache.put(new Element(urls[i], crl));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", urls[i], e);
             }
         }
