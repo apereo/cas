@@ -140,7 +140,7 @@ public class MockWebServer {
                 try {
                     writeResponse(this.serverSocket.accept());
                 } catch (final SocketException se) {
-                    System.out.println("Stopping on socket close.");
+                    logger.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final IOException ioe) {
                     ioe.printStackTrace();
