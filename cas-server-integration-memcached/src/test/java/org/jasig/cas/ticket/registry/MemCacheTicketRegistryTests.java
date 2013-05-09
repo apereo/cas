@@ -114,7 +114,7 @@ public class MemCacheTicketRegistryTests {
         try {
             socket = new Socket("127.0.0.1", 11211);
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         } finally {
             IOUtils.closeQuietly(socket);

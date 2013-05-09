@@ -51,7 +51,7 @@ public class EncryptedMapDecoratorTests {
             final Cache cache = this.cacheManager.getCache("clearPassCache");
             this.map = new EhcacheBackedMap(cache);
             this.decorator = new EncryptedMapDecorator(map);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             fail(e.getMessage());
         }
     }
