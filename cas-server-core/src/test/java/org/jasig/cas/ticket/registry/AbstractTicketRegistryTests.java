@@ -94,7 +94,6 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (final Exception e) {
-            System.out.println(e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
