@@ -86,7 +86,7 @@ public final class ProxyController extends AbstractController {
             return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     targetService));
-        } catch (TicketException e) {
+        } catch (final TicketException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                 new Object[] {ticket});
         } catch (final UnauthorizedServiceException e) {
