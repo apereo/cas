@@ -158,6 +158,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="severity" value="error"/>
   </module>
   <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Trailing spaces"/>  
     <property name="severity" value="error"/>
     <property name="format" value=".\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
@@ -221,6 +222,13 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="severity" value="error"/>
     <property name="format" value="LogFactory\.getLog"/>
     <property name="message" value="CAS uses the slf4j logging framework."/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="id" value="sysOutConsoleLogs" />
+    <metadata name="net.sf.eclipsecs.core.comment" value="Console output messages"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="System\.out"/>
+    <property name="message" value="Avoid sending messages to the console directly. Use a logger object instead"/>
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
