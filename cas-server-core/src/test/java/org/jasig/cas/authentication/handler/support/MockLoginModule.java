@@ -40,7 +40,7 @@ public class MockLoginModule implements LoginModule {
         final Callback[] callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
         try {
             this.callbackHandler.handle(callbacks);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LoginException();
         }
 

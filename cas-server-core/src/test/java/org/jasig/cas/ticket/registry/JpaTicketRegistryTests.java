@@ -143,7 +143,7 @@ public class JpaTicketRegistryTests {
             for (Future<String> result : results) {
                 assertNotNull(result.get());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
