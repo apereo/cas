@@ -92,9 +92,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * a cache that only lives in-memory.
      *
      * @param decoratedMap the map to decorate.  CANNOT be NULL.
-     * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
-     * @throws java.security.spec.InvalidKeySpecException if the key spec is not found.
-     * @throws java.security.InvalidKeyException if the key is invalid.
+     * @throws Exception if the algorithm cannot be found.  Should not happen in this case, or if the key spec is not found
+     * or if the key is invalid. Check the exception type for more details on the nature of the error.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap) throws Exception {
         this(decoratedMap, getRandomSalt(8), getRandomSalt(32));
@@ -108,9 +107,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param decoratedMap the map to decorate.  CANNOT be NULL.
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
      * @param secretKey the secret to use for the key.  Gets converted to bytes.  CANNOT be NULL.
-     * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
-     * @throws java.security.spec.InvalidKeySpecException if the key spec is not found.
-     * @throws java.security.InvalidKeyException if the key is invalid.
+     * @throws Exception if the algorithm cannot be found.  Should not happen in this case, or if the key spec is not found
+     * or if the key is invalid. Check the exception type for more details on the nature of the error.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String salt,
             final String secretKey) throws Exception {
@@ -126,9 +124,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
      * @param secretKeyAlgorithm the encryption algorithm. CANNOT BE NULL.
      * @param secretKey the secret to use for the key.  Gets converted to bytes.  CANNOT be NULL.
-     * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
-     * @throws java.security.spec.InvalidKeySpecException if the key spec is not found.
-     * @throws java.security.InvalidKeyException if the key is invalid.
+     * @throws Exception if the algorithm cannot be found.  Should not happen in this case, or if the key spec is not found
+     * or if the key is invalid. Check the exception type for more details on the nature of the error.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final String salt,
             final String secretKeyAlgorithm, final String secretKey) throws Exception {
