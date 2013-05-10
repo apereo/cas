@@ -191,7 +191,6 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-
     }
 
     @Test
