@@ -36,17 +36,22 @@ public class CasClientDetailsService implements ClientDetailsService {
         
         log.debug("Called loadClientByClientId with argument {}", clientId);
         
-        BaseClientDetails details = new BaseClientDetails();
+        BaseClientDetails details = null;
         
         // Set the client id and secret based on the service name and service 
         // description respectively
         for (RegisteredService service: servicesManager.getAllServices()) {
             if (clientId.equals(service.getName())) {
+            	details = new BaseClientDetails();
                 details.setClientId(clientId);
                 details.setClientSecret(service.getDescription());
                 details.setAuthorizedGrantTypes(authorizedGrantTypes);
                 break;
             }
+        }
+        
+        if (details == null) {
+        	throw new ClientRegistrationException("Client not found with clientId " + clientId);
         }
         
         return details;

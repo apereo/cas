@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 /**
  * Resets the value of the oauth token to the found TGT for that authentication
- * @author Joe
+ * @author Joe McCall
  *
  */
 public class CasTGTTokenEnhancer implements TokenEnhancer {
@@ -27,7 +27,7 @@ public class CasTGTTokenEnhancer implements TokenEnhancer {
     @NotNull
     private TicketRegistry casTicketRegistry;
     
-    public CasTGTTokenEnhancer(TokenExpirationConfig tokenExpirationConfig, TicketRegistry casTicketRegistry) {
+    public CasTGTTokenEnhancer(final TokenExpirationConfig tokenExpirationConfig, final TicketRegistry casTicketRegistry) {
         this.tokenExpirationConfig = tokenExpirationConfig;
         this.casTicketRegistry = casTicketRegistry;
     }
@@ -48,6 +48,7 @@ public class CasTGTTokenEnhancer implements TokenEnhancer {
                 TicketGrantingTicket casTGT = (TicketGrantingTicket) casTicket;
                 if (casUserName.equals(casTGT.getAuthentication().getPrincipal().getId())) {
                     log.debug("Setting the returnAccessToken value to {}", casTGT.getId());
+                    log.debug("Setting the exipation to {}", tokenExpirationConfig.getAccessTokenValiditySeconds());
                     returnAccessToken = new CasTGTOAuth2AccessToken(casTGT, tokenExpirationConfig.getAccessTokenValiditySeconds());
                     break;
                 }
