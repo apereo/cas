@@ -20,7 +20,6 @@ package org.jasig.cas.support.oauth.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -63,13 +61,10 @@ public final class OAuth20ProfileControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("missing accessToken");
     }
 
     @Test
@@ -83,13 +78,10 @@ public final class OAuth20ProfileControllerTests {
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(null);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("expired accessToken : {}", TGT_ID);
     }
 
     @Test
@@ -105,13 +97,10 @@ public final class OAuth20ProfileControllerTests {
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("expired accessToken : {}", TGT_ID);
     }
 
     @Test

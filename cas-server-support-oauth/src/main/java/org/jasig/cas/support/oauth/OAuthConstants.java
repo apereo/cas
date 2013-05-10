@@ -67,4 +67,6 @@ public interface OAuthConstants {
     String ACCESS_TOKEN_URL = "accessToken";
 
     String PROFILE_URL = "profile";
+
+    String EXPIRES = "expires";
 }
