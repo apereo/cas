@@ -115,8 +115,4 @@ public final class OAuth20AuthorizeController extends AbstractController {
         LOGGER.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }
-
-    static void setLogger(final Logger aLogger) {
-        LOGGER = aLogger;
-    }
 }
