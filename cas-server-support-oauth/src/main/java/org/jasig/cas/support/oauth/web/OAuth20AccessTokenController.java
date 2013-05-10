@@ -135,14 +135,12 @@ public final class OAuth20AccessTokenController extends AbstractController {
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
         response.setContentType("text/plain");
-        final int expires = (int) (timeout - (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000);
+        final int expires = (int) (timeout - (System.currentTimeMillis()
+                - ticketGrantingTicket.getCreationTime()) / 1000);
 
-        final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
+        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
+                                                    OAuthConstants.EXPIRES, expires);
         log.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
-    }
-
-    static void setLogger(final Logger aLogger) {
-        log = aLogger;
     }
 }

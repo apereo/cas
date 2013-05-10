@@ -39,25 +39,25 @@ import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * This class tests the {@link ClientAction} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */
 public final class ClientActionTests {
 
-    private final static String MY_KEY = "my_key";
+    private static final String MY_KEY = "my_key";
 
-    private final static String MY_SECRET = "my_secret";
+    private static final String MY_SECRET = "my_secret";
 
-    private final static String MY_LOGIN_URL = "http://casserver/login";
+    private static final String MY_LOGIN_URL = "http://casserver/login";
 
-    private final static String MY_SERVICE = "http://myservice";
+    private static final String MY_SERVICE = "http://myservice";
 
-    private final static String MY_THEME = "my_theme";
+    private static final String MY_THEME = "my_theme";
 
-    private final static String MY_LOCALE = "fr";
+    private static final String MY_LOCALE = "fr";
 
-    private final static String MY_METHOD = "POST";
+    private static final String MY_METHOD = "POST";
 
     @Test
     public void testStartAuthentication() throws Exception {
