@@ -22,7 +22,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.TicketedService;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
 
@@ -99,7 +99,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the front channel logout services.
      */
-    public Iterator<TicketedService> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Iterator<Pair<String, Service>> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 

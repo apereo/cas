@@ -78,7 +78,7 @@ public abstract class AbstractRegistryCleanerTests {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
-            ticket.setExpired();
+            ticket.markTicketExpired();
             this.ticketRegistry.addTicket(ticket);
         }
     }

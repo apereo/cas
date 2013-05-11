@@ -23,7 +23,7 @@ import java.util.Iterator;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.TicketedService;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.validation.Assertion;
 
 /**
@@ -102,7 +102,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the front channel logout services.
      */
-    Iterator<TicketedService> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    Iterator<Pair<String, Service>> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication

@@ -16,21 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
+package org.jasig.cas.authentication.principal;
 
 /**
- * Enumeration of the logout type.
+ * Define a service which support single logout.
  *
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public enum LogoutType {
+public interface SingleLogoutService extends WebApplicationService {
+
     /**
-     * For back channel SLO.
+     * Return if the service is already logged out.
+     *
+     * @return if the service is already logged out.
      */
-    BACK_CHANNEL,
+    boolean isLoggedOutAlready();
+
     /**
-     * For front channel SLO.
+     * Set if the service is already logged out.
+     *
+     * @param loggedOutAlready if the service is already logged out.
      */
-    FRONT_CHANNEL
+    void setLoggedOutAlready(boolean loggedOutAlready);
 }

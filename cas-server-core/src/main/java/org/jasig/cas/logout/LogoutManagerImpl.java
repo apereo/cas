@@ -25,16 +25,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.Deflater;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.codec.binary.Base64;
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.SamlDateUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
@@ -46,10 +48,16 @@ import org.slf4j.LoggerFactory;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public class LogoutManagerImpl implements LogoutManager {
+public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
-    protected final Logger log = LoggerFactory.getLogger(LogoutManagerImpl.class);
+    private final Logger log = LoggerFactory.getLogger(LogoutManagerImpl.class);
+
+    /** The logout request template. */
+    private static final String LOGOUT_REQUEST_TEMPLATE =
+            "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\""
+            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@"
+            + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -58,9 +66,11 @@ public class LogoutManagerImpl implements LogoutManager {
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     /** The services manager. */
+    @NotNull
     private final ServicesManager servicesManager;
 
     /** An HTTP client. */
+    @NotNull
     private final HttpClient httpClient;
 
     /** Whether single sign out is disabled or not. */
@@ -84,38 +94,39 @@ public class LogoutManagerImpl implements LogoutManager {
      * @return an interator on front channel logout services
      */
     @Override
-    public final Iterator<TicketedService> performLogout(final TicketGrantingTicket ticket) {
-        final Collection<TicketedService> services;
+    public Iterator<Pair<String, Service>> performLogout(final TicketGrantingTicket ticket) {
+        final Collection<Pair<String, Service>> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups
         synchronized (ticket) {
             services = ticket.getServices();
             ticket.removeAllServices();
         }
-        ticket.setExpired();
+        ticket.markTicketExpired();
 
-        List<TicketedService> frontServices = new ArrayList<TicketedService>();
+        final List<Pair<String, Service>> frontServices = new ArrayList<Pair<String, Service>>();
         // if SLO is not disabled
         if (!disableSingleSignOut) {
             // through all services
-            for (TicketedService ticketedService : services) {
-                Service service = ticketedService.getService();
-                String ticketId = ticketedService.getTicketId();
-                // it's a AbstractWebApplicationService, else ignore
-                if (service instanceof AbstractWebApplicationService) {
-                    AbstractWebApplicationService webAppService = (AbstractWebApplicationService) service;
+            for (final Pair<String, Service> ticketedService : services) {
+                final String ticketId = ticketedService.getFirst();
+                final Service service = ticketedService.getSecond();
+                // it's a SingleLogoutService, else ignore
+                if (service instanceof SingleLogoutService) {
+                    final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
                     // the logout has not performed already
-                    if (!webAppService.isLoggedOutAlready()) {
-                        RegisteredService registeredService = servicesManager.findServiceBy(service);
+                    if (!singleLogoutService.isLoggedOutAlready()) {
+                        final RegisteredService registeredService = servicesManager.findServiceBy(service);
                         // it's a front channel logout service
-                        if (registeredService.getLogoutType() == LogoutType.FRONT_CHANNEL) {
+                        if (registeredService != null
+                                && registeredService.getLogoutType() == LogoutType.FRONT_CHANNEL) {
                             // keep it for later front logout
                             frontServices.add(ticketedService);
                         } else {
                             // perform back channel logout
-                            if (!logOutOfService(webAppService, ticketId)) {
+                            if (!performBackChannelLogout(singleLogoutService, ticketId)) {
                                 log.warn("Logout message not sent to [[]]; Continuing processing...",
-                                        webAppService.getId());
+                                        singleLogoutService.getId());
                             }
                         }
                     }
@@ -133,18 +144,14 @@ public class LogoutManagerImpl implements LogoutManager {
      * @param ticketId the ticket id.
      * @return if the logout has been performed.
      */
-    protected final boolean logOutOfService(final AbstractWebApplicationService service, final String ticketId) {
+    private boolean performBackChannelLogout(final SingleLogoutService service, final String ticketId) {
         log.debug("Sending logout request for: {}", service.getId());
 
         final String logoutRequest = createBackChannelLogoutMessage(ticketId);
 
         service.setLoggedOutAlready(true);
 
-        if (this.httpClient != null) {
-            return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, true);
-        }
-
-        return false;
+        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, true);
     }
 
     /**
@@ -172,20 +179,10 @@ public class LogoutManagerImpl implements LogoutManager {
      * @return a back channel logout.
      */
     private String createBackChannelLogoutMessage(final String ticketId) {
-        final String logoutRequest = "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""
-                + GENERATOR.getNewTicketId("LR") + "\" Version=\"2.0\" IssueInstant=\""
-                + SamlDateUtils.getCurrentDateAndTime() + "\"><saml:NameID "
-                + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>"
-                + ticketId + "</samlp:SessionIndex></samlp:LogoutRequest>";
+        final String logoutRequest =
+                            String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
+                                    SamlDateUtils.getCurrentDateAndTime(), ticketId);
         return logoutRequest;
-    }
-
-    /**
-     * Get the HTTP client.
-     * @return the HTTP client.
-     */
-    protected final HttpClient getHttpClient() {
-        return this.httpClient;
     }
 
     /**

@@ -47,8 +47,8 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
-import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
@@ -60,6 +60,7 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +161,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public Iterator<TicketedService> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Iterator<Pair<String, Service>> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
         log.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
@@ -169,12 +170,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (ticket == null) {
             log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            return null;
+            List<Pair<String, Service>> list = Collections.emptyList();
+            return list.iterator();
         }
 
-        log.debug("Ticket found. Performing back channel logout and then deleting.");
-        Iterator<TicketedService> servicesIterator = logoutManager.performLogout(ticket);
+        log.debug("Ticket found. Deleting and then performing back channel logout.");
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
+        Iterator<Pair<String, Service>> servicesIterator = logoutManager.performLogout(ticket);
 
         return servicesIterator;
     }

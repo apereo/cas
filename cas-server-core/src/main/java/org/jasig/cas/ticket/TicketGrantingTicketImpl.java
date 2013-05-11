@@ -31,6 +31,7 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.Pair;
 import org.springframework.util.Assert;
 
 /**
@@ -59,22 +60,26 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Column(name="EXPIRED", nullable=false)
     private Boolean expired = false;
 
+    /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
     private final HashMap<String, Service> services = new HashMap<String, Service>();
 
+    /**
+     * Empty constructor.
+     */
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
 
     /**
      * Constructs a new TicketGrantingTicket.
+     * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
      * @param id the id of the Ticket
      * @param ticketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
-     * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
         final TicketGrantingTicket ticketGrantingTicket,
@@ -99,6 +104,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         this(id, null, authentication, policy);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Authentication getAuthentication() {
         return this.authentication;
     }
@@ -132,10 +140,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      *
      * @return Immutable collection of accessed services.
     */
-    public synchronized Collection<TicketedService> getServices() {
-        final List<TicketedService> list = new ArrayList<TicketedService>(services.size());
-        for (String ticket : services.keySet()) {
-            list.add(new TicketedService(ticket, services.get(ticket)));
+    public synchronized Collection<Pair<String, Service>> getServices() {
+        final List<Pair<String, Service>> list = new ArrayList<Pair<String, Service>>(services.size());
+        for (final String ticket : services.keySet()) {
+            list.add(new Pair<String, Service>(ticket, services.get(ticket)));
         }
         return Collections.unmodifiableCollection(list);
     }
@@ -157,9 +165,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     }
 
     /**
-     * Set the TGT expired.
+     * Mark a ticket as expired.
      */
-    public void setExpired() {
+    public void markTicketExpired() {
         this.expired = true;
     }
 
@@ -172,6 +180,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
