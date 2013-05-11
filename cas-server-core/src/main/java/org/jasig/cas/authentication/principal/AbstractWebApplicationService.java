@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.1
  *
  */
-public abstract class AbstractWebApplicationService implements WebApplicationService {
+public abstract class AbstractWebApplicationService implements SingleLogoutService {
 
     protected static final Logger log = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
@@ -94,6 +94,12 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             + url.substring(questionMarkPosition);
     }
 
+    /**
+     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
+     * Used to reconstruct the redirect url.
+     *
+     * @return the original url provided.
+     */
     public final String getOriginalUrl() {
         return this.originalUrl;
     }

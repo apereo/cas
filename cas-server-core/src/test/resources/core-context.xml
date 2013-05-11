@@ -64,7 +64,7 @@
     <constructor-arg index="0" ref="servicesManager"/>
     <constructor-arg index="1" ref="httpClient"/>
   </bean>
-  
+
   <bean id="attributeRepository"
     class="org.jasig.services.persondir.support.StubPersonAttributeDao">
     <property name="backingMap">

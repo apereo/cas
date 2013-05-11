@@ -27,7 +27,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketedService;
+import org.jasig.cas.util.Pair;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -185,8 +185,8 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
-        public void setExpired() {
-            this.getTicket().setExpired();
+        public void markTicketExpired() {
+            this.getTicket().markTicketExpired();
             updateTicket();
         }
 
@@ -201,7 +201,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
-        public Collection<TicketedService> getServices() {
+        public Collection<Pair<String, Service>> getServices() {
             return this.getTicket().getServices();
         }
 

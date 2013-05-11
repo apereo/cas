@@ -71,7 +71,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        t.setExpired();
+        t.markTicketExpired();
         assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
     }
 

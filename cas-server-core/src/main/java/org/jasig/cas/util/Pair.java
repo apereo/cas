@@ -16,21 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
+package org.jasig.cas.util;
 
 /**
- * Enumeration of the logout type.
+ * This class contains a pair of objects.
  *
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public enum LogoutType {
+public class Pair<A, B> {
+
+    /** The first object of the pair. */
+    private final A first;
+
+    /** The second object of the pair. */
+    private final B second;
+
     /**
-     * For back channel SLO.
+     * Build a pair.
+     *
+     * @param first the first object of the pair.
+     * @param second the second object of the pair.
      */
-    BACK_CHANNEL,
+    public Pair(final A first, final B second) {
+        this.first = first;
+        this.second = second;
+    }
+
     /**
-     * For front channel SLO.
+     * Return the first object of the pair.
+     * @return the first object of the pair.
      */
-    FRONT_CHANNEL
+    public final A getFirst() {
+        return this.first;
+    }
+
+    /**
+     * Return the second object of the pair.
+     * @return the second object of the pair.
+     */
+    public final B getSecond() {
+        return this.second;
+    }
 }

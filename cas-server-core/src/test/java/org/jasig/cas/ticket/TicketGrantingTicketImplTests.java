@@ -26,9 +26,11 @@ import java.util.List;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Test;
 
@@ -160,10 +162,10 @@ public class TicketGrantingTicketImplTests {
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false);
-        Collection<TicketedService> services = t.getServices();
+        Collection<Pair<String, Service>> services = t.getServices();
         assertEquals(1, services.size());
-        TicketedService service = services.iterator().next();
-        assertEquals(testService, service.getService());
+        Pair<String, Service> service = services.iterator().next();
+        assertEquals(testService, service.getSecond());
         t.removeAllServices();
         services = t.getServices();
         assertEquals(0, services.size());
@@ -178,7 +180,7 @@ public class TicketGrantingTicketImplTests {
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false);
         assertFalse(t.isExpired());
-        t.setExpired();
+        t.markTicketExpired();
         assertTrue(t.isExpired());
     }
 }
