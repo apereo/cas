@@ -39,9 +39,6 @@ public abstract class AbstractRegistryCleanerTests {
 
     private TicketRegistry ticketRegistry;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
