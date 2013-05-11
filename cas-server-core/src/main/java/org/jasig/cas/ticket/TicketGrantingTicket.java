@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.Pair;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main
@@ -63,7 +64,7 @@ public interface TicketGrantingTicket extends Ticket {
      *
      * @return Immutable collection of accessed services.
     */
-    Collection<TicketedService> getServices();
+    Collection<Pair<String, Service>> getServices();
 
     /**
      * Remove all services of the TGT (at logout).
@@ -71,10 +72,9 @@ public interface TicketGrantingTicket extends Ticket {
     void removeAllServices();
 
     /**
-     * Explicitly expire a ticket.
-     *
+     * Mark a ticket as expired.
      */
-    void setExpired();
+    void markTicketExpired();
 
     /**
      * Convenience method to determine if the TicketGrantingTicket is the root

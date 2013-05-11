@@ -25,8 +25,8 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketedService;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import java.util.Collection;
@@ -40,6 +40,8 @@ import java.util.List;
  * @author Marvin S. Addison
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
+
+    private static final long serialVersionUID = 6546995681334670659L;
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
@@ -106,8 +108,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public Collection<TicketedService> getServices() {
-        return null;
+    public Collection<Pair<String, Service>> getServices() {
+        return Collections.emptyList();
     }
 
     @Override
@@ -115,7 +117,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public void setExpired() {
+    public void markTicketExpired() {
         expired = true;
     }
 }
