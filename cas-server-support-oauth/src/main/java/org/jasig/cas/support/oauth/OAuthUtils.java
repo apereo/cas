@@ -22,10 +22,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -125,5 +129,26 @@ public final class OAuthUtils {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
+     * @param servicesManager the service registry DAO instance.
+     * @param clientId the client id by which the {@link OAuthRegisteredService} is to be located.
+     * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
+     */
+    public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager,
+                                                                   final String clientId) {
+        final Iterator<RegisteredService> it = servicesManager.getAllServices().iterator();
+        while (it.hasNext()) {
+            final RegisteredService aService = it.next();
+            if (aService instanceof OAuthRegisteredService) {
+                final OAuthRegisteredService service  = (OAuthRegisteredService) aService;
+                if (service.getClientId().equals(clientId)) {
+                    return service;
+                }
+            }
+        }
+        return null;
     }
 }
