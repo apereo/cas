@@ -52,6 +52,7 @@ header h1 { background: #210F7A; color: white; padding: 1.4em 1.4em; font-size: 
 #msg.errors { border: 1px dotted #BB0000; color: #BB0000; padding-left: 100px; background: url(../images/error.gif) no-repeat 20px center; }
 #msg.success { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/confirm.gif) no-repeat 20px center; }
 #msg.info { border: 1px dotted #008; color: #008; padding-left: 100px; background: url(../images/info.gif) no-repeat 20px center; }
+#msg.question { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/question.png) no-repeat 20px center; }
 
 #login { width: 320px; float: left; margin-right: 20px; }
 #fm1 { padding: 20px; background: #eee; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
