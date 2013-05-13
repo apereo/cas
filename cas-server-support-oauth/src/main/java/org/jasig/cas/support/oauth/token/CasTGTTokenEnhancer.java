@@ -13,34 +13,34 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 /**
- * Resets the value of the oauth token to the found TGT for that authentication
+ * Resets the value of the oauth token to the found TGT for that authentication.
  * @author Joe McCall
  *
  */
 public class CasTGTTokenEnhancer implements TokenEnhancer {
-    
+
     private static final Logger log = LoggerFactory.getLogger(CasTGTTokenEnhancer.class);
-    
+
     @NotNull
     private TokenExpirationConfig tokenExpirationConfig;
 
     @NotNull
     private TicketRegistry casTicketRegistry;
-    
+
     public CasTGTTokenEnhancer(final TokenExpirationConfig tokenExpirationConfig, final TicketRegistry casTicketRegistry) {
         this.tokenExpirationConfig = tokenExpirationConfig;
         this.casTicketRegistry = casTicketRegistry;
     }
 
     @Override
-    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+    public OAuth2AccessToken enhance(final OAuth2AccessToken accessToken, final OAuth2Authentication authentication) {
         // Get the user from the authentication
         String casUserName = authentication.getName();
-        
+
         DefaultOAuth2AccessToken returnAccessToken = null;
-        
+
         log.debug("There are {} tickets in the ticket registry", casTicketRegistry.getTickets().size());
-        
+
         // Then find the TGT for that user
         for (Ticket casTicket: casTicketRegistry.getTickets()) {
             log.debug("Checking ticket for value {}", casTicket.getId());
@@ -54,7 +54,7 @@ public class CasTGTTokenEnhancer implements TokenEnhancer {
                 }
             }
         }
-        
+
         return returnAccessToken != null? returnAccessToken : accessToken;
     }
 }

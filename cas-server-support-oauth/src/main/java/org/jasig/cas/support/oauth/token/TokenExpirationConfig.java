@@ -4,13 +4,13 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
- * A convenience bean to inject the CAS TGT timeout value into a bean where 
+ * A convenience bean to inject the CAS TGT timeout value into a bean where
  * other beans can access it.
- * @author Joe
+ * @author Joe McCall
  *
  */
 public class TokenExpirationConfig {
-    
+
     @NotNull
     @Min(0)
     private long accessTokenValiditySeconds;
@@ -25,7 +25,7 @@ public class TokenExpirationConfig {
     /**
      * @param accessTokenValiditySeconds the accessTokenValiditySeconds to set
      */
-    public void setAccessTokenValiditySeconds(long accessTokenValiditySeconds) {
+    public void setAccessTokenValiditySeconds(final long accessTokenValiditySeconds) {
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
     }
 

@@ -16,46 +16,52 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+/**
+ * An implementation of TokenStore that is really a facade for translating the tokens to/from CAS tickets.
+ *
+ * @author Joe McCall
+ *
+ */
 public class CasTicketRegistryTokenStore implements TokenStore {
-    
+
     @NotNull
     private TicketRegistry ticketRegistry;
-    
+
     @NotNull
     private TokenExpirationConfig tokenExpirationConfig;
 
     @Override
-    public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
+    public OAuth2Authentication readAuthentication(final OAuth2AccessToken token) {
         return readAuthentication(token.getValue());
     }
 
     @Override
-    public OAuth2Authentication readAuthentication(String token) {
+    public OAuth2Authentication readAuthentication(final String token) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
+    public void storeAccessToken(final OAuth2AccessToken token, final OAuth2Authentication authentication) {
         // TODO Auto-generated method stub
 
     }
-    
+
     @Override
-    public OAuth2AccessToken readAccessToken(String tokenValue) {
-        
+    public OAuth2AccessToken readAccessToken(final String tokenValue) {
+
         try {
             TicketGrantingTicket ticket = ticketRegistry.getTicket(tokenValue, TicketGrantingTicket.class);
-            
+
             if (ticket == null) {
                 throw new InvalidTicketException("Ticket not found in ticket registry");
             }
-            
-            long remainingValidSeconds = 
-                    System.currentTimeMillis() - 
-                    ticket.getCreationTime() - 
+
+            long remainingValidSeconds =
+                    System.currentTimeMillis() -
+                    ticket.getCreationTime() -
                     TimeUnit.SECONDS.toMillis(tokenExpirationConfig.getAccessTokenValiditySeconds());
-            
+
             return new CasTGTOAuth2AccessToken(ticket, remainingValidSeconds);
         } catch (InvalidTicketException e) {
             return null;
@@ -63,58 +69,58 @@ public class CasTicketRegistryTokenStore implements TokenStore {
     }
 
     /**
-     * Use this method to remove the TGT found in the access token from the 
-     * ticket registry
+     * Use this method to remove the TGT found in the access token from the
+     * ticket registry.
      */
     @Override
-    public void removeAccessToken(OAuth2AccessToken token) {
+    public void removeAccessToken(final OAuth2AccessToken token) {
         String casTGTValue = token.getValue();
         ticketRegistry.deleteTicket(casTGTValue);
     }
 
     @Override
-    public void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
+    public void storeRefreshToken(final OAuth2RefreshToken refreshToken, final OAuth2Authentication authentication) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken token) {
+    public OAuth2RefreshToken readRefreshToken(final String tokenValue) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void removeRefreshToken(OAuth2RefreshToken token) {
+    public OAuth2Authentication readAuthenticationForRefreshToken(final OAuth2RefreshToken token) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void removeRefreshToken(final OAuth2RefreshToken token) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
+    public void removeAccessTokenUsingRefreshToken(final OAuth2RefreshToken refreshToken) {
         // TODO Auto-generated method stub
 
     }
 
     /**
-     * The access token itself isn't really stored, but it's converted from a 
-     * CAS TGT retrieved from the ticket registry
+     * The access token itself isn't really stored, but it's converted from a
+     * CAS TGT retrieved from the ticket registry.
      */
     @Override
-    public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
+    public OAuth2AccessToken getAccessToken(final OAuth2Authentication authentication) {
         if (!(authentication.getPrincipal() instanceof SimplePrincipal)) {
             return null;
         }
         String casUsername = ((SimplePrincipal) authentication.getPrincipal()).getId();
-        
-        OAuth2AccessToken accessToken = null; 
-        
+
+        OAuth2AccessToken accessToken = null;
+
         for (Ticket casTicket: ticketRegistry.getTickets()) {
             if (casTicket instanceof TicketGrantingTicket) {
                 TicketGrantingTicket casTicketGrantingTicket = (TicketGrantingTicket) casTicket;
@@ -124,15 +130,15 @@ public class CasTicketRegistryTokenStore implements TokenStore {
                 }
             }
         }
-        
+
         return accessToken;
     }
 
     /**
-     * Returns all TGT OAuth tokens whose username matches the one assigned for that TGT
+     * Returns all TGT OAuth tokens whose username matches the one assigned for that TGT.
      */
     @Override
-    public Collection<OAuth2AccessToken> findTokensByUserName(String userName) {
+    public Collection<OAuth2AccessToken> findTokensByUserName(final String userName) {
         Collection<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
         for (Ticket casTicket: ticketRegistry.getTickets()) {
             if (casTicket instanceof TicketGrantingTicket) {
@@ -146,12 +152,11 @@ public class CasTicketRegistryTokenStore implements TokenStore {
     }
 
     /**
-     * This function assumes it's used to find all tokens that are valid for 
-     * the specified client. Since all clients are valid for all tokens, 
-     * return the list of all access tokens.
+     * This function assumes it's used to find all tokens that are valid for the specified client. Since all clients
+     * are valid for all tokens, return the list of all access tokens.
      */
     @Override
-    public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
+    public Collection<OAuth2AccessToken> findTokensByClientId(final String clientId) {
         Collection<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
         for (Ticket casTicket: ticketRegistry.getTickets()) {
             if (casTicket instanceof TicketGrantingTicket) {
@@ -160,20 +165,20 @@ public class CasTicketRegistryTokenStore implements TokenStore {
         }
         return accessTokens;
     }
-    
-    private OAuth2AccessToken createAccessTokenFromTGT(TicketGrantingTicket ticket) {
-        return new CasTGTOAuth2AccessToken(ticket, 
+
+    private OAuth2AccessToken createAccessTokenFromTGT(final TicketGrantingTicket ticket) {
+        return new CasTGTOAuth2AccessToken(ticket,
                 tokenExpirationConfig.getAccessTokenValiditySeconds());
     }
 
-    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 
     /**
      * @param tokenExpirationConfig the tokenExpirationConfig to set
      */
-    public void setTokenExpirationConfig(TokenExpirationConfig tokenExpirationConfig) {
+    public void setTokenExpirationConfig(final TokenExpirationConfig tokenExpirationConfig) {
         this.tokenExpirationConfig = tokenExpirationConfig;
     }
 
