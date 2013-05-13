@@ -81,7 +81,7 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-        verify(log).error("missing clientId");
+        verify(log).error("Missing {}", "client_id");
     }
 
     @Test
@@ -99,7 +99,7 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-        verify(log).error("missing redirectUri");
+        verify(log).error("Missing {}", "redirect_uri");
     }
 
     @Test
@@ -117,7 +117,7 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-        verify(log).error("missing clientSecret");
+        verify(log).error("Missing {}", "client_secret");
     }
 
     @Test
@@ -135,7 +135,7 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-        verify(log).error("missing code");
+        verify(log).error("Missing {}", "code");
     }
 
     @Test
@@ -212,7 +212,7 @@ public final class OAuth20AccessTokenControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
-        verify(log).error("Wrong client secret : {} for service description : {}", CLIENT_SECRET,
+        verify(log).error("Wrong client secret for service description : {}",
                 WRONG_CLIENT_SECRET);
     }
 

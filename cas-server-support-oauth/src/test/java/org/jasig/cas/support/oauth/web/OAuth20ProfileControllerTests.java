@@ -69,7 +69,7 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("missing accessToken");
+        verify(log).error("Missing {}", "access_token");
     }
 
     @Test

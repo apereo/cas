@@ -82,7 +82,7 @@ public final class OAuth20AuthorizeControllerTests {
         OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("missing clientId");
+        verify(log).error("Missing {}", "client_id");
     }
 
     @Test
@@ -97,7 +97,7 @@ public final class OAuth20AuthorizeControllerTests {
         OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("missing redirectUri");
+        verify(log).error("Missing {}", "redirect_uri");
     }
 
     @Test
@@ -116,7 +116,7 @@ public final class OAuth20AuthorizeControllerTests {
         OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("Unknown clientId : {}", CLIENT_ID);
+        verify(log).error("Unknown {} : {}", "client_id", CLIENT_ID);
     }
 
     @Test
@@ -140,7 +140,7 @@ public final class OAuth20AuthorizeControllerTests {
         oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
+        verify(log).error("Unsupported {} : {} for serviceId : {}", "redirect_uri", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
 
     @Test
