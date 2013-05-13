@@ -18,17 +18,15 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -79,23 +77,14 @@ public final class OAuth20AuthorizeController extends AbstractController {
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
-        // name of the CAS service
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
-        RegisteredService service = null;
-        for (final RegisteredService aService : services) {
-            if (StringUtils.equals(aService.getName(), clientId)) {
-                service = aService;
-                break;
-            }
-        }
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         if (service == null) {
             log.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final String serviceId = service.getServiceId();
-        // redirectUri should start with serviceId
-        if (!StringUtils.startsWith(redirectUri, serviceId)) {
+        if (!redirectUri.matches(serviceId)) {
             log.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
@@ -103,7 +92,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
         // keep info in session
         final HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
-        session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getTheme());
+        session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getName());
         session.setAttribute(OAuthConstants.OAUTH20_STATE, state);
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()

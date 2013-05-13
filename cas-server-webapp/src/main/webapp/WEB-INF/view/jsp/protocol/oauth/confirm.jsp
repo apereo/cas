@@ -19,7 +19,7 @@
 
 --%>
 <jsp:directive.include file="../../default/ui/includes/top.jsp" />
-		<div id="welcome">
+		<div id="msg" class="question">
 			<h2><spring:message code="screen.oauth.confirm.header" /></h2>
 
 			<p>
