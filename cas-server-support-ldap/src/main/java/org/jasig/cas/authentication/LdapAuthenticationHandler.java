@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Performs LDAP authentication given username/password. */
     @NotNull
@@ -81,18 +81,15 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     @NotNull
     private Map<String, String> principalAttributeMap = Collections.emptyMap();
 
-
-
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
-
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
      * @param  authenticator  Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(final Authenticator authenticator) {
+    public LdapAuthenticationHandler(@NotNull final Authenticator authenticator) {
         this.authenticator = authenticator;
     }
 
@@ -165,18 +162,25 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
                     new Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
-        } catch (LdapException e) {
+        } catch (final LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
         }
         log.debug("LDAP response: {}", response);
+                
+        examineAccountStatePostAuthentication(response);
+        
         if (response.getResult()) {
             return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
         }
+        
+        throw new FailedLoginException("LDAP authentication failed.");
+    }
+
+    private void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
         final AccountState state = response.getAccountState();
         if (state != null && state.getError() != null) {
             state.getError().throwSecurityException();
         }
-        throw new FailedLoginException("LDAP authentication failed.");
     }
 
     @Override
