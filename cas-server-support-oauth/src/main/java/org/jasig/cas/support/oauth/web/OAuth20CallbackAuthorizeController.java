@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.slf4j.Logger;
@@ -57,6 +58,10 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
 
+        if (StringUtils.isBlank(callbackUrl)) {
+            log.error("{} is missing from the session and can not be retrieved.", OAuthConstants.OAUTH20_CALLBACKURL);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+        }
         // and state
         final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
         logger.debug("{} : {}", OAuthConstants.OAUTH20_STATE, state);
