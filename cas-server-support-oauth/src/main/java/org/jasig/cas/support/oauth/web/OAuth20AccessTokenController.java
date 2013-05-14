@@ -18,16 +18,14 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -75,59 +73,15 @@ public final class OAuth20AccessTokenController extends AbstractController {
         final String code = request.getParameter(OAuthConstants.CODE);
         LOGGER.debug("{} : {}", OAuthConstants.CODE, code);
 
-        // clientId is required
-        if (StringUtils.isBlank(clientId)) {
-            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-        // redirectUri is required
-        if (StringUtils.isBlank(redirectUri)) {
-            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-        // clientSecret is required
-        if (StringUtils.isBlank(clientSecret)) {
-            LOGGER.error("Missing {}", OAuthConstants.CLIENT_SECRET);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-        // code is required
-        if (StringUtils.isBlank(code)) {
-            LOGGER.error("Missing {}", OAuthConstants.CODE);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-
-        // name of the CAS service
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
-        RegisteredService service = null;
-        for (final RegisteredService aService : services) {
-            if (StringUtils.equals(aService.getName(), clientId)) {
-                service = aService;
-                break;
-            }
-        }
-        if (service == null) {
-            LOGGER.error("Unknown clientId : {}", clientId);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-
-        final String serviceId = service.getServiceId();
-        // redirectUri should start with serviceId
-        if (!StringUtils.startsWith(redirectUri, serviceId)) {
-            LOGGER.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
-        }
-
-        // description of the service should be the secret
-        final String serviceDescription = service.getDescription();
-        if (!StringUtils.equals(serviceDescription, clientSecret)) {
-            LOGGER.error("Wrong client secret for service description : {}", serviceDescription);
+        final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
+        if (!isVerified) {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            LOGGER.error("Code expired : {}", code);
+            log.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, 400);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
@@ -140,7 +94,50 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
                                                     OAuthConstants.EXPIRES, expires);
-        LOGGER.debug("text : {}", text);
+        log.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
+    }
+
+    private boolean verifyAccessTokenRequest(final HttpServletResponse response, final String redirectUri,
+                                             final String clientId, final String clientSecret, final String code) {
+
+        // clientId is required
+        if (StringUtils.isBlank(clientId)) {
+            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
+            return false;
+        }
+        // redirectUri is required
+        if (StringUtils.isBlank(redirectUri)) {
+            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
+            return false;
+        }
+        // clientSecret is required
+        if (StringUtils.isBlank(clientSecret)) {
+            LOGGER.error("Missing {}", OAuthConstants.CLIENT_SECRET);
+            return false;
+        }
+        // code is required
+        if (StringUtils.isBlank(code)) {
+            LOGGER.error("Missing {}", OAuthConstants.CODE);
+            return false;
+        }
+
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        if (service == null) {
+            log.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
+            return false;
+        }
+
+        final String serviceId = service.getServiceId();
+        if (redirectUri.matches(serviceId)) {
+            log.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            return false;
+        }
+
+        if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
+            log.error("Wrong client secret for service {}", service);
+            return false;
+        }
+        return true;
     }
 }
