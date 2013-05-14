@@ -59,7 +59,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
 
         if (StringUtils.isBlank(callbackUrl)) {
-            log.error("{} is missing from the session and can not be retrieved.", OAuthConstants.OAUTH20_CALLBACKURL);
+            logger.error("{} is missing from the session and can not be retrieved.", OAuthConstants.OAUTH20_CALLBACKURL);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         // and state
