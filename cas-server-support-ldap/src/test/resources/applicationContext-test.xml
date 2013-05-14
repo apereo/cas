@@ -23,6 +23,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -55,9 +56,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="testCredentials" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
       p:location="credentials.properties" />
 
-  <bean id="testPrincipals" class="org.springframework.core.io.ClassPathResource">
-    <constructor-arg value="principals.json" />
-  </bean>
+  <bean id="testPrincipals" class="org.springframework.core.io.ClassPathResource"
+        c:path="principals.json" />
 
   <bean id="testUserDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
         p:location="userdetails.properties" />
@@ -87,7 +87,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:validator-ref="searchValidator"
         p:pruneStrategy-ref="pruneStrategy"/>
 
-
   <!--
      +========================================================================
      | LDAP authentication beans
@@ -102,24 +101,31 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="authnPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="authnConnectionPool" />
 
-  <bean id="authenticator" class="org.ldaptive.auth.Authenticator">
-    <!-- Define the strategy for resolving DNs from the CAS username. -->
-    <constructor-arg>
-      <bean class="org.ldaptive.auth.PooledSearchDnResolver"
-            p:baseDn="${ldap.authn.baseDn}"
-            p:allowMultipleDns="false"
-            p:connectionFactory-ref="authnPooledLdapConnectionFactory"
-            p:userFilter="${ldap.authn.searchFilter}" />
-    </constructor-arg>
+  <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+    c:resolver-ref="pooledSearchDnResolver" c:handler-ref="pooledBindHandler"
+    p:authenticationResponseHandlers-ref="authResponseHandlers" />
+  
+  <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+        p:baseDn="${ldap.authn.baseDn}"
+        p:allowMultipleDns="false"
+        p:connectionFactory-ref="authnPooledLdapConnectionFactory"
+        p:userFilter="${ldap.authn.searchFilter}" />
 
-    <!-- Define the source of LDAP connections used for authentication. -->
-    <constructor-arg>
-      <bean class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-            p:connectionFactory-ref="authnPooledLdapConnectionFactory" />
-    </constructor-arg>
-  </bean>
-
-
+  <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+        p:connectionFactory-ref="authnPooledLdapConnectionFactory"
+        p:authenticationControls-ref="authControls" />
+  
+  <util:list id="authControls">
+    <bean class="org.ldaptive.control.PasswordPolicyControl" 
+          p:graceAuthNsRemaining="10" p:timeBeforeExpiration="10"
+          c:critical="true" />
+  </util:list> 
+  <util:list id="authResponseHandlers">
+    <!--  <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" /> -->
+    <bean class="org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler" />
+    <!-- <bean class="org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler" /> -->
+  </util:list>
+  
   <!--
      +========================================================================
      | LDAP credential to principal resolver beans
@@ -149,23 +155,18 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
   </bean>
 
-
   <!--
      +========================================================================
      | LDAP monitor beans
      +========================================================================
   -->
-  <bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor">
-      <constructor-arg ref="authnConnectionFactory" />
-      <constructor-arg ref="searchValidator" />
-  </bean>
+  <bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
+    c:factory-ref="authnConnectionFactory" c:validator-ref="searchValidator" />
 
   <bean class="org.jasig.cas.monitor.PooledConnectionFactoryMonitor"
         p:executor-ref="poolMonitorExecutor"
-        p:maxWait="5000">
-    <constructor-arg ref="authnPooledLdapConnectionFactory" />
-    <constructor-arg ref="searchValidator" />
-  </bean>
+        p:maxWait="5000"
+        c:factory-ref="authnPooledLdapConnectionFactory" c:validator-ref="searchValidator"/>
 
   <bean id="poolMonitorExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
@@ -187,35 +188,23 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="userDetailsPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="userDetailsConnectionPool" />
 
-  <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService">
-    <!-- Source of LDAP connections for search operation. -->
-    <constructor-arg ref="userDetailsPooledLdapConnectionFactory" />
+  <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
+        c:factory-ref="userDetailsPooledLdapConnectionFactory"
+        c:roleSearchExecutor-ref="searchExecutorRole" c:userSearchExecutor-ref="searchExecutorUser"
+        c:userAttributeName="${ldap.userdetails.user.attribute}" c:roleAttributeName="${ldap.userdetails.role.attribute}" />
 
-    <!-- Component that performs the LDAP search operation for user data. -->
-    <constructor-arg>
-      <bean class="org.ldaptive.SearchExecutor"
-            p:baseDn="${ldap.userdetails.user.baseDn}"
-            p:searchFilter="${ldap.userdetails.user.searchFilter}"
-            p:returnAttributes-ref="userDetailsUserAttributes"
-          />
-    </constructor-arg>
-
-    <!-- Component that performs the LDAP search operation for role data. -->
-    <constructor-arg>
-      <bean class="org.ldaptive.SearchExecutor"
-            p:baseDn="${ldap.userdetails.role.baseDn}"
-            p:searchFilter="${ldap.userdetails.role.searchFilter}"
-            p:returnAttributes-ref="userDetailsRoleAttributes"
-          />
-    </constructor-arg>
-
-    <!-- LDAP attribute to be used for user details username. -->
-    <constructor-arg value="${ldap.userdetails.user.attribute}" />
-
-    <!-- LDAP attribute to be used as basis for granted authority role name. -->
-    <constructor-arg value="${ldap.userdetails.role.attribute}" />
-  </bean>
-
+  <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
+    p:baseDn="${ldap.userdetails.role.baseDn}"
+    p:searchFilter="${ldap.userdetails.role.searchFilter}"
+    p:returnAttributes-ref="userDetailsRoleAttributes"
+  />
+  
+  <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
+    p:baseDn="${ldap.userdetails.user.baseDn}"
+    p:searchFilter="${ldap.userdetails.user.searchFilter}"
+    p:returnAttributes-ref="userDetailsUserAttributes"
+  />
+                  
   <util:list id="userDetailsUserAttributes">
     <value>${ldap.userdetails.user.attribute}</value>
   </util:list>
@@ -223,4 +212,5 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <util:list id="userDetailsRoleAttributes">
     <value>${ldap.userdetails.role.attribute}</value>
   </util:list>
+  
 </beans>
