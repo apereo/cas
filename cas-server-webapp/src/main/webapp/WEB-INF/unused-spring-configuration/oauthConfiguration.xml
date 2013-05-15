@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to Jasig under one or more contributor license agreements. 
+	See the NOTICE file distributed with this work for additional information 
+	regarding copyright ownership. Jasig licenses this file to you under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at the 
+	following location: http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	<description>
+		This is the OAuth configuration XML file. It specifies the beans used by
+		this package in conjunction with spring-security-oauth
+	</description>
+
+    <!-- There are 2 authentications that need to be handled:
+        1.) Client Authentication: This is done by the clientAuthenticationManager
+        2.) Resource Owner Authentication: done by the resourceOwnerAuthenticationManager
+        
+        The client authentication happens in the token endpoint, while the resource owner 
+        authentication happens in the authorization endpoint -->
+    
+    <sec:http security="none" pattern="/oauth2.0/error*" />
+    
+    <!-- token endpoint is anonymous, but can be http basic for password grant type -->
+    <sec:http authentication-manager-ref="clientAuthenticationManager"
+        pattern="/oauth2.0/accessToken*">
+        <sec:custom-filter ref="clientCredentialsTokenEndpointFilter"
+            before="PRE_AUTH_FILTER"/>
+        <sec:http-basic/>
+    </sec:http>
+    
+    
+    <!-- Just found out that the use of this is permitted, but not recommended. Needs code review -->
+    <!-- Extracts the client_id and client_secret from the request parameters and allows it to be used with the 
+        configured authentication manager -->
+    <bean id="clientCredentialsTokenEndpointFilter"
+        class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter"
+        c:path="/oauth2.0/accessToken"
+        p:authentication-manager-ref="clientAuthenticationManager"/>
+        
+    <sec:http entry-point-ref="casEntryPoint"
+        pattern="/oauth2.0/profile*">
+        <sec:custom-filter ref="casFilter" position="CAS_FILTER" />
+    </sec:http>
+    
+    <!-- authorization endpoint must be authenticated with the resource owner -->
+    <sec:http entry-point-ref="casEntryPoint"
+        pattern="/oauth2.0/**">
+        <sec:custom-filter ref="oauth2ProviderFilter"
+            before="PRE_AUTH_FILTER" />
+        <sec:custom-filter ref="casFilter" position="CAS_FILTER" />
+    </sec:http>
+    
+    <bean id="clientDetailsUserService"
+        class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService"
+        c:client-details-service-ref="casClientDetailsService" />
+        
+    <!-- every client that's described in the cas services registry are authorized to use the defined authorized grant types -->
+    <bean id="casClientDetailsService"
+        class="org.jasig.cas.support.oauth.CasClientDetailsService"
+        autowire="constructor">
+        <constructor-arg name="authorizedGrantTypes">
+            <list>
+                <value>authorization_code</value>
+                <value>implicit</value>
+                <!-- password commented out until it can be supported on
+                     stateless clients -->
+                <!--<value>password</value>-->
+                <!-- refresh token commented out until we can determine if it can be described in CAS terms -->
+<!--                 <value>refresh_token</value> -->
+            </list>
+        </constructor-arg>
+    </bean>
+        
+    <!-- Authenticates the resource owner as described in rfc6749 -->
+    <sec:authentication-manager id="resourceOwnerAuthenticationManager">
+        <!-- Uses spring-security-cas to act as a CAS client for web page based authorization schemes 
+            (e.g., authorization_code, implicit)-->
+        <sec:authentication-provider ref="casClientAuthenticationProvider" />
+        
+        <!-- Custom bean that authenticates users based on how CAS is configured to authenticate users on the server side -->
+        <!-- Used for non-interactive authorization schemes (e.g., password, refresh_token) -->
+        <sec:authentication-provider ref="casServerAuthenticationProvider" />
+        
+    </sec:authentication-manager>
+    
+    <!-- Authenticates the client as described in rfc6749 -->
+    <sec:authentication-manager id="clientAuthenticationManager">
+        <sec:authentication-provider user-service-ref="clientDetailsUserService" />
+    </sec:authentication-manager>
+
+    <!-- This is needed for the automatic framework endpoint discovery -->
+    <mvc:annotation-driven /> 
+	
+	<bean id="casServerAuthenticationProvider"
+	   class="org.jasig.cas.support.spring.CasServerAuthenticationProvider" 
+	   autowire="constructor" />
+
+	<!-- Simple convenience class so we can use Spring to autowire this bean 
+		every time instead of repeating the SpEL syntax. The exception to this is 
+		for the DefaultTokenServices bean because we don't really want to extend 
+		it to require a TokenExpirationConfig bean -->
+	<bean class="org.jasig.cas.support.oauth.token.TokenExpirationConfig" 
+        p:access-token-validity-seconds="${tgt.timeToKillInSeconds:7200}"/>
+
+    <bean id="tokenServices"
+        class="org.springframework.security.oauth2.provider.token.DefaultTokenServices"
+        p:support-refresh-token="false"
+        p:access-token-validity-seconds="${tgt.timeToKillInSeconds:7200}">
+        <property name="tokenEnhancer">
+		    <bean class="org.jasig.cas.support.oauth.token.CasTGTTokenEnhancer" 
+		        autowire="constructor"/>
+        </property>
+        <property name="tokenStore">
+            <bean
+                class="org.jasig.cas.support.oauth.token.CasTicketRegistryTokenStore"
+                autowire="byType" />
+        </property>
+    </bean>
+    
+<!--     <bean class="com.fasterxml.jackson.databind.ObjectMapper" /> -->
+    
+<!--     <context:component-scan base-package="org.jasig.cas.support.oauth.endpoint" /> -->
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+	    p:always-use-full-path="true">
+	    <property name="interceptors"><array>
+	       <bean class="org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor" />
+	    </array></property>
+	    
+		<property name="urlMap"><map>
+	        <entry key="/oauth2.0/confirm_access">
+               <bean class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+                   p:view-name="oauthConfirmView" />
+	        </entry>
+	        <entry key="/oauth2.0/error">
+               <bean class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+                   p:view-name="oauthErrorView" />
+	        </entry>
+	        <entry key="/oauth2.0/profile">
+	           <bean class="org.jasig.cas.support.oauth.web.OAuth20ProfileController" 
+	               autowire="constructor" />
+	        </entry>
+		</map></property>
+	</bean>
+
+    <!-- the /oauth2.0 endpoint is already mapped in web.xml, so we just need 
+        to map the endpoint urls -->
+    <!-- The user-approval-page needs to be behind cas protection in order to get the model populated -->
+    <oauth2:authorization-server
+        client-details-service-ref="casClientDetailsService" token-services-ref="tokenServices"
+        authorization-endpoint-url="/authorize" token-endpoint-url="/accessToken"
+        user-approval-page="forward:/oauth2.0/confirm_access"
+        error-page="forward:error">
+        <oauth2:authorization-code />
+        <oauth2:implicit/>
+        <!-- Commented out until they are implemented. See related comments
+             above -->
+        <oauth2:refresh-token />
+        <oauth2:password 
+            authentication-manager-ref="resourceOwnerAuthenticationManager" />
+    </oauth2:authorization-server>
+    
+    <oauth2:resource-server
+        id="oauth2ProviderFilter"
+        token-services-ref="tokenServices"/>
+        
+    <!-- The following configuration is for protecting the oauth endpoints with CAS -->
+    <bean class="org.springframework.security.cas.ServiceProperties"
+        p:service="/oauth2.0/j_spring_cas_security_check" />
+    
+    <!-- Let's just see what happens when we supply the server-side authentication manager to the bean here. -->
+    <bean id="casFilter"
+        class="org.springframework.security.cas.web.CasAuthenticationFilter"
+        p:filter-processes-url="/oauth2.0/j_spring_cas_security_check"
+        p:authentication-manager-ref="resourceOwnerAuthenticationManager" />
+        
+    <!-- TODO hard-coded endpoints everywhere -->
+    <bean id="casEntryPoint"
+        class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"
+        p:login-url="/cas2/login"
+        autowire="byType"/>
+        
+    <!-- Used by the cas client to populate the authentication headers with required information that's not populated by the 
+        casServerAuthenticationManager -->
+    <bean id="casClientAuthenticationProvider"
+        class="org.springframework.security.cas.authentication.CasAuthenticationProvider"
+        p:key="an_id_for_this_auth_provider_only"
+        autowire="byType">
+        <property name="authenticationUserDetailsService">
+<!--             We can't really use the clientDetailsUserService here because it describes the *client* -->
+            <bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper"
+                c:user-details-service-ref="clientDetailsUserService"/>
+        </property>
+        <property name="ticketValidator">
+            <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"
+                c:cas-server-url-prefix="http://localhost:8080/cas2/" />
+        </property>
+    </bean>
+        
+
+</beans>
