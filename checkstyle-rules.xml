@@ -147,11 +147,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
     </module>
   </module>
-  <module name="Header">
-    <property name="headerFile" value="${checkstyle.java.license.header.file}"/>
-    <property name="fileExtensions" value="java"/>
-    <property name="severity" value="error"/>
-  </module>
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml, properties, txt"/>
     <property name="lineSeparator" value="lf" />
