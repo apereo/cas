@@ -20,29 +20,16 @@
 --%>
 <jsp:directive.include file="../../default/ui/includes/top.jsp" />
 <div id="welcome">
-	<h2>
-		<spring:message code="screen.oauth.confirm.header" />
-	</h2>
-	
-    <!-- Authorization request = ${authorizationRequest} -->
+    <h2>
+        <spring:message code="screen.oauth.confirm.header" />
+    </h2>
 
-	<p>
-		<spring:message code="screen.oauth.confirm.message"
-			arguments="${client_id}" />
-	</p>
-	<!--
-	   the client id is ${client_id} and the authorizePath is ${authorizePath} 
-	 -->
-	<form id='confirmationForm' name='confirmationForm'
-		action='authorize' method='post'>
-		<input name='user_oauth_approval' value='true' type='hidden' /> <label><input
-			name='authorize' value='Authorize' type='submit'></label>
-	</form>
-	<form id='denialForm' name='denialForm'
-		action='authorize' method='post'>
-		<input name='user_oauth_approval' value='false' type='hidden' /> <label>
-			<input name='deny' value='Deny' type='submit'>
-		</label>
-	</form>
+    <p>
+<%--         <spring:message code="screen.oauth.confirm.message" --%>
+<%--             arguments="${client_id}" /> --%>
+        <!-- TODO Internationalization and formatting -->
+        ${error}
+        
+    </p>
 </div>
 <jsp:directive.include file="../../default/ui/includes/bottom.jsp" />
