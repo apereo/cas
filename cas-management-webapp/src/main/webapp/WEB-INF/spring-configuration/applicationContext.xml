@@ -21,9 +21,12 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you know what you're doing!
@@ -43,23 +46,22 @@
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
           p:basename="classpath:messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" p:cacheSeconds="180" />
 
-    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl">
-        <constructor-arg index="0" ref="serviceRegistryDao"/>
-    </bean>
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+          c:serviceRegistryDao-ref="serviceRegistryDao" />
     
     <!-- Spring-Json View provides a JsonExceptionResolver exceptions thrown during a controller action -->
-    <bean id="ajaxExceptionResolver" class="org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver">
-        <property name="exceptionView" value="jsonView" />
+    <bean id="ajaxExceptionResolver" class="org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver"
+          p:exceptionView="jsonView">
         <property name="errorHandler">
-            <list>
+            <util:list>
                 <bean class="org.springframework.web.servlet.view.json.error.HttpStatusError" p:errorCode="412"/>
                 <bean class="org.springframework.web.servlet.view.json.error.ModelFlagError"/>
-            </list>
+            </util:list>
         </property>
         <property name="exceptionHandler">
-            <list>
+            <util:list>
                 <bean class="org.springframework.web.servlet.view.json.exception.StackTraceExceptionHandler" />
-            </list>
+            </util:list>
         </property>
     </bean>
 </beans>
