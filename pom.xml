@@ -241,7 +241,6 @@
                 <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
                 <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
-                <propertyExpansion>checkstyle.java.license.header.file=${cs.dir}/HEADER</propertyExpansion>
             </configuration>
             <executions>
                 <execution>
