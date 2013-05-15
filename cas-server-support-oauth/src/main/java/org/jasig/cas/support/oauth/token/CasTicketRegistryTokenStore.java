@@ -43,7 +43,7 @@ public class CasTicketRegistryTokenStore implements TokenStore {
 
     @Override
     public void storeAccessToken(final OAuth2AccessToken token, final OAuth2Authentication authentication) {
-        // TODO Auto-generated method stub
+        // this method should do nothing, because by definition the ticket has been stored at this point
 
     }
 
@@ -57,12 +57,12 @@ public class CasTicketRegistryTokenStore implements TokenStore {
                 throw new InvalidTicketException("Ticket not found in ticket registry");
             }
 
-            long remainingValidSeconds =
+            long remainingValidMillieconds =
+                    TimeUnit.SECONDS.toMillis(tokenExpirationConfig.getAccessTokenValiditySeconds()) +
                     System.currentTimeMillis() -
-                    ticket.getCreationTime() -
-                    TimeUnit.SECONDS.toMillis(tokenExpirationConfig.getAccessTokenValiditySeconds());
+                    ticket.getCreationTime();
 
-            return new CasTGTOAuth2AccessToken(ticket, remainingValidSeconds);
+            return new CasTGTOAuth2AccessToken(ticket, TimeUnit.MILLISECONDS.toSeconds(remainingValidMillieconds));
         } catch (InvalidTicketException e) {
             return null;
         }
