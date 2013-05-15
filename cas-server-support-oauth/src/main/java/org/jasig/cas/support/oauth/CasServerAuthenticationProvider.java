@@ -1,4 +1,4 @@
-package org.jasig.cas.support.spring;
+package org.jasig.cas.support.oauth;
 
 import java.util.ArrayList;
 import java.util.Collection;

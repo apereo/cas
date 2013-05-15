@@ -110,7 +110,7 @@
     <mvc:annotation-driven /> 
 	
 	<bean id="casServerAuthenticationProvider"
-	   class="org.jasig.cas.support.spring.CasServerAuthenticationProvider" 
+	   class="org.jasig.cas.support.oauth.CasServerAuthenticationProvider" 
 	   autowire="constructor" />
 
 	<!-- Simple convenience class so we can use Spring to autowire this bean 
