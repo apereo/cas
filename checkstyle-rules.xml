@@ -63,6 +63,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="ParameterNumber">
         <property name="max" value="10" />
         <property name="severity" value="error"/>
+        <property name="tokens" value="METHOD_DEF">
     </module>
     <module name="LineLength">
       <property name="max" value="140"/>
