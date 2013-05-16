@@ -29,6 +29,7 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 
 /**
  * <p>
@@ -126,7 +127,7 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                 log.info("Resolved principal {}", principal);
                 foundSupported = true;
                 if (principal != null) {
-                    return new Pair<AuthenticationHandler,Principal>(authenticatedClass, principal);
+                    return new Pair<AuthenticationHandler, Principal>(authenticatedClass, principal);
                 }
             }
         }

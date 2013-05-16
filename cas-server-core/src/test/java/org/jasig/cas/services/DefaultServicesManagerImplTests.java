@@ -209,10 +209,6 @@ public class DefaultServicesManagerImplTests  {
             // nothing to do
         }
 
-        public boolean logOutOfService(final String sessionIdentifier) {
-            return false;
-        }
-
         public boolean matches(final Service service) {
             return true;
         }
