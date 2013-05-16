@@ -27,6 +27,7 @@
     <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
+        <evaluate expression="checkTgtStateInitialFlowSetupAction" />
     </on-start>
 
 	<decision-state id="ticketGrantingTicketExistsCheck">
@@ -218,5 +219,6 @@
         <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
         <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
 		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
+        <transition to="generateLoginTicket" on-exception="org.jasig.cas.web.flow.InconsistentTgtInitialStateException"/>
 	</global-transitions>
 </flow>
