@@ -18,7 +18,12 @@
  */
 package org.jasig.cas;
 
-import com.github.inspektr.audit.annotation.Audit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.Authentication;
@@ -31,6 +36,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServicesManager;
@@ -56,10 +62,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.github.inspektr.audit.annotation.Audit;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -97,29 +100,29 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
     @NotNull
-    private TicketRegistry serviceTicketRegistry;
+    private final TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
      */
     @NotNull
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     /**
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
     @NotNull
-    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
-    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Expiration policy for ticket granting tickets. */
     @NotNull
@@ -131,7 +134,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** Implementation of Service Manager. */
     @NotNull
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /** Encoder to generate PseudoIds. */
     @NotNull
@@ -140,12 +143,55 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** The default attribute filter to match principal attributes against that of a registered service. **/
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
 
+    /** The logout manager. **/
+    @NotNull
+    private final LogoutManager logoutManager;
+
+    /**
+     * Build the central authentication service implementation.
+     *
+     * @param ticketRegistry the tickets registry.
+     * @param serviceTicketRegistry the service tickets registry.
+     * @param authenticationManager the authentication manager.
+     * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
+     * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
+     * @param ticketGrantingTicketExpirationPolicy the TGT expiration policy.
+     * @param serviceTicketExpirationPolicy the service ticket expiration policy.
+     * @param servicesManager the services manager.
+     * @param logoutManager the logout manager.
+     */
+    public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
+            final TicketRegistry serviceTicketRegistry,
+            final AuthenticationManager authenticationManager,
+            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+            final ExpirationPolicy serviceTicketExpirationPolicy,
+            final ServicesManager servicesManager,
+            final LogoutManager logoutManager) {
+        this.ticketRegistry = ticketRegistry;
+        if (serviceTicketRegistry == null) {
+            this.serviceTicketRegistry = ticketRegistry;
+        } else {
+            this.serviceTicketRegistry = serviceTicketRegistry;
+        }
+        this.authenticationManager = authenticationManager;
+        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
+        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
+        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
+        this.servicesManager = servicesManager;
+        this.logoutManager = logoutManager;
+    }
+
     /**
      * {@inheritDoc}
-     * Implementation of destoryTicketGrantingTicket expires the ticket provided
-     * and removes it from the TicketRegistry.
+     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
+     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
-     * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
+     * @param ticketGrantingTicketId the id of the ticket we want to destroy
+     * @return the front channel logout services.
      */
     @Audit(
         action="TICKET_GRANTING_TICKET_DESTROYED",
@@ -154,7 +200,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Map<String, Service> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
         logger.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
@@ -163,12 +209,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (ticket == null) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            return;
+            return Collections.emptyMap();
         }
 
-        logger.debug("Ticket found. Expiring and then deleting.");
-        ticket.expire();
+        logger.debug("Ticket found. Deleting and then performing back channel logout.");
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
+        final Map<String, Service> services =  logoutManager.performLogout(ticket);
+
+        return services;
     }
 
     /**
@@ -182,8 +231,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials)
-                                throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service,
+            final Credentials credentials) throws TicketException {
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
@@ -242,8 +291,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
         }
 
-        /* this code is a bit brittle by depending on the class name. Future versions
-         * (i.e. CAS4 will know inherently how to identify themselves).
+        /*
+         * TODO Code is brittle to rely on class names. Future versions (i.e. CAS4 will know inherently how to identify themselves).
          */
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
             .get(service.getClass().getName());
@@ -273,12 +322,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return serviceTicket.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Audit(
         action="SERVICE_TICKET",
         actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
+    @Override
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         return this.grantServiceTicket(ticketGrantingTicketId, service, null);
@@ -356,8 +409,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Service [%s] does not exist or isn't enabled, "
-                                            + "and not allowed to validate tickets.", service.getId());
+            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled,"
+                    + "and thus not allowed to validate tickets.", service.getId());
             logger.warn(msg);
             throw new UnauthorizedServiceException(msg);
         }
@@ -385,11 +438,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
 
-            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(), principal.getAttributes(),
-                    registeredService);
+            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(),
+                    principal.getAttributes(), registeredService);
             if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease,
-                        registeredService);
+                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(),
+                        attributesToRelease, registeredService);
             }
 
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
@@ -447,7 +500,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             } else {
                 principalId = principal.getId();
                 final Object[] errorLogParameters = new Object[] {principalId, registeredService.getUsernameAttribute(),
-                        principal.getAttributes(), registeredService.getServiceId(), principalId};
+                        principal.getAttributes(), registeredService.getServiceId(), principalId };
                 logger.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "
                         + "provide on the validation response the user attribute the registered service [{}] expects. "
                         + "CAS will instead return the default username attribute [{}]", errorLogParameters);
@@ -491,75 +544,23 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
-     * Method to set the TicketRegistry.
-     *
-     * @param ticketRegistry the TicketRegistry to set.
+     * @param persistentIdGenerator a persistent id generator.
      */
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-
-        if (this.serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        }
-    }
-
-    public void setServiceTicketRegistry(final TicketRegistry serviceTicketRegistry) {
-        this.serviceTicketRegistry = serviceTicketRegistry;
+    public void setPersistentIdGenerator(final PersistentIdGenerator persistentIdGenerator) {
+        this.persistentIdGenerator = persistentIdGenerator;
     }
 
     /**
-     * Method to inject the AuthenticationManager into the class.
-     *
-     * @param authenticationManager The authenticationManager to set.
+     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
      */
-    public void setAuthenticationManager(
-        final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    /**
-     * Method to inject the TicketGrantingTicket Expiration Policy.
-     *
-     * @param ticketGrantingTicketExpirationPolicy The
-     * ticketGrantingTicketExpirationPolicy to set.
-     */
-    public void setTicketGrantingTicketExpirationPolicy(
-        final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
 
     /**
-     * Method to inject the Unique Ticket Id Generator into the class.
-     *
-     * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to use
+     * @param serviceTicketExpirationPolicy a ST expiration policy.
      */
-    public void setTicketGrantingTicketUniqueTicketIdGenerator(
-        final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
-        this.ticketGrantingTicketUniqueTicketIdGenerator = uniqueTicketIdGenerator;
-    }
-
-    /**
-     * Method to inject the TicketGrantingTicket Expiration Policy.
-     *
-     * @param serviceTicketExpirationPolicy The serviceTicketExpirationPolicy to
-     * set.
-     */
-    public void setServiceTicketExpirationPolicy(
-        final ExpirationPolicy serviceTicketExpirationPolicy) {
+    public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
-    public void setUniqueTicketIdGeneratorsForService(
-        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
-        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setPersistentIdGenerator(
-        final PersistentIdGenerator persistentIdGenerator) {
-        this.persistentIdGenerator = persistentIdGenerator;
     }
 }

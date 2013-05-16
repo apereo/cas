@@ -111,6 +111,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "username_attr", nullable = true, length = 256)
     private String usernameAttribute = null;
 
+    /**
+     * The logout type of the service. As front channel SLO is an experimental feature,
+     * the default logout type is the back channel one.
+     */
+    @Transient
+    private LogoutType logoutType = LogoutType.BACK_CHANNEL;
+
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
@@ -176,14 +183,15 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.ignoreAttributes, that.ignoreAttributes).append(this.ssoEnabled, that.ssoEnabled)
                 .append(this.allowedAttributes, that.allowedAttributes).append(this.description, that.description)
                 .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
-                .append(this.usernameAttribute, that.usernameAttribute).isEquals();
+                .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
+                .isEquals();
     }
 
     public int hashCode() {
         return new HashCodeBuilder(7, 31).append(this.allowedAttributes).append(this.description)
                 .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
                 .append(this.ssoEnabled).append(this.anonymousAccess).append(this.ignoreAttributes)
-                .append(this.evaluationOrder).append(this.usernameAttribute).toHashCode();
+                .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
@@ -264,6 +272,24 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         }
     }
 
+    /**
+     * Returns the logout type of the service.
+     *
+     * @return the logout type of the service.
+     */
+    public final LogoutType getLogoutType() {
+        return logoutType;
+    }
+
+    /**
+     * Set the logout type of the service.
+     *
+     * @param logoutType the logout type of the service.
+     */
+    public final void setLogoutType(final LogoutType logoutType) {
+        this.logoutType = logoutType;
+    }
+
     public RegisteredService clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
@@ -289,6 +315,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setIgnoreAttributes(source.isIgnoreAttributes());
         this.setEvaluationOrder(source.getEvaluationOrder());
         this.setUsernameAttribute(source.getUsernameAttribute());
+        this.setLogoutType(source.getLogoutType());
     }
 
     /**
