@@ -22,11 +22,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
-
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
   <!-- Credentials Cache implementation -->
   <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
@@ -38,39 +40,30 @@
         p:cacheManager-ref="ehCacheManager"
         p:cacheName="clearPassCache"/>
 
-  <bean id="credentialsCache" class="org.jasig.cas.extension.clearpass.EhcacheBackedMap">
-    <constructor-arg index="0" ref="clearPassEhCache"/>
-  </bean>
+  <bean id="credentialsCache" class="org.jasig.cas.extension.clearpass.EhcacheBackedMap"
+    c:cache-ref="clearPassEhCache"/>
   
-  <bean id="encryptedMap" class="org.jasig.cas.extension.clearpass.EncryptedMapDecorator">
-    <constructor-arg index="0" ref="credentialsCache" />
-  </bean>
+  <bean id="encryptedMap" class="org.jasig.cas.extension.clearpass.EncryptedMapDecorator"
+    c:decoratedMap-ref="credentialsCache"/>
 
   <!--
     NOTE:
     Name of delegated ticket registry bean in ticketRegistry.xml must be "ticketRegistryValue."
   -->
-  <bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator">
-    <constructor-arg index="0" ref="ticketRegistryValue"/>
-    <constructor-arg index="1" ref="encryptedMap"/>
-  </bean>
+  <bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator"
+    c:actualTicketRegistry-ref="ticketRegistryValue" c:cache-ref="encryptedMap" />
 
   <!-- implementation of the clear pass vending service -->
-  <bean id="clearPassController" class="org.jasig.cas.extension.clearpass.ClearPassController">
-    <constructor-arg index="0" ref="encryptedMap"/>
-  </bean>
+  <bean id="clearPassController" class="org.jasig.cas.extension.clearpass.ClearPassController"
+    c:credentialsCache-ref="encryptedMap"/>
 
   <bean id="handlerMappingClearPass" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
-        p:alwaysUseFullPath="true">
-    <property name="mappings">
-      <props>
-        <prop key="/clearPass">
-          clearPassController
-        </prop>
-      </props>
-    </property>
-  </bean>
+        p:alwaysUseFullPath="true" p:mappings-ref="mappings" />
 
+  <util:properties id="mappings">
+    <prop key="/clearPass">clearPassController</prop>
+  </util:properties>
+      
   <!-- Security configuration -->
   <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
     <sec:filter-chain-map request-matcher="ant">
@@ -93,17 +86,12 @@
     A bean named clearPassProxyList must be defined in deployerConfigContext.xml that defines
     the list of proxying services authorized to obtain clearpass credentials.
   -->
-  <bean id="casValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
-    <property name="serverName" value="${server.name}"/>
-    <property name="exceptionOnValidationFailure" value="false"/>
-    <property name="useSession" value="true"/>
-    <property name="ticketValidator">
-      <bean class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
-        <constructor-arg index="0" value="${server.prefix}" />
-        <property name="allowedProxyChains" ref="clearPassProxyList" />
-      </bean>
-    </property>
-  </bean>
+  <bean id="casValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"
+        p:serverName="${server.name}" p:exceptionOnValidationFailure="false" 
+        p:useSession="true" p:ticketValidator-ref="clearPassTicketValidator" />
+
+  <bean id="clearPassTicketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
+        c:casServerUrlPrefix="${server.prefix}" p:allowedProxyChains-ref="clearPassProxyList" />
 
   <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
 
