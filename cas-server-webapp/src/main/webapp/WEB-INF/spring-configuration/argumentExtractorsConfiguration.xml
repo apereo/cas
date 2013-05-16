@@ -31,9 +31,7 @@
 	</description>
  	<bean
  		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.support.CasArgumentExtractor"
-         p:httpClient-ref="noRedirectHttpClient"
-         p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
+ 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
 
  	<util:list id="argumentExtractors">
 		<ref bean="casArgumentExtractor" />

@@ -87,7 +87,7 @@ public class ServiceTicketImplTests {
                 new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
-        t.expire();
+        t.markTicketExpired();
 
         assertTrue(s.isExpired());
     }
