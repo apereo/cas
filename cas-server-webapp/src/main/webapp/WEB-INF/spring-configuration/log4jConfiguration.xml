@@ -22,7 +22,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <description>
         Log4J initialization.  Configuration options are sourced from cas.properties.  This allows deployers to externalize
@@ -32,15 +34,11 @@
         Deployers should not have to edit this file.
     </description>
 
-     <bean id="log4jInitialization" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-         <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
-         <property name="targetMethod" value="initLogging"/>
-         <property name="arguments">
-             <list>
-                 <value>${log4j.config.location:classpath:log4j.xml}</value>
-                 <value>${log4j.refresh.interval:60000}</value>
-             </list>
-         </property>
-    </bean>
-
+    <bean id="log4jInitialization" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+        p:targetClass="org.springframework.util.Log4jConfigurer" p:targetMethod="initLogging" p:arguments-ref="arguments"/>
+    
+    <util:list id="arguments">
+       <value>${log4j.config.location:classpath:log4j.xml}</value>
+       <value>${log4j.refresh.interval:60000}</value>
+    </util:list>
 </beans>
