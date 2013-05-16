@@ -129,7 +129,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
 
         final String serviceId = service.getServiceId();
-        if (redirectUri.matches(serviceId)) {
+        if (!redirectUri.matches(serviceId)) {
             log.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return false;
         }
