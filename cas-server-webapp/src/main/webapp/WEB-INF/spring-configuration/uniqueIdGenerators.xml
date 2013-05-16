@@ -22,6 +22,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
@@ -31,41 +32,17 @@
     </description>
        
 	<!-- ID Generators -->
-	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
-		<constructor-arg
-			index="0"
-			type="int"
-			value="50" />
-		<constructor-arg
-			index="1" value="${host.name}" />
-	</bean>
+	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+        c:maxLength="50" c:suffix="${host.name}" />
 
-	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
-		<constructor-arg
-			index="0"
-			type="int"
-			value="20" />
-		<constructor-arg
-			index="1" value="${host.name}" />
-	</bean>
+	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+        c:maxLength="20" c:suffix="${host.name}" />
 
-    <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
-        <constructor-arg
-            index="0"
-            type="int"
-            value="30" />
-    </bean>
+    <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+        c:maxLength="30" />
     	
-<bean
-      id="proxy20TicketUniqueIdGenerator"
-      class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
-		<constructor-arg
-			index="0"
-			type="int"
-			value="20" />
-		<constructor-arg
-			index="1" value="${host.name}" />
-</bean>
+    <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+        c:maxLength="20" c:suffix="${host.name}" />
 	 
 	<util:map id="uniqueIdGeneratorsMap">
 		<entry

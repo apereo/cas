@@ -21,7 +21,9 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <description>
@@ -58,11 +60,8 @@
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
           p:basename="classpath:messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" p:cacheSeconds="180" />
 
-    <bean
-            id="servicesManager"
-            class="org.jasig.cas.services.DefaultServicesManagerImpl">
-        <constructor-arg index="0" ref="serviceRegistryDao"/>
-    </bean>
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+        c:serviceRegistryDao-ref="serviceRegistryDao" />
 
     <!--
         Job to periodically reload services from service registry.
