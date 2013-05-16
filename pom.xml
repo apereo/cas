@@ -422,6 +422,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/.idea/**</exclude>
             <exclude>**/*.keystore</exclude>
             <exclude>**/*.example</exclude>
+            <exclude>**/*.sample</exclude>
+            <exclude>**/*.conf</exclude>
             <exclude>**/*.doc</exclude>
             <exclude>**/*.jmx</exclude>
             <exclude>**/checkstyle-*.xml</exclude>
