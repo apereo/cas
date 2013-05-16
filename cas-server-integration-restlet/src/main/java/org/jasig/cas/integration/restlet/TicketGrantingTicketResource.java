@@ -19,7 +19,6 @@
 package org.jasig.cas.integration.restlet;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.restlet.Context;
@@ -38,8 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Implementation of a Restlet resource for creating Service Tickets from a
  * TicketGrantingTicket, as well as deleting a TicketGrantingTicket.
@@ -56,19 +53,11 @@ public final class TicketGrantingTicketResource extends ServerResource {
 
     private String ticketGrantingTicketId;
 
-    @Autowired
-    @NotNull
-    private HttpClient httpClient;
-
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
         this.setNegotiated(false);
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
-    }
-
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
     @Delete
@@ -84,7 +73,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
         try {
             final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     this.ticketGrantingTicketId,
-                    new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
+                    new SimpleWebApplicationServiceImpl(serviceUrl));
             getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");

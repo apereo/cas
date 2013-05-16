@@ -29,9 +29,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -154,11 +154,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(OTHER_REDIRECT_URI);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
@@ -178,12 +175,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setDescription(WRONG_CLIENT_SECRET);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, WRONG_CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
@@ -203,12 +196,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setDescription(CLIENT_SECRET);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(CODE)).thenReturn(null);
@@ -231,12 +220,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setDescription(CLIENT_SECRET);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
         final ServiceTicket serviceTicket = mock(ServiceTicket.class);
@@ -261,12 +246,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setDescription(CLIENT_SECRET);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
         final ServiceTicket serviceTicket = mock(ServiceTicket.class);
@@ -295,5 +276,14 @@ public final class OAuth20AccessTokenControllerTests {
         final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, "&" + OAuthConstants.EXPIRES + "="));
         assertTrue(timeLeft >= TIMEOUT - TIME_BEFORE - DELTA);
         assertTrue(timeLeft <= TIMEOUT - TIME_BEFORE + DELTA);
+    }
+
+    private RegisteredService getRegisteredService(final String serviceId, final String secret) {
+        final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName("The registered service name");
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        registeredServiceImpl.setClientSecret(secret);
+        return registeredServiceImpl;
     }
 }

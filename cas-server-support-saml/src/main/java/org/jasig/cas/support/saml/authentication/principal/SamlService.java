@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -66,12 +65,12 @@ public final class SamlService extends AbstractWebApplicationService {
     private static final long serialVersionUID = -6867572626767140223L;
 
     protected SamlService(final String id) {
-        super(id, id, null, new HttpClient());
+        super(id, id, null);
     }
 
     protected SamlService(final String id, final String originalUrl,
-            final String artifactId, final HttpClient httpClient, final String requestId) {
-        super(id, originalUrl, artifactId, httpClient);
+            final String artifactId, final String requestId) {
+        super(id, originalUrl, artifactId);
         this.requestId = requestId;
     }
 
@@ -89,7 +88,7 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     public static SamlService createServiceFrom(
-            final HttpServletRequest request, final HttpClient httpClient) {
+            final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String artifactId;
         final String requestBody = getRequestBody(request);
@@ -130,7 +129,7 @@ public final class SamlService extends AbstractWebApplicationService {
         LOGGER.debug(String.format("Extracted ArtifactId: %s", artifactId));
         LOGGER.debug(String.format("Extracted Request Id: %s", requestId));
 
-        return new SamlService(id, service, artifactId, httpClient, requestId);
+        return new SamlService(id, service, artifactId, requestId);
     }
 
     @Override
