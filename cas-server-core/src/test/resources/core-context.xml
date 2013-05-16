@@ -21,26 +21,14 @@
 -->
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-  <bean
-    name="centralAuthenticationService"
-    class="org.jasig.cas.CentralAuthenticationServiceImpl">
-    <property
-      name="authenticationManager"
-      ref="authenticationManager" />
-    <property
-      name="serviceTicketExpirationPolicy"
-      ref="neverExpiresExpirationPolicy" />
-    <property
-      name="ticketGrantingTicketExpirationPolicy"
-      ref="neverExpiresExpirationPolicy" />
-    <property
-      name="ticketRegistry"
-      ref="ticketRegistry" />
-    <property
-      name="ticketGrantingTicketUniqueTicketIdGenerator"
-      ref="uniqueTicketIdGenerator" />
-    <property
-      name="uniqueTicketIdGeneratorsForService">
+  <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
+    <constructor-arg index="0" ref="ticketRegistry"/>
+    <constructor-arg index="1">
+      <null />
+    </constructor-arg>
+    <constructor-arg index="2" ref="authenticationManager"/>
+    <constructor-arg index="3" ref="uniqueTicketIdGenerator"/>
+    <constructor-arg index="4">
       <map>
                 <entry
                         key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
@@ -49,10 +37,11 @@
                         key="org.jasig.cas.authentication.principal.OpenIdService"
                         value-ref="uniqueTicketIdGenerator" />
       </map>
-    </property>
-        <property name="servicesManager"
-        ref="servicesManager" />
-    <property name="logoutManager" ref="logoutManager" />
+    </constructor-arg>
+    <constructor-arg index="5" ref="neverExpiresExpirationPolicy"/>
+    <constructor-arg index="6" ref="neverExpiresExpirationPolicy"/>
+    <constructor-arg index="7" ref="servicesManager"/>
+    <constructor-arg index="8" ref="logoutManager"/>
   </bean>
 
   <bean id="httpClient" class="org.jasig.cas.util.HttpClient">

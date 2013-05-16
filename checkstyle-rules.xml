@@ -55,7 +55,10 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
     </module>
     <module name="MethodLength"/>
-    <module name="ParameterNumber"/>
+    <module name="ParameterNumber">
+        <property name="max" value="10"/>
+        <property name="severity" value="error"/>
+    </module>
     <module name="LineLength">
       <property name="max" value="120"/>
       <property name="tabWidth" value="4"/>

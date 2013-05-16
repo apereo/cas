@@ -97,16 +97,20 @@
     </bean>
 
     <!-- CentralAuthenticationService -->
-    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
-          p:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
-          p:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
-          p:authenticationManager-ref="authenticationManager"
-          p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
-          p:ticketRegistry-ref="ticketRegistry"
-          p:servicesManager-ref="servicesManager"
-          p:persistentIdGenerator-ref="persistentIdGenerator"
-          p:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
-          p:logoutManager-ref="logoutManager"/>
+    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
+        <constructor-arg index="0" ref="ticketRegistry"/>
+        <constructor-arg index="1">
+          <null />
+        </constructor-arg>
+        <constructor-arg index="2" ref="authenticationManager"/>
+        <constructor-arg index="3" ref="ticketGrantingTicketUniqueIdGenerator"/>
+        <constructor-arg index="4" ref="uniqueIdGeneratorsMap"/>
+        <constructor-arg index="5" ref="grantingTicketExpirationPolicy"/>
+        <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
+        <constructor-arg index="7" ref="servicesManager"/>
+        <constructor-arg index="8" ref="logoutManager"/>
+        <property name="persistentIdGenerator" ref="persistentIdGenerator"/>
+    </bean>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
