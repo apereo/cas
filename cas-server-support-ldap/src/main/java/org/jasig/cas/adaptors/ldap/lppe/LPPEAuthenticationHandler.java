@@ -44,6 +44,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class LPPEAuthenticationHandler extends LdapAuthenticationHandler implements InitializingBean {
 
+    /** The ldap configuration constructed based on given the policy. **/
     private final PasswordPolicyConfiguration configuration;
 
     public LPPEAuthenticationHandler(@NotNull final Authenticator authenticator, @NotNull final PasswordPolicyConfiguration configuration) {
@@ -52,46 +53,47 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
     }
 
     @Override
-    protected void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
+    protected final void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
         super.examineAccountStatePostAuthentication(response);
-        this.configuration.build(response.getLdapEntry());
-        this.examineAccountStatus(response);
-        this.validateAccountPasswordExpirationPolicy();
+        if (!configuration.build(response.getLdapEntry())) {
+            this.examineAccountStatus(response);
+            this.validateAccountPasswordExpirationPolicy();    
+        }
     }
 
     protected void examineAccountStatus(final AuthenticationResponse response) throws LoginException {
-        final String uid =  this.configuration.getDn();
+        final String uid =  configuration.getDn();
         
-        if (this.configuration.isUserAccountControlSetToDisableAccount()) {
+        if (configuration.isUserAccountControlSetToDisableAccount()) {
             final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
             throw new AccountDisabledException(msg);
         }
 
-        if (this.configuration.isUserAccountControlSetToLockAccount()) {
+        if (configuration.isUserAccountControlSetToLockAccount()) {
             final String msg = String.format("User account control flag is set. Account %s is locked", uid);
             throw new AccountLockedException(msg);
         }
 
-        if (this.configuration.isUserAccountControlSetToExpirePassword()) {
+        if (configuration.isUserAccountControlSetToExpirePassword()) {
             final String msg = String.format("User account control flag is set. Account %s has expired", uid);
             throw new CredentialExpiredException(msg);
         }
 
-        if (this.configuration.isAccountDisabled()) {
+        if (configuration.isAccountDisabled()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is disabled",
-                    this.configuration.getAccountDisabledAttributeName() , uid);
+                    configuration.getAccountDisabledAttributeName() , uid);
             throw new AccountDisabledException(msg);
         }
         
-        if (this.configuration.isAccountLocked()) {
+        if (configuration.isAccountLocked()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is locked",
-                    this.configuration.getAccountLockedAttributeName(), uid);
+                    configuration.getAccountLockedAttributeName(), uid);
             throw new AccountLockedException(msg);
         }
         
-        if (this.configuration.isAccountPasswordMustChange()) {
+        if (configuration.isAccountPasswordMustChange()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s must change it password", 
-                                             this.configuration.getAccountPasswordMustChangeAttributeName(), uid);
+                                             configuration.getAccountPasswordMustChangeAttributeName(), uid);
             throw new AccountPasswordMustChangeException(msg);
         }
     }
@@ -102,44 +104,44 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
     }
 
     private void populatePrincipalAttributeMap() {
-        if (!StringUtils.isBlank(this.configuration.getUserAccountControlAttributeName())) {
-            principalAttributeMap.put(this.configuration.getUserAccountControlAttributeName(),
-                                      this.configuration.getUserAccountControlAttributeName());
+        if (!StringUtils.isBlank(configuration.getUserAccountControlAttributeName())) {
+            principalAttributeMap.put(configuration.getUserAccountControlAttributeName(),
+                                      configuration.getUserAccountControlAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getAccountDisabledAttributeName())) {
-            principalAttributeMap.put(this.configuration.getAccountDisabledAttributeName(),
-                                      this.configuration.getAccountDisabledAttributeName());
+        if (!StringUtils.isBlank(configuration.getAccountDisabledAttributeName())) {
+            principalAttributeMap.put(configuration.getAccountDisabledAttributeName(),
+                                      configuration.getAccountDisabledAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getAccountLockedAttributeName())) {
-            principalAttributeMap.put(this.configuration.getAccountLockedAttributeName(),
-                                      this.configuration.getAccountLockedAttributeName());
+        if (!StringUtils.isBlank(configuration.getAccountLockedAttributeName())) {
+            principalAttributeMap.put(configuration.getAccountLockedAttributeName(),
+                                      configuration.getAccountLockedAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getAccountPasswordMustChangeAttributeName())) {
-            principalAttributeMap.put(this.configuration.getAccountPasswordMustChangeAttributeName(),
-                                      this.configuration.getAccountPasswordMustChangeAttributeName());
+        if (!StringUtils.isBlank(configuration.getAccountPasswordMustChangeAttributeName())) {
+            principalAttributeMap.put(configuration.getAccountPasswordMustChangeAttributeName(),
+                                      configuration.getAccountPasswordMustChangeAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getIgnorePasswordExpirationWarningAttributeName())) {
-            principalAttributeMap.put(this.configuration.getIgnorePasswordExpirationWarningAttributeName(),
-                                      this.configuration.getIgnorePasswordExpirationWarningAttributeName());
+        if (!StringUtils.isBlank(configuration.getIgnorePasswordExpirationWarningAttributeName())) {
+            principalAttributeMap.put(configuration.getIgnorePasswordExpirationWarningAttributeName(),
+                                      configuration.getIgnorePasswordExpirationWarningAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getPasswordExpirationDateAttributeName())) {
-            principalAttributeMap.put(this.configuration.getPasswordExpirationDateAttributeName(),
-                                      this.configuration.getPasswordExpirationDateAttributeName());
+        if (!StringUtils.isBlank(configuration.getPasswordExpirationDateAttributeName())) {
+            principalAttributeMap.put(configuration.getPasswordExpirationDateAttributeName(),
+                                      configuration.getPasswordExpirationDateAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getPasswordWarningNumberOfDaysAttributeName())) {
-            principalAttributeMap.put(this.configuration.getPasswordWarningNumberOfDaysAttributeName(),
-                                      this.configuration.getPasswordWarningNumberOfDaysAttributeName());
+        if (!StringUtils.isBlank(configuration.getPasswordWarningNumberOfDaysAttributeName())) {
+            principalAttributeMap.put(configuration.getPasswordWarningNumberOfDaysAttributeName(),
+                                      configuration.getPasswordWarningNumberOfDaysAttributeName());
         }
         
-        if (!StringUtils.isBlank(this.configuration.getValidPasswordNumberOfDaysAttributeName())) {
-            principalAttributeMap.put(this.configuration.getValidPasswordNumberOfDaysAttributeName(),
-                                      this.configuration.getValidPasswordNumberOfDaysAttributeName());
+        if (!StringUtils.isBlank(configuration.getValidPasswordNumberOfDaysAttributeName())) {
+            principalAttributeMap.put(configuration.getValidPasswordNumberOfDaysAttributeName(),
+                                      configuration.getValidPasswordNumberOfDaysAttributeName());
         }
     }
     
@@ -149,8 +151,8 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
      * calculated based on the defined policy. 
      */
     protected int getDaysToExpirationDate(final DateTime expireDate) throws LoginException {
-        final DateTimeZone timezone = this.configuration.getDateConverter().getTimeZone();
-        final DateTime currentTime = new DateTime(this.configuration.getDateConverter().getTimeZone());
+        final DateTimeZone timezone = configuration.getDateConverter().getTimeZone();
+        final DateTime currentTime = new DateTime(configuration.getDateConverter().getTimeZone());
         log.debug("Current date is {}. Expiration date is {}", currentTime, expireDate);
 
         final Days d = Days.daysBetween(currentTime, expireDate);
@@ -166,11 +168,11 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
 
         // Warning period begins from X number of days before the expiration date
         final DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), timezone)
-                                        .minusDays(this.configuration.getPasswordWarningNumberOfDays());
+                                        .minusDays(configuration.getPasswordWarningNumberOfDays());
         log.debug("Warning period begins on {}", warnPeriod);
 
-        if (this.configuration.isAlwaysDisplayPasswordExpirationWarning()) {
-            log.debug("Warning all. The password for {} will expire in {} day(s)", this.configuration.getDn(), daysToExpirationDate);
+        if (configuration.isAlwaysDisplayPasswordExpirationWarning()) {
+            log.debug("Warning all. The password for {} will expire in {} day(s)", configuration.getDn(), daysToExpirationDate);
         } else if (currentTime.equals(warnPeriod) || currentTime.isAfter(warnPeriod)) {
             log.debug("Password will expire in {} day(s)", daysToExpirationDate);
         } else {
@@ -186,18 +188,18 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
      * @see #setLdapDateConverter(LdapDateConverter)
      */
     private DateTime getExpirationDateToUse() {
-        final DateTime dateValue = this.configuration.convertPasswordExpirationDate(); 
+        final DateTime dateValue = configuration.convertPasswordExpirationDate(); 
                 
-        final DateTime expireDate = dateValue.plusDays(this.configuration.getValidPasswordNumberOfDays());
+        final DateTime expireDate = dateValue.plusDays(configuration.getValidPasswordNumberOfDays());
         log.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}", dateValue,
-                this.configuration.getPasswordExpirationDateAttributeName(), this.configuration
-                        .getValidPasswordNumberOfDays(), expireDate);
+                configuration.getPasswordExpirationDateAttributeName(),
+                configuration.getValidPasswordNumberOfDays(), expireDate);
 
         return expireDate;
     }
 
     private void validateAccountPasswordExpirationPolicy() throws LoginException {
-        if (this.configuration.isAccountPasswordSetToNeverExpire()) {
+        if (configuration.isAccountPasswordSetToNeverExpire()) {
             log.debug("Account password will never expire. Skipping password policy...");
             return;
         }
