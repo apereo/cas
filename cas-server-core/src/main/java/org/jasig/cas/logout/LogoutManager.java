@@ -16,24 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.saml.web.support;
+package org.jasig.cas.logout;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
-import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
-import org.jasig.cas.web.support.AbstractArgumentExtractor;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
- * Retrieve the ticket and artifact based on the SAML 1.1 profile.
+ * A logout manager handles the Single Log Out process.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Jerome Leleu
+ * @since 4.0.0
  */
-public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
+public interface LogoutManager {
 
-    @Override
-    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SamlService.createServiceFrom(request);
-    }
+    /**
+     * Perform a back channel logout for a given ticket granting ticket and returns the services
+     * eligible to a front channel logout.
+     *
+     * @param ticket a given ticket granting ticket.
+     * @return an interator on front channel logout services
+     */
+    Map<String, Service> performLogout(TicketGrantingTicket ticket);
 }

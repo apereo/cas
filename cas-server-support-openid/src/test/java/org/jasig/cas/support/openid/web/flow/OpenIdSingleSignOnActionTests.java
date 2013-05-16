@@ -20,6 +20,7 @@ package org.jasig.cas.support.openid.web.flow;
 
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -66,7 +68,7 @@ public class OpenIdSingleSignOnActionTests {
 
     private DirectMappingAuthenticationManagerImpl authenticationManager;
 
-    private final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
+    private CentralAuthenticationServiceImpl impl;
 
     @Before
     public void setUp() throws Exception {
@@ -89,13 +91,10 @@ public class OpenIdSingleSignOnActionTests {
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
-        this.impl.setAuthenticationManager(this.authenticationManager);
-        this.impl.setServicesManager(new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()));
-        this.impl.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.impl.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.impl.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        this.impl.setTicketRegistry(this.ticketRegistry);
-        this.impl.setUniqueTicketIdGeneratorsForService(generator);
+        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
+                new DefaultUniqueTicketIdGenerator(), generator, new NeverExpiresExpirationPolicy(),
+                new NeverExpiresExpirationPolicy(),
+                new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()), mock(LogoutManager.class));
 
         this.action = new OpenIdSingleSignOnAction();
         this.action.setCentralAuthenticationService(this.impl);

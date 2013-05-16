@@ -50,7 +50,6 @@
 	
 	<bean id="ticketResource" class="org.jasig.cas.integration.restlet.TicketResource" scope="prototype" />
 	
-	<bean id="ticketGrantingTicketResource" class="org.jasig.cas.integration.restlet.TicketGrantingTicketResource" scope="prototype"
-            p:httpClient-ref="httpClient"/>
+	<bean id="ticketGrantingTicketResource" class="org.jasig.cas.integration.restlet.TicketGrantingTicketResource" scope="prototype" />
 	
 </beans>
