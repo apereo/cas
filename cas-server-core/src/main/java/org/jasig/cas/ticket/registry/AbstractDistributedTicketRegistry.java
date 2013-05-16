@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.registry;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -131,21 +132,24 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             super(ticketRegistry, serviceTicket, callback);
         }
 
-
+        @Override
         public Service getService() {
             return getTicket().getService();
         }
 
+        @Override
         public boolean isFromNewLogin() {
             return getTicket().isFromNewLogin();
         }
 
+        @Override
         public boolean isValidFor(final Service service) {
             final boolean b = this.getTicket().isValidFor(service);
             updateTicket();
             return b;
         }
 
+        @Override
         public TicketGrantingTicket grantTicketGrantingTicket(final String id,
                 final Authentication authentication, final ExpirationPolicy expirationPolicy) {
             final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
@@ -165,10 +169,12 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             super(ticketRegistry, ticketGrantingTicket, callback);
         }
 
+        @Override
         public Authentication getAuthentication() {
             return getTicket().getAuthentication();
         }
 
+        @Override
         public ServiceTicket grantServiceTicket(final String id, final Service service,
                 final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
             final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
@@ -177,17 +183,30 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return t;
         }
 
-        public void expire() {
-            this.getTicket().expire();
+        @Override
+        public void markTicketExpired() {
+            this.getTicket().markTicketExpired();
             updateTicket();
         }
 
+        @Override
         public boolean isRoot() {
             return getTicket().isRoot();
         }
 
+        @Override
         public List<Authentication> getChainedAuthentications() {
             return getTicket().getChainedAuthentications();
+        }
+
+        @Override
+        public Map<String, Service> getServices() {
+            return this.getTicket().getServices();
+        }
+
+        @Override
+        public void removeAllServices() {
+            this.getTicket().removeAllServices();
         }
     }
 }
