@@ -18,21 +18,20 @@
  */
 package org.jasig.cas.remoting.server;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.util.Pair;
-import org.jasig.cas.validation.Assertion;
-import org.springframework.util.Assert;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
-import java.util.Iterator;
-import java.util.Set;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.validation.Assertion;
+import org.springframework.util.Assert;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -99,7 +98,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the front channel logout services.
      */
-    public Iterator<Pair<String, Service>> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Map<String, Service> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 

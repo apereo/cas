@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -27,7 +27,6 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.Pair;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -201,7 +200,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
-        public Collection<Pair<String, Service>> getServices() {
+        public Map<String, Service> getServices() {
             return this.getTicket().getServices();
         }
 

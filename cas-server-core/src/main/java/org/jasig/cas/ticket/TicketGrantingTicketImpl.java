@@ -19,10 +19,10 @@
 package org.jasig.cas.ticket;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +31,6 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.Pair;
 import org.springframework.util.Assert;
 
 /**
@@ -136,16 +135,16 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     }
 
     /**
-     * Gets an immutable collection of services accessed by this ticket-granting ticket.
+     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
      *
-     * @return Immutable collection of accessed services.
+     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
-    public synchronized Collection<Pair<String, Service>> getServices() {
-        final List<Pair<String, Service>> list = new ArrayList<Pair<String, Service>>(services.size());
+    public synchronized Map<String, Service> getServices() {
+        final Map<String, Service> map = new HashMap<String, Service>(services.size());
         for (final String ticket : services.keySet()) {
-            list.add(new Pair<String, Service>(ticket, services.get(ticket)));
+            map.put(ticket, services.get(ticket));
         }
-        return Collections.unmodifiableCollection(list);
+        return Collections.unmodifiableMap(map);
     }
 
     /**
