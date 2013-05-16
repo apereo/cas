@@ -313,12 +313,12 @@ public final class PasswordPolicyConfiguration {
         return false;
     }
 
-    public PasswordPolicyConfiguration build(final LdapEntry entry) {
+    public boolean build(final LdapEntry entry) {
 
         final String expirationDate = getPasswordPolicyAttributeValue(entry, this.passwordExpirationDateAttributeName);
         if (StringUtils.isBlank(expirationDate)) {
             LOGGER.warn("Password expiration policy cannot be established because the password expiration date is blank.");
-            return null;
+            return false;
         }
 
         setDn(entry.getDn());
@@ -366,7 +366,7 @@ public final class PasswordPolicyConfiguration {
             setUserAccountControl(attributeValue);
         }
 
-        return this;
+        return true;
     }
 
     private String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
