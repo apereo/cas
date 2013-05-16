@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
-import org.jasig.cas.web.support.AbstractSingleSignOutEnabledArgumentExtractor;
+import org.jasig.cas.web.support.AbstractArgumentExtractor;
 
 /**
  * Constructs a GoogleAccounts compatible service and provides the public and
@@ -35,7 +35,7 @@ import org.jasig.cas.web.support.AbstractSingleSignOutEnabledArgumentExtractor;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class GoogleAccountsArgumentExtractor extends AbstractSingleSignOutEnabledArgumentExtractor {
+public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtractor {
 
     @NotNull
     private PublicKey publicKey;

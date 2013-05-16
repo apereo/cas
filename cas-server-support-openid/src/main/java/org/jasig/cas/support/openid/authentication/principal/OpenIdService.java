@@ -58,7 +58,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
     protected OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
             final String signature, final ParameterList parameterList) {
-        super(id, originalUrl, artifactId, null);
+        super(id, originalUrl, artifactId);
         this.identity = openIdIdentity;
         this.artifactId = artifactId;
         this.requestParameters = parameterList;
@@ -137,9 +137,14 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
+    /**
+     * Return that the service is already logged out.
+     *
+     * @return that the service is already logged out.
+     */
     @Override
-    public boolean logOutOfService(final String sessionIdentifier) {
-        return false;
+    public boolean isLoggedOutAlready() {
+        return true;
     }
 
     public static OpenIdService createServiceFrom(

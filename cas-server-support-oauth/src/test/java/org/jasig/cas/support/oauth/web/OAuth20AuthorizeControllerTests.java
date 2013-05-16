@@ -29,10 +29,10 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -116,11 +116,8 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(OTHER_REDIRECT_URI);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
@@ -140,12 +137,8 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setTheme(SERVICE_NAME);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
@@ -175,12 +168,8 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setTheme(SERVICE_NAME);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
@@ -197,5 +186,13 @@ public final class OAuth20AuthorizeControllerTests {
         assertEquals(
                 OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
                 redirectView.getUrl());
+    }
+
+    private RegisteredService getRegisteredService(final String serviceId, final String name) {
+        final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName(name);
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        return registeredServiceImpl;
     }
 }
