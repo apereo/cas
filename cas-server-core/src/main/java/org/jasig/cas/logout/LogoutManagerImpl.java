@@ -19,10 +19,8 @@
 package org.jasig.cas.logout;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.Deflater;
 
 import javax.validation.constraints.NotNull;
@@ -36,7 +34,6 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.SamlDateUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
@@ -94,8 +91,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return an interator on front channel logout services
      */
     @Override
-    public Iterator<Pair<String, Service>> performLogout(final TicketGrantingTicket ticket) {
-        final Collection<Pair<String, Service>> services;
+    public Map<String, Service> performLogout(final TicketGrantingTicket ticket) {
+        final Map<String, Service> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups
         synchronized (ticket) {
@@ -104,13 +101,12 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         ticket.markTicketExpired();
 
-        final List<Pair<String, Service>> frontServices = new ArrayList<Pair<String, Service>>();
+        final Map<String, Service> frontServices = new HashMap<String, Service>();
         // if SLO is not disabled
         if (!disableSingleSignOut) {
             // through all services
-            for (final Pair<String, Service> ticketedService : services) {
-                final String ticketId = ticketedService.getFirst();
-                final Service service = ticketedService.getSecond();
+            for (final String ticketId : services.keySet()) {
+                final Service service = services.get(ticketId);
                 // it's a SingleLogoutService, else ignore
                 if (service instanceof SingleLogoutService) {
                     final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
@@ -121,7 +117,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                         if (registeredService != null
                                 && registeredService.getLogoutType() == LogoutType.FRONT_CHANNEL) {
                             // keep it for later front logout
-                            frontServices.add(ticketedService);
+                            frontServices.put(ticketId, service);
                         } else {
                             // perform back channel logout
                             if (!performBackChannelLogout(singleLogoutService, ticketId)) {
@@ -134,7 +130,7 @@ public final class LogoutManagerImpl implements LogoutManager {
             }
         }
 
-        return frontServices.iterator();
+        return frontServices;
     }
 
     /**

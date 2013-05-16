@@ -18,11 +18,10 @@
  */
 package org.jasig.cas.logout;
 
-import java.util.Iterator;
+import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.Pair;
 
 /**
  * A logout manager handles the Single Log Out process.
@@ -39,5 +38,5 @@ public interface LogoutManager {
      * @param ticket a given ticket granting ticket.
      * @return an interator on front channel logout services
      */
-    Iterator<Pair<String, Service>> performLogout(TicketGrantingTicket ticket);
+    Map<String, Service> performLogout(TicketGrantingTicket ticket);
 }

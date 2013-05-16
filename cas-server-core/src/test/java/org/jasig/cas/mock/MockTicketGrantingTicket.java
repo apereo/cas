@@ -18,6 +18,11 @@
  */
 package org.jasig.cas.mock;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -26,13 +31,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Mock ticket-granting ticket.
@@ -108,8 +107,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public Collection<Pair<String, Service>> getServices() {
-        return Collections.emptyList();
+    public Map<String, Service> getServices() {
+        return Collections.emptyMap();
     }
 
     @Override

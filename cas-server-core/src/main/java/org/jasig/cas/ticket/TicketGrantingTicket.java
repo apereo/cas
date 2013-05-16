@@ -18,12 +18,11 @@
  */
 package org.jasig.cas.ticket;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.Pair;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main
@@ -60,11 +59,11 @@ public interface TicketGrantingTicket extends Ticket {
         ExpirationPolicy expirationPolicy, boolean credentialsProvided);
 
     /**
-     * Gets an immutable collection of services accessed by this ticket-granting ticket.
+     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
      *
-     * @return Immutable collection of accessed services.
+     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
-    Collection<Pair<String, Service>> getServices();
+    Map<String, Service> getServices();
 
     /**
      * Remove all services of the TGT (at logout).

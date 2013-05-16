@@ -19,8 +19,21 @@
 
 package org.jasig.cas;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -30,15 +43,10 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-
-import java.util.List;
-
-
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests with the help of Mockito framework.
@@ -65,8 +73,6 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
     @Before
     public void prepareNewCAS() {
-        this.cas = new CentralAuthenticationServiceImpl();
-
         final ServiceTicket stMock = mock(ServiceTicket.class);
         when(stMock.getId()).thenReturn("st-id");
         when(stMock.getService()).thenReturn(TestUtils.getService());
@@ -98,8 +104,9 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher("test1")))).thenReturn(mockRegSvc1);
         when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher("test")))).thenReturn(mockRegSvc2);
 
-        this.cas.setTicketRegistry(ticketRegMock);
-        this.cas.setServicesManager(smMock);
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
+                mock(UniqueTicketIdGenerator.class), mock(Map.class), mock(ExpirationPolicy.class),
+                mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
     }
 
     @Test(expected=InvalidTicketException.class)
