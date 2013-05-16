@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,27 +118,4 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             logger.error("{} threw error authenticating {}", handlerName, credentials, e);
         }
     }
-
-
-    protected static class Pair<A, B> {
-
-        private final A first;
-
-        private final B second;
-
-        public Pair(final A first, final B second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public A getFirst() {
-            return this.first;
-        }
-
-
-        public B getSecond() {
-            return this.second;
-        }
-    }
-
 }

@@ -29,6 +29,7 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 
 /**
  * Ensures that all authentication handlers are tried, but if one is tried,

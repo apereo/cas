@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 import org.springframework.util.Assert;
 
 /**
@@ -81,8 +82,8 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         return new Pair<AuthenticationHandler, Principal>(d.getAuthenticationHandler(), p);
     }
 
-    public void setCredentialsMapping(
-        final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
+    public void setCredentialsMapping(final Map<Class< ? extends Credentials>,
+            DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
 
