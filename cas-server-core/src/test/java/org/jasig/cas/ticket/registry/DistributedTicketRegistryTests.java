@@ -105,7 +105,7 @@ public class DistributedTicketRegistryTests {
         assertTrue(s2.isValidFor(TestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
 
-        returned.expire();
+        returned.markTicketExpired();
         assertTrue(t.isExpired());
     }
 
