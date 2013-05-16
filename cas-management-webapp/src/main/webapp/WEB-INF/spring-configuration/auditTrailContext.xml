@@ -22,8 +22,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
   <description>
   Configuration file for the Inspektr package which handles auditing for Java applications.
@@ -34,58 +38,38 @@
 
   <aop:aspectj-autoproxy/> 
 
-  <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect">
-    <!-- String applicationCode -->
-    <constructor-arg index="0" value="CAS_Management" />
-
-    <!-- PrincipalResolver auditablePrincipalResolver -->
-    <constructor-arg index="1" ref="auditablePrincipalResolver" />
+ <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect"
+    c:applicationCode="CAS_Management" c:auditablePrincipalResolver-ref="auditablePrincipalResolver" 
+    c:auditTrailManagers-ref="auditTrailManager" c:auditActionResolverMap-ref="auditActionResolverMap"
+    c:auditResourceResolverMap-ref="auditResourceResolverMap" />
     
-    <!-- List<AuditTrailManager> auditTrailManagers -->
-    <constructor-arg index="2">
-      <list>
-        <ref bean="auditTrailManager" />
-      </list>
-    </constructor-arg>
-
-    <!-- Map<String,AuditActionResolver> auditActionResolverMap -->
-    <constructor-arg index="3">
-      <map>
+    <util:map id="auditActionResolverMap">
         <entry key="DELETE_SERVICE_ACTION_RESOLVER">
             <ref local="deleteServiceActionResolver" />
         </entry>
         <entry key="SAVE_SERVICE_ACTION_RESOLVER">
           <ref local="saveServiceActionResolver" />
         </entry>
-      </map>
-    </constructor-arg>
-    
-    <!-- Map<String,AuditResourceResolver> auditResourceResolverMap -->
-    <constructor-arg index="4">
-      <map>
+    </util:map>
+  
+    <util:map id="auditResourceResolverMap">
         <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
             <ref local="deleteServiceResourceResolver" />
         </entry>
         <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
             <ref local="saveServiceResourceResolver" />
         </entry>
-      </map>
-    </constructor-arg>
-  </bean>
-
+    </util:map>
+   
     <bean id="saveServiceResourceResolver" class="com.github.inspektr.audit.spi.support.ParametersAsStringResourceResolver" />
 
     <bean id="deleteServiceResourceResolver" class="org.jasig.cas.audit.spi.ServiceManagementResourceResolver" />
 
-    <bean id="saveServiceActionResolver" class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
-        <constructor-arg index="0" value="_SUCCEEDED" />
-        <constructor-arg index="1" value="_FAILED" />
-    </bean>
+    <bean id="saveServiceActionResolver" class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver"
+          c:successSuffix="_SUCCESS" c:failureSuffix="_FAILED" />
 
-    <bean id="deleteServiceActionResolver" class="com.github.inspektr.audit.spi.support.ObjectCreationAuditActionResolver">
-        <constructor-arg index="0" value="_SUCCEEDED" />
-        <constructor-arg index="1" value="_FAILED" />
-    </bean>
+    <bean id="deleteServiceActionResolver" class="com.github.inspektr.audit.spi.support.ObjectCreationAuditActionResolver"
+          c:successSuffix="_SUCCESS" c:failureSuffix="_FAILED" />
 
-  <bean id="auditablePrincipalResolver" class="com.github.inspektr.audit.spi.support.SpringSecurityAuditablePrincipalResolver" />
+    <bean id="auditablePrincipalResolver" class="com.github.inspektr.audit.spi.support.SpringSecurityAuditablePrincipalResolver" />
 </beans>
