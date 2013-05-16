@@ -19,6 +19,7 @@
 package org.jasig.cas.adaptors.trusted.web.flow;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -32,6 +33,8 @@ import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -56,8 +59,6 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
 
-        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
@@ -69,12 +70,10 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(
                 new CredentialsToPrincipalResolver[] {new PrincipalBearingCredentialsToPrincipalResolver()}));
 
-        centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
-                new DefaultUniqueTicketIdGenerator());
-        centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
-        centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        centralAuthenticationService.setAuthenticationManager(authenticationManager);
+        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
+                new DefaultTicketRegistry(), null, authenticationManager, new DefaultUniqueTicketIdGenerator(),
+                idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
+                mock(ServicesManager.class), mock(LogoutManager.class));
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
     }

@@ -16,24 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.saml.web.support;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
-import org.jasig.cas.web.support.AbstractArgumentExtractor;
+package org.jasig.cas.authentication.principal;
 
 /**
- * Retrieve the ticket and artifact based on the SAML 1.1 profile.
+ * Define a service which support single logout.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Jerome Leleu
+ * @since 4.0.0
  */
-public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
+public interface SingleLogoutService extends WebApplicationService {
 
-    @Override
-    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SamlService.createServiceFrom(request);
-    }
+    /**
+     * Return if the service is already logged out.
+     *
+     * @return if the service is already logged out.
+     */
+    boolean isLoggedOutAlready();
+
+    /**
+     * Set if the service is already logged out.
+     *
+     * @param loggedOutAlready if the service is already logged out.
+     */
+    void setLoggedOutAlready(boolean loggedOutAlready);
 }

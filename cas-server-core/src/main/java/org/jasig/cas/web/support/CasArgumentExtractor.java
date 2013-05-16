@@ -24,15 +24,14 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 
 /**
- * Implements the traditional CAS2 protocol.  Accepts an HttpClient reference.  A default
- * one is configured that you can override.
+ * Implements the traditional CAS2 protocol.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class CasArgumentExtractor extends AbstractSingleSignOutEnabledArgumentExtractor {
+public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
     public final WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request, getHttpClientIfSingleSignOutEnabled());
+        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 }
