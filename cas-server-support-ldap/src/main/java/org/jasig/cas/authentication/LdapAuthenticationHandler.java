@@ -79,7 +79,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     /** Mapping of LDAP attribute name to principal attribute name. */
     @NotNull
-    private Map<String, String> principalAttributeMap = Collections.emptyMap();
+    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
@@ -176,7 +176,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         throw new FailedLoginException("LDAP authentication failed.");
     }
 
-    private void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
+    protected void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
         final AccountState state = response.getAccountState();
         if (state != null && state.getError() != null) {
             state.getError().throwSecurityException();
