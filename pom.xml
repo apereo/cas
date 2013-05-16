@@ -396,6 +396,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
           <header>${cs.dir}/src/licensing/header.txt</header>
+          <skipExistingHeaders>true</skipExistingHeaders>
           <strictCheck>true</strictCheck>
           <headerDefinitions>
             <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
@@ -418,6 +419,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/overlays/**</exclude>
             <exclude>src/licensing/**</exclude>
             <exclude>**/testCA/**</exclude>
+            <exclude>**/.idea/**</exclude>
+            <exclude>**/*.keystore</exclude>
+            <exclude>**/*.example</exclude>
+            <exclude>**/*.doc</exclude>
+            <exclude>**/*.jmx</exclude>
+            <exclude>**/checkstyle-*.xml</exclude>
           </excludes>
         </configuration>
         <executions>
