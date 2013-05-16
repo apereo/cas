@@ -33,7 +33,8 @@
     <!--Quartz -->
     <!-- TICKET REGISTRY CLEANER -->
     <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-        p:ticketRegistry-ref="ticketRegistry" />
+        p:ticketRegistry-ref="ticketRegistry"
+        p:logoutManager-ref="logoutManager"/>
 
     <bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
         p:targetObject-ref="ticketRegistryCleaner"
