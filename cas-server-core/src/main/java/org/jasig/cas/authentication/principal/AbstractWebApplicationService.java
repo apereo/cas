@@ -19,15 +19,9 @@
 package org.jasig.cas.authentication.principal;
 
 import java.util.Collections;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.SamlDateUtils;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +32,13 @@ import org.slf4j.LoggerFactory;
  * @since 3.1
  *
  */
-public abstract class AbstractWebApplicationService implements WebApplicationService {
+public abstract class AbstractWebApplicationService implements SingleLogoutService {
+
+    private static final long serialVersionUID = 610105280927740076L;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
-
-    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     /** The id of the service. */
     private final String id;
@@ -58,14 +52,11 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     private boolean loggedOutAlready = false;
 
-    private final HttpClient httpClient;
-
     protected AbstractWebApplicationService(final String id, final String originalUrl,
-            final String artifactId, final HttpClient httpClient) {
+            final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
-        this.httpClient = httpClient;
     }
 
     public final String toString() {
@@ -105,12 +96,14 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             + url.substring(questionMarkPosition);
     }
 
-    protected final String getOriginalUrl() {
+    /**
+     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
+     * Used to reconstruct the redirect url.
+     *
+     * @return the original url provided.
+     */
+    public final String getOriginalUrl() {
         return this.originalUrl;
-    }
-
-    protected final HttpClient getHttpClient() {
-        return this.httpClient;
     }
 
     public boolean equals(final Object object) {
@@ -147,27 +140,21 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return this.id.equals(service.getId());
     }
 
-    public synchronized boolean logOutOfService(final String sessionIdentifier) {
-        if (this.loggedOutAlready) {
-            return true;
-        }
+    /**
+     * Return if the service is already logged out.
+     *
+     * @return if the service is already logged out.
+     */
+    public boolean isLoggedOutAlready() {
+        return loggedOutAlready;
+    }
 
-        LOGGER.debug("Sending logout request for: {}", getId());
-
-        final Formatter fmt = new Formatter();
-        fmt.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s", GENERATOR.getNewTicketId("LR"))
-           .format("\" Version=\"2.0\" IssueInstant=\"%s", SamlDateUtils.getCurrentDateAndTime())
-           .format("\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>")
-           .format("%s</samlp:SessionIndex></samlp:LogoutRequest>", sessionIdentifier);
-
-        this.loggedOutAlready = true;
-        final String logoutRequest = fmt.toString();
-
-        IOUtils.closeQuietly(fmt);
-        if (this.httpClient != null) {
-            return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest, true);
-        }
-
-        return false;
+    /**
+     * Set if the service is already logged out.
+     *
+     * @param loggedOutAlready if the service is already logged out.
+     */
+    public final void setLoggedOutAlready(final boolean loggedOutAlready) {
+        this.loggedOutAlready = loggedOutAlready;
     }
 }
