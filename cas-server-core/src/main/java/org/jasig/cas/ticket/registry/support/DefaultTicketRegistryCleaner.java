@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
@@ -73,8 +74,12 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
-    private boolean logUserOutOfServices = true;
+    /** The logout manager. */
+    @NotNull
+    private LogoutManager logoutManager;
 
+    /** If the user must be logged out of the services. */
+    private boolean logUserOutOfServices = true;
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
@@ -101,7 +106,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
             for (final Ticket ticket : ticketsToRemove) {
                 // CAS-686: Expire TGT to trigger single sign-out
                 if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    ((TicketGrantingTicket) ticket).expire();
+                    logoutManager.performLogout((TicketGrantingTicket) ticket);
                 }
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
@@ -141,5 +146,14 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
         this.logUserOutOfServices = logUserOutOfServices;
+    }
+
+    /**
+     * Set the logout manager.
+     *
+     * @param logoutManager the logout manager.
+     */
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
     }
 }

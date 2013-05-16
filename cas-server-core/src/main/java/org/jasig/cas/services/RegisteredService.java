@@ -155,4 +155,11 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return An instance of an attribute filter for this service
      */
     RegisteredServiceAttributeFilter getAttributeFilter();
+
+    /**
+     * Returns the logout type of the service.
+     *
+     * @return the logout type of the service.
+     */
+    LogoutType getLogoutType();
 }
