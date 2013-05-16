@@ -121,7 +121,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
-        super(id, originalUrl, artifactId, null);
+        super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
@@ -168,14 +168,13 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
-     * {@inheritDoc}
-     * Service does not support Single Log Out.
+     * Return true if the service is already logged out.
      *
-     * @see org.jasig.cas.authentication.principal.WebApplicationService#logOutOfService(java.lang.String)
+     * @return true if the service is already logged out.
      */
     @Override
-    public boolean logOutOfService(final String sessionIdentifier) {
-        return false;
+    public boolean isLoggedOutAlready() {
+        return true;
     }
 
     private String constructSamlResponse() {

@@ -36,7 +36,7 @@ public class SamlServiceTests {
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request, null);
+        final SamlService impl = SamlService.createServiceFrom(request);
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -48,7 +48,7 @@ public class SamlServiceTests {
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "http://www.cnn.com/;jsession=test");
-        final SamlService impl = SamlService.createServiceFrom(request, null);
+        final SamlService impl = SamlService.createServiceFrom(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -57,7 +57,7 @@ public class SamlServiceTests {
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request, null);
+        final SamlService impl = SamlService.createServiceFrom(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -74,7 +74,7 @@ public class SamlServiceTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(body.getBytes());
 
-        final SamlService impl = SamlService.createServiceFrom(request, null);
+        final SamlService impl = SamlService.createServiceFrom(request);
         assertEquals("artifact", impl.getArtifactId());
         assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
     }
