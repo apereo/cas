@@ -26,6 +26,9 @@ $(document).ready(function(){
     //flash success box
     $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
     
+    //flash confirm box
+    $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+    
     if (!window.console || window.console == {}) {
         window.console.log = function() {};
     }
