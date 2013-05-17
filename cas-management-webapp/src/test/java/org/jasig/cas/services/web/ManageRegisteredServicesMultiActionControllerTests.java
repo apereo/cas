@@ -36,10 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public class ManageRegisteredServicesMultiActionControllerTests {
 
@@ -68,7 +66,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
+        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request,
+                new MockHttpServletResponse());
 
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
@@ -80,7 +79,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
+        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request,
+                new MockHttpServletResponse());
 
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));

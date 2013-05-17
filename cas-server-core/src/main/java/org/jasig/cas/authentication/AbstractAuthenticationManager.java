@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.3.5
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
@@ -48,11 +47,15 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<AuthenticationMetaDataPopulator>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Audit(
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
     @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
+    @Override
     public final Authentication authenticate(final Credentials credentials) throws AuthenticationException {
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);

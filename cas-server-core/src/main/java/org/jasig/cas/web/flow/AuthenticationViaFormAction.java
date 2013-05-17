@@ -62,6 +62,7 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
+    /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
