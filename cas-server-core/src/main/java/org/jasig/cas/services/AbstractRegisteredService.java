@@ -75,6 +75,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
 
+    /**
+     * The unique identifier for this service.
+     */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 

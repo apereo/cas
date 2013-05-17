@@ -52,7 +52,6 @@ import org.springframework.web.servlet.DispatcherServlet;
  * attribute under the key "exceptionCaughtByServlet".
  *
  * @author Andrew Petro
-
  * @see DispatcherServlet
  */
 public final class SafeDispatcherServlet extends HttpServlet {
@@ -94,10 +93,6 @@ public final class SafeDispatcherServlet extends HttpServlet {
 
             // log it via Commons Logging
             LOGGER.error(message, t);
-
-            // log it to System.err
-            System.err.println(message);
-            t.printStackTrace();
 
             // log it to the ServletContext
             ServletContext context = config.getServletContext();
