@@ -71,7 +71,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
         try {
             Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             fail(e.getMessage());
         }
     }

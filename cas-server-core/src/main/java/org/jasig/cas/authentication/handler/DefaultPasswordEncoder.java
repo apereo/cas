@@ -90,7 +90,7 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         return buf.toString();
     }
 
-    public final void setCharacterEncoding(final String characterEncoding) {
+    public void setCharacterEncoding(final String characterEncoding) {
         this.characterEncoding = characterEncoding;
     }
 }

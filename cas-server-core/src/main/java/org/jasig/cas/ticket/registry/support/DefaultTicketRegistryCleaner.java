@@ -64,7 +64,7 @@ import javax.validation.constraints.NotNull;
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /** The Commons Logging instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The instance of the TicketRegistry to clean. */
     @NotNull
@@ -85,13 +85,13 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
     public void clean() {
-        log.info("Beginning ticket cleanup.");
-        log.debug("Attempting to acquire ticket cleanup lock.");
+        logger.info("Beginning ticket cleanup.");
+        logger.debug("Attempting to acquire ticket cleanup lock.");
         if (!this.lock.acquire()) {
-            log.info("Could not obtain lock.  Aborting cleanup.");
+            logger.info("Could not obtain lock.  Aborting cleanup.");
             return;
         }
-        log.debug("Acquired lock.  Proceeding with cleanup.");
+        logger.debug("Acquired lock.  Proceeding with cleanup.");
         try {
             final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
             final Collection<Ticket> ticketsInCache;
@@ -102,7 +102,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            log.info("{} tickets found to be removed.", ticketsToRemove.size());
+            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
             for (final Ticket ticket : ticketsToRemove) {
                 // CAS-686: Expire TGT to trigger single sign-out
                 if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
@@ -111,11 +111,11 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         } finally {
-            log.debug("Releasing ticket cleanup lock.");
+            logger.debug("Releasing ticket cleanup lock.");
             this.lock.release();
         }
 
-        log.info("Finished ticket cleanup.");
+        logger.info("Finished ticket cleanup.");
     }
 
 

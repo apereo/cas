@@ -55,6 +55,7 @@ public final class RegisteredServiceValidator implements Validator {
     private IPersonAttributeDao personAttributeDao;
 
     /**
+     * {@inheritDoc}
      * Supports {@link RegisteredService} objects.
      *
      * @see org.springframework.validation.Validator#supports(java.lang.Class)

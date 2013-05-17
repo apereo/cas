@@ -100,7 +100,8 @@ public class InitialFlowSetupActionTests {
     @Test
     public void testNoServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
+                new MockHttpServletResponse()));
 
         final Event event = this.action.execute(context);
 

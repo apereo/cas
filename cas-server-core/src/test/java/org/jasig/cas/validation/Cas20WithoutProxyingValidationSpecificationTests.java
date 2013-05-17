@@ -55,7 +55,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void testDoesNotSatisfiesSpecOfFalse() {
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] { "test2" })));
+        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
     }
 
     @Test

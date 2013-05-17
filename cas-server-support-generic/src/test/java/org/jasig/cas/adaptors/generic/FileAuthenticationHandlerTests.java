@@ -53,9 +53,9 @@ public class FileAuthenticationHandlerTests {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
+        } catch (final UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -65,7 +65,7 @@ public class FileAuthenticationHandlerTests {
         try {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
             assertFalse(this.authenticationHandler.supports(c));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");
         }
     }
@@ -79,7 +79,7 @@ public class FileAuthenticationHandlerTests {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
@@ -134,7 +134,7 @@ public class FileAuthenticationHandlerTests {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }

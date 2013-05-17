@@ -47,11 +47,13 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getName() {
         return HealthCheckMonitor.class.getSimpleName();
     }
 
     /** {@inheritDoc} */
+    @Override
     public HealthStatus observe() {
         final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());
         StatusCode code = StatusCode.UNKNOWN;

@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class TerminateWebSessionListener extends FlowExecutionListenerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(TerminateWebSessionListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TerminateWebSessionListener.class);
 
     @Min(0)
     private int timeToDieInSeconds = 2;
@@ -54,7 +54,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
         final HttpSession webSession = request.getSession(false);
 
         if (webSession != null) {
-            log.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
+            LOGGER.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
             // set the web session to die in timeToDieInSeconds
             webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
         }

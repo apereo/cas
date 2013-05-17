@@ -83,6 +83,7 @@ final int serviceTicketTimeOut) {
      * @param serviceTicketTimeOut ST timeout in milliseconds.
      * @param hostnames  Array of memcached hosts where each element is of the form host:port.
      * @see MemCacheTicketRegistry#MemCacheTicketRegistry(String[], int, int)
+     * @deprecated This has been deprecated
      */
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
@@ -106,37 +107,39 @@ final int serviceTicketTimeOut) {
     }
 
     protected void updateTicket(final Ticket ticket) {
-        log.debug("Updating ticket {}", ticket);
+        logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                log.error("Failed updating {}", ticket);
+                logger.error("Failed updating {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async replace operation for ticket {}. Cannot determine whether update was successful.", ticket);
+            logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
+                        + "Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
-            log.error("Failed updating {}", ticket, e);
+            logger.error("Failed updating {}", ticket, e);
         }
     }
 
     public void addTicket(final Ticket ticket) {
-        log.debug("Adding ticket {}", ticket);
+        logger.debug("Adding ticket {}", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                log.error("Failed adding {}", ticket);
+                logger.error("Failed adding {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async add operation for ticket {}. Cannot determine whether add was successful.", ticket);
+            logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
+                    + "Cannot determine whether add was successful.", ticket);
         } catch (final Exception e) {
-            log.error("Failed adding {}", ticket, e);
+            logger.error("Failed adding {}", ticket, e);
         }
     }
 
     public boolean deleteTicket(final String ticketId) {
-        log.debug("Deleting ticket {}", ticketId);
+        logger.debug("Deleting ticket {}", ticketId);
         try {
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
-            log.error("Failed deleting {}", ticketId, e);
+            logger.error("Failed deleting {}", ticketId, e);
         }
         return false;
     }
@@ -148,16 +151,18 @@ final int serviceTicketTimeOut) {
                 return getProxiedTicketInstance(t);
             }
         } catch (final Exception e) {
-            log.error("Failed fetching {} ", ticketId, e);
+            logger.error("Failed fetching {} ", ticketId, e);
         }
         return null;
     }
 
     /**
+     * {@inheritDoc}
      * This operation is not supported.
      *
      * @throws UnsupportedOperationException if you try and call this operation.
      */
+    @Override
     public Collection<Ticket> getTickets() {
         throw new UnsupportedOperationException("GetTickets not supported.");
     }
@@ -167,10 +172,11 @@ final int serviceTicketTimeOut) {
     }
 
     /**
-     * As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
+     * @param sync set to true, if updates to registry are to be synchronized
+     * @deprecated As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
      */
     @Deprecated
-    public void setSynchronizeUpdatesToRegistry(final boolean b) { /* NOOP */ }
+    public void setSynchronizeUpdatesToRegistry(final boolean sync) {}
 
     @Override
     protected boolean needsCallback() {

@@ -69,7 +69,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
          Thread.sleep(SLIDING_TIMEOUT / 2 + 100);
          assertTrue(ticketGrantingTicket.isExpired());
 
-     } catch (InterruptedException e) {
+     } catch (final InterruptedException e) {
          throw e;
      }
     }
@@ -89,7 +89,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
             Thread.sleep(SLIDING_TIMEOUT + 100);
             assertTrue(ticketGrantingTicket.isExpired());
 
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw e;
         }
     }

@@ -43,7 +43,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     /** Map instance where credentials are stored. */
     @NotNull
-    private final Map<String,String> cache;
+    private final Map<String, String> cache;
 
     /**
      * Constructs an instance of the decorator wrapping the real ticket registry instance inside.
@@ -65,7 +65,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
             final String ticketId = ticketGrantingTicket.getId();
             final String userName = ticketGrantingTicket.getAuthentication().getPrincipal().getId();
 
-            log.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
+            logger.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
 
             this.cache.put(ticketId, userName);
         }
@@ -83,7 +83,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         final String userName = this.cache.get(ticketId);
 
         if (userName != null) {
-            log.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
+            logger.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
             this.cache.remove(userName);
         }
 
@@ -100,7 +100,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).sessionCount();
         }
-        log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.",
+        logger.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.sessionCount();
     }
@@ -110,7 +110,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).serviceTicketCount();
         }
-        log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.",
+        logger.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.serviceTicketCount();
     }

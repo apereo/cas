@@ -27,8 +27,7 @@ package org.jasig.cas.validation;
 
  * @since 3.0
  */
-public abstract class AbstractCasProtocolValidationSpecification implements
-    ValidationSpecification {
+public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
 
     /** The default value for the renew attribute is false. */
     private static final boolean DEFAULT_RENEW = false;
@@ -70,6 +69,8 @@ public abstract class AbstractCasProtocolValidationSpecification implements
     /**
      * Template method to allow for additional checks by subclassed methods
      * without needing to call super.isSatisfiedBy(...).
+     * @param assertion the assertion
+     * @return true, if the subclass implementation is satisfied by the assertion
      */
     protected abstract boolean isSatisfiedByInternal(final Assertion assertion);
 }

@@ -71,7 +71,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
     /** Instance of Logging. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The compiled pattern supplied by the deployer. */
     @NotNull
@@ -127,7 +127,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         for (int i = certificates.length - 1; i >= 0; i--) {
             final X509Certificate certificate = certificates[i];
             try {
-                log.debug("Evaluating {}", CertUtils.toString(certificate));
+                logger.debug("Evaluating {}", CertUtils.toString(certificate));
 
                 validate(certificate);
 
@@ -139,22 +139,22 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                 // >=0 when this is a CA cert and -1 when it's not
                 int pathLength = certificate.getBasicConstraints();
                 if (pathLength < 0) {
-                    log.debug("Found valid client certificate");
+                    logger.debug("Found valid client certificate");
                     clientCert = certificate;
                 } else {
-                    log.debug("Found valid CA certificate");
+                    logger.debug("Found valid CA certificate");
                 }
             } catch (final GeneralSecurityException e) {
-                log.warn("Failed to validate {}", CertUtils.toString(certificate), e);
+                logger.warn("Failed to validate {}", CertUtils.toString(certificate), e);
                 valid = false;
             }
         }
         if (valid && hasTrustedIssuer && clientCert != null) {
             x509Credentials.setCertificate(clientCert);
-            log.info("Successfully authenticated {}", credentials);
+            logger.info("Successfully authenticated {}", credentials);
             return true;
         }
-        log.info("Failed to authenticate {}", credentials);
+        logger.info("Failed to authenticate {}", credentials);
         return false;
     }
 
@@ -222,7 +222,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             }
         } else {
             // Check pathLength for CA cert
-            if (pathLength == Integer.MAX_VALUE && this.maxPathLengthAllowUnspecified != true) {
+            if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
                 throw new GeneralSecurityException("Unlimited certificate path length not allowed by configuration.");
             } else if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
                 throw new GeneralSecurityException(String.format(
@@ -232,7 +232,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     private boolean isValidKeyUsage(final X509Certificate certificate) {
-        log.debug("Checking certificate keyUsage extension");
+        logger.debug("Checking certificate keyUsage extension");
 
         /*
          * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
@@ -241,16 +241,16 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
          */
         final boolean[] keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
-            log.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
+            logger.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
             return !this.requireKeyUsage;
         }
 
         final boolean valid;
         if (isCritical(certificate, KEY_USAGE_OID) || this.requireKeyUsage) {
-            log.debug("KeyUsage extension is marked critical or required by configuration.");
+            logger.debug("KeyUsage extension is marked critical or required by configuration.");
             valid = keyUsage[0];
         } else {
-            log.debug(
+            logger.debug(
                "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
             valid = true;
         }
@@ -279,7 +279,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             final Pattern pattern) {
         final String name = principal.getName();
         final boolean result = pattern.matcher(name).matches();
-        log.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
+        logger.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
         return result;
     }
 }

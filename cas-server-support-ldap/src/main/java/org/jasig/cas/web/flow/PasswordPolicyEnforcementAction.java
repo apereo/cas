@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class PasswordPolicyEnforcementAction extends AbstractAction implements InitializingBean {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private PasswordPolicyEnforcer passwordPolicyEnforcer;
 
@@ -84,7 +84,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             final String code = e.getCode();
             reqCtx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
         } catch (final Exception fe) {
-            log.error(fe.getMessage(), fe);
+            logger.error(fe.getMessage(), fe);
         }
     }
 
@@ -95,7 +95,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        log.debug("Checking account status for password...");
+        logger.debug("Checking account status for password...");
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
         final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)
@@ -108,35 +108,35 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
         try {
             if (userId == null && ticket == null) {
                 msgToLog = "No user principal or service ticket available.";
-                log.error(msgToLog);
+                logger.error(msgToLog);
                 throw new LdapPasswordPolicyEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
             }
 
             if (userId == null && ticket != null) {
                 returnedEvent = success();
-                log.debug("Received service ticket {} but no user id. Skipping password enforcement.", ticket);
+                logger.debug("Received service ticket {} but no user id. Skipping password enforcement.", ticket);
             } else {
-                log.debug("Retrieving number of days to password expiration date for user {}", userId);
+                logger.debug("Retrieving number of days to password expiration date for user {}", userId);
 
                 final long daysToExpirationDate = getPasswordPolicyEnforcer()
                                                   .getNumberOfDaysToPasswordExpirationDate(userId);
 
                 if (daysToExpirationDate == -1) {
                     returnedEvent = success();
-                    log.debug("Password for {} is not expiring", userId);
+                    logger.debug("Password for {} is not expiring", userId);
                 } else {
                     returnedEvent = warning();
-                    log.debug("Password for {} is expiring in {} days", userId, daysToExpirationDate);
+                    logger.debug("Password for {} is expiring in {} days", userId, daysToExpirationDate);
                     context.getFlowScope().put("expireDays", daysToExpirationDate);
                     context.getFlowScope().put("redirectTimeout", this.redirectTimeout);
                 }
             }
         } catch (final LdapAuthenticationException e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
-            log.debug("Switching to flow event id {} for user {}", returnedEvent.getId(), userId);
+            logger.debug("Switching to flow event id {} for user {}", returnedEvent.getId(), userId);
         }
 
         return returnedEvent;
@@ -145,7 +145,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     @Override
     protected void initAction() throws Exception {
         Assert.notNull(getPasswordPolicyEnforcer(), "password policy enforcer cannot be null");
-        log.debug("Initialized the action with password policy enforcer {}",
+        logger.debug("Initialized the action with password policy enforcer {}",
                 getPasswordPolicyEnforcer().getClass().getName());
     }
 }

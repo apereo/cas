@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class JaasAuthenticationHandlerTests {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JaasAuthenticationHandler handler;
 
@@ -38,7 +38,7 @@ public class JaasAuthenticationHandlerTests {
         String pathPrefix = System.getProperty("user.dir");
         pathPrefix = !pathPrefix.contains("cas-server-core") ? pathPrefix
             + "/cas-server-core" : pathPrefix;
-        log.info("PATH PREFIX: {}", pathPrefix);
+        logger.info("PATH PREFIX: {}", pathPrefix);
 
         final String pathToConfig = pathPrefix
             + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
