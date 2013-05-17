@@ -53,6 +53,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private Map<Pattern, String> overrides = new HashMap<Pattern, String>();
 
+    @Override
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.servicesManager == null) {
             return getDefaultThemeName();
@@ -81,6 +82,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
                 ? rService.getTheme() : getDefaultThemeName();
     }
 
+    @Override
     public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
         // nothing to do here
     }

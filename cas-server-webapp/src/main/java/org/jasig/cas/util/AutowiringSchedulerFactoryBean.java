@@ -46,6 +46,7 @@ public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean i
 
     private ApplicationContext applicationContext;
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         final Map<String, Trigger> triggers = this.applicationContext.getBeansOfType(Trigger.class);
         super.setTriggers(triggers.values().toArray(new Trigger[triggers.size()]));
@@ -54,6 +55,7 @@ public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean i
         super.afterPropertiesSet();
     }
 
+    @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
         this.applicationContext = applicationContext;
