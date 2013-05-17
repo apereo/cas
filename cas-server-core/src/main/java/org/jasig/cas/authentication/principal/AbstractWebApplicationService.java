@@ -39,7 +39,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
-
     /** The id of the service. */
     private final String id;
 
