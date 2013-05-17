@@ -44,8 +44,6 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
 
     private final ResponseType responseType;
 
-    private boolean loggedOutAlready = false;
-
     private static final long serialVersionUID = 8334068957483758042L;
 
     public SimpleWebApplicationServiceImpl(final String id) {

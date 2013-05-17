@@ -30,6 +30,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
  * @author Marvin S. Addison
  */
 public final class SimpleWebApplicationServiceSerializer extends SimpleSerializer<SimpleWebApplicationServiceImpl> {
+    /** Kyro instance. **/
     protected final Kryo kryo;
 
     public SimpleWebApplicationServiceSerializer(final Kryo kryo) {

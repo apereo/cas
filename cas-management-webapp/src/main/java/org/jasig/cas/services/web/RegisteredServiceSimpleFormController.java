@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.services.web;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -148,12 +147,10 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
 
     /**
      * {@inheritDoc}
-     * Returns the attributes, page title, and command name.
-     *
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    protected Map referenceData(final HttpServletRequest request) throws Exception {
+    protected Map<?, ?> referenceData(final HttpServletRequest request) throws Exception {
 
         final Map<String, Object> model = new HashMap<String, Object>();
 

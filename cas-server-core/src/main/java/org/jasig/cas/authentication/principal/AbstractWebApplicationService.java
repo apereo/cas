@@ -30,12 +30,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public abstract class AbstractWebApplicationService implements SingleLogoutService {
 
     private static final long serialVersionUID = 610105280927740076L;
 
+    /** Logger instance. **/
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
