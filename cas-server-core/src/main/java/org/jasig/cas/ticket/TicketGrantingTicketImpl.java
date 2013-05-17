@@ -50,7 +50,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
     /** The authenticated object for which this ticket was generated for. */
     @Lob
     @Column(name="AUTHENTICATION", nullable=false)
