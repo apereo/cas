@@ -54,7 +54,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     protected EntityManager entityManager;
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Application identifier that identifies rows in the locking table,
@@ -108,13 +108,14 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 
     /** {@inheritDoc} */
+    @Override
     @Transactional(readOnly = false)
     public boolean acquire() {
         Lock lock;
         try {
             lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
-        } catch (PersistenceException e) {
-            log.debug("{} failed querying for {} lock.", new Object[] {uniqueId, applicationId, e});
+        } catch (final PersistenceException e) {
+            logger.debug("{} failed querying for {} lock.", new Object[] {uniqueId, applicationId, e});
             return false;
         }
 
@@ -123,16 +124,16 @@ public class JpaLockingStrategy implements LockingStrategy {
             final Date expDate = lock.getExpirationDate();
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
-                log.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
+                logger.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
             } else if (expDate != null && new Date().after(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
-                log.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
+                logger.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
             }
         } else {
             // First acquisition attempt for this applicationId
-            log.debug("Creating {} lock initially held by {}.", applicationId, uniqueId);
+            logger.debug("Creating {} lock initially held by {}.", applicationId, uniqueId);
             result = acquire(entityManager, new Lock());
         }
         return result;
@@ -140,6 +141,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 
     /** {@inheritDoc} */
+    @Override
     @Transactional(readOnly = false)
     public void release() {
         final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
@@ -152,7 +154,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         if (uniqueId.equals(owner)) {
             lock.setUniqueId(null);
             lock.setExpirationDate(null);
-            log.debug("Releasing {} lock held by {}.", applicationId, uniqueId);
+            logger.debug("Releasing {} lock held by {}.", applicationId, uniqueId);
             entityManager.persist(lock);
         } else {
             throw new IllegalStateException("Cannot release lock owned by " + owner);
@@ -202,10 +204,10 @@ public class JpaLockingStrategy implements LockingStrategy {
             success = true;
         } catch (final PersistenceException e) {
             success = false;
-            if (log.isDebugEnabled()) {
-                log.debug("{} could not obtain {} lock.", new Object[] {uniqueId, applicationId, e});
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} could not obtain {} lock.", new Object[] {uniqueId, applicationId, e});
             } else {
-                log.info("{} could not obtain {} lock.", uniqueId, applicationId);
+                logger.info("{} could not obtain {} lock.", uniqueId, applicationId);
             }
         }
         return success;

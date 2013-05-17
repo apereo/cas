@@ -42,12 +42,12 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
         try {
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
             final String bindDn = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-            log.debug("Performing LDAP bind with credential: {}", bindDn);
+            logger.debug("Performing LDAP bind with credential: {}", bindDn);
             dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder()
                     .encode(credentials.getPassword()));
             return true;
         } catch (final NamingException e) {
-            log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
+            logger.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
             throw handleLdapError(e);
         } finally {
             if (dirContext != null) {

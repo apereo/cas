@@ -33,11 +33,11 @@ public final class ServiceResourceResolver implements AuditResourceResolver {
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        return new String[] { retval.toString() + " for " + service.getId() };
+        return new String[] {retval.toString() + " for " + service.getId()};
     }
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception ex) {
         final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        return new String[] { service.getId() };
+        return new String[] {service.getId()};
     }
 }

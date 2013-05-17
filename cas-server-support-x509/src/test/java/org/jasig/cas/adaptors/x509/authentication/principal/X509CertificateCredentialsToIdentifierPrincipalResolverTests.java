@@ -97,7 +97,7 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
         try {
             cf = CertificateFactory.getInstance("X.509");
             cert = (X509Certificate) cf.generateCertificate(in);
-        } catch (CertificateException e) {
+        } catch (final CertificateException e) {
             e.printStackTrace();
             fail("Error creating test certificate");
         }

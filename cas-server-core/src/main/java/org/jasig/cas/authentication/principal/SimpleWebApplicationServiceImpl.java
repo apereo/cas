@@ -32,8 +32,7 @@ import org.springframework.util.StringUtils;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class SimpleWebApplicationServiceImpl extends
-    AbstractWebApplicationService {
+public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final String CONST_PARAM_SERVICE = "service";
 

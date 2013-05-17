@@ -61,12 +61,14 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the Ticket is null.
      */
+    @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
 
-        log.debug("Added ticket [{}] to registry.", ticket.getId());
+        logger.debug("Added ticket [{}] to registry.", ticket.getId());
         this.cache.put(ticket.getId(), ticket);
     }
 
@@ -75,11 +77,11 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
             return null;
         }
 
-        log.debug("Attempting to retrieve ticket [{}]", ticketId);
+        logger.debug("Attempting to retrieve ticket [{}]", ticketId);
         final Ticket ticket = this.cache.get(ticketId);
 
         if (ticket != null) {
-            log.debug("Ticket [{}] found in registry.", ticketId);
+            logger.debug("Ticket [{}] found in registry.", ticketId);
         }
 
         return ticket;
@@ -89,7 +91,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         if (ticketId == null) {
             return false;
         }
-        log.debug("Removing ticket [{}] from registry", ticketId);
+        logger.debug("Removing ticket [{}] from registry", ticketId);
         return (this.cache.remove(ticketId) != null);
     }
 

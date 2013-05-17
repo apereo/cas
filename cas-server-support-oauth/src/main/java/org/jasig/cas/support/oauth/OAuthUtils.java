@@ -44,14 +44,16 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public final class OAuthUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(OAuthUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
+
+    private OAuthUtils() {}
 
     /**
-     * Write to the ouput this error text and return a null view.
+     * Write to the output this error text and return a null view.
      *
-     * @param response
-     * @param error
-     * @param status
+     * @param response http response
+     * @param error error message
+     * @param status status code
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error, final int status) {
@@ -61,9 +63,9 @@ public final class OAuthUtils {
     /**
      * Write to the output the text and return a null view.
      *
-     * @param response
-     * @param text
-     * @param status
+     * @param response http response
+     * @param text output text
+     * @param status status code
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
@@ -73,7 +75,7 @@ public final class OAuthUtils {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
-            log.error("Failed to write to response", e);
+            LOGGER.error("Failed to write to response", e);
         }
         return null;
     }
@@ -81,8 +83,8 @@ public final class OAuthUtils {
     /**
      * Return a view which is a redirection to an url with an error parameter.
      *
-     * @param url
-     * @param error
+     * @param url redirect url
+     * @param error error message
      * @return A view which is a redirection to an url with an error parameter
      */
     public static ModelAndView redirectToError(final String url, final String error) {
@@ -96,7 +98,7 @@ public final class OAuthUtils {
     /**
      * Return a view which is a redirection to an url.
      *
-     * @param url
+     * @param url redirect url
      * @return A view which is a redirection to an url
      */
     public static ModelAndView redirectTo(final String url) {
@@ -106,9 +108,9 @@ public final class OAuthUtils {
     /**
      * Add a parameter with given name and value to an url.
      *
-     * @param url
-     * @param name
-     * @param value
+     * @param url url to which parameters will be added
+     * @param name name of parameter
+     * @param value parameter value
      * @return the url with the parameter
      */
     public static String addParameter(final String url, final String name, final String value) {

@@ -59,7 +59,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
         try {
             Thread.sleep(TIMEOUT + 100);
             assertTrue(this.ticket.isExpired());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             fail(e.getMessage());
         }
     }
@@ -70,7 +70,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
             Thread.sleep(TIMEOUT -100);
             assertFalse(this.ticket.isExpired());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             fail(e.getMessage());
         }
     }

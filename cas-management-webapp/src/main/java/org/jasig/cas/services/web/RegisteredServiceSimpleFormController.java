@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.services.web;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,6 +64,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
+     * {@inheritDoc}
      * Sets the require fields and the disallowed fields from the
      * HttpServletRequest.
      *
@@ -72,7 +72,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * org.springframework.web.bind.ServletRequestDataBinder)
      */
     @Override
-    protected final void initBinder(final HttpServletRequest request,
+    protected void initBinder(final HttpServletRequest request,
             final ServletRequestDataBinder binder) throws Exception {
         binder.setRequiredFields(new String[] {"description", "serviceId",
                 "name", "allowedToProxy", "enabled", "ssoEnabled",
@@ -82,6 +82,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
+     * {@inheritDoc}
      * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
      *
      * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest,
@@ -89,7 +90,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * org.springframework.validation.BindException)
      */
     @Override
-    protected final ModelAndView onSubmit(final HttpServletRequest request,
+    protected ModelAndView onSubmit(final HttpServletRequest request,
             final HttpServletResponse response, final Object command,
             final BindException errors) throws Exception {
         RegisteredService service = (RegisteredService) command;
@@ -145,12 +146,11 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     }
 
     /**
-     * Returns the attributes, page title, and command name.
-     *
+     * {@inheritDoc}
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    protected final Map referenceData(final HttpServletRequest request) throws Exception {
+    protected Map<?, ?> referenceData(final HttpServletRequest request) throws Exception {
 
         final Map<String, Object> model = new HashMap<String, Object>();
 

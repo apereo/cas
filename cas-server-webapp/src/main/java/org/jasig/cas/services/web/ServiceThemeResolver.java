@@ -51,8 +51,9 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private List<ArgumentExtractor> argumentExtractors;
 
-    private Map<Pattern,String> overrides = new HashMap<Pattern,String>();
+    private Map<Pattern, String> overrides = new HashMap<Pattern, String>();
 
+    @Override
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.servicesManager == null) {
             return getDefaultThemeName();
@@ -69,17 +70,19 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
 
-        for (final Map.Entry<Pattern,String> entry : this.overrides.entrySet()) {
+        for (final Map.Entry<Pattern, String> entry : this.overrides.entrySet()) {
             if (entry.getKey().matcher(userAgent).matches()) {
-                request.setAttribute("isMobile","true");
+                request.setAttribute("isMobile", "true");
                 request.setAttribute("browserType", entry.getValue());
                 break;
             }
         }
 
-        return service != null && rService != null && StringUtils.hasText(rService.getTheme()) ? rService.getTheme() : getDefaultThemeName();
+        return service != null && rService != null && StringUtils.hasText(rService.getTheme())
+                ? rService.getTheme() : getDefaultThemeName();
     }
 
+    @Override
     public void setThemeName(final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
         // nothing to do here
     }
@@ -100,11 +103,11 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      *
      * @param mobileOverrides the list of mobile browsers.
      */
-    public void setMobileBrowsers(final Map<String,String> mobileOverrides) {
+    public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
         // initialize the overrides variable to an empty map
-        this.overrides = new HashMap<Pattern,String>();
+        this.overrides = new HashMap<Pattern, String>();
 
-        for (final Map.Entry<String,String> entry : mobileOverrides.entrySet()) {
+        for (final Map.Entry<String, String> entry : mobileOverrides.entrySet()) {
             this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
         }
     }

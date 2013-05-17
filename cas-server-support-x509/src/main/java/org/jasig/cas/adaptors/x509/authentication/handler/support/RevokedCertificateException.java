@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RevokedCertificateException extends GeneralSecurityException {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long serialVersionUID = 8827788431199129708L;
 
@@ -93,7 +93,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
                     this.reason = Reason.fromCode(code);
                 }
             } catch (final Exception e) {
-                log.trace("An exception occurred when resolving extension value: {}", e.getMessage());
+                logger.trace("An exception occurred when resolving extension value: {}", e.getMessage());
             }
         }
     }

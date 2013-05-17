@@ -27,13 +27,13 @@ import org.springframework.context.ApplicationContextAware;
  * holds the application context.
  */
 public class ApplicationContextProvider implements ApplicationContextAware {
-    private static ApplicationContext context = null;
+    private static ApplicationContext CONTEXT = null;
 
     public static ApplicationContext getApplicationContext() {
-        return context;
+        return CONTEXT;
     }
 
     public void setApplicationContext(final ApplicationContext ctx) {
-        this.context = ctx;
+        CONTEXT = ctx;
     }
 }

@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public abstract class AbstractRegistryCleanerTests {

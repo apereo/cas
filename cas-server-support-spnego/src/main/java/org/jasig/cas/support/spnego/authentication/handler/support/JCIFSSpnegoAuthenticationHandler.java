@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public final class JCIFSSpnegoAuthenticationHandler extends
         AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Authentication authentication;
 
@@ -71,34 +71,33 @@ public final class JCIFSSpnegoAuthenticationHandler extends
                 principal = this.authentication.getPrincipal();
                 nextToken = this.authentication.getNextToken();
             }
-        } catch (jcifs.spnego.AuthenticationException e) {
+        } catch (final jcifs.spnego.AuthenticationException e) {
             throw new BadCredentialsAuthenticationException(e);
         }
         // evaluate jcifs response
         if (nextToken != null) {
-            log.debug("Setting nextToken in credentials");
+            logger.debug("Setting nextToken in credentials");
             spnegoCredentials.setNextToken(nextToken);
         } else {
-            log.debug("nextToken is null");
+            logger.debug("nextToken is null");
         }
 
         if (principal != null) {
             if (spnegoCredentials.isNtlm()) {
-                log.debug("NTLM Credentials is valid for user [{}]", principal.getName());
+                logger.debug("NTLM Credentials is valid for user [{}]", principal.getName());
                 spnegoCredentials.setPrincipal(getSimplePrincipal(principal
                         .getName(), true));
                 return this.isNTLMallowed;
             }
             // else => kerberos
-            log.debug("Kerberos Credentials is valid for user [{}]", principal.getName());
+            logger.debug("Kerberos Credentials is valid for user [{}]", principal.getName());
             spnegoCredentials.setPrincipal(getSimplePrincipal(principal
                     .getName(), false));
             return true;
 
         }
 
-        log
-        .debug("Principal is null, the processing of the SPNEGO Token failed");
+        logger.debug("Principal is null, the processing of the SPNEGO Token failed");
         return false;
     }
 

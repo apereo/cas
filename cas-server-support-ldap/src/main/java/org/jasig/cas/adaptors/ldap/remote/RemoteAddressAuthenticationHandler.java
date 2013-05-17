@@ -40,7 +40,7 @@ import javax.validation.constraints.NotNull;
 public final class RemoteAddressAuthenticationHandler implements
 AuthenticationHandler {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The network netmask. */
     @NotNull
@@ -82,7 +82,7 @@ AuthenticationHandler {
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
-        log.debug("Checking IP address: {} in ", ip, network, netmask);
+        logger.debug("Checking IP address: {} in ", ip, network, netmask);
 
         byte[] networkBytes = network.getAddress();
         byte[] netmaskBytes = netmask.getAddress();
@@ -91,7 +91,7 @@ AuthenticationHandler {
         /* check IPv4/v6-compatibility or parameters: */
         if(networkBytes.length != netmaskBytes.length
                 || netmaskBytes.length != ipBytes.length) {
-            log.debug("Network address {}, subnet mask {} and/or host address {}"
+            logger.debug("Network address {}, subnet mask {} and/or host address {}"
                     + " have different sizes! (return false ...)", network, netmask, ip);
             return false;
         }
@@ -100,11 +100,11 @@ AuthenticationHandler {
         for(int i=0; i<netmaskBytes.length; i++) {
             int mask = netmaskBytes[i] & 0xff;
             if((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
-                log.debug("{} is not in {}/{}", ip, network, netmask);
+                logger.debug("{} is not in {}/{}", ip, network, netmask);
                 return false;
             }
         }
-        log.debug("{} is in {}/{}", ip, network, netmask);
+        logger.debug("{} is in {}/{}", ip, network, netmask);
         return true;
     }
 
@@ -124,16 +124,16 @@ AuthenticationHandler {
 
                 try {
                     this.inetNetwork = InetAddress.getByName(network);
-                    log.debug("InetAddress network: {}", this.inetNetwork.toString());
+                    logger.debug("InetAddress network: {}", this.inetNetwork.toString());
                 } catch (final UnknownHostException e) {
-                    log.error("The network address was not valid: {}", e.getMessage());
+                    logger.error("The network address was not valid: {}", e.getMessage());
                 }
 
                 try {
                     this.inetNetmask = InetAddress.getByName(netmask);
-                    log.debug("InetAddress netmask: {}", this.inetNetmask.toString());
+                    logger.debug("InetAddress netmask: {}", this.inetNetmask.toString());
                 } catch (final UnknownHostException e) {
-                    log.error("The network netmask was not valid: {}", e.getMessage());
+                    logger.error("The network netmask was not valid: {}", e.getMessage());
                 }
             }
         }

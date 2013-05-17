@@ -65,7 +65,7 @@ public class TimeoutExpirationPolicyTests {
             Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
             // accurate??
             assertTrue(this.ticket.isExpired());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             fail(e.getMessage());
         }
     }

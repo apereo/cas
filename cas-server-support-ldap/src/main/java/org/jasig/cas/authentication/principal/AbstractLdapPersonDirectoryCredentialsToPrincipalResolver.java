@@ -67,7 +67,7 @@ AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     protected final SearchControls getSearchControls() {
         final SearchControls constraints = new SearchControls();
-        log.debug("returning search controls: scope={}; search base={}; attributes={}; timeout=",
+        logger.debug("returning search controls: scope={}; search base={}; attributes={}; timeout=",
                 this.scope, this.searchBase, Arrays.toString(this.attributeIds), this.timeout);
 
         constraints.setSearchScope(this.scope);

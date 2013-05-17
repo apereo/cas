@@ -43,7 +43,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    private final Logger log = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
 
@@ -94,10 +94,10 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         String openIdMode = request.getParameter("openid.mode");
         if (openIdMode != null && openIdMode.equals("associate")) {
-            log.info("Handling request. openid.mode : {}", openIdMode);
+            logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }
-        log.info("Cannot handle request. openid.mode : {}", openIdMode);
+        logger.info("Cannot handle request. openid.mode : {}", openIdMode);
         return false;
     }
 
