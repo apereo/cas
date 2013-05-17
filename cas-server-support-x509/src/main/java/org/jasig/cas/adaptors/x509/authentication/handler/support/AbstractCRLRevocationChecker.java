@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
+    /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Policy to apply when CRL data is unavailable. */

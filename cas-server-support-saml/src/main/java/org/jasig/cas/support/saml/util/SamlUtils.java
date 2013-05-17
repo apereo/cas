@@ -64,6 +64,9 @@ public final class SamlUtils {
 
     private static final String SAML_PROTOCOL_NS_URI_V20 = "urn:oasis:names:tc:SAML:2.0:protocol";
 
+    /**
+     * The constructor is intentionally marked as private.
+     */
     private SamlUtils() {
         // nothing to do
     }
