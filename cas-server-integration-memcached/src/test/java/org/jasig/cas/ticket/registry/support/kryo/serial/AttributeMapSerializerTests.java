@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class AttributeMapSerializerTests {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Map<String, Object> attributes;
 
     public AttributeMapSerializerTests(final Map<String, Object> attributes) {
@@ -55,11 +55,13 @@ public class AttributeMapSerializerTests {
 
         // Test case #1: single-valued attribute
         attrMap = new LinkedHashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;
+
             {
                 put("altUsername", "fhqwhgads");
             }
         };
-        params.add(new Object[] { attrMap });
+        params.add(new Object[] {attrMap});
 
         // Test case #2: multi-valued attribute
         final List<String> names = new ArrayList<String>(3);
@@ -67,19 +69,21 @@ public class AttributeMapSerializerTests {
         names.add("homsar");
         names.add("eh-steve");
         attrMap = new LinkedHashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;
             {
                 put("altUsernames", names);
             }
         };
-        params.add(new Object[] { attrMap });
+        params.add(new Object[] {attrMap});
 
         // Test case #3: null attribute
         attrMap = new LinkedHashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;
             {
                 put("altUsername", null);
             }
         };
-        params.add(new Object[] { attrMap });
+        params.add(new Object[] {attrMap});
 
         return params;
     }
@@ -101,9 +105,9 @@ public class AttributeMapSerializerTests {
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get(bytes);
         try {
-            log.debug(new String(bytes, "UTF-8"));
-        } catch (Exception e) {
-            log.error("Error printing buffer as string.");
+            logger.debug(new String(bytes, "UTF-8"));
+        } catch (final Exception e) {
+            logger.error("Error printing buffer as string.");
         }
         buffer.rewind();
     }

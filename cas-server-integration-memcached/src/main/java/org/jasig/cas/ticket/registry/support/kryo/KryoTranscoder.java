@@ -67,7 +67,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     private final Kryo kryo = new Kryo();
 
     /** Logging instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Maximum size of single encoded object in bytes. */
     private final int bufferSize;
@@ -206,7 +206,7 @@ public class KryoTranscoder implements Transcoder<Object> {
                 }
                 if (rootCause instanceof BufferOverflowException) {
                     buffer = ByteBuffer.allocate(bufferSize * ++factor);
-                    log.warn("Buffer overflow while encoding {}", o);
+                    logger.warn("Buffer overflow while encoding {}", o);
                 } else {
                     throw e;
                 }

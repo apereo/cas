@@ -55,13 +55,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     protected void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
-        log.debug("Updated ticket [{}].", ticket);
+        logger.debug("Updated ticket [{}].", ticket);
     }
 
     @Transactional(readOnly = false)
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
-        log.debug("Added ticket [{}] to registry.", ticket);
+        logger.debug("Added ticket [{}] to registry.", ticket);
     }
 
     @Transactional(readOnly = false)
@@ -74,12 +74,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
         if (ticket instanceof ServiceTicket) {
             removeTicket(ticket);
-            log.debug("Deleted ticket [{}] from the registry.", ticket);
+            logger.debug("Deleted ticket [{}] from the registry.", ticket);
             return true;
         }
 
         deleteTicketAndChildren(ticket);
-        log.debug("Deleted ticket [{}] and its children from the registry.", ticket);
+        logger.debug("Deleted ticket [{}] and its children from the registry.", ticket);
         return true;
     }
 
@@ -109,13 +109,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     private void removeTicket(final Ticket ticket) {
         try {
-            if (log.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 final Date creationDate = new Date(ticket.getCreationTime());
-                log.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
+                logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
             entityManager.remove(ticket);
         } catch (final Exception e) {
-            log.error("Error removing {} from registry.", ticket, e);
+            logger.error("Error removing {} from registry.", ticket, e);
         }
     }
 
@@ -132,7 +132,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            log.error("Error getting ticket {} from registry.", ticketId, e);
+            logger.error("Error getting ticket {} from registry.", ticketId, e);
         }
         return null;
     }

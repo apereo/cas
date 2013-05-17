@@ -57,7 +57,7 @@ import org.springframework.web.context.request.WebRequest;
  */
 public class TicketResource extends ServerResource {
 
-    private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -68,7 +68,7 @@ public class TicketResource extends ServerResource {
 
     @Post
     public final void acceptRepresentation(final Representation entity)  {
-        log.debug("Obtaining credentials...");
+        LOGGER.debug("Obtaining credentials...");
         final Credentials c = obtainCredentials();
 
         Formatter fmt = null;
@@ -88,7 +88,7 @@ public class TicketResource extends ServerResource {
 
             getResponse().setEntity(fmt.toString(), MediaType.TEXT_HTML);
         } catch (final TicketException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         } finally {
             IOUtils.closeQuietly(fmt);
@@ -117,7 +117,7 @@ public class TicketResource extends ServerResource {
     }
 
     private void logFormRequest(final Form form) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             final Set<String> pairs = new HashSet<String>();
             for (final String name : form.getNames()) {
                 final StringBuilder builder = new StringBuilder();
@@ -130,7 +130,7 @@ public class TicketResource extends ServerResource {
                 }
                 pairs.add(builder.toString());
             }
-            log.debug(StringUtils.join(pairs, ", "));
+            LOGGER.debug(StringUtils.join(pairs, ", "));
         }
     }
 

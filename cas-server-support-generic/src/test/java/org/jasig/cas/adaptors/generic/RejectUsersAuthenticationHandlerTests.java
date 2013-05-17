@@ -59,7 +59,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -69,7 +69,7 @@ public class RejectUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
     }
@@ -120,7 +120,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("Exception expected as null should never be in map.");
         }
     }

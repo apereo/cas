@@ -54,7 +54,8 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
+                     columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService>,
         Serializable {
@@ -74,6 +75,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
 
+    /**
+     * The unique identifier for this service.
+     */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
@@ -318,11 +322,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     /**
+     * {@inheritDoc}
      * Compares this instance with the <code>other</code> registered service based on
      * evaluation order, name. The name comparison is case insensitive.
      *
      * @see #getEvaluationOrder()
      */
+    @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder().append(this.getEvaluationOrder(), other.getEvaluationOrder())
                 .append(this.getName().toLowerCase(), other.getName().toLowerCase())

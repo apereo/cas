@@ -34,11 +34,11 @@ public final class CredentialsAsFirstParameterResourceResolver implements AuditR
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         final Credentials credentials = (Credentials) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
-        return new String[] { "supplied credentials: " + credentials.toString() };
+        return new String[] {"supplied credentials: " + credentials.toString()};
     }
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
         final Credentials credentials = (Credentials) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
-        return new String[] { "supplied credentials: " + credentials.toString() };
+        return new String[] {"supplied credentials: " + credentials.toString()};
     }
 }

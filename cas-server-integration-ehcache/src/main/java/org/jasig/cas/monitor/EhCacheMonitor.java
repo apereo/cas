@@ -24,7 +24,7 @@ import net.sf.ehcache.Cache;
 
 /**
  * Monitors a {@link net.sf.ehcache.Cache} instance.
- * The accuracy of statistics is governed by the value of {@link Cache#getStatisticsAccuracy()}.
+ * The accuracy of statistics is governed by the value of {@link Cache#getStatistics()}.
  *
  * <p>NOTE: computation of highly accurate statistics is expensive.</p>
  *
@@ -42,6 +42,6 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        return new EhCacheStatistics[] { new EhCacheStatistics(cache) };
+        return new EhCacheStatistics[] {new EhCacheStatistics(cache)};
     }
 }

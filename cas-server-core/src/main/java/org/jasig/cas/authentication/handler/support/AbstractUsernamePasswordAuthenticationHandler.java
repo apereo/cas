@@ -66,11 +66,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**
+     * {@inheritDoc}
      * Method automatically handles conversion to UsernamePasswordCredentials
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
      * @return true if credentials are authentic, false otherwise.
      */
+    @Override
     protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
@@ -137,9 +139,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credentials are not null and the credentials class is
      * equal to the class defined in classToSupport.
      */
+    @Override
     public final boolean supports(final Credentials credentials) {
         return credentials != null
             && (this.classToSupport.equals(credentials.getClass()) || (this.classToSupport

@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
     private Worker worker;
@@ -60,7 +60,7 @@ public class MockWebServer {
     public MockWebServer(final int port, final Resource resource, final String contentType) {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, contentType);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Cannot create Web server", e);
         }
     }
@@ -79,7 +79,7 @@ public class MockWebServer {
         this.worker.stop();
         try {
             this.workerThread.join();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -139,10 +139,10 @@ public class MockWebServer {
             while (this.running) {
                 try {
                     writeResponse(this.serverSocket.accept());
-                } catch (SocketException se) {
-                    System.out.println("Stopping on socket close.");
+                } catch (final SocketException se) {
+                    logger.debug("Stopping on socket close.");
                     this.running = false;
-                } catch (IOException ioe) {
+                } catch (final IOException ioe) {
                     ioe.printStackTrace();
                 }
             }
@@ -151,8 +151,8 @@ public class MockWebServer {
         public void stop() {
             try {
                 this.serverSocket.close();
-            } catch (IOException e) {
-                log.trace("Exception when closing the server socket: {}", e.getMessage());
+            } catch (final IOException e) {
+                logger.trace("Exception when closing the server socket: {}", e.getMessage());
             }
         }
 

@@ -35,24 +35,27 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.3.5
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
+    protected final Logger logger = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<AuthenticationMetaDataPopulator>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Audit(
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
     @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
+    @Override
     public final Authentication authenticate(final Credentials credentials) throws AuthenticationException {
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
@@ -62,8 +65,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
          *  then the pair must not be null.
          */
         final Principal p = pair.getSecond();
-        log.info("Authenticated {} with credential {}.", p, credentials);
-        log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
+        logger.info("Authenticated {} with credential {}.", p, credentials);
+        logger.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
 
         Authentication authentication = new MutableAuthentication(p);
 
@@ -113,9 +116,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             final Exception e) {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
-            log.info("{} failed authenticating {}", handlerName, credentials);
+            logger.info("{} failed authenticating {}", handlerName, credentials);
         } else {
-            log.error("{} threw error authenticating {}", handlerName, credentials, e);
+            logger.error("{} threw error authenticating {}", handlerName, credentials, e);
         }
     }
 }

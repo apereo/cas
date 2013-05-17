@@ -57,7 +57,6 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
     @Before
     public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-        
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 

@@ -50,6 +50,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
     /** The authenticated object for which this ticket was generated for. */
     @Lob
     @Column(name="AUTHENTICATION", nullable=false)
@@ -106,6 +107,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /**
      * {@inheritDoc}
      */
+    @Override
     public Authentication getAuthentication() {
         return this.authentication;
     }
@@ -117,6 +119,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * impact the ticket expiration policy in that, depending on the policy
      * configuration, the ticket may be considered expired.
      */
+    @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided) {
@@ -182,6 +185,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
 

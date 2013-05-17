@@ -69,19 +69,19 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
 
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
-            } catch (AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 authException = e;
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
             }
 
             if (authenticated) {
-                log.info("{} successfully authenticated {}", handlerName, credentials);
+                logger.info("{} successfully authenticated {}", handlerName, credentials);
                 final Principal p = this.linkedHandlers.get(authenticationHandler).resolvePrincipal(credentials);
                 return new Pair<AuthenticationHandler, Principal>(authenticationHandler, p);
             }
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
         }
 
         if (foundOneThatWorks) {

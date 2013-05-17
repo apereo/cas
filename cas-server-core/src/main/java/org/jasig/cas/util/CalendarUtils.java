@@ -26,9 +26,11 @@ import java.util.Date;
  */
 public final class CalendarUtils {
 
+    /** Array that defines week days by name, including one that is "undefined". **/
     public static final String[] WEEKDAYS = new String[] {"UNDEFINED", "Sunday", "Monday",
                                     "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
+    /** Constructor. **/
     private CalendarUtils() {
         // nothing to do
     }

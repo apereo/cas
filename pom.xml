@@ -395,9 +395,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
-          <header>src/licensing/header.txt</header>
+          <header>${cs.dir}/src/licensing/header.txt</header>
+          <skipExistingHeaders>true</skipExistingHeaders>
+          <strictCheck>true</strictCheck>
           <headerDefinitions>
-            <headerDefinition>src/licensing/header-definitions.xml</headerDefinition>
+            <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
           <aggregate>true</aggregate>
           <excludes>
@@ -412,12 +414,28 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.crt</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.checkstyle</exclude>
             <exclude>**/.gitignore</exclude>
             <exclude>**/overlays/**</exclude>
             <exclude>src/licensing/**</exclude>
             <exclude>**/testCA/**</exclude>
+            <exclude>**/.idea/**</exclude>
+            <exclude>**/*.keystore</exclude>
+            <exclude>**/*.example</exclude>
+            <exclude>**/*.sample</exclude>
+            <exclude>**/*.conf</exclude>
+            <exclude>**/*.doc</exclude>
+            <exclude>**/*.jmx</exclude>
           </excludes>
         </configuration>
+        <executions>
+            <execution>
+                <phase>compile</phase>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+            </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

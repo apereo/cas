@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class JRadiusServerImpl implements RadiusServer {
 
-    private static final Logger log = LoggerFactory.getLogger(JRadiusServerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JRadiusServerImpl.class);
 
     /** Default PAP Authenticator if no other one is specified. */
     private static final RadiusAuthenticator DEFAULT_RADIUS_AUTHENTICATOR = new PAPAuthenticator();
@@ -183,17 +183,16 @@ public final class JRadiusServerImpl implements RadiusServer {
 
             // accepted
             if (response instanceof AccessAccept) {
-                log.debug("Authentication request suceeded for host:"
-                        + this.inetAddress.getCanonicalHostName()
-                        + " and username "
-                        + usernamePasswordCredentials.getUsername());
+                LOGGER.debug("Authentication request suceeded for host: {} and username {}",
+                        this.inetAddress.getCanonicalHostName(),
+                        usernamePasswordCredentials.getUsername());
                 return true;
             }
 
             // rejected
-            log.debug("Authentication request failed for host:"
-                    + this.inetAddress.getCanonicalHostName() + " and username "
-                    + usernamePasswordCredentials.getUsername());
+            LOGGER.debug("Authentication request failed for host: {} and username {}",
+                    this.inetAddress.getCanonicalHostName(),
+                    usernamePasswordCredentials.getUsername());
             return false;
         } catch (final UnknownAttributeException e) {
             throw new IllegalArgumentException(

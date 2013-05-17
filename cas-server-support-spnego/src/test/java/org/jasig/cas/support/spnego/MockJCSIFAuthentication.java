@@ -34,7 +34,7 @@ public class MockJCSIFAuthentication extends Authentication {
 
     private final boolean valid;
 
-    private final byte[] outToken = new byte[] { 4, 5, 6 };
+    private final byte[] outToken = new byte[] {4, 5, 6};
 
     public MockJCSIFAuthentication(final boolean valid) {
         this.principal = new MockPrincipal("test");
