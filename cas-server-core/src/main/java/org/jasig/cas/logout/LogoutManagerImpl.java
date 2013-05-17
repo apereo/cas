@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(LogoutManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
 
     /** The logout request template. */
     private static final String LOGOUT_REQUEST_TEMPLATE =
@@ -121,7 +121,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                         } else {
                             // perform back channel logout
                             if (!performBackChannelLogout(singleLogoutService, ticketId)) {
-                                log.warn("Logout message not sent to [[]]; Continuing processing...",
+                                LOGGER.warn("Logout message not sent to [[]]; Continuing processing...",
                                         singleLogoutService.getId());
                             }
                         }
@@ -141,7 +141,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return if the logout has been performed.
      */
     private boolean performBackChannelLogout(final SingleLogoutService service, final String ticketId) {
-        log.debug("Sending logout request for: {}", service.getId());
+        LOGGER.debug("Sending logout request for: {}", service.getId());
 
         final String logoutRequest = createBackChannelLogoutMessage(ticketId);
 

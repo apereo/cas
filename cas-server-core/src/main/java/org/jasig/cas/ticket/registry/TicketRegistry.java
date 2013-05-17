@@ -52,6 +52,7 @@ public interface TicketRegistry {
      *
      * @param ticketId the id of the ticket we wish to retrieve.
      * @param clazz The expected class of the ticket we wish to retrieve.
+     * @param <T> the generic ticket type to return that extends {@link Ticket}
      * @return the requested ticket.
      */
     <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz);

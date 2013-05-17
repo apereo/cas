@@ -43,7 +43,8 @@ public class PoolStatus extends Status {
      *
      * @param code Status code.
      * @param desc Human-readable status description.
-     *
+     * @param active number of active pool resources
+     * @param idle number of idle pool resources
      * @see #getCode()
      */
     public PoolStatus(final StatusCode code, final String desc, final int active, final int idle) {

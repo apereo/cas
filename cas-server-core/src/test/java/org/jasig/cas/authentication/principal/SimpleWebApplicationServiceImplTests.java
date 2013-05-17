@@ -75,7 +75,7 @@ public class SimpleWebApplicationServiceImplTests {
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
-        assertEquals("http://foo.com/",response.getUrl());
+        assertEquals("http://foo.com/", response.getUrl());
     }
 
     @Test
@@ -87,6 +87,6 @@ public class SimpleWebApplicationServiceImplTests {
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
-        assertEquals("http://foo.com/?param=test",response.getUrl());
+        assertEquals("http://foo.com/?param=test", response.getUrl());
     }
 }

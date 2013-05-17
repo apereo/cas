@@ -45,6 +45,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
     private Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if a mapping cannot be found.
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
@@ -63,18 +64,18 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             authException = e;
             logAuthenticationHandlerError(handlerName, credentials, e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logAuthenticationHandlerError(handlerName, credentials, e);
         }
 
         if (!authenticated) {
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
             throw authException;
         }
-        log.info("{} successfully authenticated {}", handlerName, credentials);
+        logger.info("{} successfully authenticated {}", handlerName, credentials);
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
 

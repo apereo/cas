@@ -31,8 +31,8 @@ import javax.security.auth.spi.LoginModule;
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
 
-    public void initialize(final Subject subject, final CallbackHandler handler, final Map<String,?> arg2,
-            final Map<String,?> arg3) {
+    public void initialize(final Subject subject, final CallbackHandler handler, final Map<String, ?> arg2,
+            final Map<String, ?> arg3) {
         this.callbackHandler = handler;
     }
 
@@ -40,7 +40,7 @@ public class MockLoginModule implements LoginModule {
         final Callback[] callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
         try {
             this.callbackHandler.handle(callbacks);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new LoginException();
         }
 

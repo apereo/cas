@@ -75,14 +75,14 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 line = bufferedReader.readLine();
             }
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (final IOException e) {
-                log.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             }
         }
 

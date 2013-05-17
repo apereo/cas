@@ -103,11 +103,11 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         });
 
         if (cns.isEmpty()) {
-            log.info("Search for {} returned 0 results.", filter);
+            logger.info("Search for {} returned 0 results.", filter);
             return false;
         }
         if (cns.size() > 1 && !this.allowMultipleAccounts) {
-            log.warn("Search for {} returned multiple results, which is not allowed.", filter);
+            logger.warn("Search for {} returned multiple results, which is not allowed.", filter);
             return false;
         }
 
@@ -115,7 +115,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
-                log.debug("Performing LDAP bind with credential: {}", dn);
+                logger.debug("Performing LDAP bind with credential: {}", dn);
                 test = this.getContextSource().getContext(finalDn,
                         getPasswordEncoder().encode(credentials.getPassword()));
 
@@ -123,10 +123,10 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                     return true;
                 }
             } catch (final NamingSecurityException e) {
-                log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
+                logger.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
                 throw handleLdapError(e);
             } catch (final Exception e) {
-                log.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw handleLdapError(e);
             } finally {
                 LdapUtils.closeContext(test);

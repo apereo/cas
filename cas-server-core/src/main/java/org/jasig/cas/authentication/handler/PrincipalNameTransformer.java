@@ -21,7 +21,6 @@ package org.jasig.cas.authentication.handler;
 
 /**
  * @author Howard Gilbert
-
  * @since 3.3.6
  */
 public interface PrincipalNameTransformer {
@@ -40,6 +39,6 @@ public interface PrincipalNameTransformer {
      * @param formUserId The raw userid typed into the login form
      * @return the string that the Authentication Handler should lookup in the backend system
      */
-    public String transform(String formUserId);
+    String transform(String formUserId);
 }
 

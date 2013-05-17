@@ -75,7 +75,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
     }
@@ -89,7 +89,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }

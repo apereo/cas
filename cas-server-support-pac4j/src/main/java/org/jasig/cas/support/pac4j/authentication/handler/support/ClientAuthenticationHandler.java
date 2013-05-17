@@ -62,18 +62,18 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
     @Override
     protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
         final ClientCredentials clientCredentials = (ClientCredentials) credentials;
-        log.debug("clientCredentials : {}", clientCredentials);
+        logger.debug("clientCredentials : {}", clientCredentials);
 
         final String clientName = clientCredentials.getCredentials().getClientName();
-        log.debug("clientName : {}", clientName);
+        logger.debug("clientName : {}", clientName);
 
         // get client
         final Client<org.pac4j.core.credentials.Credentials, UserProfile> client = this.clients.findClient(clientName);
-        log.debug("client : {}", client);
+        logger.debug("client : {}", client);
 
         // get user profile
         final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials());
-        log.debug("userProfile : {}", userProfile);
+        logger.debug("userProfile : {}", userProfile);
 
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             clientCredentials.setUserProfile(userProfile);

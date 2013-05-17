@@ -21,6 +21,8 @@ package org.jasig.cas.monitor;
 
 import java.util.Formatter;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Simple implementation of cache statistics.
  *
@@ -103,6 +105,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         builder.append("MB used, ");
         builder.append(getPercentFree()).append("% free, ");
         builder.append(this.evictions).append(" evictions");
+        IOUtils.closeQuietly(formatter);
     }
 
 
