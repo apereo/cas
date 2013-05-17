@@ -46,6 +46,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
+    /** Logger object. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Min(0)
