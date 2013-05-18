@@ -28,7 +28,7 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * An implementation the {@link LdapDateConverter} that expects the received
  * date value to be consistent with a given {@link DateTimeFormatter}'s pattern.
- * 
+ *
  * @author Misagh Moayyed
  * @version 4.0.0
  */
@@ -36,19 +36,19 @@ public class SimpleDateFormatLdapDateConverter extends AbstractLdapDateConverter
 
     @NotNull
     private String passwordExpirationDateFormat = null;
-    
+
     private DateTimeZone timeZone = DateTimeZone.UTC;
-    
+
     public SimpleDateFormatLdapDateConverter(@NotNull final String passwordExpirationDateFormat) {
         this.passwordExpirationDateFormat = passwordExpirationDateFormat;
     }
-    
+
     public SimpleDateFormatLdapDateConverter(@NotNull final String passwordExpirationDateFormat,
-                                            @NotNull final DateTimeZone timeZone) {
+            @NotNull final DateTimeZone timeZone) {
         this(passwordExpirationDateFormat);
         this.timeZone = timeZone;
     }
-        
+
     @Override
     public DateTimeZone getTimeZone() {
         return this.timeZone;
