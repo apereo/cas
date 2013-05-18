@@ -47,23 +47,25 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
     /** The ldap configuration constructed based on given the policy. **/
     private final PasswordPolicyConfiguration configuration;
 
-    public LPPEAuthenticationHandler(@NotNull final Authenticator authenticator, @NotNull final PasswordPolicyConfiguration configuration) {
+    public LPPEAuthenticationHandler(@NotNull final Authenticator authenticator,
+            @NotNull final PasswordPolicyConfiguration configuration) {
         super(authenticator);
         this.configuration = configuration;
     }
 
     @Override
-    protected final void examineAccountStatePostAuthentication(final AuthenticationResponse response) throws LoginException {
+    protected final void examineAccountStatePostAuthentication(final AuthenticationResponse response)
+            throws LoginException {
         super.examineAccountStatePostAuthentication(response);
         if (!configuration.build(response.getLdapEntry())) {
             this.examineAccountStatus(response);
-            this.validateAccountPasswordExpirationPolicy();    
+            this.validateAccountPasswordExpirationPolicy();
         }
     }
 
     protected void examineAccountStatus(final AuthenticationResponse response) throws LoginException {
         final String uid =  configuration.getDn();
-        
+
         if (configuration.isUserAccountControlSetToDisableAccount()) {
             final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
             throw new AccountDisabledException(msg);
@@ -84,20 +86,20 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
                     configuration.getAccountDisabledAttributeName() , uid);
             throw new AccountDisabledException(msg);
         }
-        
+
         if (configuration.isAccountLocked()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is locked",
                     configuration.getAccountLockedAttributeName(), uid);
             throw new AccountLockedException(msg);
         }
-        
+
         if (configuration.isAccountPasswordMustChange()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s must change it password", 
+            final String msg = String.format("Password policy attribute %s is set. Account %s must change it password",
                                              configuration.getAccountPasswordMustChangeAttributeName(), uid);
             throw new AccountPasswordMustChangeException(msg);
         }
     }
-        
+
     @Override
     public void afterPropertiesSet() throws Exception {
         populatePrincipalAttributeMap();
@@ -108,47 +110,47 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
             principalAttributeMap.put(configuration.getUserAccountControlAttributeName(),
                                       configuration.getUserAccountControlAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getAccountDisabledAttributeName())) {
             principalAttributeMap.put(configuration.getAccountDisabledAttributeName(),
                                       configuration.getAccountDisabledAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getAccountLockedAttributeName())) {
             principalAttributeMap.put(configuration.getAccountLockedAttributeName(),
                                       configuration.getAccountLockedAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getAccountPasswordMustChangeAttributeName())) {
             principalAttributeMap.put(configuration.getAccountPasswordMustChangeAttributeName(),
                                       configuration.getAccountPasswordMustChangeAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getIgnorePasswordExpirationWarningAttributeName())) {
             principalAttributeMap.put(configuration.getIgnorePasswordExpirationWarningAttributeName(),
                                       configuration.getIgnorePasswordExpirationWarningAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getPasswordExpirationDateAttributeName())) {
             principalAttributeMap.put(configuration.getPasswordExpirationDateAttributeName(),
                                       configuration.getPasswordExpirationDateAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getPasswordWarningNumberOfDaysAttributeName())) {
             principalAttributeMap.put(configuration.getPasswordWarningNumberOfDaysAttributeName(),
                                       configuration.getPasswordWarningNumberOfDaysAttributeName());
         }
-        
+
         if (!StringUtils.isBlank(configuration.getValidPasswordNumberOfDaysAttributeName())) {
             principalAttributeMap.put(configuration.getValidPasswordNumberOfDaysAttributeName(),
                                       configuration.getValidPasswordNumberOfDaysAttributeName());
         }
     }
-    
+
     /**
      * Calculates the number of days left to the expiration date.
-     * @return Number of days left to the expiration date or -1 if the no expiration warning is 
-     * calculated based on the defined policy. 
+     * @return Number of days left to the expiration date or -1 if the no expiration warning is
+     * calculated based on the defined policy.
      */
     protected int getDaysToExpirationDate(final DateTime expireDate) throws LoginException {
         final DateTimeZone timezone = configuration.getDateConverter().getTimeZone();
@@ -160,7 +162,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
 
         log.debug("Days left to the expiration date: {}", daysToExpirationDate);
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
-            final String msgToLog = String.format("Password expiration date %s is on/before the current time %s and has expired.",
+            final String msgToLog = String.format("Password expiration date %s is on/before the current time %s.",
                                           daysToExpirationDate, currentTime);
             log.debug(msgToLog);
             return 0;
@@ -172,7 +174,8 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
         log.debug("Warning period begins on {}", warnPeriod);
 
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()) {
-            log.debug("Warning all. The password for {} will expire in {} day(s)", configuration.getDn(), daysToExpirationDate);
+            log.debug("Warning all. The password for {} will expire in {} day(s)",
+                    configuration.getDn(), daysToExpirationDate);
         } else if (currentTime.equals(warnPeriod) || currentTime.isAfter(warnPeriod)) {
             log.debug("Password will expire in {} day(s)", daysToExpirationDate);
         } else {
@@ -182,16 +185,17 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler impleme
 
         return daysToExpirationDate;
     }
-    
+
     /**
      * Determines the expiration date to use based on the password policy configuration.
      * @see #setLdapDateConverter(LdapDateConverter)
      */
     private DateTime getExpirationDateToUse() {
-        final DateTime dateValue = configuration.convertPasswordExpirationDate(); 
-                
+        final DateTime dateValue = configuration.convertPasswordExpirationDate();
+
         final DateTime expireDate = dateValue.plusDays(configuration.getValidPasswordNumberOfDays());
-        log.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}", dateValue,
+        log.debug("Retrieved date value {} for date attribute {} and added {} days."
+                    + "The final expiration date is {}", dateValue,
                 configuration.getPasswordExpirationDateAttributeName(),
                 configuration.getValidPasswordNumberOfDays(), expireDate);
 

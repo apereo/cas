@@ -93,7 +93,6 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         this.authenticator = authenticator;
     }
 
-
     /**
      * Sets the component name. Defaults to simple class name.
      *
@@ -151,14 +150,13 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     }
 
     @Override
-    public HandlerResult authenticate(final Credentials credential)
-            throws GeneralSecurityException, PreventedException {
+    public HandlerResult authenticate(final Credentials credential) throws GeneralSecurityException,
+                                PreventedException {
         final AuthenticationResponse response;
         final UsernamePasswordCredentials upc = (UsernamePasswordCredentials) credential;
         try {
             log.debug("Attempting LDAP authentication for {}", credential);
-            final AuthenticationRequest request = new AuthenticationRequest(
-                    upc.getUsername(),
+            final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
@@ -166,13 +164,13 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             throw new PreventedException("Unexpected LDAP error", e);
         }
         log.debug("LDAP response: {}", response);
-                
+
         examineAccountStatePostAuthentication(response);
-        
+
         if (response.getResult()) {
             return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
         }
-        
+
         throw new FailedLoginException("LDAP authentication failed.");
     }
 

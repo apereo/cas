@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class PasswordPolicyConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
 
     /**
      * This enumeration defines a selective limited set of ldap user account control flags
@@ -46,7 +46,8 @@ public final class PasswordPolicyConfiguration {
      * is a bitwise flag that may contain one of more of the following values.
      */
     private enum ActiveDirectoryUserAccountControlFlags {
-        UAC_FLAG_ACCOUNT_DISABLED(2), UAC_FLAG_LOCKOUT(16), UAC_FLAG_PASSWD_NOTREQD(32), UAC_FLAG_DONT_EXPIRE_PASSWD(65536), 
+        UAC_FLAG_ACCOUNT_DISABLED(2), UAC_FLAG_LOCKOUT(16), UAC_FLAG_PASSWD_NOTREQD(32),
+        UAC_FLAG_DONT_EXPIRE_PASSWD(65536),
         UAC_FLAG_PASSWORD_EXPIRED(8388608);
 
         private int value;
@@ -55,7 +56,7 @@ public final class PasswordPolicyConfiguration {
             this.value = id;
         }
 
-        public final int getValue() {
+        public int getValue() {
             return this.value;
         }
     }
@@ -64,10 +65,10 @@ public final class PasswordPolicyConfiguration {
     @NotNull
     private LdapDateConverter ldapDateConverter = null;
 
-    /** The value that will cause password warning to be bypassed  */
+    /** The value that will cause password warning to be bypassed.  */
     private List<String> ignorePasswordExpirationWarningFlags = new ArrayList<String>();
 
-    /** Disregard the warning period and warn all users of password expiration */
+    /** Disregard the warning period and warn all users of password expiration. */
     private boolean alwaysDisplayPasswordExpirationWarning = false;
 
     private String passwordExpirationDate;
@@ -83,50 +84,50 @@ public final class PasswordPolicyConfiguration {
 
     private long userAccountControl = -1;
 
-    /** The custom attribute that indicates the account is disabled **/
+    /** The custom attribute that indicates the account is disabled. **/
     private String accountDisabledAttributeName = null;
 
-    /** The custom attribute that indicates the account is locked **/
+    /** The custom attribute that indicates the account is locked. **/
     private String accountLockedAttributeName = null;
 
-    /** The custom attribute that indicates the account password must change **/
+    /** The custom attribute that indicates the account password must change. **/
     private String accountPasswordMustChangeAttributeName = null;
 
-    /** The attribute that indicates the user account status **/
+    /** The attribute that indicates the user account status. **/
     private String userAccountControlAttributeName = "userAccountControl";
 
-    /** The attribute that contains the data that will determine if password warning is skipped  */
+    /** The attribute that contains the data that will determine if password warning is skipped.  */
     private String ignorePasswordExpirationWarningAttributeName = null;
 
-    /** Default number of days which the password may be considered valid **/
+    /** Default number of days which the password may be considered valid. **/
     private int defaultValidPasswordNumberOfDays = 90;
 
-    /** Default number of days to use when calculating the warning period **/
+    /** Default number of days to use when calculating the warning period. **/
     private int defaultPasswordWarningNumberOfDays = 30;
 
-    /** Url to the password policy application **/
+    /** Url to the password policy application. **/
     private String passwordPolicyUrl;
 
-    /** The attribute that contains the user's warning days */
+    /** The attribute that contains the user's warning days. */
     private String passwordWarningNumberOfDaysAttributeName = null;
 
-    /** The attribute that contains the number of days the user's password is valid */
+    /** The attribute that contains the number of days the user's password is valid. */
     private String validPasswordNumberOfDaysAttributeName = null;
 
     private String dn;
 
-    public final boolean isAlwaysDisplayPasswordExpirationWarning() {
+    public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
 
-    public final void setAlwaysDisplayPasswordExpirationWarning(boolean alwaysDisplayPasswordExpirationWarning) {
+    public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
         this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
     }
 
     public PasswordPolicyConfiguration() {
     }
 
-    public final String getPasswordPolicyUrl() {
+    public String getPasswordPolicyUrl() {
         return this.passwordPolicyUrl;
     }
 
@@ -141,7 +142,7 @@ public final class PasswordPolicyConfiguration {
     public String getAccountDisabledAttributeName() {
         return this.accountDisabledAttributeName;
     }
-    
+
     public void setAccountLockedAttributeName(final String accountLockedAttributeName) {
         this.accountLockedAttributeName = accountLockedAttributeName;
     }
@@ -149,7 +150,7 @@ public final class PasswordPolicyConfiguration {
     public String getAccountLockedAttributeName() {
         return this.accountLockedAttributeName;
     }
-    
+
     public void setAccountPasswordMustChangeAttributeName(final String accountPasswordMustChange) {
         this.accountPasswordMustChangeAttributeName = accountPasswordMustChange;
     }
@@ -169,7 +170,7 @@ public final class PasswordPolicyConfiguration {
     public String getUserAccountControlAttributeName() {
         return this.userAccountControlAttributeName;
     }
-    
+
     public void setValidPasswordNumberOfDaysAttributeName(final String validDaysAttributeName) {
         this.validPasswordNumberOfDaysAttributeName = validDaysAttributeName;
     }
@@ -177,7 +178,7 @@ public final class PasswordPolicyConfiguration {
     public String getValidPasswordNumberOfDaysAttributeName() {
         return this.validPasswordNumberOfDaysAttributeName;
     }
-    
+
     public void setPasswordWarningNumberOfDaysAttributeName(final String warningDaysAttributeName) {
         this.passwordWarningNumberOfDaysAttributeName = warningDaysAttributeName;
     }
@@ -185,7 +186,7 @@ public final class PasswordPolicyConfiguration {
     public String getPasswordWarningNumberOfDaysAttributeName() {
         return this.passwordWarningNumberOfDaysAttributeName;
     }
-    
+
     public void setDefaultValidPasswordNumberOfDays(final int days) {
         this.defaultValidPasswordNumberOfDays = days;
     }
@@ -280,7 +281,7 @@ public final class PasswordPolicyConfiguration {
         this.dn = dn;
     }
 
-    public final boolean isAccountPasswordSetToNeverExpire() {
+    public boolean isAccountPasswordSetToNeverExpire() {
         final String ignoreCheckValue = getIgnorePasswordExpirationWarningAttributeName();
         boolean ignoreChecks = false;
 
@@ -289,7 +290,8 @@ public final class PasswordPolicyConfiguration {
         }
 
         if (!ignoreChecks) {
-            ignoreChecks = isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD);
+            ignoreChecks = isUserAccountControlBitSet(
+                    ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD);
         }
         return ignoreChecks;
     }
@@ -317,7 +319,7 @@ public final class PasswordPolicyConfiguration {
 
         final String expirationDate = getPasswordPolicyAttributeValue(entry, this.passwordExpirationDateAttributeName);
         if (StringUtils.isBlank(expirationDate)) {
-            LOGGER.warn("Password expiration policy cannot be established because the password expiration date is blank.");
+            log.warn("Password expiration date is null.");
             return false;
         }
 
@@ -374,7 +376,7 @@ public final class PasswordPolicyConfiguration {
             final LdapAttribute attribute = entry.getAttribute(attrName);
 
             if (attribute != null) {
-                LOGGER.debug("Retrieved attribute [{}] with value [{}]", attrName, attribute.getStringValue());
+                log.debug("Retrieved attribute [{}] with value [{}]", attrName, attribute.getStringValue());
                 return attribute.getStringValue();
             }
         }
