@@ -46,17 +46,21 @@ public final class PasswordPolicyConfiguration {
      * is a bitwise flag that may contain one of more of the following values.
      */
     private enum ActiveDirectoryUserAccountControlFlags {
-        UAC_FLAG_ACCOUNT_DISABLED(2), UAC_FLAG_LOCKOUT(16), UAC_FLAG_PASSWD_NOTREQD(32),
-        UAC_FLAG_DONT_EXPIRE_PASSWD(65536),
-        UAC_FLAG_PASSWORD_EXPIRED(8388608);
+        ADS_UF_ACCOUNT_DISABLE(0x00000002),
+        ADS_UF_LOCKOUT(0x00000010),
+        ADS_UF_PASSWORD_NOTREQUIRED(0x00000020),
+        ADS_UF_PASSWD_CANT_CHANGE(0x00000040),
+        ADS_UF_NORMAL_ACCOUNT(0x00000200),
+        ADS_UF_DONT_EXPIRE_PASSWD(0x00010000),
+        ADS_UF_PASSWORD_EXPIRED(0x00800000);
 
-        private int value;
+        private long value;
 
-        ActiveDirectoryUserAccountControlFlags(final int id) {
+        ActiveDirectoryUserAccountControlFlags(final long id) {
             this.value = id;
         }
 
-        public int getValue() {
+        public long getValue() {
             return this.value;
         }
     }
@@ -72,14 +76,19 @@ public final class PasswordPolicyConfiguration {
     private boolean alwaysDisplayPasswordExpirationWarning = false;
 
     private String passwordExpirationDate;
+
     private String ignorePasswordExpirationWarning;
+
     private String passwordExpirationDateAttributeName;
 
     private int validPasswordNumberOfDays;
+    
     private int passwordWarningNumberOfDays;
 
     private boolean accountDisabled;
+    
     private boolean accountLocked;
+    
     private boolean accountPasswordMustChange;
 
     private long userAccountControl = -1;
@@ -115,6 +124,8 @@ public final class PasswordPolicyConfiguration {
     private String validPasswordNumberOfDaysAttributeName = null;
 
     private String dn;
+
+    private boolean isCritical;
 
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
@@ -230,7 +241,7 @@ public final class PasswordPolicyConfiguration {
     }
 
     public String getIgnorePasswordExpirationWarningAttributeName() {
-        return this.ignorePasswordExpirationWarning;
+        return this.ignorePasswordExpirationWarningAttributeName;
     }
 
     public int getValidPasswordNumberOfDays() {
@@ -246,7 +257,7 @@ public final class PasswordPolicyConfiguration {
     }
 
     public void setIgnorePasswordExpirationWarningAttributeName(final String value) {
-        this.ignorePasswordExpirationWarning = value;
+        this.ignorePasswordExpirationWarningAttributeName = value;
     }
 
     public void setValidPasswordNumberOfDays(final int valid) {
@@ -265,6 +276,14 @@ public final class PasswordPolicyConfiguration {
         return this.passwordExpirationDateAttributeName;
     }
 
+    public String getIgnorePasswordExpirationWarning() {
+        return this.ignorePasswordExpirationWarning;
+    }
+
+    private void setIgnorePasswordExpirationWarning(final String warning) {
+        this.ignorePasswordExpirationWarning = warning;
+    }
+
     public LdapDateConverter getDateConverter() {
         return this.ldapDateConverter;
     }
@@ -281,8 +300,16 @@ public final class PasswordPolicyConfiguration {
         this.dn = dn;
     }
 
+    public boolean isCritical() {
+        return this.isCritical;
+    }
+
+    public void setCritical(final boolean critical) {
+        this.isCritical = critical;
+    }
+
     public boolean isAccountPasswordSetToNeverExpire() {
-        final String ignoreCheckValue = getIgnorePasswordExpirationWarningAttributeName();
+        final String ignoreCheckValue = getIgnorePasswordExpirationWarning();
         boolean ignoreChecks = false;
 
         if (!StringUtils.isBlank(ignoreCheckValue) && this.ignorePasswordExpirationWarningFlags != null) {
@@ -290,22 +317,26 @@ public final class PasswordPolicyConfiguration {
         }
 
         if (!ignoreChecks) {
-            ignoreChecks = isUserAccountControlBitSet(
-                    ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD);
+            ignoreChecks = isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_DONT_EXPIRE_PASSWD)
+                    || isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWD_CANT_CHANGE);
+        }
+        if (!ignoreChecks) {
+            ignoreChecks = NumberUtils.isNumber(getPasswordExpirationDate()) &&
+                            NumberUtils.toLong(getPasswordExpirationDate()) <= 0;
         }
         return ignoreChecks;
     }
 
     public boolean isUserAccountControlSetToDisableAccount() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED);
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE);
     }
 
     public boolean isUserAccountControlSetToLockAccount() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT);
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT);
     }
 
     public boolean isUserAccountControlSetToExpirePassword() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED);
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWORD_EXPIRED);
     }
 
     public boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
@@ -317,53 +348,52 @@ public final class PasswordPolicyConfiguration {
 
     public boolean build(final LdapEntry entry) {
 
-        final String expirationDate = getPasswordPolicyAttributeValue(entry, this.passwordExpirationDateAttributeName);
+        final String expirationDate = getPasswordPolicyAttributeValue(entry, getPasswordExpirationDateAttributeName());
         if (StringUtils.isBlank(expirationDate)) {
-            log.warn("Password expiration date is null.");
+            log.warn("Password expiration date [{}] is null.", getPasswordExpirationDateAttributeName());
             return false;
         }
 
         setDn(entry.getDn());
-        setPasswordExpirationDateAttributeName(this.passwordExpirationDateAttributeName);
         setPasswordExpirationDate(expirationDate);
         setPasswordWarningNumberOfDays(this.defaultPasswordWarningNumberOfDays);
         setValidPasswordNumberOfDays(this.defaultValidPasswordNumberOfDays);
 
-        String attributeValue = getPasswordPolicyAttributeValue(entry, this.passwordWarningNumberOfDaysAttributeName);
+        String attributeValue = getPasswordPolicyAttributeValue(entry, getPasswordWarningNumberOfDaysAttributeName());
         if (attributeValue != null) {
             if (NumberUtils.isNumber(attributeValue)) {
                 setPasswordWarningNumberOfDays(Integer.parseInt(attributeValue));
             }
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.ignorePasswordExpirationWarningAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getIgnorePasswordExpirationWarningAttributeName());
         if (attributeValue != null) {
-            setIgnorePasswordExpirationWarningAttributeName(attributeValue);
+            setIgnorePasswordExpirationWarning(attributeValue);
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.validPasswordNumberOfDaysAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getValidPasswordNumberOfDaysAttributeName());
         if (attributeValue != null) {
             if (NumberUtils.isNumber(attributeValue)) {
                 setValidPasswordNumberOfDays(Integer.parseInt(attributeValue));
             }
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.accountDisabledAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getAccountDisabledAttributeName());
         if (attributeValue != null) {
             setAccountDisabled(Boolean.valueOf(attributeValue));
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.accountLockedAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getAccountLockedAttributeName());
         if (attributeValue != null) {
             setAccountLocked(Boolean.valueOf(attributeValue));
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.accountPasswordMustChangeAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getAccountPasswordMustChangeAttributeName());
         if (attributeValue != null) {
             setAccountPasswordMustChange(Boolean.valueOf(attributeValue));
         }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, this.userAccountControlAttributeName);
+        attributeValue = getPasswordPolicyAttributeValue(entry, getUserAccountControlAttributeName());
         if (attributeValue != null) {
             setUserAccountControl(attributeValue);
         }
@@ -373,6 +403,7 @@ public final class PasswordPolicyConfiguration {
 
     private String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
         if (attrName != null) {
+            log.debug("Retrieving attribute [{}]", attrName);
             final LdapAttribute attribute = entry.getAttribute(attrName);
 
             if (attribute != null) {
@@ -384,6 +415,6 @@ public final class PasswordPolicyConfiguration {
     }
 
     public DateTime convertPasswordExpirationDate() {
-        return getDateConverter().convert(this.getPasswordExpirationDate());
+        return getDateConverter().convert(getPasswordExpirationDate());
     }
 }

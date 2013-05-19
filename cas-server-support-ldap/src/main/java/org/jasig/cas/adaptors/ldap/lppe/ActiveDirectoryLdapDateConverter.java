@@ -56,5 +56,4 @@ public class ActiveDirectoryLdapDateConverter extends AbstractLdapDateConverter 
         log.debug("Recalculated ActiveDirectory's date value of {} to {}", dateValue, dt);
         return dt;
     }
-
 }
