@@ -31,12 +31,18 @@ import javax.security.auth.login.AccountException;
 public class InvalidLoginTimeException extends AccountException implements Serializable {
 
     private static final long serialVersionUID = -6699752791525619208L;
-
+    
     public InvalidLoginTimeException() {
         super();
     }
 
     public InvalidLoginTimeException(final String message) {
         super(message);
+    }
+    
+    public static void checkAndThrowException(final int code, final String msg) throws InvalidLoginTimeException {
+        if (msg.equalsIgnoreCase("INVALID_LOGON_HOURS")) {
+            throw new InvalidLoginTimeException(msg);
+        }
     }
 }
