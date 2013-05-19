@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.ldap.lppe;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * An abstract implementation of the {@link LdapDateConverter} which defines common
@@ -30,18 +31,28 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @version 4.0.0
  */
-public abstract class AbstractLdapDateConverter implements LdapDateConverter {
+public abstract class AbstractLdapDateConverter implements LdapDateConverter, InitializingBean {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private DateTimeZone timeZone = DateTimeZone.UTC;
+    private DateTimeZone timeZone = DateTimeZone.getDefault();
 
     public void setTimeZone(final DateTimeZone timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public void setTimeZoneId(final String timeZoneId) {
+        setTimeZone(DateTimeZone.forID(timeZoneId));
     }
 
     @Override
     public DateTimeZone getTimeZone() {
        return this.timeZone;
     }
-}
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.debug("Initialized Ldap date converter [{}] with timezone [{}]", this.getClass().getSimpleName(),
+                this.timeZone);
+    } 
+   
+}

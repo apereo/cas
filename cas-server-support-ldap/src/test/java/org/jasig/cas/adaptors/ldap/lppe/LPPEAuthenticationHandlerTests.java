@@ -82,7 +82,7 @@ public class LPPEAuthenticationHandlerTests {
                 try {
                     handler.authenticate(newCredentials(username, password));
                     fail(username + " authentication succeeded but should have thrown " + expectedResult);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     assertEquals(expectedResult, e.getClass().getSimpleName());
                 }
             }
