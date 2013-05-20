@@ -28,13 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordExpiringException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
-import org.jasig.cas.authentication.InvalidLoginLocationException;
-import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
-import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 
@@ -80,23 +77,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
             }
         }
     }
-
-    @Override
-    protected void examineAccountState(final AuthenticationResponse response) throws LoginException {
-        final AccountState state = response.getAccountState();
-        if (state != null) {
-            if (state.getError() != null) {
-                AccountPasswordMustChangeException.checkAndThrowException(state.getError().getCode(),
-                        state.getError().getMessage());
-                InvalidLoginLocationException.checkAndThrowException(state.getError().getCode(),
-                        state.getError().getMessage());
-                InvalidLoginTimeException.checkAndThrowException(state.getError().getCode(),
-                        state.getError().getMessage());
-            } 
-        }
-        super.examineAccountState(response);
-    }
-
+    
     protected void examineAccountStatus(final AuthenticationResponse response) throws LoginException {
         final String uid =  configuration.getDn();
 
