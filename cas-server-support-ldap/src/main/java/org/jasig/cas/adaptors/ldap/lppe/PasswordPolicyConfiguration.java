@@ -26,6 +26,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
@@ -69,6 +71,8 @@ public final class PasswordPolicyConfiguration {
     @NotNull
     private LdapDateConverter ldapDateConverter = null;
 
+    private DateTimeFormatter datetimeFormatter = DateTimeFormat.fullDate();
+    
     /** The value that will cause password warning to be bypassed.  */
     private List<String> ignorePasswordExpirationWarningFlags = new ArrayList<String>();
 
@@ -123,6 +127,8 @@ public final class PasswordPolicyConfiguration {
     /** The attribute that contains the number of days the user's password is valid. */
     private String validPasswordNumberOfDaysAttributeName = null;
 
+    private String staticPasswordExpirationDate = null;
+   
     private String dn;
 
     private boolean isCritical;
@@ -204,6 +210,21 @@ public final class PasswordPolicyConfiguration {
 
     public void setDefaultPasswordWarningNumberOfDays(final int days) {
         this.defaultPasswordWarningNumberOfDays = days;
+    }
+    
+    public void setStaticPasswordExpirationDate(final String date) {
+        this.staticPasswordExpirationDate = date;
+    }
+    
+    public void setDateTimeFormatter(final DateTimeFormatter fmt) {
+        this.datetimeFormatter = fmt;
+    }
+    
+    public DateTime getStaticPasswordExpirationDate() {
+        if (staticPasswordExpirationDate != null) {
+            return DateTime.parse(this.staticPasswordExpirationDate, this.datetimeFormatter);
+        }
+        return null;
     }
 
     private void setUserAccountControl(final String userAccountControl) {
