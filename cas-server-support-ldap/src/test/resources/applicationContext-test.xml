@@ -118,7 +118,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <util:list id="authControls">
     <bean class="org.ldaptive.control.PasswordPolicyControl" 
           p:graceAuthNsRemaining="10" p:timeBeforeExpiration="10"
-          c:critical="true" />
+          c:critical="${ldap.auth.control.critical:false}" />
   </util:list> 
   
   <!--
