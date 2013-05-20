@@ -38,9 +38,4 @@ public class AccountPasswordMustChangeException extends CredentialExpiredExcepti
         super(msg);
     }
     
-    public static void checkAndThrowException(final int code, final String msg) throws AccountPasswordMustChangeException {
-        if (msg.equalsIgnoreCase("PASSWORD_MUST_CHANGE")) {
-            throw new AccountPasswordMustChangeException(msg);
-        }
-    }
 }

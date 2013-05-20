@@ -39,10 +39,4 @@ public class InvalidLoginLocationException extends AccountException implements S
     public InvalidLoginLocationException(final String message) {
         super(message);
     }
-    
-    public static void checkAndThrowException(final int code, final String msg) throws InvalidLoginLocationException {
-        if (msg.equalsIgnoreCase("INVALID_WORKSTATION")) {
-            throw new InvalidLoginLocationException(msg);
-        }
-    }
 }
