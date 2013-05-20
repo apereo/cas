@@ -120,11 +120,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
           p:graceAuthNsRemaining="10" p:timeBeforeExpiration="10"
           c:critical="true" />
   </util:list> 
-  <util:list id="authResponseHandlers">
-    <!--  <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" /> -->
-    <bean class="org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler" />
-    <!-- <bean class="org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler" /> -->
-  </util:list>
   
   <!--
      +========================================================================

@@ -40,9 +40,4 @@ public class InvalidLoginTimeException extends AccountException implements Seria
         super(message);
     }
     
-    public static void checkAndThrowException(final int code, final String msg) throws InvalidLoginTimeException {
-        if (msg.equalsIgnoreCase("INVALID_LOGON_HOURS")) {
-            throw new InvalidLoginTimeException(msg);
-        }
-    }
 }
