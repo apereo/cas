@@ -115,8 +115,6 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         }
     }
 
-    
-
     @Override
     protected void afterPropertiesSetInternal() {
         populatePrincipalAttributeMap();
@@ -210,13 +208,16 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     private DateTime getExpirationDateToUse() {
         final DateTime dateValue = configuration.convertPasswordExpirationDate();
 
-        final DateTime expireDate = dateValue.plusDays(configuration.getValidPasswordNumberOfDays());
-        log.debug("Retrieved date value [{}] for date attribute [{}] and added {} valid days. "
-                    + "The final expiration date is [{}]", dateValue,
-                configuration.getPasswordExpirationDateAttributeName(),
-                configuration.getValidPasswordNumberOfDays(), expireDate);
+        if (configuration.getStaticPasswordExpirationDate() == null) {
+          final DateTime expireDate = dateValue.plusDays(configuration.getValidPasswordNumberOfDays());
+          log.debug("Retrieved date value [{}] for date attribute [{}] and added {} valid days. "
+                      + "The final expiration date is [{}]", dateValue,
+                  configuration.getPasswordExpirationDateAttributeName(),
+                  configuration.getValidPasswordNumberOfDays(), expireDate);
 
-        return expireDate;
+          return expireDate;
+        }
+        return dateValue;
     }
 
     private void validateAccountPasswordExpirationPolicy() throws LoginException {
@@ -226,6 +227,17 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         }
 
         final DateTime expireTime = getExpirationDateToUse();
+        
+        if (configuration.getStaticPasswordExpirationDate() != null &&
+            (expireTime.equals(configuration.getStaticPasswordExpirationDate()) ||
+             expireTime.isAfter(configuration.getStaticPasswordExpirationDate()))) {
+            
+            final String msg = String.format("Account password has expired beyond the static expiration date [{}]",
+                    configuration.getStaticPasswordExpirationDate());
+            log.debug(msg);
+            throw new CredentialExpiredException(msg);   
+        }
+             
         final int days = getDaysToExpirationDate(expireTime);
         if (days != -1) {
             final String msg = String.format("Password expires in [%d] days", days);
