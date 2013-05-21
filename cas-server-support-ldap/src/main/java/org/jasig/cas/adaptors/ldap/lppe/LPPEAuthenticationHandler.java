@@ -24,7 +24,6 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordExpiringException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
@@ -94,12 +93,10 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * Examine the account status based on custom attributes defined (if any),
      * to determine whether the account status matches the following cases:
      * <ul>
-     * <li>Disabled (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)})</li>
-     * <li>Locked (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)} )</li>
-     * <li>Expired (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)} )</li>
-     * <li>Disabled (based on {@link PasswordPolicyConfiguration#setAccountDisabledAttributeName(String)})</li>
-     * <li>Locked (based on {@link PasswordPolicyConfiguration#setAccountLockedAttributeName(String)} )</li>
-     * <li>Expired (based on {@link PasswordPolicyConfiguration#setAccountPasswordMustChangeAttributeName(String)} )</li>
+     * <li>Disabled: {@link AccountDisabledException}</li>
+     * <li>Locked: {@link AccountLockedException}</li>
+     * <li>Expired: {@link CredentialExpiredException}</li>
+     * <li>Password Must Change: {@link AccountPasswordMustChangeException}</li>
      * </ul>
      * @param response the ldaptive authentication response.
      * @throws LoginException if the above conditions match, an instance of LoginException 
@@ -108,36 +105,23 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     protected void examineAccountStatus(final AuthenticationResponse response) throws LoginException {
         final String uid =  configuration.getDn();
 
-        if (configuration.isUserAccountControlSetToDisableAccount()) {
-            final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
-            throw new AccountDisabledException(msg);
-        }
-
-        if (configuration.isUserAccountControlSetToLockAccount()) {
-            final String msg = String.format("User account control flag is set. Account %s is locked", uid);
-            throw new AccountLockedException(msg);
-        }
-
-        if (configuration.isUserAccountControlSetToExpirePassword()) {
-            final String msg = String.format("User account control flag is set. Account %s has expired", uid);
+        if (configuration.isAccountExpired()) {
+            final String msg = String.format("Account %s has expired", uid);
             throw new CredentialExpiredException(msg);
         }
 
         if (configuration.isAccountDisabled()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s is disabled",
-                    configuration.getAccountDisabledAttributeName() , uid);
+            final String msg = String.format("Account %s is disabled", uid);
             throw new AccountDisabledException(msg);
         }
 
         if (configuration.isAccountLocked()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s is locked",
-                    configuration.getAccountLockedAttributeName(), uid);
+            final String msg = String.format("Account %s is locked", uid);
             throw new AccountLockedException(msg);
         }
 
         if (configuration.isAccountPasswordMustChange()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s must change it password",
-                                             configuration.getAccountPasswordMustChangeAttributeName(), uid);
+            final String msg = String.format("Account %s must change it password", uid);
             throw new AccountPasswordMustChangeException(msg);
         }
     }
@@ -153,45 +137,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * configuration.
      */
     private void populatePrincipalAttributeMap() {
-        if (!StringUtils.isBlank(configuration.getUserAccountControlAttributeName())) {
-            principalAttributeMap.put(configuration.getUserAccountControlAttributeName(),
-                                      configuration.getUserAccountControlAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getAccountDisabledAttributeName())) {
-            principalAttributeMap.put(configuration.getAccountDisabledAttributeName(),
-                                      configuration.getAccountDisabledAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getAccountLockedAttributeName())) {
-            principalAttributeMap.put(configuration.getAccountLockedAttributeName(),
-                                      configuration.getAccountLockedAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getAccountPasswordMustChangeAttributeName())) {
-            principalAttributeMap.put(configuration.getAccountPasswordMustChangeAttributeName(),
-                                      configuration.getAccountPasswordMustChangeAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getIgnorePasswordExpirationWarningAttributeName())) {
-            principalAttributeMap.put(configuration.getIgnorePasswordExpirationWarningAttributeName(),
-                                      configuration.getIgnorePasswordExpirationWarningAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getPasswordExpirationDateAttributeName())) {
-            principalAttributeMap.put(configuration.getPasswordExpirationDateAttributeName(),
-                                      configuration.getPasswordExpirationDateAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getPasswordWarningNumberOfDaysAttributeName())) {
-            principalAttributeMap.put(configuration.getPasswordWarningNumberOfDaysAttributeName(),
-                                      configuration.getPasswordWarningNumberOfDaysAttributeName());
-        }
-
-        if (!StringUtils.isBlank(configuration.getValidPasswordNumberOfDaysAttributeName())) {
-            principalAttributeMap.put(configuration.getValidPasswordNumberOfDaysAttributeName(),
-                                      configuration.getValidPasswordNumberOfDaysAttributeName());
-        }
+        principalAttributeMap.putAll(configuration.getPasswordPolicyAttributesMap());
     }
 
     /**
