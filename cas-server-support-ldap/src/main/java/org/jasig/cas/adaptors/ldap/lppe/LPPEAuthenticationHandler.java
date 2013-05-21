@@ -124,7 +124,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     }
 
     @Override
-    protected void afterPropertiesSetInternal() {
+    protected void initializeInternal() {
         populatePrincipalAttributeMap();
     }
 
