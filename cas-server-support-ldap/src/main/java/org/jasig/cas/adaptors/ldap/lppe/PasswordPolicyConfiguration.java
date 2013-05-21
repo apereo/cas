@@ -19,7 +19,9 @@
 package org.jasig.cas.adaptors.ldap.lppe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -39,34 +41,9 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Misagh Moayyed
  * @version 4.0.0
  */
-public final class PasswordPolicyConfiguration implements InitializingBean {
+public class PasswordPolicyConfiguration implements InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
-
-    /**
-     * This enumeration defines a selective limited set of ldap user account control flags
-     * that indicate various statuses of the user account. The account status
-     * is a bitwise flag that may contain one of more of the following values.
-     */
-    private enum ActiveDirectoryUserAccountControlFlags {
-        ADS_UF_ACCOUNT_DISABLE(0x00000002),
-        ADS_UF_LOCKOUT(0x00000010),
-        ADS_UF_PASSWORD_NOTREQUIRED(0x00000020),
-        ADS_UF_PASSWD_CANT_CHANGE(0x00000040),
-        ADS_UF_NORMAL_ACCOUNT(0x00000200),
-        ADS_UF_DONT_EXPIRE_PASSWD(0x00010000),
-        ADS_UF_PASSWORD_EXPIRED(0x00800000);
-
-        private long value;
-
-        ActiveDirectoryUserAccountControlFlags(final long id) {
-            this.value = id;
-        }
-
-        public long getValue() {
-            return this.value;
-        }
-    }
+    protected static final Logger log = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
 
     /** The ldap converter used in calculating the expiration date attribute value.*/
     @NotNull
@@ -87,18 +64,20 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
 
     private String passwordExpirationDateAttributeName;
 
+    /** Number of valid password days. **/
     private int validPasswordNumberOfDays;
     
+    /** Number of password warning days. **/
     private int passwordWarningNumberOfDays;
 
-    private boolean accountDisabled;
+    private boolean accountDisabled = false;
     
-    private boolean accountLocked;
+    private boolean accountLocked = false;
     
-    private boolean accountPasswordMustChange;
+    private boolean accountPasswordMustChange = false;
 
-    private long userAccountControl = -1;
-
+    private boolean accountExpired = false;
+    
     /** The custom attribute that indicates the account is disabled. **/
     private String accountDisabledAttributeName = null;
 
@@ -108,8 +87,6 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
     /** The custom attribute that indicates the account password must change. **/
     private String accountPasswordMustChangeAttributeName = null;
 
-    /** The attribute that indicates the user account status. **/
-    private String userAccountControlAttributeName = "userAccountControl";
 
     /** The attribute that contains the data that will determine if password warning is skipped.  */
     private String ignorePasswordExpirationWarningAttributeName = null;
@@ -178,18 +155,13 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
         return this.accountPasswordMustChangeAttributeName;
     }
 
-    public long getUserAccountControl() {
-        return this.userAccountControl;
-    }
-
-    public void setUserAccountControlAttributeName(final String attr) {
-        this.userAccountControlAttributeName = attr;
-    }
-
-    public String getUserAccountControlAttributeName() {
-        return this.userAccountControlAttributeName;
-    }
-
+    /**
+     * The attribute value in days will be added to expiration date to construct the
+     * final expiration policy.
+     * @param validDaysAttributeName
+     * @see #setStaticPasswordExpirationDate(String)
+     * @see #setPasswordExpirationDate(String)
+     */
     public void setValidPasswordNumberOfDaysAttributeName(final String validDaysAttributeName) {
         this.validPasswordNumberOfDaysAttributeName = validDaysAttributeName;
     }
@@ -243,13 +215,7 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
         return null;
     }
 
-    private void setUserAccountControl(final String userAccountControl) {
-        if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
-            this.userAccountControl = Long.parseLong(userAccountControl);
-        }
-    }
-
-    public boolean isAccountDisabled() {
+    protected boolean isAccountDisabled() {
         return this.accountDisabled;
     }
 
@@ -257,15 +223,19 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
         this.accountDisabled = accountDisabled;
     }
 
-    public boolean isAccountLocked() {
+    protected boolean isAccountLocked() {
         return this.accountLocked;
     }
 
+    protected boolean isAccountExpired() {
+        return this.accountExpired;
+    }
+    
     private void setAccountLocked(final boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 
-    public boolean isAccountPasswordMustChange() {
+    protected boolean isAccountPasswordMustChange() {
         return this.accountPasswordMustChange;
     }
 
@@ -351,14 +321,11 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
 
     /**
      * Evaluate whether an account is set to never expire. 
-     * Compares the account against configured ignore values for password expiration warning.
-     * Then checks for AD-specific user account control values
-     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_DONT_EXPIRE_PASSWD} and 
-     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_PASSWD_CANT_CHANGE}. Finally,
+     * Compares the account against configured ignore values for password expiration warning. Finally,
      * checks the value of password expiration date (if numeric) to be greater than zero.
      * @return true, if the any of the above conditions return true.
      */
-    public boolean isAccountPasswordSetToNeverExpire() {
+    protected boolean isAccountPasswordSetToNeverExpire() {
         final String ignoreCheckValue = getIgnorePasswordExpirationWarning();
         boolean ignoreChecks = false;
 
@@ -367,33 +334,10 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
         }
 
         if (!ignoreChecks) {
-            ignoreChecks = isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_DONT_EXPIRE_PASSWD)
-                    || isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWD_CANT_CHANGE);
-        }
-        if (!ignoreChecks) {
             ignoreChecks = NumberUtils.isNumber(getPasswordExpirationDate()) &&
                             NumberUtils.toLong(getPasswordExpirationDate()) <= 0;
         }
         return ignoreChecks;
-    }
-
-    public boolean isUserAccountControlSetToDisableAccount() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE);
-    }
-
-    public boolean isUserAccountControlSetToLockAccount() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT);
-    }
-
-    public boolean isUserAccountControlSetToExpirePassword() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWORD_EXPIRED);
-    }
-
-    public boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
-        if (getUserAccountControl() > 0) {
-            return ((getUserAccountControl() & bit.getValue()) == bit.getValue());
-        }
-        return false;
     }
 
     /**
@@ -402,7 +346,7 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
      * @param entry the authenticated ldap account entry.
      * @return false if password expiration date value is blank. Otherwise, true.
      */
-    public boolean build(final LdapEntry entry) {
+    public final boolean build(final LdapEntry entry) {
 
         final String expirationDate = getPasswordPolicyAttributeValue(entry, getPasswordExpirationDateAttributeName());
         if (StringUtils.isBlank(expirationDate)) {
@@ -446,12 +390,11 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
         if (attributeValue != null) {
             setAccountPasswordMustChange(translateValueToBoolean(attributeValue));
         }
+     
+        return buildInternal(entry);
+    }
 
-        attributeValue = getPasswordPolicyAttributeValue(entry, getUserAccountControlAttributeName());
-        if (attributeValue != null) {
-            setUserAccountControl(attributeValue);
-        }
-
+    protected boolean buildInternal(final LdapEntry entry) {
         return true;
     }
 
@@ -460,11 +403,11 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
      * @param value the attribute value to translate
      * @return true, if the value {@link Boolean#valueOf(String)} returns true or if the value is an integer greater than zero.
      */
-    private boolean translateValueToBoolean(final String value) {
+    protected boolean translateValueToBoolean(final String value) {
         return Boolean.valueOf(value) || (NumberUtils.toLong(value) > 0);
     }
     
-    private String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
+    protected String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
         if (attrName != null) {
             log.debug("Retrieving attribute [{}]", attrName);
             final LdapAttribute attribute = entry.getAttribute(attrName);
@@ -482,12 +425,52 @@ public final class PasswordPolicyConfiguration implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws Exception {
         if (getStaticPasswordExpirationDate() != null) {
             
             setValidPasswordNumberOfDays(0);
             log.debug("Static password expiration date is configured. Number of valid "
             		+ "password days is now set to [{}]", getValidPasswordNumberOfDays());
         }
+    }
+
+    protected Map<String, String> getPasswordPolicyAttributesMap() {
+        final Map<String, String> principalAttributeMap = new HashMap<String, String>();
+        
+        if (!StringUtils.isBlank(getAccountDisabledAttributeName())) {
+            principalAttributeMap.put(getAccountDisabledAttributeName(),
+                                      getAccountDisabledAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getAccountLockedAttributeName())) {
+            principalAttributeMap.put(getAccountLockedAttributeName(),
+                                      getAccountLockedAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getAccountPasswordMustChangeAttributeName())) {
+            principalAttributeMap.put(getAccountPasswordMustChangeAttributeName(),
+                                      getAccountPasswordMustChangeAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getIgnorePasswordExpirationWarningAttributeName())) {
+            principalAttributeMap.put(getIgnorePasswordExpirationWarningAttributeName(),
+                                      getIgnorePasswordExpirationWarningAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getPasswordExpirationDateAttributeName())) {
+            principalAttributeMap.put(getPasswordExpirationDateAttributeName(),
+                                      getPasswordExpirationDateAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getPasswordWarningNumberOfDaysAttributeName())) {
+            principalAttributeMap.put(getPasswordWarningNumberOfDaysAttributeName(),
+                                      getPasswordWarningNumberOfDaysAttributeName());
+        }
+
+        if (!StringUtils.isBlank(getValidPasswordNumberOfDaysAttributeName())) {
+            principalAttributeMap.put(getValidPasswordNumberOfDaysAttributeName(),
+                                      getValidPasswordNumberOfDaysAttributeName());
+        }
+        return principalAttributeMap;
     }
 }
