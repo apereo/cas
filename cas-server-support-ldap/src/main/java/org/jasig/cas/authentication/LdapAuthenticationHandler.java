@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
@@ -42,7 +44,6 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
@@ -58,7 +59,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class LdapAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     /** Logger instance. */
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -220,9 +221,9 @@ public class LdapAuthenticationHandler implements AuthenticationHandler, Initial
         return new SimplePrincipal(principalAttr.getStringValue(), attributeMap);
     }
 
-    @Override
-    public final void afterPropertiesSet() throws Exception {
-        afterPropertiesSetInternal();
+    @PostConstruct
+    public void initialize() {
+        initializeInternal();
         final List<String> attributes = new ArrayList<String>();
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);
@@ -230,6 +231,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler, Initial
         attributes.addAll(this.principalAttributeMap.keySet());
         this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
     }
-    
-    protected void afterPropertiesSetInternal() {}
+
+    protected void initializeInternal() {
+    }
 }
