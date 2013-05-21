@@ -156,7 +156,6 @@ public class LdapAuthenticationHandler implements AuthenticationHandler, Initial
         
         if (response.getResult()) {
             doPostAuthentication(response);
-            return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
         }
 
         throw new FailedLoginException("LDAP authentication failed.");
@@ -170,8 +169,8 @@ public class LdapAuthenticationHandler implements AuthenticationHandler, Initial
         }
     }
 
-    protected void doPostAuthentication(final AuthenticationResponse response) throws LoginException {
-        
+    protected HandlerResult doPostAuthentication(final AuthenticationResponse response) throws LoginException {
+        return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
     }
 
     @Override
@@ -193,7 +192,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler, Initial
      *
      * @throws LoginException On security policy errors related to principal creation.
      */
-    private Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
+    protected Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
         final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
         if (principalAttr == null || principalAttr.size() == 0) {
             return null;
