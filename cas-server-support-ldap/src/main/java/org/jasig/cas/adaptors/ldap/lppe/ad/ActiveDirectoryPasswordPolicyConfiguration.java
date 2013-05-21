@@ -21,8 +21,8 @@ package org.jasig.cas.adaptors.ldap.lppe.ad;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.adaptors.ldap.lppe.PasswordPolicyConfiguration;
+import org.jasig.cas.adaptors.ldap.lppe.PasswordPolicyResult;
 import org.ldaptive.LdapEntry;
 
 /**
@@ -32,64 +32,8 @@ import org.ldaptive.LdapEntry;
  */
 public class ActiveDirectoryPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
-    private long userAccountControl = -1;
-    
     /** The attribute that indicates the user account status. **/
     private String userAccountControlAttributeName = "userAccountControl";
-    
-    /**
-     * This enumeration defines a selective limited set of ldap user account control flags
-     * that indicate various statuses of the user account. The account status
-     * is a bitwise flag that may contain one of more of the following values.
-     */
-    private enum ActiveDirectoryUserAccountControlFlags {
-        ADS_UF_ACCOUNT_DISABLE(0x00000002),
-        ADS_UF_LOCKOUT(0x00000010),
-        ADS_UF_PASSWORD_NOTREQUIRED(0x00000020),
-        ADS_UF_PASSWD_CANT_CHANGE(0x00000040),
-        ADS_UF_NORMAL_ACCOUNT(0x00000200),
-        ADS_UF_DONT_EXPIRE_PASSWD(0x00010000),
-        ADS_UF_PASSWORD_EXPIRED(0x00800000);
-
-        private long value;
-
-        ActiveDirectoryUserAccountControlFlags(final long id) {
-            this.value = id;
-        }
-
-        public long getValue() {
-            return this.value;
-        }
-    }
-
-    private boolean isUserAccountControlSetToDisableAccount() {
-        if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE)) {
-            log.debug("User account control flag is set. Account [{}] is disabled", getDn());
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isUserAccountControlSetToLockAccount() {
-        if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT)) {
-            log.debug("User account control flag is set. Account [{}] is locked", getDn());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected boolean isAccountExpired() {
-        return super.isAccountExpired() || isUserAccountControlSetToExpirePassword();
-    }
-
-    private boolean isUserAccountControlSetToExpirePassword() {
-        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWORD_EXPIRED);
-    }
-
-    private long getUserAccountControl() {
-        return this.userAccountControl;
-    }
 
     public void setUserAccountControlAttributeName(final String attr) {
         this.userAccountControlAttributeName = attr;
@@ -97,46 +41,6 @@ public class ActiveDirectoryPasswordPolicyConfiguration extends PasswordPolicyCo
 
     public String getUserAccountControlAttributeName() {
         return this.userAccountControlAttributeName;
-    }
-
-    private void setUserAccountControl(final String userAccountControl) {
-        if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
-            this.userAccountControl = Long.parseLong(userAccountControl);
-        }
-    }
-    
-    public boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
-        if (getUserAccountControl() > 0) {
-            return ((getUserAccountControl() & bit.getValue()) == bit.getValue());
-        }
-        return false;
-    }
-    
-    @Override
-    protected boolean isAccountLocked() {
-        return super.isAccountLocked() || isUserAccountControlSetToLockAccount();
-    }
-
-    @Override
-    protected boolean isAccountDisabled() {
-        return super.isAccountDisabled() || isUserAccountControlSetToDisableAccount();
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>Additionally, checks for AD-specific user account control values
-     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_DONT_EXPIRE_PASSWD} and 
-     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_PASSWD_CANT_CHANGE}.
-     */
-    @Override
-    public boolean isAccountPasswordSetToNeverExpire() {
-        boolean ignoreChecks = super.isAccountPasswordSetToNeverExpire();
-
-        if (!ignoreChecks) {
-            ignoreChecks = isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_DONT_EXPIRE_PASSWD)
-                    || isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_PASSWD_CANT_CHANGE);
-        }
-        return ignoreChecks;
     }
 
     @Override
@@ -150,13 +54,17 @@ public class ActiveDirectoryPasswordPolicyConfiguration extends PasswordPolicyCo
     }
 
     @Override
-    protected boolean buildInternal(final LdapEntry entry) {
-        final String attributeValue = getPasswordPolicyAttributeValue(entry, getUserAccountControlAttributeName());
-        if (attributeValue != null) {
-            setUserAccountControl(attributeValue);
-        }
-        return super.buildInternal(entry);
+    protected PasswordPolicyResult getPasswordPolicyResultInstance() {
+        return new ActiveDirectoryPasswordPolicyResult(this);
     }
     
-    
+    @Override
+    protected PasswordPolicyResult buildInternal(final LdapEntry entry, final PasswordPolicyResult result) {
+        final ActiveDirectoryPasswordPolicyResult adResult = (ActiveDirectoryPasswordPolicyResult) result;
+        final String attributeValue = getPasswordPolicyAttributeValue(entry, getUserAccountControlAttributeName());
+        if (attributeValue != null) {
+            adResult.setUserAccountControl(attributeValue);
+        }
+        return super.buildInternal(entry, result);
+    }
 }

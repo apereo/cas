@@ -34,16 +34,15 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * The password policy configuration defined by the underlying data source.
  * @author Misagh Moayyed
  * @version 4.0.0
  */
-public class PasswordPolicyConfiguration implements InitializingBean {
+public class PasswordPolicyConfiguration {
 
-    protected static final Logger log = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /** The ldap converter used in calculating the expiration date attribute value.*/
     @NotNull
@@ -58,25 +57,8 @@ public class PasswordPolicyConfiguration implements InitializingBean {
     /** Disregard the warning period and warn all users of password expiration. */
     private boolean alwaysDisplayPasswordExpirationWarning = false;
 
-    private String passwordExpirationDate;
-
-    private String ignorePasswordExpirationWarning;
-
+    /** Attribute name based on which password expiration policy will be constructed. **/
     private String passwordExpirationDateAttributeName;
-
-    /** Number of valid password days. **/
-    private int validPasswordNumberOfDays;
-    
-    /** Number of password warning days. **/
-    private int passwordWarningNumberOfDays;
-
-    private boolean accountDisabled = false;
-    
-    private boolean accountLocked = false;
-    
-    private boolean accountPasswordMustChange = false;
-
-    private boolean accountExpired = false;
     
     /** The custom attribute that indicates the account is disabled. **/
     private String accountDisabledAttributeName = null;
@@ -86,7 +68,6 @@ public class PasswordPolicyConfiguration implements InitializingBean {
 
     /** The custom attribute that indicates the account password must change. **/
     private String accountPasswordMustChangeAttributeName = null;
-
 
     /** The attribute that contains the data that will determine if password warning is skipped.  */
     private String ignorePasswordExpirationWarningAttributeName = null;
@@ -106,21 +87,26 @@ public class PasswordPolicyConfiguration implements InitializingBean {
     /** The attribute that contains the number of days the user's password is valid. */
     private String validPasswordNumberOfDaysAttributeName = null;
 
+    /** static password expiration date beyond which passwords are considered expired. **/
     private String staticPasswordExpirationDate = null;
    
-    private String dn;
-
-    private boolean isCritical;
-
+    public PasswordPolicyConfiguration() {
+    }
+    
+    public void setIgnorePasswordExpirationWarningFlags(final List<String> values) {
+        this.ignorePasswordExpirationWarningFlags = values;
+    }
+    
+    public List<String> getIgnorePasswordExpirationWarningFlags() {
+        return this.ignorePasswordExpirationWarningFlags;
+    }
+    
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
 
     public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
         this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
-    }
-
-    public PasswordPolicyConfiguration() {
     }
 
     public String getPasswordPolicyUrl() {
@@ -160,7 +146,6 @@ public class PasswordPolicyConfiguration implements InitializingBean {
      * final expiration policy.
      * @param validDaysAttributeName
      * @see #setStaticPasswordExpirationDate(String)
-     * @see #setPasswordExpirationDate(String)
      */
     public void setValidPasswordNumberOfDaysAttributeName(final String validDaysAttributeName) {
         this.validPasswordNumberOfDaysAttributeName = validDaysAttributeName;
@@ -190,7 +175,6 @@ public class PasswordPolicyConfiguration implements InitializingBean {
      * Provides a constant password expiration date value, beyond which
      * the account will be considered expired. When provided, the 
      * number of days the password may remain valid is set to zero
-     * via {@link #setValidPasswordNumberOfDays(int)}.
      * @param date
      * @see #setDateTimeFormatter(DateTimeFormatter)
      */
@@ -215,64 +199,13 @@ public class PasswordPolicyConfiguration implements InitializingBean {
         return null;
     }
 
-    protected boolean isAccountDisabled() {
-        return this.accountDisabled;
-    }
-
-    private void setAccountDisabled(final boolean accountDisabled) {
-        this.accountDisabled = accountDisabled;
-    }
-
-    protected boolean isAccountLocked() {
-        return this.accountLocked;
-    }
-
-    protected boolean isAccountExpired() {
-        return this.accountExpired;
-    }
-    
-    private void setAccountLocked(final boolean accountLocked) {
-        this.accountLocked = accountLocked;
-    }
-
-    protected boolean isAccountPasswordMustChange() {
-        return this.accountPasswordMustChange;
-    }
-
-    private void setAccountPasswordMustChange(final boolean accountPasswordMustChange) {
-        this.accountPasswordMustChange = accountPasswordMustChange;
-    }
-
-    public String getPasswordExpirationDate() {
-        return this.passwordExpirationDate;
-    }
-
     public String getIgnorePasswordExpirationWarningAttributeName() {
         return this.ignorePasswordExpirationWarningAttributeName;
     }
 
-    public int getValidPasswordNumberOfDays() {
-        return this.validPasswordNumberOfDays;
-    }
-
-    public int getPasswordWarningNumberOfDays() {
-        return this.passwordWarningNumberOfDays;
-    }
-
-    private void setPasswordExpirationDate(final String date) {
-        this.passwordExpirationDate = date;
-    }
-
+    
     public void setIgnorePasswordExpirationWarningAttributeName(final String value) {
         this.ignorePasswordExpirationWarningAttributeName = value;
-    }
-
-    public void setValidPasswordNumberOfDays(final int valid) {
-        this.validPasswordNumberOfDays = valid;
-    }
-
-    public void setPasswordWarningNumberOfDays(final int days) {
-        this.passwordWarningNumberOfDays = days;
     }
 
     public void setPasswordExpirationDateAttributeName(final String value) {
@@ -283,14 +216,6 @@ public class PasswordPolicyConfiguration implements InitializingBean {
         return this.passwordExpirationDateAttributeName;
     }
 
-    public String getIgnorePasswordExpirationWarning() {
-        return this.ignorePasswordExpirationWarning;
-    }
-
-    private void setIgnorePasswordExpirationWarning(final String warning) {
-        this.ignorePasswordExpirationWarning = warning;
-    }
-
     public LdapDateConverter getDateConverter() {
         return this.ldapDateConverter;
     }
@@ -299,103 +224,67 @@ public class PasswordPolicyConfiguration implements InitializingBean {
         this.ldapDateConverter = converter;
     }
 
-    public String getDn() {
-        return this.dn;
-    }
-
-    private void setDn(final String dn) {
-        this.dn = dn;
-    }
-
-    public boolean isCritical() {
-        return this.isCritical;
-    }
-
-    /** Determines whether password policy errors should simply be ignored,
-     * or they should be treated as critical issues failing the authentication flow.
-     * @param critical if policy should be critical.
-     */
-    public void setCritical(final boolean critical) {
-        this.isCritical = critical;
-    }
-
-    /**
-     * Evaluate whether an account is set to never expire. 
-     * Compares the account against configured ignore values for password expiration warning. Finally,
-     * checks the value of password expiration date (if numeric) to be greater than zero.
-     * @return true, if the any of the above conditions return true.
-     */
-    protected boolean isAccountPasswordSetToNeverExpire() {
-        final String ignoreCheckValue = getIgnorePasswordExpirationWarning();
-        boolean ignoreChecks = false;
-
-        if (!StringUtils.isBlank(ignoreCheckValue) && this.ignorePasswordExpirationWarningFlags != null) {
-            ignoreChecks = this.ignorePasswordExpirationWarningFlags.contains(ignoreCheckValue);
-        }
-
-        if (!ignoreChecks) {
-            ignoreChecks = NumberUtils.isNumber(getPasswordExpirationDate()) &&
-                            NumberUtils.toLong(getPasswordExpirationDate()) <= 0;
-        }
-        return ignoreChecks;
-    }
-
     /**
      * Construct the internal state of the password policy configuration based on
      * attributes and defined settings.
      * @param entry the authenticated ldap account entry.
      * @return false if password expiration date value is blank. Otherwise, true.
      */
-    public final boolean build(final LdapEntry entry) {
+    public final PasswordPolicyResult build(final LdapEntry entry) {
 
         final String expirationDate = getPasswordPolicyAttributeValue(entry, getPasswordExpirationDateAttributeName());
         if (StringUtils.isBlank(expirationDate)) {
             log.warn("Password expiration date [{}] is null.", getPasswordExpirationDateAttributeName());
-            return false;
+            return null;
         }
 
-        setDn(entry.getDn());
-        setPasswordExpirationDate(expirationDate);
-        setPasswordWarningNumberOfDays(this.defaultPasswordWarningNumberOfDays);
-        setValidPasswordNumberOfDays(this.defaultValidPasswordNumberOfDays);
+        final PasswordPolicyResult result = getPasswordPolicyResultInstance();
+        result.setDn(entry.getDn());
+        result.setPasswordExpirationDate(expirationDate);
+        result.setPasswordWarningNumberOfDays(this.defaultPasswordWarningNumberOfDays);
+        result.setValidPasswordNumberOfDays(this.defaultValidPasswordNumberOfDays);
 
         String attributeValue = getPasswordPolicyAttributeValue(entry, getPasswordWarningNumberOfDaysAttributeName());
         if (attributeValue != null) {
             if (NumberUtils.isNumber(attributeValue)) {
-                setPasswordWarningNumberOfDays(Integer.parseInt(attributeValue));
+                result.setPasswordWarningNumberOfDays(Integer.parseInt(attributeValue));
             }
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getIgnorePasswordExpirationWarningAttributeName());
         if (attributeValue != null) {
-            setIgnorePasswordExpirationWarning(attributeValue);
+            result.setIgnorePasswordExpirationWarning(attributeValue);
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getValidPasswordNumberOfDaysAttributeName());
         if (attributeValue != null) {
-            setValidPasswordNumberOfDays(NumberUtils.toInt(attributeValue));
+            result.setValidPasswordNumberOfDays(NumberUtils.toInt(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountDisabledAttributeName());
         if (attributeValue != null) {
-            setAccountDisabled(translateValueToBoolean(attributeValue));
+            result.setAccountDisabled(translateValueToBoolean(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountLockedAttributeName());
         if (attributeValue != null) {
-            setAccountLocked(translateValueToBoolean(attributeValue));
+            result.setAccountLocked(translateValueToBoolean(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountPasswordMustChangeAttributeName());
         if (attributeValue != null) {
-            setAccountPasswordMustChange(translateValueToBoolean(attributeValue));
+            result.setAccountPasswordMustChange(translateValueToBoolean(attributeValue));
         }
      
-        return buildInternal(entry);
+        return buildInternal(entry, result);
     }
 
-    protected boolean buildInternal(final LdapEntry entry) {
-        return true;
+    protected PasswordPolicyResult getPasswordPolicyResultInstance() {
+        return new PasswordPolicyResult(this);
+    }
+
+    protected PasswordPolicyResult buildInternal(final LdapEntry entry, final PasswordPolicyResult result) {
+        return result;
     }
 
     /**
@@ -418,20 +307,6 @@ public class PasswordPolicyConfiguration implements InitializingBean {
             }
         }
         return null;
-    }
-
-    public DateTime convertPasswordExpirationDate() {
-        return getDateConverter().convert(getPasswordExpirationDate());
-    }
-
-    @Override
-    public final void afterPropertiesSet() throws Exception {
-        if (getStaticPasswordExpirationDate() != null) {
-            
-            setValidPasswordNumberOfDays(0);
-            log.debug("Static password expiration date is configured. Number of valid "
-            		+ "password days is now set to [{}]", getValidPasswordNumberOfDays());
-        }
     }
 
     protected Map<String, String> getPasswordPolicyAttributesMap() {
