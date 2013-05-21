@@ -32,13 +32,14 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * The password policy configuration defined by the underlying data source.
  * @author Misagh Moayyed
  * @version 4.0.0
  */
-public final class PasswordPolicyConfiguration {
+public final class PasswordPolicyConfiguration implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(PasswordPolicyConfiguration.class);
 
@@ -71,6 +72,7 @@ public final class PasswordPolicyConfiguration {
     @NotNull
     private LdapDateConverter ldapDateConverter = null;
 
+    /** the date/time formatter object used to parse date patterns in dates. **/
     private DateTimeFormatter datetimeFormatter = DateTimeFormat.fullDate();
     
     /** The value that will cause password warning to be bypassed.  */
@@ -212,6 +214,14 @@ public final class PasswordPolicyConfiguration {
         this.defaultPasswordWarningNumberOfDays = days;
     }
     
+    /**
+     * Provides a constant password expiration date value, beyond which
+     * the account will be considered expired. When provided, the 
+     * number of days the password may remain valid is set to zero
+     * via {@link #setValidPasswordNumberOfDays(int)}.
+     * @param date
+     * @see #setDateTimeFormatter(DateTimeFormatter)
+     */
     public void setStaticPasswordExpirationDate(final String date) {
         this.staticPasswordExpirationDate = date;
     }
@@ -220,6 +230,12 @@ public final class PasswordPolicyConfiguration {
         this.datetimeFormatter = fmt;
     }
     
+    /**
+     * Construct the static password expiration date based on the formatter defined.
+     * @return the static password expiration date.
+     * @see #setDateTimeFormatter(DateTimeFormatter)
+     * @see #setStaticPasswordExpirationDate(String)
+     */
     public DateTime getStaticPasswordExpirationDate() {
         if (staticPasswordExpirationDate != null) {
             return DateTime.parse(this.staticPasswordExpirationDate, this.datetimeFormatter);
@@ -325,10 +341,23 @@ public final class PasswordPolicyConfiguration {
         return this.isCritical;
     }
 
+    /** Determines whether password policy errors should simply be ignored,
+     * or they should be treated as critical issues failing the authentication flow.
+     * @param critical if policy should be critical.
+     */
     public void setCritical(final boolean critical) {
         this.isCritical = critical;
     }
 
+    /**
+     * Evaluate whether an account is set to never expire. 
+     * Compares the account against configured ignore values for password expiration warning.
+     * Then checks for AD-specific user account control values
+     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_DONT_EXPIRE_PASSWD} and 
+     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_PASSWD_CANT_CHANGE}. Finally,
+     * checks the value of password expiration date (if numeric) to be greater than zero.
+     * @return true, if the any of the above conditions return true.
+     */
     public boolean isAccountPasswordSetToNeverExpire() {
         final String ignoreCheckValue = getIgnorePasswordExpirationWarning();
         boolean ignoreChecks = false;
@@ -367,6 +396,12 @@ public final class PasswordPolicyConfiguration {
         return false;
     }
 
+    /**
+     * Construct the internal state of the password policy configuration based on
+     * attributes and defined settings.
+     * @param entry the authenticated ldap account entry.
+     * @return false if password expiration date value is blank. Otherwise, true.
+     */
     public boolean build(final LdapEntry entry) {
 
         final String expirationDate = getPasswordPolicyAttributeValue(entry, getPasswordExpirationDateAttributeName());
@@ -420,6 +455,11 @@ public final class PasswordPolicyConfiguration {
         return true;
     }
 
+    /**
+     * Translate a value to its corresponding boolean value. 
+     * @param value the attribute value to translate
+     * @return true, if the value {@link Boolean#valueOf(String)} returns true or if the value is an integer greater than zero.
+     */
     private boolean translateValueToBoolean(final String value) {
         return Boolean.valueOf(value) || (NumberUtils.toLong(value) > 0);
     }
@@ -439,5 +479,15 @@ public final class PasswordPolicyConfiguration {
 
     public DateTime convertPasswordExpirationDate() {
         return getDateConverter().convert(getPasswordExpirationDate());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (getStaticPasswordExpirationDate() != null) {
+            
+            setValidPasswordNumberOfDays(0);
+            log.debug("Static password expiration date is configured. Number of valid "
+            		+ "password days is now set to [{}]", getValidPasswordNumberOfDays());
+        }
     }
 }
