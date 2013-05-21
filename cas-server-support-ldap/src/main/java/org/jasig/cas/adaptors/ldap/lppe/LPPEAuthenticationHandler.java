@@ -53,6 +53,18 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         this.configuration = configuration;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Builds the {@link PasswordPolicyConfiguration} defined, examines the account status
+     * for locked, disabled, expired, etc accounts and validates the password expiration policy.
+     * If the policy cannot be built, account status matches one of the defined failure conditions
+     * or the password policy expiration fails and the configuration is set as critical, 
+     * the authentication will fail. otherwise a warning is issued and the flow.
+     * is resumed.
+     * @see PasswordPolicyConfiguration#setCritical(boolean)
+     * @see #examineAccountStatus(AuthenticationResponse)
+     * @see #validateAccountPasswordExpirationPolicy()
+     */
     @Override
     protected final void doPostAuthentication(final AuthenticationResponse response)
             throws LoginException {
@@ -78,6 +90,21 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         }
     }
     
+    /**
+     * Examine the account status based on custom attributes defined (if any),
+     * to determine whether the account status matches the following cases:
+     * <ul>
+     * <li>Disabled (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)})</li>
+     * <li>Locked (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)} )</li>
+     * <li>Expired (based on {@link PasswordPolicyConfiguration#setUserAccountControlAttributeName(String)} )</li>
+     * <li>Disabled (based on {@link PasswordPolicyConfiguration#setAccountDisabledAttributeName(String)})</li>
+     * <li>Locked (based on {@link PasswordPolicyConfiguration#setAccountLockedAttributeName(String)} )</li>
+     * <li>Expired (based on {@link PasswordPolicyConfiguration#setAccountPasswordMustChangeAttributeName(String)} )</li>
+     * </ul>
+     * @param response the ldaptive authentication response.
+     * @throws LoginException if the above conditions match, an instance of LoginException 
+     * mapped to the error is thrown.
+     */
     protected void examineAccountStatus(final AuthenticationResponse response) throws LoginException {
         final String uid =  configuration.getDn();
 
@@ -120,6 +147,11 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         populatePrincipalAttributeMap();
     }
 
+    /**
+     * Populate configured custom attributes automatically to be returned
+     * as part of the authentication. This is a facility to provide easier and reduced
+     * configuration.
+     */
     private void populatePrincipalAttributeMap() {
         if (!StringUtils.isBlank(configuration.getUserAccountControlAttributeName())) {
             principalAttributeMap.put(configuration.getUserAccountControlAttributeName(),
@@ -203,7 +235,12 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
 
     /**
      * Determines the expiration date to use based on the password policy configuration.
-     * @see #setLdapDateConverter(LdapDateConverter)
+     * Converts the password expiration date based on the 
+     * {@link PasswordPolicyConfiguration#setDateConverter(LdapDateConverter)} and returns
+     * that value is the policy is set to evaluate against a static password expiration date.
+     * Otherwise, adds {@link PasswordPolicyConfiguration#getValidPasswordNumberOfDays()} days
+     * and returns the expiration date.
+     * @return the configured expiration date to use.
      */
     private DateTime getExpirationDateToUse() {
         final DateTime dateValue = configuration.convertPasswordExpirationDate();
