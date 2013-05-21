@@ -394,24 +394,22 @@ public final class PasswordPolicyConfiguration {
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getValidPasswordNumberOfDaysAttributeName());
         if (attributeValue != null) {
-            if (NumberUtils.isNumber(attributeValue)) {
-                setValidPasswordNumberOfDays(Integer.parseInt(attributeValue));
-            }
+            setValidPasswordNumberOfDays(NumberUtils.toInt(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountDisabledAttributeName());
         if (attributeValue != null) {
-            setAccountDisabled(Boolean.valueOf(attributeValue));
+            setAccountDisabled(translateValueToBoolean(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountLockedAttributeName());
         if (attributeValue != null) {
-            setAccountLocked(Boolean.valueOf(attributeValue));
+            setAccountLocked(translateValueToBoolean(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getAccountPasswordMustChangeAttributeName());
         if (attributeValue != null) {
-            setAccountPasswordMustChange(Boolean.valueOf(attributeValue));
+            setAccountPasswordMustChange(translateValueToBoolean(attributeValue));
         }
 
         attributeValue = getPasswordPolicyAttributeValue(entry, getUserAccountControlAttributeName());
@@ -422,6 +420,10 @@ public final class PasswordPolicyConfiguration {
         return true;
     }
 
+    private boolean translateValueToBoolean(final String value) {
+        return Boolean.valueOf(value) || (NumberUtils.toLong(value) > 0);
+    }
+    
     private String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
         if (attrName != null) {
             log.debug("Retrieving attribute [{}]", attrName);
