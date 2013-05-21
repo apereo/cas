@@ -18,19 +18,25 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AccountDisabledException;
-import org.jasig.cas.authentication.AccountPasswordExpiringException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 
@@ -65,20 +71,18 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * @see #validateAccountPasswordExpirationPolicy()
      */
     @Override
-    protected final void doPostAuthentication(final AuthenticationResponse response)
+    protected final HandlerResult doPostAuthentication(final AuthenticationResponse response)
             throws LoginException {
         
-        final PasswordPolicyResult result = configuration.build(response.getLdapEntry());
+        final LdapEntry entry = response.getLdapEntry();
+        final PasswordPolicyResult result = configuration.build(entry);
         if (result == null) {
             throw new FailedLoginException("LPPE authentication failed. Configuration cannot be determined.");
         }
         
-        try { 
-            this.examineAccountStatus(response, result);
-            this.validateAccountPasswordExpirationPolicy(result);
-        } catch (final LoginException e) {
-            throw e;
-        }
+        this.examineAccountStatus(response, result);
+        final List<Message> warnings = this.validateAccountPasswordExpirationPolicy(result);
+        return new HandlerResult(this, super.createPrincipal(entry), warnings);
     }
     
     /**
@@ -196,14 +200,20 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         return dateValue;
     }
 
-    private void validateAccountPasswordExpirationPolicy(final PasswordPolicyResult result) throws LoginException {
+    /**
+     * Validate the account password expiration policy based on results collected.
+     * @param result the policy result object
+     * @return List of warnings
+     * @throws LoginException if the account has already expired.
+     */
+    private List<Message> validateAccountPasswordExpirationPolicy(final PasswordPolicyResult result) throws LoginException {
         if (result.isAccountPasswordSetToNeverExpire()) {
             log.debug("Account password will never expire. Skipping password policy...");
-            return;
+            return Collections.emptyList();
         }
 
         final DateTime expireTime = getExpirationDateToUse(result);
-        
+        final List<Message> warnings = new LinkedList<Message>();
         if (configuration.getStaticPasswordExpirationDate() != null &&
             (expireTime.equals(configuration.getStaticPasswordExpirationDate()) ||
              expireTime.isAfter(configuration.getStaticPasswordExpirationDate()))) {
@@ -218,7 +228,10 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         if (days != -1) {
             final String msg = String.format("Password expires in [%d] days", days);
             log.debug(msg);
-            throw new AccountPasswordExpiringException(msg, days);
+            warnings.add(new AccountPasswordExpiringMessage(msg, days));
         }
+        return warnings;
     }
+    
+
 }
