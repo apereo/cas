@@ -22,7 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
@@ -49,6 +51,8 @@ public final class OAuth20ProfileControllerTests {
     private static final String TGT_ID = "TGT-1";
 
     private static final String NAME = "attributeName";
+
+    private static final String NAME2 = "attributeName2";
 
     private static final String VALUE = "attributeValue";
 
@@ -119,6 +123,8 @@ public final class OAuth20ProfileControllerTests {
         when(principal.getId()).thenReturn(ID);
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
+        List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
@@ -127,7 +133,7 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"}]}",
-                mockResponse.getContentAsString());
+        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
     }
 }
