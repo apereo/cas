@@ -214,5 +214,5 @@
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
 
-  <import resource="spring-configuration/casServletOverrides.xml"/>
+  <import resource="casServletOverrides.xml"/>
 </beans>
