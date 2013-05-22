@@ -55,6 +55,8 @@ public final class OAuth20ProfileController extends AbstractController {
 
     private final TicketRegistry ticketRegistry;
 
+    private final JsonFactory jsonFactory = new JsonFactory(new com.fasterxml.jackson.databind.ObjectMapper());
+
     public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -66,8 +68,7 @@ public final class OAuth20ProfileController extends AbstractController {
         final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        final JsonFactory jsonFactory = new JsonFactory();
-        final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
+        final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
 
         try {
             response.setContentType("application/json");
