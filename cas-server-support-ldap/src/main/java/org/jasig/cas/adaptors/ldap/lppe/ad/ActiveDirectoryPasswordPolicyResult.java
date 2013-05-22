@@ -62,7 +62,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
 
     private boolean isUserAccountControlSetToDisableAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE)) {
-            log.debug("User account control flag is set. Account [{}] is disabled", getDn());
+            logger.debug("User account control flag is set. Account [{}] is disabled", getDn());
             return true;
         }
         return false;
@@ -70,7 +70,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
 
     private boolean isUserAccountControlSetToLockAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT)) {
-            log.debug("User account control flag is set. Account [{}] is locked", getDn());
+            logger.debug("User account control flag is set. Account [{}] is locked", getDn());
             return true;
         }
         return false;
