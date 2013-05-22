@@ -93,7 +93,7 @@ public class PasswordPolicyConfiguration {
     public PasswordPolicyConfiguration() {
     }
     
-    public void setIgnorePasswordExpirationWarningFlags(final List<String> values) {
+    public void setIgnorePasswordExpirationWarningFlags(@NotNull final List<String> values) {
         this.ignorePasswordExpirationWarningFlags = values;
     }
     
