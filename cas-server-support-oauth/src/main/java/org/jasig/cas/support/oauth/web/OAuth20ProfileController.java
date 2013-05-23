@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -55,7 +56,7 @@ public final class OAuth20ProfileController extends AbstractController {
 
     private final TicketRegistry ticketRegistry;
 
-    private final JsonFactory jsonFactory = new JsonFactory(new com.fasterxml.jackson.databind.ObjectMapper());
+    private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
     public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
