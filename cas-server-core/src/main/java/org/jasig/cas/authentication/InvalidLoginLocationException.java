@@ -31,7 +31,7 @@ import javax.security.auth.login.AccountException;
 public class InvalidLoginLocationException extends AccountException implements Serializable {
 
     private static final long serialVersionUID = 5745711263227480194L;
-
+        
     public InvalidLoginLocationException() {
         super();
     }

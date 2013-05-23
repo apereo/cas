@@ -18,9 +18,6 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import java.util.List;
-
-import org.jasig.cas.authentication.LdapAuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -52,12 +49,6 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     @NotNull
     private String filter;
 
-    /**
-     * List of error definitions and their types, based on
-     * which the user will be directed to a given view in the flow.
-     **/
-    private List<LdapErrorDefinition> ldapErrorDefinitions;
-
     /** Whether the LdapTemplate should ignore partial results. */
     private boolean ignorePartialResultException = false;
 
@@ -72,10 +63,6 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
 
     public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
         this.ignorePartialResultException = ignorePartialResultException;
-    }
-
-    public void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
-        this.ldapErrorDefinitions = ldapErrorDefs;
     }
 
     /**
@@ -127,33 +114,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         this.filter = filter;
     }
 
-    /**
-     * Available ONLY for subclasses that would want to customize how ldap error codes are handled.
-     *
-     * @param e The ldap exception that occurred.
-     * @return an instance of {@link AuthenticationException}
-     */
     protected AuthenticationException handleLdapError(final Exception e) {
-        if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
-            log.debug("No error definitions are defined. Throwing error {}", e.getMessage());
-            return BadCredentialsAuthenticationException.ERROR;
-        }
-
-        log.debug("Handling error: {}", e.getMessage());
-
-        for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions) {
-            if (ldapErrorDef.matches(e.getMessage())) {
-                log.debug("Found error type {}. Throwing error for {}",
-                        ldapErrorDef.getType(), e.getMessage());
-
-                return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE,
-                        e.getMessage(), ldapErrorDef.getType());
-
-            }
-        }
-
-        log.debug("No error definition could be matched against the error. Throwing default error for {}", e.getMessage());
-
         return BadCredentialsAuthenticationException.ERROR;
     }
 }
