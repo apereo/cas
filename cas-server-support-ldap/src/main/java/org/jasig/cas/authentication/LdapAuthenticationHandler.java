@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
 public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Performs LDAP authentication given username/password. */
     @NotNull
@@ -79,23 +80,19 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     /** Mapping of LDAP attribute name to principal attribute name. */
     @NotNull
-    private Map<String, String> principalAttributeMap = Collections.emptyMap();
-
-
+    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
-
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
      * @param  authenticator  Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(final Authenticator authenticator) {
+    public LdapAuthenticationHandler(@NotNull final Authenticator authenticator) {
         this.authenticator = authenticator;
     }
-
 
     /**
      * Sets the component name. Defaults to simple class name.
@@ -140,43 +137,41 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         this.principalAttributeMap = attributeNameMap;
     }
 
-    /**
-     * Initializes the component after properties are set.
-     */
-    @PostConstruct
-    public void initialize() {
-        final List<String> attributes = new ArrayList<String>();
-        if (this.principalIdAttribute != null) {
-            attributes.add(this.principalIdAttribute);
-        }
-        attributes.addAll(this.principalAttributeMap.keySet());
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
-    }
-
     @Override
-    public HandlerResult authenticate(final Credentials credential)
-            throws GeneralSecurityException, PreventedException {
+    public HandlerResult authenticate(final Credentials credential) throws GeneralSecurityException,
+                                PreventedException {
         final AuthenticationResponse response;
         final UsernamePasswordCredentials upc = (UsernamePasswordCredentials) credential;
         try {
             log.debug("Attempting LDAP authentication for {}", credential);
-            final AuthenticationRequest request = new AuthenticationRequest(
-                    upc.getUsername(),
+            final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
-        } catch (LdapException e) {
+        } catch (final LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
         }
         log.debug("LDAP response: {}", response);
+
+        examineAccountState(response);
+        
         if (response.getResult()) {
-            return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
+            doPostAuthentication(response);
         }
+
+        throw new FailedLoginException("LDAP authentication failed.");
+    }
+
+    protected void examineAccountState(final AuthenticationResponse response) throws
+            LoginException {
         final AccountState state = response.getAccountState();
         if (state != null && state.getError() != null) {
             state.getError().throwSecurityException();
         }
-        throw new FailedLoginException("LDAP authentication failed.");
+    }
+
+    protected HandlerResult doPostAuthentication(final AuthenticationResponse response) throws LoginException {
+        return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
     }
 
     @Override
@@ -198,7 +193,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
      *
      * @throws LoginException On security policy errors related to principal creation.
      */
-    private Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
+    protected Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
         final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
         if (principalAttr == null || principalAttr.size() == 0) {
             return null;
@@ -224,5 +219,19 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             }
         }
         return new SimplePrincipal(principalAttr.getStringValue(), attributeMap);
+    }
+
+    @PostConstruct
+    public void initialize() {
+        initializeInternal();
+        final List<String> attributes = new ArrayList<String>();
+        if (this.principalIdAttribute != null) {
+            attributes.add(this.principalIdAttribute);
+        }
+        attributes.addAll(this.principalAttributeMap.keySet());
+        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+    }
+
+    protected void initializeInternal() {
     }
 }
