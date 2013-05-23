@@ -31,7 +31,7 @@ import javax.security.auth.login.AccountException;
 public class InvalidLoginTimeException extends AccountException implements Serializable {
 
     private static final long serialVersionUID = -6699752791525619208L;
-
+    
     public InvalidLoginTimeException() {
         super();
     }
@@ -39,4 +39,5 @@ public class InvalidLoginTimeException extends AccountException implements Seria
     public InvalidLoginTimeException(final String message) {
         super(message);
     }
+    
 }
