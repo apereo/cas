@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.remoting.server;
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
@@ -109,10 +110,10 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the front channel logout services.
+     * @return the logout requests.
      */
     @Override
-    public Map<String, Service> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 

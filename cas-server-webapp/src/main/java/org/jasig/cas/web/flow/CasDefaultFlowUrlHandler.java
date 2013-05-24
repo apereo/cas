@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
@@ -32,12 +35,30 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
+    /** Default flow execution key parameter name, {@value}. Same as that used by {@link DefaultFlowUrlHandler}. */
+    public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
+
+    /** Flow execution parameter name. */
+    private String flowExecutionKeyParameter = DEFAULT_FLOW_EXECUTION_KEY_PARAMETER;
+
+    /**
+     * Sets the parameter name used to carry flow execution key in request.
+     *
+     * @param parameterName Request parameter name.
+     */
+    public final void setFlowExecutionKeyParameter(final String parameterName) {
+        this.flowExecutionKeyParameter = parameterName;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuffer builder = new StringBuffer();
         builder.append(request.getRequestURI());
         builder.append("?");
-        appendQueryParameters(builder, request.getParameterMap(), getEncodingScheme(request));
+        final Map flowParams = new LinkedHashMap(request.getParameterMap());
+        flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
+        appendQueryParameters(builder, flowParams, getEncodingScheme(request));
         return builder.toString();
     }
 
