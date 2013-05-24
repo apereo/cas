@@ -18,10 +18,11 @@
  */
 package org.jasig.cas;
 
-import java.util.Map;
+import java.util.Collection;
 
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
@@ -99,9 +100,9 @@ public interface CentralAuthenticationService {
      * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the front channel logout services.
+     * @return the logout requests.
      */
-    Map<String, Service> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication

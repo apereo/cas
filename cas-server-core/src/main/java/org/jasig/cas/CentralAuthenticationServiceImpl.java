@@ -19,6 +19,7 @@
 package org.jasig.cas;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServicesManager;
@@ -191,7 +193,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the front channel logout services.
+     * @return the logout requests.
      */
     @Audit(
         action="TICKET_GRANTING_TICKET_DESTROYED",
@@ -200,7 +202,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public Map<String, Service> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
         logger.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
@@ -209,15 +211,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (ticket == null) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         logger.debug("Ticket found. Deleting and then performing back channel logout.");
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
 
-        final Map<String, Service> services =  logoutManager.performLogout(ticket);
-
-        return services;
+        return logoutManager.performLogout(ticket);
     }
 
     /**
