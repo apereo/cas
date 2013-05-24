@@ -19,7 +19,9 @@
 package org.jasig.cas.logout;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
 
@@ -84,14 +86,13 @@ public final class LogoutManagerImpl implements LogoutManager {
     }
 
     /**
-     * Perform a back channel logout for a given ticket granting ticket and returns the services
-     * eligible to a front channel logout.
+     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
      *
      * @param ticket a given ticket granting ticket.
-     * @return an interator on front channel logout services
+     * @return all logout requests.
      */
     @Override
-    public Map<String, Service> performLogout(final TicketGrantingTicket ticket) {
+    public Collection<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         final Map<String, Service> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups
@@ -101,7 +102,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         ticket.markTicketExpired();
 
-        final Map<String, Service> frontServices = new HashMap<String, Service>();
+        final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
         // if SLO is not disabled
         if (!disableSingleSignOut) {
             // through all services
@@ -112,15 +113,18 @@ public final class LogoutManagerImpl implements LogoutManager {
                     final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
                     // the logout has not performed already
                     if (!singleLogoutService.isLoggedOutAlready()) {
+                        final LogoutRequest logoutRequest = new LogoutRequest(ticketId, service);
+                        // always add the logout request
+                        logoutRequests.add(logoutRequest);
                         final RegisteredService registeredService = servicesManager.findServiceBy(service);
-                        // it's a front channel logout service
-                        if (registeredService != null
-                                && registeredService.getLogoutType() == LogoutType.FRONT_CHANNEL) {
-                            // keep it for later front logout
-                            frontServices.put(ticketId, service);
-                        } else {
+                        // the service is no more defined, or the logout type is not defined or is back channel
+                        if (registeredService == null || registeredService.getLogoutType() == null
+                                || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
                             // perform back channel logout
-                            if (!performBackChannelLogout(singleLogoutService, ticketId)) {
+                            if (performBackChannelLogout(singleLogoutService, ticketId)) {
+                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                            } else {
+                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
                                 LOGGER.warn("Logout message not sent to [[]]; Continuing processing...",
                                         singleLogoutService.getId());
                             }
@@ -130,7 +134,7 @@ public final class LogoutManagerImpl implements LogoutManager {
             }
         }
 
-        return frontServices;
+        return logoutRequests;
     }
 
     /**
@@ -153,15 +157,15 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Create a logout message for front channel logout.
      *
-     * @param ticketId the ticket id.
-     * @return a front logout message.
+     * @param logoutRequest the logout request.
+     * @return a front SAML logout message.
      */
-    private String createFrontChannelLogoutMessage(final String ticketId) {
-        final String logoutRequest = createBackChannelLogoutMessage(ticketId);
+    public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
+        final String logoutMessage = createBackChannelLogoutMessage(logoutRequest.getTicketId());
         final Deflater deflater = new Deflater();
-        deflater.setInput(logoutRequest.getBytes(ASCII));
+        deflater.setInput(logoutMessage.getBytes(ASCII));
         deflater.finish();
-        final byte[] buffer = new byte[logoutRequest.length()];
+        final byte[] buffer = new byte[logoutMessage.length()];
         final int resultSize = deflater.deflate(buffer);
         final byte[] output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
@@ -175,9 +179,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return a back channel logout.
      */
     private String createBackChannelLogoutMessage(final String ticketId) {
-        final String logoutRequest =
-                            String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-                                    SamlDateUtils.getCurrentDateAndTime(), ticketId);
+        final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
+                SamlDateUtils.getCurrentDateAndTime(), ticketId);
         return logoutRequest;
     }
 
