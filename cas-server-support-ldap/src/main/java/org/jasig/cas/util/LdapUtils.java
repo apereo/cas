@@ -18,16 +18,9 @@
  */
 package org.jasig.cas.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-
+import org.ldaptive.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ldap.core.LdapEncoder;
 
 /**
  * Utilities related to LDAP functions.
@@ -44,56 +37,17 @@ public final class LdapUtils {
     }
 
     /**
-     * Utility method to replace the placeholders in the filter with the proper
-     * values from the userName.
-     *
-     * @param filter
-     * @param userName
-     * @return the filtered string populated with the username
-     */
-    public static String getFilterWithValues(final String filter,
-            final String userName) {
-        final Map<String, String> properties = new HashMap<String, String>();
-        final String[] userDomain;
-        String newFilter = filter;
-
-        properties.put("%u", userName);
-
-        userDomain = userName.split("@");
-
-        properties.put("%U", userDomain[0]);
-
-        if (userDomain.length > 1) {
-            properties.put("%d", userDomain[1]);
-
-            final String[] dcArray = userDomain[1].split("\\.");
-
-            for (int i = 0; i < dcArray.length; i++) {
-                properties.put("%" + (i + 1), dcArray[dcArray.length
-                                                      - 1 - i]);
-            }
-        }
-
-        for (final String key : properties.keySet()) {
-            final String value = LdapEncoder.nameEncode(properties.get(key));
-            newFilter = newFilter.replaceAll(key, Matcher.quoteReplacement(value));
-        }
-
-        return newFilter;
-    }
-
-    /**
      * Close the given context and ignore any thrown exception. This is useful
      * for typical finally blocks in manual Ldap statements.
      *
-     * @param context the Ldap context to close
+     * @param context the Ldap connection to close
      */
-    public static void closeContext(final DirContext context) {
+    public static void closeConnection(final Connection context) {
         if (context != null) {
             try {
                 context.close();
-            } catch (NamingException ex) {
-                log.warn("Could not close context", ex);
+            } catch (final Exception ex) {
+                log.warn("Could not close ldap connection", ex);
             }
         }
     }

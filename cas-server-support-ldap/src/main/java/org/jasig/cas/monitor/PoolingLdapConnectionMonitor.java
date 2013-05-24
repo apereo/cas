@@ -18,61 +18,58 @@
  */
 package org.jasig.cas.monitor;
 
-import javax.naming.directory.DirContext;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ldap.pool.DirContextType;
-import org.springframework.ldap.pool.factory.PoolingContextSource;
+import org.jasig.cas.util.LdapUtils;
+import org.ldaptive.Connection;
+import org.ldaptive.pool.ConnectionPool;
+import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.Validator;
 
 /**
- * LDAP pool monitor that observes a pool of LDAP connections provided by {@link PoolingContextSource}.
+ * LDAP pool monitor that observes a pool of LDAP connections.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
-    /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+public class PoolingLdapConnectionMonitor extends AbstractPoolMonitor {
 
     /** Pool to observe. */
     @NotNull
-    private final PoolingContextSource poolingContextSource;
+    private final PooledConnectionFactory poolingContextSource;
 
-
-    public PoolingContextSourceMonitor(final PoolingContextSource pool) {
+    private ConnectionPool connectionPool;
+    
+    public PoolingLdapConnectionMonitor(final PooledConnectionFactory pool) {
         this.poolingContextSource = pool;
+        this.connectionPool = pool.getConnectionPool();
     }
 
 
     /** {@inheritDoc} */
     @Override
     protected StatusCode checkPool() throws Exception {
-        final boolean success;
-        DirContext ctxt = null;
+        Connection c = null;
         try {
-            ctxt = poolingContextSource.getReadOnlyContext();
-            success = poolingContextSource.getDirContextValidator().validateDirContext(DirContextType.READ_ONLY, ctxt);
+            final Validator<Connection> validator = this.connectionPool.getValidator();
+            final boolean success = validator.validate(this.poolingContextSource.getConnection());        
+            return success ? StatusCode.OK : StatusCode.ERROR;
         } finally {
-            if (ctxt != null) {
-                ctxt.close();
-            }
+            LdapUtils.closeConnection(c);
         }
-        return success ? StatusCode.OK : StatusCode.ERROR;
     }
 
 
     /** {@inheritDoc} */
     @Override
     protected int getIdleCount() {
-        return poolingContextSource.getNumIdle();
+        return connectionPool.availableCount() - this.getActiveCount();
     }
 
 
     /** {@inheritDoc} */
     @Override
     protected int getActiveCount() {
-        return poolingContextSource.getNumActive();
+        return connectionPool.activeCount();
     }
 }
