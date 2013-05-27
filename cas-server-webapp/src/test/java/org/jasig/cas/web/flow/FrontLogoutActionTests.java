@@ -19,13 +19,13 @@
 package org.jasig.cas.web.flow;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 import java.util.zip.Inflater;
 
 import org.apache.commons.codec.binary.Base64;
@@ -87,7 +87,15 @@ public class FrontLogoutActionTests {
     }
 
     @Test
-    public void testLogoutNoIterator() throws Exception {
+    public void testLogoutNoRequest() throws Exception {
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_INDEX, 0);
+        final Event event = this.frontLogoutAction.doExecute(this.requestContext);
+        assertEquals(FrontLogoutAction.FINISH_EVENT, event.getId());
+    }
+
+    @Test
+    public void testLogoutNoIndex() throws Exception {
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_REQUESTS, Collections.emptyList());
         final Event event = this.frontLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontLogoutAction.FINISH_EVENT, event.getId());
     }
@@ -96,7 +104,8 @@ public class FrontLogoutActionTests {
     public void testLogoutOneLogoutRequestSuccess() throws Exception {
         final LogoutRequest logoutRequest = new LogoutRequest("", null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_REQUESTS, Arrays.asList(logoutRequest).iterator());
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_REQUESTS, Arrays.asList(logoutRequest));
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontLogoutAction.FINISH_EVENT, event.getId());
     }
@@ -106,12 +115,13 @@ public class FrontLogoutActionTests {
     public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
         final String FAKE_URL = "http://url";
         LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
-        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_REQUESTS, Arrays.asList(logoutRequest).iterator());
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_REQUESTS, Arrays.asList(logoutRequest));
+        this.requestContext.getFlowScope().put(FrontLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontLogoutAction.REDIRECT_APP_EVENT, event.getId());
-        Iterator<LogoutRequest> iterator =
-                (Iterator<LogoutRequest>) this.requestContext.getFlowScope().get(FrontLogoutAction.LOGOUT_REQUESTS);
-        assertFalse(iterator.hasNext());
+        List<LogoutRequest> list =
+                (List<LogoutRequest>) this.requestContext.getFlowScope().get(FrontLogoutAction.LOGOUT_REQUESTS);
+        assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
         assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
         assertTrue(url.endsWith("&RelayState=" + FLOW_EXECUTION_KEY));

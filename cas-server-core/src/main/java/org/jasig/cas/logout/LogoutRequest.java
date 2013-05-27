@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.logout;
 
+import java.io.Serializable;
+
 import org.jasig.cas.authentication.principal.Service;
 
 /**
@@ -26,7 +28,10 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class LogoutRequest {
+public final class LogoutRequest implements Serializable {
+
+    /** Generated serialVersionUID. */
+    private static final long serialVersionUID = -6411421298859045022L;
 
     /** The service ticket id. */
     private final String ticketId;

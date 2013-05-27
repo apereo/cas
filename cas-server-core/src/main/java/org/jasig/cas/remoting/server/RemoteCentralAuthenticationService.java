@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.remoting.server;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -113,7 +113,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @return the logout requests.
      */
     @Override
-    public Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 

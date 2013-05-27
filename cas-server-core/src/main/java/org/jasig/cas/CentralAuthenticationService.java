@@ -18,7 +18,7 @@
  */
 package org.jasig.cas;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
@@ -102,7 +102,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
      */
-    Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication

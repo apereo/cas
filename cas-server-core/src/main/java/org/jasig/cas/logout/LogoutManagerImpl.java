@@ -20,7 +20,6 @@ package org.jasig.cas.logout;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
@@ -92,7 +91,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return all logout requests.
      */
     @Override
-    public Collection<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         final Map<String, Service> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups

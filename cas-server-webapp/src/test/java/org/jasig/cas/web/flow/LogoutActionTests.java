@@ -18,8 +18,13 @@
  */
 package org.jasig.cas.web.flow;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 
@@ -39,9 +44,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -170,9 +172,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
         this.logoutAction.setCentralAuthenticationService(centralAuthenticationService);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
-        Iterator<LogoutRequest> logoutRequests =
-                (Iterator<LogoutRequest>) this.requestContext.getFlowScope().get(LogoutAction.LOGOUT_REQUESTS);
-        assertTrue(logoutRequests.hasNext());
-        assertEquals(logoutRequest, logoutRequests.next());
+        List<LogoutRequest> logoutRequests =
+                (List<LogoutRequest>) this.requestContext.getFlowScope().get(LogoutAction.LOGOUT_REQUESTS);
+        assertEquals(1, logoutRequests.size());
+        assertEquals(logoutRequest, logoutRequests.get(0));
     }
 }
