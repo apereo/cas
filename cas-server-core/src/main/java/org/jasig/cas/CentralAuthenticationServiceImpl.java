@@ -19,7 +19,6 @@
 package org.jasig.cas;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -202,7 +201,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public Collection<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
         logger.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
