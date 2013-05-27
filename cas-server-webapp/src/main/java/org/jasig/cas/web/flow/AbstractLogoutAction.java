@@ -33,6 +33,9 @@ public abstract class AbstractLogoutAction extends AbstractAction {
     /** A constant for the logout requests in web flow. */
     public static final String LOGOUT_REQUESTS = "logoutRequests";
 
+    /** A constant for the logout index in web flow. */
+    public static final String LOGOUT_INDEX = "logoutIndex";
+
     /** The finish event in webflow. */
     public static final String FINISH_EVENT = "finish";
 

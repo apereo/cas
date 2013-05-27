@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,9 +79,10 @@ public final class LogoutAction extends AbstractLogoutAction {
         final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         boolean needFrontSlo = false;
         if (ticketGrantingTicketId != null) {
-            final Collection<LogoutRequest> logoutRequests = this.centralAuthenticationService
+            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService
                     .destroyTicketGrantingTicket(ticketGrantingTicketId);
-            context.getFlowScope().put(LOGOUT_REQUESTS, logoutRequests.iterator());
+            context.getFlowScope().put(LOGOUT_REQUESTS, logoutRequests);
+            context.getFlowScope().put(LOGOUT_INDEX,  0);
             for (LogoutRequest logoutRequest : logoutRequests) {
                 // if some logout request must still be attempted
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {

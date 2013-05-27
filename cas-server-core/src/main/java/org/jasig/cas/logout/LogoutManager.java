@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.logout;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
@@ -36,7 +36,7 @@ public interface LogoutManager {
      * @param ticket a given ticket granting ticket.
      * @return all logout requests.
      */
-    Collection<LogoutRequest> performLogout(TicketGrantingTicket ticket);
+    List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
 
     /**
      * Create a logout message for front channel logout.

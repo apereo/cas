@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -55,10 +55,11 @@ public final class FrontLogoutAction extends AbstractLogoutAction {
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        final Iterator<LogoutRequest> logoutRequests = (Iterator<LogoutRequest>) context.getFlowScope().get(LOGOUT_REQUESTS);
-        if (logoutRequests != null) {
-            while (logoutRequests.hasNext()) {
-                final LogoutRequest logoutRequest = logoutRequests.next();
+        final List<LogoutRequest> logoutRequests = (List<LogoutRequest>) context.getFlowScope().get(LOGOUT_REQUESTS);
+        final Integer startIndex = (Integer) context.getFlowScope().get(LOGOUT_INDEX);
+        if (logoutRequests != null && startIndex != null) {
+            for (int i = startIndex; i < logoutRequests.size(); i++) {
+                final LogoutRequest logoutRequest = logoutRequests.get(i);
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
                     // assume it has been successful
                     logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
@@ -66,8 +67,8 @@ public final class FrontLogoutAction extends AbstractLogoutAction {
                     final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
                     preventCaching(response);
 
-                    // save updated iterator
-                    context.getFlowScope().put(LOGOUT_REQUESTS, logoutRequests);
+                    // save updated index
+                    context.getFlowScope().put(LOGOUT_INDEX, i + 1);
 
                     // redirect to application with SAML logout message
                     final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(logoutRequest.getService().getId());
