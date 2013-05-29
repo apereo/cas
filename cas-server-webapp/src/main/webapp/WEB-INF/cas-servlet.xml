@@ -157,9 +157,12 @@
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
+  <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
+
   <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
-  <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"/>
+  <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"
+        p:conversionService-ref="logoutConversionService" />
 
   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
     <property name="viewResolvers">
@@ -168,6 +171,7 @@
       </util:list>
     </property>
   </bean>
+
   <bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
