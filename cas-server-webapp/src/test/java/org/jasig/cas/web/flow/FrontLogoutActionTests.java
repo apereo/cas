@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -124,8 +125,7 @@ public class FrontLogoutActionTests {
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
         assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
-        assertTrue(url.endsWith("&RelayState=" + FLOW_EXECUTION_KEY));
-        final byte[] samlMessage = Base64.decodeBase64(StringUtils.substringBetween(url,  "?SAMLRequest=", "&RelayState="));
+        final byte[] samlMessage = Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url,  "?SAMLRequest="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
         final byte[] result = new byte[1000];
