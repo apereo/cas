@@ -27,6 +27,7 @@ import javax.security.auth.login.FailedLoginException;
 
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
@@ -97,7 +98,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             log.debug("User [{}] was successfully authenticated.", username);
-            return new HandlerResult(this);
+            return new HandlerResult(this, new BasicCredentialMetaData(credential));
         }
         log.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

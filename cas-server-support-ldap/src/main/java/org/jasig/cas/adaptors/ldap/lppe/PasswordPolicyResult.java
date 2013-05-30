@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PasswordPolicyResult {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
     /** Password expiration date in raw format. **/
     private String passwordExpirationDate;
 
@@ -50,31 +50,31 @@ public class PasswordPolicyResult {
 
     /** Number of valid password days. **/
     private int validPasswordNumberOfDays;
-    
+
     /** Number of password warning days. **/
     private int passwordWarningNumberOfDays;
 
     private boolean accountDisabled = false;
-    
+
     private boolean accountLocked = false;
-    
+
     private boolean accountPasswordMustChange = false;
 
     private boolean accountExpired = false;
-    
+
     /** Authenticated DN entry via ldap. **/
     private String dn;
-    
+
     /** The computed and converted password expiration date time object. **/
     private DateTime passwordExpirationDateTime;
-    
+
     /**
      * Reference to the password warning expiration ignore flags stored locally
      * to avoid keeping track of the {@link PasswordPolicyConfiguration} object
      * for easier serialization reasons.
      */
     private final List<String> ignorePasswordExpirationWarningFlags;
-    
+
     public PasswordPolicyResult(@NotNull final PasswordPolicyConfiguration configuration) {
         this.passwordExpirationDateTime = configuration.getDateConverter().convert(getPasswordExpirationDate());
         this.ignorePasswordExpirationWarningFlags = configuration.getIgnorePasswordExpirationWarningFlags();
@@ -103,7 +103,7 @@ public class PasswordPolicyResult {
     protected boolean isAccountExpired() {
         return this.accountExpired;
     }
-    
+
     protected void setAccountLocked(final boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
@@ -151,9 +151,9 @@ public class PasswordPolicyResult {
     protected void setIgnorePasswordExpirationWarning(final String warning) {
         this.ignorePasswordExpirationWarning = warning;
     }
-  
+
     /**
-     * Evaluate whether an account is set to never expire. 
+     * Evaluate whether an account is set to never expire.
      * Compares the account against configured ignore values for password expiration warning.
      * Finally, checks the value of password expiration date (if numeric) to be greater than zero.
      * @return true, if the any of the above conditions return true.

@@ -39,10 +39,13 @@ import org.springframework.util.StringUtils;
 public class HandlerResult implements Serializable {
 
     /** Serialization support. */
-    private static final long serialVersionUID = 2845332722782828199L;
+    private static final long serialVersionUID = 5767801575062385921L;
 
     /** The name of the authentication handler that successfully authenticated a credential. */
     private String handlerName;
+
+    /** Credential meta data. */
+    private CredentialMetaData credentialMetaData;
 
     /** Resolved principal for authenticated credential. */
     private Principal principal;
@@ -51,31 +54,42 @@ public class HandlerResult implements Serializable {
     private List<Message> warnings;
 
 
-    public HandlerResult(final AuthenticationHandler source) {
-        this(source, null, Collections.<Message>emptyList());
+    public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
+        this(source, metaData, null, Collections.<Message>emptyList());
     }
 
-    public HandlerResult(final AuthenticationHandler source, final Principal p) {
-        this(source, p, Collections.<Message>emptyList());
+    public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
+        this(source, metaData, p, Collections.<Message>emptyList());
     }
 
-    public HandlerResult(final AuthenticationHandler source, final List<Message> warnings) {
-        this(source, null, Collections.<Message>emptyList());
+    public HandlerResult(
+            final AuthenticationHandler source, final CredentialMetaData metaData, final List<Message> warnings) {
+        this(source, metaData, null, Collections.<Message>emptyList());
     }
 
-    public HandlerResult(final AuthenticationHandler source, final Principal p, final List<Message> warnings) {
+    public HandlerResult(
+            final AuthenticationHandler source,
+            final CredentialMetaData metaData,
+            final Principal p,
+            final List<Message> warnings) {
         Assert.notNull(source, "Source cannot be null.");
+        Assert.notNull(metaData, "Credential metadata cannot be null.");
         Assert.notNull(warnings, "Warnings cannot be null.");
         this.handlerName = source.getName();
         if (!StringUtils.hasText(this.handlerName)) {
             this.handlerName = source.getClass().getSimpleName();
         }
+        this.credentialMetaData = metaData;
         this.principal = p;
         this.warnings = warnings;
     }
 
     public String getHandlerName() {
         return this.handlerName;
+    }
+
+    public CredentialMetaData getCredentialMetaData() {
+        return this.credentialMetaData;
     }
 
     public Principal getPrincipal() {
@@ -90,6 +104,7 @@ public class HandlerResult implements Serializable {
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(109, 31);
         builder.append(this.handlerName);
+        builder.append(this.credentialMetaData);
         builder.append(this.principal);
         builder.append(this.warnings);
         return builder.toHashCode();
@@ -105,6 +120,7 @@ public class HandlerResult implements Serializable {
         }
         final HandlerResult other = (HandlerResult) obj;
         return this.handlerName.equals(other.getHandlerName()) &&
+                this.credentialMetaData.equals(other.getCredentialMetaData()) &&
                 this.principal.equals(other.getPrincipal()) &&
                 this.warnings.equals(other.getWarnings());
     }

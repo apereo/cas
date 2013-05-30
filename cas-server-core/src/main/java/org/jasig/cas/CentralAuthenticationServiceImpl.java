@@ -26,9 +26,9 @@ import javax.validation.constraints.NotNull;
 import com.github.inspektr.audit.annotation.Audit;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
@@ -177,7 +177,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws AuthenticationException, TicketException {
+    public String grantServiceTicket(
+            final String ticketGrantingTicketId, final Service service, final Credentials ... credentials)
+            throws AuthenticationException, TicketException {
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
@@ -283,7 +285,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
+    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials ... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -373,8 +375,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
-            final Authentication authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate(),
-                                                                       authentication.getAttributes());
+            final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
+            builder.setPrincipal(modifiedPrincipal);
+            final Authentication authToUse = builder.build();
             final List<Authentication> authentications = new ArrayList<Authentication>();
             for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
                 authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
@@ -448,7 +451,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public String createTicketGrantingTicket(final Credentials credentials)
+    public String createTicketGrantingTicket(final Credentials ... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
