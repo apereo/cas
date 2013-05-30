@@ -158,7 +158,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
     private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket>
             implements TicketGrantingTicket {
 
-        private static final long serialVersionUID = 3946038899057626741L;
+        private static final long serialVersionUID = 5312560061970601497L;
 
         protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
@@ -167,6 +167,11 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         public Authentication getAuthentication() {
             return getTicket().getAuthentication();
+        }
+
+        @Override
+        public List<Authentication> getSupplementalAuthentications() {
+            return getTicket().getSupplementalAuthentications();
         }
 
         public ServiceTicket grantServiceTicket(final String id, final Service service,
@@ -184,6 +189,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         public boolean isRoot() {
             return getTicket().isRoot();
+        }
+
+        public TicketGrantingTicket getRoot() {
+            return getTicket().getRoot();
         }
 
         public List<Authentication> getChainedAuthentications() {

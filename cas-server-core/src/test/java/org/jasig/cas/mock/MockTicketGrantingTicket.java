@@ -84,6 +84,14 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return true;
     }
 
+    public TicketGrantingTicket getRoot() {
+        return this;
+    }
+
+    public List<Authentication> getSupplementalAuthentications() {
+        return Collections.emptyList();
+    }
+
     public List<Authentication> getChainedAuthentications() {
         return Collections.emptyList();
     }

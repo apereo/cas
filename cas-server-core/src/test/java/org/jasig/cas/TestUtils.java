@@ -24,7 +24,6 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.Principal;
@@ -33,7 +32,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -175,8 +174,7 @@ public final class TestUtils {
         for (int i = 0; i < extraPrincipals.length; i++) {
             list.add(TestUtils.getAuthentication(extraPrincipals[i]));
         }
-        return new ImmutableAssertionImpl(list, TestUtils.getService(),
-            fromNewLogin);
+        return new ImmutableAssertion(TestUtils.getAuthentication(), list, TestUtils.getService(), fromNewLogin);
     }
 
     public static MockRequestContext getContext() {
