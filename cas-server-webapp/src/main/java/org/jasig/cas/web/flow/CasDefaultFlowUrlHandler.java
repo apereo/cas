@@ -50,6 +50,16 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         this.flowExecutionKeyParameter = parameterName;
     }
 
+    /**
+     * Get the flow execution key.
+     *
+     * @param request the current HTTP servlet request.
+     * @return the flow execution key.
+     */
+    public final String getFlowExecutionKey(final HttpServletRequest request) {
+        return request.getParameter(flowExecutionKeyParameter);
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
