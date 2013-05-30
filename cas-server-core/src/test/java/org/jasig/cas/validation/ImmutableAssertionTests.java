@@ -30,10 +30,12 @@ import org.junit.Test;
 
 
 /**
+ * Unit test for {@link ImmutableAssertion} class.
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
-public class AssertionImplTests {
+public class ImmutableAssertionTests {
 
     @Test
     public void testGettersForChainedPrincipals() {
@@ -43,8 +45,8 @@ public class AssertionImplTests {
         list.add(TestUtils.getAuthentication("test1"));
         list.add(TestUtils.getAuthentication("test2"));
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertion assertion = new ImmutableAssertion(
+                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion
             .getChainedAuthentications().size());
@@ -56,8 +58,8 @@ public class AssertionImplTests {
 
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), false);
+        final ImmutableAssertion assertion = new ImmutableAssertion(
+                TestUtils.getAuthentication(), list, TestUtils.getService(), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -68,8 +70,8 @@ public class AssertionImplTests {
 
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertion assertion = new ImmutableAssertion(
+                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -79,8 +81,8 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertion assertion = new ImmutableAssertion(
+                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals(null));
     }
@@ -90,27 +92,25 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertion assertion = new ImmutableAssertion(
+                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals("test"));
     }
 
     @Test
     public void testEqualsWithValidObject() {
-        final List<Authentication> list = new ArrayList<Authentication>();
         final List<Authentication> list1 = new ArrayList<Authentication>();
+        final List<Authentication> list2 = new ArrayList<Authentication>();
 
         final Authentication auth = TestUtils.getAuthentication();
-        list.add(auth);
         list1.add(auth);
+        list2.add(auth);
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
-        final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(
-            list1, TestUtils.getService(), true);
+        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, TestUtils.getService(), true);
+        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, TestUtils.getService(), true);
 
-        assertTrue(assertion.equals(assertion1));
+        assertTrue(assertion1.equals(assertion2));
     }
 
     @Test
@@ -120,8 +120,7 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final Assertion assertion = new ImmutableAssertionImpl(list, service,
-            false);
+        final Assertion assertion = new ImmutableAssertion(TestUtils.getAuthentication(), list, service, false);
 
         assertEquals(service, assertion.getService());
     }
