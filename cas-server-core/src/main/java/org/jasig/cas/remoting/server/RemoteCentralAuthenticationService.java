@@ -63,7 +63,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
-    public String createTicketGrantingTicket(final Credentials credentials)
+    public String createTicketGrantingTicket(final Credentials ... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
@@ -81,7 +81,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if given invalid credentials
      */
     public String grantServiceTicket(
-            final String ticketGrantingTicketId, final Service service, final Credentials credentials)
+            final String ticketGrantingTicketId, final Service service, final Credentials ... credentials)
             throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
@@ -100,7 +100,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
+    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials ... credentials)
             throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
@@ -108,14 +108,16 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
     }
 
-    private void checkForErrors(final Credentials credentials) {
+    private void checkForErrors(final Credentials ... credentials) {
         if (credentials == null) {
             return;
         }
 
-        final Set<ConstraintViolation<Credentials>> errors = this.validator.validate(credentials);
-        if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+        for (final Credentials c : credentials) {
+            final Set<ConstraintViolation<Credentials>> errors = this.validator.validate(c);
+            if (!errors.isEmpty()) {
+                throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+            }
         }
     }
 

@@ -18,25 +18,32 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
-import javax.security.auth.login.AccountException;
+import javax.validation.constraints.NotNull;
 
 /**
- * Describes an error condition where authentication occurs from a location that is disallowed by security policy
- * applied to the underlying user account.
+ * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
+ * at least one credential.
  *
  * @author Marvin S. Addison
- * @version 4.0
  */
-public class InvalidLoginLocationException extends AccountException implements Serializable {
+public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
-    private static final long serialVersionUID = 5745711263227480194L;
+    /** Authentication handler name that is required to satisfy policy. */
+    @NotNull
+    private final String requiredHandlerName;
 
-    public InvalidLoginLocationException() {
-        super();
+    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
+        this.requiredHandlerName = requiredHandlerName;
     }
 
-    public InvalidLoginLocationException(final String message) {
-        super(message);
+    @Override
+    public boolean isSatisfiedBy(final Authentication authentication) {
+        int found = 0;
+        for (final String name : authentication.getSuccesses().keySet()) {
+            if (this.requiredHandlerName.equals(name)) {
+                found++;
+            }
+        }
+        return found > 0;
     }
 }

@@ -51,12 +51,12 @@ public interface CentralAuthenticationService {
      * Create a TicketGrantingTicket based on opaque credentials supplied by the
      * caller.
      *
-     * @param credentials The credentials to create the ticket for
+     * @param credentials One or more credentials that must be authenticated in order to create the ticket.
      * @return The String identifier of the ticket (may not be null).
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials credentials)
+    String createTicketGrantingTicket(Credentials ... credentials)
         throws AuthenticationException, TicketException;
 
     /**
@@ -77,14 +77,13 @@ public interface CentralAuthenticationService {
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @param credentials the Credentials to present to receive the
-     * ServiceTicket
+     * @param credentials One or more credentials to authenticate prior to granting the service ticket.
      * @return the ServiceTicket for target Service.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if the ticket could not be created.
      */
     String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
+        final Service service, final Credentials ... credentials)
         throws AuthenticationException, TicketException;
 
     /**
@@ -112,13 +111,12 @@ public interface CentralAuthenticationService {
      *
      * @param serviceTicketId The service ticket that will delegate to a
      * TicketGrantingTicket
-     * @param credentials The credentials of the service that wishes to have a
-     * TicketGrantingTicket delegated to it.
+     * @param credentials One or more credentials to authenticate prior to delegating the ticket.
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy
      * authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if there was an error creating the ticket
      */
     String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws AuthenticationException, TicketException;
+        final Credentials ... credentials) throws AuthenticationException, TicketException;
 }
