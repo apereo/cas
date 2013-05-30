@@ -259,7 +259,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
                 TestUtils.getService());
-        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
 
@@ -272,7 +272,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
-        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
 
@@ -285,8 +285,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
-        final Authentication auth = assertion.getChainedAuthentications().get(0);
-        assertEquals(auth.getPrincipal().getId(), "developer");
+        assertEquals("developer", assertion.getPrimaryAuthentication().getPrincipal().getId());
     }
 
     @Test
@@ -298,7 +297,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
-        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        final Authentication auth = assertion.getPrimaryAuthentication();
 
         /*
          * The attribute specified for this service is not allows in the list of returned attributes.
