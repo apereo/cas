@@ -18,25 +18,23 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
-import javax.security.auth.login.AccountException;
-
 /**
- * Describes an error condition where authentication occurs from a location that is disallowed by security policy
- * applied to the underlying user account.
+ * Authentication policy that defines success as at least one authentication success and no authentication attempts
+ * that were prevented by system errors. This policy may be a desirable alternative to {@link AnyAuthenticationPolicy}
+ * for cases where deployers wish to fail closed for indeterminate security events.
  *
  * @author Marvin S. Addison
- * @version 4.0
+ * @since 4.0
  */
-public class InvalidLoginLocationException extends AccountException implements Serializable {
+public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
-    private static final long serialVersionUID = 5745711263227480194L;
-
-    public InvalidLoginLocationException() {
-        super();
-    }
-
-    public InvalidLoginLocationException(final String message) {
-        super(message);
+    @Override
+    public boolean isSatisfiedBy(final Authentication authentication) {
+        for (final String handler : authentication.getFailures().keySet()) {
+            if (authentication.getFailures().get(handler) instanceof PreventedException) {
+                return false;
+            }
+        }
+        return super.isSatisfiedBy(authentication);
     }
 }

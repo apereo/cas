@@ -18,25 +18,19 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
-import javax.security.auth.login.AccountException;
-
 /**
- * Describes an error condition where authentication occurs from a location that is disallowed by security policy
- * applied to the underlying user account.
+ * Describes a credential provided for authentication. Implementations should expect instances of this type to be
+ * stored for periods of time equal to the length of the SSO session or longer, which necessitates consideration of
+ * serialization and security.
  *
  * @author Marvin S. Addison
- * @version 4.0
+ * @since 4.0
  */
-public class InvalidLoginLocationException extends AccountException implements Serializable {
-
-    private static final long serialVersionUID = 5745711263227480194L;
-
-    public InvalidLoginLocationException() {
-        super();
-    }
-
-    public InvalidLoginLocationException(final String message) {
-        super(message);
-    }
+public interface CredentialMetaData {
+    /**
+     * Gets a unique identifier for the kind of credential this represents.
+     *
+     * @return Unique identifier for the given type of credential.
+     */
+    String getId();
 }

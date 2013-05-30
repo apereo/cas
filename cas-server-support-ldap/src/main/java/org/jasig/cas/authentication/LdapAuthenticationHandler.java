@@ -154,7 +154,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         log.debug("LDAP response: {}", response);
 
         examineAccountState(response);
-        
+
         if (response.getResult()) {
             doPostAuthentication(response);
         }
@@ -171,7 +171,10 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     }
 
     protected HandlerResult doPostAuthentication(final AuthenticationResponse response) throws LoginException {
-        return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
+        return new HandlerResult(
+                this,
+                new BasicCredentialMetaData(new UsernamePasswordCredentials()),
+                createPrincipal(response.getLdapEntry()));
     }
 
     @Override

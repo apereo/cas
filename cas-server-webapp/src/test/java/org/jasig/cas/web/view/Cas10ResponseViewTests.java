@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
@@ -51,7 +52,7 @@ public class Cas10ResponseViewTests {
     public void setUp() throws Exception {
         this.model = new HashMap<String,Object>();
         List<Authentication> list = new ArrayList<Authentication>();
-        list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
+        list.add(TestUtils.getAuthentication());
         this.model.put("assertion", new ImmutableAssertionImpl(list,
                 TestUtils.getService("TestService"), true));
     }
