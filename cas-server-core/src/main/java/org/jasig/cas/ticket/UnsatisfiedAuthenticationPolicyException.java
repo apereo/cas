@@ -49,4 +49,13 @@ public class UnsatisfiedAuthenticationPolicyException extends TicketException {
         Assert.notNull(policy, "ContextualAuthenticationPolicy cannot be null");
         this.policy = policy;
     }
+
+    /**
+     * Gets the unsatisfied policy that caused this exception.
+     *
+     * @return Non-null unsatisfied policy cause.
+     */
+    public ContextualAuthenticationPolicy<?> getPolicy() {
+        return policy;
+    }
 }
