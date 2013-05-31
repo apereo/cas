@@ -20,6 +20,7 @@ package org.jasig.cas.services;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import org.jasig.cas.authentication.principal.Service;
 
@@ -136,6 +137,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * </ul>
      */
     public String getUsernameAttribute();
+
+    /**
+     * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
+     *
+     * @return Non-null set of required handler names.
+     */
+    public Set<String> getRequiredHandlers();
 
     /**
      * Returns whether the service matches the registered service.

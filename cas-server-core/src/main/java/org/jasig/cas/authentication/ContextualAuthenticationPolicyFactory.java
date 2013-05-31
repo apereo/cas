@@ -19,22 +19,22 @@
 package org.jasig.cas.authentication;
 
 /**
- * A factory for producing authentication policies based on arbitrary context data.
- * The policies created by these components may be stateful; for exmaple, their state may be based
- * on data provided by the context used to create the policy.
+ * A factory for producing (stateful) authentication policies based on arbitrary context data.
+ * This component provides a way to inject stateless factories into components that produce stateful
+ * authentication policies that can leverage arbitrary contextual information to evaluate security policy.
  *
  * @author Marvin S. Addison
  * @version 4.0
  */
-public interface AuthenticationPolicyFactory<T> {
+public interface ContextualAuthenticationPolicyFactory<T> {
 
     /**
-     * Creates a (possibly stateful) authentication policy based on provided context data.
+     * Creates a contextual (presumably stateful) authentication policy based on provided context data.
      *
      * @param context Context data used to create an authentication policy.
      *
-     * @return Authentication policy object. In many cases this object will be stateful and therefore not
-     * thread safe unless explicitly noted otherwise.
+     * @return Contextual authentication policy object. The returned object should be assumed to be stateful
+     * and not thread safe unless explicitly noted otherwise.
      */
-    AuthenticationPolicy createPolicy(T context);
+    ContextualAuthenticationPolicy<T> createPolicy(T context);
 }

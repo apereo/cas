@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
+import org.springframework.util.Assert;
+
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication
  * cannot proceed due to unsatisfied authentication security policy.
@@ -28,22 +31,22 @@ package org.jasig.cas.ticket;
 public class UnsatisfiedAuthenticationPolicyException extends TicketException {
 
     /** Serializable ID for unique id. */
-    private static final long serialVersionUID = 6799742892247182523L;
+    private static final long serialVersionUID = -827432780367197133L;
 
     /** Code description. */
     private static final String CODE = "UNSATISFIED_AUTHN_POLICY";
 
-    /** Creates a new instance with no cause. */
-    public UnsatisfiedAuthenticationPolicyException() {
-        super(CODE);
-    }
+    /** Unfulfilled policy that caused this exception. */
+    private final ContextualAuthenticationPolicy<?> policy;
 
     /**
-     * Creates a new instance with a cause.
+     * Creates a new instance with no cause.
      *
-     * @param cause Error that caused this one.
+     * @param policy Non-null unfulfilled security policy that caused exception.
      */
-    public UnsatisfiedAuthenticationPolicyException(final Throwable cause) {
-        super(CODE, cause);
+    public UnsatisfiedAuthenticationPolicyException(final ContextualAuthenticationPolicy<?> policy) {
+        super(CODE);
+        Assert.notNull(policy, "ContextualAuthenticationPolicy cannot be null");
+        this.policy = policy;
     }
 }

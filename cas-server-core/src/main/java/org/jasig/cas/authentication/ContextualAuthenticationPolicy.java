@@ -18,29 +18,17 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.services.ServiceContext;
-
 /**
- * Produces authentication policies that passively satisfy any given {@link Authentication}.
+ * A stateful authentication policy that is applied using arbitrary contextual information.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class PassiveAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
-
-    @Override
-    public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
-        return new ContextualAuthenticationPolicy<ServiceContext>() {
-
-            @Override
-            public ServiceContext getContext() {
-                return context;
-            }
-
-            @Override
-            public boolean isSatisfiedBy(final Authentication authentication) {
-                return true;
-            }
-        };
-    }
+public interface ContextualAuthenticationPolicy<T> extends AuthenticationPolicy {
+    /**
+     * Gets the context used to evaluate the authentication policy.
+     *
+     * @return Context information.
+     */
+    T getContext();
 }
