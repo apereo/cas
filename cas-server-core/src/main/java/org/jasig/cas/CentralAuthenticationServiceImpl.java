@@ -28,8 +28,8 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationPolicy;
-import org.jasig.cas.authentication.AuthenticationPolicyFactory;
+import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
+import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.PassiveAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -148,7 +148,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * perform authentication.
      */
     @NotNull
-    private AuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
+    private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new PassiveAuthenticationPolicyFactory();
 
     /**
@@ -327,10 +327,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         // Ensure the authentication satisfies security policy
-        final AuthenticationPolicy policy = serviceContextAuthenticationPolicyFactory.createPolicy(
-                new ServiceContext(serviceTicket.getService(), registeredService));
+        final ContextualAuthenticationPolicy<ServiceContext> policy =
+                serviceContextAuthenticationPolicyFactory.createPolicy(
+                        new ServiceContext(serviceTicket.getService(), registeredService));
         if (!policy.isSatisfiedBy(authentication)) {
-            throw new UnsatisfiedAuthenticationPolicyException();
+            throw new UnsatisfiedAuthenticationPolicyException(policy);
         }
 
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket
@@ -563,14 +564,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.persistentIdGenerator = persistentIdGenerator;
     }
 
-    public void setServiceContextAuthenticationPolicyFactory(final AuthenticationPolicyFactory<ServiceContext> policy) {
+    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
     }
 
     private void checkAuthenticationPolicy(final TicketGrantingTicket ticket, final ServiceContext context)
         throws TicketException {
 
-        final AuthenticationPolicy policy = serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        final ContextualAuthenticationPolicy<ServiceContext> policy =
+                serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return;
         }
@@ -579,13 +581,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 return;
             }
         }
-        throw new UnsatisfiedAuthenticationPolicyException();
+        throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
     private Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {
 
-        final AuthenticationPolicy policy = serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        final ContextualAuthenticationPolicy<ServiceContext> policy =
+                serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
@@ -594,6 +597,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 return auth;
             }
         }
-        throw new UnsatisfiedAuthenticationPolicyException();
+        throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 }

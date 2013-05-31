@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.generic;
-
-import static org.junit.Assert.*;
+package org.jasig.cas.authentication;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +27,8 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -74,8 +74,8 @@ public class AcceptUsersAuthenticationHandlerTests  {
     public void testDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                .supports(new HttpBasedServiceCredentials(new URL(
-                    "http://www.rutgers.edu"))));
+                    .supports(new HttpBasedServiceCredentials(new URL(
+                            "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
         }
