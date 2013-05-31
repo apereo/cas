@@ -40,7 +40,7 @@
     <bean id="acceptUsersAuthenticationHandler"
           class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
         <constructor-arg>
-            <bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
+            <bean class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
                 <property name="users">
                     <map>
                         <entry key="casuser" value="Mellon"/>

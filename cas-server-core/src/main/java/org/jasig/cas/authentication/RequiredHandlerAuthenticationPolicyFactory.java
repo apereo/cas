@@ -21,12 +21,14 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.services.ServiceContext;
 
 /**
- * Produces authentication policies that passively satisfy any given {@link Authentication}.
+ * Produces {@link ContextualAuthenticationPolicy} instances that are satisfied iff the given {@link Authentication}
+ * was created by authenticating credentials by all handlers named in
+ * {@link org.jasig.cas.services.RegisteredService#getRequiredHandlers()}.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class PassiveAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
+public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override
     public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
@@ -39,6 +41,11 @@ public class PassiveAuthenticationPolicyFactory implements ContextualAuthenticat
 
             @Override
             public boolean isSatisfiedBy(final Authentication authentication) {
+                for (final String required : context.getRegisteredService().getRequiredHandlers()) {
+                    if (!authentication.getSuccesses().containsKey(required)) {
+                        return false;
+                    }
+                }
                 return true;
             }
         };
