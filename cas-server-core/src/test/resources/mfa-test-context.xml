@@ -114,12 +114,17 @@
     <bean id="authenticationManager"
           class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
           p:authenticationPolicy-ref="authenticationPolicy">
-       <constructor-arg>
-           <map>
-               <entry key-ref="passwordHandler" value-ref="usernamePrincipalResolver" />
-               <entry key-ref="oneTimePasswordHandler"><null/></entry>
-           </map>
-       </constructor-arg>
+        <constructor-arg>
+            <map>
+                <entry key-ref="passwordHandler" value-ref="usernamePrincipalResolver"/>
+                <entry key-ref="oneTimePasswordHandler">
+                    <null/>
+                </entry>
+            </map>
+        </constructor-arg>
+        <property name="authenticationMetaDataPopulators">
+            <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+        </property>
     </bean>
 
     <bean id="authenticationPolicy"
