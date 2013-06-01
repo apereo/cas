@@ -191,7 +191,7 @@ public class AuthenticationBuilder {
     /**
      * Gets the authentication success map.
      *
-     * @return Non-null authentication success map.
+     * @return Non-null map of handler names to successful handler authentication results.
      */
     public Map<String, HandlerResult> getSuccesses() {
         return this.successes;
@@ -200,7 +200,7 @@ public class AuthenticationBuilder {
     /**
      * Sets the authentication handler success map.
      *
-     * @param successes Non-null map of handler names to successful authentications.
+     * @param successes Non-null map of handler names to successful handler authentication results.
      *
      * @return This builder instance.
      */
