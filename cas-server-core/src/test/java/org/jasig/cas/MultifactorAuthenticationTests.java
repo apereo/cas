@@ -87,6 +87,19 @@ public class MultifactorAuthenticationTests {
         assertNotNull(st);
     }
 
+    @Test
+    public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
+        // Note the original credential used to start SSO session does not satisfy security policy
+        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+        assertNotNull(tgt);
+        final String st = cas.grantServiceTicket(
+                tgt,
+                newService("https://example.com/high/"),
+                newUserPassCredentials("alice", "alice"),
+                new OneTimePasswordCredentials("alice", "31415"));
+        assertNotNull(st);
+    }
+
     private static UsernamePasswordCredentials newUserPassCredentials(final String user, final String pass) {
         final UsernamePasswordCredentials userpass = new UsernamePasswordCredentials();
         userpass.setUsername(user);
