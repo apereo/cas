@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.4
  */
-public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
+public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /** Default flow execution key parameter name, {@value}. Same as that used by {@link DefaultFlowUrlHandler}. */
     public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
@@ -46,7 +46,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      *
      * @param parameterName Request parameter name.
      */
-    public final void setFlowExecutionKeyParameter(final String parameterName) {
+    public void setFlowExecutionKeyParameter(final String parameterName) {
         this.flowExecutionKeyParameter = parameterName;
     }
 
@@ -56,17 +56,17 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      * @param request the current HTTP servlet request.
      * @return the flow execution key.
      */
-    public final String getFlowExecutionKey(final HttpServletRequest request) {
+    public String getFlowExecutionKey(final HttpServletRequest request) {
         return request.getParameter(flowExecutionKeyParameter);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuffer builder = new StringBuffer();
         builder.append(request.getRequestURI());
         builder.append("?");
-        final Map flowParams = new LinkedHashMap(request.getParameterMap());
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
         appendQueryParameters(builder, flowParams, getEncodingScheme(request));
         return builder.toString();

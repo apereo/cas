@@ -18,9 +18,13 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Abstract logout action, which prevents caching on logout.
@@ -44,6 +48,28 @@ public abstract class AbstractLogoutAction extends AbstractAction {
 
     /** The redirect to app event in webflow. */
     public static final String REDIRECT_APP_EVENT = "redirectApp";
+
+    @Override
+    protected final Event doExecute(final RequestContext context) throws Exception {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+
+        preventCaching(response);
+
+        return doInternalExecute(request, response, context);
+    }
+
+    /**
+     * Execute the logout action after invalidating the cache.
+     *
+     * @param request the HTTP request.
+     * @param response the HTTP response.
+     * @param context the webflow context.
+     * @return the event triggered by this actions.
+     * @throws Exception exception returned by this action.
+     */
+    protected abstract Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
+            final RequestContext context) throws Exception;
 
     /**
      * Prevent caching by adding the appropriate headers.
