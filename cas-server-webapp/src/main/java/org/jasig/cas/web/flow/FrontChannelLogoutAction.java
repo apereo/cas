@@ -21,13 +21,13 @@ package org.jasig.cas.web.flow;
 import java.net.URLEncoder;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
-import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class FrontLogoutAction extends AbstractLogoutAction {
+public final class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     @NotNull
     private final LogoutManager logoutManager;
@@ -48,13 +48,14 @@ public final class FrontLogoutAction extends AbstractLogoutAction {
      *
      * @param logoutManager a logout manager.
      */
-    public FrontLogoutAction(final LogoutManager logoutManager) {
+    public FrontChannelLogoutAction(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
+            final RequestContext context) throws Exception {
 
         final List<LogoutRequest> logoutRequests = (List<LogoutRequest>) context.getFlowScope().get(LOGOUT_REQUESTS);
         final Integer startIndex = (Integer) context.getFlowScope().get(LOGOUT_INDEX);
@@ -64,9 +65,6 @@ public final class FrontLogoutAction extends AbstractLogoutAction {
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
                     // assume it has been successful
                     logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-
-                    final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-                    preventCaching(response);
 
                     // save updated index
                     context.getFlowScope().put(LOGOUT_INDEX, i + 1);

@@ -30,7 +30,7 @@
   </action-state>
 
   <action-state id="frontLogout">
-    <evaluate expression="frontLogoutAction" />
+    <evaluate expression="frontChannelLogoutAction" />
     <transition on="finish" to="finishLogout" />
     <transition on="redirectApp" to="redirectToFrontApp" />
   </action-state>

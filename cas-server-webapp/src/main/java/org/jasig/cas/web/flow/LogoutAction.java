@@ -31,7 +31,6 @@ import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
-import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -70,11 +69,8 @@ public final class LogoutAction extends AbstractLogoutAction {
     private boolean followServiceRedirects;
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-
-        preventCaching(response);
+    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
+            final RequestContext context) throws Exception {
 
         final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         boolean needFrontSlo = false;
