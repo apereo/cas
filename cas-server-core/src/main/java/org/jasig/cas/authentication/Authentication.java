@@ -45,9 +45,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface Authentication extends Serializable {
 
@@ -76,8 +73,10 @@ public interface Authentication extends Serializable {
     /**
      * Gets a list of metadata about the credentials supplied at authentication time.
      *
-     * @return List of supplied credentials represented as metadata that should be considered safe for long-term
-     * storage (e.g. serializable and secure with respect to credential disclosure).
+     * @return Non-null list of supplied credentials represented as metadata that should be considered safe for
+     * long-term storage (e.g. serializable and secure with respect to credential disclosure). The order of items in
+     * the returned list SHOULD be the same as the order in which the source credentials were presented and subsequently
+     * processed.
      */
     List<CredentialMetaData> getCredentials();
 
