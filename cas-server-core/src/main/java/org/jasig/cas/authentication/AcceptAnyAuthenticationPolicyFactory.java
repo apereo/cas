@@ -26,7 +26,7 @@ import org.jasig.cas.services.ServiceContext;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class PassiveAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
+public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override
     public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {

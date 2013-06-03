@@ -38,12 +38,6 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) {
-        int found = 0;
-        for (final String name : authentication.getSuccesses().keySet()) {
-            if (this.requiredHandlerName.equals(name)) {
-                found++;
-            }
-        }
-        return found > 0;
+        return authentication.getSuccesses().containsKey(this.requiredHandlerName);
     }
 }
