@@ -32,9 +32,7 @@ import org.springframework.webflow.execution.repository.support.CompositeFlowExe
 public final class CompositeFlowExecutionKeyConverter implements Converter {
 
     /**
-     * The source class.
-     *
-     * @return the source class.
+     * {@inheritDoc}
      */
     @Override
     public Class getSourceClass() {
@@ -42,9 +40,7 @@ public final class CompositeFlowExecutionKeyConverter implements Converter {
     }
 
     /**
-     * The target class.
-     *
-     * @return the target class.
+     * {@inheritDoc}
      */
     @Override
     public Class getTargetClass() {
@@ -52,10 +48,7 @@ public final class CompositeFlowExecutionKeyConverter implements Converter {
     }
 
     /**
-     * Perform the conversion.
-     *
-     * @param source
-     * @param target
+     * {@inheritDoc}
      */
     @Override
     public Object convertSourceToTargetClass(final Object source, final Class targetClass) throws Exception {
