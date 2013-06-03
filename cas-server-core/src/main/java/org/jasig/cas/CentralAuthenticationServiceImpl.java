@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
 import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -31,7 +32,6 @@ import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.MixedPrincipalException;
-import org.jasig.cas.authentication.PassiveAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
@@ -144,12 +144,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
 
     /**
-     * Authentication policy that uses a service context to produce policies to apply on ticket methods that
-     * perform authentication.
+     * Authentication policy that uses a service context to produce stateful security policies to apply when
+     * authenticating credentials.
      */
     @NotNull
     private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
-            new PassiveAuthenticationPolicyFactory();
+            new AcceptAnyAuthenticationPolicyFactory();
 
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
@@ -245,8 +245,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             ticketGrantingTicket.getSupplementalAuthentications().add(current);
         }
 
-        // Ensure at least one authentication event bound (directly) to the ticket satisfies security policy
-        checkAuthenticationPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
+        // Perform security policy check by getting the authentication that satisfies the configured policy
+        // This throws if no suitable policy is found
+        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
         // this code is a bit brittle by depending on the class name.  Future versions (i.e. CAS4 will know inherently how to identify themselves)
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
@@ -566,22 +567,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    private void checkAuthenticationPolicy(final TicketGrantingTicket ticket, final ServiceContext context)
-        throws TicketException {
-
-        final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(context);
-        if (policy.isSatisfiedBy(ticket.getAuthentication())) {
-            return;
-        }
-        for (final Authentication auth : ticket.getSupplementalAuthentications()) {
-            if (policy.isSatisfiedBy(auth)) {
-                return;
-            }
-        }
-        throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
     private Authentication getAuthenticationSatisfiedByPolicy(
