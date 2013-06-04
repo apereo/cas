@@ -74,7 +74,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         this.ignorePartialResultException = ignorePartialResultException;
     }
 
-    public void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
+    public final void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
         this.ldapErrorDefinitions = ldapErrorDefs;
     }
 
@@ -133,7 +133,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      * @param e The ldap exception that occurred.
      * @return an instance of {@link AuthenticationException}
      */
-    protected AuthenticationException handleLdapError(final Exception e) {
+    protected final AuthenticationException handleLdapError(final Exception e) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
             logger.debug("No error definitions are defined. Throwing error {}", e.getMessage());
             return BadCredentialsAuthenticationException.ERROR;

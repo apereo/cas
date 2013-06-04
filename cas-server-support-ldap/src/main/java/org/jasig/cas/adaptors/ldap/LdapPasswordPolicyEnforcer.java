@@ -177,7 +177,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     protected String warningDaysAttribute;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws Exception {
         Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
         Assert.notNull(this.filter, "filter cannot be null");
         Assert.notNull(this.searchBase, "searchBase cannot be null");
@@ -202,7 +202,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @return Number of days left to the expiration date, or {@value #PASSWORD_STATUS_PASS}
      */
     @Override
-    public long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials)
+    public final long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials)
             throws LdapPasswordPolicyEnforcementException {
         String msgToLog = null;
 
@@ -263,14 +263,14 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      *
      * @param contextSource the data source to use.
      */
-    public void setContextSource(final ContextSource contextSource) {
+    public final void setContextSource(final ContextSource contextSource) {
         this.ldapTemplate = new LdapTemplate(contextSource);
     }
 
     /**
      * @param dateAttribute The DateAttribute to set.
      */
-    public void setDateAttribute(final String dateAttribute) {
+    public final void setDateAttribute(final String dateAttribute) {
         this.dateAttribute = dateAttribute;
         logger.debug("Date attribute: {}", dateAttribute);
     }
@@ -279,7 +279,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @param dateFormat String to pass to SimpleDateFormat() that describes the
      * date in the ExpireDateAttribute. This parameter is required.
      */
-    public void setDateFormat(final String dateFormat) {
+    public final void setDateFormat(final String dateFormat) {
         this.dateFormat = dateFormat;
         logger.debug("Date format: {}", dateFormat);
     }
@@ -287,27 +287,27 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param filter The LDAP filter to set.
      */
-    public void setFilter(final String filter) {
+    public final void setFilter(final String filter) {
         this.filter = filter;
 
         logger.debug("Search filter: {}", filter);
     }
 
-    public void setIgnorePartialResultException(final boolean ignorePartialResultException) {
+    public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
         this.ignorePartialResultException = ignorePartialResultException;
     }
 
     /**
      * @param maxNumberResults The maxNumberResults to set.
      */
-    public void setMaxNumberResults(final int maxNumberResults) {
+    public final void setMaxNumberResults(final int maxNumberResults) {
         this.maxNumberResults = maxNumberResults;
     }
 
     /**
      * @param noWarnAttribute The noWarnAttribute to set.
      */
-    public void setNoWarnAttribute(final String noWarnAttribute) {
+    public final void setNoWarnAttribute(final String noWarnAttribute) {
         this.noWarnAttribute = noWarnAttribute;
 
         logger.debug("Attribute to flag warning bypass: {}", noWarnAttribute);
@@ -316,7 +316,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param noWarnValues The noWarnAttribute to set.
      */
-    public void setNoWarnValues(final List<String> noWarnValues) {
+    public final void setNoWarnValues(final List<String> noWarnValues) {
         this.noWarnValues = noWarnValues;
 
         logger.debug("Value to flag warning bypass: {}", noWarnValues.toString());
@@ -325,14 +325,14 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param scope The scope to set.
      */
-    public void setScope(final int scope) {
+    public final void setScope(final int scope) {
         this.scope = scope;
     }
 
     /**
      * @param searchBase The searchBase to set.
      */
-    public void setSearchBase(final String searchBase) {
+    public final void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
         logger.debug("Search base: {}", searchBase);
     }
@@ -340,7 +340,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param timeout The timeout to set.
      */
-    public void setTimeout(final int timeout) {
+    public final void setTimeout(final int timeout) {
         this.timeout = timeout;
         logger.debug("Timeout: {}", this.timeout);
     }
@@ -349,7 +349,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @param validDays Number of days that a password is valid for.
      * Used as a default if DateAttribute is not set or is not found in the LDAP results
      */
-    public void setValidDays(final int validDays) {
+    public final void setValidDays(final int validDays) {
         this.validDays = validDays;
         logger.debug("Password valid days: {}", validDays);
     }
@@ -357,7 +357,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param validDaysAttribute The ValidDaysAttribute to set.
      */
-    public void setValidDaysAttribute(final String validDaysAttribute) {
+    public final void setValidDaysAttribute(final String validDaysAttribute) {
         this.validDaysAttribute = validDaysAttribute;
         logger.debug("Valid days attribute: {}", validDaysAttribute);
     }
@@ -365,7 +365,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param warnAll Disregard warningPeriod and warn all users of password expiration.
      */
-    public void setWarnAll(final Boolean warnAll) {
+    public final void setWarnAll(final Boolean warnAll) {
         this.warnAll = warnAll;
         logger.debug("warnAll: {}", warnAll);
     }
@@ -375,7 +375,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * message is displayed to set. Used as a default if warningDaysAttribute is
      * not set or is not found in the LDAP results. This parameter is required.
      */
-    public void setWarningDays(final int warningDays) {
+    public final void setWarningDays(final int warningDays) {
         this.warningDays = warningDays;
         logger.debug("Default warningDays: {}", warningDays);
     }
@@ -383,7 +383,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param warnDays The WarningDaysAttribute to set.
      */
-    public void setWarningDaysAttribute(final String warnDays) {
+    public final void setWarningDaysAttribute(final String warnDays) {
         this.warningDaysAttribute = warnDays;
         logger.debug("Warning days attribute: {}", warnDays);
     }

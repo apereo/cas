@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.adaptors.ldap.ppolicy;
 
@@ -80,27 +94,26 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
      */
     private int timeout = LdapPpolicyPasswordPolicyEnforcer.DEFAULT_TIMEOUT;
     /**
-     * default number of days that a warning message will be displayed
+     * default number of days that a warning message will be displayed.
      */
     private int warningDays = 30;
     /**
      * The attribute that contains the number of days the user's password is
-     * valid
+     * valid.
      */
     protected int validDays;
     /**
-     * Disregard WarnPeriod and warn all users of password expiration
+     * Disregard WarnPeriod and warn all users of password expiration.
      */
     protected Boolean warnAll = Boolean.FALSE;
     /**
-     * Skip warning period check from ldap policy, use configured value instead
-     * (
+     * Skip warning period check from ldap policy, use configured value instead.
      */
     private Boolean ignoreLDAPWarningDays = Boolean.FALSE;
-    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
-    public void afterPropertiesSet() throws Exception {
+    @Override
+    public final void afterPropertiesSet() throws Exception {
         Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
         Assert.notNull(this.filter, "filter cannot be null");
         Assert.notNull(this.searchBase, "searchBase cannot be null");
@@ -122,7 +135,7 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
      *
      * @param dataSource the data source to use.
      */
-    public void setContextSource(final ContextSource contextSource) {
+    public final void setContextSource(final ContextSource contextSource) {
         this.context = contextSource;
         this.ldapTemplate = new LdapTemplate(contextSource);
     }
@@ -130,34 +143,34 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     /**
      * @param filter The LDAP filter to set.
      */
-    public void setFilter(final String filter) {
+    public final void setFilter(final String filter) {
         this.filter = filter;
 
         logDebug("Search filter: " + filter);
     }
 
-    public void setIgnorePartialResultException(final boolean ignorePartialResultException) {
+    public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
         this.ignorePartialResultException = ignorePartialResultException;
     }
 
     /**
      * @param maxNumberResults The maxNumberResults to set.
      */
-    public void setMaxNumberResults(final int maxNumberResults) {
+    public final void setMaxNumberResults(final int maxNumberResults) {
         this.maxNumberResults = maxNumberResults;
     }
 
     /**
      * @param filter The scope to set.
      */
-    public void setScope(final int scope) {
+    public final void setScope(final int scope) {
         this.scope = scope;
     }
 
     /**
      * @param searchBase The searchBase to set.
      */
-    public void setSearchBase(final String searchBase) {
+    public final void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
         logDebug("Search base: " + searchBase);
     }
@@ -165,7 +178,7 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     /**
      * @param timeout The timeout to set.
      */
-    public void setTimeout(final int timeout) {
+    public final void setTimeout(final int timeout) {
         this.timeout = timeout;
         logDebug("Timeout: " + this.timeout);
     }
@@ -173,7 +186,7 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     /**
      * @param ValidDaysAttribute The ValidDaysAttribute to set.
      */
-    public void setValidDays(final int validDays) {
+    public final void setValidDays(final int validDays) {
         this.validDays = validDays;
         logDebug("Valid days: " + validDays);
     }
@@ -182,7 +195,7 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
      * @param warnAll Disregard warningPeriod and warn all users of password
      * expiration.
      */
-    public void setWarnAll(final Boolean warnAll) {
+    public final void setWarnAll(final Boolean warnAll) {
         this.warnAll = warnAll;
         logDebug("warnAll: " + warnAll);
     }
@@ -192,12 +205,14 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
      * message is displayed to set. Used as a default if warningDaysAttribute is
      * not set or is not found in the LDAP results. This parameter is required.
      */
-    public void setWarningDays(final int warningDays) {
+    public final void setWarningDays(final int warningDays) {
         this.warningDays = warningDays;
         logDebug("Default warningDays: " + warningDays);
     }
 
-    public long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials) throws LdapPasswordPolicyEnforcementException {
+    @Override
+    public final long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials)
+            throws LdapPasswordPolicyEnforcementException {
 
         // first get the right dn for the user id form ldap
         String cn = this.getFullDNFromUserId(userId);
@@ -222,20 +237,20 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     }
 
     private void logDebug(final String log) {
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug(log);
+        if (logger.isDebugEnabled()) {
+            logger.debug(log);
         }
     }
 
     private void logError(final String log, final Exception e) {
-        if (this.logger.isErrorEnabled()) {
-            this.logger.error(e.getMessage(), e);
+        if (logger.isErrorEnabled()) {
+            logger.error(e.getMessage(), e);
         }
     }
 
     private void logInfo(final String log) {
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info(log);
+        if (logger.isInfoEnabled()) {
+            logger.info(log);
         }
     }
 
@@ -252,18 +267,18 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     /**
      * @return the principalNameTransformer
      */
-    public PrincipalNameTransformer getPrincipalNameTransformer() {
+    public final PrincipalNameTransformer getPrincipalNameTransformer() {
         return principalNameTransformer;
     }
 
     /**
      * @param principalNameTransformer the principalNameTransformer to set
      */
-    public void setPrincipalNameTransformer(PrincipalNameTransformer principalNameTransformer) {
+    public final void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
 
-    private String getFullDNFromUserId(String userId) throws LdapPasswordPolicyEnforcementException {
+    private String getFullDNFromUserId(final String userId) throws LdapPasswordPolicyEnforcementException {
         // first get the right dn for the user id form ldap
         final List<String> cns = new ArrayList<String>();
 
@@ -274,15 +289,15 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
         final String searchFilter = LdapUtils.getFilterWithValues(this.filter, transformedUsername);
         this.ldapTemplate.search(
                 new SearchExecutor() {
-                    public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                        return context.search(base, searchFilter, searchControls);
-                    }
-                },
+            public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
+                return context.search(base, searchFilter, searchControls);
+            }
+        },
                 new NameClassPairCallbackHandler() {
-                    public void handleNameClassPair(final NameClassPair nameClassPair) {
-                        cns.add(nameClassPair.getNameInNamespace());
-                    }
-                });
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getNameInNamespace());
+            }
+        });
 
         if (cns.isEmpty()) {
             String logMessage = "Search for " + filter + " returned 0 results.";
@@ -297,7 +312,7 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
         return cns.get(0);
     }
 
-    private boolean displayWarning(PasswordPolicyResponseControl p, int expiresIn) {
+    private boolean displayWarning(final PasswordPolicyResponseControl p, final int expiresIn) {
         // ski[p the LDAP policy check if configured to do so (expensive action)
         if (this.isIgnoreLDAPWarningDays()) {
             Calendar warnWhen = new GregorianCalendar();
@@ -312,14 +327,14 @@ public class LdapPpolicyPasswordPolicyEnforcer extends AbstractPasswordPolicyEnf
     /**
      * @return the ignoreLDAPWarningDays
      */
-    public Boolean isIgnoreLDAPWarningDays() {
+    public final Boolean isIgnoreLDAPWarningDays() {
         return ignoreLDAPWarningDays;
     }
 
     /**
      * @param ignoreLDAPWarningDays the ignoreLDAPWarningDays to set
      */
-    public void setIgnoreLDAPWarningDays(Boolean ignoreLDAPWarningDays) {
+    public final void setIgnoreLDAPWarningDays(final Boolean ignoreLDAPWarningDays) {
         this.ignoreLDAPWarningDays = ignoreLDAPWarningDays;
     }
 }

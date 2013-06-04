@@ -33,20 +33,20 @@ public class LdapErrorDefinition {
 
     private String type  = null;
 
-    public String getType() {
+    public final String getType() {
         return this.type;
     }
 
-    public boolean matches(final String msg) {
+    public final boolean matches(final String msg) {
         final Matcher matcher = getLdapPattern().matcher(msg);
         return matcher.find();
     }
 
-    public void setLdapPattern(final String ldapPattern) {
+    public final void setLdapPattern(final String ldapPattern) {
         this.ldapPattern = Pattern.compile(ldapPattern);
     }
 
-    public void setType(final String errMessage) {
+    public final void setType(final String errMessage) {
         this.type = errMessage;
     }
 

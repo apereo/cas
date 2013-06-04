@@ -29,8 +29,9 @@ public interface PasswordPolicyEnforcer {
      * @param userId The unique ID of the user
      * @return Number of days to the expiration date, or -1 if checks pass.
      * @throws LdapPasswordPolicyEnforcementException if the authentication fails as the result of enforcing password policy
+     * @deprecated use method that supplies credentials so password policy enforcer can do a bind attempt to the directory
      */
-	@Deprecated
+    @Deprecated
     long getNumberOfDaysToPasswordExpirationDate(String userId)
             throws LdapPasswordPolicyEnforcementException;
     /**
@@ -38,6 +39,7 @@ public interface PasswordPolicyEnforcer {
      * @paramcredentials The credentials of the user
      * @return Number of days to the expiration date, or -1 if checks pass.
      */
-    public long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials) throws LdapPasswordPolicyEnforcementException;
+    long getNumberOfDaysToPasswordExpirationDate(final String userId, final String credentials)
+            throws LdapPasswordPolicyEnforcementException;
 
 }

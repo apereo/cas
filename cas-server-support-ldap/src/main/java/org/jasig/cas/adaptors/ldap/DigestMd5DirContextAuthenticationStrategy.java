@@ -40,7 +40,7 @@ public class DigestMd5DirContextAuthenticationStrategy
 
     /** {@inheritDoc} */
     @Override
-    public DirContext processContextAfterCreation(
+    public final DirContext processContextAfterCreation(
             final DirContext ctx,
             final String userDn,
             final String password)
@@ -53,7 +53,7 @@ public class DigestMd5DirContextAuthenticationStrategy
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings(value = "unchecked")
-    public void setupEnvironment(
+    public final void setupEnvironment(
             final Hashtable env,
             final String userDn,
             final String password)

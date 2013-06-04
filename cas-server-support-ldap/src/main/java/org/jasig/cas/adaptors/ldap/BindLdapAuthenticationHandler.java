@@ -136,7 +136,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         return false;
     }
 
-    protected String composeCompleteDnToCheck(final String dn, final UsernamePasswordCredentials credentials) {
+    protected final String composeCompleteDnToCheck(final String dn, final UsernamePasswordCredentials credentials) {
         return dn;
     }
 
@@ -154,7 +154,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
      * Method to return whether multiple accounts are allowed.
      * @return true if multiple accounts are allowed, false otherwise.
      */
-    protected boolean isAllowMultipleAccounts() {
+    protected final boolean isAllowMultipleAccounts() {
         return this.allowMultipleAccounts;
     }
 
@@ -162,7 +162,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
      * Method to return the max number of results allowed.
      * @return the maximum number of results.
      */
-    protected int getMaxNumberResults() {
+    protected final int getMaxNumberResults() {
         return this.maxNumberResults;
     }
 
@@ -170,7 +170,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
      * Method to return the scope.
      * @return the scope
      */
-    protected int getScope() {
+    protected final int getScope() {
         return this.scope;
     }
 
@@ -178,7 +178,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
      * Method to return the search base.
      * @return the search base.
      */
-    protected String getSearchBase() {
+    protected final String getSearchBase() {
         return this.searchBase;
     }
 
@@ -186,7 +186,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
      * Method to return the timeout.
      * @return the timeout.
      */
-    protected int getTimeout() {
+    protected final int getTimeout() {
         return this.timeout;
     }
 
@@ -197,7 +197,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     /**
      * @param allowMultipleAccounts The allowMultipleAccounts to set.
      */
-    public void setAllowMultipleAccounts(final boolean allowMultipleAccounts) {
+    public final void setAllowMultipleAccounts(final boolean allowMultipleAccounts) {
         this.allowMultipleAccounts = allowMultipleAccounts;
     }
 
