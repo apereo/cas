@@ -111,32 +111,18 @@
 
     <bean
         id="authenticationManager"
-        class="org.jasig.cas.authentication.AuthenticationManagerImpl">
-        <property
-            name="credentialsToPrincipalResolvers">
+        class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+        <constructor-arg>
+            <map>
+                <entry key-ref="simpleTestUsernamePasswordAuthenticationHandler"
+                       value-ref="usernamePasswordCredentialsToPrincipalResolver" />
+                <entry key-ref="httpBasedServiceCredentialsAuthenticationHandler"
+                       value-ref="httpBasedServiceCredentialsToPrincipalResolver" />
+            </map>
+        </constructor-arg>
+        <property name="authenticationMetaDataPopulators">
             <list>
-                <ref local="usernamePasswordCredentialsToPrincipalResolver" />
-                <ref local="httpBasedServiceCredentialsToPrincipalResolver" />
-<!--                <bean
-                    class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />-->
-            </list>
-        </property>
-        <property
-            name="authenticationHandlers">
-            <list>
-                <ref local="simpleTestUsernamePasswordAuthenticationHandler" />
-                <ref local="httpBasedServiceCredentialsAuthenticationHandler" />
-<!--                <bean
-                    class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
-                    <property name="ticketRegistry" ref="ticketRegistry" />
-                </bean>-->
-            </list>
-        </property>
-        <property
-            name="authenticationMetaDataPopulators">
-            <list>
-                <ref
-                    local="authenticationMetaDataPopulator" />
+                <ref local="authenticationMetaDataPopulator" />
             </list>
         </property>
 

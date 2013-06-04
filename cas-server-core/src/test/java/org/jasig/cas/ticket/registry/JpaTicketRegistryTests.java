@@ -30,7 +30,7 @@ import java.util.concurrent.Future;
 
 import javax.sql.DataSource;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
@@ -157,7 +157,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 idGenerator.getNewTicketId("TGT"),
-                new ImmutableAuthentication(principal, null),
+                TestUtils.getAuthentication(principal),
                 expirationPolicyTGT);
     }
 

@@ -34,7 +34,10 @@ import javax.validation.constraints.Size;
 public class UsernamePasswordCredentials implements Credentials {
 
     /** Unique ID for serialization. */
-    private static final long serialVersionUID = -8343864967200862794L;
+    private static final long serialVersionUID = 4408913902552789095L;
+
+    /** Password suffix appended to username in string representation. */
+    private static final String PASSWORD_SUFFIX = "+password";
 
     /** The username. */
     @NotNull
@@ -74,8 +77,9 @@ public class UsernamePasswordCredentials implements Credentials {
         this.username = userName;
     }
 
+    @Override
     public String toString() {
-        return "[username: " + this.username + "]";
+        return this.username + PASSWORD_SUFFIX;
     }
 
     @Override
