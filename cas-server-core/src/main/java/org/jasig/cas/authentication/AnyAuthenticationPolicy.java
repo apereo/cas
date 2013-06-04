@@ -27,7 +27,7 @@ package org.jasig.cas.authentication;
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Flag to try all credentials before policy is satisfied. */
-    private boolean tryAll;
+    private boolean tryAll = false;
 
     /**
      * Sets the flag to try all credentials before the policy is satisfied.
