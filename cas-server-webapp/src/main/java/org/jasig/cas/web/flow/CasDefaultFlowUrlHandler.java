@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
@@ -30,14 +33,42 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.4
  */
-public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
+public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
+
+    /** Default flow execution key parameter name, {@value}. Same as that used by {@link DefaultFlowUrlHandler}. */
+    public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
+
+    /** Flow execution parameter name. */
+    private String flowExecutionKeyParameter = DEFAULT_FLOW_EXECUTION_KEY_PARAMETER;
+
+    /**
+     * Sets the parameter name used to carry flow execution key in request.
+     *
+     * @param parameterName Request parameter name.
+     */
+    public void setFlowExecutionKeyParameter(final String parameterName) {
+        this.flowExecutionKeyParameter = parameterName;
+    }
+
+    /**
+     * Get the flow execution key.
+     *
+     * @param request the current HTTP servlet request.
+     * @return the flow execution key.
+     */
+    public String getFlowExecutionKey(final HttpServletRequest request) {
+        return request.getParameter(flowExecutionKeyParameter);
+    }
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuffer builder = new StringBuffer();
         builder.append(request.getRequestURI());
         builder.append("?");
-        appendQueryParameters(builder, request.getParameterMap(), getEncodingScheme(request));
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
+        flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
+        appendQueryParameters(builder, flowParams, getEncodingScheme(request));
         return builder.toString();
     }
 

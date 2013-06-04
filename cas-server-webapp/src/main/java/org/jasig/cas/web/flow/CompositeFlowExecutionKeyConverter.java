@@ -16,33 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.logout;
+package org.jasig.cas.web.flow;
 
-import java.util.List;
+import org.springframework.binding.convert.converters.Converter;
+import org.springframework.webflow.execution.repository.support.CompositeFlowExecutionKey;
 
-import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
- * A logout manager handles the Single Log Out process.
+ * Special converter for the {@link CompositeFlowExecutionKey} to return as a String.
  *
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public interface LogoutManager {
+@SuppressWarnings("rawtypes")
+public final class CompositeFlowExecutionKeyConverter implements Converter {
 
     /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
-     *
-     * @param ticket a given ticket granting ticket.
-     * @return all logout requests.
+     * {@inheritDoc}
      */
-    List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
+    @Override
+    public Class getSourceClass() {
+        return CompositeFlowExecutionKey.class;
+    }
 
     /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
+     * {@inheritDoc}
      */
-    String createFrontChannelLogoutMessage(LogoutRequest logoutRequest);
+    @Override
+    public Class getTargetClass() {
+        return String.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object convertSourceToTargetClass(final Object source, final Class targetClass) throws Exception {
+        return source.toString();
+    }
 }
