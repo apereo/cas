@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web;
+package org.jasig.cas.web.flow;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,23 +26,25 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Controller to delete ticket granting ticket cookie in order to log out of
- * single sign on. This controller implements the idea of the ESUP Portail's
- * Logout patch to allow for redirecting to a url on logout. It also exposes a
- * log out link to the view via the WebConstants.LOGOUT constant.
+ * Action to delete the TGT and the appropriate cookies.
+ * It also performs the back-channel SLO on the services accessed by the user during its browsing.
+ * After this back-channel SLO, a front-channel SLO can be started if some services require it.
+ * The final logout page or a redirection url is also computed in this action.
  *
  * @author Scott Battaglia
+ * @author Jerome Leleu
  * @since 3.0
  */
-public final class LogoutController extends AbstractController {
+public final class LogoutAction extends AbstractLogoutAction {
 
     /** The CORE to which we delegate for all CAS functionality. */
     @NotNull
@@ -54,10 +58,7 @@ public final class LogoutController extends AbstractController {
     @NotNull
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    /** Logout view name. */
-    @NotNull
-    private String logoutView;
-
+    /** The services manager. */
     @NotNull
     private ServicesManager servicesManager;
 
@@ -67,34 +68,45 @@ public final class LogoutController extends AbstractController {
      */
     private boolean followServiceRedirects;
 
-    public LogoutController() {
-        setCacheSeconds(0);
-    }
-
     @Override
-    protected ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        final String service = request.getParameter("service");
+    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
+            final RequestContext context) throws Exception {
 
+        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        boolean needFrontSlo = false;
         if (ticketGrantingTicketId != null) {
-            this.centralAuthenticationService
-                .destroyTicketGrantingTicket(ticketGrantingTicketId);
+            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService
+                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
+            context.getFlowScope().put(LOGOUT_REQUESTS, logoutRequests);
+            context.getFlowScope().put(LOGOUT_INDEX,  0);
+            for (LogoutRequest logoutRequest : logoutRequests) {
+                // if some logout request must still be attempted
+                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
+                    needFrontSlo = true;
+                    break;
+                }
+            }
 
             this.ticketGrantingTicketCookieGenerator.removeCookie(response);
             this.warnCookieGenerator.removeCookie(response);
         }
 
+        final String service = request.getParameter("service");
         if (this.followServiceRedirects && service != null) {
             final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
 
             if (rService != null && rService.isEnabled()) {
-                return new ModelAndView(new RedirectView(service));
+                context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }
 
-        return new ModelAndView(this.logoutView);
+        // there are some front services to logout, perform front SLO
+        if (needFrontSlo) {
+            return new Event(this, FRONT_EVENT);
+        } else {
+            // otherwise, finish the logout process
+            return new Event(this, FINISH_EVENT);
+        }
     }
 
     public void setTicketGrantingTicketCookieGenerator(
@@ -117,10 +129,6 @@ public final class LogoutController extends AbstractController {
 
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
         this.followServiceRedirects = followServiceRedirects;
-    }
-
-    public void setLogoutView(final String logoutView) {
-        this.logoutView = logoutView;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {

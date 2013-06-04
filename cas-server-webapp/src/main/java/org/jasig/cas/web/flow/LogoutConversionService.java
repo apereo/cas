@@ -16,33 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.logout;
+package org.jasig.cas.web.flow;
 
-import java.util.List;
-
-import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.springframework.binding.convert.service.DefaultConversionService;
 
 /**
- * A logout manager handles the Single Log Out process.
+ * Special conversion service with a {@link CompositeFlowExecutionKeyConverter}.
  *
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public interface LogoutManager {
+public class LogoutConversionService extends DefaultConversionService {
 
     /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
-     *
-     * @param ticket a given ticket granting ticket.
-     * @return all logout requests.
+     * Build a new conversion service with a {@link CompositeFlowExecutionKeyConverter}.
      */
-    List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
-
-    /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
-     */
-    String createFrontChannelLogoutMessage(LogoutRequest logoutRequest);
+    public LogoutConversionService() {
+        super();
+        addConverter(new CompositeFlowExecutionKeyConverter());
+    }
 }
