@@ -93,6 +93,17 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
 
     /**
+     * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
+     * listed order for supported credentials. This form may only be used by authentication handlers that
+     * resolve principals during the authentication process.
+     *
+     * @param handlers One or more authentication handlers.
+     */
+    public PolicyBasedAuthenticationManager(final AuthenticationHandler ... handlers) {
+        this(Arrays.asList(handlers));
+    }
+
+    /**
      * Creates a new authentication manager with a list of authentication handlers that are attempted in the
      * listed order for supported credentials. This form may only be used by authentication handlers that
      * resolve principals during the authentication process.
