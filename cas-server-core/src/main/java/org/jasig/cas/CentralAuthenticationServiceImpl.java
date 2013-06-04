@@ -327,14 +327,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        // Ensure the authentication satisfies security policy
-        final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(
-                        new ServiceContext(serviceTicket.getService(), registeredService));
-        if (!policy.isSatisfiedBy(authentication)) {
-            throw new UnsatisfiedAuthenticationPolicyException(policy);
-        }
-
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket
                 .grantTicketGrantingTicket(
                         this.ticketGrantingTicketUniqueTicketIdGenerator
