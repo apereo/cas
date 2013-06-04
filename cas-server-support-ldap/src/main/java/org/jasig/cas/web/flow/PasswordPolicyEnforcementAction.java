@@ -101,6 +101,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
         final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)
                                                         context.getFlowScope().get("credentials");
         final String userId = credentials.getUsername();
+        final String password = credentials.getPassword();
 
         Event returnedEvent = error();
         String msgToLog = null;
@@ -119,7 +120,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
                 logger.debug("Retrieving number of days to password expiration date for user {}", userId);
 
                 final long daysToExpirationDate = getPasswordPolicyEnforcer()
-                                                  .getNumberOfDaysToPasswordExpirationDate(userId);
+                                                  .getNumberOfDaysToPasswordExpirationDate(userId, password);
 
                 if (daysToExpirationDate == -1) {
                     returnedEvent = success();
