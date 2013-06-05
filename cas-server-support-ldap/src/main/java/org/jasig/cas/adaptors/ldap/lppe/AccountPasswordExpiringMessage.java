@@ -20,11 +20,17 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.jasig.cas.Message;
 
+/**
+ * Message conveying LDAP account expiration details.
+ *
+ * @author Misagh Moayyed
+ * @since 4.0
+ */
 public class AccountPasswordExpiringMessage extends Message {
     private static final long serialVersionUID = -7827652078735517752L;
-    
+
     private static final String CODE = "ldap.lppe.account.psw.expiring";
-    
+
     private long numberOfDaysToPasswordExpiration;
 
     public AccountPasswordExpiringMessage(final String defaultMsg, final long days) {

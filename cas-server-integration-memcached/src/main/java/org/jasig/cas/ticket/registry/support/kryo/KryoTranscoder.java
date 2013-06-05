@@ -33,15 +33,12 @@ import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.HardTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.ImmutableAuthenticationSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.MultiTimeUseOrTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.MutableAuthenticationSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimplePrincipalSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.TimeoutExpirationPolicySerializer;
@@ -105,11 +102,10 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(Date.class, new DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(fieldHelper));
         kryo.register(HashMap.class);
-        kryo.register(ImmutableAuthentication.class, new ImmutableAuthenticationSerializer(kryo, fieldHelper));
+        kryo.register(ImmutableAuthentication.class);
         kryo.register(
                 MultiTimeUseOrTimeoutExpirationPolicy.class,
                 new MultiTimeUseOrTimeoutExpirationPolicySerializer(fieldHelper));
-        kryo.register(MutableAuthentication.class, new MutableAuthenticationSerializer(kryo, fieldHelper));
         kryo.register(
                 NeverExpiresExpirationPolicy.class,
                 new FieldSerializer(kryo, NeverExpiresExpirationPolicy.class));

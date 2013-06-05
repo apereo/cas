@@ -19,10 +19,9 @@
 package org.jasig.cas.support.pac4j.authentication;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredentials;
 
@@ -45,17 +44,14 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      * {@inheritDoc}
      */
     @Override
-    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credentials credentials) {
         if (credentials instanceof ClientCredentials) {
             final ClientCredentials clientCredentials = (ClientCredentials) credentials;
-            final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
-                    clientCredentials.getUserProfile().getAttributes());
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(simplePrincipal,
-                    authentication.getAuthenticatedDate());
-            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-            mutableAuthentication.getAttributes().put(CLIENT_NAME, clientCredentials.getCredentials().getClientName());
-            return mutableAuthentication;
+            final Authentication temp = builder.build();
+            builder.setPrincipal(new SimplePrincipal(
+                    temp.getPrincipal().getId(),
+                    clientCredentials.getUserProfile().getAttributes()));
+            builder.addAttribute(CLIENT_NAME, clientCredentials.getCredentials().getClientName());
         }
-        return authentication;
     }
 }
