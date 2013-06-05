@@ -57,7 +57,7 @@ public class ActiveDirectoryPasswordPolicyConfiguration extends PasswordPolicyCo
     protected PasswordPolicyResult getPasswordPolicyResultInstance() {
         return new ActiveDirectoryPasswordPolicyResult(this);
     }
-    
+
     @Override
     protected PasswordPolicyResult buildInternal(final LdapEntry entry, final PasswordPolicyResult result) {
         final ActiveDirectoryPasswordPolicyResult adResult = (ActiveDirectoryPasswordPolicyResult) result;

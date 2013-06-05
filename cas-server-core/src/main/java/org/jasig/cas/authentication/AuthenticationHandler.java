@@ -73,6 +73,8 @@ public interface AuthenticationHandler {
 
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
+     * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
+     * handler instance has a unique name.
      *
      * @return Unique name within a Spring context.
      */

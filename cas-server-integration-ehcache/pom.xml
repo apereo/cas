@@ -37,7 +37,14 @@
       <groupId>org.jasig.cas</groupId>         
       <artifactId>cas-server-core</artifactId>         
       <version>${project.version}</version>      
-    </dependency>   
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <developers>

@@ -31,15 +31,16 @@ import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.ldaptive.auth.AccountState;
 
 /**
- * An extension of ldaptive's ActiveDirectoryAccountState class that defines CAS-specific exceptions
- * to be thrown back for the following codes:
- * 
+ * An extension of ldaptive's ActiveDirectoryAccountState class that defines CAS-specific exceptions.
+ * The map of account state to exception class follows:
+ *
  * <ul>
- *  <li>INVALID_LOGON_HOURS</li>
- *  <li>INVALID_WORKSTATION</li>
- *  <li>PASSWORD_MUST_CHANGE</li>
- *  <li>ACCOUNT_DISABLED</li>
+ *  <li>INVALID_LOGON_HOURS - org.jasig.cas.authentication.InvalidLoginTimeException</li>
+ *  <li>INVALID_WORKSTATION - org.jasig.cas.authentication.InvalidLoginLocationException</li>
+ *  <li>PASSWORD_MUST_CHANGE - org.jasig.cas.authentication.AccountPasswordMustChangeException</li>
+ *  <li>ACCOUNT_DISABLED - org.jasig.cas.authentication.AccountDisabledException</li>
  * </ul>
+ *
  * @author Misagh Moayyed
  * @since 4.0
  */
@@ -72,7 +73,7 @@ class ActiveDirectoryAccountState extends org.ldaptive.auth.ext.ActiveDirectoryA
         @Override
         public void throwSecurityException() throws LoginException {
             if (MAPPINGS.containsKey(this.error)) {
-                final LoginException e = createException();               
+                final LoginException e = createException();
                 throw e;
             } else {
                 this.error.throwSecurityException();

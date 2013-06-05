@@ -30,7 +30,7 @@ import org.jasig.cas.adaptors.ldap.lppe.PasswordPolicyResult;
  */
 public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
     private long userAccountControl = -1;
-    
+
     public ActiveDirectoryPasswordPolicyResult(final PasswordPolicyConfiguration configuration) {
         super(configuration);
     }
@@ -62,7 +62,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
 
     private boolean isUserAccountControlSetToDisableAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE)) {
-            logger.debug("User account control flag is set. Account [{}] is disabled", getDn());
+            log.debug("User account control flag is set. Account [{}] is disabled", getDn());
             return true;
         }
         return false;
@@ -70,7 +70,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
 
     private boolean isUserAccountControlSetToLockAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT)) {
-            logger.debug("User account control flag is set. Account [{}] is locked", getDn());
+            log.debug("User account control flag is set. Account [{}] is locked", getDn());
             return true;
         }
         return false;
@@ -94,14 +94,14 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
             this.userAccountControl = Long.parseLong(userAccountControl);
         }
     }
-    
+
     private boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
         if (getUserAccountControl() > 0) {
             return ((getUserAccountControl() & bit.getValue()) == bit.getValue());
         }
         return false;
     }
-    
+
     @Override
     protected boolean isAccountLocked() {
         return super.isAccountLocked() || isUserAccountControlSetToLockAccount();
@@ -115,7 +115,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
     /**
      * {@inheritDoc}
      * <p>Additionally, checks for AD-specific user account control values
-     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_DONT_EXPIRE_PASSWD} and 
+     * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_DONT_EXPIRE_PASSWD} and
      * {@link ActiveDirectoryUserAccountControlFlags#ADS_UF_PASSWD_CANT_CHANGE}.
      */
     @Override

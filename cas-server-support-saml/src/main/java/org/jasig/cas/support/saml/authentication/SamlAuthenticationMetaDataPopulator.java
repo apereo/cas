@@ -21,7 +21,7 @@ package org.jasig.cas.support.saml.authentication;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -35,10 +35,10 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * attributes map.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.1
  */
-public class SamlAuthenticationMetaDataPopulator implements
-                AuthenticationMetaDataPopulator {
+public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
@@ -70,14 +70,12 @@ public class SamlAuthenticationMetaDataPopulator implements
     }
 
     @Override
-    public final Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
+    public final void populateAttributes(final AuthenticationBuilder builder, final Credentials credentials) {
 
         final String credentialsClass = credentials.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
 
-        authentication.getAttributes().put(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
-
-        return authentication;
+        builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 
     /**
