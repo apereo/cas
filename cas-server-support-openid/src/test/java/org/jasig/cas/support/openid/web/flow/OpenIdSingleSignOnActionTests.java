@@ -21,21 +21,21 @@ package org.jasig.cas.support.openid.web.flow;
 
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl;
-import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
-import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
+import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
@@ -65,27 +65,19 @@ public class OpenIdSingleSignOnActionTests {
 
     private TicketRegistry ticketRegistry;
 
-    private DirectMappingAuthenticationManagerImpl authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     private final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
 
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = new DefaultTicketRegistry();
-        this.authenticationManager = new DirectMappingAuthenticationManagerImpl();
-
-        final Map<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder>
-                credentialsMapping = new HashMap<Class<? extends Credentials>,
-                                     DirectAuthenticationHandlerMappingHolder>();
-
-        final DirectAuthenticationHandlerMappingHolder holder = new DirectAuthenticationHandlerMappingHolder();
         final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
         handler.setTicketRegistry(this.ticketRegistry);
-        holder.setAuthenticationHandler(new LegacyAuthenticationHandlerAdapter(handler));
-        holder.setCredentialsToPrincipalResolver(new OpenIdCredentialsToPrincipalResolver());
-
-        this.authenticationManager.setCredentialsMapping(credentialsMapping);
-        credentialsMapping.put(OpenIdCredentials.class, holder);
+        this.authenticationManager = new PolicyBasedAuthenticationManager(
+                Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
+                        new LegacyAuthenticationHandlerAdapter(handler),
+                        new OpenIdCredentialsToPrincipalResolver()));
 
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
@@ -148,7 +140,7 @@ public class OpenIdSingleSignOnActionTests {
     public void testSuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = new MutableAuthentication(new SimplePrincipal("scootman28"));
+        final Authentication authentication = TestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
                 new NeverExpiresExpirationPolicy());
 

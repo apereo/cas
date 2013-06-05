@@ -20,9 +20,7 @@ package org.jasig.cas.support.openid.authentication.handler.support;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -85,7 +83,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     protected TicketGrantingTicket getTicketGrantingTicket() {
-        final Authentication authentication = new MutableAuthentication(new SimplePrincipal("test"));
-        return new TicketGrantingTicketImpl("test", authentication, new NeverExpiresExpirationPolicy());
+        return new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

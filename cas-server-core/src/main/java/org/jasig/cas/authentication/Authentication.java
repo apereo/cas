@@ -20,6 +20,7 @@ package org.jasig.cas.authentication;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
@@ -42,11 +43,8 @@ import org.jasig.cas.authentication.principal.Principal;
  *
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
-
+ * @author Marvin S. Addison
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface Authentication extends Serializable {
 
@@ -71,4 +69,29 @@ public interface Authentication extends Serializable {
      * @return the map of attributes.
      */
     Map<String, Object> getAttributes();
+
+    /**
+     * Gets a list of metadata about the credentials supplied at authentication time.
+     *
+     * @return Non-null list of supplied credentials represented as metadata that should be considered safe for
+     * long-term storage (e.g. serializable and secure with respect to credential disclosure). The order of items in
+     * the returned list SHOULD be the same as the order in which the source credentials were presented and subsequently
+     * processed.
+     */
+    List<CredentialMetaData> getCredentials();
+
+    /**
+     * Gets a map describing successful authentications produced by {@link AuthenticationHandler} components.
+     *
+     * @return Map of handler names to successful authentication result produced by that handler.
+     */
+    Map<String, HandlerResult> getSuccesses();
+
+    /**
+     * Gets a map describing failed authentications. By definition the failures here were not sufficient to prevent
+     * authentication.
+     *
+     * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
+     */
+    Map<String, Exception> getFailures();
 }

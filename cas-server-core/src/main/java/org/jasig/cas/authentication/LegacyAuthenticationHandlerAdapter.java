@@ -35,18 +35,15 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
 
     private final org.jasig.cas.authentication.handler.AuthenticationHandler legacyHandler;
 
-    private final HandlerResult result;
-
     public LegacyAuthenticationHandlerAdapter(final org.jasig.cas.authentication.handler.AuthenticationHandler legacy) {
         this.legacyHandler = legacy;
-        this.result = new HandlerResult(this);
     }
 
     @Override
     public HandlerResult authenticate(final Credentials credential) throws GeneralSecurityException, PreventedException {
         try {
             if (this.legacyHandler.authenticate(credential)) {
-                return this.result;
+                return new HandlerResult(this, new BasicCredentialMetaData(credential));
             } else {
                 throw new GeneralSecurityException(String.format("%s failed to authenticate %s", this.getName(), credential));
             }

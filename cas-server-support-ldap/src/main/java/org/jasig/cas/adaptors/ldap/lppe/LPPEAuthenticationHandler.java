@@ -31,8 +31,10 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
@@ -63,7 +65,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * <p>Builds the {@link PasswordPolicyConfiguration} defined, examines the account status
      * for locked, disabled, expired, etc accounts and validates the password expiration policy.
      * If the policy cannot be built, account status matches one of the defined failure conditions
-     * or the password policy expiration fails and the configuration is set as critical, 
+     * or the password policy expiration fails and the configuration is set as critical,
      * the authentication will fail. otherwise a warning is issued and the flow.
      * is resumed.
      * @see PasswordPolicyConfiguration#setCritical(boolean)
@@ -73,21 +75,24 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     @Override
     protected final HandlerResult doPostAuthentication(final AuthenticationResponse response)
             throws LoginException {
-        
+
         final LdapEntry entry = response.getLdapEntry();
         final PasswordPolicyResult result = configuration.build(entry);
         if (result == null) {
             throw new FailedLoginException("LPPE authentication failed. Configuration cannot be determined.");
         }
-        
+
         this.examineAccountStatus(response, result);
         final List<Message> warnings = this.validateAccountPasswordExpirationPolicy(result);
-        return new HandlerResult(this, super.createPrincipal(entry), warnings);
+        return new HandlerResult(
+                this,
+                new BasicCredentialMetaData(new UsernamePasswordCredentials()),
+                super.createPrincipal(entry), warnings);
     }
-    
+
     /**
      * Examine the account status based on custom attributes defined (if any),
-     * to determine whether the account status matches the following cases:
+     * to determine whether the account status matches the following cases.
      * <ul>
      * <li>Disabled: {@link AccountDisabledException}</li>
      * <li>Locked: {@link AccountLockedException}</li>
@@ -95,7 +100,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * <li>Password Must Change: {@link AccountPasswordMustChangeException}</li>
      * </ul>
      * @param response the ldaptive authentication response.
-     * @throws LoginException if the above conditions match, an instance of LoginException 
+     * @throws LoginException if the above conditions match, an instance of LoginException
      * mapped to the error is thrown.
      */
     protected void examineAccountStatus(final AuthenticationResponse response,
@@ -178,7 +183,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
 
     /**
      * Determines the expiration date to use based on the password policy configuration.
-     * Converts the password expiration date based on the 
+     * Converts the password expiration date based on the
      * {@link PasswordPolicyConfiguration#setDateConverter(LdapDateConverter)} and returns
      * that value is the policy is set to evaluate against a static password expiration date.
      * Otherwise, adds {@link PasswordPolicyConfiguration#getValidPasswordNumberOfDays()} days
@@ -187,7 +192,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      */
     private DateTime getExpirationDateToUse(final PasswordPolicyResult result) {
         final DateTime dateValue = result.getPasswordExpirationDateTime();
-        
+
         if (configuration.getStaticPasswordExpirationDate() == null) {
           final DateTime expireDate = dateValue.plusDays(result.getValidPasswordNumberOfDays());
           log.debug("Retrieved date value [{}] for date attribute [{}] and added {} valid days. "
@@ -217,13 +222,13 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         if (configuration.getStaticPasswordExpirationDate() != null &&
             (expireTime.equals(configuration.getStaticPasswordExpirationDate()) ||
              expireTime.isAfter(configuration.getStaticPasswordExpirationDate()))) {
-            
+
             final String msg = String.format("Account password has expired beyond the static expiration date [{}]",
                     configuration.getStaticPasswordExpirationDate());
             log.debug(msg);
-            throw new CredentialExpiredException(msg);   
+            throw new CredentialExpiredException(msg);
         }
-             
+
         final int days = getDaysToExpirationDate(expireTime, result);
         if (days != -1) {
             final String msg = String.format("Password expires in [%d] days", days);
@@ -232,6 +237,5 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         }
         return warnings;
     }
-    
 
 }

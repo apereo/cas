@@ -19,7 +19,12 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
@@ -27,7 +32,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -38,7 +43,9 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Scott Battaglia
@@ -76,7 +83,7 @@ public final class TestUtils {
     public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword(
         final String username) {
         return getCredentialsWithDifferentUsernameAndPassword(username,
-            username);
+                username);
     }
 
     public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword() {
@@ -130,15 +137,29 @@ public final class TestUtils {
     }
 
     public static Authentication getAuthentication() {
-        return new ImmutableAuthentication(getPrincipal());
-    }
-
-    public static Authentication getAuthenticationWithService() {
-        return new ImmutableAuthentication(getService());
+        return getAuthentication(CONST_USERNAME);
     }
 
     public static Authentication getAuthentication(final String name) {
-        return new ImmutableAuthentication(getPrincipal(name));
+        return getAuthentication(getPrincipal(name));
+    }
+
+    public static Authentication getAuthentication(final Principal principal) {
+        return getAuthentication(principal, Collections.<String, Object>emptyMap());
+    }
+
+    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredentials());
+        return new AuthenticationBuilder(principal)
+                .addCredential(meta)
+                .addSuccess("testHandler", new HandlerResult(handler, meta))
+                .setAttributes(attributes)
+                .build();
+    }
+
+    public static Authentication getAuthenticationWithService() {
+        return getAuthentication(getService());
     }
 
     public static Assertion getAssertion(final boolean fromNewLogin) {
@@ -153,8 +174,7 @@ public final class TestUtils {
         for (int i = 0; i < extraPrincipals.length; i++) {
             list.add(TestUtils.getAuthentication(extraPrincipals[i]));
         }
-        return new ImmutableAssertionImpl(list, TestUtils.getService(),
-            fromNewLogin);
+        return new ImmutableAssertion(TestUtils.getAuthentication(), list, TestUtils.getService(), fromNewLogin);
     }
 
     public static MockRequestContext getContext() {
