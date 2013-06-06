@@ -19,7 +19,7 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
 /**
  * Implementation of CredentialsToPrincipalResolver that converts the OpenId
@@ -32,13 +32,13 @@ public final class OpenIdCredentialsToPrincipalResolver extends
 AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credentials credentials) {
-        return ((OpenIdCredentials) credentials).getUsername();
+    protected String extractPrincipalId(final Credential credential) {
+        return ((OpenIdCredential) credential).getUsername();
     }
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials instanceof OpenIdCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof OpenIdCredential;
     }
 
 }

@@ -19,7 +19,7 @@
 package org.jasig.cas.support.pac4j.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 
 /**
@@ -35,8 +35,8 @@ public class ClientCredentialsToPrincipalResolver extends AbstractPersonDirector
      * {@inheritDoc}
      */
     @Override
-    protected String extractPrincipalId(final Credentials credentials) {
-        final ClientCredentials clientCredentials = (ClientCredentials) credentials;
+    protected String extractPrincipalId(final Credential credential) {
+        final ClientCredential clientCredentials = (ClientCredential) credential;
         final String principalId = clientCredentials.getUserProfile().getTypedId();
         log.debug("principalId : {}", principalId);
         return principalId;
@@ -46,7 +46,7 @@ public class ClientCredentialsToPrincipalResolver extends AbstractPersonDirector
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null && ClientCredentials.class.isAssignableFrom(credentials.getClass());
+    public boolean supports(final Credential credential) {
+        return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
     }
 }

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotNull;
@@ -53,7 +53,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @NotNull
     private Resource fileName;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
+    protected final boolean authenticateUsernamePasswordInternal(final PasswordCredential credentials) {
         BufferedReader bufferedReader = null;
 
         try {

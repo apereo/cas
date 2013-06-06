@@ -16,25 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.authentication;
 
+import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * UsernamePasswordCredentials respresents the username and password that a user
- * may provide in order to prove the authenticity of who they say they are.
+ * Credential for authenticating with a username and password.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
-public class UsernamePasswordCredentials implements Credentials {
+public class PasswordCredential implements Credential, Serializable {
 
     /** Unique ID for serialization. */
-    private static final long serialVersionUID = 4408913902552789095L;
+    private static final long serialVersionUID = -700605081472810939L;
 
     /** Password suffix appended to username in string representation. */
     private static final String PASSWORD_SUFFIX = "+password";
@@ -48,6 +46,20 @@ public class UsernamePasswordCredentials implements Credentials {
     @NotNull
     @Size(min=1, message = "required.password")
     private String password;
+
+    /** Default constructor. */
+    public PasswordCredential() {}
+
+    /**
+     * Creates a new instance with the given username and password.
+     *
+     * @param userName Non-null user name.
+     * @param password Non-null password.
+     */
+    public PasswordCredential(final String userName, final String password) {
+        this.username = userName;
+        this.password = password;
+    }
 
     /**
      * @return Returns the password.
@@ -77,6 +89,11 @@ public class UsernamePasswordCredentials implements Credentials {
         this.username = userName;
     }
 
+    /** {@inheritDoc} */
+    public String getId() {
+        return this.username;
+    }
+
     @Override
     public String toString() {
         return this.username + PASSWORD_SUFFIX;
@@ -91,7 +108,7 @@ public class UsernamePasswordCredentials implements Credentials {
             return false;
         }
 
-        UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
+        PasswordCredential that = (PasswordCredential) o;
 
         if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;

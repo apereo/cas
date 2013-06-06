@@ -19,11 +19,11 @@
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
 /**
- * Extracts the Principal out of PrincipalBearingCredentials. It is very simple
- * to resolve PrincipalBearingCredentials to a Principal since the credentials
+ * Extracts the Principal out of PrincipalBearingCredential. It is very simple
+ * to resolve PrincipalBearingCredential to a Principal since the credentials
  * already bear the ready-to-go Principal.
  *
  * @author Andrew Petro
@@ -33,14 +33,14 @@ public final class PrincipalBearingCredentialsToPrincipalResolver extends
             AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credentials credentials) {
-        return ((PrincipalBearingCredentials) credentials).getPrincipal()
+    protected String extractPrincipalId(final Credential credential) {
+        return ((PrincipalBearingCredential) credential).getPrincipal()
                 .getId();
     }
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-                && credentials.getClass().equals(PrincipalBearingCredentials.class);
+    public boolean supports(final Credential credential) {
+        return credential != null
+                && credential.getClass().equals(PrincipalBearingCredential.class);
     }
 }

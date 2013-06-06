@@ -20,7 +20,7 @@ package org.jasig.cas.adaptors.ldap.remote;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -36,12 +36,12 @@ public final class RemoteAddressNonInteractiveCredentialsAction extends
                 AbstractNonInteractiveCredentialsAction {
 
     @Override
-    protected Credentials constructCredentialsFromRequest(final RequestContext context) {
+    protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final String remoteAddress = request.getRemoteAddr();
 
         if (StringUtils.hasText(remoteAddress)) {
-            return new RemoteAddressCredentials(remoteAddress);
+            return new RemoteAddressCredential(remoteAddress);
         }
 
         logger.debug("No remote address found.");

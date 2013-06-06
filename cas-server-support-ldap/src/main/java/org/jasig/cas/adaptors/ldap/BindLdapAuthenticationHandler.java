@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.NamingSecurityException;
 import org.springframework.ldap.core.ContextSource;
@@ -79,7 +79,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
 
     @Override
     protected final boolean authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredentials credentials) throws AuthenticationException {
+            final PasswordCredential credentials) throws AuthenticationException {
 
         final List<String> cns = new ArrayList<String>();
 
@@ -140,7 +140,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     }
 
     protected String composeCompleteDnToCheck(final String dn,
-            final UsernamePasswordCredentials credentials) {
+            final PasswordCredential credentials) {
         return dn;
     }
 

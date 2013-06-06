@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.authentication;
+
+import java.io.Serializable;
 
 /**
  * Handles both remember me services and username and password.
@@ -25,11 +27,10 @@ package org.jasig.cas.authentication.principal;
  * @since 3.2.1
  *
  */
-public class RememberMeUsernamePasswordCredentials extends
-    UsernamePasswordCredentials implements RememberMeCredentials {
+public class RememberMePasswordCredential extends PasswordCredential implements RememberMeCredential, Serializable {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = -9178853167397038282L;
+    private static final long serialVersionUID = -6710007659431302397L;
 
     private boolean rememberMe;
 
@@ -54,7 +55,7 @@ public class RememberMeUsernamePasswordCredentials extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final RememberMeUsernamePasswordCredentials other = (RememberMeUsernamePasswordCredentials) obj;
+        final RememberMePasswordCredential other = (RememberMePasswordCredential) obj;
         if (this.rememberMe != other.rememberMe) {
             return false;
         }

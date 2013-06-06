@@ -130,7 +130,7 @@ public class AuthenticationBuilder {
      * @return This builder instance.
      */
     public AuthenticationBuilder setCredentials(final List<CredentialMetaData> credentials) {
-        Assert.notNull(credentials, "Credentials cannot be null");
+        Assert.notNull(credentials, "Credential cannot be null");
         this.credentials.clear();
         for (final CredentialMetaData c : credentials) {
             this.credentials.add(c);

@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
@@ -86,7 +86,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         final List<Message> warnings = this.validateAccountPasswordExpirationPolicy(result);
         return new HandlerResult(
                 this,
-                new BasicCredentialMetaData(new UsernamePasswordCredentials()),
+                new BasicCredentialMetaData(new PasswordCredential()),
                 super.createPrincipal(entry), warnings);
     }
 

@@ -218,7 +218,7 @@ public class JpaTicketRegistryTests {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {
                     // Querying for the TGT prior to updating it as done in
-                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credentials)
+                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
                     final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                     jpaTicketRegistry.addTicket(st);
                     return st.getId();

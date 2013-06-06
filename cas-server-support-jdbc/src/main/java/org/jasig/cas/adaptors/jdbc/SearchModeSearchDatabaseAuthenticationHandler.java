@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.validation.constraints.NotNull;
@@ -52,7 +52,7 @@ AbstractJdbcUsernamePasswordAuthenticationHandler implements InitializingBean {
     private String sql;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final PasswordCredential credentials) throws AuthenticationException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
 

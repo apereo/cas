@@ -29,7 +29,7 @@ import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.springframework.util.Assert;
 
 /**
@@ -72,7 +72,7 @@ public class JaasAuthenticationHandler extends
     }
 
     protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
+        final PasswordCredential credentials)
         throws AuthenticationException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());

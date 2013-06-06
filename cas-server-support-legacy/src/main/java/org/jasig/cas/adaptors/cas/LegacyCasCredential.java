@@ -20,17 +20,17 @@ package org.jasig.cas.adaptors.cas;
 
 import javax.servlet.ServletRequest;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 
 /**
- * Class to wrap the HttpServletRequest object opaquely in the Credentials. The
+ * Class to wrap the HttpServletRequest object opaquely in the Credential. The
  * LegacyPasswordHandlerAdapter extracts this object so it can be presented to a
  * CAS 2 PasswordHandler.
  *
  * @author Scott Battaglia
  * @since 3.0
  */
-public final class LegacyCasCredentials extends UsernamePasswordCredentials {
+public final class LegacyCasCredential extends PasswordCredential {
 
     private static final long serialVersionUID = 3256442508274775608L;
 

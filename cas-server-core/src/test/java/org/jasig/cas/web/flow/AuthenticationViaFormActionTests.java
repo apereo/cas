@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -236,10 +236,10 @@ public class AuthenticationViaFormActionTests extends
 
         final CredentialsBinder cb = new CredentialsBinder(){
 
-            public void bind(final HttpServletRequest request, final Credentials credentials) {
-                ((UsernamePasswordCredentials) credentials)
+            public void bind(final HttpServletRequest request, final Credential credentials) {
+                ((PasswordCredential) credentials)
                     .setUsername("test2");
-                ((UsernamePasswordCredentials) credentials)
+                ((PasswordCredential) credentials)
                     .setPassword("test2");
             }
 
@@ -253,7 +253,7 @@ public class AuthenticationViaFormActionTests extends
 
  //       assertEquals(
  //           "test2",
- //           ((UsernamePasswordCredentials) context
+ //           ((PasswordCredential) context
  //               .getFlowScope().get(
  //                   "credentials")).getUsername());
 
@@ -264,7 +264,7 @@ public class AuthenticationViaFormActionTests extends
         final CredentialsBinder c = new CredentialsBinder(){
 
             public void bind(final HttpServletRequest request,
-                final Credentials credentials) {
+                final Credential credentials) {
                 // nothing to do here
             }
 

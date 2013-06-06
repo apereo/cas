@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.jasig.cas.RequiredConfigurationProfileValueSource;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +89,8 @@ public class LPPEAuthenticationHandlerTests {
         }
     }
 
-    private UsernamePasswordCredentials newCredentials(final String user, final String pass) {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+    private PasswordCredential newCredentials(final String user, final String pass) {
+        final PasswordCredential credentials = new PasswordCredential();
         credentials.setUsername(user);
         credentials.setPassword(pass);
         return credentials;

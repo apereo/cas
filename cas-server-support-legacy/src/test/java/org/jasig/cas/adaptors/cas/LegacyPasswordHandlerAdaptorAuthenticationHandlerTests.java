@@ -44,8 +44,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
     @Test
     public void testSupports() {
         assertFalse(this.lphaah.supports(null));
-        assertTrue(this.lphaah.supports(new LegacyCasCredentials()));
-        assertFalse(this.lphaah.supports(new LegacyCasTrustedCredentials()));
+        assertTrue(this.lphaah.supports(new LegacyCasCredential()));
+        assertFalse(this.lphaah.supports(new LegacyCasTrustedCredential()));
     }
 
     /**
@@ -55,7 +55,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
      */
     @Test
     public void testAuthenticateUnsupported() {
-        this.lphaah.supports(new LegacyCasTrustedCredentials());
+        this.lphaah.supports(new LegacyCasTrustedCredential());
     }
 
     @Test
@@ -65,8 +65,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
         mockHandler.setSucceed(true);
         this.lphaah.setPasswordHandler(mockHandler);
 
-        // configure the LegacyCasCredentials
-        LegacyCasCredentials credentials = new LegacyCasCredentials();
+        // configure the LegacyCasCredential
+        LegacyCasCredential credentials = new LegacyCasCredential();
         credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
@@ -86,8 +86,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
         mockHandler.setSucceed(false);
         this.lphaah.setPasswordHandler(mockHandler);
 
-        // configure the LegacyCasCredentials
-        LegacyCasCredentials credentials = new LegacyCasCredentials();
+        // configure the LegacyCasCredential
+        LegacyCasCredential credentials = new LegacyCasCredential();
         credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();

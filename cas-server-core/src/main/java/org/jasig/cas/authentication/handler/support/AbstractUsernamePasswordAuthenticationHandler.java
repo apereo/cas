@@ -18,19 +18,19 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
 
 import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
- * check for UsernamePasswordCredentials.
+ * check for PasswordCredential.
  *
  * @author Scott Battaglia
 
@@ -43,7 +43,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default class to support if one is not supplied. */
-    private static final Class<UsernamePasswordCredentials> DEFAULT_CLASS = UsernamePasswordCredentials.class;
+    private static final Class<PasswordCredential> DEFAULT_CLASS = PasswordCredential.class;
 
     /** Class that this instance will support. */
     @NotNull
@@ -66,27 +66,27 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**
-     * Method automatically handles conversion to UsernamePasswordCredentials
+     * Method automatically handles conversion to PasswordCredential
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
-     * @return true if credentials are authentic, false otherwise.
+     * @return true if credential are authentic, false otherwise.
      */
-    protected final boolean doAuthentication(final Credentials credentials)
+    protected final boolean doAuthentication(final Credential credential)
         throws AuthenticationException {
-        return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
+        return authenticateUsernamePasswordInternal((PasswordCredential) credential);
     }
 
     /**
-     * Abstract convenience method that assumes the credentials passed in are a
-     * subclass of UsernamePasswordCredentials.
+     * Abstract convenience method that assumes the credential passed in are a
+     * subclass of PasswordCredential.
      *
-     * @param credentials the credentials representing the Username and Password
+     * @param credentials the credential representing the Username and Password
      * presented to CAS
-     * @return true if the credentials are authentic, false otherwise.
+     * @return true if the credential are authentic, false otherwise.
      * @throws AuthenticationException if authenticity cannot be determined.
      */
     protected abstract boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
+        final PasswordCredential credentials)
         throws AuthenticationException;
 
     /**
@@ -137,13 +137,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     }
 
     /**
-     * @return true if the credentials are not null and the credentials class is
+     * @return true if the credential are not null and the credential class is
      * equal to the class defined in classToSupport.
      */
-    public final boolean supports(final Credentials credentials) {
-        return credentials != null
-            && (this.classToSupport.equals(credentials.getClass()) || (this.classToSupport
-                .isAssignableFrom(credentials.getClass()))
+    public final boolean supports(final Credential credential) {
+        return credential != null
+            && (this.classToSupport.equals(credential.getClass()) || (this.classToSupport
+                .isAssignableFrom(credential.getClass()))
                 && this.supportSubClasses);
     }
 }

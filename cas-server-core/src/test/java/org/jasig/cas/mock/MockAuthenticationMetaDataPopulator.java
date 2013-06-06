@@ -20,10 +20,10 @@ package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
 public class MockAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    public void populateAttributes(final AuthenticationBuilder builder, final Credentials credentials) {}
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {}
 
 }
