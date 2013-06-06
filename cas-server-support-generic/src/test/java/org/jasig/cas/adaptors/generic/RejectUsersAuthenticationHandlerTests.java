@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testSupportsProperUserCredentials() {
-        PasswordCredential c = new PasswordCredential();
+        UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -77,7 +77,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test(expected=AuthenticationException.class)
     public void testFailsUserInMap() throws AuthenticationException {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -86,7 +86,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testPassesUserNotInMap() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -100,7 +100,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testFailsNullUserName() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -114,7 +114,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testFailsNullUserNameAndPassword() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);

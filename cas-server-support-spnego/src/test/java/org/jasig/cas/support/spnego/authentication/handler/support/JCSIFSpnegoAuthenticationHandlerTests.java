@@ -20,7 +20,7 @@ package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
@@ -79,7 +79,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     public void testSupports() {
         assertFalse(this.authenticationHandler.supports(null));
         assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
-        assertFalse(this.authenticationHandler.supports(new PasswordCredential()));
+        assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test

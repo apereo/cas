@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- * Tests for RememberMePasswordCredential.
+ * Tests for RememberMeUsernamePasswordCredential.
  *
  * @author Scott Battaglia
  * @since 3.2.1
@@ -33,7 +33,7 @@ public final class RememberMePasswordCredentialTests {
 
     @Test
     public void testGettersAndSetters() {
-        final RememberMePasswordCredential c = new RememberMePasswordCredential();
+        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);

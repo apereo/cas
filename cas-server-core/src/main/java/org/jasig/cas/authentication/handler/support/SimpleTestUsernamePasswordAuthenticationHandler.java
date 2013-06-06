@@ -31,7 +31,7 @@ import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
@@ -81,9 +81,9 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     public final HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final PasswordCredential passwordCredential = (PasswordCredential) credential;
-        final String username = passwordCredential.getUsername();
-        final String password = passwordCredential.getPassword();
+        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        final String username = usernamePasswordCredential.getUsername();
+        final String password = usernamePasswordCredential.getPassword();
 
         final Exception exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
@@ -106,7 +106,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential instanceof PasswordCredential;
+        return credential instanceof UsernamePasswordCredential;
     }
 
     @Override

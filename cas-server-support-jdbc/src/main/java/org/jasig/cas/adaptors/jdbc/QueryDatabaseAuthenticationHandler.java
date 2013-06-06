@@ -19,7 +19,7 @@
 package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final PasswordCredential credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
         final String username = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(

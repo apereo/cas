@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -57,7 +57,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
                 HttpBasedServiceCredential.class.getName(),
                 AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(
-                PasswordCredential.class.getName(),
+                UsernamePasswordCredential.class.getName(),
                 AUTHN_METHOD_PASSWORD);
 
         // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency

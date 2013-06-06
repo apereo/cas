@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
 /**
@@ -52,7 +52,7 @@ public class X509CertificateCredentialsToDistinguishedNamePrincipalResolverTests
 
     @Test
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new PasswordCredential()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
 }

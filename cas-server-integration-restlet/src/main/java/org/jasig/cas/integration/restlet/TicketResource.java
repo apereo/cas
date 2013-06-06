@@ -29,7 +29,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -90,7 +90,7 @@ public class TicketResource extends ServerResource {
     }
 
     protected Credential obtainCredentials() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
 

@@ -20,7 +20,7 @@ package org.jasig.cas.support.spnego.authentication.principal;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +53,6 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     public void testSupports() {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
-        assertFalse(this.resolver.supports(new PasswordCredential()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 }

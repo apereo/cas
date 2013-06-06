@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.radius;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * Interface representing a Radius Server.
@@ -34,6 +34,6 @@ public interface RadiusServer {
      * @param credentials the credentials to authenticate.
      * @return true if authenticated, false otherwise.
      */
-    boolean authenticate(PasswordCredential credentials);
+    boolean authenticate(UsernamePasswordCredential credentials);
 
 }

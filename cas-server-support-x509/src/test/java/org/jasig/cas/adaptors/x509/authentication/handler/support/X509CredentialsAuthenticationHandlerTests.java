@@ -26,7 +26,7 @@ import edu.vt.middleware.crypt.util.CryptReader;
 
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -98,7 +98,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         params.add(new Object[] {
                 handler,
-                new PasswordCredential(),
+                new UsernamePasswordCredential(),
                 false,
                 false,
         });

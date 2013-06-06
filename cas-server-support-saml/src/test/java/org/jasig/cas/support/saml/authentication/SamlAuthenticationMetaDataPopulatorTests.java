@@ -30,7 +30,7 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
@@ -53,7 +53,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testAuthenticationTypeFound() {
-        final PasswordCredential credentials = new PasswordCredential();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
@@ -99,7 +99,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
-        final CredentialMetaData meta = new BasicCredentialMetaData(new PasswordCredential());
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new AuthenticationBuilder(principal)
                 .addCredential(meta)

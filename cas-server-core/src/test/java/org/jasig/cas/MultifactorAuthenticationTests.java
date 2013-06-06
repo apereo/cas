@@ -20,9 +20,9 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.validation.Assertion;
 import org.junit.Test;
@@ -110,8 +110,8 @@ public class MultifactorAuthenticationTests {
                 SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
-    private static PasswordCredential newUserPassCredentials(final String user, final String pass) {
-        final PasswordCredential userpass = new PasswordCredential();
+    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
+        final UsernamePasswordCredential userpass = new UsernamePasswordCredential();
         userpass.setUsername(user);
         userpass.setPassword(pass);
         return userpass;

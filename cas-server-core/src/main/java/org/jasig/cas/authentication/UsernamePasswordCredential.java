@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
  * @author Marvin S. Addison
  * @since 3.0
  */
-public class PasswordCredential implements Credential, Serializable {
+public class UsernamePasswordCredential implements Credential, Serializable {
 
     /** Unique ID for serialization. */
     private static final long serialVersionUID = -700605081472810939L;
@@ -48,7 +48,7 @@ public class PasswordCredential implements Credential, Serializable {
     private String password;
 
     /** Default constructor. */
-    public PasswordCredential() {}
+    public UsernamePasswordCredential() {}
 
     /**
      * Creates a new instance with the given username and password.
@@ -56,7 +56,7 @@ public class PasswordCredential implements Credential, Serializable {
      * @param userName Non-null user name.
      * @param password Non-null password.
      */
-    public PasswordCredential(final String userName, final String password) {
+    public UsernamePasswordCredential(final String userName, final String password) {
         this.username = userName;
         this.password = password;
     }
@@ -108,7 +108,7 @@ public class PasswordCredential implements Credential, Serializable {
             return false;
         }
 
-        PasswordCredential that = (PasswordCredential) o;
+        UsernamePasswordCredential that = (UsernamePasswordCredential) o;
 
         if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;

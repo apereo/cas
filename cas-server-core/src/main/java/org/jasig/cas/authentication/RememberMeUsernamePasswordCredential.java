@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @since 3.2.1
  *
  */
-public class RememberMePasswordCredential extends PasswordCredential implements RememberMeCredential, Serializable {
+public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential, Serializable {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -6710007659431302397L;
@@ -55,7 +55,7 @@ public class RememberMePasswordCredential extends PasswordCredential implements 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final RememberMePasswordCredential other = (RememberMePasswordCredential) obj;
+        final RememberMeUsernamePasswordCredential other = (RememberMeUsernamePasswordCredential) obj;
         if (this.rememberMe != other.rememberMe) {
             return false;
         }
