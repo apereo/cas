@@ -31,17 +31,17 @@ import org.junit.Test;
  * @since 3.0.6
  *
  */
-public class X509CertificateCredentialsToDistinguishedNamePrincipalResolverTests
-        extends AbstractX509CertificateTests {
+public class X509SerialNumberPrincipalResolverTests
+extends AbstractX509CertificateTests {
 
-    private final X509CertificateCredentialsToDistinguishedNamePrincipalResolver
-        resolver = new X509CertificateCredentialsToDistinguishedNamePrincipalResolver();
+    private final X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();
 
     @Test
     public void testResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
-        assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolvePrincipal(c).getId());
+
+        assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(), this.resolver.resolve(c).getId());
     }
 
     @Test

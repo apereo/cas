@@ -32,12 +32,17 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 
 /**
+ * Resolves principals by querying a data source using the Jasig
+ * <a href="http://developer.jasig.org/projects/person-directory/1.5.0-SNAPSHOT/apidocs/">Person Directory API</a>.
+ * The {@link org.jasig.cas.authentication.principal.Principal#getAttributes()} are populated by the results of the
+ * query and the principal ID may optionally be set by proving an attribute whose first non-null value is used;
+ * otherwise the credential ID is used for the principal ID.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Marvin S. Addison
+ * @since 4.0
+ *
  */
-public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
-    implements CredentialsToPrincipalResolver {
+public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Log instance. */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -48,10 +53,19 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
-    public final Principal resolvePrincipal(final Credential credential) {
+    /** Optional prinicpal attribute name. */
+    private String principalAttributeName;
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
+
+    @Override
+    public final Principal resolve(final Credential credential) {
         log.debug("Attempting to resolve a principal...");
 
-        final String principalId = extractPrincipalId(credential);
+        String principalId = extractPrincipalId(credential);
 
         if (principalId == null) {
             return null;
@@ -75,22 +89,24 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         if (attributes == null) {
             return null;
         }
+
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
-        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
-            final String key = entry.getKey();
-            final Object value = entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue();
-            convertedAttributes.put(key, value);
+        for (final String key : attributes.keySet()) {
+            final List<Object> values = attributes.get(key);
+            if (key.equals(this.principalAttributeName)) {
+                if (values.isEmpty()) {
+                    log.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
+                } else {
+                    principalId = values.get(0).toString();
+                    log.debug("Found principal attribute value {}", principalId);
+                    log.debug("Removing principal attribute {} from attribute map.", this.principalAttributeName);
+                }
+            } else {
+                convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
+            }
         }
         return new SimplePrincipal(principalId, convertedAttributes);
     }
-
-    /**
-     * Extracts the id of the user from the provided credential.
-     *
-     * @param credential the credential provided by the user.
-     * @return the username, or null if it could not be resolved.
-     */
-    protected abstract String extractPrincipalId(Credential credential);
 
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
@@ -98,5 +114,25 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
 
     public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
         this.returnNullIfNoAttributes = returnNullIfNoAttributes;
+    }
+
+    /**
+     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
+     *
+     * @param attribute Name of attribute containing principal ID.
+     */
+    public void setPrincipalAttributeName(final String attribute) {
+        this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Extracts the id of the user from the provided credential. This method should be overridded by subclasses to
+     * achieve more sophisticated strategies for producing a principal ID from a credential.
+     *
+     * @param credential the credential provided by the user.
+     * @return the username, or null if it could not be resolved.
+     */
+    protected String extractPrincipalId(final Credential credential) {
+        return credential.getId();
     }
 }

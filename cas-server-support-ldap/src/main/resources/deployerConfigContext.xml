@@ -101,10 +101,10 @@
        | Credential-to-principal resolver beans
        -->
     <bean id="usernamePasswordCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
     <bean id="httpBasedCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
 
 </beans>

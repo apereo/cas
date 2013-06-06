@@ -30,11 +30,11 @@ import org.junit.Test;
  * @since 3.0.5
  */
 public class PrincipalBearingCredentialsToPrincipalResolverTests {
-    private PrincipalBearingCredentialsToPrincipalResolver resolver;
+    private PrincipalBearingPrincipalResolver resolver;
 
     @Before
     public void setUp() throws Exception {
-        this.resolver = new PrincipalBearingCredentialsToPrincipalResolver();
+        this.resolver = new PrincipalBearingPrincipalResolver();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void testReturnedPrincipal() {
-        assertEquals("test", this.resolver.resolvePrincipal(
+        assertEquals("test", this.resolver.resolve(
                 new PrincipalBearingCredential(new SimplePrincipal("test"))).getId());
     }
 
