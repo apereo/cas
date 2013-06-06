@@ -21,18 +21,20 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 import java.security.cert.X509Certificate;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AbstractCredential;
 
 /**
+ * An X.509 certificate credential.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.0.4
  *
  */
-public final class X509CertificateCredentials implements Credentials {
+public final class X509CertificateCredential extends AbstractCredential {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = 7579713688326827121L;
+    private static final long serialVersionUID = 631753409512746474L;
 
     /** The collection of certificates sent with the request. */
     private final X509Certificate[] certificates;
@@ -40,7 +42,7 @@ public final class X509CertificateCredentials implements Credentials {
     /** The certificate that we actually use. */
     private X509Certificate certificate;
 
-    public X509CertificateCredentials(final X509Certificate[] certificates) {
+    public X509CertificateCredential(final X509Certificate[] certificates) {
         this.certificates = certificates;
     }
 
@@ -57,7 +59,7 @@ public final class X509CertificateCredentials implements Credentials {
     }
 
     @Override
-    public String toString() {
+    public String getId() {
         X509Certificate cert = null;
         if (getCertificate() != null) {
             cert = getCertificate();
@@ -68,6 +70,6 @@ public final class X509CertificateCredentials implements Credentials {
         if (cert != null) {
             return CertUtils.toString(cert);
         }
-        return super.toString();
+        return UNKNOWN_ID;
     }
 }

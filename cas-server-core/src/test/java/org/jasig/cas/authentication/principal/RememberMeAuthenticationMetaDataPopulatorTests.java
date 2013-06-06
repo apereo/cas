@@ -25,9 +25,12 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
+import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.RememberMePasswordCredential;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
 
@@ -43,22 +46,22 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testWithTrueRememberMeCredentials() {
-        final RememberMeUsernamePasswordCredentials c = new RememberMeUsernamePasswordCredentials();
+        final RememberMePasswordCredential c = new RememberMePasswordCredential();
         c.setRememberMe(true);
         final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
 
-        assertEquals(true, auth.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
     public void testWithFalseRememberMeCredentials() {
-        final RememberMeUsernamePasswordCredentials c = new RememberMeUsernamePasswordCredentials();
+        final RememberMePasswordCredential c = new RememberMePasswordCredential();
         c.setRememberMe(false);
         final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
 
-        assertNull(auth.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
@@ -66,17 +69,17 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 
-        assertNull(auth.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
-    private AuthenticationBuilder newBuilder(final Credentials credentials) {
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredentials());
+    private AuthenticationBuilder newBuilder(final Credential credential) {
+        final CredentialMetaData meta = new BasicCredentialMetaData(new PasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final AuthenticationBuilder builder = new AuthenticationBuilder(TestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new HandlerResult(handler, meta));
 
-        this.p.populateAttributes(builder, credentials);
+        this.p.populateAttributes(builder, credential);
         return builder;
     }
 

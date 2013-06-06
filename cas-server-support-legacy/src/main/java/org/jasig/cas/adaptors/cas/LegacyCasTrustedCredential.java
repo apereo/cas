@@ -16,30 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.adaptors.cas;
 
-import static org.junit.Assert.*;
+import javax.servlet.ServletRequest;
 
-import org.junit.Test;
+import org.jasig.cas.authentication.Credential;
 
 /**
- * Tests for RememberMeUsernamePasswordCredentials.
+ * Credential class that maps to the paramters required by the Legacy CAS
+ * password handler.
  *
  * @author Scott Battaglia
- * @since 3.2.1
- *
+ * @since 3.0
  */
-public final class RememberMeUsernamePasswordCredentialsTests  {
+public final class LegacyCasTrustedCredential implements Credential {
 
-    @Test
-    public void testGettersAndSetters() {
-        final RememberMeUsernamePasswordCredentials c = new RememberMeUsernamePasswordCredentials();
-        c.setPassword("password");
-        c.setUsername("username");
-        c.setRememberMe(true);
+    private ServletRequest servletRequest;
 
-        assertEquals("username", c.getUsername());
-        assertEquals("password", c.getPassword());
-        assertTrue(c.isRememberMe());
+    /**
+     * @return Returns the servletRequest.
+     */
+    public ServletRequest getServletRequest() {
+        return this.servletRequest;
+    }
+
+    /**
+     * @param servletRequest The servletRequest to set.
+     */
+    public void setServletRequest(final ServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
+    }
+
+    @Override
+    public String getId() {
+        return UNKNOWN_ID;
     }
 }

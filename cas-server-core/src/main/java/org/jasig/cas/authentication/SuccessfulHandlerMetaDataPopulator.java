@@ -18,11 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * Sets an authentication attribute containing the collection of authentication handlers (by name) that successfully
- * authenticated credentials. The attribute name is given by {@link #SUCCESSFUL_AUTHENTICATION_HANDLERS}.
+ * authenticated credential. The attribute name is given by {@link #SUCCESSFUL_AUTHENTICATION_HANDLERS}.
  * This component provides a simple method to inject successful handlers into the CAS ticket validation
  * response to support level of assurance and MFA use cases.
  *
@@ -30,11 +28,11 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @since 4.0
  */
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
-    /** Attribute name containing collection of handler names that successfully authenticated credentials. */
+    /** Attribute name containing collection of handler names that successfully authenticated credential. */
     public static final String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credentials credentials) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, builder.getSuccesses().keySet());
     }
 }

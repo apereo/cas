@@ -25,9 +25,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jasig.cas.authentication.PasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.junit.Test;
 
 /**
@@ -53,7 +53,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testSupportsProperUserCredentials() {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        PasswordCredential c = new PasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -68,7 +68,7 @@ public class RejectUsersAuthenticationHandlerTests {
     public void testDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                .supports(new HttpBasedServiceCredentials(new URL(
+                .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -77,7 +77,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test(expected=AuthenticationException.class)
     public void testFailsUserInMap() throws AuthenticationException {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final PasswordCredential c = new PasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -86,7 +86,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testPassesUserNotInMap() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final PasswordCredential c = new PasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -100,7 +100,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testFailsNullUserName() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final PasswordCredential c = new PasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -114,7 +114,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testFailsNullUserNameAndPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final PasswordCredential c = new PasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);

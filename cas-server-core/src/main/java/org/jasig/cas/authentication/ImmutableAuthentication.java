@@ -79,10 +79,10 @@ public final class ImmutableAuthentication implements Authentication, Serializab
             final Map<String, Exception> failures) {
 
         Assert.notNull(date, "Date cannot be null");
-        Assert.notNull(credentials, "Credentials cannot be null");
+        Assert.notNull(credentials, "Credential cannot be null");
         Assert.notNull(principal, "Principal cannot be null");
         Assert.notNull(successes, "Successes cannot be null");
-        Assert.notEmpty(credentials, "Credentials cannot be empty");
+        Assert.notEmpty(credentials, "Credential cannot be empty");
         Assert.notEmpty(successes, "Successes cannot be empty");
 
         this.authenticatedDate = new ImmutableDate(date.getTime());

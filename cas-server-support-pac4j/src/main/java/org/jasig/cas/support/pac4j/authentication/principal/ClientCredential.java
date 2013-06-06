@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.support.pac4j.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import java.io.Serializable;
+
+import org.jasig.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
 /**
@@ -27,12 +29,12 @@ import org.pac4j.core.profile.UserProfile;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class ClientCredentials implements Credentials {
+public final class ClientCredential implements Credential, Serializable {
 
     /**
      * The servialVersionUID.
      */
-    private static final long serialVersionUID = 48260679132007471L;
+    private static final long serialVersionUID = -7883301304291894763L;
 
     /**
      * The user profile after authentication.
@@ -49,7 +51,7 @@ public final class ClientCredentials implements Credentials {
      *
      * @param theCredentials The authentication credentials
      */
-    public ClientCredentials(final org.pac4j.core.credentials.Credentials theCredentials) {
+    public ClientCredential(final org.pac4j.core.credentials.Credentials theCredentials) {
         this.credentials = theCredentials;
     }
 
@@ -78,5 +80,10 @@ public final class ClientCredentials implements Credentials {
      */
     public void setUserProfile(final UserProfile theUserProfile) {
         this.userProfile = theUserProfile;
+    }
+
+    @Override
+    public String getId() {
+        return this.userProfile.getId();
     }
 }
