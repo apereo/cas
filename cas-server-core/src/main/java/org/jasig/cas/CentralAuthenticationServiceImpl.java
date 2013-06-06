@@ -32,7 +32,7 @@ import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.MixedPrincipalException;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
@@ -190,7 +190,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(
-            final String ticketGrantingTicketId, final Service service, final Credentials ... credentials)
+            final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
@@ -295,7 +295,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * @throws IllegalArgumentException if the ServiceTicketId or the
-     * Credentials are null.
+     * Credential are null.
      */
     @Audit(
         action="PROXY_GRANTING_TICKET",
@@ -303,7 +303,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials ... credentials)
+    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -468,7 +468,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
-    public String createTicketGrantingTicket(final Credentials ... credentials)
+    public String createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");

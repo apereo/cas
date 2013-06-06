@@ -20,11 +20,11 @@ package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
-import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
+import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
 
     @Test
     public void testSuccessfulAuthenticationWithDomainName() throws AuthenticationException {
-        final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {0, 1, 2});
+        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(true);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
         assertTrue(this.authenticationHandler.authenticate(credentials));
@@ -54,7 +54,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
 
     @Test
     public void testSuccessfulAuthenticationWithoutDomainName() throws AuthenticationException {
-        final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {0, 1, 2});
+        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(false);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
         assertTrue(this.authenticationHandler.authenticate(credentials));
@@ -64,7 +64,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
 
     @Test
     public void testUnsuccessfulAuthentication() {
-        final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {0, 1, 2});
+        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
         try {
             this.authenticationHandler.authenticate(credentials);
@@ -78,8 +78,8 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     @Test
     public void testSupports() {
         assertFalse(this.authenticationHandler.supports(null));
-        assertTrue(this.authenticationHandler.supports(new SpnegoCredentials(new byte[] {0, 1, 2})));
-        assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+        assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
+        assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test

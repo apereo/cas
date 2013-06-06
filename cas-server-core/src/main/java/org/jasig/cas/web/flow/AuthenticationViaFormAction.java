@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
@@ -41,8 +41,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action to authenticate credentials and retrieve a TicketGrantingTicket for
- * those credentials. If there is a request for renew, then it also generates
+ * Action to authenticate credential and retrieve a TicketGrantingTicket for
+ * those credential. If there is a request for renew, then it also generates
  * the Service Ticket required.
  *
  * @author Scott Battaglia
@@ -77,14 +77,14 @@ public class AuthenticationViaFormAction {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
+    public final void doBind(final RequestContext context, final Credential credential) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        if (this.credentialsBinder != null && this.credentialsBinder.supports(credentials.getClass())) {
-            this.credentialsBinder.bind(request, credentials);
+        if (this.credentialsBinder != null && this.credentialsBinder.supports(credential.getClass())) {
+            this.credentialsBinder.bind(request, credential);
         }
     }
-    public final Event submit(final RequestContext context, final Credentials credentials,
+    public final Event submit(final RequestContext context, final Credential credential,
             final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
@@ -102,14 +102,14 @@ public class AuthenticationViaFormAction {
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                        ticketGrantingTicketId, service, credentials);
+                        ticketGrantingTicketId, service, credential);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
                 return newEvent(WARN);
             } catch (final AuthenticationException e) {
                 return newEvent(AUTHENTICATION_FAILURE, e);
             } catch (final TicketCreationException e) {
-                log.warn("Invalid attempt to access service using renew=true with different credentials. Ending SSO session.");
+                log.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             } catch (final TicketException e) {
                 return newEvent(ERROR, e);
@@ -118,7 +118,7 @@ public class AuthenticationViaFormAction {
 
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context,
-                    this.centralAuthenticationService.createTicketGrantingTicket(credentials));
+                    this.centralAuthenticationService.createTicketGrantingTicket(credential));
             putWarnCookieIfRequestParameterPresent(context);
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
@@ -156,18 +156,18 @@ public class AuthenticationViaFormAction {
 
     /**
      * Set a CredentialsBinder for additional binding of the HttpServletRequest
-     * to the Credentials instance, beyond our default binding of the
-     * Credentials as a Form Object in Spring WebMVC parlance. By the time we
+     * to the Credential instance, beyond our default binding of the
+     * Credential as a Form Object in Spring WebMVC parlance. By the time we
      * invoke this CredentialsBinder, we have already engaged in default binding
      * such that for each HttpServletRequest parameter, if there was a JavaBean
-     * property of the Credentials implementation of the same name, we have set
+     * property of the Credential implementation of the same name, we have set
      * that property to be the value of the corresponding request parameter.
      * This CredentialsBinder plugin point exists to allow consideration of
      * things other than HttpServletRequest parameters in populating the
-     * Credentials (or more sophisticated consideration of the
+     * Credential (or more sophisticated consideration of the
      * HttpServletRequest parameters).
      *
-     * @param credentialsBinder the credentials binder to set.
+     * @param credentialsBinder the credential binder to set.
      */
     public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;

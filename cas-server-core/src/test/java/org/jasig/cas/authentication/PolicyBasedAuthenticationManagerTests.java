@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import javax.security.auth.login.FailedLoginException;
 
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
-        final Authentication auth = manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -36,7 +35,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final AnyAuthenticationPolicy any = new AnyAuthenticationPolicy();
         any.setTryAll(true);
         manager.setAuthenticationPolicy(any);
-        final Authentication auth = manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -47,7 +46,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
-        manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        manager.authenticate(mock(Credential.class), mock(Credential.class));
         fail("Should have thrown AuthenticationException");
     }
 
@@ -57,7 +56,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(true),
                 newMockHandler(true));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
-        final Authentication auth = manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
         assertEquals(2, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -69,7 +68,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(false),
                 newMockHandler(false));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
-        manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        manager.authenticate(mock(Credential.class), mock(Credential.class));
         fail("Should have thrown AuthenticationException");
     }
 
@@ -79,7 +78,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerA"));
-        final Authentication auth = manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -91,7 +90,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerB"));
-        manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        manager.authenticate(mock(Credential.class), mock(Credential.class));
         fail("Should have thrown AuthenticationException");
     }
 
@@ -103,7 +102,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
         policy.setTryAll(true);
         manager.setAuthenticationPolicy(policy);
-        final Authentication auth = manager.authenticate(mock(Credentials.class), mock(Credentials.class));
+        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -137,15 +136,15 @@ public class PolicyBasedAuthenticationManagerTests {
     private static AuthenticationHandler newMockHandler(final String name, final boolean success) throws Exception {
         final AuthenticationHandler mock = mock(AuthenticationHandler.class);
         when(mock.getName()).thenReturn(name);
-        when(mock.supports(any(Credentials.class))).thenReturn(true);
+        when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
             final HandlerResult result = new HandlerResult(
                     mock,
                     mock(CredentialMetaData.class),
                     new SimplePrincipal("nobody"));
-            when(mock.authenticate(any(Credentials.class))).thenReturn(result);
+            when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
-            when(mock.authenticate(any(Credentials.class))).thenThrow(new FailedLoginException());
+            when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
         }
         return mock;
     }

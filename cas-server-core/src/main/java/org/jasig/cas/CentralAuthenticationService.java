@@ -19,7 +19,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
@@ -58,7 +58,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials ... credentials)
+    String createTicketGrantingTicket(Credential... credentials)
         throws AuthenticationException, TicketException;
 
     /**
@@ -95,7 +95,7 @@ public interface CentralAuthenticationService {
      * @throws TicketException if the ticket could not be created.
      */
     String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials ... credentials)
+        final Service service, final Credential... credentials)
         throws AuthenticationException, TicketException;
 
     /**
@@ -134,5 +134,5 @@ public interface CentralAuthenticationService {
      * @throws TicketException if there was an error creating the ticket
      */
     String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials ... credentials) throws AuthenticationException, TicketException;
+        final Credential... credentials) throws AuthenticationException, TicketException;
 }

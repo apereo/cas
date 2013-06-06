@@ -24,13 +24,13 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -76,43 +76,43 @@ public final class TestUtils {
         // do not instantiate
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword() {
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword() {
         return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword(
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
         final String username) {
         return getCredentialsWithDifferentUsernameAndPassword(username,
                 username);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword() {
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword() {
         return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME,
             CONST_PASSWORD);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
         final String username, final String password) {
         // noinspection LocalVariableOfConcreteClass
-        final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
         return usernamePasswordCredentials;
     }
 
-    public static HttpBasedServiceCredentials getHttpBasedServiceCredentials() {
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_GOOD_URL);
     }
 
-    public static HttpBasedServiceCredentials getBadHttpBasedServiceCredentials() {
+    public static HttpBasedServiceCredential getBadHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_BAD_URL);
     }
 
-    public static HttpBasedServiceCredentials getHttpBasedServiceCredentials(
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredentials(new URL(url));
+            return new HttpBasedServiceCredential(new URL(url));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -150,7 +150,7 @@ public final class TestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredentials());
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new AuthenticationBuilder(principal)
                 .addCredential(meta)
                 .addSuccess("testHandler", new HandlerResult(handler, meta))

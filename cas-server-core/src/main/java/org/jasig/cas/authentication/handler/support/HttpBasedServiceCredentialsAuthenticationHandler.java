@@ -19,8 +19,8 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 
 /**
- * Class to validate the credentials presented by communicating with the web
+ * Class to validate the credential presented by communicating with the web
  * server and checking the certificate that is returned against the hostname,
  * etc.
  * <p>
@@ -55,8 +55,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     @NotNull
     private HttpClient httpClient;
 
-    public boolean authenticate(final Credentials credentials) {
-        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
+    public boolean authenticate(final Credential credential) {
+        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
@@ -64,7 +64,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
             return false;
         }
         log
-            .debug("Attempting to resolve credentials for "
+            .debug("Attempting to resolve credential for "
                 + serviceCredentials);
 
         return this.httpClient.isValidEndPoint(serviceCredentials
@@ -72,12 +72,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     }
 
     /**
-     * @return true if the credentials provided are not null and the credentials
-     * are a subclass of (or equal to) HttpBasedServiceCredentials.
+     * @return true if the credential provided are not null and the credential
+     * are a subclass of (or equal to) HttpBasedServiceCredential.
      */
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
+    public boolean supports(final Credential credential) {
+        return credential != null
+            && HttpBasedServiceCredential.class.isAssignableFrom(credential
                 .getClass());
     }
 

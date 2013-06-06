@@ -18,17 +18,22 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
-
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
+ * The primary difference between this component and {@link UsernamePasswordCredential} is that the username/ID is optional
+ * in the former and requisite in the latter.
+ * <p>
+ * This class implements {@link CredentialMetaData} since the one-time-password is safe for long-term storage after
+ * authentication. Note that metadata is stored only _after_ authentication, at which time the OTP has already
+ * been consumed and by definition is no longer useful for authentication.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class OneTimePasswordCredentials implements Credentials, Serializable {
+public class OneTimePasswordCredential extends AbstractCredential {
+
+    /** Serialization version marker. */
+    private static final long serialVersionUID = 1892587671827699709L;
 
     /** One-time password. */
     private final String password;
@@ -41,7 +46,7 @@ public class OneTimePasswordCredentials implements Credentials, Serializable {
      *
      * @param password Non-null cleartext one-time password value.
      */
-    public OneTimePasswordCredentials(final String password) {
+    public OneTimePasswordCredential(final String password) {
         if (password == null) {
             throw new IllegalArgumentException("One-time password cannot be null.");
         }
@@ -55,7 +60,7 @@ public class OneTimePasswordCredentials implements Credentials, Serializable {
      * @param id Identifier that is commonly used to look up one-time password in system of record.
      * @param password Non-null cleartext one-time password value.
      */
-    public OneTimePasswordCredentials(final String id, final String password) {
+    public OneTimePasswordCredential(final String id, final String password) {
         this(password);
         this.id = id;
     }

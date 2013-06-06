@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,21 +35,21 @@ public class LegacyCasCredentialsBinderTests {
     private CredentialsBinder credentialsBinder = new LegacyCasCredentialsBinder();
 
     /**
-     * Tests that we support LegacyCasCredentials and
-     * LegacyCasTrustedCredentials and that we do not support some adhoc
-     * Credentials that are not and do not subclass these credentials.
+     * Tests that we support LegacyCasCredential and
+     * LegacyCasTrustedCredential and that we do not support some adhoc
+     * Credential that are not and do not subclass these credentials.
      */
     @Test
     public void testSupports() {
-        assertTrue(this.credentialsBinder.supports(LegacyCasCredentials.class));
-        assertTrue(this.credentialsBinder.supports(LegacyCasTrustedCredentials.class));
-        assertFalse(this.credentialsBinder.supports(AdHocUnsupportedCredentials.class));
+        assertTrue(this.credentialsBinder.supports(LegacyCasCredential.class));
+        assertTrue(this.credentialsBinder.supports(LegacyCasTrustedCredential.class));
+        assertFalse(this.credentialsBinder.supports(AdHocUnsupportedCredential.class));
     }
 
     @Test
     public void testBindMethod() {
         HttpServletRequest request = new MockHttpServletRequest();
-        LegacyCasCredentials credentials = new LegacyCasCredentials();
+        LegacyCasCredential credentials = new LegacyCasCredential();
 
         this.credentialsBinder.bind(request, credentials);
 
@@ -59,7 +59,7 @@ public class LegacyCasCredentialsBinderTests {
     @Test
     public void testBindMethodWithTrust() {
         HttpServletRequest request = new MockHttpServletRequest();
-        LegacyCasTrustedCredentials credentials = new LegacyCasTrustedCredentials();
+        LegacyCasTrustedCredential credentials = new LegacyCasTrustedCredential();
 
         this.credentialsBinder.bind(request, credentials);
 
@@ -70,7 +70,9 @@ public class LegacyCasCredentialsBinderTests {
      * We test that we do not support these adhoc non-legacy do-nothing
      * credentials.
      */
-    private class AdHocUnsupportedCredentials implements Credentials {
-        private static final long serialVersionUID = 3257285812100936752L;
+    private class AdHocUnsupportedCredential implements Credential {
+        public String getId() {
+            return UNKNOWN_ID;
+        }
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.core.AttributesMapper;
 
@@ -43,9 +44,9 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
     private CredentialsToPrincipalResolver credentialsToPrincipalResolver;
 
     @Override
-    protected String extractPrincipalId(final Credentials credentials) {
+    protected String extractPrincipalId(final Credential credential) {
         final Principal principal = this.credentialsToPrincipalResolver
-                .resolvePrincipal(credentials);
+                .resolvePrincipal(credential);
 
         if (principal == null) {
             log.info("Initial principal could not be resolved from request, "
@@ -115,8 +116,8 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
      * Delegates checking to the configured CredentialsToPrincipalResolver.
      */
     @Override
-    public boolean supports(final Credentials credentials) {
-        return this.credentialsToPrincipalResolver.supports(credentials);
+    public boolean supports(final Credential credential) {
+        return this.credentialsToPrincipalResolver.supports(credential);
     }
 
     /**

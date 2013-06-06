@@ -98,7 +98,7 @@
     <!--
        | TODO: Replace this component with one suitable for your enviroment.
        |
-       | This component provides authentication for the kind of credentials used in your environment. In most cases
+       | This component provides authentication for the kind of credential used in your environment. In most cases
        | credential is a username/password pair that lives in a system of record like an LDAP directory.
        | The most common authentication handler beans:
        |
