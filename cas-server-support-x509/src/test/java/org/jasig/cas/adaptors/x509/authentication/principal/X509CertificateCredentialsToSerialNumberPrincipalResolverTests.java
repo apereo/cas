@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PasswordCredential;
 import org.junit.Test;
 
 /**
@@ -38,7 +38,7 @@ extends AbstractX509CertificateTests {
 
     @Test
     public void testResolvePrincipalInternal() {
-        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
         assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(), this.resolver.resolvePrincipal(c).getId());
@@ -46,13 +46,13 @@ extends AbstractX509CertificateTests {
 
     @Test
     public void testSupport() {
-        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+        assertFalse(this.resolver.supports(new PasswordCredential()));
     }
 
 }

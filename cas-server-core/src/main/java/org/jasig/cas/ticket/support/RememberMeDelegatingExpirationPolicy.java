@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
@@ -44,7 +44,7 @@ public final class RememberMeDelegatingExpirationPolicy implements ExpirationPol
 
     public boolean isExpired(final TicketState ticketState) {
         final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
-                get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+                get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
         if (b == null || b.equals(Boolean.FALSE)) {
             return this.sessionExpirationPolicy.isExpired(ticketState);

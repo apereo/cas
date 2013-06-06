@@ -21,7 +21,6 @@ package org.jasig.cas.authentication;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +28,8 @@ import java.util.Map;
 
 import javax.security.auth.login.FailedLoginException;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -46,8 +42,8 @@ public class ImmutableAuthenticationTests {
     @Test
     public void testImmutable() {
         final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredentials());
-        final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredentials());
+        final CredentialMetaData credential1 = new BasicCredentialMetaData(new PasswordCredential());
+        final CredentialMetaData credential2 = new BasicCredentialMetaData(new PasswordCredential());
         final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
         credentials.add(credential1);
         credentials.add(credential2);
@@ -69,7 +65,7 @@ public class ImmutableAuthenticationTests {
             fail("Should have failed");
         } catch (RuntimeException e) {}
         try {
-            auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredentials()));
+            auth.getCredentials().add(new BasicCredentialMetaData(new PasswordCredential()));
             fail("Should have failed");
         } catch (RuntimeException e) {}
         try {

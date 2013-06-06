@@ -24,11 +24,11 @@ import java.security.cert.X509Certificate;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,17 +108,17 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-                && X509CertificateCredentials.class.isAssignableFrom(credentials
+    public boolean supports(final Credential credential) {
+        return credential != null
+                && X509CertificateCredential.class.isAssignableFrom(credential
                         .getClass());
     }
 
     @Override
-    protected final boolean doAuthentication(final Credentials credentials)
+    protected final boolean doAuthentication(final Credential credential)
             throws AuthenticationException {
 
-        final X509CertificateCredentials x509Credentials = (X509CertificateCredentials) credentials;
+        final X509CertificateCredential x509Credentials = (X509CertificateCredential) credential;
         final X509Certificate[] certificates = x509Credentials.getCertificates();
 
         X509Certificate clientCert = null;
@@ -151,10 +151,10 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (valid && hasTrustedIssuer && clientCert != null) {
             x509Credentials.setCertificate(clientCert);
-            log.info("Successfully authenticated {}", credentials);
+            log.info("Successfully authenticated {}", credential);
             return true;
         }
-        log.info("Failed to authenticate {}", credentials);
+        log.info("Failed to authenticate {}", credential);
         return false;
     }
 

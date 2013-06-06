@@ -16,24 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.authentication;
 
 import java.net.URL;
 
 import org.springframework.util.Assert;
 
 /**
- * The Credentials representing an HTTP-based service. HTTP-based services (such
- * as web applications) are often represented by the URL entry point of the
- * application.
+ * A credential representing an HTTP endpoint given by a URL. Authenticating the credential usually involves
+ * contacting the endpoint via the URL and observing the resulting connection (e.g. SSL certificate) and response
+ * (e.g. status, headers).
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public class HttpBasedServiceCredentials implements Credentials {
+public class HttpBasedServiceCredential extends AbstractCredential {
 
     /** Unique Serializable ID. */
-    private static final long serialVersionUID = 3904681574350991665L;
+    private static final long serialVersionUID = 1492607216336354503L;
 
     /** The callbackURL to check that identifies the application. */
     private final URL callbackUrl;
@@ -42,17 +43,21 @@ public class HttpBasedServiceCredentials implements Credentials {
     private final String callbackUrlAsString;
 
     /**
-     * Constructor that takes the URL of the HTTP-based service and creates the
-     * Credentials object. Caches the value of URL.toExternalForm so updates to
-     * the URL will not be reflected in a call to toString().
+     * Creates a new instance for an HTTP endpoint located at the given URL.
      *
-     * @param callbackUrl the URL representing the service
+     * @param callbackUrl Non-null URL that will be contacted to validate the credential.
+     *
      * @throws IllegalArgumentException if the callbackUrl is null.
      */
-    public HttpBasedServiceCredentials(final URL callbackUrl) {
+    public HttpBasedServiceCredential(final URL callbackUrl) {
         Assert.notNull(callbackUrl, "callbackUrl cannot be null");
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
+    }
+
+    /** {@inheritDoc} */
+    public String getId() {
+        return this.callbackUrlAsString;
     }
 
     /**
@@ -60,15 +65,6 @@ public class HttpBasedServiceCredentials implements Credentials {
      */
     public final URL getCallbackUrl() {
         return this.callbackUrl;
-    }
-
-    /**
-     * Returns the String version of the URL, based on the original URL
-     * provided. i.e. this caches the value of URL.toExternalForm()
-     * @return callback url as a String
-     */
-    public final String toString() {
-        return "[callbackUrl: " + this.callbackUrlAsString + "]";
     }
 
     public int hashCode() {
@@ -91,7 +87,7 @@ public class HttpBasedServiceCredentials implements Credentials {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final HttpBasedServiceCredentials other = (HttpBasedServiceCredentials) obj;
+        final HttpBasedServiceCredential other = (HttpBasedServiceCredential) obj;
         if (this.callbackUrlAsString == null) {
             if (other.callbackUrlAsString != null) {
                 return false;

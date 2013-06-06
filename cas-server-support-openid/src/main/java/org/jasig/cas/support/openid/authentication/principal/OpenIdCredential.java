@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdCredentials implements Credentials {
+public final class OpenIdCredential implements Credential {
 
     private static final long serialVersionUID = -6535869729412406133L;
 
@@ -32,7 +32,7 @@ public final class OpenIdCredentials implements Credentials {
 
     private final String username;
 
-    public OpenIdCredentials(final String ticketGrantingTicketId, final String username) {
+    public OpenIdCredential(final String ticketGrantingTicketId, final String username) {
         this.ticketGrantingTicketId = ticketGrantingTicketId;
         this.username = username;
     }
@@ -46,8 +46,13 @@ public final class OpenIdCredentials implements Credentials {
     }
 
     @Override
+    public String getId() {
+        return this.username;
+    }
+
+    @Override
     public String toString() {
-        return "username: " + this.username;
+        return this.username;
     }
 
 }

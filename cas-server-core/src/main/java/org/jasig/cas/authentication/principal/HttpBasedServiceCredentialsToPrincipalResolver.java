@@ -18,9 +18,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+
 /**
  * HttpBasedServiceCredentialsToPrincipalResolver extracts the callbackUrl from
- * the HttpBasedServiceCredentials and constructs a SimpleService with the
+ * the HttpBasedServiceCredential and constructs a SimpleService with the
  * callbackUrl as the unique Id.
  *
  * @author Scott Battaglia
@@ -34,18 +37,18 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
      * the callback url.
      * @return the resolved principal object
      */
-    public Principal resolvePrincipal(final Credentials credentials) {
-        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
+    public Principal resolvePrincipal(final Credential credential) {
+        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         return new SimpleWebApplicationServiceImpl(serviceCredentials.getCallbackUrl().toExternalForm());
     }
 
     /**
-     * @return true if the credentials provided are not null and are assignable
-     * from HttpBasedServiceCredentials, otherwise returns false.
+     * @return true if the credential provided are not null and are assignable
+     * from HttpBasedServiceCredential, otherwise returns false.
      */
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
+    public boolean supports(final Credential credential) {
+        return credential != null
+            && HttpBasedServiceCredential.class.isAssignableFrom(credential
                 .getClass());
     }
 }

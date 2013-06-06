@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
@@ -137,7 +136,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
     @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
-    public final Authentication authenticate(final Credentials ... credentials) throws AuthenticationException {
+    public final Authentication authenticate(final Credential... credentials) throws AuthenticationException {
 
         final AuthenticationBuilder builder = authenticateInternal(credentials);
         final Authentication authentication = builder.build();
@@ -159,7 +158,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         log.debug("Attribute map for {}: {}", principal.getId(), principal.getAttributes());
 
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
-            for (final Credentials credential : credentials) {
+            for (final Credential credential : credentials) {
                 populator.populateAttributes(builder, credential);
             }
         }
@@ -186,7 +185,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     }
 
     /**
-     * Follows the same contract as {@link AuthenticationManager#authenticate(Credentials...)}.
+     * Follows the same contract as {@link AuthenticationManager#authenticate(Credential...)}.
      *
      * @param credentials One or more credentials to authenticate.
      *
@@ -196,17 +195,17 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @throws AuthenticationException When one or more credentials failed authentication such that security policy
      * was not satisfied.
      */
-    protected AuthenticationBuilder authenticateInternal(final Credentials ... credentials)
+    protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
             throws AuthenticationException {
 
         final AuthenticationBuilder builder = new AuthenticationBuilder(NULL_PRINCIPAL);
-        for (final Credentials c : credentials) {
+        for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
         boolean found;
         Principal principal;
         CredentialsToPrincipalResolver resolver;
-        for (final Credentials credential : credentials) {
+        for (final Credential credential : credentials) {
             found = false;
             for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
                 if (handler.supports(credential)) {
@@ -260,7 +259,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
 
     protected Principal resolvePrincipal(
-            final String handlerName, final CredentialsToPrincipalResolver resolver, final Credentials credential) {
+            final String handlerName, final CredentialsToPrincipalResolver resolver, final Credential credential) {
         if (resolver.supports(credential)) {
             try {
                 final Principal p = resolver.resolvePrincipal(credential);

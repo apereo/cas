@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.remote;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AbstractCredential;
 
 /**
  *
@@ -26,13 +26,14 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @since 3.2.1
  *
  */
-public final class RemoteAddressCredentials implements Credentials {
+public final class RemoteAddressCredential extends AbstractCredential {
 
-    private static final long serialVersionUID = -1219945780227815281L;
+    /** Serialization version marker. */
+    private static final long serialVersionUID = -3638145328441211073L;
 
     private final String remoteAddress;
 
-    public RemoteAddressCredentials(final String remoteAddress) {
+    public RemoteAddressCredential(final String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
 
@@ -41,7 +42,7 @@ public final class RemoteAddressCredentials implements Credentials {
     }
 
     @Override
-    public String toString() {
-        return "[remote IP Address: " + this.remoteAddress + "]";
+    public String getId() {
+        return this.remoteAddress;
     }
 }
