@@ -33,7 +33,7 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,13 +165,13 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     @Override
     public boolean authenticate(
-            final PasswordCredential passwordCredentials) {
+            final UsernamePasswordCredential usernamePasswordCredentials) {
         final RadiusClient radiusClient = getNewRadiusClient();
 
         final AttributeList attributeList = new AttributeList();
-        attributeList.add(new Attr_UserName(passwordCredentials
+        attributeList.add(new Attr_UserName(usernamePasswordCredentials
                 .getUsername()));
-        attributeList.add(new Attr_UserPassword(passwordCredentials
+        attributeList.add(new Attr_UserPassword(usernamePasswordCredentials
                 .getPassword()));
 
         final AccessRequest request = new AccessRequest(radiusClient,
@@ -186,14 +186,14 @@ public final class JRadiusServerImpl implements RadiusServer {
                 log.debug("Authentication request suceeded for host:"
                         + this.inetAddress.getCanonicalHostName()
                         + " and username "
-                        + passwordCredentials.getUsername());
+                        + usernamePasswordCredentials.getUsername());
                 return true;
             }
 
             // rejected
             log.debug("Authentication request failed for host:"
                     + this.inetAddress.getCanonicalHostName() + " and username "
-                    + passwordCredentials.getUsername());
+                    + usernamePasswordCredentials.getUsername());
             return false;
         } catch (final UnknownAttributeException e) {
             throw new IllegalArgumentException(

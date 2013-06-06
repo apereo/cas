@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
 /**
@@ -58,7 +58,7 @@ extends AbstractX509CertificateTests {
 
     @Test
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new PasswordCredential()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
 }

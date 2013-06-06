@@ -25,7 +25,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
 
@@ -61,7 +61,7 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
 
     @Test
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new PasswordCredential()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
     private X509Certificate getTestCertificate() {

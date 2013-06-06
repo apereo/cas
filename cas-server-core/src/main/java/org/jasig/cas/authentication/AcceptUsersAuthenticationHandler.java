@@ -48,7 +48,7 @@ public class AcceptUsersAuthenticationHandler extends
     @NotNull
     private Map<String, String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final PasswordCredential credentials) {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String cachedPassword = this.users.get(transformedUsername);
 

@@ -24,7 +24,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <var name="credential" class="org.jasig.cas.authentication.PasswordCredential" />
+    <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>

@@ -19,11 +19,11 @@
 package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * Implementation of CredentialsToPrincipalResolver for Credential based on
- * PasswordCredential when a SimplePrincipal (username only) is
+ * UsernamePasswordCredential when a SimplePrincipal (username only) is
  * sufficient.
  * <p>
  * Implementation extracts the username from the Credential provided and
@@ -38,18 +38,18 @@ public final class UsernamePasswordCredentialsToPrincipalResolver extends
     AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     protected String extractPrincipalId(final Credential credential) {
-        final PasswordCredential passwordCredentials = (PasswordCredential) credential;
-        return passwordCredentials.getUsername();
+        final UsernamePasswordCredential usernamePasswordCredentials = (UsernamePasswordCredential) credential;
+        return usernamePasswordCredentials.getUsername();
     }
 
     /**
-     * Return true if Credential are PasswordCredential, false
+     * Return true if Credential are UsernamePasswordCredential, false
      * otherwise.
      * @return true, if the credential are supported by this resolver
      */
     public boolean supports(final Credential credential) {
         return credential != null
-            && PasswordCredential.class.isAssignableFrom(credential
+            && UsernamePasswordCredential.class.isAssignableFrom(credential
                 .getClass());
     }
 }

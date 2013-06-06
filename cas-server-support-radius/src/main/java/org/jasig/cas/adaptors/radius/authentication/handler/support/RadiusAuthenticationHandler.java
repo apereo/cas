@@ -21,7 +21,7 @@ package org.jasig.cas.adaptors.radius.authentication.handler.support;
 import java.util.List;
 
 import org.jasig.cas.adaptors.radius.RadiusServer;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 
@@ -55,7 +55,7 @@ AbstractUsernamePasswordAuthenticationHandler {
     private boolean failoverOnAuthenticationFailure;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final PasswordCredential credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {

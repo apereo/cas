@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
 /**
@@ -46,6 +46,6 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
     public void testSupports() {
         PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
-        assertFalse(this.handler.supports(new PasswordCredential()));
+        assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }
 }

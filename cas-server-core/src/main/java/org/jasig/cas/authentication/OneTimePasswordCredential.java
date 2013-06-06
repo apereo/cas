@@ -20,7 +20,7 @@ package org.jasig.cas.authentication;
 
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
- * The primary difference between this component and {@link PasswordCredential} is that the username/ID is optional
+ * The primary difference between this component and {@link UsernamePasswordCredential} is that the username/ID is optional
  * in the former and requisite in the latter.
  * <p>
  * This class implements {@link CredentialMetaData} since the one-time-password is safe for long-term storage after

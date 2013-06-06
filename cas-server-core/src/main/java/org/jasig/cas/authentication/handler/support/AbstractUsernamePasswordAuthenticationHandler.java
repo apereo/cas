@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
- * check for PasswordCredential.
+ * check for UsernamePasswordCredential.
  *
  * @author Scott Battaglia
 
@@ -43,7 +43,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default class to support if one is not supplied. */
-    private static final Class<PasswordCredential> DEFAULT_CLASS = PasswordCredential.class;
+    private static final Class<UsernamePasswordCredential> DEFAULT_CLASS = UsernamePasswordCredential.class;
 
     /** Class that this instance will support. */
     @NotNull
@@ -66,19 +66,19 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**
-     * Method automatically handles conversion to PasswordCredential
+     * Method automatically handles conversion to UsernamePasswordCredential
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
      * @return true if credential are authentic, false otherwise.
      */
     protected final boolean doAuthentication(final Credential credential)
         throws AuthenticationException {
-        return authenticateUsernamePasswordInternal((PasswordCredential) credential);
+        return authenticateUsernamePasswordInternal((UsernamePasswordCredential) credential);
     }
 
     /**
      * Abstract convenience method that assumes the credential passed in are a
-     * subclass of PasswordCredential.
+     * subclass of UsernamePasswordCredential.
      *
      * @param credentials the credential representing the Username and Password
      * presented to CAS
@@ -86,7 +86,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * @throws AuthenticationException if authenticity cannot be determined.
      */
     protected abstract boolean authenticateUsernamePasswordInternal(
-        final PasswordCredential credentials)
+        final UsernamePasswordCredential credentials)
         throws AuthenticationException;
 
     /**
