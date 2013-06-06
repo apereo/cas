@@ -31,7 +31,7 @@ public class PasswordCredentialTests {
 
     @Test
     public void testSetGetUsername() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String userName = "test";
 
         c.setUsername(userName);
@@ -41,7 +41,7 @@ public class PasswordCredentialTests {
 
     @Test
     public void testSetGetPassword() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String password = "test";
 
         c.setPassword(password);

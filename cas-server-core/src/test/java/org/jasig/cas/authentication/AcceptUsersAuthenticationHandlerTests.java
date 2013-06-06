@@ -52,7 +52,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsSpecialCharacters() throws Exception {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
         assertTrue(this.authenticationHandler.authenticate(c));
@@ -61,7 +61,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -81,7 +81,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testAuthenticatesUserInMap() {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -95,7 +95,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsUserNotInMap() throws AuthenticationException {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -105,7 +105,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullUserName() throws AuthenticationException {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -115,7 +115,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullUserNameAndPassword() throws AuthenticationException {
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -125,7 +125,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullPassword() throws AuthenticationException{
-        final PasswordCredential c = new PasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword(null);

@@ -88,8 +88,8 @@ public class LdapAuthenticationHandlerTests {
         }
     }
 
-    private PasswordCredential newCredentials(final String user, final String pass) {
-        final PasswordCredential credentials = new PasswordCredential();
+    private UsernamePasswordCredential newCredentials(final String user, final String pass) {
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(user);
         credentials.setPassword(pass);
         return credentials;

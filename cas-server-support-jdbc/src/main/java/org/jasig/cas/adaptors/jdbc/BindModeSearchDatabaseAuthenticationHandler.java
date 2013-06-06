@@ -21,7 +21,7 @@ package org.jasig.cas.adaptors.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -40,7 +40,7 @@ AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @Override
     protected final boolean authenticateUsernamePasswordInternal(
-            final PasswordCredential credentials)
+            final UsernamePasswordCredential credentials)
                     throws AuthenticationException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();

@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,7 +42,7 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
     // XXX TEMPORARILY DISABLED TEST SO WE CAN BUILD
     /*
     public void testRuIdFound() {
-        final PasswordCredential credentials = new PasswordCredential();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getExistsCredential());
         assertTrue(this.ldapResolver.supports(credentials));
         final Principal p = this.ldapResolver.resolvePrincipal(credentials);
@@ -52,7 +52,7 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
 
     @Test
     public void testRuIdNotFound() {
-        final PasswordCredential credentials = new PasswordCredential();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getNotExistsCredential());
         final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         assertNull(p);
@@ -60,7 +60,7 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
 
     @Test
     public void testTooMany() {
-        final PasswordCredential credentials = new PasswordCredential();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getTooManyCredential());
         final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         assertNull(p);

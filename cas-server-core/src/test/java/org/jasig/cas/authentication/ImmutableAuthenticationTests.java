@@ -42,8 +42,8 @@ public class ImmutableAuthenticationTests {
     @Test
     public void testImmutable() {
         final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData credential1 = new BasicCredentialMetaData(new PasswordCredential());
-        final CredentialMetaData credential2 = new BasicCredentialMetaData(new PasswordCredential());
+        final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
         credentials.add(credential1);
         credentials.add(credential2);
@@ -65,7 +65,7 @@ public class ImmutableAuthenticationTests {
             fail("Should have failed");
         } catch (RuntimeException e) {}
         try {
-            auth.getCredentials().add(new BasicCredentialMetaData(new PasswordCredential()));
+            auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
             fail("Should have failed");
         } catch (RuntimeException e) {}
         try {

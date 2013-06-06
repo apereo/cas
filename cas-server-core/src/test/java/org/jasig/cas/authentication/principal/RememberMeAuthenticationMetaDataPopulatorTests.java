@@ -29,8 +29,8 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.RememberMePasswordCredential;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testWithTrueRememberMeCredentials() {
-        final RememberMePasswordCredential c = new RememberMePasswordCredential();
+        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
@@ -56,7 +56,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testWithFalseRememberMeCredentials() {
-        final RememberMePasswordCredential c = new RememberMePasswordCredential();
+        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
@@ -73,7 +73,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     private AuthenticationBuilder newBuilder(final Credential credential) {
-        final CredentialMetaData meta = new BasicCredentialMetaData(new PasswordCredential());
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final AuthenticationBuilder builder = new AuthenticationBuilder(TestUtils.getPrincipal())
                 .addCredential(meta)

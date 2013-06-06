@@ -20,7 +20,7 @@ package org.jasig.cas.adaptors.cas;
 
 import javax.servlet.ServletRequest;
 
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * Class to wrap the HttpServletRequest object opaquely in the Credential. The
@@ -30,7 +30,7 @@ import org.jasig.cas.authentication.PasswordCredential;
  * @author Scott Battaglia
  * @since 3.0
  */
-public final class LegacyCasCredential extends PasswordCredential {
+public final class LegacyCasCredential extends UsernamePasswordCredential {
 
     private static final long serialVersionUID = 3256442508274775608L;
 

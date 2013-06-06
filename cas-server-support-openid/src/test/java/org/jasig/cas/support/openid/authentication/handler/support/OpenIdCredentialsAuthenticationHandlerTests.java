@@ -21,7 +21,7 @@ package org.jasig.cas.support.openid.authentication.handler.support;
 import static org.junit.Assert.*;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.PasswordCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -51,7 +51,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     @Test
     public void testSupports() {
         assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
-        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new PasswordCredential()));
+        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
