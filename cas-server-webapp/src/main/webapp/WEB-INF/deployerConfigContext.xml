@@ -114,14 +114,14 @@
 
     <!-- Required for proxy ticket mechanism -->
     <bean id="proxyPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
     <!--
        | Resolves a principal from a credential using an attribute repository that is configured to resolve
        | against a deployer-specific store (e.g. LDAP).
        -->
     <bean id="primaryPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
         <property name="attributeRepository" ref="attributeRepository" />
     </bean>
 
