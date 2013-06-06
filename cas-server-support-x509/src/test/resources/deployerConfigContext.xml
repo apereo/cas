@@ -100,10 +100,10 @@
        | Credential-to-principal resolver beans
        -->
     <bean id="usernamePasswordCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
     <bean id="httpBasedCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
     <!--
        | Resolves a principal from the subject DN of an X.509 certificate.
@@ -111,7 +111,7 @@
        | subject DN is DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto.
        -->
     <bean id="x509CredentialsResolver"
-          class="org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSubjectPrinciplalResolver"
+          class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
           p:descriptor="$UID@$DC.$DC" />
 
 </beans>

@@ -28,12 +28,12 @@ import java.util.Map;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSerialNumberPrincipalResolver;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -65,9 +65,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
         handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
 
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
-                        handler,
-                        new X509CertificateCredentialsToSerialNumberPrincipalResolver()));
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
+                        handler, new X509SerialNumberPrincipalResolver()));
 
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
                 new DefaultUniqueTicketIdGenerator());

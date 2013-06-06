@@ -32,11 +32,14 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.handler.SearchEntryHandler;
 
 /**
+ * Base class for principal resolvers that query an LDAP directory for prinicpal resolution.
+ *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.2.1
  */
-public abstract class AbstractLdapPersonDirectoryCredentialsToPrincipalResolver extends
-AbstractPersonDirectoryCredentialsToPrincipalResolver {
+public abstract class AbstractLdapPersonDirectoryPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 2;
@@ -163,35 +166,35 @@ AbstractPersonDirectoryCredentialsToPrincipalResolver {
         return this.followReferrals;
     }
     
-    public final void setAttributeIds(String[] attributeIds) {
+    public final void setAttributeIds(final String[] attributeIds) {
         this.attributeIds = attributeIds;
     }
 
-    public final void setSearchFilter(SearchFilter searchFilter) {
+    public final void setSearchFilter(final SearchFilter searchFilter) {
         this.searchFilter = searchFilter;
     }
 
-    public final void setFollowReferrals(boolean followReferrals) {
+    public final void setFollowReferrals(final boolean followReferrals) {
         this.followReferrals = followReferrals;
     }
 
-    public final void setSize(long size) {
+    public final void setSize(final long size) {
         this.size = size;
     }
 
-    public final void setSortBehavior(SortBehavior sortBehavior) {
+    public final void setSortBehavior(final SortBehavior sortBehavior) {
         this.sortBehavior = sortBehavior;
     }
 
-    public final void setSearchScope(SearchScope searchScope) {
+    public final void setSearchScope(final SearchScope searchScope) {
         this.searchScope = searchScope;
     }
 
-    public final void setSearchEntryHandlers(List<SearchEntryHandler> searchEntryHandlers) {
+    public final void setSearchEntryHandlers(final List<SearchEntryHandler> searchEntryHandlers) {
         this.searchEntryHandlers = searchEntryHandlers;
     }
 
-    public final void setDerefAliases(DerefAliases derefAliases) {
+    public final void setDerefAliases(final DerefAliases derefAliases) {
         this.derefAliases = derefAliases;
     }
 
