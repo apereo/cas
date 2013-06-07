@@ -18,7 +18,10 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.ldaptive.Connection;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +29,13 @@ import org.slf4j.LoggerFactory;
  * Utilities related to LDAP functions.
  *
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.0
  */
 public final class LdapUtils {
 
+    public static final String OBJECTCLASS_ATTRIBUTE = "objectclass";
+    
     private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     private LdapUtils() {
@@ -50,5 +56,87 @@ public final class LdapUtils {
                 log.warn("Could not close ldap connection", ex);
             }
         }
+    }
+    
+    /**
+     * Reads a Boolean value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     */
+    public static Boolean getBoolean(final LdapEntry ctx, final String attribute) {
+        return getBoolean(ctx, attribute, false);
+    }
+
+    /**
+     * Reads a Boolean value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     * @param nullValue the value which should be returning in case of a null value
+     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     */
+    public static Boolean getBoolean(final LdapEntry ctx, final String attribute, final Boolean nullValue) {
+        final String v = getString(ctx, attribute, nullValue.toString());
+        if (v != null) {
+            return v.equalsIgnoreCase(Boolean.TRUE.toString());
+        }
+        return nullValue;
+    }
+    
+    /**
+     * Reads a Long value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     */
+    public static Long getLong(final LdapEntry ctx, final String attribute) {
+        return getLong(ctx, attribute, Long.MIN_VALUE);
+    }
+
+    /**
+     * Reads a Long value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     * @param nullValue the value which should be returning in case of a null value
+     */
+    public static Long getLong(final LdapEntry ctx, final String attribute, final Long nullValue) {
+        final String v = getString(ctx, attribute, nullValue.toString());
+        if (v != null && NumberUtils.isNumber(v)) {
+            return Long.valueOf(v);
+        }
+        return nullValue;
+    }
+    
+    /**
+     * Reads a String value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     */
+    public static String getString(final LdapEntry ctx, final String attribute) {
+        return getString(ctx, attribute, null);
+    }
+
+    /**
+     * Reads a String value from the LdapEntry
+     *
+     * @param ctx       the ldap entry
+     * @param attribute the attribute name
+     * @param nullValue the value which should be returning in case of a null value
+     */
+    public static String getString(final LdapEntry ctx, final String attribute, final String nullValue) {
+        final LdapAttribute attr = ctx.getAttribute(attribute);
+        if (attr == null) {
+            return nullValue;
+        }
+        
+        final String v = attr.getStringValue();
+        if (v != null) {
+            return v;
+        }
+        return nullValue;
     }
 }
