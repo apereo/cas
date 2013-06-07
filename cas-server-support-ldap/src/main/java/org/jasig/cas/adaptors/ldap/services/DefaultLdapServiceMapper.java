@@ -18,19 +18,29 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.util.LdapUtils;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.AntPathMatcher;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
- * Default implementation of LdapServiceMapper which maps each property
- * of RegisteredService to a explicit LDAP attribute.
- *
- * @author Siegfried Puchbauer, SPP (http://www.spp.at/)
+ * Misagh Moayyed
  */
-public final class DefaultLdapServiceMapper extends LdapServiceMapper {
+public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapServiceMapper.class);
 
     @NotNull
     private String objectclass = "casService";
@@ -63,69 +73,67 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
     private String serviceThemeAttribute = "casServiceTheme";
 
     @NotNull
+    private String usernameAttribute = "casUsernameAttribute";
+
+    @NotNull
     private String serviceAllowedAttributesAttribute = "casAllowedAttributes";
 
+    @NotNull
+    private String evaluationOrderAttribute = "casEvaluationOrder";
 
     @Override
-    protected RegisteredService doMapFromContext(final DirContextOperations ctx) {
-        RegisteredServiceImpl s = new RegisteredServiceImpl();
+    public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
+        
+        final Collection<LdapAttribute> attrs = new LinkedList<LdapAttribute>();
+        attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
+        attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
 
-        s.setId(Long.parseLong(ctx.getStringAttribute(this.idAttribute)));
-        s.setServiceId(ctx.getStringAttribute(this.serviceIdAttribute));
-        s.setName(ctx.getStringAttribute(this.namingAttribute));
-        s.setEnabled(SpringLdapUtils.getBoolean(ctx, this.serviceEnabledAttribute));
-        s.setAllowedToProxy(SpringLdapUtils.getBoolean(ctx, this.serviceAllowedToProxyAttribute));
-        s.setAnonymousAccess(SpringLdapUtils.getBoolean(ctx, this.serviceAnonymousAccessAttribute));
-        s.setDescription(ctx.getStringAttribute(this.serviceDescriptionAttribute));
-        s.setSsoEnabled(SpringLdapUtils.getBoolean(ctx, this.serviceSsoEnabledAttribute));
-        s.setTheme(ctx.getStringAttribute(this.serviceThemeAttribute));
+        attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled())));
+        attrs.add(new LdapAttribute(this.serviceAllowedToProxyAttribute, Boolean.toString(svc.isAllowedToProxy())));
+        attrs.add(new LdapAttribute(this.serviceAnonymousAccessAttribute, Boolean.toString(svc.isAnonymousAccess())));
+        attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled())));
 
-        final String[] attributes = ctx.getStringAttributes(this.serviceAllowedAttributesAttribute);
+        attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
 
-        if (attributes != null) {
-            s.setAllowedAttributes(Arrays.asList(attributes));
+        attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
+        attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
+        attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
+
+        attrs.add(new LdapAttribute(this.serviceAllowedAttributesAttribute, svc.getAllowedAttributes().toArray(new String[] {})));
+        attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass));
+
+        return new LdapEntry(dn, attrs);
+    }
+
+    @Override
+    public RegisteredService mapToRegisteredService(final LdapEntry entry) {
+
+        final AbstractRegisteredService s = getRegisteredService(entry.getAttribute(this.idAttribute).getStringValue());
+
+        if (s != null) {
+            s.setId(LdapUtils.getLong(entry, this.idAttribute, Long.valueOf(entry.getDn().hashCode())));
+
+            s.setServiceId(LdapUtils.getString(entry, this.serviceIdAttribute));
+            s.setName(LdapUtils.getString(entry, this.namingAttribute));
+            s.setDescription(LdapUtils.getString(entry, this.serviceDescriptionAttribute));
+            s.setTheme(LdapUtils.getString(entry, this.serviceThemeAttribute));
+
+            s.setEvaluationOrder(LdapUtils.getLong(entry, this.evaluationOrderAttribute).intValue());
+            s.setUsernameAttribute(LdapUtils.getString(entry, this.usernameAttribute));
+
+            s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
+            s.setAllowedToProxy(LdapUtils.getBoolean(entry, this.serviceAllowedToProxyAttribute));
+            s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
+            s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
+
+            final LdapAttribute attrs = entry.getAttribute(this.serviceAllowedAttributesAttribute);
+            if (attrs != null) {
+                final Collection<String> attributes = attrs.getStringValues();
+                s.setAllowedAttributes(new LinkedList<String>(attributes));
+            }
         }
 
         return s;
-    }
-
-    @Override
-    protected DirContextAdapter doMapToContext(final RegisteredService service,final  DirContextAdapter ctx) {
-        ctx.setAttributeValue(this.idAttribute, String.valueOf(service.getId()));
-        ctx.setAttributeValue(this.serviceIdAttribute, service.getServiceId());
-        SpringLdapUtils.setBoolean(ctx, this.serviceEnabledAttribute, service.isEnabled());
-        SpringLdapUtils.setBoolean(ctx, this.serviceAllowedToProxyAttribute, service.isAllowedToProxy());
-        SpringLdapUtils.setBoolean(ctx, this.serviceAnonymousAccessAttribute, service.isAnonymousAccess());
-        SpringLdapUtils.setBoolean(ctx, this.serviceSsoEnabledAttribute, service.isSsoEnabled());
-        ctx.setAttributeValue(this.serviceThemeAttribute, service.getTheme());
-        ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes().toArray(new String[service.getAllowedAttributes().size()]), false);
-        ctx.setAttributeValue(this.serviceDescriptionAttribute, service.getDescription());
-        if (!SpringLdapUtils.containsObjectClass(ctx, this.objectclass)) {
-            ctx.addAttributeValue(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);
-        }
-
-        return ctx;
-    }
-
-    @Override
-    protected DirContextAdapter createCtx(final String parentDn, final RegisteredService service) {
-        DistinguishedName dn = new DistinguishedName(parentDn);
-        dn.add(this.namingAttribute, service.getName());
-        return new DirContextAdapter(dn);
-    }
-
-    @Override
-    protected Filter getSearchFilter(final Long id) {
-        return new AndFilter().and(getLoadFilter()).and(new EqualsFilter(this.idAttribute, String.valueOf(id)));
-    }
-
-    @Override
-    protected Filter getLoadFilter() {
-        return new EqualsFilter(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);
-    }
-
-    public void setObjectclass(final String objectclass) {
-        this.objectclass = objectclass;
     }
 
     public void setServiceIdAttribute(final String serviceIdAttribute) {
@@ -166,5 +174,30 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
 
     public void setServiceAllowedAttributesAttribute(final String serviceAllowedAttributesAttribute) {
         this.serviceAllowedAttributesAttribute = serviceAllowedAttributesAttribute;
+    }
+
+    private boolean isValidRegexPattern(final String pattern) {
+        try {
+            Pattern.compile(pattern);
+        } catch (final PatternSyntaxException e) {
+            LOGGER.debug("Failed to identify [{}] as a regular expression. Falling back to ant patterns", pattern);
+            return new AntPathMatcher().isPattern(pattern);
+        }
+        return true;
+    }
+
+    private AbstractRegisteredService getRegisteredService(final String id) {
+        if (isValidRegexPattern(id)) {
+            return new RegexRegisteredService();
+        }
+        return new RegisteredServiceImpl();
+    }
+
+    public final void setUsernameAttribute(final String usernameAttribute) {
+        this.usernameAttribute = usernameAttribute;
+    }
+
+    public final void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
+        this.evaluationOrderAttribute = evaluationOrderAttribute;
     }
 }
