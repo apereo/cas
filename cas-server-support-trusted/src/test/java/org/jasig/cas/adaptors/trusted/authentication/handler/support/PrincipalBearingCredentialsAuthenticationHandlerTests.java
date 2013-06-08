@@ -37,9 +37,9 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
-    public void testNonNullPrincipal() {
+    public void testNonNullPrincipal() throws Exception {
         PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
-        assertTrue(this.handler.authenticate(credentials));
+        assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test

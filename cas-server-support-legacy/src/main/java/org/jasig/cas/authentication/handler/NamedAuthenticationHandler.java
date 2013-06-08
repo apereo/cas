@@ -19,13 +19,14 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Offers AuthenticationHandlers a way to identify themselves by a
- * user-configured name.
+ * Named variant of CAS 3.0 {@link AuthenticationHandler} interface. This is deprecated in favor of
+ * {@link org.jasig.cas.authentication.AuthenticationHandler}.
  *
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
+@Deprecated
 public interface NamedAuthenticationHandler extends AuthenticationHandler {
 
     String getName();

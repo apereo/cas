@@ -97,24 +97,22 @@
       <version>2.2.0</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-legacy</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <excludes>
-            <!--
-            If you enable the bind authentication handler unit tests,
-            you need an LDAP infrastructure to test against.
-            Create an ldaptive.properties file from the ldaptive.properties.sample
-            template suitable for your environment.
-            -->
-            <exclude>**/*Bind*Tests.java</exclude>
-          </excludes>
-          <argLine>-Djavax.net.ssl.trustStore=src/test/resources/rutgers.keystore -Djavax.net.ssl.trustStorePassword=changeit</argLine>
           <skipTests>true</skipTests>
         </configuration>
       </plugin>

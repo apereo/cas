@@ -30,13 +30,24 @@ import java.security.GeneralSecurityException;
 public interface AuthenticationHandler {
 
     /**
-     * Authenticates the given credential.
+     * Authenticates the given credential. There are three possible outcomes of this process, and implementers
+     * MUST adhere to the following contract:
+     *
+     * <ol>
+     *     <li>Success -- return {@link HandlerResult}</li>
+     *     <li>Failure -- throw {@link GeneralSecurityException}</li>
+     *     <li>Indeterminate -- throw {@link PreventedException}</li>
+     * </ol>
      *
      * @param credential The credential to authenticate.
      *
-     * @return A result object containing metadata about a successful authentication event.
-     * The most common information is an optional {@link org.jasig.cas.authentication.principal.Principal}
-     * resolved from the credential and warnings issued by the source, for example, password expiration warnings.
+     * @return A result object containing metadata about a successful authentication event that includes at
+     * a minimum the name of the handler that authenticated the credential and some credential metadata.
+     * The following data is optional:
+     * <ul>
+     *     <li>{@link org.jasig.cas.authentication.principal.Principal}</li>
+     *     <li>Messages issued by the handler about the credential (e.g. impending password expiration warning)</li>
+     * </ul>
      *
      * @throws GeneralSecurityException On authentication failures where the root cause is security related,
      * e.g. invalid credential. Implementing classes SHOULD be as specific as possible in communicating the reason for

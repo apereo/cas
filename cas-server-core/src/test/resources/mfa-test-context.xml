@@ -80,18 +80,14 @@
     </bean>
 
     <bean id="passwordHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
-                p:name="passwordHandler">
-                <property name="users">
-                    <map>
-                        <entry key="alice" value="alice"/>
-                        <entry key="mallory" value="mallory"/>
-                    </map>
-                </property>
-            </bean>
-        </constructor-arg>
+          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
+          p:name="passwordHandler">
+        <property name="users">
+            <map>
+                <entry key="alice" value="alice"/>
+                <entry key="mallory" value="mallory"/>
+            </map>
+        </property>
     </bean>
 
     <bean id="oneTimePasswordHandler"

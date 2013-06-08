@@ -58,13 +58,13 @@ import org.springframework.util.Assert;
  *   </ul>
  *   <li>
  *     After all credentials have been attempted check security policy again.
- *     We apply an implicit security policy of requiring at least one handler to successfully authenticate
- *     its credential. Then the security policy given by {@link #setAuthenticationPolicy(AuthenticationPolicy)}
- *     is applied. In all cases {@link AuthenticationException} is raised if security policy is not met.
+ *     Note there is an implicit security policy that requires at least one credential to be authenticated.
+ *     Then the security policy given by {@link #setAuthenticationPolicy(AuthenticationPolicy)} is applied.
+ *     In all cases {@link AuthenticationException} is raised if security policy is not met.
  *   </li>
  * </ul>
  *
- * It is an error condition to fail to resolve a principal or resolve multiple non-identical principals.
+ * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
  * @since 4.0
@@ -131,6 +131,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         this.handlerResolverMap = map;
     }
 
+    /** {@inheritDoc} */
     @Audit(
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
@@ -145,11 +146,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new UnresolvedPrincipalException(authentication);
         }
 
-        for (final HandlerResult result : authentication.getSuccesses().values()) {
-            if (result.getPrincipal() != null && !result.getPrincipal().equals(principal)) {
-                throw new MixedPrincipalException(authentication, principal, result.getPrincipal());
-            }
-        }
         for (final HandlerResult result : authentication.getSuccesses().values()) {
             builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
         }

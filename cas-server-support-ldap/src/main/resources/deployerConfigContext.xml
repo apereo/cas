@@ -21,7 +21,10 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
@@ -36,22 +39,63 @@
        | Authentication handler beans
        -->
     <bean id="httpBasedAuthenticationHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
-        </constructor-arg>
-    </bean>
+          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
 
     <bean id="ldapAuthenticationHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler">
-                <property name="filter" value="uid=%u"/>
-                <property name="searchBase" value="ou=people,dc=rutgers,dc=edu"/>
-                <property name="contextSource" ref="contextSource"/>
-            </bean>
-        </constructor-arg>
+          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          p:principalIdAttribute="authId">
+        <constructor-arg ref="authenticator" />
+        <property name="principalAttributeMap">
+            <map>
+                <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
+                <entry key="memberOf" value="memberOf" />
+            </map>
+        </property>
     </bean>
+
+    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+          c:resolver-ref="pooledSearchDnResolver"
+          c:handler-ref="pooledBindHandler" />
+
+    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+          p:ldapUrl="${ldap.url}"
+          p:connectTimeout="${ldap.connectTimeout}"
+          p:useStartTLS="${ldap.useStartTLS}" />
+
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+          p:minPoolSize="${ldap.pool.minSize}"
+          p:maxPoolSize="${ldap.pool.maxSize}"
+          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+          p:validatePeriodically="${ldap.pool.validatePeriodically}"
+          p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+          p:prunePeriod="${ldap.pool.prunePeriod}"
+          p:idleTime="${ldap.pool.idleTime}" />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+    <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
+          init-method="initialize"
+          p:poolConfig-ref="ldapPoolConfig"
+          p:blockWaitTime="${ldap.pool.blockWaitTime}"
+          p:validator-ref="searchValidator"
+          p:pruneStrategy-ref="pruneStrategy"/>
+
+    <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+          p:baseDn="${ldap.authn.baseDn}"
+          p:allowMultipleDns="false"
+          p:connectionFactory-ref="pooledConnectionFactory"
+          p:userFilter="${ldap.authn.searchFilter}" />
+
+    <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+          p:connectionFactory-ref="pooledConnectionFactory" />
+
+    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="connectionConfig" />
+
+    <bean id="pooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+          p:connectionPool-ref="connectionPool" />
 
     <!--
        | Credential-to-principal resolver beans
@@ -63,32 +107,4 @@
           class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
 
 
-    <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="anonymousReadOnly" value="false" />
-        <property name="password" value="{password_goes_here}" />
-        <property name="pooled" value="true" />
-        <property name="urls">
-            <list>
-                <value>ldap://ldap.rutgers.edu:636/</value>
-                <value>ldap://ldap2.rutgers.edu:636/</value>
-            </list>
-        </property>
-        <property name="userDn" value="{username_goes_here}" />
-        <property name="baseEnvironmentProperties">
-            <map>
-                <entry>
-                    <key>
-                        <value>java.naming.security.protocol</value>
-                    </key>
-                    <value>ssl</value>
-                </entry>
-                <entry>
-                    <key>
-                        <value>java.naming.security.authentication</value>
-                    </key>
-                    <value>simple</value>
-                </entry>
-            </map>
-        </property>
-    </bean>
 </beans>

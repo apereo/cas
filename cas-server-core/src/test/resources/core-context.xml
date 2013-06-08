@@ -146,14 +146,10 @@
           class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
 
     <bean id="httpBasedServiceCredentialsAuthenticationHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
-                <property name="httpClient">
-                    <bean class="org.jasig.cas.util.HttpClient" />
-                </property>
-            </bean>
-        </constructor-arg>
+          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+        <property name="httpClient">
+            <bean class="org.jasig.cas.util.HttpClient" />
+        </property>
     </bean>
 
     <bean id="simpleTestUsernamePasswordAuthenticationHandler"

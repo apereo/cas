@@ -29,7 +29,6 @@ import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBe
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -64,7 +63,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
-                        new LegacyAuthenticationHandlerAdapter(new PrincipalBearingCredentialsAuthenticationHandler()),
+                        new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingCredentialsToPrincipalResolver()));
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
                 new DefaultUniqueTicketIdGenerator());
