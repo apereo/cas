@@ -29,4 +29,6 @@ public interface LdapRegisteredServiceMapper {
     RegisteredService mapToRegisteredService(final LdapEntry result);
     
     LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc);
+    
+    String getDnForRegisteredService(String parentDn, RegisteredService svc);
 }
