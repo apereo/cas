@@ -18,11 +18,15 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
+import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import javax.security.auth.login.FailedLoginException;
+
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -33,25 +37,25 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
+ * @author Marvin S. Addison
+ *
  * @since 3.0
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends
-AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    /** {@inheritDoc} */
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredential credentials)
-                    throws AuthenticationException {
-        final String username = credentials.getUsername();
-        final String password = credentials.getPassword();
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
 
         try {
-            final Connection c = this.getDataSource()
-                    .getConnection(username, password);
+            final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
-            return true;
+            return new SimplePrincipal(username);
         } catch (final SQLException e) {
-            return false;
+            throw new FailedLoginException(e.getMessage());
+        } catch (final Exception e) {
+            throw new PreventedException(e);
         }
     }
 }
