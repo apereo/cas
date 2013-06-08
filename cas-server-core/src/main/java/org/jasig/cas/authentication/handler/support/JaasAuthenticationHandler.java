@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -25,11 +26,11 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.util.Assert;
 
 /**
@@ -47,17 +48,17 @@ import org.springframework.util.Assert;
  * edu.uconn.netid.jaas.LDAPLoginModule sufficient<br />
  * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"<br />
  * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"<br />
- * java.naming.security.credentials="password" Attribute="uid" startTLS="true"; };<br />
+ * java.naming.security.credential="password" Attribute="uid" startTLS="true"; };<br />
  *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
-
+ * @author Marvin S. Addison
+ *
  * @since 3.0.5
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
  */
-public class JaasAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
     private static final String DEFAULT_REALM = "CAS";
@@ -71,27 +72,25 @@ public class JaasAuthenticationHandler extends
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credentials)
-        throws AuthenticationException {
+    /** {@inheritDoc} */
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
 
-        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-
+        final LoginContext lc = new LoginContext(
+                this.realm,
+                new UsernamePasswordCallbackHandler(username, password));
         try {
-            log.debug("Attempting authentication for: {}", transformedUsername);
-            final LoginContext lc = new LoginContext(this.realm,
-                new UsernamePasswordCallbackHandler(transformedUsername,
-                    credentials.getPassword()));
-
+            log.debug("Attempting authentication for: {}", username);
             lc.login();
+        } finally {
             lc.logout();
-        } catch (final LoginException fle) {
-            log.debug("Authentication failed for: {}", transformedUsername);
-            return false;
         }
 
-        log.debug("Authentication succeeded for: {}", transformedUsername);
-        return true;
+        Principal principal = null;
+        if (lc.getSubject().getPrincipals() != null && lc.getSubject().getPrincipals().size() > 0) {
+            principal = new SimplePrincipal(lc.getSubject().getPrincipals().iterator().next().getName());
+        }
+        return principal;
     }
 
     public void setRealm(final String realm) {

@@ -18,13 +18,18 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import java.security.GeneralSecurityException;
+
+import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -40,7 +45,7 @@ import javax.validation.constraints.NotNull;
 
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler {
+public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
@@ -55,20 +60,17 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     @NotNull
     private HttpClient httpClient;
 
-    public boolean authenticate(final Credential credential) {
-        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
-        if (this.requireSecure
-            && !serviceCredentials.getCallbackUrl().getProtocol().equals(
-                PROTOCOL_HTTPS)) {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
+        final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
+        if (this.requireSecure && !httpCredential.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
             log.debug("Authentication failed because url was not secure.");
-            return false;
+            throw new FailedLoginException();
         }
-        log
-            .debug("Attempting to resolve credential for "
-                + serviceCredentials);
-
-        return this.httpClient.isValidEndPoint(serviceCredentials
-            .getCallbackUrl());
+        log.debug("Attempting to resolve credential for {}", httpCredential);
+        if (!this.httpClient.isValidEndPoint(httpCredential.getCallbackUrl())) {
+            throw new FailedLoginException();
+        }
+        return new HandlerResult(this, httpCredential, new SimplePrincipal(httpCredential.getId()));
     }
 
     /**
@@ -76,9 +78,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
      * are a subclass of (or equal to) HttpBasedServiceCredential.
      */
     public boolean supports(final Credential credential) {
-        return credential != null
-            && HttpBasedServiceCredential.class.isAssignableFrom(credential
-                .getClass());
+        return credential instanceof HttpBasedServiceCredential;
     }
 
     /** Sets the HttpClient which will do all of the connection stuff. */

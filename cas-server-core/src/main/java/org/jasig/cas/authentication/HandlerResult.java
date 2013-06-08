@@ -119,9 +119,14 @@ public class HandlerResult implements Serializable {
             return true;
         }
         final HandlerResult other = (HandlerResult) obj;
-        return this.handlerName.equals(other.getHandlerName()) &&
-                this.credentialMetaData.equals(other.getCredentialMetaData()) &&
-                this.principal.equals(other.getPrincipal()) &&
-                this.warnings.equals(other.getWarnings());
+        return this.handlerName.equals(other.getHandlerName())
+                && this.credentialMetaData.equals(other.getCredentialMetaData())
+                && this.principal.equals(other.getPrincipal())
+                && this.warnings.equals(other.getWarnings());
+    }
+
+    @Override
+    public String toString() {
+        return this.handlerName + ":" + this.credentialMetaData;
     }
 }

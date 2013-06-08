@@ -61,10 +61,10 @@ public final class X509CertificateCredential extends AbstractCredential {
     @Override
     public String getId() {
         X509Certificate cert = null;
-        if (getCertificate() != null) {
-            cert = getCertificate();
-        } else if (getCertificates() != null && getCertificates().length > 1) {
-            cert = getCertificates()[0];
+        if (this.certificate != null) {
+            cert = this.certificate;
+        } else if (this.certificates != null && this.certificates.length > 0) {
+            cert = this.certificates[0];
         }
 
         if (cert != null) {

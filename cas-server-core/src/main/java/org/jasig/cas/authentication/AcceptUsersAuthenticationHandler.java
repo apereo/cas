@@ -18,11 +18,16 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -39,28 +44,32 @@ import javax.validation.constraints.NotNull;
  * to it.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
+ *
  * @since 3.0
  */
-public class AcceptUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
     @NotNull
     private Map<String, String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
-        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-        final String cachedPassword = this.users.get(transformedUsername);
+    /** {@inheritDoc} */
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
+
+        final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
-           log.debug("The user [{}] was not found in the map.", transformedUsername);
-           return false;
+           log.debug("{} was not found in the map.", username);
+           throw new AccountNotFoundException();
         }
 
-        final String encodedPassword = this.getPasswordEncoder().encode(
-            credentials.getPassword());
-
-        return (cachedPassword.equals(encodedPassword));
+        final String encodedPassword = this.getPasswordEncoder().encode(password);
+        if (!cachedPassword.equals(encodedPassword)) {
+            throw new FailedLoginException();
+        }
+        return new SimplePrincipal(username);
     }
 
     /**
