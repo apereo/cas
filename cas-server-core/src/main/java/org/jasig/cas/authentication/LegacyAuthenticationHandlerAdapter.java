@@ -22,7 +22,6 @@ import java.security.GeneralSecurityException;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
 
 /**
  * Adapts a CAS 3.x {@link org.jasig.cas.authentication.handler.AuthenticationHandler} onto a CAS 4.x
@@ -40,10 +39,16 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
     }
 
     @Override
-    public HandlerResult authenticate(final Credentials credential) throws GeneralSecurityException, PreventedException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             if (this.legacyHandler.authenticate(credential)) {
-                return new HandlerResult(this, new BasicCredentialMetaData(credential));
+                final CredentialMetaData md;
+                if (credential instanceof CredentialMetaData) {
+                    md = (CredentialMetaData) credential;
+                } else {
+                    md = new BasicCredentialMetaData(credential);
+                }
+                return new HandlerResult(this, md);
             } else {
                 throw new GeneralSecurityException(String.format("%s failed to authenticate %s", this.getName(), credential));
             }
@@ -53,7 +58,7 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
     }
 
     @Override
-    public boolean supports(final Credentials credential) {
+    public boolean supports(final Credential credential) {
         return this.legacyHandler.supports(credential);
     }
 

@@ -28,8 +28,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -66,7 +66,7 @@ public class TicketResource extends ServerResource {
     @Post
     public final void acceptRepresentation(final Representation entity)  {
         log.debug("Obtaining credentials...");
-        final Credentials c = obtainCredentials();
+        final Credential c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
@@ -89,8 +89,8 @@ public class TicketResource extends ServerResource {
         return Status.SUCCESS_CREATED;
     }
 
-    protected Credentials obtainCredentials() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+    protected Credential obtainCredentials() {
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
 

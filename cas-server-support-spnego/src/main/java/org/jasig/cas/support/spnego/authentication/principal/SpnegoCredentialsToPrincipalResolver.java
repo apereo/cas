@@ -21,13 +21,13 @@ package org.jasig.cas.support.spnego.authentication.principal;
 import java.util.Locale;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
 import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
- * SpnegoCredentials and returns a SimplePrincipal.
+ * SpnegoCredential and returns a SimplePrincipal.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -43,8 +43,8 @@ public final class SpnegoCredentialsToPrincipalResolver extends
     private Transform transformPrincipalId = Transform.NONE;
 
     @Override
-    protected String extractPrincipalId(final Credentials credentials) {
-        final SpnegoCredentials c = (SpnegoCredentials) credentials;
+    protected String extractPrincipalId(final Credential credential) {
+        final SpnegoCredential c = (SpnegoCredential) credential;
 
         switch (this.transformPrincipalId) {
         case UPPERCASE:
@@ -57,9 +57,9 @@ public final class SpnegoCredentialsToPrincipalResolver extends
     }
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-                && SpnegoCredentials.class.equals(credentials.getClass());
+    public boolean supports(final Credential credential) {
+        return credential != null
+                && SpnegoCredential.class.equals(credential.getClass());
     }
 
     public void setTransformPrincipalId(final Transform transform) {

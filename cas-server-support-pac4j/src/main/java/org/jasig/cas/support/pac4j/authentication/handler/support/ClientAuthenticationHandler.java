@@ -23,8 +23,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.UserProfile;
@@ -55,13 +55,13 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null && ClientCredentials.class.isAssignableFrom(credentials.getClass());
+    public boolean supports(final Credential credential) {
+        return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
-    protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
-        final ClientCredentials clientCredentials = (ClientCredentials) credentials;
+    protected boolean doAuthentication(final Credential credential) throws AuthenticationException {
+        final ClientCredential clientCredentials = (ClientCredential) credential;
         log.debug("clientCredentials : {}", clientCredentials);
 
         final String clientName = clientCredentials.getCredentials().getClientName();

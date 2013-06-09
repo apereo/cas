@@ -25,7 +25,7 @@ import com.github.inspektr.audit.spi.AuditResourceResolver;
 import org.jasig.cas.util.AopUtils;
 
 /**
- * Converts the Credentials object into a String resource identifier.
+ * Converts the Credential object into a String resource identifier.
  *
  * @author Scott Battaglia
  * @since 3.1.2

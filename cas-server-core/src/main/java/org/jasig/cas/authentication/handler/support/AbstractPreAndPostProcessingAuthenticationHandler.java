@@ -20,7 +20,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,21 +48,21 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     /**
      * Method to execute before authentication occurs.
      *
-     * @param credentials the Credentials supplied
+     * @param credential the Credential supplied
      * @return true if authentication should continue, false otherwise.
      */
-    protected boolean preAuthenticate(final Credentials credentials) {
+    protected boolean preAuthenticate(final Credential credential) {
         return true;
     }
 
     /**
      * Method to execute after authentication occurs.
      *
-     * @param credentials the supplied credentials
+     * @param credential the supplied credential
      * @param authenticated the result of the authentication attempt.
      * @return true if the handler should return true, false otherwise.
      */
-    protected boolean postAuthenticate(final Credentials credentials,
+    protected boolean postAuthenticate(final Credential credential,
         final boolean authenticated) {
         return authenticated;
     }
@@ -75,18 +75,18 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
         return this.name;
     }
 
-    public final boolean authenticate(final Credentials credentials)
+    public final boolean authenticate(final Credential credential)
         throws AuthenticationException {
 
-        if (!preAuthenticate(credentials)) {
+        if (!preAuthenticate(credential)) {
             return false;
         }
 
-        final boolean authenticated = doAuthentication(credentials);
+        final boolean authenticated = doAuthentication(credential);
 
-        return postAuthenticate(credentials, authenticated);
+        return postAuthenticate(credential, authenticated);
     }
 
-    protected abstract boolean doAuthentication(final Credentials credentials)
+    protected abstract boolean doAuthentication(final Credential credential)
         throws AuthenticationException;
 }

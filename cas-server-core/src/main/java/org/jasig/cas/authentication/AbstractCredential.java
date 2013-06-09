@@ -16,23 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.authentication;
+
+import java.io.Serializable;
 
 /**
- * Credentials that wish to handle remember me scenarios need
- * to implement this class.
+ * Base class for CAS credentials that are safe for long-term storage.
  *
- * @author Scott Battaglia
- * @since 3.2.1
- *
+ * @author Marvin S. Addison
+ * @since 4.0
  */
-public interface RememberMeCredentials extends Credentials {
+public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 
-    String AUTHENTICATION_ATTRIBUTE_REMEMBER_ME = "org.jasig.cas.authentication.principal.REMEMBER_ME";
+    /** Serialization version marker. */
+    private static final long serialVersionUID = 4130371020442064793L;
 
-    String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
-
-    boolean isRememberMe();
-
-    void setRememberMe(boolean rememberMe);
+    /**
+     * @return The credential identifier.
+     */
+    @Override
+    public String toString() {
+        return getId();
+    }
 }
