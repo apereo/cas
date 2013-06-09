@@ -19,9 +19,9 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Generic Bad Credentials Exception. This can be thrown when the system knows
+ * Generic Bad Credential Exception. This can be thrown when the system knows
  * the credentials are not valid specificially because they are bad. Subclasses
- * can be specific to a certain type of Credentials
+ * can be specific to a certain type of Credential
  * (BadUsernamePassowrdCredentials).
  *
  * @author Scott Battaglia

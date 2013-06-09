@@ -50,8 +50,9 @@ import org.springframework.util.Assert;
 public final class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = -5197946718924166491L;
+    private static final long serialVersionUID = -8608149809180911599L;
 
+    /** Logger instance. */
     private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
@@ -66,6 +67,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
     private final HashMap<String,Service> services = new HashMap<String, Service>();
+
+    @Lob
+    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
+    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
 
     public TicketGrantingTicketImpl() {
         // nothing to do
@@ -138,6 +143,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.getGrantingTicket() == null;
     }
 
+
+    public TicketGrantingTicket getRoot() {
+        TicketGrantingTicket current = this;
+        TicketGrantingTicket parent = current.getGrantingTicket();
+        while (parent != null) {
+            current = parent;
+            parent = current.getGrantingTicket();
+        }
+        return current;
+    }
+
     public synchronized void expire() {
         this.expired = true;
         logOutOfServices();
@@ -147,17 +163,21 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
+    public List<Authentication> getSupplementalAuthentications() {
+        return this.supplementalAuthentications;
+    }
+
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
-        if (this.getGrantingTicket() == null) {
-            list.add(this.getAuthentication());
+        list.add(getAuthentication());
+        list.addAll(getSupplementalAuthentications());
+
+        if (getGrantingTicket() == null) {
             return Collections.unmodifiableList(list);
         }
 
-        list.add(this.getAuthentication());
-        list.addAll(this.getGrantingTicket().getChainedAuthentications());
-
+        list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
     }
 

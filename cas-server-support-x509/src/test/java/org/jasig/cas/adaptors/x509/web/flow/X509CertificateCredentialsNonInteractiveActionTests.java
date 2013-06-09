@@ -21,7 +21,7 @@ package org.jasig.cas.adaptors.x509.web.flow;
 import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +30,9 @@ import org.jasig.cas.adaptors.x509.authentication.handler.support.X509Credential
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSerialNumberPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
+import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -47,8 +48,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 
-public class X509CertificateCredentialsNonInteractiveActionTests extends
-        AbstractX509CertificateTests {
+public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
 
     private X509CertificateCredentialsNonInteractiveAction action;
 
@@ -61,19 +61,14 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
-        final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
-
         final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
         a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
 
-        final AuthenticationHandler[] handlers = new AuthenticationHandler[] {
-                new LegacyAuthenticationHandlerAdapter(a),
-        };
-        authenticationManager.setAuthenticationHandlers(Arrays.asList(handlers));
-        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(
-                new CredentialsToPrincipalResolver[] {
-                        new X509CertificateCredentialsToSerialNumberPrincipalResolver()
-                }));
+        final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
+                Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
+                        new LegacyAuthenticationHandlerAdapter(a),
+                        new X509CertificateCredentialsToSerialNumberPrincipalResolver()));
+
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
                 new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);

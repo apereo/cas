@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
-import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials;
+import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * AuthenticationHandler which authenticates Principal-bearing credentials.
  * Authentication must have occurred at the time the Principal-bearing
  * credentials were created, so we perform no further authentication. Thus
- * merely by being presented a PrincipalBearingCredentials, this handler returns
+ * merely by being presented a PrincipalBearingCredential, this handler returns
  * true.
  *
  * @author Andrew Petro
@@ -40,13 +40,13 @@ public final class PrincipalBearingCredentialsAuthenticationHandler implements
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public boolean authenticate(final Credentials credentials) {
-        log.debug("Trusting credentials for: {}", credentials);
+    public boolean authenticate(final Credential credential) {
+        log.debug("Trusting credential for: {}", credential);
         return true;
     }
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials.getClass().equals(PrincipalBearingCredentials.class);
+    public boolean supports(final Credential credential) {
+        return credential.getClass().equals(PrincipalBearingCredential.class);
     }
 }

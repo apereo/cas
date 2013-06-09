@@ -20,8 +20,6 @@ package org.jasig.cas.authentication;
 
 import java.security.GeneralSecurityException;
 
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * An authentication handler authenticates a single credential. In many cases credentials are authenticated by
  * comparison with data in a system of record such as LDAP directory or database.
@@ -56,23 +54,25 @@ public interface AuthenticationHandler {
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD
      * take care to populate the cause, where applicable, with the error that prevented authentication.
      */
-    HandlerResult authenticate(Credentials credential) throws GeneralSecurityException, PreventedException;
+    HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
 
 
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,
-     * the {@link #authenticate(Credentials)} method MUST be capable of processing a given credential if
+     * the {@link #authenticate(Credential)} method MUST be capable of processing a given credential if
      * <code>supports</code> returns true on the same credential.
      *
      * @param credential The credential to check.
      *
      * @return True if the handler supports the Credential, false otherwise.
      */
-    boolean supports(Credentials credential);
+    boolean supports(Credential credential);
 
 
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
+     * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
+     * handler instance has a unique name.
      *
      * @return Unique name within a Spring context.
      */

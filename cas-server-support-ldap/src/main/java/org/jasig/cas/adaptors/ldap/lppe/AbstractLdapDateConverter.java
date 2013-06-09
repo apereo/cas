@@ -53,6 +53,5 @@ public abstract class AbstractLdapDateConverter implements LdapDateConverter, In
     public void afterPropertiesSet() throws Exception {
         log.debug("Initialized Ldap date converter [{}] with timezone [{}]", this.getClass().getSimpleName(),
                 this.timeZone);
-    } 
-   
+    }
 }

@@ -30,11 +30,8 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.ldaptive.Credential;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -138,14 +135,14 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     }
 
     @Override
-    public HandlerResult authenticate(final Credentials credential) throws GeneralSecurityException,
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException,
                                 PreventedException {
         final AuthenticationResponse response;
-        final UsernamePasswordCredentials upc = (UsernamePasswordCredentials) credential;
+        final UsernamePasswordCredential upc = (UsernamePasswordCredential) credential;
         try {
             log.debug("Attempting LDAP authentication for {}", credential);
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
-                    new Credential(upc.getPassword()),
+                    new org.ldaptive.Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
         } catch (final LdapException e) {
@@ -154,7 +151,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         log.debug("LDAP response: {}", response);
 
         examineAccountState(response);
-        
+
         if (response.getResult()) {
             doPostAuthentication(response);
         }
@@ -171,12 +168,15 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     }
 
     protected HandlerResult doPostAuthentication(final AuthenticationResponse response) throws LoginException {
-        return new HandlerResult(this, createPrincipal(response.getLdapEntry()));
+        return new HandlerResult(
+                this,
+                new BasicCredentialMetaData(new UsernamePasswordCredential()),
+                createPrincipal(response.getLdapEntry()));
     }
 
     @Override
-    public boolean supports(final Credentials credential) {
-        return credential instanceof UsernamePasswordCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof UsernamePasswordCredential;
     }
 
     @Override
