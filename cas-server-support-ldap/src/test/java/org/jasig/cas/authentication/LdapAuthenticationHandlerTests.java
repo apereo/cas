@@ -22,7 +22,6 @@ import java.security.GeneralSecurityException;
 import java.util.Properties;
 
 import org.jasig.cas.RequiredConfigurationProfileValueSource;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +88,8 @@ public class LdapAuthenticationHandlerTests {
         }
     }
 
-    private UsernamePasswordCredentials newCredentials(final String user, final String pass) {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+    private UsernamePasswordCredential newCredentials(final String user, final String pass) {
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(user);
         credentials.setPassword(pass);
         return credentials;

@@ -21,11 +21,11 @@ package org.jasig.cas.support.saml.authentication;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -35,10 +35,10 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * attributes map.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.1
  */
-public class SamlAuthenticationMetaDataPopulator implements
-                AuthenticationMetaDataPopulator {
+public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
@@ -54,10 +54,10 @@ public class SamlAuthenticationMetaDataPopulator implements
 
     public SamlAuthenticationMetaDataPopulator() {
         this.authenticationMethods.put(
-                HttpBasedServiceCredentials.class.getName(),
+                HttpBasedServiceCredential.class.getName(),
                 AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(
-                UsernamePasswordCredentials.class.getName(),
+                UsernamePasswordCredential.class.getName(),
                 AUTHN_METHOD_PASSWORD);
 
         // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
@@ -70,14 +70,12 @@ public class SamlAuthenticationMetaDataPopulator implements
     }
 
     @Override
-    public final Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
+    public final void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 
-        final String credentialsClass = credentials.getClass().getName();
+        final String credentialsClass = credential.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
 
-        authentication.getAttributes().put(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
-
-        return authentication;
+        builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 
     /**
@@ -85,7 +83,7 @@ public class SamlAuthenticationMetaDataPopulator implements
      * defaults. Mapping should be of the following type:
      * <p>(<String version of Package/Class Name> <SAML Type>)
      * <p>
-     * Example: (<"org.jasig.cas.authentication.principal.HttpBasedServiceCredentials">
+     * Example: (<"org.jasig.cas.authentication.HttpBasedServiceCredential">
      * <SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client>)
      *
      * @param userDefinedMappings map of user defined authentication types.

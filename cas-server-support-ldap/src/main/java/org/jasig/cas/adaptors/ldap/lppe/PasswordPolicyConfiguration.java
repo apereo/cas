@@ -50,7 +50,7 @@ public class PasswordPolicyConfiguration {
 
     /** the date/time formatter object used to parse date patterns in dates. **/
     private DateTimeFormatter datetimeFormatter = DateTimeFormat.fullDate();
-    
+
     /** The value that will cause password warning to be bypassed.  */
     private List<String> ignorePasswordExpirationWarningFlags = new ArrayList<String>();
 
@@ -59,7 +59,7 @@ public class PasswordPolicyConfiguration {
 
     /** Attribute name based on which password expiration policy will be constructed. **/
     private String passwordExpirationDateAttributeName;
-    
+
     /** The custom attribute that indicates the account is disabled. **/
     private String accountDisabledAttributeName = null;
 
@@ -89,18 +89,18 @@ public class PasswordPolicyConfiguration {
 
     /** static password expiration date beyond which passwords are considered expired. **/
     private String staticPasswordExpirationDate = null;
-   
+
     public PasswordPolicyConfiguration() {
     }
-    
+
     public void setIgnorePasswordExpirationWarningFlags(@NotNull final List<String> values) {
         this.ignorePasswordExpirationWarningFlags = values;
     }
-    
+
     public List<String> getIgnorePasswordExpirationWarningFlags() {
         return this.ignorePasswordExpirationWarningFlags;
     }
-    
+
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
@@ -170,10 +170,10 @@ public class PasswordPolicyConfiguration {
     public void setDefaultPasswordWarningNumberOfDays(final int days) {
         this.defaultPasswordWarningNumberOfDays = days;
     }
-    
+
     /**
      * Provides a constant password expiration date value, beyond which
-     * the account will be considered expired. When provided, the 
+     * the account will be considered expired. When provided, the
      * number of days the password may remain valid is set to zero
      * @param date
      * @see #setDateTimeFormatter(DateTimeFormatter)
@@ -181,11 +181,11 @@ public class PasswordPolicyConfiguration {
     public void setStaticPasswordExpirationDate(final String date) {
         this.staticPasswordExpirationDate = date;
     }
-    
+
     public void setDateTimeFormatter(final DateTimeFormatter fmt) {
         this.datetimeFormatter = fmt;
     }
-    
+
     /**
      * Construct the static password expiration date based on the formatter defined.
      * @return the static password expiration date.
@@ -203,7 +203,6 @@ public class PasswordPolicyConfiguration {
         return this.ignorePasswordExpirationWarningAttributeName;
     }
 
-    
     public void setIgnorePasswordExpirationWarningAttributeName(final String value) {
         this.ignorePasswordExpirationWarningAttributeName = value;
     }
@@ -275,7 +274,7 @@ public class PasswordPolicyConfiguration {
         if (attributeValue != null) {
             result.setAccountPasswordMustChange(translateValueToBoolean(attributeValue));
         }
-     
+
         return buildInternal(entry, result);
     }
 
@@ -288,14 +287,14 @@ public class PasswordPolicyConfiguration {
     }
 
     /**
-     * Translate a value to its corresponding boolean value. 
+     * Translate a value to its corresponding boolean value.
      * @param value the attribute value to translate
      * @return true, if the value {@link Boolean#valueOf(String)} returns true or if the value is an integer greater than zero.
      */
     protected boolean translateValueToBoolean(final String value) {
         return Boolean.valueOf(value) || (NumberUtils.toLong(value) > 0);
     }
-    
+
     protected String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
         if (attrName != null) {
             log.debug("Retrieving attribute [{}]", attrName);
@@ -311,7 +310,7 @@ public class PasswordPolicyConfiguration {
 
     protected Map<String, String> getPasswordPolicyAttributesMap() {
         final Map<String, String> principalAttributeMap = new HashMap<String, String>();
-        
+
         if (!StringUtils.isBlank(getAccountDisabledAttributeName())) {
             principalAttributeMap.put(getAccountDisabledAttributeName(),
                                       getAccountDisabledAttributeName());

@@ -30,11 +30,11 @@ import org.junit.Test;
  */
 public class PrincipalBearingCredentialsTests {
 
-    private PrincipalBearingCredentials principalBearingCredentials;
+    private PrincipalBearingCredential principalBearingCredentials;
 
     @Before
     public void setUp() throws Exception {
-        this.principalBearingCredentials = new PrincipalBearingCredentials(new SimplePrincipal("test"));
+        this.principalBearingCredentials = new PrincipalBearingCredential(new SimplePrincipal("test"));
     }
 
     @Test

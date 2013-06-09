@@ -27,12 +27,13 @@ import javax.security.auth.login.FailedLoginException;
 
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -77,12 +78,12 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     }
 
     @Override
-    public final HandlerResult authenticate(final Credentials credential)
+    public final HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final UsernamePasswordCredentials passwordCredential = (UsernamePasswordCredentials) credential;
-        final String username = passwordCredential.getUsername();
-        final String password = passwordCredential.getPassword();
+        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        final String username = usernamePasswordCredential.getUsername();
+        final String password = usernamePasswordCredential.getPassword();
 
         final Exception exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
@@ -97,15 +98,15 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             log.debug("User [{}] was successfully authenticated.", username);
-            return new HandlerResult(this);
+            return new HandlerResult(this, new BasicCredentialMetaData(credential));
         }
         log.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
     }
 
     @Override
-    public boolean supports(final Credentials credential) {
-        return credential instanceof UsernamePasswordCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof UsernamePasswordCredential;
     }
 
     @Override
