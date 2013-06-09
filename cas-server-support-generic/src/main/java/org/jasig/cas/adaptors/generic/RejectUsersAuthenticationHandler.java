@@ -20,10 +20,10 @@ package org.jasig.cas.adaptors.generic;
 
 import java.util.List;
 
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import javax.validation.constraints.NotNull;
 
@@ -47,7 +47,7 @@ public class RejectUsersAuthenticationHandler extends
     @NotNull
     private List<String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
             throws AuthenticationException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());

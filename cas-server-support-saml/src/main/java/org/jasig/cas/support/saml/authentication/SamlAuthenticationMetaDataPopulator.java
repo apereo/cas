@@ -23,9 +23,9 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -54,10 +54,10 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
 
     public SamlAuthenticationMetaDataPopulator() {
         this.authenticationMethods.put(
-                HttpBasedServiceCredentials.class.getName(),
+                HttpBasedServiceCredential.class.getName(),
                 AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(
-                UsernamePasswordCredentials.class.getName(),
+                UsernamePasswordCredential.class.getName(),
                 AUTHN_METHOD_PASSWORD);
 
         // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
@@ -70,9 +70,9 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public final void populateAttributes(final AuthenticationBuilder builder, final Credentials credentials) {
+    public final void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 
-        final String credentialsClass = credentials.getClass().getName();
+        final String credentialsClass = credential.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
 
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
@@ -83,7 +83,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
      * defaults. Mapping should be of the following type:
      * <p>(<String version of Package/Class Name> <SAML Type>)
      * <p>
-     * Example: (<"org.jasig.cas.authentication.principal.HttpBasedServiceCredentials">
+     * Example: (<"org.jasig.cas.authentication.HttpBasedServiceCredential">
      * <SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client>)
      *
      * @param userDefinedMappings map of user defined authentication types.

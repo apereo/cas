@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.authentication;
 
 import static org.junit.Assert.*;
 
@@ -27,11 +27,11 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.0
  */
-public class UsernamePasswordCredentialsTests  {
+public class PasswordCredentialTests {
 
     @Test
     public void testSetGetUsername() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String userName = "test";
 
         c.setUsername(userName);
@@ -41,7 +41,7 @@ public class UsernamePasswordCredentialsTests  {
 
     @Test
     public void testSetGetPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String password = "test";
 
         c.setPassword(password);

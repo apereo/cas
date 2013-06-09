@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
         final Authentication authentication = TestUtils.getAuthentication(
                 new SimplePrincipal("test"),
                 Collections.<String, Object>singletonMap(
-                        RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
