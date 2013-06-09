@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * An extension point to the Authentication process that allows CAS to provide
  * additional attributes related to the overall Authentication (such as
@@ -37,7 +35,7 @@ public interface AuthenticationMetaDataPopulator {
      * Adds authentication metadata attributes on successful authentication of the given credential.
      *
      * @param builder Builder object that temporarily holds authentication metadata.
-     * @param credentials Successfully authenticated credentials.
+     * @param credential Successfully authenticated credential.
      */
-    void populateAttributes(AuthenticationBuilder builder, Credentials credentials);
+    void populateAttributes(AuthenticationBuilder builder, Credential credential);
 }

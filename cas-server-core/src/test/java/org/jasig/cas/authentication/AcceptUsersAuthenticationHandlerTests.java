@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -54,7 +52,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsSpecialCharacters() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
         assertTrue(this.authenticationHandler.authenticate(c));
@@ -63,7 +61,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -74,7 +72,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     public void testDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                    .supports(new HttpBasedServiceCredentials(new URL(
+                    .supports(new HttpBasedServiceCredential(new URL(
                             "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -83,7 +81,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testAuthenticatesUserInMap() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -97,7 +95,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsUserNotInMap() throws AuthenticationException {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -107,7 +105,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullUserName() throws AuthenticationException {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -117,7 +115,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullUserNameAndPassword() throws AuthenticationException {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -127,7 +125,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
 
     @Test
     public void testFailsNullPassword() throws AuthenticationException{
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword(null);

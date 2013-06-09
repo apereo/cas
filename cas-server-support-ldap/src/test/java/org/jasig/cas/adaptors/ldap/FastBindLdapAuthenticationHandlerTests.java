@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.*;
@@ -40,7 +40,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
 
 
     public void testSuccessUsernamePassword() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.fastBindTestConfig.getExistsCredential());
         c.setPassword(this.fastBindTestConfig.getExistsSuccessPassword());
 
@@ -49,7 +49,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
 
 
     public void testSuccessUsernameSaslMd5Password() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.saslMd5FastBindTestConfig.getExistsCredential());
         c.setPassword(this.saslMd5FastBindTestConfig.getExistsSuccessPassword());
 
@@ -58,7 +58,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
 
 
     public void testBadUsernamePassword() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.fastBindTestConfig.getExistsCredential());
         c.setPassword(this.fastBindTestConfig.getExistsFailurePassword());
 
@@ -67,7 +67,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
 
 
     public void testNotExistsUsername() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.fastBindTestConfig.getNotExistsCredential());
         c.setPassword("");
 

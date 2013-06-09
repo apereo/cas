@@ -21,10 +21,10 @@ package org.jasig.cas.authentication;
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Basic credential metadata implementation that stores credential class name as identifier.
+ * Basic credential metadata implementation that stores the original credential ID and the original credential type.
+ * This can be used as a simple converter for any {@link Credential} that doesn't implement {@link CredentialMetaData}.
  *
  * @author Marvin S. Addison
  * @since 4.0
@@ -32,18 +32,22 @@ import org.jasig.cas.authentication.principal.Credentials;
 public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
 
     /** Serialization version marker. */
-    private static final long serialVersionUID = -9153771561241003144L;
+    private static final long serialVersionUID = 4929579849241505377L;
 
     /** Credential type unique identifier. */
     private final String id;
+
+    /** Type of original credential. */
+    private Class<? extends Credential> credentialClass;
 
     /**
      * Creates a new instance from the given credential.
      *
      * @param credential Credential for which metadata should be created.
      */
-    public BasicCredentialMetaData(final Credentials credential) {
-        this.id = credential.getClass().getName();
+    public BasicCredentialMetaData(final Credential credential) {
+        this.id = credential.getId();
+        this.credentialClass = credential.getClass();
     }
 
     @Override
@@ -51,13 +55,26 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
         return this.id;
     }
 
+    /**
+     * Gets the type of the original credential.
+     *
+     * @return Non-null credential class.
+     */
+    public Class<? extends Credential> getCredentialClass() {
+        return this.credentialClass;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(19, 21).append(this.id).toHashCode();
+        return new HashCodeBuilder(19, 21).append(this.id).append(this.credentialClass).toHashCode();
     }
 
     @Override
     public boolean equals(final Object other) {
-        return other instanceof CredentialMetaData && this.id.equals(((CredentialMetaData) other).getId());
+        if (!(other instanceof BasicCredentialMetaData)) {
+            return false;
+        }
+        final BasicCredentialMetaData md = (BasicCredentialMetaData) other;
+        return this.id.equals(md.getId()) && this.credentialClass.equals(md.getCredentialClass());
     }
 }

@@ -27,9 +27,9 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.OneTimePasswordCredentials;
+import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.util.StringUtils;
 
@@ -58,9 +58,9 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
     }
 
     @Override
-    public HandlerResult authenticate(final Credentials credential)
+    public HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
-        final OneTimePasswordCredentials otp = (OneTimePasswordCredentials) credential;
+        final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
             return new HandlerResult(this, new BasicCredentialMetaData(otp), new SimplePrincipal(otp.getId()));
@@ -69,8 +69,8 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
     }
 
     @Override
-    public boolean supports(final Credentials credential) {
-        return credential instanceof OneTimePasswordCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof OneTimePasswordCredential;
     }
 
     @Override

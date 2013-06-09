@@ -18,26 +18,27 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.springframework.util.Assert;
 
 /**
- * Credentials that are a holder for Spnego init token.
+ * Credential that are a holder for Spnego init token.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-public final class SpnegoCredentials implements Credentials {
+public final class SpnegoCredential implements Credential, Serializable {
 
     /**
      * Unique id for serialization.
      */
-    private static final long serialVersionUID = -4908976823931528L;
+    private static final long serialVersionUID = 84084596791289548L;
 
     /**
      * The Spnego Init Token.
@@ -59,7 +60,7 @@ public final class SpnegoCredentials implements Credentials {
      */
     private final boolean isNtlm;
 
-    public SpnegoCredentials(final byte[] initToken) {
+    public SpnegoCredential(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");
         this.initToken = initToken;
         this.isNtlm = isTokenNtlm(this.initToken);
@@ -89,6 +90,16 @@ public final class SpnegoCredentials implements Credentials {
         return this.isNtlm;
     }
 
+    @Override
+    public String getId() {
+        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
+
     private boolean isTokenNtlm(final byte[] token) {
         if (token == null || token.length < 8) {
             return false;
@@ -102,17 +113,12 @@ public final class SpnegoCredentials implements Credentials {
     }
 
     @Override
-    public String toString() {
-        return this.principal !=null ? this.principal.getId() : "unknown";
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null || !obj.getClass().equals(this.getClass())) {
             return false;
         }
 
-        final SpnegoCredentials c = (SpnegoCredentials) obj;
+        final SpnegoCredential c = (SpnegoCredential) obj;
 
         return Arrays.equals(this.initToken, c.getInitToken())
                 && this.principal.equals(c.getPrincipal())

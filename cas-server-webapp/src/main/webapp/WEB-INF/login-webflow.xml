@@ -24,7 +24,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
+    <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
@@ -117,21 +117,21 @@
 		<transition on="generated" to="viewLoginForm" />
 	</action-state>
     
-	<view-state id="viewLoginForm" view="casLoginView" model="credentials">
+	<view-state id="viewLoginForm" view="casLoginView" model="credential">
         <binder>
             <binding property="username" />
             <binding property="password" />
         </binder>
         <on-entry>
-            <set name="viewScope.commandName" value="'credentials'" />
+            <set name="viewScope.commandName" value="'credential'" />
         </on-entry>
 		<transition on="submit" bind="true" validate="true" to="realSubmit">
-            <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credentials)" />
+            <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credential)" />
         </transition>
 	</view-state>
 
   	<action-state id="realSubmit">
-        <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credentials, messageContext)" />
+        <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
         <!--
 	      To enable LPPE on the 'warn' replace the below transition with:
 	      <transition on="warn" to="passwordPolicyCheck" />

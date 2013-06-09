@@ -24,7 +24,7 @@ import com.github.inspektr.common.web.ClientInfo;
 import com.github.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -105,8 +105,8 @@ AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
         return null;
     }
 
-    private UsernamePasswordCredentials badCredentials(final String username) {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+    private UsernamePasswordCredential badCredentials(final String username) {
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
         credentials.setPassword("badpassword");
         return credentials;

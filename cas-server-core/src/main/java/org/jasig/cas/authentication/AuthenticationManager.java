@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * Authenticates one or more credentials.
  *
@@ -46,5 +44,5 @@ public interface AuthenticationManager {
      * @throws AuthenticationException On authentication failure. The exception contains details
      * on each of the credentials that failed to authenticate.
      */
-    Authentication authenticate(final Credentials ... credentials) throws AuthenticationException;
+    Authentication authenticate(final Credential... credentials) throws AuthenticationException;
 }
