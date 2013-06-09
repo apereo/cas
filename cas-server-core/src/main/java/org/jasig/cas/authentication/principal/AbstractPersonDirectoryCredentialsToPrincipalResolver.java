@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -48,10 +49,10 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
-    public final Principal resolvePrincipal(final Credentials credentials) {
+    public final Principal resolvePrincipal(final Credential credential) {
         log.debug("Attempting to resolve a principal...");
 
-        final String principalId = extractPrincipalId(credentials);
+        final String principalId = extractPrincipalId(credential);
 
         if (principalId == null) {
             return null;
@@ -85,12 +86,12 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     }
 
     /**
-     * Extracts the id of the user from the provided credentials.
+     * Extracts the id of the user from the provided credential.
      *
-     * @param credentials the credentials provided by the user.
+     * @param credential the credential provided by the user.
      * @return the username, or null if it could not be resolved.
      */
-    protected abstract String extractPrincipalId(Credentials credentials);
+    protected abstract String extractPrincipalId(Credential credential);
 
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;

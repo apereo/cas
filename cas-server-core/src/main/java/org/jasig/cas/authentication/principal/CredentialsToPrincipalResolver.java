@@ -18,22 +18,24 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.authentication.Credential;
+
 /**
- * CredentialsToPrincipalResolvers extract information from the Credentials
- * provided and determine the Principal represented by those credentials.
+ * CredentialsToPrincipalResolvers extract information from the Credential
+ * provided and determine the Principal represented by those credential.
  * <p>
  * A minimal Principal object just has one ID value. This can be extended with
  * richer objects containing more properties. The SimplePrincipal class
  * implementing this interface just stores a userid.
  * </p>
  * <p>
- * The Credentials typically contains a userid typed by the user or a
+ * The Credential typically contains a userid typed by the user or a
  * Certificate presented by the browser. In the simplest case the userid is
  * stored as the Principal ID. The Certificate is a more complicated case
  * because the ID may have to be extracted from the Subject DN or from one of
  * the alternate subject names. In a few cases, the institution may prefer the
  * ID to be a student or employee ID number that can only be obtained by
- * database lookup using information supplied in the Credentials.
+ * database lookup using information supplied in the Credential.
  * </p>
  * <p>
  * The Resolver is free to obtain additional information about the user and
@@ -49,26 +51,26 @@ package org.jasig.cas.authentication.principal;
  * This is a published and supported CAS Server 3 API.
  * </p>
  * @see org.jasig.cas.authentication.principal.Principal
- * @see org.jasig.cas.authentication.principal.Credentials
+ * @see Credential
  */
 public interface CredentialsToPrincipalResolver {
 
     /**
-     * Turn Credentials into a Principal object by analyzing the information
-     * provided in the Credentials and constructing a Principal object based on
-     * that information or information derived from the Credentials object.
+     * Turn Credential into a Principal object by analyzing the information
+     * provided in the Credential and constructing a Principal object based on
+     * that information or information derived from the Credential object.
      *
-     * @param credentials from which to resolve Principal
+     * @param credential from which to resolve Principal
      * @return resolved Principal, or null if the principal could not be resolved.
      */
-    Principal resolvePrincipal(Credentials credentials);
+    Principal resolvePrincipal(Credential credential);
 
     /**
-     * Determine if a credentials type is supported by this resolver. This is
+     * Determine if a credential type is supported by this resolver. This is
      * checked before calling resolve principal.
      *
-     * @param credentials The credentials to check if we support.
-     * @return true if we support these credentials, false otherwise.
+     * @param credential The credential to check if we support.
+     * @return true if we support these credential, false otherwise.
      */
-    boolean supports(Credentials credentials);
+    boolean supports(Credential credential);
 }
