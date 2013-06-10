@@ -19,6 +19,8 @@
 package org.jasig.cas.monitor;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -28,9 +30,11 @@ import org.springframework.util.Assert;
  * @since 3.5.0
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
+    
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    
     /** Monitor name. */
     protected String name;
-
 
     /**
      * @return Monitor name.
