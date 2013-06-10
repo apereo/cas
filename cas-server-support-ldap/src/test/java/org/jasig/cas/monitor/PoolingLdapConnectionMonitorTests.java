@@ -24,32 +24,32 @@ import java.util.concurrent.Executors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.pool.factory.PoolingContextSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit test for {@link PoolingContextSourceMonitor} class.
+ * Unit test for {@link PoolingLdapConnectionMonitor} class.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/ldapContext-test.xml")
-public class PoolingContextSourceMonitorTests {
+public class PoolingLdapConnectionMonitorTests {
 
     @Autowired
-    private PoolingContextSource poolingContextSource;
-    private PoolingContextSourceMonitor monitor;
+    private PooledConnectionFactory poolingContextSource;
+    private PoolingLdapConnectionMonitor monitor;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Before
     public void setUp() throws Exception {
-        monitor = new PoolingContextSourceMonitor(poolingContextSource);
+        monitor = new PoolingLdapConnectionMonitor(poolingContextSource);
         monitor.setExecutor(executor);
     }
 

@@ -20,40 +20,42 @@ package org.jasig.cas.monitor;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.ldap.pool.DirContextType;
-import org.springframework.ldap.pool.validation.DirContextValidator;
+import org.jasig.cas.util.LdapUtils;
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapException;
+import org.ldaptive.pool.Validator;
 
 /**
- * Monitor that observes a {@link org.springframework.ldap.core.support.LdapContextSource}.
+ * Monitor that observes a {@link ConnectionFactory}
  *
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
+public class LdapConnectionMonitor extends AbstractNamedMonitor<Status> {
 
-    @NotNull
-    private final LdapContextSource contextSource;
-
-    @NotNull
-    private final DirContextValidator dirContextValidator;
-
-
+    private ConnectionFactory factory = null;
+    private Validator<Connection> validator = null;
     /**
      * Creates a new monitor that observes the given LDAP context source.
      *
-     * @param source LDAP context source to observe.
-     * @param validator LDAP context validator.
      */
-    public ContextSourceMonitor(final LdapContextSource source, final DirContextValidator validator) {
-        this.contextSource = source;
-        this.dirContextValidator = validator;
+    public LdapConnectionMonitor(@NotNull final ConnectionFactory factory,@NotNull final Validator<Connection> validator) {
+        this.factory = factory;
+        this.validator = validator;
     }
 
     @Override
     public Status observe() {
-        if (dirContextValidator.validateDirContext(DirContextType.READ_ONLY, contextSource.getReadOnlyContext())) {
-            return Status.OK;
+        Connection c = null;
+        try {
+            c = factory.getConnection();
+            c.open();
+            return validator.validate(c) ? Status.OK : Status.ERROR;
+        } catch (final LdapException e) {
+            log.debug(e.getMessage(), e);
+        } finally {
+            LdapUtils.closeConnection(c);
         }
         return Status.ERROR;
     }
