@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.ldap.services;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.jasig.cas.RequiredConfigurationProfileValueSource;
@@ -83,7 +84,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
         rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
-        
+        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
         this.dao.save(rs);
 
         list1 = this.dao.load();
