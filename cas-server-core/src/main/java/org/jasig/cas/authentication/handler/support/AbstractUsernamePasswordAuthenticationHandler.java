@@ -61,11 +61,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
             throws GeneralSecurityException, PreventedException {
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
         if (userPass.getUsername() == null) {
-            throw new AccountNotFoundException();
+            throw new AccountNotFoundException("Username is null.");
         }
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (transformedUsername == null) {
-            throw new AccountNotFoundException();
+            throw new AccountNotFoundException("Transformed username is null.");
         }
         final Principal principal = authenticateUsernamePasswordInternal(
                 transformedUsername,

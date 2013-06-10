@@ -88,6 +88,6 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
                     new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
         }
 
-        throw new FailedLoginException();
+        throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
     }
 }
