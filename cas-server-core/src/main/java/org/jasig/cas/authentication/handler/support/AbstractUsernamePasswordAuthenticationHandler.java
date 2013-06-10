@@ -63,12 +63,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         if (userPass.getUsername() == null) {
             throw new AccountNotFoundException();
         }
-        final String transformedUsename = this.principalNameTransformer.transform(userPass.getUsername());
-        if (transformedUsename == null) {
+        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        if (transformedUsername == null) {
             throw new AccountNotFoundException();
         }
         final Principal principal = authenticateUsernamePasswordInternal(
-                transformedUsename,
+                transformedUsername,
                 userPass.getPassword());
         return new HandlerResult(this, new BasicCredentialMetaData(credential), principal);
     }
