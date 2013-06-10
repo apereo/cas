@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -105,13 +106,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 line = bufferedReader.readLine();
             }
         } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (final IOException e) {
-                log.error("Error closing credential file", e);
-            }
+            IOUtils.closeQuietly(bufferedReader);
         }
         return null;
     }
