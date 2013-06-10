@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit test for {@link LdaptivePersonAttributeDao}.
+ * Unit test for {@link LdapPersonAttributeDao}.
  *
  * @author Marvin S. Addison
  * @since 4.0
@@ -51,7 +51,7 @@ import static org.junit.Assert.assertTrue;
 public class LdaptivePersonAttributeDaoTests {
 
     @Autowired
-    private LdaptivePersonAttributeDao attributeDao;
+    private LdapPersonAttributeDao attributeDao;
 
     @Autowired
     @Qualifier("testPrincipals")
