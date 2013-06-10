@@ -35,7 +35,6 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
