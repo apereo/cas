@@ -18,15 +18,18 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import javax.naming.directory.SearchControls;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.core.LdapTemplate;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.DerefAliases;
+import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
+import org.ldaptive.SortBehavior;
+import org.ldaptive.handler.SearchEntryHandler;
 
 /**
  * @author Scott Battaglia
@@ -43,12 +46,11 @@ AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     /** LdapTemplate to execute ldap queries. */
     @NotNull
-    private LdapTemplate ldapTemplate;
+    private ConnectionFactory connectionFactory;
 
-    /** The filter path to the lookup value of the user. */
-    @NotNull
-    private String filter;
-
+    /** Time out. **/
+    private int timeout = DEFAULT_TIMEOUT;
+    
     /** The attribute that contains the value that should become the principal. */
     @NotNull
     private String[] attributeIds;
@@ -57,56 +59,33 @@ AbstractPersonDirectoryCredentialsToPrincipalResolver {
     @NotNull
     private String searchBase;
 
-    /** The scope. */
-    @Min(0)
-    @Max(2)
-    private int scope = SearchControls.SUBTREE_SCOPE;
+    private SearchFilter searchFilter;
 
-    /** The amount of time to wait. */
-    private int timeout = DEFAULT_TIMEOUT;
+    private boolean followReferrals = true;
 
-    protected final SearchControls getSearchControls() {
-        final SearchControls constraints = new SearchControls();
-        log.debug("returning search controls: scope={}; search base={}; attributes={}; timeout=",
-                this.scope, this.searchBase, Arrays.toString(this.attributeIds), this.timeout);
+    private long size = DEFAULT_MAX_NUMBER_OF_RESULTS;
 
-        constraints.setSearchScope(this.scope);
-        constraints.setReturningAttributes(this.attributeIds);
-        constraints.setTimeLimit(this.timeout);
-        constraints.setCountLimit(DEFAULT_MAX_NUMBER_OF_RESULTS);
-        return constraints;
-    }
+    private SortBehavior sortBehavior = SortBehavior.getDefaultSortBehavior();
+
+    private SearchScope searchScope = SearchScope.SUBTREE;
+
+    private List<SearchEntryHandler> searchEntryHandlers = Collections.emptyList();
+
+    private DerefAliases derefAliases = DerefAliases.ALWAYS;
 
     /**
      * Method to set the datasource and generate a LDAPTemplate.
-     * @param contextSource the datasource to use.
+     * @param connectionFactory the datasource to use.
      */
-    public final void setContextSource(final ContextSource contextSource) {
-        this.ldapTemplate = new LdapTemplate(contextSource);
-
-        // Fix for http://www.ja-sig.org/issues/browse/CAS-663
-        this.ldapTemplate.setIgnorePartialResultException(true);
+    public final void setConnectionFactory(final ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
     /**
      * @param filter The LDAP filter to set.
      */
-    public final void setFilter(final String filter) {
-        this.filter = filter;
-    }
-
-    /**
-     * @param principalAttributeName The principalAttributeName to set.
-     */
-    public final void setPrincipalAttributeName(final String principalAttributeName) {
-        this.attributeIds = new String[] {principalAttributeName};
-    }
-
-    /**
-     * @param scope The scope to set.
-     */
-    public final void setScope(final int scope) {
-        this.scope = scope;
+    public final void setFilter(final String filter, final Object... parameters) {
+        this.searchFilter = new SearchFilter(filter, parameters);
     }
 
     /**
@@ -123,27 +102,97 @@ AbstractPersonDirectoryCredentialsToPrincipalResolver {
         this.timeout = timeout;
     }
 
-
-    protected final String getFilter() {
-        return this.filter;
-    }
-
-
     protected final String[] getAttributeIds() {
         return this.attributeIds;
     }
-
 
     protected final String getSearchBase() {
         return this.searchBase;
     }
 
-
     protected final int getTimeout() {
         return this.timeout;
     }
 
-    protected final LdapTemplate getLdapTemplate() {
-        return this.ldapTemplate;
+    protected final ConnectionFactory getConnectionFactory() {
+        return this.connectionFactory;
     }
+    
+    protected final SearchFilter getSearchFilter() {
+        return this.searchFilter;
+    }
+    
+    protected final SearchRequest getSearchRequest() {
+        final SearchRequest request = new SearchRequest();
+        request.setFollowReferrals(getFollowReferrals());
+        request.setBaseDn(getSearchBase());
+        request.setSearchFilter(getSearchFilter());
+        request.setReturnAttributes(getAttributeIds());
+        request.setTimeLimit(getTimeout());
+        request.setSizeLimit(getSize());
+        request.setSortBehavior(getSortBehavior());
+        request.setSearchScope(getSearchScope());
+        request.setDerefAliases(getDerefAliases());
+        final SearchEntryHandler[] handlers = getSearchEntryHandlers().toArray(new SearchEntryHandler[] {});
+        request.setSearchEntryHandlers(handlers);
+        
+        return request;
+    }
+
+    protected final DerefAliases getDerefAliases() {
+        return this.derefAliases;
+    }
+
+    protected final List<SearchEntryHandler> getSearchEntryHandlers() {
+        return this.searchEntryHandlers;
+    }
+
+    protected final SearchScope getSearchScope() {
+        return this.searchScope;
+    }
+
+    protected final SortBehavior getSortBehavior() {
+        return this.sortBehavior;
+    }
+
+    protected final long getSize() {
+        return this.size;
+    }
+
+    protected final boolean getFollowReferrals() {        
+        return this.followReferrals;
+    }
+    
+    public final void setAttributeIds(String[] attributeIds) {
+        this.attributeIds = attributeIds;
+    }
+
+    public final void setSearchFilter(SearchFilter searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    public final void setFollowReferrals(boolean followReferrals) {
+        this.followReferrals = followReferrals;
+    }
+
+    public final void setSize(long size) {
+        this.size = size;
+    }
+
+    public final void setSortBehavior(SortBehavior sortBehavior) {
+        this.sortBehavior = sortBehavior;
+    }
+
+    public final void setSearchScope(SearchScope searchScope) {
+        this.searchScope = searchScope;
+    }
+
+    public final void setSearchEntryHandlers(List<SearchEntryHandler> searchEntryHandlers) {
+        this.searchEntryHandlers = searchEntryHandlers;
+    }
+
+    public final void setDerefAliases(DerefAliases derefAliases) {
+        this.derefAliases = derefAliases;
+    }
+
 }
