@@ -66,13 +66,13 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         try {
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (passwordOnRecord == null) {
-                throw new AccountNotFoundException();
+                throw new AccountNotFoundException(username + " not found in backing file.");
             }
             if (password != null && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
                 return new SimplePrincipal(username);
             }
         } catch (final IOException e) {
-            throw new PreventedException(e);
+            throw new PreventedException("IO error reading backing file", e);
         }
         throw new FailedLoginException();
     }
