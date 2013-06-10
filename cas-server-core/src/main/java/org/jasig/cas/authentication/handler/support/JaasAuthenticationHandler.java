@@ -36,19 +36,32 @@ import org.springframework.util.Assert;
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
  * authentication to JAAS.
+ *
  * <p>
  * Using the JAAS Authentication Handler requires you to configure the
  * appropriate JAAS modules. You can specify the location of a jass.conf file
- * using the VM parameter
- * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf.
+ * using the following VM parameter:
+ * <pre>
+ * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf
+ * </pre>
+ *
  * <p>
  * This example jaas.conf would try Kerberos based authentication, then try LDAP
- * authentication CAS { com.sun.security.auth.module.Krb5LoginModule sufficient
- * client=TRUE debug=FALSE useTicketCache=FALSE;
- * edu.uconn.netid.jaas.LDAPLoginModule sufficient<br />
- * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"<br />
- * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"<br />
- * java.naming.security.credential="password" Attribute="uid" startTLS="true"; };<br />
+ * authentication:
+ * <pre>
+ * CAS {
+ *   com.sun.security.auth.module.Krb5LoginModule sufficient
+ *     client=TRUE
+ *     debug=FALSE
+ *     useTicketCache=FALSE;
+ *   edu.uconn.netid.jaas.LDAPLoginModule sufficient
+ *     java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"
+ *     java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"
+ *     java.naming.security.credentials="password"
+ *     Attribute="uid"
+ *     startTLS="true";
+ * };
+ * </pre>
  *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
  * @author Marvin S. Addison
