@@ -22,7 +22,10 @@ import org.jasig.cas.services.RegisteredService;
 import org.ldaptive.LdapEntry;
 
 /**
- * Misagh Moayyed
+ * Strategy interface to define operations required when mapping LDAP
+ * entries to registered services and vice versa. 
+ * @see DefaultLdapServiceMapper
+ * @author Misagh Moayyed
  */
 public interface LdapRegisteredServiceMapper {
 

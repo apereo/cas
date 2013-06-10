@@ -30,13 +30,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 
 import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Misagh Moayyed
+ * Default implementation of {@link LdapRegisteredServiceMapper} that is able
+ * to map ldap entries to {@link RegisteredService} instances based on
+ * certain attributes names. This implementation also respects the object class
+ * attribute of LDAP entries via {@link LdapUtils#OBJECTCLASS_ATTRIBUTE}.
+ * @author Misagh Moayyed
  */
 public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapper {
 
@@ -81,17 +88,20 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     @NotNull
     private String evaluationOrderAttribute = "casEvaluationOrder";
 
+    @NotNull
+    private String requiredHandlersAttribute = "casRequiredHandlers";
+    
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
         final String newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating new DN entry [{}]", newDn);
 
-        if (svc.getId() == -1) {
+        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) svc).setId(newDn.hashCode());
         }
 
-        final Collection<LdapAttribute> attrs = new LinkedList<LdapAttribute>();
+        final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
         attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
         attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
 
@@ -107,6 +117,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
 
         attrs.add(new LdapAttribute(this.serviceAllowedAttributesAttribute, svc.getAllowedAttributes().toArray(new String[] {})));
+        attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[] {})));
+               
         attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass));
 
         return new LdapEntry(newDn, attrs);
@@ -136,11 +148,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
 
-                final LdapAttribute attrs = entry.getAttribute(this.serviceAllowedAttributesAttribute);
-                if (attrs != null) {
-                    final Collection<String> attributes = attrs.getStringValues();
-                    s.setAllowedAttributes(new LinkedList<String>(attributes));
-                }
+                s.setAllowedAttributes(new ArrayList<String>(getMultiValuedAttributeValues(entry, this.serviceAllowedAttributesAttribute)));
+                s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
             }
             return s;
         }
@@ -187,6 +196,10 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.serviceAllowedAttributesAttribute = serviceAllowedAttributesAttribute;
     }
 
+    public void setRequiredHandlersAttribute(final String handlers) {
+        this.requiredHandlersAttribute = handlers;
+    }
+    
     private boolean isValidRegexPattern(final String pattern) {
         try {
             Pattern.compile(pattern);
@@ -197,6 +210,14 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return true;
     }
 
+    private Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
+        final LdapAttribute attrs = entry.getAttribute(attrName);
+        if (attrs != null) {
+            return attrs.getStringValues();
+        }
+        return Collections.emptyList();
+    }
+    
     private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
         if (isValidRegexPattern(id)) {
             return new RegexRegisteredService();

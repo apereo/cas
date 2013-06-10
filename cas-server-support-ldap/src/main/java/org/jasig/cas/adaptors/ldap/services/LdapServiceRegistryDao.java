@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +35,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
-import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -46,10 +46,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.SearchScope;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.cache.Cache;
-import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,22 +65,19 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapServiceMapper();
 
     private Cache<SearchRequest> cacheStrategy = null;
-    private String baseDn = "";
-    private int sizeLimit = 0;
-    private DerefAliases derefAliases = DerefAliases.ALWAYS;
-    private boolean followReferrals = true;
-    private boolean typesOnly = false;
-    private SearchScope searchScope = SearchScope.SUBTREE;
-    private SortBehavior sortBehavior = SortBehavior.getDefaultSortBehavior();
-    private SearchEntryHandler[] searchEntryHandlers;
-    private String searchFilter = null;
-    private String loadFilter = null;
-    private String[] attributesToReturn = null;
-    private int timeLimit = 0;
-
+    
+    @NotNull
+    private String searchFilter;
+    
+    @NotNull
+    private String loadFilter;
+    
+    @NotNull
+    private SearchRequest searchRequest;
+    
     @Override
     public RegisteredService save(final RegisteredService rs) {
-        if (rs.getId() != -1) {
+        if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             return update(rs);
         }
 
@@ -92,15 +86,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
             connection = this.connectionFactory.getConnection();
             final AddOperation operation = new AddOperation(connection);
 
-            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-            return rs;
         } catch (final LdapException e) {
             log.error(e.getMessage(), e);
         } finally {
             LdapUtils.closeConnection(connection);
         }
-        return null;
+        return rs;
     }
 
     private RegisteredService update(final RegisteredService rs) {
@@ -114,23 +107,21 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
                 connection = this.connectionFactory.getConnection();
                 final ModifyOperation operation = new ModifyOperation(connection);
 
-                final List<AttributeModification> mods = new LinkedList<AttributeModification>();
+                final List<AttributeModification> mods = new ArrayList<AttributeModification>();
 
-                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
                 for (final LdapAttribute attr : entry.getAttributes()) {
                     mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
                 }
                 final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
                 operation.execute(request);
-
-                return rs;
             }
         } catch (final LdapException e) {
             log.error(e.getMessage(), e);
         } finally {
             LdapUtils.closeConnection(connection);
         }
-        return null;
+        return rs;
     }
 
     @Override
@@ -208,16 +199,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private Response<SearchResult> executeSearchOperation(final Connection connection, final SearchFilter filter) throws LdapException {
         final SearchOperation searchOperation = new SearchOperation(connection, this.cacheStrategy);
 
-        final SearchRequest searchRequest = new SearchRequest(this.baseDn, filter, this.attributesToReturn);
-        searchRequest.setReturnAttributes(this.attributesToReturn);
-        searchRequest.setSearchEntryHandlers(this.searchEntryHandlers);
-        searchRequest.setDerefAliases(this.derefAliases);
-        searchRequest.setFollowReferrals(this.followReferrals);
-        searchRequest.setSearchScope(this.searchScope);
-        searchRequest.setSizeLimit(this.sizeLimit);
-        searchRequest.setSortBehavior(this.sortBehavior);
-        searchRequest.setTypesOnly(this.typesOnly);
-        searchRequest.setTimeLimit(this.timeLimit);
+        this.searchRequest.setSearchFilter(filter);
 
         log.debug("Using search request [{}]", searchRequest.toString());
         return searchOperation.execute(searchRequest);
@@ -235,38 +217,6 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         this.ldapServiceMapper = ldapServiceMapper;
     }
 
-    public final void setBaseDn(@NotNull final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public final void setSizeLimit(final int sizeLimit) {
-        this.sizeLimit = sizeLimit;
-    }
-
-    public final void setDerefAliases(final DerefAliases derefAliases) {
-        this.derefAliases = derefAliases;
-    }
-
-    public final void setFollowReferrals(final boolean followReferrals) {
-        this.followReferrals = followReferrals;
-    }
-
-    public final void setTypesOnly(final boolean typesOnly) {
-        this.typesOnly = typesOnly;
-    }
-
-    public final void setSearchScope(final SearchScope searchScope) {
-        this.searchScope = searchScope;
-    }
-
-    public final void setSortBehavior(final SortBehavior sortBehavior) {
-        this.sortBehavior = sortBehavior;
-    }
-
-    public final void setSearchEntryHandlers(final SearchEntryHandler[] searchEntryHandlers) {
-        this.searchEntryHandlers = searchEntryHandlers;
-    }
-
     public void setSearchFilter(@NotNull final String filter) {
         this.searchFilter = filter;
     }
@@ -275,11 +225,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         this.loadFilter = filter;
     }
 
-    public void setAttributesToReturn(final String[] attrs) {
-        this.attributesToReturn = attrs;
-    }
-
-    public void setTimeLimit(final int limit) {
-        this.timeLimit = limit;
+    public void setSearchRequest(@NotNull final SearchRequest request) {
+        this.searchRequest = request;
     }
 }
