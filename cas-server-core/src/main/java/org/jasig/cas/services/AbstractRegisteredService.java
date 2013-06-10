@@ -70,7 +70,7 @@ public abstract class AbstractRegisteredService
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = -1;
+    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @JoinTable(name = "rs_attributes", joinColumns = @JoinColumn(name = "RegisteredServiceImpl_id"))

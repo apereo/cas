@@ -32,6 +32,10 @@ import org.jasig.cas.authentication.principal.Service;
  * @since 3.1
  */
 public interface RegisteredService extends Cloneable, Serializable {
+    
+    /** constant representing the identifier of a newly about-to-be-created registered service. **/
+    final long INITIAL_IDENTIFIER_VALUE = Long.MAX_VALUE;
+    
     /**
      * Is this application currently allowed to use CAS?
      *
@@ -78,8 +82,8 @@ public interface RegisteredService extends Cloneable, Serializable {
     String getServiceId();
 
     /**
-     * The numeric identifier for this service.
-     *
+     * The numeric identifier for this service. Implementations
+     * are expected to initialize the id with the value of {@link #INITIAL_IDENTIFIER_VALUE}.
      * @return the numeric identifier for this service.
      */
     long getId();
