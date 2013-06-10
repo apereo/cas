@@ -63,7 +63,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
         } catch (final UnknownHostException e) {
             log.debug("Unknown host {}", c.getRemoteAddress());
         }
-        throw new FailedLoginException();
+        throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
     }
 
     @Override

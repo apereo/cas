@@ -68,10 +68,10 @@ AbstractJdbcUsernamePasswordAuthenticationHandler implements InitializingBean {
         try {
             count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, encyptedPassword);
         } catch (final DataAccessException e) {
-            throw new PreventedException(e);
+            throw new PreventedException("SQL exception while executing query for " + username, e);
         }
         if (count == 0) {
-            throw new FailedLoginException();
+            throw new FailedLoginException(username + " not found with SQL query.");
         }
         return new SimplePrincipal(username);
     }

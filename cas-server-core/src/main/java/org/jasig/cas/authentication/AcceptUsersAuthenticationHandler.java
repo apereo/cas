@@ -62,7 +62,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
         if (cachedPassword == null) {
            log.debug("{} was not found in the map.", username);
-           throw new AccountNotFoundException();
+           throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
         final String encodedPassword = this.getPasswordEncoder().encode(password);

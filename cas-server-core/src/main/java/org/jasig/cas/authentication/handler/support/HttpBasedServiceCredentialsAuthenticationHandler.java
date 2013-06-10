@@ -64,11 +64,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         if (this.requireSecure && !httpCredential.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
             log.debug("Authentication failed because url was not secure.");
-            throw new FailedLoginException();
+            throw new FailedLoginException(httpCredential.getCallbackUrl() + " is not an HTTPS endpoint as required.");
         }
-        log.debug("Attempting to resolve credential for {}", httpCredential);
+        log.debug("Attempting to authenticate {}", httpCredential);
         if (!this.httpClient.isValidEndPoint(httpCredential.getCallbackUrl())) {
-            throw new FailedLoginException();
+            throw new FailedLoginException(
+                    httpCredential.getCallbackUrl() + " sent an unacceptable response status code");
         }
         return new HandlerResult(this, httpCredential, new SimplePrincipal(httpCredential.getId()));
     }

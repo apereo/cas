@@ -52,7 +52,7 @@ public final class OpenIdCredentialsAuthenticationHandler extends AbstractAuthen
                         TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
-            throw new FailedLoginException();
+            throw new FailedLoginException("TGT is null or expired.");
         }
         final Principal principal = t.getAuthentication().getPrincipal();
         if (!principal.getId().equals(c.getUsername())) {

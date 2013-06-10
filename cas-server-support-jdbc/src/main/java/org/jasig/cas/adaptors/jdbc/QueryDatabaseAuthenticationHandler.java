@@ -56,12 +56,16 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
             if (!dbPassword.equals(encryptedPassword)) {
-                throw new FailedLoginException();
+                throw new FailedLoginException("Password does not match value on record.");
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
-            throw new AccountNotFoundException();
+            if (e.getActualSize() == 0) {
+                throw new AccountNotFoundException(username + " not found with SQL query");
+            } else {
+                throw new FailedLoginException("Multiple records found for " + username);
+            }
         } catch (final DataAccessException e) {
-            throw new PreventedException(e);
+            throw new PreventedException("SQL exception while executing query for " + username, e);
         }
         return new SimplePrincipal(username);
     }
