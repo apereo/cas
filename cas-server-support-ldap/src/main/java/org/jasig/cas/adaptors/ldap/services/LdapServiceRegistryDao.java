@@ -192,7 +192,6 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private Response<SearchResult> searchForServiceById(final Connection connection, final long id) throws LdapException {
         final SearchFilter filter = new SearchFilter(this.searchFilter);
         filter.setParameter(0, id);
-
         return executeSearchOperation(connection, filter);
     }
 
