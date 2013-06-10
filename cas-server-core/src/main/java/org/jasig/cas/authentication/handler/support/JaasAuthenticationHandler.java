@@ -19,6 +19,7 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.security.GeneralSecurityException;
+import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -100,8 +101,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         Principal principal = null;
-        if (lc.getSubject().getPrincipals() != null && lc.getSubject().getPrincipals().size() > 0) {
-            principal = new SimplePrincipal(lc.getSubject().getPrincipals().iterator().next().getName());
+        final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+        if (principals != null && principals.size() > 0) {
+            principal = new SimplePrincipal(principals.iterator().next().getName());
         }
         return principal;
     }
