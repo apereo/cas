@@ -141,8 +141,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:searchFilter="${ldap.resolver.searchFilter}"
         p:connectionFactory-ref="resolverPooledLdapConnectionFactory"
         p:unmappedUsernameAttribute="${ldap.resolver.userNameAttribute}"
-        p:resultAttributeMapping-ref="resultAttributeMapping"
-        p:usernameAttributeProvider-ref="resolverUsernameProvider">
+        p:resultAttributeMapping-ref="resultAttributeMapping">
     <property name="searchControls">
       <bean class="javax.naming.directory.SearchControls"
             p:countLimit="5"
@@ -155,35 +154,19 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="resolver"
       class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver"
       c:connectionFactory-ref="authnConnectionFactory"
-      c:searchExecutor-ref="searchExecutorUser" >
+      c:searchExecutor-ref="searchExecutorUser"
+      p:attributeMapping-ref="resultAttributeMapping"
+      p:attributeRepository-ref="attributeRepository"
+      p:usernameAttribute="${ldap.resolver.userNameAttribute}">
 
     <property name="credentialsToPrincipalResolver">
         <bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
     </property>
-
-    <!-- Attributes fetched by and only available to the ldap resolver itself.
-         These are to only be used internally if/when needed and are not
-         related to the attribute policy resolution of CAS in anyway. -->
-    <property name="attributeMapping" ref="resultAttributeMapping" />
-    <property name="attributeRepository" ref="attributeRepository" />
-    <property name="usernameProvider" ref="resolverUsernameProvider" />
   </bean>
 
-  <bean id="resolverUsernameProvider"
-      class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider"
-      c:usernameAttribute="${ldap.resolver.userNameAttribute}" />
-  
-  <bean id="ldapServiceUsernameProvider"
-      class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider"
-      c:usernameAttribute="${ldap.userdetails.user.attribute}" />
-
-  <bean id="ldapServiceRoleUsernameProvider"
-      class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider"
-      c:usernameAttribute="${ldap.userdetails.role.attribute}" />
-  
   <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
         p:baseDn="${ldap.userdetails.user.baseDn}"
-        p:searchFilter="${ldap.userdetails.user.searchFilter}"
+        p:searchFilter="${ldap.resolver.searchFilter}"
         p:returnAttributes-ref="userDetailsUserAttributes" />
   
   <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
@@ -229,8 +212,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         c:factory-ref="userDetailsPooledLdapConnectionFactory"
         c:roleSearchExecutor-ref="searchExecutorRole"
         c:userSearchExecutor-ref="searchExecutorUser" 
-        c:userAttributeName-ref="ldapServiceUsernameProvider"
-        c:roleAttributeName-ref="ldapServiceRoleUsernameProvider" />
+        c:userAttributeName="${ldap.userdetails.user.attribute}"
+        c:roleAttributeName="${ldap.userdetails.role.attribute}" />
                   
   <util:list id="userDetailsUserAttributes">
     <value>${ldap.userdetails.user.attribute}</value>
