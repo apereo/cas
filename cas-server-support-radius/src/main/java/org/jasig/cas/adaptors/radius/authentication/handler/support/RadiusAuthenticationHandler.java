@@ -18,13 +18,16 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.jasig.cas.adaptors.radius.RadiusServer;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,8 +37,7 @@ import javax.validation.constraints.Size;
  * @author Scott Battaglia
  * @since 3.0
  */
-public class RadiusAuthenticationHandler extends
-AbstractUsernamePasswordAuthenticationHandler {
+public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
     @NotNull
@@ -55,30 +57,26 @@ AbstractUsernamePasswordAuthenticationHandler {
     private boolean failoverOnAuthenticationFailure;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
 
         for (final RadiusServer radiusServer : this.servers) {
+            log.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
-                final boolean response = radiusServer.authenticate(credentials);
-
-                if (response
-                        || !response && !this.failoverOnAuthenticationFailure) {
-                    return response;
+                if (radiusServer.authenticate(username, password)) {
+                    return new SimplePrincipal(username);
+                } else if (!this.failoverOnAuthenticationFailure) {
+                    throw new FailedLoginException();
                 }
-
-                log
-                .debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
-            } catch (Exception e) {
+                log.debug("failoverOnAuthenticationFailure enabled -- trying next server");
+            } catch (final PreventedException e) {
                 if (!this.failoverOnException) {
-                    log
-                    .warn("Failover disabled.  Returning false for authentication request.");
-                } else {
-                    log.warn("Failover enabled.  Trying next RadiusServer.");
+                    throw e;
                 }
+                log.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-
-        return false;
+        throw new FailedLoginException();
     }
 
     /**

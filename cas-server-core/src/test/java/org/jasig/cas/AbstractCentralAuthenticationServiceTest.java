@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,11 +63,4 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
         return this.ticketRegistry;
     }
 
-    protected List<AuthenticationHandler> handlerList(final org.jasig.cas.authentication.handler.AuthenticationHandler ... legacyHandlers) {
-        final List<AuthenticationHandler> handlers = new ArrayList<AuthenticationHandler>();
-        for (org.jasig.cas.authentication.handler.AuthenticationHandler ah : legacyHandlers) {
-            handlers.add(new LegacyAuthenticationHandlerAdapter(ah));
-        }
-        return handlers;
-    }
 }

@@ -20,13 +20,16 @@ package org.jasig.cas.adaptors.ldap.remote;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.GeneralSecurityException;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AbstractAuthenticationHandler;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -37,8 +40,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.2.1
  *
  */
-public final class RemoteAddressAuthenticationHandler implements
-AuthenticationHandler {
+public final class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -51,20 +53,22 @@ AuthenticationHandler {
     private InetAddress inetNetwork = null;
 
     @Override
-    public boolean authenticate(final Credential credential)
-            throws AuthenticationException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final RemoteAddressCredential c = (RemoteAddressCredential) credential;
         try {
             final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
-            return containsAddress(this.inetNetwork, this.inetNetmask, inetAddress);
+            if (containsAddress(this.inetNetwork, this.inetNetmask, inetAddress)) {
+                return new HandlerResult(this, c, new SimplePrincipal(c.getId()));
+            }
         } catch (final UnknownHostException e) {
-            return false;
+            log.debug("Unknown host {}", c.getRemoteAddress());
         }
+        throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential.getClass().equals(RemoteAddressCredential.class);
+        return credential instanceof RemoteAddressCredential;
     }
 
     /**
