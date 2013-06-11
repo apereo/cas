@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit test for {@link LdaptivePersonAttributeDao}.
+ * Unit test for {@link LdapPersonAttributeDao}.
  *
  * @author Marvin S. Addison
  * @since 4.0
@@ -48,10 +48,10 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})
 @ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
 @IfProfileValue(name = "resolverConfig", value = "true")
-public class LdaptivePersonAttributeDaoTests {
+public class LdapPersonAttributeDaoTests {
 
     @Autowired
-    private LdaptivePersonAttributeDao attributeDao;
+    private LdapPersonAttributeDao attributeDao;
 
     @Autowired
     @Qualifier("testPrincipals")
@@ -69,7 +69,7 @@ public class LdaptivePersonAttributeDaoTests {
     }
 
     /**
-     * Determines whether the given attibute maps are equal irrespective of value ordering.
+     * Determines whether the given attribute maps are equal irrespective of value ordering.
      *
      * @param a First set of attributes.
      * @param b Second set of attributes.

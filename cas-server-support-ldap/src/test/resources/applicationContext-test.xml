@@ -27,7 +27,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
@@ -136,7 +136,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:connectionPool-ref="resolverConnectionPool" />
 
   <bean id="attributeRepository"
-        class="org.jasig.cas.persondir.LdaptivePersonAttributeDao"
+        class="org.jasig.cas.persondir.LdapPersonAttributeDao"
         p:baseDN="${ldap.resolver.baseDn}"
         p:searchFilter="${ldap.resolver.searchFilter}"
         p:connectionFactory-ref="resolverPooledLdapConnectionFactory"
@@ -148,7 +148,31 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:timeLimit="5000"
             p:searchScope="2" />
     </property>
+    
   </bean>
+
+  <bean id="resolver"
+      class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver"
+      c:connectionFactory-ref="authnConnectionFactory"
+      c:searchExecutor-ref="searchExecutorUser"
+      p:attributeMapping-ref="resultAttributeMapping"
+      p:attributeRepository-ref="attributeRepository"
+      p:usernameAttribute="${ldap.resolver.userNameAttribute}">
+
+    <property name="credentialsToPrincipalResolver">
+        <bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+    </property>
+  </bean>
+
+  <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
+        p:baseDn="${ldap.userdetails.user.baseDn}"
+        p:searchFilter="${ldap.resolver.searchFilter}"
+        p:returnAttributes-ref="userDetailsUserAttributes" />
+  
+  <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
+        p:baseDn="${ldap.userdetails.role.baseDn}"
+        p:searchFilter="${ldap.userdetails.role.searchFilter}"
+        p:returnAttributes-ref="userDetailsRoleAttributes" />
 
   <!--
      +========================================================================
@@ -183,22 +207,13 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="userDetailsPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="userDetailsConnectionPool" />
 
+
   <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
         c:factory-ref="userDetailsPooledLdapConnectionFactory"
-        c:roleSearchExecutor-ref="searchExecutorRole" c:userSearchExecutor-ref="searchExecutorUser"
-        c:userAttributeName="${ldap.userdetails.user.attribute}" c:roleAttributeName="${ldap.userdetails.role.attribute}" />
-
-  <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
-    p:baseDn="${ldap.userdetails.role.baseDn}"
-    p:searchFilter="${ldap.userdetails.role.searchFilter}"
-    p:returnAttributes-ref="userDetailsRoleAttributes"
-  />
-  
-  <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
-    p:baseDn="${ldap.userdetails.user.baseDn}"
-    p:searchFilter="${ldap.userdetails.user.searchFilter}"
-    p:returnAttributes-ref="userDetailsUserAttributes"
-  />
+        c:roleSearchExecutor-ref="searchExecutorRole"
+        c:userSearchExecutor-ref="searchExecutorUser" 
+        c:userAttributeName="${ldap.userdetails.user.attribute}"
+        c:roleAttributeName="${ldap.userdetails.role.attribute}" />
                   
   <util:list id="userDetailsUserAttributes">
     <value>${ldap.userdetails.user.attribute}</value>
