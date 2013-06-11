@@ -36,7 +36,6 @@
             </cas:proxies>
         </c:if>
 
-        <!-- CAS-1283: Principal attributes-->
         <c:if test="${fn:length(assertion.chainedAuthentications[fn:length(assertion.chainedAuthentications)-1].principal.attributes) > 0}">
             <cas:attributes>
                 <c:forEach var="attr"
