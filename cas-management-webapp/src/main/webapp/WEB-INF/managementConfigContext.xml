@@ -31,11 +31,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!--
 	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
@@ -54,15 +57,14 @@
     may go against a database or LDAP server.  The id should remain "attributeRepository" though.
      -->
     <bean id="attributeRepository"
-        class="org.jasig.services.persondir.support.StubPersonAttributeDao">
-        <property name="backingMap">
-            <map>
-                <entry key="uid" value="uid" />
-                <entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
-                <entry key="groupMembership" value="groupMembership" />
-            </map>
-        </property>
+        class="org.jasig.services.persondir.support.StubPersonAttributeDao" p:backingMap-ref="backingMap">
     </bean>
+    
+    <util:map id="backingMap">
+        <entry key="uid" value="uid" />
+        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
+        <entry key="groupMembership" value="groupMembership" />
+    </util:map>
 
 	<!-- 
 	Sample, in-memory data store for the ServiceRegistry. A real implementation
@@ -73,14 +75,10 @@
 		id="serviceRegistryDao"
         class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
             <property name="registeredServices">
-                <list>
-                    <bean class="org.jasig.cas.services.RegexRegisteredService">
-                        <property name="id" value="0" />
-                        <property name="name" value="HTTP and IMAP" />
-                        <property name="description" value="Allows HTTP(S) and IMAP(S) protocols" />
-                        <property name="serviceId" value="^(https?|imaps?)://.*" />
-                        <property name="evaluationOrder" value="10000001" />
-                    </bean>
+                <util:list>
+                    <bean class="org.jasig.cas.services.RegexRegisteredService"
+                          p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+                          p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
                     <!--
                     Use the following definition instead of the above to further restrict access
                     to services within your domain (including subdomains).
@@ -95,7 +93,7 @@
                         <property name="evaluationOrder" value="0" />
                     </bean>
                     -->
-                </list>
+                </util:list>
             </property>
         </bean>
 

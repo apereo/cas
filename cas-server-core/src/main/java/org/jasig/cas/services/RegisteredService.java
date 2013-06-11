@@ -123,6 +123,7 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Sets the relative evaluation order of this service when determining
      * matches.
+     * @param evaluationOrder the service evaluation order
      */
     void setEvaluationOrder(final int evaluationOrder);
 
@@ -135,7 +136,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      *  <li><code>null</code> indicating the default username</li>
      * </ul>
      */
-    public String getUsernameAttribute();
+    String getUsernameAttribute();
 
     /**
      * Returns whether the service matches the registered service.
@@ -154,4 +155,11 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return An instance of an attribute filter for this service
      */
     RegisteredServiceAttributeFilter getAttributeFilter();
+
+    /**
+     * Returns the logout type of the service.
+     *
+     * @return the logout type of the service.
+     */
+    LogoutType getLogoutType();
 }

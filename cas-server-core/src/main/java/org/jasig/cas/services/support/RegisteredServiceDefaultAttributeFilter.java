@@ -40,15 +40,15 @@ import org.slf4j.LoggerFactory;
  * @see RegisteredServiceRegexAttributeFilter
  */
 public final class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
             final RegisteredService registeredService) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
 
         if (registeredService.isIgnoreAttributes()) {
-            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.",
+            logger.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.",
                     registeredService.getName());
             attributes.putAll(givenAttributes);
         } else {
@@ -56,7 +56,7 @@ public final class RegisteredServiceDefaultAttributeFilter implements Registered
                 final Object value = givenAttributes.get(attribute);
 
                 if (value != null) {
-                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute,
+                    logger.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute,
                             registeredService.getName());
                     attributes.put(attribute, value);
                 }

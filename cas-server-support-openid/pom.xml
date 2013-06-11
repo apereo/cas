@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-openid</artifactId>
 	<packaging>jar</packaging>
-	<name>Jasig CAS OpenId Support</name>
+	<name>Jasig CAS OpenId Server Support</name>
 
 	<dependencies>
 		<dependency>
@@ -62,4 +62,8 @@
         </dependency>
 
     </dependencies>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>

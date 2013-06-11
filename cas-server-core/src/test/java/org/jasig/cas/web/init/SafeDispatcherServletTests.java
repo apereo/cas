@@ -102,7 +102,7 @@ public class SafeDispatcherServletTests {
 
         try {
             this.safeServlet.service(mockRequest, mockResponse);
-        } catch (ApplicationContextException ace) {
+        } catch (final ApplicationContextException ace) {
             // good, threw the exception we expected.
             return;
         }
@@ -120,10 +120,9 @@ public class SafeDispatcherServletTests {
 
         try {
             this.safeServlet.service(mockRequest, mockResponse);
-        } catch (ApplicationContextException e) {
-            System.out.println(e);
+        } catch (final ApplicationContextException e) {
             fail("Unexpected exception.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return;
         }
     }

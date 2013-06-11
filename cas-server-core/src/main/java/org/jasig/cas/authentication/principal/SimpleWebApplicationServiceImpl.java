@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Response.ResponseType;
-import org.jasig.cas.util.HttpClient;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,8 +32,7 @@ import org.springframework.util.StringUtils;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class SimpleWebApplicationServiceImpl extends
-    AbstractWebApplicationService {
+public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final String CONST_PARAM_SERVICE = "service";
 
@@ -49,26 +47,18 @@ public final class SimpleWebApplicationServiceImpl extends
     private static final long serialVersionUID = 8334068957483758042L;
 
     public SimpleWebApplicationServiceImpl(final String id) {
-        this(id, id, null, null, null);
-    }
-
-    public SimpleWebApplicationServiceImpl(final String id, final HttpClient httpClient) {
-        this(id, id, null, null, httpClient);
+        this(id, id, null, null);
     }
 
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
-        final ResponseType responseType, final HttpClient httpClient) {
-        super(id, originalUrl, artifactId, httpClient);
+        final ResponseType responseType) {
+        super(id, originalUrl, artifactId);
         this.responseType = responseType;
     }
 
-    public static SimpleWebApplicationServiceImpl createServiceFrom(final HttpServletRequest request) {
-        return createServiceFrom(request, null);
-    }
-
     public static SimpleWebApplicationServiceImpl createServiceFrom(
-        final HttpServletRequest request, final HttpClient httpClient) {
+        final HttpServletRequest request) {
         final String targetService = request
             .getParameter(CONST_PARAM_TARGET_SERVICE);
         final String method = request.getParameter(CONST_PARAM_METHOD);
@@ -84,7 +74,7 @@ public final class SimpleWebApplicationServiceImpl extends
 
         return new SimpleWebApplicationServiceImpl(id, serviceToUse,
             artifactId, "POST".equals(method) ? ResponseType.POST
-                : ResponseType.REDIRECT, httpClient);
+                : ResponseType.REDIRECT);
     }
 
     public Response getResponse(final String ticketId) {

@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
     /** Static ID for serialization. */
     private static final long serialVersionUID = 2136490343650084287L;
@@ -56,14 +56,20 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
-    /** Convenient virtual property setter to set time in seconds. */
+    /**
+     * Convenient virtual property setter to set time in seconds.
+     * @param maxTimeToLiveInSeconds max number of seconds for the tickets to stay alive
+     **/
     public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds){
         if(this.maxTimeToLiveInMilliSeconds == 0L) {
             this.maxTimeToLiveInMilliSeconds = TimeUnit.SECONDS.toMillis(maxTimeToLiveInSeconds);
         }
     }
 
-    /** Convenient virtual property setter to set time in seconds. */
+    /**
+     * @param timeToKillInSeconds time for the ticket to stay active in seconds
+     * Convenient virtual property setter to set time in seconds.
+     **/
     public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
         if(this.timeToKillInMilliSeconds == 0L) {
             this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(timeToKillInSeconds);
@@ -78,13 +84,13 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     public boolean isExpired(final TicketState ticketState) {
         // Ticket has been used, check maxTimeToLive (hard window)
         if ((System.currentTimeMillis() - ticketState.getCreationTime() >= maxTimeToLiveInMilliSeconds)) {
-            log.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
+            LOGGER.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
             return true;
         }
 
         // Ticket is within hard window, check timeToKill (sliding window)
         if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() >= timeToKillInMilliSeconds)) {
-            log.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
+            LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;
         }
 

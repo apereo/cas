@@ -43,7 +43,7 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
-    protected static final Logger log = LoggerFactory.getLogger(OpenIdService.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
 
@@ -58,7 +58,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
     protected OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
             final String signature, final ParameterList parameterList) {
-        super(id, originalUrl, artifactId, null);
+        super(id, originalUrl, artifactId);
         this.identity = openIdIdentity;
         this.artifactId = artifactId;
         this.requestParameters = parameterList;
@@ -80,7 +80,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
         if (ticketId != null) {
 
             ServerManager manager = (ServerManager) ApplicationContextProvider.getApplicationContext().getBean("serverManager");
-            CentralAuthenticationService cas = (CentralAuthenticationService) ApplicationContextProvider.getApplicationContext().getBean("centralAuthenticationService");
+            CentralAuthenticationService cas = (CentralAuthenticationService) ApplicationContextProvider.getApplicationContext()
+                                                .getBean("centralAuthenticationService");
             boolean associated = false;
             boolean associationValid = true;
             try {
@@ -99,8 +100,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
                     }
                 }
-            } catch (MessageException me) {
-                log.error("Message exception : {}", me.getMessage(), me);
+            } catch (final MessageException me) {
+                LOGGER.error("Message exception : {}", me.getMessage(), me);
             }
 
             boolean successFullAuthentication = true;
@@ -108,13 +109,13 @@ public final class OpenIdService extends AbstractWebApplicationService {
                 if (associated) {
                     if (associationValid) {
                         cas.validateServiceTicket(ticketId, this);
-                        log.info("Validated openid ticket");
+                        LOGGER.info("Validated openid ticket");
                     } else {
                         successFullAuthentication = false;
                     }
                 }
-            } catch (TicketException te) {
-                log.error("Could not validate ticket : {}", te.getMessage(), te);
+            } catch (final TicketException te) {
+                LOGGER.error("Could not validate ticket : {}", te.getMessage(), te);
                 successFullAuthentication = false;
             }
 
@@ -136,9 +137,14 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
+    /**
+     * Return that the service is already logged out.
+     *
+     * @return that the service is already logged out.
+     */
     @Override
-    public boolean logOutOfService(final String sessionIdentifier) {
-        return false;
+    public boolean isLoggedOutAlready() {
+        return true;
     }
 
     public static OpenIdService createServiceFrom(

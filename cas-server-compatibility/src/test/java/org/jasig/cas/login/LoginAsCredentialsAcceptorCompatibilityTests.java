@@ -162,8 +162,6 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         // and see that it has been invalidated
 
         beginAt("/serviceValidate?ticket=" + firstServiceTicket + "&service=" + encodedService);
-
-        System.out.println(getDialog().getResponseText());
         assertTextPresent("<cas:authenticationFailure");
 
     }

@@ -43,7 +43,7 @@ import javax.validation.constraints.NotNull;
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
@@ -91,10 +91,12 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
+     * {@inheritDoc}
      * Note, if the repository is empty, this implementation will return a default service to grant all access.
      * <p>
      * This preserves default CAS behavior.
      */
+    @Override
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = convertToTreeSet();
 
@@ -143,7 +145,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     public void reload() {
-        log.info("Reloading registered services.");
+        logger.info("Reloading registered services.");
         load();
     }
 
@@ -152,12 +154,12 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                 new ConcurrentHashMap<Long, RegisteredService>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            log.debug("Adding registered service {}", r.getServiceId());
+            logger.debug("Adding registered service {}", r.getServiceId());
             localServices.put(r.getId(), r);
         }
 
         this.services = localServices;
-        log.info(String.format("Loaded %s services.", this.services.size()));
+        logger.info(String.format("Loaded %s services.", this.services.size()));
     }
 
     private RegisteredService constructDefaultRegisteredService(final List<String> attributes) {

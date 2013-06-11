@@ -18,6 +18,11 @@
  */
 package org.jasig.cas.mock;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -28,16 +33,14 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Mock ticket-granting ticket.
  *
  * @author Marvin S. Addison
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
+
+    private static final long serialVersionUID = 6546995681334670659L;
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
@@ -75,10 +78,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return new MockServiceTicket(id, service, this);
     }
 
-    public void expire() {
-        expired = true;
-    }
-
     public boolean isRoot() {
         return true;
     }
@@ -105,5 +104,19 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public int getCountOfUses() {
         return usageCount;
+    }
+
+    @Override
+    public Map<String, Service> getServices() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public void removeAllServices() {
+    }
+
+    @Override
+    public void markTicketExpired() {
+        expired = true;
     }
 }

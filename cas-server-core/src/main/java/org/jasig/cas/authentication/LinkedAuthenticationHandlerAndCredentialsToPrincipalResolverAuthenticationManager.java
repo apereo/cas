@@ -29,6 +29,7 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 
 /**
  * Ensures that all authentication handlers are tried, but if one is tried,
@@ -46,7 +47,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
     private final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers;
 
     public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(
-            final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
+            final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers) {
         this.linkedHandlers = linkedHandlers;
     }
 
@@ -68,19 +69,19 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
 
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
-            } catch (AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 authException = e;
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
             }
 
             if (authenticated) {
-                log.info("{} successfully authenticated {}", handlerName, credentials);
+                logger.info("{} successfully authenticated {}", handlerName, credentials);
                 final Principal p = this.linkedHandlers.get(authenticationHandler).resolvePrincipal(credentials);
-                return new Pair<AuthenticationHandler,Principal>(authenticationHandler, p);
+                return new Pair<AuthenticationHandler, Principal>(authenticationHandler, p);
             }
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
         }
 
         if (foundOneThatWorks) {

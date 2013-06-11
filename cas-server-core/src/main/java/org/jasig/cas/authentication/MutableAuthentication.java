@@ -50,7 +50,7 @@ public final class MutableAuthentication extends AbstractAuthentication {
     }
 
     public MutableAuthentication(final Principal principal, final Date date,
-            final Map<String,Object> authenticationAttributes) {
+            final Map<String, Object> authenticationAttributes) {
         super(principal, authenticationAttributes);
         this.authenticatedDate = date;
     }

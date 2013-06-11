@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -35,6 +36,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -46,13 +48,15 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public final class OAuth20ProfileController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
 
     private static final String ID = "id";
 
     private static final String ATTRIBUTES = "attributes";
 
     private final TicketRegistry ticketRegistry;
+
+    private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
     public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
@@ -61,57 +65,50 @@ public final class OAuth20ProfileController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
+
         final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
-        log.debug("accessToken : {}", accessToken);
+        LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        final JsonFactory jsonFactory = new JsonFactory();
-        final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
+        final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
 
-        response.setContentType("application/json");
+        try {
+            response.setContentType("application/json");
 
-        // accessToken is required
-        if (StringUtils.isBlank(accessToken)) {
-            log.error("missing accessToken");
+            // accessToken is required
+            if (StringUtils.isBlank(accessToken)) {
+                LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+                jsonGenerator.writeEndObject();
+                return null;
+            }
+            // get ticket granting ticket
+            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
+                    .getTicket(accessToken);
+            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+                LOGGER.error("expired accessToken : {}", accessToken);
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
+                jsonGenerator.writeEndObject();
+                return null;
+            }
+            // generate profile : identifier + attributes
+            final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+            jsonGenerator.writeStringField(ID, principal.getId());
+            jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+            final Map<String, Object> attributes = principal.getAttributes();
+            for (final String key : attributes.keySet()) {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeObjectField(key, attributes.get(key));
+                jsonGenerator.writeEndObject();
+            }
+            jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
-            jsonGenerator.close();
-            response.flushBuffer();
             return null;
-        }
-
-        // get ticket granting ticket
-        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(accessToken);
-        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-            log.error("expired accessToken : {}", accessToken);
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
-            jsonGenerator.writeEndObject();
-            jsonGenerator.close();
+        } finally {
+            IOUtils.closeQuietly(jsonGenerator);
             response.flushBuffer();
-            return null;
         }
-
-        // generate profile : identifier + attributes
-        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField(ID, principal.getId());
-        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
-        final Map<String, Object> attributes = principal.getAttributes();
-        for (final String key : attributes.keySet()) {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeObjectField(key, attributes.get(key));
-            jsonGenerator.writeEndObject();
-        }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
-        jsonGenerator.close();
-        response.flushBuffer();
-        return null;
-    }
-
-    static void setLogger(final Logger aLogger) {
-        log = aLogger;
     }
 }

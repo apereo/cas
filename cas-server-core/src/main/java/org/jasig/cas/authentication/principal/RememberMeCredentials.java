@@ -28,8 +28,10 @@ package org.jasig.cas.authentication.principal;
  */
 public interface RememberMeCredentials extends Credentials {
 
+    /** Authentication attribute name for remember-me. **/
     String AUTHENTICATION_ATTRIBUTE_REMEMBER_ME = "org.jasig.cas.authentication.principal.REMEMBER_ME";
 
+    /** Request parameter name. **/
     String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
 
     boolean isRememberMe();

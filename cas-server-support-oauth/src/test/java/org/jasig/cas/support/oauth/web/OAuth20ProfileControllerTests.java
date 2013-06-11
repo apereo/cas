@@ -20,10 +20,11 @@ package org.jasig.cas.support.oauth.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
@@ -32,7 +33,6 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -52,6 +52,8 @@ public final class OAuth20ProfileControllerTests {
 
     private static final String NAME = "attributeName";
 
+    private static final String NAME2 = "attributeName2";
+
     private static final String VALUE = "attributeValue";
 
     private static final String CONTENT_TYPE = "application/json";
@@ -63,13 +65,10 @@ public final class OAuth20ProfileControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("missing accessToken");
     }
 
     @Test
@@ -83,13 +82,10 @@ public final class OAuth20ProfileControllerTests {
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(null);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("expired accessToken : {}", TGT_ID);
     }
 
     @Test
@@ -105,13 +101,10 @@ public final class OAuth20ProfileControllerTests {
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20ProfileController.setLogger(log);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
-        verify(log).error("expired accessToken : {}", TGT_ID);
     }
 
     @Test
@@ -130,6 +123,8 @@ public final class OAuth20ProfileControllerTests {
         when(principal.getId()).thenReturn(ID);
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
+        List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
@@ -138,7 +133,7 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"}]}",
-                mockResponse.getContentAsString());
+        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
     }
 }

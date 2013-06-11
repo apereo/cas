@@ -62,7 +62,8 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    /** Logger instance. **/
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -78,7 +79,7 @@ public class AuthenticationViaFormAction {
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
-            log.warn("Invalid login ticket {}", providedLoginTicket);
+            logger.warn("Invalid login ticket {}", providedLoginTicket);
             final String code = "INVALID_TICKET";
             messageContext.addMessage(
                 new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
@@ -103,7 +104,7 @@ public class AuthenticationViaFormAction {
                 }
 
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-                log.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
+                logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
             }
         }
 
@@ -134,11 +135,12 @@ public class AuthenticationViaFormAction {
            * client may expose sensitive credential and error data.
            */
           final String defaultCode = BadCredentialsAuthenticationException.CODE;
-          log.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
+          logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]",
+                  defaultCode);
           messageContext.addMessage(new MessageBuilder().error().code(defaultCode)
                         .defaultText("A technical has error occured. [code:" + defaultCode + "]").build());
       } catch (final Exception fe) {
-          log.error(fe.getMessage(), fe);
+          logger.error(fe.getMessage(), fe);
       }
     }
 
@@ -159,7 +161,7 @@ public class AuthenticationViaFormAction {
     private String getAuthenticationExceptionEventId(final TicketException e) {
         final AuthenticationException authEx = getAuthenticationExceptionAsCause(e);
 
-        log.debug("An authentication error has occurred. Returning the event id {}", authEx.getType());
+        logger.debug("An authentication error has occurred. Returning the event id {}", authEx.getType());
         return authEx.getType();
     }
 

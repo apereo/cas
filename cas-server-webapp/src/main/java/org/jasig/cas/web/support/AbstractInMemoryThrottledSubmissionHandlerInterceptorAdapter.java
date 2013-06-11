@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.5
  */
-public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
+public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
+                extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
 
@@ -60,18 +61,18 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     public final void decrementCounts() {
         final Set<String> keys = this.ipMap.keySet();
-        log.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
+        logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final Date now = new Date();
         String key;
         for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
             key = iter.next();
             if (submissionRate(now, this.ipMap.get(key)) < getThresholdRate()) {
-                log.trace("Removing entry for key {}", key);
+                logger.trace("Removing entry for key {}", key);
                 iter.remove();
             }
         }
-        log.debug("Done decrementing count for throttler.");
+        logger.debug("Done decrementing count for throttler.");
     }
 
     /**

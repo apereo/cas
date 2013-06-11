@@ -49,7 +49,7 @@ public class Cas10ResponseViewTests {
 
     @Before
     public void setUp() throws Exception {
-        this.model = new HashMap<String,Object>();
+        this.model = new HashMap<String, Object>();
         List<Authentication> list = new ArrayList<Authentication>();
         list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
         this.model.put("assertion", new ImmutableAssertionImpl(list,

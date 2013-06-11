@@ -21,7 +21,6 @@ package org.jasig.cas.support.oauth.web;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -30,12 +29,11 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Test;
-import org.scribe.utils.OAuthEncoder;
-import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -78,11 +76,8 @@ public final class OAuth20AuthorizeControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("missing clientId");
     }
 
     @Test
@@ -93,11 +88,8 @@ public final class OAuth20AuthorizeControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("missing redirectUri");
     }
 
     @Test
@@ -112,11 +104,8 @@ public final class OAuth20AuthorizeControllerTests {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger log = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("Unknown clientId : {}", CLIENT_ID);
     }
 
     @Test
@@ -127,20 +116,14 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(OTHER_REDIRECT_URI);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
         when(servicesManager.getAllServices()).thenReturn(services);
-        final Logger log = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(log);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(log).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
 
     @Test
@@ -154,12 +137,8 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setTheme(SERVICE_NAME);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
@@ -172,8 +151,8 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
                 redirectView.getUrl());
     }
 
@@ -189,12 +168,8 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        registeredServiceImpl.setName(CLIENT_ID);
-        registeredServiceImpl.setServiceId(REDIRECT_URI);
-        registeredServiceImpl.setTheme(SERVICE_NAME);
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
-        services.add(registeredServiceImpl);
+        services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
@@ -208,8 +183,16 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
                 redirectView.getUrl());
+    }
+
+    private RegisteredService getRegisteredService(final String serviceId, final String name) {
+        final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName(name);
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        return registeredServiceImpl;
     }
 }
