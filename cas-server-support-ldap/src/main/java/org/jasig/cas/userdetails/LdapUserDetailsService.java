@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -79,11 +78,11 @@ public class LdapUserDetailsService implements UserDetailsService {
 
     /** Specify the name of LDAP attribute to use as principal identifier. */
     @NotNull
-    private final IUsernameAttributeProvider userAttributeName;
+    private final String userAttributeName;
 
     /** Specify the name of LDAP attribute to be used as the basis for role granted authorities. */
     @NotNull
-    private final IUsernameAttributeProvider roleAttributeName;
+    private final String roleAttributeName;
 
     /** Prefix appended to the uppercased {@link #roleAttributeName} per the normal Spring Security convention. */
     @NotNull
@@ -105,8 +104,8 @@ public class LdapUserDetailsService implements UserDetailsService {
             final ConnectionFactory factory,
             final SearchExecutor userSearchExecutor,
             final SearchExecutor roleSearchExecutor,
-            final IUsernameAttributeProvider userAttributeName,
-            final IUsernameAttributeProvider roleAttributeName) {
+            final String userAttributeName,
+            final String roleAttributeName) {
 
         this.connectionFactory = factory;
         this.userSearchExecutor = userSearchExecutor;
@@ -161,7 +160,7 @@ public class LdapUserDetailsService implements UserDetailsService {
                     "Found multiple results for user which is not allowed (allowMultipleResults=false).");
         }
         final String userDn = userResult.getEntry().getDn();
-        final LdapAttribute userAttribute = userResult.getEntry().getAttribute(this.userAttributeName.getUsernameAttribute());
+        final LdapAttribute userAttribute = userResult.getEntry().getAttribute(this.userAttributeName);
         if (userAttribute == null) {
             throw new IllegalStateException(this.userAttributeName + " attribute not found in results.");
         }
@@ -181,7 +180,7 @@ public class LdapUserDetailsService implements UserDetailsService {
         LdapAttribute roleAttribute;
         final Collection<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>(roleResult.size());
         for (final LdapEntry entry : roleResult.getEntries()) {
-            roleAttribute = entry.getAttribute(this.roleAttributeName.getUsernameAttribute());
+            roleAttribute = entry.getAttribute(this.roleAttributeName);
             if (roleAttribute == null) {
                 log.warn("Role attribute not found on entry {}", entry);
                 continue;
@@ -203,7 +202,9 @@ public class LdapUserDetailsService implements UserDetailsService {
     private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(executor.getSearchFilter().getFilter());
-        filter.setParameter(this.userAttributeName.getUsernameAttribute(), username);
+        filter.setParameter(0, username);
+        
+        log.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }
 }

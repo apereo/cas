@@ -31,7 +31,6 @@ import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentials
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.services.persondir.support.IUsernameAttributeProvider;
 import org.jasig.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -53,10 +52,6 @@ import org.springframework.util.Assert;
 public class CredentialsToLdapAttributePrincipalResolver extends
              AbstractPersonDirectoryCredentialsToPrincipalResolver implements InitializingBean {
 
-    /** Username attribute name provider. **/
-    @NotNull
-    private IUsernameAttributeProvider usernameProvider = new SimpleUsernameAttributeProvider();
-
     /** Map of directory attribute name to CAS attribute name. */
     private Map<String, String> attributeMapping = new HashMap<String, String>();
 
@@ -71,6 +66,9 @@ public class CredentialsToLdapAttributePrincipalResolver extends
     @NotNull
     private final ConnectionFactory connectionFactory;
 
+    /** Username attribute referenced by the search query. **/
+    @NotNull
+    private String usernameAttribute = "user";
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
      * request.
@@ -114,14 +112,13 @@ public class CredentialsToLdapAttributePrincipalResolver extends
     }
 
     /**
-     * Username attribute provider instance to be used when constructing ldap search queries.
-     * By default, the {@link SimpleUsernameAttributeProvider} is used.
+     * Username attribute to be used by the search query. 
      *
-     * @param usernameProvider the provider instance
+     * @param usernameAttr the username attribute
      * @see SimpleUsernameAttributeProvider
      */
-    public final void setUsernameProvider(final IUsernameAttributeProvider usernameProvider) {
-        this.usernameProvider = usernameProvider;
+    public final void setUsernameAttribute(final String usernameAttr) {
+        this.usernameAttribute = usernameAttr;
     }
 
     /**
@@ -180,7 +177,7 @@ public class CredentialsToLdapAttributePrincipalResolver extends
             log.debug("Attempting to resolve LDAP principal for {}.", resolvedPrincipal);
 
             final Set<String> attributesToReturn = new HashSet<String>(this.attributeMapping.keySet());
-            attributesToReturn.add(this.usernameProvider.getUsernameAttribute());
+            attributesToReturn.add(usernameAttribute);
             final String[] attrs = attributesToReturn.toArray(new String[]{});
 
             final Response<SearchResult> response = searchExecutor.search(connectionFactory,
@@ -212,17 +209,17 @@ public class CredentialsToLdapAttributePrincipalResolver extends
      * @return  Resolved CAS principal.
      */
     private Principal principalFromEntry(final LdapEntry entry) {
-        final LdapAttribute nameAttribute = entry.getAttribute(this.usernameProvider.getUsernameAttribute());
+        final LdapAttribute nameAttribute = entry.getAttribute(this.usernameAttribute);
         if (nameAttribute == null) {
             log.warn("Username attribute {} not found on {}; Returning null principal.",
-                    this.usernameProvider.getUsernameAttribute(), entry);
+                    this.usernameAttribute, entry);
             return null;
         }
         final String id = nameAttribute.getStringValue();
         final Map<String, Object> attributes = new HashMap<String, Object>(entry.getAttributes().size());
         Object value;
         for (LdapAttribute attribute : entry.getAttributes()) {
-            if (this.usernameProvider.getUsernameAttribute().equals(attribute.getName())) {
+            if (this.usernameAttribute.equals(attribute.getName())) {
                 continue;
             }
             log.debug("Resolving LDAP attribute [{}]", attribute.getName());
@@ -267,7 +264,7 @@ public class CredentialsToLdapAttributePrincipalResolver extends
     protected final SearchFilter createSearchFilter(final Principal principal) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(searchExecutor.getSearchFilter().getFilter());
-        filter.setParameter(this.usernameProvider.getUsernameAttribute(), principal.getId());
+        filter.setParameter(0, principal.getId());
         log.debug("Constructed LDAP search filter [{}] for principal id [{}]", filter.format(), principal.getId());
         return filter;
     }
