@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Credentials;
 
 /**
  * Deprecated interface for authenticating user-supplied credential. This component has
@@ -51,7 +51,7 @@ public interface AuthenticationHandler {
      * @throws AuthenticationException An AuthenticationException can contain
      * details about why a particular authentication request failed.
      */
-    boolean authenticate(Credential credential)
+    boolean authenticate(Credentials credential)
         throws AuthenticationException;
 
     /**
@@ -63,5 +63,5 @@ public interface AuthenticationHandler {
      * @param credential The credential to check.
      * @return true if the handler supports the Credential, false othewrise.
      */
-    boolean supports(Credential credential);
+    boolean supports(Credentials credential);
 }

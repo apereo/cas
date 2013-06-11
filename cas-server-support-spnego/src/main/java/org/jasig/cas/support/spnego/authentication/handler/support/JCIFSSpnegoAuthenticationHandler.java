@@ -19,8 +19,9 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -28,8 +29,10 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.regex.Pattern;
+import javax.security.auth.login.FailedLoginException;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -38,10 +41,11 @@ import java.util.regex.Pattern;
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
+ * @author Marvin S. Addison
+ *
  * @since 3.1
  */
-public final class JCIFSSpnegoAuthenticationHandler extends
-        AbstractPreAndPostProcessingAuthenticationHandler {
+public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -58,54 +62,52 @@ public final class JCIFSSpnegoAuthenticationHandler extends
     private boolean isNTLMallowed = false;
 
     @Override
-    protected boolean doAuthentication(final Credential credential)
-            throws AuthenticationException {
-        final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+        final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
         Principal principal;
         byte[] nextToken;
         try {
             // proceed authentication using jcifs
             synchronized (this) {
                 this.authentication.reset();
-                this.authentication.process(spnegoCredentials.getInitToken());
+                this.authentication.process(spnegoCredential.getInitToken());
                 principal = this.authentication.getPrincipal();
                 nextToken = this.authentication.getNextToken();
             }
         } catch (jcifs.spnego.AuthenticationException e) {
-            throw new BadCredentialsAuthenticationException(e);
+            throw new FailedLoginException(e.getMessage());
         }
+
         // evaluate jcifs response
         if (nextToken != null) {
             log.debug("Setting nextToken in credential");
-            spnegoCredentials.setNextToken(nextToken);
+            spnegoCredential.setNextToken(nextToken);
         } else {
             log.debug("nextToken is null");
         }
 
+        boolean success = false;
         if (principal != null) {
-            if (spnegoCredentials.isNtlm()) {
+            if (spnegoCredential.isNtlm()) {
                 log.debug("NTLM Credential is valid for user [{}]", principal.getName());
-                spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                        .getName(), true));
-                return this.isNTLMallowed;
+                spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), true));
+                success = this.isNTLMallowed;
             }
             // else => kerberos
             log.debug("Kerberos Credential is valid for user [{}]", principal.getName());
-            spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                    .getName(), false));
-            return true;
-
+            spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), false));
+            success = true;
         }
 
-        log
-        .debug("Principal is null, the processing of the SPNEGO Token failed");
-        return false;
+        if (!success) {
+            throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
+        }
+        return new HandlerResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && SpnegoCredential.class.equals(credential.getClass());
+        return credential instanceof SpnegoCredential;
     }
 
     public void setAuthentication(final Authentication authentication) {
@@ -120,8 +122,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         this.isNTLMallowed = isNTLMallowed;
     }
 
-    protected SimplePrincipal getSimplePrincipal(final String name,
-            final boolean isNtlm) {
+    protected SimplePrincipal getSimplePrincipal(final String name, final boolean isNtlm) {
         if (this.principalWithDomainName) {
             return new SimplePrincipal(name);
         }

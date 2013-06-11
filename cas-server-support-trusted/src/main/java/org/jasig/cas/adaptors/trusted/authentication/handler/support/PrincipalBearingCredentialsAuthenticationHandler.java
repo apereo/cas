@@ -18,9 +18,13 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
+
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,19 +38,20 @@ import org.slf4j.LoggerFactory;
  * @author Andrew Petro
  * @since 3.0.5
  */
-public final class PrincipalBearingCredentialsAuthenticationHandler implements
-        AuthenticationHandler {
+public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public boolean authenticate(final Credential credential) {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         log.debug("Trusting credential for: {}", credential);
-        return true;
+        return new HandlerResult(
+                this, (PrincipalBearingCredential) credential, new SimplePrincipal(credential.getId()));
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential.getClass().equals(PrincipalBearingCredential.class);
+        return credential instanceof PrincipalBearingCredential;
     }
 }
+

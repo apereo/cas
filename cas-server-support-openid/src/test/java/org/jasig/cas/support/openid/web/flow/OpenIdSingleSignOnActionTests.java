@@ -30,7 +30,6 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
@@ -76,7 +75,7 @@ public class OpenIdSingleSignOnActionTests {
         handler.setTicketRegistry(this.ticketRegistry);
         this.authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
-                        new LegacyAuthenticationHandlerAdapter(handler),
+                        handler,
                         new OpenIdCredentialsToPrincipalResolver()));
 
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
