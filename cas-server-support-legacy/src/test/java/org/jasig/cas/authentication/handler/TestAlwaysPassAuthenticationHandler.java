@@ -16,28 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.radius;
+package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Interface representing a Radius Server.
+ * Test authentication handler that always passes.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Marvin S. Addison
  */
-public interface RadiusServer {
+public class TestAlwaysPassAuthenticationHandler implements AuthenticationHandler {
+    @Override
+    public boolean authenticate(final Credentials credential) throws AuthenticationException {
+        return true;
+    }
 
-    /**
-     * Method to authenticate a set of credentials.
-     *
-     * @param username Non-null username to authenticate.
-     * @param password Password to authenticate.
-     *
-     * @return True on success, false otherwise.
-     *
-     * @throws PreventedException On indeterminate case where authentication was prevented by a system (e.g. IO) error.
-     */
-    boolean authenticate(String username, String password) throws PreventedException;
-
+    @Override
+    public boolean supports(final Credentials credential) {
+        return true;
+    }
 }

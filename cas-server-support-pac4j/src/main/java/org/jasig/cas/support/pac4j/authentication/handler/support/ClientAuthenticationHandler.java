@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -60,7 +65,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
-    protected boolean doAuthentication(final Credential credential) throws AuthenticationException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final ClientCredential clientCredentials = (ClientCredential) credential;
         log.debug("clientCredentials : {}", clientCredentials);
 
@@ -77,9 +82,12 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             clientCredentials.setUserProfile(userProfile);
-            return true;
+            return new HandlerResult(
+                    this,
+                    new BasicCredentialMetaData(credential),
+                    new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
         }
 
-        return false;
+        throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
     }
 }

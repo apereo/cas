@@ -45,7 +45,7 @@
 
     <!--
        | The authentication manager defines security policy for authentication by specifying at a minimum
-       | the authentication handlers that will be used to authenticate credentials. While the AuthenticationManager
+       | the authentication handlers that will be used to authenticate credential. While the AuthenticationManager
        | interface supports plugging in another implementation, the default PolicyBasedAuthenticationManager should
        | be sufficient in most cases.
        +-->
@@ -77,8 +77,8 @@
         <!--
            | Defines the security policy around authentication. Some alternative policies that ship with CAS:
            |
-           | * NotPreventedAuthenticationPolicy - all credentials must either pass or fail authentication
-           | * AllAuthenticationPolicy - all presented credentials must be authenticated successfully
+           | * NotPreventedAuthenticationPolicy - all credential must either pass or fail authentication
+           | * AllAuthenticationPolicy - all presented credential must be authenticated successfully
            | * RequiredHandlerAuthenticationPolicy - specifies a handler that must authenticate its credential to pass
            -->
         <property name="authenticationPolicy">
@@ -88,12 +88,8 @@
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-                  p:httpClient-ref="httpClient"/>
-        </constructor-arg>
-    </bean>
+          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+          p:httpClient-ref="httpClient" />
 
     <!--
        | TODO: Replace this component with one suitable for your enviroment.
@@ -108,16 +104,12 @@
        | * org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler
        -->
     <bean id="primaryAuthenticationHandler"
-          class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-        <constructor-arg>
-            <bean class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
-                <property name="users">
-                    <map>
-                        <entry key="casuser" value="Mellon"/>
-                    </map>
-                </property>
-            </bean>
-        </constructor-arg>
+          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
+        <property name="users">
+            <map>
+                <entry key="casuser" value="Mellon"/>
+            </map>
+        </property>
     </bean>
 
     <!-- Required for proxy ticket mechanism -->

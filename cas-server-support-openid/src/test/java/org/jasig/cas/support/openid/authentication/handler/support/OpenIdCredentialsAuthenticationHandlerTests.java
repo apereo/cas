@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
+import javax.security.auth.login.FailedLoginException;
+
 import static org.junit.Assert.*;
 
 import org.jasig.cas.TestUtils;
@@ -60,26 +62,26 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertTrue(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        assertEquals("test", this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testTGTThatIsExpired() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
         t.expire();
-        assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testTGTWithDifferentId() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
     protected TicketGrantingTicket getTicketGrantingTicket() {

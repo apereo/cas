@@ -16,39 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.cas;
-
-import javax.servlet.ServletRequest;
-
-import org.jasig.cas.authentication.Credential;
+package org.jasig.cas.authentication.handler;
 
 /**
- * Credential class that maps to the paramters required by the Legacy CAS
- * password handler.
+ * Named variant of CAS 3.0 {@link AuthenticationHandler} interface. This is deprecated in favor of
+ * {@link org.jasig.cas.authentication.AuthenticationHandler}.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.2.1
+ *
  */
-public final class LegacyCasTrustedCredential implements Credential {
+@Deprecated
+public interface NamedAuthenticationHandler extends AuthenticationHandler {
 
-    private ServletRequest servletRequest;
-
-    /**
-     * @return Returns the servletRequest.
-     */
-    public ServletRequest getServletRequest() {
-        return this.servletRequest;
-    }
-
-    /**
-     * @param servletRequest The servletRequest to set.
-     */
-    public void setServletRequest(final ServletRequest servletRequest) {
-        this.servletRequest = servletRequest;
-    }
-
-    @Override
-    public String getId() {
-        return UNKNOWN_ID;
-    }
+    String getName();
 }
