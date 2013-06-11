@@ -19,6 +19,7 @@
 package org.jasig.cas.integration.restlet;
 
 import java.security.Principal;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -55,7 +57,7 @@ import org.springframework.web.context.request.WebRequest;
  */
 public class TicketResource extends ServerResource {
 
-    private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -66,17 +68,30 @@ public class TicketResource extends ServerResource {
 
     @Post
     public final void acceptRepresentation(final Representation entity)  {
-        log.debug("Obtaining credentials...");
+        LOGGER.debug("Obtaining credentials...");
         final Credentials c = obtainCredentials();
+
+        Formatter fmt = null;
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
-            final Reference ticket_ref = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
-            getResponse().setLocationRef(ticket_ref);
-            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);
+            final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
+            getResponse().setLocationRef(ticketReference);
+
+            fmt = new Formatter();
+            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
+
+            fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription())
+               .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference)
+               .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+               .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+
+            getResponse().setEntity(fmt.toString(), MediaType.TEXT_HTML);
         } catch (final TicketException e) {
-            log.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(fmt);
         }
     }
     /**
@@ -102,7 +117,7 @@ public class TicketResource extends ServerResource {
     }
 
     private void logFormRequest(final Form form) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             final Set<String> pairs = new HashSet<String>();
             for (final String name : form.getNames()) {
                 final StringBuilder builder = new StringBuilder();
@@ -115,7 +130,7 @@ public class TicketResource extends ServerResource {
                 }
                 pairs.add(builder.toString());
             }
-            log.debug(StringUtils.join(pairs, ", "));
+            LOGGER.debug(StringUtils.join(pairs, ", "));
         }
     }
 
@@ -160,7 +175,7 @@ public class TicketResource extends ServerResource {
 
         @Override
         public Map<String, String[]> getParameterMap() {
-            final Map<String, String[]> conversion = new HashMap<String,String[]>();
+            final Map<String, String[]> conversion = new HashMap<String, String[]>();
 
             for (final Map.Entry<String, String> entry : this.form.getValuesMap().entrySet()) {
                 conversion.put(entry.getKey(), new String[] {entry.getValue()});

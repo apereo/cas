@@ -31,8 +31,7 @@ public final class SpringLdapUtils {
 
     public static final String OBJECTCLASS_ATTRIBUTE = "objectclass";
 
-    public static final String LDAP_BOOLEAN_TRUE = "TRUE";
-    public static final String LDAP_BOOLEAN_FALSE = "FALSE";
+    private SpringLdapUtils() {}
 
     /**
      * Reads a Boolean value from the DirContextAdapter.
@@ -51,14 +50,14 @@ public final class SpringLdapUtils {
      *
      * @param ctx       the DirContextAdapter
      * @param attribute the attribute name
-     * @param nullValue the value which sould be returing in case of a null value
+     * @param nullValue the value which should be returning in case of a null value
      * @return <code>true</code> if the attribute's value matches (case-insensitive)
      * <code>"true"</code>, otherwise false
      */
     public static Boolean getBoolean(final DirContextOperations ctx, final String attribute, final Boolean nullValue) {
         final String v = ctx.getStringAttribute(attribute);
         if (v != null) {
-            return v.equalsIgnoreCase(LDAP_BOOLEAN_TRUE);
+            return v.equalsIgnoreCase(Boolean.TRUE.toString());
         }
         return nullValue;
     }
@@ -71,7 +70,7 @@ public final class SpringLdapUtils {
      * @param value     the boolean value
      */
     public static void setBoolean(final DirContextOperations ctx, final String attribute, final Boolean value) {
-        ctx.setAttributeValue(attribute, value ? LDAP_BOOLEAN_TRUE : LDAP_BOOLEAN_FALSE);
+        ctx.setAttributeValue(attribute, value ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     }
 
     /**

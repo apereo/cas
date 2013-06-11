@@ -33,18 +33,15 @@ import org.springframework.core.io.ClassPathResource;
 /**
  * @author Scott Battaglia
  */
-public class FileAuthenticationHandlerTests  {
+public class FileAuthenticationHandlerTests {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         this.authenticationHandler = new FileAuthenticationHandler();
-        this.authenticationHandler.setFileName(
-                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
+        this.authenticationHandler.setFileName(new ClassPathResource(
+                "org/jasig/cas/adaptors/generic/authentication.txt"));
 
     }
 
@@ -56,9 +53,9 @@ public class FileAuthenticationHandlerTests  {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
+        } catch (final UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -66,10 +63,9 @@ public class FileAuthenticationHandlerTests  {
     @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
-                new URL("http://www.rutgers.edu"));
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
             assertFalse(this.authenticationHandler.supports(c));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");
         }
     }
@@ -83,7 +79,7 @@ public class FileAuthenticationHandlerTests  {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
@@ -129,8 +125,8 @@ public class FileAuthenticationHandlerTests  {
     public void testAuthenticatesUserInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(
-                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(new ClassPathResource(
+                "org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");
@@ -138,7 +134,7 @@ public class FileAuthenticationHandlerTests  {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
@@ -147,8 +143,8 @@ public class FileAuthenticationHandlerTests  {
     public void testFailsUserNotInFileWithCommaSeparator() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(
-                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(new ClassPathResource(
+                "org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("fds");
@@ -160,8 +156,8 @@ public class FileAuthenticationHandlerTests  {
     public void testFailsGoodUsernameBadPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(
-                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(new ClassPathResource(
+                "org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");

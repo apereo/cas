@@ -40,7 +40,7 @@ import javax.validation.constraints.Min;
 public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
@@ -51,12 +51,13 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
 
 
     /**
+     * {@inheritDoc}
      * The CRL next update time is compared against the current time with the threshold
      * applied and rejected if and only if the next update time is in the past.
      *
      * @param crl CRL instance to evaluate.
      *
-     * @throws ExpiredCRLException On expired CRL data.
+     * @throws GeneralSecurityException On expired CRL data. Check the exception type for exact details
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
@@ -68,9 +69,8 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
             if (CertUtils.isExpired(crl, cutoff.getTime())) {
                 throw new ExpiredCRLException(crl.toString(), cutoff.getTime(), this.threshold);
             }
-            log.info(
-                    String.format("CRL expired on %s but is within threshold period, %s seconds.",
-                            crl.getNextUpdate(), this.threshold));
+            logger.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
+                        crl.getNextUpdate(), this.threshold));
         }
     }
 

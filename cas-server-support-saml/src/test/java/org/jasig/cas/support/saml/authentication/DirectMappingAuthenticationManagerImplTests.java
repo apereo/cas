@@ -48,7 +48,8 @@ public class DirectMappingAuthenticationManagerImplTests {
     public void setUp() throws Exception {
         this.manager = new DirectMappingAuthenticationManagerImpl();
 
-        final Map<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder> mappings = new HashMap<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder>();
+        final Map<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder> mappings =
+                new HashMap<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder>();
         final List<AuthenticationMetaDataPopulator> populators = new ArrayList<AuthenticationMetaDataPopulator>();
         populators.add(new SamlAuthenticationMetaDataPopulator());
 

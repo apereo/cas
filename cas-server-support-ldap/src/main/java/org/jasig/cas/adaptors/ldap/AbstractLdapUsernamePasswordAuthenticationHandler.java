@@ -135,15 +135,15 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      */
     protected AuthenticationException handleLdapError(final Exception e) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
-            log.debug("No error definitions are defined. Throwing error {}", e.getMessage());
+            logger.debug("No error definitions are defined. Throwing error {}", e.getMessage());
             return BadCredentialsAuthenticationException.ERROR;
         }
 
-        log.debug("Handling error: {}", e.getMessage());
+        logger.debug("Handling error: {}", e.getMessage());
 
         for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions) {
             if (ldapErrorDef.matches(e.getMessage())) {
-                log.debug("Found error type {}. Throwing error for {}",
+                logger.debug("Found error type {}. Throwing error for {}",
                         ldapErrorDef.getType(), e.getMessage());
 
                 return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE,
@@ -152,8 +152,8 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
             }
         }
 
-        log.debug("No error definition could be matched against the error. Throwing default error for {}", e.getMessage());
-
+        logger.debug("No error definition could be matched against the error. Throwing default error for {}",
+                e.getMessage());
         return BadCredentialsAuthenticationException.ERROR;
     }
 }

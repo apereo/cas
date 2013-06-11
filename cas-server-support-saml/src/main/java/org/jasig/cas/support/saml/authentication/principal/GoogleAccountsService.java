@@ -56,9 +56,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private static final Logger log = LoggerFactory.getLogger(GoogleAccountsService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsService.class);
 
-    private static Random random = new Random();
+    private static Random RANDOM_GENERATOR = new Random();
 
     private static final char[] CHAR_MAPPINGS = {
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
@@ -68,7 +68,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final String CONST_RELAY_STATE = "RelayState";
 
-    private static final String TEMPLATE_SAML_RESPONSE = "<samlp:Response ID=\"<RESPONSE_ID>\" IssueInstant=\"<ISSUE_INSTANT>\" Version=\"2.0\""
+    private static final String TEMPLATE_SAML_RESPONSE =
+            "<samlp:Response ID=\"<RESPONSE_ID>\" IssueInstant=\"<ISSUE_INSTANT>\" Version=\"2.0\""
             + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\""
             + " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\""
             + " xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">"
@@ -120,7 +121,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
-        super(id, originalUrl, artifactId, null);
+        super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
@@ -167,13 +168,13 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
-     * Service does not support Single Log Out.
+     * Return true if the service is already logged out.
      *
-     * @see org.jasig.cas.authentication.principal.WebApplicationService#logOutOfService(java.lang.String)
+     * @return true if the service is already logged out.
      */
     @Override
-    public boolean logOutOfService(final String sessionIdentifier) {
-        return false;
+    public boolean isLoggedOutAlready() {
+        return true;
     }
 
     private String constructSamlResponse() {
@@ -213,7 +214,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static String createID() {
         final byte[] bytes = new byte[20]; // 160 bits
-        random.nextBytes(bytes);
+        RANDOM_GENERATOR.nextBytes(bytes);
 
         final char[] chars = new char[40];
 

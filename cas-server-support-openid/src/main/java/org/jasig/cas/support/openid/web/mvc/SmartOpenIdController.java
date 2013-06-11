@@ -43,7 +43,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    private final Logger log = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
 
@@ -65,23 +65,26 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
         ParameterList parameters = new ParameterList(request.getParameterMap());
 
-        String mode = parameters.hasParameter("openid.mode") ?
-                parameters.getParameterValue("openid.mode") : null;
-                Message response = null;
-                if (mode != null && mode.equals("associate")) {
-                    response = serverManager.associationResponse(parameters);
-                }
-                final Map<String, String> responseParams = new HashMap<String, String>();
-                if (response != null) {
-                    responseParams.putAll(response.getParameterMap());
-                }
+        final String mode = parameters.hasParameter("openid.mode")
+                ? parameters.getParameterValue("openid.mode")
+                : null;
 
-                return responseParams;
+        Message response = null;
+        if (mode != null && mode.equals("associate")) {
+            response = serverManager.associationResponse(parameters);
+        }
+        final Map<String, String> responseParams = new HashMap<String, String>();
+        if (response != null) {
+            responseParams.putAll(response.getParameterMap());
+        }
+
+        return responseParams;
 
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
         final Map<String, String> parameters = new HashMap<String, String>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(successView, "parameters", parameters);
@@ -91,10 +94,10 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         String openIdMode = request.getParameter("openid.mode");
         if (openIdMode != null && openIdMode.equals("associate")) {
-            log.info("Handling request. openid.mode : {}", openIdMode);
+            logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }
-        log.info("Cannot handle request. openid.mode : {}", openIdMode);
+        logger.info("Cannot handle request. openid.mode : {}", openIdMode);
         return false;
     }
 

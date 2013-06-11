@@ -49,7 +49,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     private boolean requireSecure = true;
 
     /** Log instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
     @NotNull
@@ -60,28 +60,31 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
-            log.debug("Authentication failed because url was not secure.");
+            logger.debug("Authentication failed because url was not secure.");
             return false;
         }
-        log
-            .debug("Attempting to resolve credentials for "
-                + serviceCredentials);
+        logger.debug("Attempting to resolve credentials for {}", serviceCredentials);
 
         return this.httpClient.isValidEndPoint(serviceCredentials
             .getCallbackUrl());
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credentials provided are not null and the credentials
      * are a subclass of (or equal to) HttpBasedServiceCredentials.
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
                 .getClass());
     }
 
-    /** Sets the HttpClient which will do all of the connection stuff. */
+    /**
+     * Sets the HttpClient which will do all of the connection stuff.
+     * @param httpClient http client instance to use
+     **/
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }

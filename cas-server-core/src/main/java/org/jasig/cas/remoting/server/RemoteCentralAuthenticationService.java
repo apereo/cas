@@ -18,18 +18,21 @@
  */
 package org.jasig.cas.remoting.server;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.validation.Assertion;
-import org.springframework.util.Assert;
+import java.util.List;
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.validation.Assertion;
+import org.springframework.util.Assert;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -59,9 +62,11 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
+    @Override
     public String createTicketGrantingTicket(final Credentials credentials) throws TicketException {
         Assert.notNull(credentials, "credentials cannot be null");
         checkForErrors(credentials);
@@ -69,14 +74,20 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if given invalid credentials
      */
+    @Override
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
@@ -84,17 +95,33 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
     }
 
-    public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+    /**
+     * {@inheritDoc}
+     * <p>Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
+     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
+     *
+     * @param ticketGrantingTicketId the id of the ticket we want to destroy
+     * @return the logout requests.
+     */
+    @Override
+    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+        return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the credentials are invalid.
      */
+    @Override
     public String delegateTicketGrantingTicket(final String serviceTicketId,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);

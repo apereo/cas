@@ -72,7 +72,6 @@ public class ServiceThemeResolverTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
-        System.out.println("1");
         assertEquals("myTheme", this.serviceThemeResolver.resolveThemeName(request));
     }
 

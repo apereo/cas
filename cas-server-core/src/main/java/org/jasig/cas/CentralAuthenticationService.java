@@ -18,8 +18,11 @@
  */
 package org.jasig.cas;
 
+import java.util.List;
+
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
@@ -54,8 +57,7 @@ public interface CentralAuthenticationService {
      * @return The String identifier of the ticket (may not be null).
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials credentials)
-        throws TicketException;
+    String createTicketGrantingTicket(Credentials credentials) throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -65,8 +67,7 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service)
-        throws TicketException;
+    String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service *if* the principal resolved from the
@@ -80,9 +81,8 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
-        throws TicketException;
+    String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials)
+            throws TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -92,16 +92,17 @@ public interface CentralAuthenticationService {
      * @return ServiceTicket if valid for the service
      * @throws TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId,
-        final Service service) throws TicketException;
+    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
     /**
-     * Destroy a TicketGrantingTicket. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed.
+     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
+     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
      *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
+     * @return the logout requests.
      */
-    void destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
@@ -115,6 +116,6 @@ public interface CentralAuthenticationService {
      * authentication.
      * @throws TicketException if there was an error creating the ticket
      */
-    String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws TicketException;
+    String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
+            throws TicketException;
 }

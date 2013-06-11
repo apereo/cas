@@ -54,14 +54,11 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(
-        name = "expression_type",
-        length = 15,
-        discriminatorType = DiscriminatorType.STRING,
-        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
+                     columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
-public abstract class AbstractRegisteredService
-        implements RegisteredService, Comparable<RegisteredService>, Serializable {
+public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService>,
+        Serializable {
 
     private static final long serialVersionUID = 7645279151115635245L;
 
@@ -78,6 +75,9 @@ public abstract class AbstractRegisteredService
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
 
+    /**
+     * The unique identifier for this service.
+     */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
@@ -113,6 +113,13 @@ public abstract class AbstractRegisteredService
      */
     @Column(name = "username_attr", nullable = true, length = 256)
     private String usernameAttribute = null;
+
+    /**
+     * The logout type of the service. As front channel SLO is an experimental feature,
+     * the default logout type is the back channel one.
+     */
+    @Transient
+    private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -163,7 +170,7 @@ public abstract class AbstractRegisteredService
             return false;
         }
 
-        if (this == o)  {
+        if (this == o) {
             return true;
         }
 
@@ -173,36 +180,21 @@ public abstract class AbstractRegisteredService
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        return new EqualsBuilder()
-                  .append(this.allowedToProxy, that.allowedToProxy)
-                  .append(this.anonymousAccess, that.anonymousAccess)
-                  .append(this.enabled, that.enabled)
-                  .append(this.evaluationOrder, that.evaluationOrder)
-                  .append(this.ignoreAttributes, that.ignoreAttributes)
-                  .append(this.ssoEnabled, that.ssoEnabled)
-                  .append(this.allowedAttributes, that.allowedAttributes)
-                  .append(this.description, that.description)
-                  .append(this.name, that.name)
-                  .append(this.serviceId, that.serviceId)
-                  .append(this.theme, that.theme)
-                  .append(this.usernameAttribute, that.usernameAttribute)
-                  .isEquals();
+        return new EqualsBuilder().append(this.allowedToProxy, that.allowedToProxy)
+                .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
+                .append(this.evaluationOrder, that.evaluationOrder)
+                .append(this.ignoreAttributes, that.ignoreAttributes).append(this.ssoEnabled, that.ssoEnabled)
+                .append(this.allowedAttributes, that.allowedAttributes).append(this.description, that.description)
+                .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
+                .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
+                .isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder(7, 31)
-                  .append(this.allowedAttributes)
-                  .append(this.description)
-                  .append(this.serviceId)
-                  .append(this.name)
-                  .append(this.theme)
-                  .append(this.enabled)
-                  .append(this.ssoEnabled)
-                  .append(this.anonymousAccess)
-                  .append(this.ignoreAttributes)
-                  .append(this.evaluationOrder)
-                  .append(this.usernameAttribute)
-                  .toHashCode();
+        return new HashCodeBuilder(7, 31).append(this.allowedAttributes).append(this.description)
+                .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
+                .append(this.ssoEnabled).append(this.anonymousAccess).append(this.ignoreAttributes)
+                .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
@@ -277,10 +269,28 @@ public abstract class AbstractRegisteredService
      */
     public void setUsernameAttribute(final String username) {
         if (StringUtils.isBlank(username)) {
-          this.usernameAttribute = null;
+            this.usernameAttribute = null;
         } else {
-          this.usernameAttribute = username;
+            this.usernameAttribute = username;
         }
+    }
+
+    /**
+     * Returns the logout type of the service.
+     *
+     * @return the logout type of the service.
+     */
+    public final LogoutType getLogoutType() {
+        return logoutType;
+    }
+
+    /**
+     * Set the logout type of the service.
+     *
+     * @param logoutType the logout type of the service.
+     */
+    public final void setLogoutType(final LogoutType logoutType) {
+        this.logoutType = logoutType;
     }
 
     public RegisteredService clone() throws CloneNotSupportedException {
@@ -308,19 +318,21 @@ public abstract class AbstractRegisteredService
         this.setIgnoreAttributes(source.isIgnoreAttributes());
         this.setEvaluationOrder(source.getEvaluationOrder());
         this.setUsernameAttribute(source.getUsernameAttribute());
+        this.setLogoutType(source.getLogoutType());
     }
 
     /**
+     * {@inheritDoc}
      * Compares this instance with the <code>other</code> registered service based on
      * evaluation order, name. The name comparison is case insensitive.
      *
      * @see #getEvaluationOrder()
      */
+    @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder()
-                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
-                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
-                  .toComparison();
+        return new CompareToBuilder().append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                .append(this.getServiceId(), other.getServiceId()).toComparison();
     }
 
     public String toString() {

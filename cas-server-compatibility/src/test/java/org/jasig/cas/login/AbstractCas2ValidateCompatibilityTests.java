@@ -249,7 +249,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         assertTextPresent("cas:authenticationFailure");
 
-        // TODO: test the authentication failure response in more detail
+        //TODO test the authentication failure response in more detail
 
         assertTextNotPresent("<cas:user>");
 
@@ -259,7 +259,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         assertTextPresent("cas:authenticationSuccess");
         assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
-        // TODO: assert more about the response
+        //TODO assert more about the response
 
     }
 
@@ -287,7 +287,8 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         String encodedProxyCallbackUrl = URLEncoder.encode("https://secure.its.yale.edu/cas/noexist", "UTF-8");
 
-        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket="
+                                    + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
 
         assertTextPresent("<cas:authenticationSuccess>");
         assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
@@ -316,7 +317,8 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         String encodedProxyCallbackUrl = URLEncoder.encode(getProxyCallbackUrl(), "UTF-8");
 
-        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket
+                                    + "&pgtUrl=" + encodedProxyCallbackUrl);
 
         assertTextPresent("<cas:authenticationSuccess>");
         assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");

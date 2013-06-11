@@ -63,10 +63,9 @@ public final class HttpClient implements Serializable, DisposableBean {
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
         HttpURLConnection.HTTP_ACCEPTED};
 
-    private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
 
     private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
-
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -99,9 +98,9 @@ public final class HttpClient implements Serializable, DisposableBean {
      * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
-     * @param executorService
+     * @param executorService The executor service to send messages to end points.
      */
-    public void setExecutorService(final ExecutorService executorService) {
+    public void setExecutorService(@NotNull final ExecutorService executorService) {
         Assert.notNull(executorService);
         EXECUTOR_SERVICE = executorService;
     }
@@ -137,7 +136,7 @@ public final class HttpClient implements Serializable, DisposableBean {
             final URL u = new URL(url);
             return isValidEndPoint(u);
         } catch (final MalformedURLException e) {
-            log.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
     }
@@ -169,21 +168,23 @@ public final class HttpClient implements Serializable, DisposableBean {
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
-                    log.debug("Response code from server matched {}.", responseCode);
+                    LOGGER.debug("Response code from server matched {}.", responseCode);
                     return true;
                 }
             }
 
-            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}", responseCode);
+            LOGGER.debug("Response Code did not match any of the acceptable response codes. Code returned was {}",
+                    responseCode);
 
             // if the response code is an error and we don't find that error acceptable above:
             if (responseCode == 500) {
                 is = connection.getInputStream();
                 final String value = IOUtils.toString(is);
-                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
+                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
+                        value);
             }
         } catch (final IOException e) {
-            log.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(is);
             if (connection != null) {
@@ -199,14 +200,22 @@ public final class HttpClient implements Serializable, DisposableBean {
      *
      * @param acceptableCodes an array of status code integers.
      */
-    public final void setAcceptableCodes(final int[] acceptableCodes) {
+    public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when opening the endpoint url.
+     * @param connectionTimeout specified timeout value in milliseconds
+     */
     public void setConnectionTimeout(final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when reading from the endpoint url.
+     * @param readTimeout specified timeout value in milliseconds
+     */
     public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
     }
@@ -223,7 +232,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the SSL socket factory be used by the URL when submitting
      * request to check for URL endpoint validity.
-     * @param factory
+     * @param factory ssl socket factory instance to use
      * @see #isValidEndPoint(URL)
      */
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
@@ -233,13 +242,17 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the hostname verifier be used by the URL when submitting
      * request to check for URL endpoint validity.
-     * @param verifier
+     * @param verifier hostname verifier instance to use
      * @see #isValidEndPoint(URL)
      */
     public void setHostnameVerifier(final HostnameVerifier verifier) {
         this.hostnameVerifier = verifier;
     }
 
+    /**
+     * Shutdown the executor service.
+     * @throws Exception if the executor cannot properly shut down
+     */
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }
@@ -269,7 +282,7 @@ public final class HttpClient implements Serializable, DisposableBean {
             HttpURLConnection connection = null;
             BufferedReader in = null;
             try {
-                log.debug("Attempting to access {}", url);
+                LOGGER.debug("Attempting to access {}", url);
                 final URL logoutUrl = new URL(url);
                 final String output = "logoutRequest=" + URLEncoder.encode(message, "UTF-8");
 
@@ -294,13 +307,13 @@ public final class HttpClient implements Serializable, DisposableBean {
                     readInput =StringUtils.isNotBlank(in.readLine());
                 }
 
-                log.debug("Finished sending message to {}", url);
+                LOGGER.debug("Finished sending message to {}", url);
                 return true;
             } catch (final SocketTimeoutException e) {
-                log.warn("Socket Timeout Detected while attempting to send message to [{}]", url);
+                LOGGER.warn("Socket Timeout Detected while attempting to send message to [{}]", url);
                 return false;
             } catch (final Exception e) {
-                log.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
+                LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
                 return false;
             } finally {
                 IOUtils.closeQuietly(in);

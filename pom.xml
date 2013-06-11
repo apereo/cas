@@ -238,8 +238,8 @@
             <version>2.10</version>
             <configuration>
                 <consoleOutput>true</consoleOutput>
-                <configLocation>/checkstyle-rules.xml</configLocation>
-                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
+                <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
             </configuration>
             <executions>
@@ -395,9 +395,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
-          <header>src/licensing/header.txt</header>
+          <header>${cs.dir}/src/licensing/header.txt</header>
+          <skipExistingHeaders>true</skipExistingHeaders>
+          <strictCheck>true</strictCheck>
           <headerDefinitions>
-            <headerDefinition>src/licensing/header-definitions.xml</headerDefinition>
+            <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
           <aggregate>true</aggregate>
           <excludes>
@@ -412,12 +414,28 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.crt</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.checkstyle</exclude>
             <exclude>**/.gitignore</exclude>
             <exclude>**/overlays/**</exclude>
             <exclude>src/licensing/**</exclude>
             <exclude>**/testCA/**</exclude>
+            <exclude>**/.idea/**</exclude>
+            <exclude>**/*.keystore</exclude>
+            <exclude>**/*.example</exclude>
+            <exclude>**/*.sample</exclude>
+            <exclude>**/*.conf</exclude>
+            <exclude>**/*.doc</exclude>
+            <exclude>**/*.jmx</exclude>
           </excludes>
         </configuration>
+        <executions>
+            <execution>
+                <phase>compile</phase>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+            </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -526,8 +544,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
       
@@ -834,6 +852,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-support-trusted</module>
     <module>cas-server-support-x509</module>
     <module>cas-server-support-oauth</module>
+    <module>cas-server-support-pac4j</module>
     <module>cas-server-support-saml</module>
     <module>cas-server-integration-jboss</module>
     <module>cas-server-integration-memcached</module>
@@ -946,33 +965,34 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   </profiles>
   
   <properties>
+    <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
     <spring.version>3.2.2.RELEASE</spring.version>
     <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
     <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.6.11</aspectj.version>
+    <aspectj.version>1.7.2</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
-    <perf4j.version>0.9.14</perf4j.version>
+    <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
-    <slf4j.version>1.7.1</slf4j.version>
+    <slf4j.version>1.7.5</slf4j.version>
     <person.directory.version>1.5.1</person.directory.version>
     <servlet.api.version>2.5</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
-    <commons.codec.version>1.4</commons.codec.version>
-    <log4j.version>1.2.15</log4j.version>
-    <junit.version>4.10</junit.version>
+    <commons.codec.version>1.7</commons.codec.version>
+    <log4j.version>1.2.17</log4j.version>
+    <junit.version>4.11</junit.version>
     <checkstyle.version>5.6</checkstyle.version>
-    <commons.lang.version>2.5</commons.lang.version>
+    <commons.lang.version>3.1</commons.lang.version>
     <inspektr.version>1.0.7.GA</inspektr.version>
-    <commons.io.version>2.0</commons.io.version>
-    <mockito.version>1.9.0</mockito.version>
+    <commons.io.version>2.4</commons.io.version>
+    <mockito.version>1.9.5</mockito.version>
     <ehcache.version>2.7.0</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
-    <joda-time.version>2.1</joda-time.version>
+    <joda-time.version>2.2</joda-time.version>
 	
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>

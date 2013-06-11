@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.slf4j.Logger;
@@ -42,23 +43,28 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20CallbackAuthorizeController extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
+    private final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         // get CAS ticket
         final String ticket = request.getParameter(OAuthConstants.TICKET);
-        log.debug("ticket : {}", ticket);
+        logger.debug("{} : {}", OAuthConstants.TICKET, ticket);
 
         // retrieve callback url from session
         final HttpSession session = request.getSession();
         String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
-        log.debug("callbackUrl : {}", callbackUrl);
+        logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+
+        if (StringUtils.isBlank(callbackUrl)) {
+            logger.error("{} is missing from the session and can not be retrieved.", OAuthConstants.OAUTH20_CALLBACKURL);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+        }
         // and state
         final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
-        log.debug("state : {}", state);
+        logger.debug("{} : {}", OAuthConstants.OAUTH20_STATE, state);
         session.removeAttribute(OAuthConstants.OAUTH20_STATE);
 
         // return callback url with code & state
@@ -66,13 +72,14 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         if (state != null) {
             callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
         }
-        log.debug("callbackUrl : {}", callbackUrl);
+        logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
 
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
+
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
-        log.debug("serviceName : {}", serviceName);
+        logger.debug("serviceName : {}", serviceName);
         model.put("serviceName", serviceName);
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }

@@ -35,6 +35,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public interface AuthenticationManager {
 
+    /** Authentication method attribute name. **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**

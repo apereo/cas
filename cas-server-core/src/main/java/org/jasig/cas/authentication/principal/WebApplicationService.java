@@ -40,4 +40,12 @@ public interface WebApplicationService extends Service {
      * @return the artifact if it exists, null otherwise.
      */
     String getArtifactId();
+
+    /**
+     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
+     * Used to reconstruct the redirect url.
+     *
+     * @return the original url provided.
+     */
+    String getOriginalUrl();
 }

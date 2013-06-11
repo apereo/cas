@@ -40,7 +40,7 @@ public class TicketValidationException extends TicketException {
     /**
      * Constructs a TicketValidationException with the default exception code
      * and the original exception that was thrown.
-     *
+     * @param service original service
      */
     public TicketValidationException(final Service service) {
         super(CODE);

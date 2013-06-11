@@ -87,4 +87,8 @@
       </roles>
     </contributor>
   </contributors>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>

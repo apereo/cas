@@ -40,10 +40,12 @@ public final class UsernamePasswordCredentialsToPrincipalResolver extends
     }
 
     /**
+     * {@inheritDoc}
      * Return true if Credentials are UsernamePasswordCredentials, false
      * otherwise.
      * @return true, if the credentials are supported by this resolver
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials

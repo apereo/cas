@@ -104,7 +104,8 @@ public class Saml10SuccessResponseViewTests {
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
 
         final MutableAuthentication authentication = new MutableAuthentication(principal);
-        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD, SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
+        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authentication.getAttributes().put("testSamlAttribute", "value");
 
         final List<Authentication> authentications = new ArrayList<Authentication>();

@@ -55,7 +55,8 @@ AbstractUsernamePasswordAuthenticationHandler {
     private boolean failoverOnAuthenticationFailure;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+                                                    throws AuthenticationException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {
@@ -66,14 +67,12 @@ AbstractUsernamePasswordAuthenticationHandler {
                     return response;
                 }
 
-                log
-                .debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
-            } catch (Exception e) {
+                logger.debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
+            } catch (final Exception e) {
                 if (!this.failoverOnException) {
-                    log
-                    .warn("Failover disabled.  Returning false for authentication request.");
+                    logger.warn("Failover disabled. Returning false for authentication request.");
                 } else {
-                    log.warn("Failover enabled.  Trying next RadiusServer.");
+                    logger.warn("Failover enabled. Trying next RadiusServer.");
                 }
             }
         }

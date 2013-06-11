@@ -45,6 +45,7 @@ public interface AuthenticationMetaDataPopulator {
      *
      * @param authentication The Authentication to potentially augment with
      * additional attributes.
+     * @param credentials the presented credentials
      * @return the original Authentication object or a new Authentication
      * object.
      */

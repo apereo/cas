@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
-
 /**
  * @author Scott Battaglia
  * @since 3.0
@@ -43,11 +42,9 @@ public class AssertionImplTests {
         list.add(TestUtils.getAuthentication("test1"));
         list.add(TestUtils.getAuthentication("test2"));
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), true);
 
-        assertEquals(list.toArray(new Authentication[0]).length, assertion
-            .getChainedAuthentications().size());
+        assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().size());
     }
 
     @Test
@@ -56,8 +53,7 @@ public class AssertionImplTests {
 
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), false);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -68,8 +64,7 @@ public class AssertionImplTests {
 
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -79,8 +74,7 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals(null));
     }
@@ -90,8 +84,7 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals("test"));
     }
@@ -105,10 +98,8 @@ public class AssertionImplTests {
         list.add(auth);
         list1.add(auth);
 
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, TestUtils.getService(), true);
-        final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(
-            list1, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, TestUtils.getService(), true);
+        final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(list1, TestUtils.getService(), true);
 
         assertTrue(assertion.equals(assertion1));
     }
@@ -120,8 +111,7 @@ public class AssertionImplTests {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
-        final Assertion assertion = new ImmutableAssertionImpl(list, service,
-            false);
+        final Assertion assertion = new ImmutableAssertionImpl(list, service, false);
 
         assertEquals(service, assertion.getService());
     }

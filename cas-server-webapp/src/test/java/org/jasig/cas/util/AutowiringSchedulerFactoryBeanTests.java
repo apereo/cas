@@ -42,6 +42,7 @@ public class AutowiringSchedulerFactoryBeanTests {
     @Before
     public void setUp() throws Exception {
         context = new ClassPathXmlApplicationContext(new String[] {
+        "core-context.xml",
         "applicationContext.xml"});
 
         this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -42,7 +41,7 @@ import org.springframework.util.StringUtils;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Logger log = LoggerFactory.getLogger(SamlService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -66,16 +65,17 @@ public final class SamlService extends AbstractWebApplicationService {
     private static final long serialVersionUID = -6867572626767140223L;
 
     protected SamlService(final String id) {
-        super(id, id, null, new HttpClient());
+        super(id, id, null);
     }
 
     protected SamlService(final String id, final String originalUrl,
-            final String artifactId, final HttpClient httpClient, final String requestId) {
-        super(id, originalUrl, artifactId, httpClient);
+            final String artifactId, final String requestId) {
+        super(id, originalUrl, artifactId);
         this.requestId = requestId;
     }
 
     /**
+     * {@inheritDoc}
      * This always returns true because a SAML Service does not receive the TARGET value on validation.
      */
     @Override
@@ -88,7 +88,7 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     public static SamlService createServiceFrom(
-            final HttpServletRequest request, final HttpClient httpClient) {
+            final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String artifactId;
         final String requestBody = getRequestBody(request);
@@ -124,12 +124,12 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
-        log.debug("Attempted to extract Request from HttpServletRequest. Results:");
-        log.debug(String.format("Request Body: %s", requestBody));
-        log.debug(String.format("Extracted ArtifactId: %s", artifactId));
-        log.debug(String.format("Extracted Request Id: %s", requestId));
+        LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
+        LOGGER.debug(String.format("Request Body: %s", requestBody));
+        LOGGER.debug(String.format("Extracted ArtifactId: %s", artifactId));
+        LOGGER.debug(String.format("Extracted Request Id: %s", requestId));
 
-        return new SamlService(id, service, artifactId, httpClient, requestId);
+        return new SamlService(id, service, artifactId, requestId);
     }
 
     @Override
@@ -153,7 +153,7 @@ public final class SamlService extends AbstractWebApplicationService {
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
-            log.debug("Exception parsing RequestID from request.", e);
+            LOGGER.debug("Exception parsing RequestID from request.", e);
             return null;
         }
     }

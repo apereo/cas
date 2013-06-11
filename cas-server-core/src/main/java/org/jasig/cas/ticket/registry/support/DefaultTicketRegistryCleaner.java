@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
@@ -63,7 +64,7 @@ import javax.validation.constraints.NotNull;
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /** The Commons Logging instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The instance of the TicketRegistry to clean. */
     @NotNull
@@ -73,20 +74,24 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
-    private boolean logUserOutOfServices = true;
+    /** The logout manager. */
+    @NotNull
+    private LogoutManager logoutManager;
 
+    /** If the user must be logged out of the services. */
+    private boolean logUserOutOfServices = true;
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
     public void clean() {
-        log.info("Beginning ticket cleanup.");
-        log.debug("Attempting to acquire ticket cleanup lock.");
+        logger.info("Beginning ticket cleanup.");
+        logger.debug("Attempting to acquire ticket cleanup lock.");
         if (!this.lock.acquire()) {
-            log.info("Could not obtain lock.  Aborting cleanup.");
+            logger.info("Could not obtain lock.  Aborting cleanup.");
             return;
         }
-        log.debug("Acquired lock.  Proceeding with cleanup.");
+        logger.debug("Acquired lock.  Proceeding with cleanup.");
         try {
             final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
             final Collection<Ticket> ticketsInCache;
@@ -97,20 +102,20 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            log.info("{} tickets found to be removed.", ticketsToRemove.size());
+            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
             for (final Ticket ticket : ticketsToRemove) {
                 // CAS-686: Expire TGT to trigger single sign-out
                 if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    ((TicketGrantingTicket) ticket).expire();
+                    logoutManager.performLogout((TicketGrantingTicket) ticket);
                 }
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         } finally {
-            log.debug("Releasing ticket cleanup lock.");
+            logger.debug("Releasing ticket cleanup lock.");
             this.lock.release();
         }
 
-        log.info("Finished ticket cleanup.");
+        logger.info("Finished ticket cleanup.");
     }
 
 
@@ -141,5 +146,14 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
         this.logUserOutOfServices = logUserOutOfServices;
+    }
+
+    /**
+     * Set the logout manager.
+     *
+     * @param logoutManager the logout manager.
+     */
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
     }
 }

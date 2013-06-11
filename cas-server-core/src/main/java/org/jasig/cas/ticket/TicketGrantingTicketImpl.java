@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,8 +31,6 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -52,8 +50,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
-
     /** The authenticated object for which this ticket was generated for. */
     @Lob
     @Column(name="AUTHENTICATION", nullable=false)
@@ -63,22 +59,26 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Column(name="EXPIRED", nullable=false)
     private Boolean expired = false;
 
+    /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
-    private final HashMap<String,Service> services = new HashMap<String, Service>();
+    private final HashMap<String, Service> services = new HashMap<String, Service>();
 
+    /**
+     * Empty constructor.
+     */
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
 
     /**
      * Constructs a new TicketGrantingTicket.
+     * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
      * @param id the id of the Ticket
      * @param ticketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
-     * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
         final TicketGrantingTicket ticketGrantingTicket,
@@ -103,10 +103,22 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         this(id, null, authentication, policy);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Authentication getAuthentication() {
         return this.authentication;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The state of the ticket is affected by this operation and the
+     * ticket will be considered used. The state update subsequently may
+     * impact the ticket expiration policy in that, depending on the policy
+     * configuration, the ticket may be considered expired.
+     */
+    @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided) {
@@ -124,29 +136,55 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return serviceTicket;
     }
 
-    private void logOutOfServices() {
-        for (final Entry<String, Service> entry : this.services.entrySet()) {
-
-            if (!entry.getValue().logOutOfService(entry.getKey())) {
-                log.warn("Logout message not sent to [[]]; Continuing processing...",
-                        entry.getValue().getId());
-            }
+    /**
+     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
+     *
+     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
+    */
+    public synchronized Map<String, Service> getServices() {
+        final Map<String, Service> map = new HashMap<String, Service>(services.size());
+        for (final String ticket : services.keySet()) {
+            map.put(ticket, services.get(ticket));
         }
+        return Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Remove all services of the TGT (at logout).
+     */
+    public void removeAllServices() {
+        services.clear();
+    }
+
+    /**
+     * Return if the TGT has no parent.
+     *
+     * @return if the TGT has no parent.
+     */
     public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
-    public synchronized void expire() {
+    /**
+     * Mark a ticket as expired.
+     */
+    public void markTicketExpired() {
         this.expired = true;
-        logOutOfServices();
     }
 
+    /**
+     * Return if the TGT is expired.
+     *
+     * @return if the TGT is expired.
+     */
     public boolean isExpiredInternal() {
         return this.expired;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
@@ -161,7 +199,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return Collections.unmodifiableList(list);
     }
 
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null
             || !(object instanceof TicketGrantingTicket)) {
             return false;
@@ -171,6 +209,4 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         return ticket.getId().equals(this.getId());
     }
-
-
 }

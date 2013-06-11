@@ -33,7 +33,8 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractLdapPersonDirectoryCredentialsToPrincipalResolver {
+public final class CredentialsToLDAPAttributePrincipalResolver extends
+        AbstractLdapPersonDirectoryCredentialsToPrincipalResolver {
 
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
@@ -48,19 +49,19 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
                 .resolvePrincipal(credentials);
 
         if (principal == null) {
-            log.info("Initial principal could not be resolved from request, "
+            logger.info("Initial principal could not be resolved from request, "
                     + "returning null");
             return null;
         }
 
-        log.debug("Resolved {}. Trying LDAP resolve now...", principal);
+        logger.debug("Resolved {}. Trying LDAP resolve now...", principal);
 
         final String ldapPrincipal = resolveFromLDAP(principal.getId());
 
         if (ldapPrincipal == null) {
-            log.info("Initial principal {} was not found in LDAP, returning null", principal.getId());
+            logger.info("Initial principal {} was not found in LDAP, returning null", principal.getId());
         } else {
-            log.debug("Resolved {} to {}", principal, ldapPrincipal);
+            logger.debug("Resolved {} to {}", principal, ldapPrincipal);
         }
 
         return ldapPrincipal;
@@ -70,7 +71,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
         final String searchFilter = LdapUtils.getFilterWithValues(getFilter(),
                 lookupAttributeValue);
 
-        log.debug("LDAP search with filter {}", searchFilter);
+        logger.debug("LDAP search with filter {}", searchFilter);
 
         try {
             // searching the directory
@@ -84,7 +85,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
                                 throws NamingException {
                             final Attribute attribute = attrs.get(idAttribute);
                             if (attribute == null) {
-                                log.debug("Principal attribute {} not found in LDAP search results. Returning null.",
+                                logger.debug("Principal attribute {} not found in LDAP search results. Returning null.",
                                         idAttribute);
                                 return null;
                             }
@@ -93,11 +94,11 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
 
                     });
             if (principalList.isEmpty()) {
-                log.debug("LDAP search returned zero results.");
+                logger.debug("LDAP search returned zero results.");
                 return null;
             }
             if (principalList.size() > 1) {
-                log.error("LDAP search returned multiple results "
+                logger.error("LDAP search returned multiple results "
                         + "for filter \"" + searchFilter + "\", "
                         + "which is not allowed.");
 
@@ -106,7 +107,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
             return (String) principalList.get(0);
 
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -123,7 +124,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
      * @param credentialsToPrincipalResolver The credentialsToPrincipalResolver
      * to set.
      */
-    public final void setCredentialsToPrincipalResolver(
+    public void setCredentialsToPrincipalResolver(
             final CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
         this.credentialsToPrincipalResolver = credentialsToPrincipalResolver;
     }

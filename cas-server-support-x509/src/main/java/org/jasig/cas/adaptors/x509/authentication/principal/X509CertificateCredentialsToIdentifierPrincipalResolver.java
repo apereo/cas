@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The following class is deprecated in favor of
+ * @deprecated The following class is deprecated in favor of
  * {@link X509CertificateCredentialsToSubjectPrinciplalResolver}.
  *
  * @author Anders Svensson
@@ -49,7 +49,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         String username = this.identifier;
 
-        log.info("Creating principal for: {}", certificate.getSubjectDN().getName());
+        logger.info("Creating principal for: {}", certificate.getSubjectDN().getName());
 
         for (final Matcher regexMatcher =
                 this.subjectRegex.matcher(certificate.getSubjectDN().getName()); regexMatcher.find();) {
@@ -61,7 +61,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver
             } else {
                 value = regexMatcher.group(3);
             }
-            log.debug(String.format("Parsed: %s - %s", name, value));
+            logger.debug(String.format("Parsed: %s - %s", name, value));
 
             username = username.replaceAll(new StringBuilder("\\$").append(name).toString(), value);
         }

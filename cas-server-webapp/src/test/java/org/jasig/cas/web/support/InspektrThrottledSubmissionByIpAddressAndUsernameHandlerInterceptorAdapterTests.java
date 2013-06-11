@@ -96,7 +96,7 @@ AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
         try {
             authenticationManager.authenticate(badCredentials(username));
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
         }
