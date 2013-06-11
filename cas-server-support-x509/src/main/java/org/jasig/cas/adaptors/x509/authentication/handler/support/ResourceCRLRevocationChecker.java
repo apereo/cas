@@ -98,7 +98,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         }
     }
 
-    /** Initializes the process that periodically fetches CRL data. */
+    /**
+     * {@inheritDoc}
+     * Initializes the process that periodically fetches CRL data. */
     @Override
     public void afterPropertiesSet() throws Exception {
         // Fetch CRL data synchronously and throw exception to abort if any fail
@@ -129,11 +131,12 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     protected void addCrl(final X509CRL crl) {
         final X500Principal issuer = crl.getIssuerX500Principal();
-        log.debug("Adding CRL for issuer {}", issuer);
+        logger.debug("Adding CRL for issuer {}", issuer);
         this.crlIssuerMap.put(issuer, crl);
     }
 
     /**
+     * {@inheritDoc}
      * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
     @Override
@@ -153,7 +156,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     protected class CRLFetcher {
         /** Logger instance. */
-        private final Logger log = LoggerFactory.getLogger(getClass());
+        private final Logger logger = LoggerFactory.getLogger(getClass());
 
         /** Array of resources pointing to CRL data. */
         private final List<Resource> resources;
@@ -187,10 +190,10 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          */
         public void fetch(final boolean throwOnError) {
             for (Resource r : this.resources) {
-                log.debug("Fetching CRL data from {}", r);
+                logger.debug("Fetching CRL data from {}", r);
                 try {
                     addCrl(CertUtils.fetchCRL(r));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     if (throwOnError) {
                         throw new RuntimeException("Error fetching CRL from " + r, e);
                     }

@@ -78,7 +78,7 @@ public class JaasAuthenticationHandler extends
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
 
         try {
-            log.debug("Attempting authentication for: {}", transformedUsername);
+            logger.debug("Attempting authentication for: {}", transformedUsername);
             final LoginContext lc = new LoginContext(this.realm,
                 new UsernamePasswordCallbackHandler(transformedUsername,
                     credentials.getPassword()));
@@ -86,11 +86,11 @@ public class JaasAuthenticationHandler extends
             lc.login();
             lc.logout();
         } catch (final LoginException fle) {
-            log.debug("Authentication failed for: {}", transformedUsername);
+            logger.debug("Authentication failed for: {}", transformedUsername);
             return false;
         }
 
-        log.debug("Authentication succeeded for: {}", transformedUsername);
+        logger.debug("Authentication succeeded for: {}", transformedUsername);
         return true;
     }
 

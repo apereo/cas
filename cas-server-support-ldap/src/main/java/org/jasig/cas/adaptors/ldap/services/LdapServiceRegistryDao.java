@@ -39,11 +39,10 @@ import javax.validation.constraints.NotNull;
  *
  * @author Siegfried Puchbauer, SPP (http://www.spp.at)
  * @author Scott Battaglia
- *
  */
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private LdapTemplate ldapTemplate;
@@ -78,7 +77,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     }
 
     public RegisteredService update(final RegisteredServiceImpl registeredService) {
-        final DirContextAdapter ctx = lookupCtx(findDn(this.ldapServiceMapper.getSearchFilter(registeredService.getId()).encode()));
+        final DirContextAdapter ctx = lookupCtx(findDn(this.ldapServiceMapper.getSearchFilter(
+                        registeredService.getId()).encode()));
         if (ctx == null) {
             return null;
         }
@@ -87,10 +87,10 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
         final String dn = ctx.getNameInNamespace();
         final ModificationItem[] modItems = ctx.getModificationItems();
-        if(log.isDebugEnabled()) {
-            log.debug("Attemting to perform modify operations on {}", dn);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Attemting to perform modify operations on {}", dn);
             for (final ModificationItem modItem : modItems) {
-                log.debug(modItem.toString());
+                logger.debug(modItem.toString());
             }
         }
         this.ldapTemplate.modifyAttributes(dn, modItems);
@@ -102,7 +102,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     }
 
     protected String findDn(final String filter) {
-        final List results = this.ldapTemplate.search(this.serviceBaseDn, filter, SearchControls.SUBTREE_SCOPE, new String[0], new ContextMapper() {
+        final List results = this.ldapTemplate.search(this.serviceBaseDn, filter, SearchControls.SUBTREE_SCOPE,
+                new String[0], new ContextMapper() {
             public Object mapFromContext(final Object ctx) {
                 return ((DirContextAdapter) ctx).getNameInNamespace();
             }
@@ -123,7 +124,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
             this.ldapTemplate.unbind(dn, false);
             return true;
         } catch (final Exception e) {
-            log.warn("Error deleting Registered Service", e);
+            logger.warn("Error deleting Registered Service", e);
             return false;
         }
     }
@@ -131,16 +132,18 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         try {
-            return this.ldapTemplate.search(this.serviceBaseDn, this.ldapServiceMapper.getLoadFilter().encode(), this.cachedSearchControls, this.ldapServiceMapper);
+            return this.ldapTemplate.search(this.serviceBaseDn, this.ldapServiceMapper.getLoadFilter().encode(),
+                    this.cachedSearchControls, this.ldapServiceMapper);
         } catch (final Exception e) {
-            log.error("Exception while loading Registered Services from LDAP Directory...", e);
+            logger.error("Exception while loading Registered Services from LDAP Directory...", e);
             return new ArrayList<RegisteredService>();
         }
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return (RegisteredService) this.ldapTemplate.lookup(findDn(this.ldapServiceMapper.getSearchFilter(id).encode()), this.ldapServiceMapper);
+        return (RegisteredService) this.ldapTemplate.lookup(findDn(this.ldapServiceMapper.getSearchFilter(id).encode()),
+                this.ldapServiceMapper);
     }
 
     public void setServiceBaseDN(final String serviceBaseDN) {

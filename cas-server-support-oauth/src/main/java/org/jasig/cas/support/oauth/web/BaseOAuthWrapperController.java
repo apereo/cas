@@ -31,15 +31,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is the base controller for wrapping OAuth protocol in CAS. It finds the right sub controller to call according to the
- * url.
+ * This controller is the base controller for wrapping OAuth protocol in CAS.
+ * It finds the right sub controller to call according to the url.
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
-    protected final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
 
     @NotNull
     protected String loginUrl;
@@ -58,7 +58,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
             throws Exception {
 
         final String method = getMethod(request);
-        log.debug("method : {}", method);
+        logger.debug("method : {}", method);
         return internalHandleRequest(method, request, response);
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /**
      * Return the method to call according to the url.
      *
-     * @param request
+     * @param request the incoming http request
      * @return the method to call according to the url
      */
     private String getMethod(final HttpServletRequest request) {

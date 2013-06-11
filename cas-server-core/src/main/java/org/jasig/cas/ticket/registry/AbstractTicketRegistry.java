@@ -34,13 +34,16 @@ import org.springframework.util.Assert;
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
 
     /** The Commons Logging log instance. */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if class is null.
      * @throws ClassCastException if class does not match requested ticket
      * class.
+     * @return specified ticket from the registry
      */
+    @Override
     public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
@@ -60,13 +63,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     public int sessionCount() {
-      log.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+      logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     public int serviceTicketCount() {
-      log.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+      logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }

@@ -126,7 +126,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             messageContext.setOutboundSAMLMessage(samlResponse);
             this.encoder.encode(messageContext);
         } catch (final Exception e) {
-            log.error("Error generating SAML response for service {}.", serviceId);
+            logger.error("Error generating SAML response for service {}.", serviceId);
             throw e;
         }
     }

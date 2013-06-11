@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.Pair;
 import org.springframework.util.Assert;
 
 /**
@@ -44,6 +45,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
     private Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if a mapping cannot be found.
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
@@ -62,26 +64,26 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             authException = e;
             logAuthenticationHandlerError(handlerName, credentials, e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logAuthenticationHandlerError(handlerName, credentials, e);
         }
 
         if (!authenticated) {
-            log.info("{} failed to authenticate {}", handlerName, credentials);
+            logger.info("{} failed to authenticate {}", handlerName, credentials);
             throw authException;
         }
-        log.info("{} successfully authenticated {}", handlerName, credentials);
+        logger.info("{} successfully authenticated {}", handlerName, credentials);
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
 
-        return new Pair<AuthenticationHandler,Principal>(d.getAuthenticationHandler(), p);
+        return new Pair<AuthenticationHandler, Principal>(d.getAuthenticationHandler(), p);
     }
 
-    public final void setCredentialsMapping(
-        final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
+    public void setCredentialsMapping(final Map<Class< ? extends Credentials>,
+            DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
 
@@ -98,7 +100,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
             // nothing to do
         }
 
-        public final AuthenticationHandler getAuthenticationHandler() {
+        public AuthenticationHandler getAuthenticationHandler() {
             return this.authenticationHandler;
         }
 

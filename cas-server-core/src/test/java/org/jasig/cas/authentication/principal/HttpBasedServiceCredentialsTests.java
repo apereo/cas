@@ -25,7 +25,6 @@ import java.net.URL;
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
-
 /**
  * @author Scott Battaglia
  * @since 3.0
@@ -34,8 +33,8 @@ public final class HttpBasedServiceCredentialsTests {
 
     @Test
     public void testProperUrl() {
-        assertEquals(TestUtils.CONST_GOOD_URL, TestUtils
-            .getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
+        assertEquals(TestUtils.CONST_GOOD_URL, TestUtils.getHttpBasedServiceCredentials().getCallbackUrl()
+                .toExternalForm());
     }
 
     @Test

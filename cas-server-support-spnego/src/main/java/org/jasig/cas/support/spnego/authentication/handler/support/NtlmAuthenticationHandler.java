@@ -70,7 +70,7 @@ AbstractPreAndPostProcessingAuthenticationHandler {
             if (this.loadBalance) {
                 // find the first dc that matches the includepattern
                 if(this.includePattern != null){
-                    NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController, 0x1C, null,null);
+                    NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController, 0x1C, null, null);
                     for (NbtAddress dc2 : dcs) {
                         if(dc2.getHostAddress().matches(this.includePattern)){
                             dc = new UniAddress(dc2);
@@ -88,15 +88,15 @@ AbstractPreAndPostProcessingAuthenticationHandler {
 
             switch (src[8]) {
             case 1:
-                log.debug("Type 1 received");
+                logger.debug("Type 1 received");
                 final Type1Message type1 = new Type1Message(src);
                 final Type2Message type2 = new Type2Message(type1,
                         challenge, null);
-                log.debug("Type 2 returned. Setting next token.");
+                logger.debug("Type 2 returned. Setting next token.");
                 ntlmCredentials.setNextToken(type2.toByteArray());
                 return false;
             case 3:
-                log.debug("Type 3 received");
+                logger.debug("Type 3 received");
                 final Type3Message type3 = new Type3Message(src);
                 final byte[] lmResponse = type3.getLMResponse() == null
                         ? new byte[0] : type3.getLMResponse();
@@ -105,19 +105,21 @@ AbstractPreAndPostProcessingAuthenticationHandler {
                                 final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                                         type3.getDomain(), type3.getUser(), challenge,
                                         lmResponse, ntResponse);
-                                log.debug("Trying to authenticate {} with domain controller", type3.getUser());
+                                logger.debug("Trying to authenticate {} with domain controller", type3.getUser());
                                 try {
                                     SmbSession.logon(dc, ntlm);
                                     ntlmCredentials.setPrincipal(new SimplePrincipal(type3
                                             .getUser()));
                                     return true;
                                 } catch (final SmbAuthException sae) {
-                                    log.debug("Authentication failed", sae);
+                                    logger.debug("Authentication failed", sae);
                                     return false;
                                 }
+            default:
+                logger.debug("No type code was received");
             }
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new BadCredentialsAuthenticationException(e);
         }
 

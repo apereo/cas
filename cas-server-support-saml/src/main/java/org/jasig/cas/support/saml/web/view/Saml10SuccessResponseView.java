@@ -92,8 +92,8 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
-        final boolean isRemembered = authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE
-                && !getAssertionFrom(model).isFromNewLogin();
+        final boolean isRemembered = authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)
+                == Boolean.TRUE && !getAssertionFrom(model).isFromNewLogin();
 
         // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
         final Assertion assertion = newSamlObject(Assertion.class);
@@ -158,7 +158,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         for (final Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
-                log.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newSamlObject(Attribute.class);

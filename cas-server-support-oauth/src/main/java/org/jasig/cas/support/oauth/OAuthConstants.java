@@ -26,55 +26,47 @@ package org.jasig.cas.support.oauth;
  */
 public interface OAuthConstants {
 
-    public static final String PROVIDER_TYPE = "providerType";
+    String REDIRECT_URI = "redirect_uri";
 
-    public static final String REDIRECT_URI = "redirect_uri";
+    String CLIENT_ID = "client_id";
 
-    public static final String CLIENT_ID = "client_id";
+    String CLIENT_SECRET = "client_secret";
 
-    public static final String CLIENT_SECRET = "client_secret";
+    String CODE = "code";
 
-    public static final String CODE = "code";
+    String SERVICE = "service";
 
-    public static final String SERVICE = "service";
+    String TICKET = "ticket";
 
-    public static final String THEME = "theme";
+    String STATE = "state";
 
-    public static final String LOCALE = "locale";
+    String ACCESS_TOKEN = "access_token";
 
-    public static final String METHOD = "method";
+    String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
-    public static final String TICKET = "ticket";
+    String OAUTH20_SERVICE_NAME = "oauth20_service_name";
 
-    public static final String STATE = "state";
+    String OAUTH20_STATE = "oauth20_state";
 
-    public static final String ACCESS_TOKEN = "access_token";
+    String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
-    public static final String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
+    String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
 
-    public static final String OAUTH20_SERVICE_NAME = "oauth20_service_name";
+    String CONFIRM_VIEW = "oauthConfirmView";
 
-    public static final String OAUTH20_STATE = "oauth20_state";
+    String ERROR_VIEW = "viewServiceErrorView";
 
-    public static final String MISSING_ACCESS_TOKEN = "missing_accessToken";
+    String INVALID_REQUEST = "invalid_request";
 
-    public static final String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
+    String INVALID_GRANT = "invalid_grant";
 
-    public static final String CONFIRM_VIEW = "oauthConfirmView";
+    String AUTHORIZE_URL = "authorize";
 
-    public static final String ERROR_VIEW = "viewServiceErrorView";
+    String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
 
-    public static final String INVALID_REQUEST = "invalid_request";
+    String ACCESS_TOKEN_URL = "accessToken";
 
-    public static final String INVALID_GRANT = "invalid_grant";
+    String PROFILE_URL = "profile";
 
-    public static final String AUTHORIZE_URL = "authorize";
-
-    public static final String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
-
-    public static final String ACCESS_TOKEN_URL = "accessToken";
-
-    public static final String PROFILE_URL = "profile";
-
-    public static final String OAUTH10_LOGIN_URL = "oauth10login";
+    String EXPIRES = "expires";
 }

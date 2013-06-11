@@ -36,14 +36,12 @@ import org.springframework.web.servlet.ModelAndView;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public class ManageRegisteredServicesMultiActionControllerTests {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ManageRegisteredServicesMultiActionController controller;
 
@@ -68,7 +66,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
+        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request,
+                new MockHttpServletResponse());
 
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
@@ -80,7 +79,8 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
+        final ModelAndView modelAndView = this.controller.deleteRegisteredService(request,
+                new MockHttpServletResponse());
 
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
@@ -145,9 +145,9 @@ public class ManageRegisteredServicesMultiActionControllerTests {
             request.addParameter("evaluationOrder", "1000");
 
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             //Exception expected; service id cannot be found
-            log.debug(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
         }
     }
 
@@ -167,9 +167,9 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         try {
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             //Exception expected; evaluation order is invalid
-            log.debug(e.getMessage(), e);
+            logger.debug(e.getMessage(), e);
         }
     }
 

@@ -76,16 +76,16 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
-    private static UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
+    private static UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
 
-    private static ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
+    private static ExpirationPolicy EXPIRATION_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static ExpirationPolicy EXPIRATION_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -143,8 +143,8 @@ public class JpaTicketRegistryTests {
             for (Future<String> result : results) {
                 assertNotNull(result.get());
             }
-        } catch (Exception e) {
-            log.debug("testConcurrentServiceTicketGeneration produced an error", e);
+        } catch (final Exception e) {
+            logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
@@ -156,16 +156,16 @@ public class JpaTicketRegistryTests {
         final Principal principal = new SimplePrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
-                idGenerator.getNewTicketId("TGT"),
+                ID_GENERATOR.getNewTicketId("TGT"),
                 new ImmutableAuthentication(principal, null),
-                expirationPolicyTGT);
+                EXPIRATION_POLICY_TGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
        return parent.grantServiceTicket(
-               idGenerator.getNewTicketId("ST"),
+               ID_GENERATOR.getNewTicketId("ST"),
                new MockService("https://service.example.com"),
-               expirationPolicyST,
+               EXPIRATION_POLICY_ST,
                false);
     }
 
@@ -214,6 +214,7 @@ public class JpaTicketRegistryTests {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {

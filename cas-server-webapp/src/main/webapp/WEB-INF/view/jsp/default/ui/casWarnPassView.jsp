@@ -41,15 +41,13 @@
   <spring:message code="screen.warnpass.message.line1" arguments="${passwordPolicyUrl}"  />
   </p>
   <p>
-  <spring:message code="screen.warnpass.message.line2" arguments="${fn:escapeXml(param.service)}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}" />
+  <spring:message code="screen.warnpass.message.line2" arguments="${fn:escapeXml(service)}${fn:indexOf(service, '?') eq -1 ? '?' : '&'}${ticketArg}" />
   </p>
 </div>
 <script type="text/javascript">
-<!--
-
   function redirectTo(URL) {
     window.location = URL ;
   }
-  setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}')", 10000);
-
+  var timeout = ${redirectTimeout};
+  setTimeout("redirectTo('${service}${fn:indexOf(service, '?') eq -1 ? '?' : '&'}${ticketArg}')", timeout);
 </script>

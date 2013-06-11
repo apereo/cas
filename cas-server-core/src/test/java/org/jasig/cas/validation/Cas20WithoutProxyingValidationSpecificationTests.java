@@ -39,33 +39,29 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void testSatisfiesSpecOfTrue() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils
-            .getAssertion(true)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     @Test
     public void testNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils
-            .getAssertion(false)));
+        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     @Test
     public void testSatisfiesSpecOfFalse() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils
-            .getAssertion(false)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     @Test
     public void testDoesNotSatisfiesSpecOfFalse() {
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils
-            .getAssertion(false, new String[] {"test2"})));
+        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
     }
 
     @Test
     public void testSettingRenew() {
         final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
-            true);
+                true);
         assertTrue(validation.isRenew());
     }
 }

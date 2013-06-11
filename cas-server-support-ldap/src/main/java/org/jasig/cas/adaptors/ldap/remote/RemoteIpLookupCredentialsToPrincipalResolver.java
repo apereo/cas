@@ -51,7 +51,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
 
     private static final String ADDR_EDIR87 = "edirectory87";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The format that the IP address is stored in the LDAP source - 'standard' is default. */
     @NotNull
@@ -66,7 +66,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
             return null;
         }
 
-        log.debug("Original IP address: {}, formatted IP address {}", c.getRemoteAddress(), formattedIpAddress);
+        logger.debug("Original IP address: {}, formatted IP address {}", c.getRemoteAddress(), formattedIpAddress);
 
         final String attributeId = getAttributeIds()[0];
         final List<?> principalList = this.getLdapTemplate().search(
@@ -82,11 +82,11 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
                 });
 
         if (principalList.isEmpty()) {
-            log.debug("LDAP search returned zero results.");
+            logger.debug("LDAP search returned zero results.");
             return null;
         }
         if (principalList.size() > 1) {
-            log.error("LDAP search returned multiple results "
+            logger.error("LDAP search returned multiple results "
                     + "for filter \"" + getFilter() + "\", "
                     + "which is not allowed.");
 
@@ -119,7 +119,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
                  */
                 String networkAddress = "\\31\\23";
                 // Turn ip (192.168.0.1) into a byte array, covert each into a byte String
-                String[] octets = formattedAddress.replace('.','_').split("_");
+                String[] octets = formattedAddress.replace('.', '_').split("_");
 
                 for (String octet : octets) {
                     networkAddress += "\\" + getHexadecimal(octet);
@@ -129,7 +129,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver
 
             return formattedAddress;
         } catch (final UnknownHostException e) {
-            log.error(e.toString(),e);
+            logger.error(e.toString(), e);
             return null;
         }
     }

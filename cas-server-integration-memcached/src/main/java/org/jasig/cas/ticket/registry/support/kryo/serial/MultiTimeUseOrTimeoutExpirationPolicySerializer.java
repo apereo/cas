@@ -32,6 +32,7 @@ import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 public final class MultiTimeUseOrTimeoutExpirationPolicySerializer extends
             SimpleSerializer<MultiTimeUseOrTimeoutExpirationPolicy> {
 
+    /** FieldHelper instance. **/
     protected final FieldHelper fieldHelper;
 
     public MultiTimeUseOrTimeoutExpirationPolicySerializer(final FieldHelper helper) {

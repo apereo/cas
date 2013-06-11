@@ -78,8 +78,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     private boolean allowMultipleAccounts;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+            throws AuthenticationException {
 
         final List<String> cns = new ArrayList<String>();
 
@@ -88,28 +88,26 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         final String base = this.searchBase;
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-        this.getLdapTemplate().search(
-                new SearchExecutor() {
+        this.getLdapTemplate().search(new SearchExecutor() {
 
-                    @Override
-                    public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                        return context.search(base, filter, searchControls);
-                    }
-                },
-                new NameClassPairCallbackHandler(){
+            @Override
+            public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
+                return context.search(base, filter, searchControls);
+            }
+        }, new NameClassPairCallbackHandler() {
 
-                    @Override
-                    public void handleNameClassPair(final NameClassPair nameClassPair) {
-                        cns.add(nameClassPair.getNameInNamespace());
-                    }
-                });
+            @Override
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getNameInNamespace());
+            }
+        });
 
         if (cns.isEmpty()) {
-            log.info("Search for {} returned 0 results.", filter);
+            logger.info("Search for {} returned 0 results.", filter);
             return false;
         }
         if (cns.size() > 1 && !this.allowMultipleAccounts) {
-            log.warn("Search for {} returned multiple results, which is not allowed.", filter);
+            logger.warn("Search for {} returned multiple results, which is not allowed.", filter);
             return false;
         }
 
@@ -117,19 +115,18 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
-                log.debug("Performing LDAP bind with credential: {}", dn);
-                test = this.getContextSource().getContext(
-                        finalDn,
+                logger.debug("Performing LDAP bind with credential: {}", dn);
+                test = this.getContextSource().getContext(finalDn,
                         getPasswordEncoder().encode(credentials.getPassword()));
 
                 if (test != null) {
                     return true;
                 }
             } catch (final NamingSecurityException e) {
-                log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
+                logger.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
                 throw handleLdapError(e);
             } catch (final Exception e) {
-                log.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw handleLdapError(e);
             } finally {
                 LdapUtils.closeContext(test);
@@ -139,8 +136,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         return false;
     }
 
-    protected String composeCompleteDnToCheck(final String dn,
-            final UsernamePasswordCredentials credentials) {
+    protected String composeCompleteDnToCheck(final String dn, final UsernamePasswordCredentials credentials) {
         return dn;
     }
 

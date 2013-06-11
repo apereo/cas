@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -27,10 +28,8 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public abstract class AbstractRegistryCleanerTests {
@@ -39,17 +38,13 @@ public abstract class AbstractRegistryCleanerTests {
 
     private TicketRegistry ticketRegistry;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
         this.registryCleaner = this.getNewRegistryCleaner(this.ticketRegistry);
     }
 
-    public abstract RegistryCleaner getNewRegistryCleaner(
-        TicketRegistry newTicketRegistry);
+    public abstract RegistryCleaner getNewRegistryCleaner(TicketRegistry newTicketRegistry);
 
     public abstract TicketRegistry getNewTicketRegistry();
 
@@ -69,9 +64,8 @@ public abstract class AbstractRegistryCleanerTests {
     @Test
     public void testCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
-        TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-            "testNoExpire", TestUtils.getAuthentication(),
-            new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
 
         this.registryCleaner.clean();
@@ -81,10 +75,9 @@ public abstract class AbstractRegistryCleanerTests {
 
     private void populateRegistryWithExpiredTickets() {
         for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-            ticket.expire();
+            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy());
+            ticket.markTicketExpired();
             this.ticketRegistry.addTicket(ticket);
         }
     }

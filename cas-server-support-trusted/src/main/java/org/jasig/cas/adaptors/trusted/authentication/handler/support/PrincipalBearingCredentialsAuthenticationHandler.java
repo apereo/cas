@@ -34,14 +34,13 @@ import org.slf4j.LoggerFactory;
  * @author Andrew Petro
  * @since 3.0.5
  */
-public final class PrincipalBearingCredentialsAuthenticationHandler implements
-        AuthenticationHandler {
+public final class PrincipalBearingCredentialsAuthenticationHandler implements AuthenticationHandler {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public boolean authenticate(final Credentials credentials) {
-        log.debug("Trusting credentials for: {}", credentials);
+        logger.debug("Trusting credentials for: {}", credentials);
         return true;
     }
 

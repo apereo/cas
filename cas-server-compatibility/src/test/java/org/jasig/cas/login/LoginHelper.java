@@ -28,11 +28,13 @@ import com.meterware.httpunit.WebResponse;
  *
  * @since 3.0
  */
-public class LoginHelper {
+public final class LoginHelper {
+
+    private LoginHelper() {}
 
     /**
      * Extract a serviceTicket from a CAS 1 ticket validation response.
-     * @param webResponse
+     * @param webResponse the web application validation response
      * @return a String representing the ticket
      * @throws IOException on IO error reading response
      * @throws RuntimeException on some parse failures
@@ -77,8 +79,7 @@ public class LoginHelper {
             int endQuoteIndex = 0;
             if (endDoubleQuoteIndex == -1 && endSingleQuoteIndex == -1) {
                 throw new RuntimeException("Failed parsing a service ticket from the response:" + response);
-            } else if (endDoubleQuoteIndex > -1 &&
-                    (endDoubleQuoteIndex < endSingleQuoteIndex || endSingleQuoteIndex == -1)) {
+            } else if (endDoubleQuoteIndex > -1 && (endDoubleQuoteIndex < endSingleQuoteIndex || endSingleQuoteIndex == -1)) {
                 endQuoteIndex = endDoubleQuoteIndex;
             } else {
                 endQuoteIndex = endSingleQuoteIndex;

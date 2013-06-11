@@ -30,7 +30,7 @@ import org.junit.Test;
 public final class LdapUtilTests {
 
     @Test
-     public void testEncoding() {
+    public void testEncoding() {
         final String filter = "cn=%u";
         assertEquals("cn=test\\+user@example.com", LdapUtils.getFilterWithValues(filter, "test+user@example.com"));
     }

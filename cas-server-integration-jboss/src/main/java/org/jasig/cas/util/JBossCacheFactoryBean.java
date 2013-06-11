@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
  */
 public final class JBossCacheFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Cache<String, Ticket> cache;
 
@@ -71,7 +71,7 @@ public final class JBossCacheFactoryBean implements FactoryBean, InitializingBea
 
     @Override
     public void destroy() throws Exception {
-        log.info("Shutting down TreeCache service.");
+        logger.info("Shutting down TreeCache service.");
         this.cache.destroy();
     }
 }

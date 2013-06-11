@@ -18,13 +18,17 @@
  */
 package org.jasig.cas.ticket;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -152,14 +156,32 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testWebApplicationSignOut() {
+    public void testWebApplicationServices() {
         final MockService testService = new MockService("test");
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false);
-        t.expire();
-        assertTrue(testService.isLoggedOut());
+        Map<String, Service> services = t.getServices();
+        assertEquals(1, services.size());
+        String ticketId = services.keySet().iterator().next();
+        assertEquals(testService, services.get(ticketId));
+        t.removeAllServices();
+        services = t.getServices();
+        assertEquals(0, services.size());
+    }
+
+    @Test
+    public void testWebApplicationExpire() {
+        final MockService testService = new MockService("test");
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), testService,
+            new NeverExpiresExpirationPolicy(), false);
+        assertFalse(t.isExpired());
+        t.markTicketExpired();
+        assertTrue(t.isExpired());
     }
 }
