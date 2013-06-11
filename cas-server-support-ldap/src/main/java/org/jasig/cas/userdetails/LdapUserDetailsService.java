@@ -20,7 +20,6 @@ package org.jasig.cas.userdetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.ldaptive.ConnectionFactory;
@@ -51,15 +50,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * </ol>
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 4.0
  */
 public class LdapUserDetailsService implements UserDetailsService {
-
-    /** The name of the username parameter in the search filter expression. */
-    public static final String USER_PARAM = "user";
-
-    /** User name placeholder in LDAP search filter expression. */
-    public static final String USER_PLACEHOLDER = '{' + USER_PARAM + '}';
 
     /** Default role prefix. */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
@@ -82,11 +76,11 @@ public class LdapUserDetailsService implements UserDetailsService {
     @NotNull
     private final SearchExecutor roleSearchExecutor;
 
-    /** Name of LDAP attribute to use as principal identifier. */
+    /** Specify the name of LDAP attribute to use as principal identifier. */
     @NotNull
     private final String userAttributeName;
 
-    /** Name of LDAP attribute to be used as the basis for role granted authorities. */
+    /** Specify the name of LDAP attribute to be used as the basis for role granted authorities. */
     @NotNull
     private final String roleAttributeName;
 
@@ -96,7 +90,6 @@ public class LdapUserDetailsService implements UserDetailsService {
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
     private boolean allowMultipleResults = false;
-
 
     /**
      * Creates a new instance with the given required parameters.
@@ -146,26 +139,6 @@ public class LdapUserDetailsService implements UserDetailsService {
         this.allowMultipleResults = allowMultiple;
     }
 
-
-    /**
-     * Initializes the instance after properties are set.
-     */
-    @PostConstruct
-    public void initialize() {
-        final String userSearchFilter = this.userSearchExecutor.getSearchFilter().getFilter();
-        if (!userSearchFilter.contains(USER_PLACEHOLDER)) {
-            throw new IllegalArgumentException(
-                    "Search filter expression must container user name placeholder " + USER_PLACEHOLDER);
-        }
-
-        final String roleSearchFilter = this.userSearchExecutor.getSearchFilter().getFilter();
-        if (!roleSearchFilter.contains(USER_PLACEHOLDER)) {
-            throw new IllegalArgumentException(
-                    "Search filter expression must container user name placeholder " + USER_PLACEHOLDER);
-        }
-    }
-
-
     @Override
     public UserDetails loadUserByUsername(final String username) {
         final SearchResult userResult;
@@ -173,7 +146,7 @@ public class LdapUserDetailsService implements UserDetailsService {
             log.debug("Attempting to get details for user {}.", username);
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
-                    filterWithParams(this.userSearchExecutor, username));
+                    createSearchFilter(this.userSearchExecutor, username));
             log.debug("LDAP user search response: {}", response);
             userResult = response.getResult();
         } catch (LdapException e) {
@@ -198,7 +171,7 @@ public class LdapUserDetailsService implements UserDetailsService {
             log.debug("Attempting to get roles for user {}.", userDn);
             final Response<SearchResult> response = this.roleSearchExecutor.search(
                     this.connectionFactory,
-                    filterWithParams(this.roleSearchExecutor, userDn));
+                    createSearchFilter(this.roleSearchExecutor, userDn));
             log.debug("LDAP role search response: {}", response);
             roleResult = response.getResult();
         } catch (LdapException e) {
@@ -218,8 +191,6 @@ public class LdapUserDetailsService implements UserDetailsService {
         return new User(id, UNKNOWN_PASSWORD, roles);
     }
 
-
-
     /**
      * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
      * the username as a parameter.
@@ -228,10 +199,12 @@ public class LdapUserDetailsService implements UserDetailsService {
      *
      * @return  Search filter with parameters applied.
      */
-    private SearchFilter filterWithParams(final SearchExecutor executor, final String username) {
+    private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(executor.getSearchFilter().getFilter());
-        filter.setParameter(USER_PARAM, username);
+        filter.setParameter(0, username);
+        
+        log.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }
 }
