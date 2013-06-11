@@ -42,6 +42,8 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Person directory <code>IPersonAttribute</code> implementation that queries an LDAP directory
@@ -50,7 +52,10 @@ import org.ldaptive.SearchScope;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
+public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
+
+    /** Logger instance. **/
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /** Search base DN. */
     @NotNull
@@ -132,13 +137,13 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
         final Connection connection;
         try {
             connection = this.connectionFactory.getConnection();
-        } catch (LdapException e) {
+        } catch (final LdapException e) {
             throw new RuntimeException("Failed getting LDAP connection", e);
         }
         final Response<SearchResult> response;
         try {
             response = new SearchOperation(connection).execute(createRequest(filter));
-        } catch (LdapException e) {
+        } catch (final LdapException e) {
             throw new RuntimeException("Failed executing LDAP query " + filter, e);
         }
         final SearchResult result = response.getResult();
@@ -162,8 +167,10 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
     protected SearchFilter appendAttributeToQuery(
             final SearchFilter filter, final String attribute, final List<Object> values) {
         final SearchFilter query;
-        if (filter == null) {
-            query = new SearchFilter(this.searchFilter, values.toArray());
+        if (filter == null && values.size() > 0) {
+            query = new SearchFilter(this.searchFilter);
+            query.setParameter(0, values.get(0).toString());
+            log.debug("Constructed LDAP search query [{}]", query.format());
         } else {
             throw new UnsupportedOperationException("Multiple attributes not supported.");
         }
@@ -196,11 +203,12 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
      *
      * @return Attribute map.
      */
-    private static Map<String, List<Object>> convertLdapEntryToMap(final LdapEntry entry) {
+    private Map<String, List<Object>> convertLdapEntryToMap(final LdapEntry entry) {
         final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>(entry.size());
         for (final LdapAttribute attr : entry.getAttributes()) {
             attributeMap.put(attr.getName(), new ArrayList<Object>(attr.getStringValues()));
         }
+        log.debug("Converted ldap DN entry [{}] to attribute map {}", entry.getDn(), attributeMap.toString());
         return attributeMap;
     }
 }
