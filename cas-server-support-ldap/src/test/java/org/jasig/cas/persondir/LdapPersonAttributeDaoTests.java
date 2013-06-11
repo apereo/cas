@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})
 @ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
 @IfProfileValue(name = "resolverConfig", value = "true")
-public class LdaptivePersonAttributeDaoTests {
+public class LdapPersonAttributeDaoTests {
 
     @Autowired
     private LdapPersonAttributeDao attributeDao;
@@ -69,7 +69,7 @@ public class LdaptivePersonAttributeDaoTests {
     }
 
     /**
-     * Determines whether the given attibute maps are equal irrespective of value ordering.
+     * Determines whether the given attribute maps are equal irrespective of value ordering.
      *
      * @param a First set of attributes.
      * @param b Second set of attributes.

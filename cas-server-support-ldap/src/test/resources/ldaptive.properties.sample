@@ -57,8 +57,8 @@ ldap.resolver.userNameAttribute=mail
 #========================================
 ldap.userdetails.user.baseDn=ou=people,dc=ldaptive,dc=org
 ldap.userdetails.role.baseDn=ou=groups,dc=ldaptive,dc=org
-ldap.userdetails.user.searchFilter=uid={user}
-ldap.userdetails.role.searchFilter=member={user}
+ldap.userdetails.user.searchFilter=uid={0}
+ldap.userdetails.role.searchFilter=member={0}
 ldap.userdetails.user.attribute=uid
 ldap.userdetails.role.attribute=ou
 

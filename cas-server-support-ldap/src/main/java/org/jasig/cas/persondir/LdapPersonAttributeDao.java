@@ -137,7 +137,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
         final Connection connection;
         try {
             connection = this.connectionFactory.getConnection();
-        } catch (LdapException e) {
+        } catch (final LdapException e) {
             throw new RuntimeException("Failed getting LDAP connection", e);
         }
         final Response<SearchResult> response;
@@ -169,7 +169,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
         final SearchFilter query;
         if (filter == null && values.size() > 0) {
             query = new SearchFilter(this.searchFilter);
-            query.setParameter(attribute, values.get(0).toString());
+            query.setParameter(0, values.get(0).toString());
             log.debug("Constructed LDAP search query [{}]", query.format());
         } else {
             throw new UnsupportedOperationException("Multiple attributes not supported.");
