@@ -20,6 +20,8 @@ package org.jasig.cas.authentication;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Base class for CAS credentials that are safe for long-term storage.
  *
@@ -29,7 +31,7 @@ import java.io.Serializable;
 public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 
     /** Serialization version marker. */
-    private static final long serialVersionUID = 4130371020442064793L;
+    private static final long serialVersionUID = 8196868021183513898L;
 
     /**
      * @return The credential identifier.
@@ -37,5 +39,21 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
     @Override
     public String toString() {
         return getId();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other instanceof  Credential && getClass().equals(other.getClass())) {
+            return getId().equals(((Credential) other).getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder builder = new HashCodeBuilder(11, 41);
+        builder.append(getClass().getName());
+        builder.append(getId());
+        return builder.toHashCode();
     }
 }

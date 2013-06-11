@@ -61,12 +61,12 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
-        final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
-        a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
+        final X509CredentialsAuthenticationHandler handler = new X509CredentialsAuthenticationHandler();
+        handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
 
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
-                        new LegacyAuthenticationHandlerAdapter(a),
+                        handler,
                         new X509CertificateCredentialsToSerialNumberPrincipalResolver()));
 
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(

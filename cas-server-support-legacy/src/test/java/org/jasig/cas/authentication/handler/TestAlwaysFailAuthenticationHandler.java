@@ -18,15 +18,21 @@
  */
 package org.jasig.cas.authentication.handler;
 
-/**
- * Offers AuthenticationHandlers a way to identify themselves by a
- * user-configured name.
- *
- * @author Scott Battaglia
- * @since 3.2.1
- *
- */
-public interface NamedAuthenticationHandler extends AuthenticationHandler {
+import org.jasig.cas.authentication.principal.Credentials;
 
-    String getName();
+/**
+ * Test authentication handler that always fails.
+ *
+ * @author Marvin S. Addison
+ */
+public class TestAlwaysFailAuthenticationHandler implements AuthenticationHandler {
+    @Override
+    public boolean authenticate(final Credentials credential) throws AuthenticationException {
+        return false;
+    }
+
+    @Override
+    public boolean supports(final Credentials credential) {
+        return true;
+    }
 }
