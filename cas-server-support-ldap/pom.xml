@@ -84,6 +84,16 @@
       <artifactId>joda-time</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-ldap</artifactId>
+      <version>3.1.2.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>ldapsdk</groupId>
+      <artifactId>ldapsdk</artifactId>
+      <version>4.1</version>
+    </dependency>
   </dependencies>
   
   <build>
