@@ -26,12 +26,6 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -45,12 +39,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
+ * Resolves a principal using a 2-stage resolution strategy:
+ *
+ * <ol>
+ *     <li>Resolve a principal ID from a (presumably simple) {@link PrincipalResolver}.</li>
+ *     <li>Uses the resolved principal ID as an input to resolve attributes and optional principal ID from LDAP.</li>
+ * </ol>
+ *
  * @author Marvin Addison
  * @author Misagh Moayyed
  * @since 4.0
  */
-public class CredentialsToLdapAttributePrincipalResolver extends
-             AbstractPersonDirectoryCredentialsToPrincipalResolver implements InitializingBean {
+public class CredentialsToLdapAttributePrincipalResolver
+        extends AbstractLdapPersonDirectoryPrincipalResolver implements InitializingBean {
 
     /** Map of directory attribute name to CAS attribute name. */
     private Map<String, String> attributeMapping = new HashMap<String, String>();
@@ -69,12 +70,13 @@ public class CredentialsToLdapAttributePrincipalResolver extends
     /** Username attribute referenced by the search query. **/
     @NotNull
     private String usernameAttribute = "user";
+
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
      * request.
      */
     @NotNull
-    private CredentialsToPrincipalResolver credentialsToPrincipalResolver;
+    private PrincipalResolver principalResolver;
 
     /**
      * Creates a new instance with the requisite parameters.
@@ -112,44 +114,42 @@ public class CredentialsToLdapAttributePrincipalResolver extends
     }
 
     /**
-     * Username attribute to be used by the search query. 
+     * Username attribute to be used by the search query.
      *
      * @param usernameAttr the username attribute
-     * @see SimpleUsernameAttributeProvider
      */
     public final void setUsernameAttribute(final String usernameAttr) {
         this.usernameAttribute = usernameAttr;
     }
 
     /**
-     * @param credentialsToPrincipalResolver The credentialsToPrincipalResolver
+     * @param principalResolver The principalResolver
      * to set.
      */
-    public final void setCredentialsToPrincipalResolver(
-            final CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
-        this.credentialsToPrincipalResolver = credentialsToPrincipalResolver;
+    public final void setPrincipalResolver(final PrincipalResolver principalResolver) {
+        this.principalResolver = principalResolver;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.credentialsToPrincipalResolver, "credentialsToPrincipalResolver cannot be null");
+        Assert.notNull(this.principalResolver, "principalResolver cannot be null");
         Assert.notNull(searchExecutor.getSearchFilter(), "SearchExecutor#searchFilter cannot be null.");
         final String filterString = searchExecutor.getSearchFilter().getFilter();
         Assert.notNull(filterString, "SearchExecutor#searchFilter#filter cannot be null.");
     }
 
     @Override
-    public final boolean supports(final Credential credentials) {
-        return credentials instanceof UsernamePasswordCredential;
+    public final boolean supports(final Credential credential) {
+        return this.principalResolver.supports(credential);
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credentials) {
-        final Principal principal = this.credentialsToPrincipalResolver.resolvePrincipal(credentials);
+    protected String extractPrincipalId(final Credential credential) {
+        final Principal principal = this.principalResolver.resolve(credential);
 
         if (principal == null) {
             log.warn("Initial principal could not be resolved from request via {}, returning null",
-                    this.credentialsToPrincipalResolver.getClass().getSimpleName());
+                    this.principalResolver.getClass().getSimpleName());
             return null;
         }
 

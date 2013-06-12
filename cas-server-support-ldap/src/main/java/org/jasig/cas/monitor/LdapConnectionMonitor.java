@@ -27,7 +27,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.pool.Validator;
 
 /**
- * Monitor that observes a {@link ConnectionFactory}
+ * Monitor that observes a {@link ConnectionFactory}.
  *
  * @author Marvin S. Addison
  * @since 3.5.1
@@ -40,7 +40,8 @@ public class LdapConnectionMonitor extends AbstractNamedMonitor<Status> {
      * Creates a new monitor that observes the given LDAP context source.
      *
      */
-    public LdapConnectionMonitor(@NotNull final ConnectionFactory factory,@NotNull final Validator<Connection> validator) {
+    public LdapConnectionMonitor(
+            @NotNull final ConnectionFactory factory, @NotNull final Validator<Connection> validator) {
         this.factory = factory;
         this.validator = validator;
     }

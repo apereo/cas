@@ -26,8 +26,6 @@ import java.util.Properties;
 import org.jasig.cas.RequiredConfigurationProfileValueSource;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -52,7 +50,7 @@ public class CredentialsToLdapAttributePrincipalResolverTests {
     private static final Logger log = LoggerFactory.getLogger(CredentialsToLdapAttributePrincipalResolverTests.class);
     
     @Autowired
-    private CredentialsToPrincipalResolver resolver;
+    private PrincipalResolver resolver;
 
     @Autowired
     @Qualifier("testCredentials")
@@ -65,7 +63,7 @@ public class CredentialsToLdapAttributePrincipalResolverTests {
             String password = values[0];
 
             final Credential cred = newCredentials(username, password);
-            final Principal p = resolver.resolvePrincipal(cred);
+            final Principal p = resolver.resolve(cred);
             if (p != null) {
                 assertTrue(p.getAttributes().size() > 0);
                 assertTrue(p.getAttributes().containsKey("commonName"));
