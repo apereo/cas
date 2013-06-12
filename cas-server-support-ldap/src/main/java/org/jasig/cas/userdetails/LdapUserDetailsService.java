@@ -203,7 +203,7 @@ public class LdapUserDetailsService implements UserDetailsService {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(executor.getSearchFilter().getFilter());
         filter.setParameter(0, username);
-        
+
         log.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }

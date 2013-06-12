@@ -47,7 +47,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapServiceMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultLdapServiceMapper.class);
 
     @NotNull
     private String objectclass = "casService";
@@ -90,12 +90,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
 
     @NotNull
     private String requiredHandlersAttribute = "casRequiredHandlers";
-    
+
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
         final String newDn = getDnForRegisteredService(dn, svc);
-        LOGGER.debug("Creating new DN entry [{}]", newDn);
+        log.debug("Creating new DN entry [{}]", newDn);
 
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) svc).setId(newDn.hashCode());
@@ -119,11 +119,11 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         if (svc.getAllowedAttributes().size() > 0) {
             attrs.add(new LdapAttribute(this.serviceAllowedAttributesAttribute, svc.getAllowedAttributes().toArray(new String[] {})));
         }
-        
+
         if (svc.getRequiredHandlers().size() > 0) {
             attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[] {})));
         }
-               
+
         attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass));
 
         return new LdapEntry(newDn, attrs);
@@ -204,12 +204,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     public void setRequiredHandlersAttribute(final String handlers) {
         this.requiredHandlersAttribute = handlers;
     }
-    
+
     private boolean isValidRegexPattern(final String pattern) {
         try {
             Pattern.compile(pattern);
         } catch (final PatternSyntaxException e) {
-            LOGGER.debug("Failed to identify [{}] as a regular expression", pattern);
+            log.debug("Failed to identify [{}] as a regular expression", pattern);
             return false;
         }
         return true;
@@ -222,14 +222,14 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         }
         return Collections.emptyList();
     }
-    
+
     private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
         if (isValidRegexPattern(id)) {
             return new RegexRegisteredService();
         }
-        
+
         if (new AntPathMatcher().isPattern(id)) {
-            return new RegisteredServiceImpl(); 
+            return new RegisteredServiceImpl();
         }
         return null;
     }
@@ -243,7 +243,7 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     }
 
     @Override
-    public String getDnForRegisteredService(String parentDn, RegisteredService svc) {
+    public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
         return String.format("%s=%s,%s", this.namingAttribute, svc.getName(), parentDn);
     }
 }

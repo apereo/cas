@@ -53,7 +53,7 @@ public abstract class AbstractLdapPersonDirectoryPrincipalResolver extends Perso
 
     /** Time out. **/
     private int timeout = DEFAULT_TIMEOUT;
-    
+
     /** The attribute that contains the value that should become the principal. */
     @NotNull
     private String[] attributeIds;
@@ -120,11 +120,11 @@ public abstract class AbstractLdapPersonDirectoryPrincipalResolver extends Perso
     protected final ConnectionFactory getConnectionFactory() {
         return this.connectionFactory;
     }
-    
+
     protected final SearchFilter getSearchFilter() {
         return this.searchFilter;
     }
-    
+
     protected final SearchRequest getSearchRequest() {
         final SearchRequest request = new SearchRequest();
         request.setFollowReferrals(getFollowReferrals());
@@ -138,7 +138,7 @@ public abstract class AbstractLdapPersonDirectoryPrincipalResolver extends Perso
         request.setDerefAliases(getDerefAliases());
         final SearchEntryHandler[] handlers = getSearchEntryHandlers().toArray(new SearchEntryHandler[] {});
         request.setSearchEntryHandlers(handlers);
-        
+
         return request;
     }
 
@@ -162,10 +162,10 @@ public abstract class AbstractLdapPersonDirectoryPrincipalResolver extends Perso
         return this.size;
     }
 
-    protected final boolean getFollowReferrals() {        
+    protected final boolean getFollowReferrals() {
         return this.followReferrals;
     }
-    
+
     public final void setAttributeIds(final String[] attributeIds) {
         this.attributeIds = attributeIds;
     }
