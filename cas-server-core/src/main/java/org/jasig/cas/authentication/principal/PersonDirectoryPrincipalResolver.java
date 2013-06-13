@@ -68,6 +68,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         String principalId = extractPrincipalId(credential);
 
         if (principalId == null) {
+            log.debug("Got null for extracted principal ID; returning null.");
             return null;
         }
 
@@ -93,13 +94,15 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
         for (final String key : attributes.keySet()) {
             final List<Object> values = attributes.get(key);
-            if (key.equals(this.principalAttributeName)) {
+            if (key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     log.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
                 } else {
                     principalId = values.get(0).toString();
-                    log.debug("Found principal attribute value {}", principalId);
-                    log.debug("Removing principal attribute {} from attribute map.", this.principalAttributeName);
+                    log.debug(
+                            "Found principal attribute value {}; removing {} from attribute map.",
+                            principalId,
+                            this.principalAttributeName);
                 }
             } else {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
