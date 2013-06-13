@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public final class LdapUtils {
 
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
-    
+
     private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     private LdapUtils() {
@@ -57,9 +57,9 @@ public final class LdapUtils {
             }
         }
     }
-    
+
     /**
-     * Reads a Boolean value from the LdapEntry
+     * Reads a Boolean value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -70,7 +70,7 @@ public final class LdapUtils {
     }
 
     /**
-     * Reads a Boolean value from the LdapEntry
+     * Reads a Boolean value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -84,9 +84,9 @@ public final class LdapUtils {
         }
         return nullValue;
     }
-    
+
     /**
-     * Reads a Long value from the LdapEntry
+     * Reads a Long value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -96,7 +96,7 @@ public final class LdapUtils {
     }
 
     /**
-     * Reads a Long value from the LdapEntry
+     * Reads a Long value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -109,9 +109,9 @@ public final class LdapUtils {
         }
         return nullValue;
     }
-    
+
     /**
-     * Reads a String value from the LdapEntry
+     * Reads a String value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -121,7 +121,7 @@ public final class LdapUtils {
     }
 
     /**
-     * Reads a String value from the LdapEntry
+     * Reads a String value from the LdapEntry.
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
@@ -132,7 +132,7 @@ public final class LdapUtils {
         if (attr == null) {
             return nullValue;
         }
-        
+
         final String v = attr.getStringValue();
         if (v != null) {
             return v;

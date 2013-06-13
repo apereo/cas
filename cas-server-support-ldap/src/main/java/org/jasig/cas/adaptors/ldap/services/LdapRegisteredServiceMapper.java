@@ -23,15 +23,16 @@ import org.ldaptive.LdapEntry;
 
 /**
  * Strategy interface to define operations required when mapping LDAP
- * entries to registered services and vice versa. 
+ * entries to registered services and vice versa.
+ *
  * @see DefaultLdapServiceMapper
  * @author Misagh Moayyed
  */
 public interface LdapRegisteredServiceMapper {
 
     RegisteredService mapToRegisteredService(final LdapEntry result);
-    
+
     LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc);
-    
+
     String getDnForRegisteredService(String parentDn, RegisteredService svc);
 }

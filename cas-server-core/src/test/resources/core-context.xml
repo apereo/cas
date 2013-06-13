@@ -138,12 +138,12 @@
           class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 
     <bean id="usernamePasswordCredentialsToPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
         <property name="attributeRepository" ref="attributeRepository" />
     </bean>
 
     <bean id="httpBasedServiceCredentialsToPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
     <bean id="httpBasedServiceCredentialsAuthenticationHandler"
           class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">

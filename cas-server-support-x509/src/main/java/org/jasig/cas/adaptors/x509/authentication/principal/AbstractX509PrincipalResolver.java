@@ -16,31 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.trusted.authentication.principal;
+package org.jasig.cas.adaptors.x509.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
+import java.security.cert.X509Certificate;
+
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
 
 /**
- * Extracts the Principal out of PrincipalBearingCredential. It is very simple
- * to resolve PrincipalBearingCredential to a Principal since the credentials
- * already bear the ready-to-go Principal.
+ * Abstract class in support of multiple resolvers for X509 Certificates.
  *
- * @author Andrew Petro
- * @since 3.0.5
+ * @author Scott Battaglia
+ * @since 3.0.4
  */
-public final class PrincipalBearingCredentialsToPrincipalResolver extends
-            AbstractPersonDirectoryCredentialsToPrincipalResolver {
+public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential) {
-        return ((PrincipalBearingCredential) credential).getPrincipal()
-                .getId();
+        return resolvePrincipalInternal(((X509CertificateCredential) credential).getCertificate());
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && credential.getClass().equals(PrincipalBearingCredential.class);
+        return credential instanceof X509CertificateCredential;
     }
+
+    protected abstract String resolvePrincipalInternal(final X509Certificate certificate);
 }

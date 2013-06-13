@@ -32,10 +32,10 @@ import org.jasig.cas.authentication.principal.Service;
  * @since 3.1
  */
 public interface RegisteredService extends Cloneable, Serializable {
-    
-    /** constant representing the identifier of a newly about-to-be-created registered service. **/
+
+    /** Initial ID value of newly created (but not persisted) registered service. **/
     final long INITIAL_IDENTIFIER_VALUE = Long.MAX_VALUE;
-    
+
     /**
      * Is this application currently allowed to use CAS?
      *

@@ -26,8 +26,7 @@ import java.security.cert.X509Certificate;
  * @author Scott Battaglia
  * @since 3.0.4
  */
-public final class X509CertificateCredentialsToSerialNumberPrincipalResolver
-extends AbstractX509CertificateCredentialsToPrincipalResolver {
+public final class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     @Override
     protected String resolvePrincipalInternal(

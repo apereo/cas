@@ -20,30 +20,17 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.Credential;
-
 /**
- * Abstract class in support of multiple resolvers for X509 Certificates.
+ * Returns a principal based on the Subject DNs name.
  *
  * @author Scott Battaglia
  * @since 3.0.4
  */
-public abstract class AbstractX509CertificateCredentialsToPrincipalResolver
-extends AbstractPersonDirectoryCredentialsToPrincipalResolver {
+public final class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     @Override
-    protected String extractPrincipalId(final Credential credential) {
-        return resolvePrincipalInternal(((X509CertificateCredential) credential).getCertificate());
+    protected String resolvePrincipalInternal(
+            final X509Certificate certificate) {
+        return certificate.getSubjectDN().getName();
     }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential != null
-                && X509CertificateCredential.class.isAssignableFrom(credential
-                        .getClass());
-    }
-
-    protected abstract String resolvePrincipalInternal(
-            final X509Certificate certificate);
 }

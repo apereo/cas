@@ -27,11 +27,11 @@ import java.util.Map;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
-import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentialsToPrincipalResolver;
+import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -64,9 +64,9 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
 
 
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
-                        new PrincipalBearingCredentialsToPrincipalResolver()));
+                        new PrincipalBearingPrincipalResolver()));
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
                 new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);

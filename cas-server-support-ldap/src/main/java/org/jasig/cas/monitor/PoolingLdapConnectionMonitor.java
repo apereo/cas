@@ -34,14 +34,16 @@ import org.ldaptive.pool.Validator;
  */
 public class PoolingLdapConnectionMonitor extends AbstractPoolMonitor {
 
-    /** Pool to observe. */
+    /** Pool whose connections to observe. */
     @NotNull
-    private final PooledConnectionFactory poolingContextSource;
+    private final PooledConnectionFactory pooledConnectionFactory;
 
+    /** Provides a validator. */
+    @NotNull
     private ConnectionPool connectionPool;
-    
+
     public PoolingLdapConnectionMonitor(final PooledConnectionFactory pool) {
-        this.poolingContextSource = pool;
+        this.pooledConnectionFactory = pool;
         this.connectionPool = pool.getConnectionPool();
     }
 
@@ -52,7 +54,7 @@ public class PoolingLdapConnectionMonitor extends AbstractPoolMonitor {
         Connection c = null;
         try {
             final Validator<Connection> validator = this.connectionPool.getValidator();
-            final boolean success = validator.validate(this.poolingContextSource.getConnection());        
+            final boolean success = validator.validate(this.pooledConnectionFactory.getConnection());
             return success ? StatusCode.OK : StatusCode.ERROR;
         } finally {
             LdapUtils.closeConnection(c);
