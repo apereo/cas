@@ -26,6 +26,7 @@ package org.jasig.cas.authentication;
  * @author William G. Thompson, Jr.
  * @author Marvin S. Addison
  * @since 3.0
+ * @see CredentialMetaData
  */
 public interface Credential {
 
@@ -38,7 +39,8 @@ public interface Credential {
      * for others it may be awkward to construct a meaningful identifier. In any case credentials require some means
      * of identification for a number of cases and implementers should make a best effor to satisfy that need.
      *
-     * @return Credential identifier.
+     * @return Non-null credential identifier. Implementers should return {@link #UNKNOWN_ID} for cases where an ID
+     * is not readily available or meaningful.
      */
     String getId();
 }
