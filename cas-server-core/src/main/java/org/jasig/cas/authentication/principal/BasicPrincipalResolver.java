@@ -37,6 +37,6 @@ public class BasicPrincipalResolver implements PrincipalResolver {
 
     @Override
     public boolean supports(final Credential credential) {
-        return true;
+        return credential.getId() != null;
     }
 }
