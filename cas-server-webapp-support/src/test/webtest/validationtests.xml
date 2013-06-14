@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!DOCTYPE project [
+<!ENTITY config	SYSTEM "includes/config.xml">
+<!ENTITY definition	SYSTEM "includes/definition.xml">
+<!ENTITY extractServiceTicket	SYSTEM "modules/extractServiceTicket.xml">
+<!ENTITY getLoginFormWithService	SYSTEM "modules/getLoginFormWithService.xml">
+<!ENTITY getLogout	SYSTEM "modules/getLogout.xml">
+<!ENTITY processLogin	SYSTEM "modules/processLogin.xml">
+<!ENTITY verifyCookie	SYSTEM "modules/verifyCookie.xml">
+<!ENTITY verifyLoginForm	SYSTEM "modules/verifyLoginForm.xml">
+<!ENTITY verifyRedirect	SYSTEM "modules/verifyRedirect.xml">
+]>
+
+<project name="logintests" basedir="." default="main">
+	&definition;
+	<target name="main">
+		<property name="username" value="arnaud.lesueur" />
+
+		<webtest name="CAS 1.0 validation">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST" url="/validate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get yes in the answer and the username" text="yes\n${username}\n" regex="true" />
+				<invoke description="Try to re-validate the ST" url="/validate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 1.0 validation failure">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST with wrong service" url="/validate?service=http://foo.bar/&amp;ticket=foo" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+				<invoke description="Try to validate the ST with wrong service" url="/validate?service=http://bar.foo/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 2.0 validation">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get the username in the response" text=".*cas:authenticationSuccess.*${username}.*" regex="true" />
+				<invoke description="Try to re-validate the ST" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*#{serviceTicket}.*" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 2.0 validation failure">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate a wrong ST with the service" url="/serviceValidate?service=http://foo.bar/&amp;ticket=foo" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*foo.*" regex="true" />
+				<invoke description="Try to validate the ST with wrong service" url="/serviceValidate?service=http://bar.foo/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_SERVICE.*#{serviceTicket}.*" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 2.0 Proxy Protocol">
+			&config;
+			<steps>
+				&processLogin;
+
+				<!-- CAS 2.0 validation, acquire proxy-granting ticket, proxy authentication -->
+				<invoke description="Get a PGTIOU" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{serviceTicket}&amp;pgtUrl=${proxyCallBackURL1}" />
+				<verifyText description="Should get the username and the PGTIOU in the response" text=".*cas:authenticationSuccess.*${username}.*cas:proxyGrantingTicket.*PGTIOU.*" regex="true" />
+				<storeRegEx description="Extract the pgtIOU" text=".*(PGTIOU-\d+-\w+).*" group="1" property="pgtIOU" />
+
+				<invoke description="Get a PGT" url="${proxyCallBackURL1}" />
+				<verifyText description="Should get the PGT in the response" text=".*#.*#.*" regex="true" />
+				<storeRegEx description="Extract the PGT" text=".*#(.*)#.*" group="1" property="pgt" />
+
+				<invoke description="Validate the PGT" url="/proxy?targetService=http://foo.com/&amp;pgt=#{pgt}" />
+				<verifyText description="Should get a Proxy Ticket in the response" text=".*cas:proxySuccess.*cas:proxyTicket.*ST-\d+-\w+-\d+.*" regex="true" />
+				<storeRegEx description="Extract the Proxy Ticket" text=".*(ST-\d+-\w+-\d+).*" group="1" property="proxyTicket" />
+
+				<invoke description="Validate the Proxy Ticket" url="/proxyValidate?service=http://foo.com/&amp;ticket=#{proxyTicket}" />
+				<verifyText description="Should get the username and the pgtUrl" text=".*cas:authenticationSuccess.*${username}.*cas:proxies.*cas:proxy.*${proxyCallBackURL1}.*" regex="true" />
+				<invoke description="Try to re-validate the Proxy Ticket" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{proxyTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*#{proxyTicket}.*" regex="true" />
+
+				<!-- CAS 2.0 unsuccessfull validation at /serviceValidate -->
+				<invoke description="Validate the PGT" url="/proxy?targetService=http://foo.com/&amp;pgt=#{pgt}" />
+				<verifyText description="Should get a Proxy Ticket in the response" text=".*cas:proxySuccess.*cas:proxyTicket.*ST-\d+-\w+-\d+.*" regex="true" />
+				<storeRegEx description="Extract the Proxy Ticket" text=".*(ST-\d+-\w+-\d+).*" group="1" property="proxyTicket" />
+
+				<invoke description="Try to validate the Proxy Ticket at /serviceValidate" url="/serviceValidate?service=http://foo.com/&amp;ticket=#{proxyTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*" regex="true" />
+
+				<!-- CAS 2.0 unsuccessfull validation at /validate -->
+				<invoke description="Validate the PGT" url="/proxy?targetService=http://foo.com/&amp;pgt=#{pgt}" />
+				<verifyText description="Should get a Proxy Ticket in the response" text=".*cas:proxySuccess.*cas:proxyTicket.*ST-\d+-\w+-\d+.*" regex="true" />
+				<storeRegEx description="Extract the Proxy Ticket" text=".*(ST-\d+-\w+-\d+).*" group="1" property="proxyTicket" />
+
+				<invoke description="Try to validate the Proxy Ticket at /validate" url="/validate?service=http://foo.com/&amp;ticket=#{proxyTicket}" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+
+				<!-- CAS 2.0 Multi-level proxy -->
+				<invoke description="Validate the PGT" url="/proxy?targetService=http://foo.com/&amp;pgt=#{pgt}" />
+				<verifyText description="Should get a Proxy Ticket in the response" text=".*cas:proxySuccess.*cas:proxyTicket.*ST-\d+-\w+-\d+.*" regex="true" />
+				<storeRegEx description="Extract the Proxy Ticket" text=".*(ST-\d+-\w+-\d+).*" group="1" property="proxyTicket" />
+
+				<invoke description="Validate the Proxy Ticket with a second pgtUrl" url="/proxyValidate?service=http://foo.com/&amp;ticket=#{proxyTicket}&amp;pgtUrl=${proxyCallBackURL2}" />
+				<verifyText description="Should get a new PGTIOU" text=".*cas:authenticationSuccess.*${username}.*cas:proxyGrantingTicket.*PGTIOU.*cas:proxies.*cas:proxy.*${proxyCallBackURL1}.*" regex="true" />
+				<storeRegEx description="Extract the new pgtIOU" text=".*(PGTIOU-\d+-\w+).*" group="1" property="pgtIOU2" />
+
+				<invoke description="Get the PGT2" url="${proxyCallBackURL2}" />
+				<verifyText description="Should get the PGT2 in the response" text=".*#.*#.*" regex="true" />
+				<storeRegEx description="Extract the PGT2" text=".*#(.*)#.*" group="1" property="pgt2" />
+
+				<invoke description="Validate the PGT2" url="/proxy?targetService=http://baz.com/&amp;pgt=#{pgt2}" />
+				<verifyText description="Should get a Proxy Ticket in the response" text=".*cas:proxySuccess.*cas:proxyTicket.*ST-\d+-\w+-\d+.*" regex="true" />
+				<storeRegEx description="Extract the Proxy Ticket" text=".*(ST-\d+-\w+-\d+).*" group="1" property="proxyTicket" />
+				<invoke description="Validate the Proxy Ticket" url="/proxyValidate?service=http://baz.com/&amp;ticket=#{proxyTicket}" />
+				<verifyText description="Should get the username and the pgtUrl" text=".*cas:authenticationSuccess.*${username}.*cas:proxies.*cas:proxy.*${proxyCallBackURL2}.*${proxyCallBackURL1}.*" regex="true" />
+
+				<!-- CAS 2.0 Proxy-granting ticket invalidation by logout -->
+				&getLogout;
+				<invoke description="Try to use the PGT" url="/proxy?targetService=http://foo.com/&amp;pgt=#{pgt}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:proxyFailure.*INVALID_TICKET.*" regex="true" />
+			</steps>
+		</webtest>
+	</target>
+</project>
