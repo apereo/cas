@@ -32,20 +32,20 @@ import org.junit.Test;
  *
  */
 public class SpnegoCredentialsToPrincipalResolverTests {
-    private SpnegoCredentialsToPrincipalResolver resolver;
+    private SpnegoPrincipalResolver resolver;
 
     private SpnegoCredential spnegoCredentials;
 
     @Before
     public void setUp() throws Exception {
-        this.resolver = new SpnegoCredentialsToPrincipalResolver();
+        this.resolver = new SpnegoPrincipalResolver();
         this.spnegoCredentials = new SpnegoCredential(new byte[] {0, 1, 2});
     }
 
     @Test
     public void testValidCredentials() {
         this.spnegoCredentials.setPrincipal(new SimplePrincipal("test"));
-        assertEquals("test", this.resolver.resolvePrincipal(this.spnegoCredentials)
+        assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }
 

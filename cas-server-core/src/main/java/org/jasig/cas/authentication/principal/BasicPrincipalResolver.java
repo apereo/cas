@@ -16,22 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.x509.authentication.principal;
+package org.jasig.cas.authentication.principal;
 
-import java.security.cert.X509Certificate;
+import org.jasig.cas.authentication.Credential;
 
 /**
- * Returns a principal based on the Subject DNs name.
+ * Provides the most basic means of principal resolution by mapping
+ * {@link org.jasig.cas.authentication.Credential#getId()} onto
+ * {@link org.jasig.cas.authentication.principal.Principal#getId()}.
  *
- * @author Scott Battaglia
- * @since 3.0.4
+ * @author Marvin S. Addison
+ * @since 4.0
  */
-public final class X509CertificateCredentialsToDistinguishedNamePrincipalResolver
-extends AbstractX509CertificateCredentialsToPrincipalResolver {
+public class BasicPrincipalResolver implements PrincipalResolver {
 
     @Override
-    protected String resolvePrincipalInternal(
-            final X509Certificate certificate) {
-        return certificate.getSubjectDN().getName();
+    public Principal resolve(final Credential credential) {
+        return new SimplePrincipal(credential.getId());
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential.getId() != null;
     }
 }

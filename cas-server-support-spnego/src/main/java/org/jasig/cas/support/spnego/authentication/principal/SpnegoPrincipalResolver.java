@@ -20,7 +20,7 @@ package org.jasig.cas.support.spnego.authentication.principal;
 
 import java.util.Locale;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
 
 import javax.validation.constraints.NotNull;
@@ -33,8 +33,7 @@ import javax.validation.constraints.NotNull;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-public final class SpnegoCredentialsToPrincipalResolver extends
-                AbstractPersonDirectoryCredentialsToPrincipalResolver {
+public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** Tranformation types. **/
     public static enum Transform {NONE, UPPERCASE, LOWERCASE}

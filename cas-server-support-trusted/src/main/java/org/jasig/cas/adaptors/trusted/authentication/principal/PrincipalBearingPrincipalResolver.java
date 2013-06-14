@@ -16,37 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.pac4j.authentication.principal;
+package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 
 /**
- * This class resolves the principal id regarding the client credentials : it's the typed user identifier.
+ * Extracts the Principal out of PrincipalBearingCredential. It is very simple
+ * to resolve PrincipalBearingCredential to a Principal since the credentials
+ * already bear the ready-to-go Principal.
  *
- * @author Jerome Leleu
- * @since 3.5.0
+ * @author Andrew Petro
+ * @since 3.0.5
  */
-public class ClientCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
-        implements CredentialsToPrincipalResolver {
+public final class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String extractPrincipalId(final Credential credential) {
-        final ClientCredential clientCredentials = (ClientCredential) credential;
-        final String principalId = clientCredentials.getUserProfile().getTypedId();
-        log.debug("principalId : {}", principalId);
-        return principalId;
+        return ((PrincipalBearingCredential) credential).getPrincipal()
+                .getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
+        return credential != null
+                && credential.getClass().equals(PrincipalBearingCredential.class);
     }
 }

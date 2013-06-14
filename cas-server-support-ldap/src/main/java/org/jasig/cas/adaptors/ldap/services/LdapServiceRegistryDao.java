@@ -65,16 +65,16 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapServiceMapper();
 
     private Cache<SearchRequest> cacheStrategy = null;
-    
+
     @NotNull
     private String searchFilter;
-    
+
     @NotNull
     private String loadFilter;
-    
+
     @NotNull
     private SearchRequest searchRequest;
-    
+
     @Override
     public RegisteredService save(final RegisteredService rs) {
         if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {

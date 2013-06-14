@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
@@ -88,7 +88,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
     @NotNull
-    private final Map<AuthenticationHandler, CredentialsToPrincipalResolver> handlerResolverMap;
+    private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
 
     /**
@@ -111,7 +111,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     public PolicyBasedAuthenticationManager(final List<AuthenticationHandler> handlers) {
         Assert.notEmpty(handlers, "At least one authentication handler is required");
-        this.handlerResolverMap = new LinkedHashMap<AuthenticationHandler, CredentialsToPrincipalResolver>(
+        this.handlerResolverMap = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>(
                 handlers.size());
         for (final AuthenticationHandler handler : handlers) {
             this.handlerResolverMap.put(handler, null);
@@ -126,7 +126,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      *
      * @param map Non-null map of authentication handler to principal resolver containing at least one entry.
      */
-    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, CredentialsToPrincipalResolver> map) {
+    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map) {
         Assert.notEmpty(map, "At least one authentication handler is required");
         this.handlerResolverMap = map;
     }
@@ -200,7 +200,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
         boolean found;
         Principal principal;
-        CredentialsToPrincipalResolver resolver;
+        PrincipalResolver resolver;
         for (final Credential credential : credentials) {
             found = false;
             for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
@@ -255,10 +255,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
 
     protected Principal resolvePrincipal(
-            final String handlerName, final CredentialsToPrincipalResolver resolver, final Credential credential) {
+            final String handlerName, final PrincipalResolver resolver, final Credential credential) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolvePrincipal(credential);
+                final Principal p = resolver.resolve(credential);
                 log.debug("{} resolved {} from {}", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
