@@ -31,11 +31,11 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -74,9 +74,9 @@ public class OpenIdSingleSignOnActionTests {
         final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
         handler.setTicketRegistry(this.ticketRegistry);
         this.authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, CredentialsToPrincipalResolver>singletonMap(
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         handler,
-                        new OpenIdCredentialsToPrincipalResolver()));
+                        new OpenIdPrincipalResolver()));
 
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());

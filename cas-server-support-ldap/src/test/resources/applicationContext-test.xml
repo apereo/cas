@@ -159,7 +159,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       p:attributeRepository-ref="attributeRepository"
       p:usernameAttribute="${ldap.resolver.userNameAttribute}">
 
-    <property name="credentialsToPrincipalResolver">
+    <property name="principalResolver">
         <bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
     </property>
   </bean>

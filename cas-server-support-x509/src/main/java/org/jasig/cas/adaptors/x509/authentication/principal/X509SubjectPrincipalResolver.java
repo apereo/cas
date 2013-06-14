@@ -34,18 +34,11 @@ import edu.vt.middleware.crypt.x509.types.AttributeType;
  * Credential to principal resolver that extracts one or more attribute values
  * from the certificate subject DN and combines them with intervening delimiters.
  *
- * <p>
- * This class is a replacement for the following deprecated resolvers:
- * <ol>
- * <li>X509CertificateCredentialsToIdentifierPrincipalResolver</li>
- * </ol>
- *
  * @author Marvin S. Addison
  * @since 3.4.4
  *
  */
-public class X509CertificateCredentialsToSubjectPrinciplalResolver
-extends AbstractX509CertificateCredentialsToPrincipalResolver {
+public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Pattern used to extract attribute names from descriptor. */
     private static final Pattern ATTR_PATTERN = Pattern.compile("\\$(\\w+)");
@@ -63,7 +56,7 @@ extends AbstractX509CertificateCredentialsToPrincipalResolver {
      * EXAMPLE:
      * <p>
      * <pre>
-     * <bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSubjectPrinciplalResolver"
+     * <bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
      *   p:descriptor="$UID@$DC.$DC" />
      * </pre>
      * <p>
@@ -101,7 +94,7 @@ extends AbstractX509CertificateCredentialsToPrincipalResolver {
      *
      * @param certificate X.509 certificate credential.
      * @return Resolved principal ID.
-     * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateCredentialsToPrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
+     * @see AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
