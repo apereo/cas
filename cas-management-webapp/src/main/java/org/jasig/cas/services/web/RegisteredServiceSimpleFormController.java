@@ -98,7 +98,8 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         if (this.getCommandClass() == null) {
             // CAS-1071
             // Treat _new_ patterns starting with ^ character as a regular expression
-            if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
+            if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
+                    && service.getServiceId().startsWith("^")) {
                 logger.debug("Detected regular expression starting with ^");
                 final RegexRegisteredService regexService = new RegexRegisteredService();
                 regexService.copyFrom(service);

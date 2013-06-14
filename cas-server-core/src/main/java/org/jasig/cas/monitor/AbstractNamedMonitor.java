@@ -30,9 +30,10 @@ import org.springframework.util.Assert;
  * @since 3.5.0
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
-    
+
+    /** Logger instance. */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     /** Monitor name. */
     protected String name;
 

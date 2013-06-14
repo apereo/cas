@@ -18,18 +18,17 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
 
 /**
- * Implementation of CredentialsToPrincipalResolver that converts the OpenId
+ * Implementation of PrincipalResolver that converts the OpenId
  * user name to a Principal.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdCredentialsToPrincipalResolver extends
-AbstractPersonDirectoryCredentialsToPrincipalResolver {
+public final class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential) {
