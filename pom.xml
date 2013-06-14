@@ -842,6 +842,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <modules>
     <module>cas-server-core</module>
     <module>cas-server-webapp</module>
+    <module>cas-server-webapp-support</module>
     <module>cas-server-support-generic</module>
     <module>cas-server-support-jdbc</module>
     <module>cas-server-support-ldap</module>
