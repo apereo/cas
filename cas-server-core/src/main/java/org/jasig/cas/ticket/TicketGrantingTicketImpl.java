@@ -31,6 +31,8 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -48,7 +50,10 @@ import org.springframework.util.Assert;
 public final class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = -5197946718924166491L;
+    private static final long serialVersionUID = -8608149809180911599L;
+
+    /** Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
@@ -64,9 +69,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
     private final HashMap<String, Service> services = new HashMap<String, Service>();
 
-    /**
-     * Empty constructor.
-     */
+    @Lob
+    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
+    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
+
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
@@ -141,6 +147,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
+    @Override
     public synchronized Map<String, Service> getServices() {
         final Map<String, Service> map = new HashMap<String, Service>(services.size());
         for (final String ticket : services.keySet()) {
@@ -152,6 +159,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /**
      * Remove all services of the TGT (at logout).
      */
+    @Override
     public void removeAllServices() {
         services.clear();
     }
@@ -161,15 +169,27 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      *
      * @return if the TGT has no parent.
      */
+    @Override
     public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
-    /**
-     * Mark a ticket as expired.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void markTicketExpired() {
         this.expired = true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TicketGrantingTicket getRoot() {
+        TicketGrantingTicket current = this;
+        TicketGrantingTicket parent = current.getGrantingTicket();
+        while (parent != null) {
+            current = parent;
+            parent = current.getGrantingTicket();
+        }
+        return current;
     }
 
     /**
@@ -177,28 +197,35 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      *
      * @return if the TGT is expired.
      */
+    @Override
     public boolean isExpiredInternal() {
         return this.expired;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
+    public List<Authentication> getSupplementalAuthentications() {
+        return this.supplementalAuthentications;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
-        if (this.getGrantingTicket() == null) {
-            list.add(this.getAuthentication());
+        list.add(getAuthentication());
+        list.addAll(getSupplementalAuthentications());
+
+        if (getGrantingTicket() == null) {
             return Collections.unmodifiableList(list);
         }
 
-        list.add(this.getAuthentication());
-        list.addAll(this.getGrantingTicket().getChainedAuthentications());
-
+        list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object object) {
         if (object == null
             || !(object instanceof TicketGrantingTicket)) {

@@ -25,7 +25,9 @@ import org.springframework.core.io.ClassPathResource;
 
 import net.sourceforge.jwebunit.WebTestCase;
 
-
+/**
+ * Base class for all Web compatibility tests.
+ */
 public abstract class AbstractCompatibilityTests extends WebTestCase {
 
     public static final String LOGIN_TOKEN = "lt";

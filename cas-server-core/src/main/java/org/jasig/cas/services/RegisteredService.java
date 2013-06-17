@@ -20,6 +20,7 @@ package org.jasig.cas.services;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import org.jasig.cas.authentication.principal.Service;
 
@@ -31,6 +32,10 @@ import org.jasig.cas.authentication.principal.Service;
  * @since 3.1
  */
 public interface RegisteredService extends Cloneable, Serializable {
+
+    /** Initial ID value of newly created (but not persisted) registered service. **/
+    long INITIAL_IDENTIFIER_VALUE = Long.MAX_VALUE;
+
     /**
      * Is this application currently allowed to use CAS?
      *
@@ -77,8 +82,8 @@ public interface RegisteredService extends Cloneable, Serializable {
     String getServiceId();
 
     /**
-     * The numeric identifier for this service.
-     *
+     * The numeric identifier for this service. Implementations
+     * are expected to initialize the id with the value of {@link #INITIAL_IDENTIFIER_VALUE}.
      * @return the numeric identifier for this service.
      */
     long getId();
@@ -137,6 +142,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      * </ul>
      */
     String getUsernameAttribute();
+
+    /**
+     * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
+     * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
+     *
+     * @return Non-null set of required handler names.
+     */
+    Set<String> getRequiredHandlers();
 
     /**
      * Returns whether the service matches the registered service.

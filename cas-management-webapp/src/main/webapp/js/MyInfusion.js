@@ -23687,7 +23687,7 @@ var fluid_1_4 = fluid_1_4 || {};
 		return Math.round((num * 100) / total)
 	};
 	fluid.uploader.ariaLiveRegionUpdater = function (statusRegion, totalFileStatusText, events) {
-		statusRegion.attr("role", "log");
+		statusRegion.attr("role", "logger");
 		statusRegion.attr("aria-live", "assertive");
 		statusRegion.attr("aria-relevant", "text");
 		statusRegion.attr("aria-atomic", "true");

@@ -46,6 +46,15 @@ public interface TicketGrantingTicket extends Ticket {
     Authentication getAuthentication();
 
     /**
+     * Gets a list of supplemental authentications associated with this ticket.
+     * A supplemental authentication is one other than the one used to create the ticket,
+     * for example, a forced authentication that happens after the beginning of a CAS SSO session.
+     *
+     * @return Non-null list of supplemental authentications.
+     */
+    List<Authentication> getSupplementalAuthentications();
+
+    /**
      * Grant a ServiceTicket for a specific service.
      *
      * @param id The unique identifier for this ticket.
@@ -84,10 +93,17 @@ public interface TicketGrantingTicket extends Ticket {
     boolean isRoot();
 
     /**
-     * Method to retrieve the chained list of Authentications for this
-     * TicketGrantingTicket.
+     * Gets the ticket-granting ticket at the root of the ticket hierarchy.
      *
-     * @return the list of principals
+     * @return Non-null root ticket-granting ticket.
+     */
+    TicketGrantingTicket getRoot();
+
+    /**
+     * Gets all authentications ({@link #getAuthentication()}, {@link #getSupplementalAuthentications()}) from this
+     * instance and all dependent tickets that reference this one.
+     *
+     * @return Non-null list of authentication associated with this ticket in leaf-first order.
      */
     List<Authentication> getChainedAuthentications();
 }
