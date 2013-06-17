@@ -1,0 +1,22 @@
+# This is a template for the principals.json file required
+# for resolver component unit test execution.
+
+
+[
+    {
+        "userName" : "userName1",
+        "id" : "principalId1",
+        "attributes" : {
+            "mail" : ["principalId1@example.org"],
+            "memberOf" : ["Users"]
+        }
+    },
+    {
+        "userName" : "userName2",
+        "id" : "principalId2",
+        "attributes" : {
+            "mail" : ["principalId2@example.org", "tamale@example.org"],
+            "memberOf" : ["Users", "Developers", "Support"]
+        }
+    }
+]

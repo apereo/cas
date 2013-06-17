@@ -24,9 +24,10 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * We cheat and utilize the {@link org.jasig.cas.authentication.AuthenticationMetaDataPopulator} to retrieve and store
@@ -46,12 +47,11 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     }
 
     @Override
-    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
-        if (credentials instanceof UsernamePasswordCredentials) {
-            final UsernamePasswordCredentials c = (UsernamePasswordCredentials) credentials;
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+        if (credential instanceof UsernamePasswordCredential) {
+            final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+            final Authentication authentication = builder.build();
             this.credentialCache.put(authentication.getPrincipal().getId(), c.getPassword());
         }
-
-        return authentication;
     }
 }

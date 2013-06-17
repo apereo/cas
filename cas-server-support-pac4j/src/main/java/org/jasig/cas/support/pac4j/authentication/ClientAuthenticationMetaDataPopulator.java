@@ -19,15 +19,14 @@
 package org.jasig.cas.support.pac4j.authentication;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredentials;
+import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 
 /**
- * This class is a meta data populator for authentication. As attributes are stored in ClientCredentials (inside the
+ * This class is a meta data populator for authentication. As attributes are stored in ClientCredential (inside the
  * user profile), they are added to the returned principal. The client name associated to the authentication is also
  * added to the authentication attributes.
  *
@@ -45,17 +44,14 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      * {@inheritDoc}
      */
     @Override
-    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
-        if (credentials instanceof ClientCredentials) {
-            final ClientCredentials clientCredentials = (ClientCredentials) credentials;
-            final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
-                    clientCredentials.getUserProfile().getAttributes());
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(simplePrincipal,
-                    authentication.getAuthenticatedDate());
-            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-            mutableAuthentication.getAttributes().put(CLIENT_NAME, clientCredentials.getCredentials().getClientName());
-            return mutableAuthentication;
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+        if (credential instanceof ClientCredential) {
+            final ClientCredential clientCredentials = (ClientCredential) credential;
+            final Authentication temp = builder.build();
+            builder.setPrincipal(new SimplePrincipal(
+                    temp.getPrincipal().getId(),
+                    clientCredentials.getUserProfile().getAttributes()));
+            builder.addAttribute(CLIENT_NAME, clientCredentials.getCredentials().getClientName());
         }
-        return authentication;
     }
 }

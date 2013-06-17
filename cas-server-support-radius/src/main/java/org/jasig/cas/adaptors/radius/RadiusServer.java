@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.radius;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PreventedException;
 
 /**
  * Interface representing a Radius Server.
@@ -31,9 +31,13 @@ public interface RadiusServer {
     /**
      * Method to authenticate a set of credentials.
      *
-     * @param credentials the credentials to authenticate.
-     * @return true if authenticated, false otherwise.
+     * @param username Non-null username to authenticate.
+     * @param password Password to authenticate.
+     *
+     * @return True on success, false otherwise.
+     *
+     * @throws PreventedException On indeterminate case where authentication was prevented by a system (e.g. IO) error.
      */
-    boolean authenticate(UsernamePasswordCredentials credentials);
+    boolean authenticate(String username, String password) throws PreventedException;
 
 }

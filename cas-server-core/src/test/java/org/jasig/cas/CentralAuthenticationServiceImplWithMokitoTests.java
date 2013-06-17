@@ -110,12 +110,12 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test(expected=InvalidTicketException.class)
-    public void testNonExistentServiceWhenDelegatingTicketGrantingTicket() throws TicketException {
+    public void testNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket("bad-st", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
-    public void testInvalidServiceWhenDelegatingTicketGrantingTicket() throws TicketException {
+    public void testInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket("st-id", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 

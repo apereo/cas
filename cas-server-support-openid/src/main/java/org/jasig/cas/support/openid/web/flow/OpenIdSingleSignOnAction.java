@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.support.openid.web.flow;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
@@ -50,7 +50,7 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
     }
 
     @Override
-    protected Credentials constructCredentialsFromRequest(final RequestContext context) {
+    protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String userName = this.extractor
                 .extractLocalUsernameFromUri(context.getRequestParameters()
@@ -68,7 +68,7 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
             return null;
         }
 
-        return new OpenIdCredentials(
+        return new OpenIdCredential(
                 ticketGrantingTicketId, userName);
     }
 }

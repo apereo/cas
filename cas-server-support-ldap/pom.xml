@@ -57,13 +57,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.ldap</groupId>
-      <artifactId>spring-ldap-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.ldap</groupId>
-      <artifactId>spring-ldap-core-tiger</artifactId>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive</artifactId>
+      <version>${ldaptive.version}</version>
     </dependency>
 
     <dependency>
@@ -73,35 +69,34 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-pool</groupId>
-      <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <scope>compile</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-legacy</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <excludes>
-            <!--
-            If you enable the bind authentication handler unit tests,
-            you need an LDAP infrastructure to test against.
-            Create an ldap.properties file from the ldap.properties.sample
-            template suitable for your environment.
-            -->
-            <exclude>**/*Bind*Tests.java</exclude>
-          </excludes>
-          <argLine>-Djavax.net.ssl.trustStore=src/test/resources/rutgers.keystore -Djavax.net.ssl.trustStorePassword=changeit</argLine>
+          <skipTests>true</skipTests>
         </configuration>
       </plugin>
     </plugins>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+  <!--
+     +========================================================================
+     | TODO:
+     |
+     | Define following beans:
+     |  1. Bean of type org.jasig.cas.authentication.LdapAuthenticationHandler
+     |     that sets principalIdAttribute.
+     |  2. Bean named "authnConnectionConfig" that defines additional configuration
+     |     needed for authentication. A common case is setting up a custom trust store.
+     |  3. Bean named "resolverConnectionConfig" that defines additional configuration
+     |     needed for principal resolution. A common case is setting up a custom trust store.
+     |  4. Bean named "resultAttributeMapping" of type Map that maps LDAP attribute names onto principal attribute
+     |     names for principal resolver components.
+     |  5. Bean named "userDetailsConnectionConfig" that defines additional configuration
+     |     needed for user details searches. A common case is setting up a custom trust store.
+     +========================================================================
+  -->
+
+  <import resource="extraConfigContext.xml" />
+
+  <context:property-placeholder location="ldaptive.properties"/>
+
+  <bean id="testCredentials" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+      p:location="credentials.properties" />
+
+  <bean id="testPrincipals" class="org.springframework.core.io.ClassPathResource"
+        c:path="principals.json" />
+
+  <bean id="testUserDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+        p:location="userdetails.properties" />
+
+  <bean id="baseConnectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true"
+        p:ldapUrl="${ldap.url}"
+        p:connectTimeout="${ldap.connectTimeout}"
+        p:useStartTLS="${ldap.useStartTLS}" />
+
+  <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+        p:minPoolSize="${ldap.pool.minSize}"
+        p:maxPoolSize="${ldap.pool.maxSize}"
+        p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        p:validatePeriodically="${ldap.pool.validatePeriodically}"
+        p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+  <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+        p:prunePeriod="${ldap.pool.prunePeriod}"
+        p:idleTime="${ldap.pool.idleTime}" />
+
+  <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+  <bean id="baseConnectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true"
+        init-method="initialize"
+        p:poolConfig-ref="ldapPoolConfig"
+        p:blockWaitTime="${ldap.pool.blockWaitTime}"
+        p:validator-ref="searchValidator"
+        p:pruneStrategy-ref="pruneStrategy"/>
+
+  <!--
+     +========================================================================
+     | LDAP authentication beans
+     +========================================================================
+  -->
+  <bean id="authnConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="authnConnectionConfig" />
+
+  <bean id="authnConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="authnConnectionFactory" />
+
+  <bean id="authnPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="authnConnectionPool" />
+
+  <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+    c:resolver-ref="pooledSearchDnResolver" c:handler-ref="pooledBindHandler"
+    p:authenticationResponseHandlers-ref="authResponseHandlers" />
+  
+  <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+        p:baseDn="${ldap.authn.baseDn}"
+        p:allowMultipleDns="false"
+        p:connectionFactory-ref="authnPooledLdapConnectionFactory"
+        p:userFilter="${ldap.authn.searchFilter}" />
+
+  <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+        p:connectionFactory-ref="authnPooledLdapConnectionFactory"
+        p:authenticationControls-ref="authControls" />
+  
+  <util:list id="authControls">
+    <bean class="org.ldaptive.control.PasswordPolicyControl" 
+          p:graceAuthNsRemaining="10" p:timeBeforeExpiration="10"
+          c:critical="${ldap.auth.control.critical:false}" />
+  </util:list> 
+  
+  <!--
+     +========================================================================
+     | LDAP credential to principal resolver beans
+     +========================================================================
+  -->
+  <bean id="resolverConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="resolverConnectionConfig" />
+
+  <bean id="resolverConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="resolverConnectionFactory" />
+
+  <bean id="resolverPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="resolverConnectionPool" />
+
+  <bean id="attributeRepository"
+        class="org.jasig.cas.persondir.LdapPersonAttributeDao"
+        p:baseDN="${ldap.resolver.baseDn}"
+        p:searchFilter="${ldap.resolver.searchFilter}"
+        p:connectionFactory-ref="resolverPooledLdapConnectionFactory"
+        p:unmappedUsernameAttribute="${ldap.resolver.userNameAttribute}"
+        p:resultAttributeMapping-ref="resultAttributeMapping">
+    <property name="searchControls">
+      <bean class="javax.naming.directory.SearchControls"
+            p:countLimit="5"
+            p:timeLimit="5000"
+            p:searchScope="2" />
+    </property>
+    
+  </bean>
+
+  <bean id="resolver"
+      class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver"
+      c:connectionFactory-ref="authnConnectionFactory"
+      c:searchExecutor-ref="searchExecutorUser"
+      p:attributeMapping-ref="resultAttributeMapping"
+      p:attributeRepository-ref="attributeRepository"
+      p:usernameAttribute="${ldap.resolver.userNameAttribute}">
+
+    <property name="principalResolver">
+        <bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+    </property>
+  </bean>
+
+  <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
+        p:baseDn="${ldap.userdetails.user.baseDn}"
+        p:searchFilter="${ldap.resolver.searchFilter}"
+        p:returnAttributes-ref="userDetailsUserAttributes" />
+  
+  <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
+        p:baseDn="${ldap.userdetails.role.baseDn}"
+        p:searchFilter="${ldap.userdetails.role.searchFilter}"
+        p:returnAttributes-ref="userDetailsRoleAttributes" />
+
+  <!--
+     +========================================================================
+     | LDAP monitor beans
+     +========================================================================
+  -->
+  <bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
+    c:factory-ref="authnConnectionFactory" c:validator-ref="searchValidator" />
+
+  <bean class="org.jasig.cas.monitor.PooledConnectionFactoryMonitor"
+        p:executor-ref="poolMonitorExecutor"
+        p:maxWait="5000"
+        c:factory-ref="authnPooledLdapConnectionFactory" c:validator-ref="searchValidator"/>
+
+  <bean id="poolMonitorExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+        p:corePoolSize="1"
+        p:maxPoolSize="1"
+        p:keepAliveSeconds="5" />
+
+  <!--
+     +========================================================================
+     | LDAP user details beans
+     +========================================================================
+  -->
+  <bean id="userDetailsConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="userDetailsConnectionConfig" />
+
+  <bean id="userDetailsConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="userDetailsConnectionFactory" />
+
+  <bean id="userDetailsPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="userDetailsConnectionPool" />
+
+
+  <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
+        c:factory-ref="userDetailsPooledLdapConnectionFactory"
+        c:roleSearchExecutor-ref="searchExecutorRole"
+        c:userSearchExecutor-ref="searchExecutorUser" 
+        c:userAttributeName="${ldap.userdetails.user.attribute}"
+        c:roleAttributeName="${ldap.userdetails.role.attribute}" />
+                  
+  <util:list id="userDetailsUserAttributes">
+    <value>${ldap.userdetails.user.attribute}</value>
+  </util:list>
+
+  <util:list id="userDetailsRoleAttributes">
+    <value>${ldap.userdetails.role.attribute}</value>
+  </util:list>
+  
+</beans>

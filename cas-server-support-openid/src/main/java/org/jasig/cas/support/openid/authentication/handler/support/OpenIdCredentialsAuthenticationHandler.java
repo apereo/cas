@@ -18,13 +18,18 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import java.security.GeneralSecurityException;
+
+import org.jasig.cas.authentication.AbstractAuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -34,31 +39,31 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdCredentialsAuthenticationHandler implements
-    AuthenticationHandler {
+public final class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @NotNull
     private TicketRegistry ticketRegistry;
 
-    public boolean authenticate(final Credentials credentials)
-        throws AuthenticationException {
-        final OpenIdCredentials c = (OpenIdCredentials) credentials;
+    @Override
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
+        final OpenIdCredential c = (OpenIdCredential) credential;
 
-        boolean result = false;
         final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(),
                         TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
-            result = false;
-        } else {
-            result = t.getAuthentication().getPrincipal().getId().equals(
-                    c.getUsername());
+            throw new FailedLoginException("TGT is null or expired.");
         }
-        return result;
+        final Principal principal = t.getAuthentication().getPrincipal();
+        if (!principal.getId().equals(c.getUsername())) {
+            throw new FailedLoginException("Principal ID mismatch");
+        }
+        return new HandlerResult(this, new BasicCredentialMetaData(c), principal);
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials instanceof OpenIdCredentials;
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof OpenIdCredential;
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {

@@ -18,38 +18,34 @@
  */
 package org.jasig.cas.validation;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 
 /**
- * Return from CentralAuthenticationService.validateServiceTicket(String,
- * Service), the Assertion contains a chain of Principal objects. The first is
- * the User's login Principal, while any others are Proxy Principals.
+ * Represents a security assertion obtained from a successfully validated ticket.
  *
  * @author Scott Battaglia
-
+ * @author Marvin S. Addison
+ *
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(String, org.jasig.cas.authentication.principal.Service)
  */
-public interface Assertion extends Serializable {
+public interface Assertion {
 
     /**
-     * Get a List of Authentications which represent the owners of the
-     * GrantingTickets which granted the ticket that was validated. The first
-     * Authentication of this list is the Authentication which originally
-     * authenticated to CAS to obtain the first Granting Ticket. Subsequent
-     * Authentication are those associated with GrantingTickets that were
-     * granted from that original granting ticket. The last Authentication in
-     * this List is that associated with the GrantingTicket that was the
-     * immediate grantor of the ticket that was validated. The List returned by
-     * this method will contain at least one Authentication.
+     * Gets the authentication event that is basis of this assertion.
      *
-     * @return a List of Authentication
+     * @return Non-null primary authentication event.
+     */
+    Authentication getPrimaryAuthentication();
+
+    /**
+     * Gets a list of all authentications that have occurred during a CAS SSO session.
+     *
+     * @return Non-null, non-empty list of authentications in leaf-first order (i.e. authentications on the root ticket
+     * occur at the end).
      */
     List<Authentication> getChainedAuthentications();
 

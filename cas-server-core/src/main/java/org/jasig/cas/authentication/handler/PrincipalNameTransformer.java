@@ -20,6 +20,8 @@ package org.jasig.cas.authentication.handler;
 
 
 /**
+ * Strategy pattern component for transforming principal names in the authentication pipeline.
+ *
  * @author Howard Gilbert
  * @since 3.3.6
  */
@@ -29,7 +31,7 @@ public interface PrincipalNameTransformer {
      * Transform the string typed into the login form into a tentative Principal Name to be
      * validated by a specific type of Authentication Handler.
      *
-     * <p>The Principal Name eventually assigned by the CredentialsToPrincipalResolver may
+     * <p>The Principal Name eventually assigned by the PrincipalResolver may
      * be unqualified ("AENewman"). However, validation of the Principal name against a
      * particular backend source represented by a particular Authentication Handler may
      * require transformation to a temporary fully qualified format such as

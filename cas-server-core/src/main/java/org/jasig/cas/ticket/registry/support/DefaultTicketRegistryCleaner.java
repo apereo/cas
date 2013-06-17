@@ -139,10 +139,10 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     }
 
     /**
-     * Whether to log users out of services when we remove an expired ticket.  The default is true. Set this to
+     * Whether to logger users out of services when we remove an expired ticket.  The default is true. Set this to
      * false to disable.
      *
-     * @param logUserOutOfServices whether to log the user out of services or not.
+     * @param logUserOutOfServices whether to logger the user out of services or not.
      */
     public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
         this.logUserOutOfServices = logUserOutOfServices;

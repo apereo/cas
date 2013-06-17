@@ -21,16 +21,17 @@ package org.jasig.cas.adaptors.trusted.web.flow;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
-import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
@@ -62,13 +63,11 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
-        final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
 
-        authenticationManager.setAuthenticationHandlers(Arrays.asList(
-                new AuthenticationHandler[] {new PrincipalBearingCredentialsAuthenticationHandler()}));
-        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(
-                new CredentialsToPrincipalResolver[] {new PrincipalBearingCredentialsToPrincipalResolver()}));
-
+        final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
+                        new PrincipalBearingCredentialsAuthenticationHandler(),
+                        new PrincipalBearingPrincipalResolver()));
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), null, authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
