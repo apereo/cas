@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -47,12 +48,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 /**
- * <p> Modifications :</p>
- * <ul>
- * <li>Inline methods {@link #getAuthentication()} and
- * {@link #getService()} as {@link #getAuthentication()} and
- * {@link #getService()}</li>
- * </ul>
+ * Unit test for {@link EhCacheTicketRegistry}.
  *
  * @author Scott Battaglia
  * @since 3.0
@@ -80,10 +76,6 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 
-    public static Authentication getAuthentication() {
-        return new ImmutableAuthentication(new SimplePrincipal("test"));
-    }
-
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
      * the ticket and return. Failure upon any exception.
@@ -91,7 +83,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testAddTicketToCache() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -122,7 +114,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testGetExistingTicketWithProperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (final Exception e) {
@@ -134,7 +126,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testGetExistingTicketWithInproperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         } catch (final ClassCastException e) {
@@ -166,7 +158,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testGetExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (final Exception e) {
@@ -178,7 +170,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (final Exception e) {
@@ -190,7 +182,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
         } catch (final Exception e) {
@@ -202,7 +194,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     @Test
     public void testDeleteNullTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
         } catch (final Exception e) {
@@ -228,7 +220,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
-                    getAuthentication(), new NeverExpiresExpirationPolicy());
+                    TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, getService(),
                     new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);

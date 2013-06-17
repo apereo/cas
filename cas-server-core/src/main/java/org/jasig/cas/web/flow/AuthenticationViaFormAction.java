@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
@@ -34,20 +34,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action to authenticate credentials and retrieve a TicketGrantingTicket for
- * those credentials. If there is a request for renew, then it also generates
+ * Action to authenticate credential and retrieve a TicketGrantingTicket for
+ * those credential. If there is a request for renew, then it also generates
  * the Service Ticket required.
  *
  * @author Scott Battaglia
  * @since 3.0.4
  */
 public class AuthenticationViaFormAction {
+
+    /** Authentication success result. */
+    public static final String SUCCESS = "success";
+
+    /** Authentication success with "warn" enabled. */
+    public static final String WARN = "warn";
+
+    /** Authentication failure result. */
+    public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
+
+    /** Error result. */
+    public static final String ERROR = "error";
 
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -65,25 +78,22 @@ public class AuthenticationViaFormAction {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
+    public final void doBind(final RequestContext context, final Credential credential) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        if (this.credentialsBinder != null && this.credentialsBinder.supports(credentials.getClass())) {
-            this.credentialsBinder.bind(request, credentials);
+        if (this.credentialsBinder != null && this.credentialsBinder.supports(credential.getClass())) {
+            this.credentialsBinder.bind(request, credential);
         }
     }
-
-    public final String submit(final RequestContext context, final Credentials credentials,
+    public final Event submit(final RequestContext context, final Credential credential,
             final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
             logger.warn("Invalid login ticket {}", providedLoginTicket);
-            final String code = "INVALID_TICKET";
-            messageContext.addMessage(
-                new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
-            return "error";
+            messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
+            return newEvent(ERROR);
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -93,55 +103,32 @@ public class AuthenticationViaFormAction {
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                        ticketGrantingTicketId, service, credentials);
+                        ticketGrantingTicketId, service, credential);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
-                return "warn";
-            } catch (final TicketException e) {
-                if (isCauseAuthenticationException(e)) {
-                    populateErrorsInstance(e, messageContext);
-                    return getAuthenticationExceptionEventId(e);
-                }
-
+                return newEvent(WARN);
+            } catch (final AuthenticationException e) {
+                return newEvent(AUTHENTICATION_FAILURE, e);
+            } catch (final TicketCreationException e) {
+                logger.warn(
+                        "Invalid attempt to access service using renew=true with different credential. "
+                        + "Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-                logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
+            } catch (final TicketException e) {
+                return newEvent(ERROR, e);
             }
         }
 
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context,
-                    this.centralAuthenticationService.createTicketGrantingTicket(credentials));
+                    this.centralAuthenticationService.createTicketGrantingTicket(credential));
             putWarnCookieIfRequestParameterPresent(context);
-            return "success";
-        } catch (final TicketException e) {
-            populateErrorsInstance(e, messageContext);
-            if (isCauseAuthenticationException(e)) {
-                return getAuthenticationExceptionEventId(e);
-            }
-            return "error";
+            return newEvent(SUCCESS);
+        } catch (final AuthenticationException e) {
+            return newEvent(AUTHENTICATION_FAILURE, e);
+        } catch (final Exception e) {
+            return newEvent(ERROR, e);
         }
-    }
-
-
-    private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
-      try {
-          final String exceptionCode = e.getCode();
-          final MessageBuilder messageBuilder = new MessageBuilder().error().code(exceptionCode);
-          messageContext.addMessage(messageBuilder.build());
-      } catch (final NoSuchMessageException ex) {
-          /*
-           * If no message is mapped to the exception code, use the default exception code of
-           * BadCredentialsAuthenticationException. Displaying the exception message itself back to the
-           * client may expose sensitive credential and error data.
-           */
-          final String defaultCode = BadCredentialsAuthenticationException.CODE;
-          logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]",
-                  defaultCode);
-          messageContext.addMessage(new MessageBuilder().error().code(defaultCode)
-                        .defaultText("A technical has error occured. [code:" + defaultCode + "]").build());
-      } catch (final Exception fe) {
-          logger.error(fe.getMessage(), fe);
-      }
     }
 
     private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
@@ -158,15 +145,12 @@ public class AuthenticationViaFormAction {
         return (AuthenticationException) e.getCause();
     }
 
-    private String getAuthenticationExceptionEventId(final TicketException e) {
-        final AuthenticationException authEx = getAuthenticationExceptionAsCause(e);
-
-        logger.debug("An authentication error has occurred. Returning the event id {}", authEx.getType());
-        return authEx.getType();
+    private Event newEvent(final String id) {
+        return new Event(this, id);
     }
 
-    private boolean isCauseAuthenticationException(final TicketException e) {
-        return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
+    private Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap("error", error));
     }
 
     public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -175,18 +159,18 @@ public class AuthenticationViaFormAction {
 
     /**
      * Set a CredentialsBinder for additional binding of the HttpServletRequest
-     * to the Credentials instance, beyond our default binding of the
-     * Credentials as a Form Object in Spring WebMVC parlance. By the time we
+     * to the Credential instance, beyond our default binding of the
+     * Credential as a Form Object in Spring WebMVC parlance. By the time we
      * invoke this CredentialsBinder, we have already engaged in default binding
      * such that for each HttpServletRequest parameter, if there was a JavaBean
-     * property of the Credentials implementation of the same name, we have set
+     * property of the Credential implementation of the same name, we have set
      * that property to be the value of the corresponding request parameter.
      * This CredentialsBinder plugin point exists to allow consideration of
      * things other than HttpServletRequest parameters in populating the
-     * Credentials (or more sophisticated consideration of the
+     * Credential (or more sophisticated consideration of the
      * HttpServletRequest parameters).
      *
-     * @param credentialsBinder the credentials binder to set.
+     * @param credentialsBinder the credential binder to set.
      */
     public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;

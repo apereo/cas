@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import static org.junit.Assert.*;
+import javax.security.auth.login.LoginException;
 
 import org.jasig.cas.TestUtils;
 import org.junit.Before;
@@ -26,6 +26,8 @@ import org.junit.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.*;
 
 public class JaasAuthenticationHandlerTests {
 
@@ -46,31 +48,28 @@ public class JaasAuthenticationHandlerTests {
         this.handler = new JaasAuthenticationHandler();
     }
 
-    @Test
+    @Test(expected = LoginException.class)
     public void testWithAlternativeRealm() throws Exception {
 
         this.handler.setRealm("TEST");
-        assertFalse(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test1")));
+        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
     @Test
     public void testWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
-        assertTrue(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+        assertNotNull(this.handler.authenticate(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
     }
 
     @Test
     public void testWithValidCredenials() throws Exception {
-        assertTrue(this.handler.authenticate(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
-    @Test
+    @Test(expected = LoginException.class)
     public void testWithInvalidCredentials() throws Exception {
-        assertFalse(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test1")));
+        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
 }

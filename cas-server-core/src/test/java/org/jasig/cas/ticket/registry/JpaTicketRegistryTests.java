@@ -30,7 +30,7 @@ import java.util.concurrent.Future;
 
 import javax.sql.DataSource;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
@@ -81,11 +81,11 @@ public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
-    private static UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
+    private static UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
 
-    private static ExpirationPolicy EXPIRATION_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
+    private static ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy EXPIRATION_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -156,16 +156,16 @@ public class JpaTicketRegistryTests {
         final Principal principal = new SimplePrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
-                ID_GENERATOR.getNewTicketId("TGT"),
-                new ImmutableAuthentication(principal, null),
-                EXPIRATION_POLICY_TGT);
+                idGenerator.getNewTicketId("TGT"),
+                TestUtils.getAuthentication(principal),
+                expirationPolicyTGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
        return parent.grantServiceTicket(
-               ID_GENERATOR.getNewTicketId("ST"),
+               idGenerator.getNewTicketId("ST"),
                new MockService("https://service.example.com"),
-               EXPIRATION_POLICY_ST,
+               expirationPolicyST,
                false);
     }
 
@@ -219,7 +219,7 @@ public class JpaTicketRegistryTests {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {
                     // Querying for the TGT prior to updating it as done in
-                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credentials)
+                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
                     final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                     jpaTicketRegistry.addTicket(st);
                     return st.getId();

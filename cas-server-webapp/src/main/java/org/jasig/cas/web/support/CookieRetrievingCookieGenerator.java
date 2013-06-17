@@ -22,7 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 
@@ -43,7 +43,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
 
-        if (!StringUtils.hasText(request.getParameter(RememberMeCredentials.REQUEST_PARAMETER_REMEMBER_ME))) {
+        if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
             super.addCookie(response, cookieValue);
         } else {
             final Cookie cookie = createCookie(cookieValue);
