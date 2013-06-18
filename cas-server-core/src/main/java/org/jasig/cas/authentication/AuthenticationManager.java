@@ -18,20 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
- * The AuthenticationManager class is the entity that determines the
- * authenticity of the credentials provided. It (or a class it delegates to) is
- * the sole authority on whether credentials are valid or not.
+ * Authenticates one or more credentials.
  *
  * @author Scott Battaglia
-
+ * @author Marvin S. Addison
+ *
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface AuthenticationManager {
 
@@ -39,19 +32,18 @@ public interface AuthenticationManager {
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**
-     * Method to validate the credentials provided. On successful validation, a
-     * fully populated Authentication object will be returned. Typically this
-     * will involve resolving a principal and providing any additional
-     * attributes, but specifics are left to the individual implementations to
-     * determine. Failure to authenticate is considered an exceptional case, and
+     * Authenticates the provided credentials. On success, an {@link Authentication} object
+     * is returned containing metadata about the result of each authenticated credential.
+     * Note that a particular implementation may require some or all credentials to be
+     * successfully authenticated. Failure to authenticate is considered an exceptional case, and
      * an AuthenticationException is thrown.
      *
-     * @param credentials The credentials provided for authentication.
-     * @return fully populated Authentication object.
-     * @throws AuthenticationException if unable to determine validity of
-     * credentials or there is an extenuating circumstance related to
-     * credentials (i.e. Account locked).
+     * @param credentials One or more credentials to authenticate.
+     *
+     * @return Authentication object on success that contains metadata about credentials that were authenticated.
+     *
+     * @throws AuthenticationException On authentication failure. The exception contains details
+     * on each of the credentials that failed to authenticate.
      */
-    Authentication authenticate(final Credentials credentials)
-        throws AuthenticationException;
+    Authentication authenticate(final Credential... credentials) throws AuthenticationException;
 }

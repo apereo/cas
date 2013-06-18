@@ -20,7 +20,8 @@ package org.jasig.cas;
 
 import java.util.List;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketException;
@@ -41,55 +42,72 @@ import org.jasig.cas.validation.Assertion;
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
  * @author Scott Battaglia
-
+ * @author Marvin S. Addison
+ *
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface CentralAuthenticationService {
 
     /**
-     * Create a TicketGrantingTicket based on opaque credentials supplied by the
-     * caller.
+     * Create a {@link org.jasig.cas.ticket.TicketGrantingTicket} by authenticating credentials.
+     * The details of the security policy around credential authentication and the definition
+     * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
+     * that at least one credential MUST be authenticated for ticket creation to succeed.
      *
-     * @param credentials The credentials to create the ticket for
-     * @return The String identifier of the ticket (may not be null).
+     * @param credentials One or more credentials that may be authenticated in order to create the ticket.
+     *
+     * @return Non-null ticket-granting ticket identifier.
+     *
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials credentials) throws TicketException;
+    String createTicketGrantingTicket(Credential... credentials)
+        throws AuthenticationException, TicketException;
 
     /**
-     * Grant a ServiceTicket for a Service.
+     * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @return the ServiceTicket for target Service.
+     *
+     * @return Non-null service ticket identifier.
+     *
      * @throws TicketException if the ticket could not be created.
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
     /**
-     * Grant a ServiceTicket for a Service *if* the principal resolved from the
-     * credentials matches the principal associated with the
-     * TicketGrantingTicket.
+     * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
+     * by authenticating the given credentials.
+     * The details of the security policy around credential authentication and the definition
+     * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
+     * that at least one credential MUST be authenticated for ticket creation to succeed.
+     * <p>
+     * The principal that is resolved from the authenticated credentials MUST be the same as that to which
+     * the given ticket-granting ticket was issued.
+     * </p>
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @param credentials the Credentials to present to receive the
-     * ServiceTicket
-     * @return the ServiceTicket for target Service.
+     * @param credentials One or more credentials to authenticate prior to granting the service ticket.
+     *
+     * @return Non-null service ticket identifier.
+     *
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials)
-            throws TicketException;
+    String grantServiceTicket(
+            final String ticketGrantingTicketId, final Service service, final Credential... credentials)
+            throws AuthenticationException, TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
      *
      * @param serviceTicketId Proof of prior authentication.
      * @param service Service wishing to validate a prior authentication.
-     * @return ServiceTicket if valid for the service
+     *
+     * @return Non-null ticket validation assertion.
+     *
      * @throws TicketException if there was an error validating the ticket.
      */
     Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
@@ -108,14 +126,16 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
      *
-     * @param serviceTicketId The service ticket that will delegate to a
-     * TicketGrantingTicket
-     * @param credentials The credentials of the service that wishes to have a
-     * TicketGrantingTicket delegated to it.
-     * @return TicketGrantingTicket that can grant ServiceTickets that proxy
-     * authentication.
+     * @param serviceTicketId The service ticket identifier that will delegate to a
+     * {@link org.jasig.cas.ticket.TicketGrantingTicket}.
+     * @param credentials One or more credentials to authenticate prior to delegating the ticket.
+     *
+     * @return Non-null ticket-granting ticket identifier that can grant {@link org.jasig.cas.ticket.ServiceTicket}
+     * that proxy authentication.
+     *
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if there was an error creating the ticket
      */
-    String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
-            throws TicketException;
+    String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+            throws AuthenticationException, TicketException;
 }

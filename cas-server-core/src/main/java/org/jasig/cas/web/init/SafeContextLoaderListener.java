@@ -86,10 +86,10 @@ public final class SafeContextLoaderListener implements ServletContextListener {
                 + "The Spring ContextLoaderListener we wrap threw on contextInitialized.\n"
                 + "But for our having caught this error, the web application context would not have initialized.";
 
-            // log it via Commons Logging
+            // logger it via Commons Logging
             logger.error(message, t);
 
-            // log it to the ServletContext
+            // logger it to the ServletContext
             ServletContext context = sce.getServletContext();
             context.log(message, t);
 
