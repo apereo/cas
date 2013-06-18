@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredentials;
+import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -157,7 +157,7 @@ public final class ClientAction extends AbstractAction {
             restoreRequestAttribute(request, session, METHOD);
 
             // create credentials
-            final ClientCredentials clientCredentials = new ClientCredentials(credentials);
+            final ClientCredential clientCredentials = new ClientCredential(credentials);
             try {
                 WebUtils.putTicketGrantingTicketInRequestScope(context,
                         this.centralAuthenticationService.createTicketGrantingTicket(clientCredentials));

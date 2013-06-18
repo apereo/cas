@@ -26,7 +26,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
@@ -92,8 +92,9 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
-        final boolean isRemembered = authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)
-                == Boolean.TRUE && !getAssertionFrom(model).isFromNewLogin();
+
+        final Object o = authentication.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        final boolean isRemembered = o == Boolean.TRUE && !getAssertionFrom(model).isFromNewLogin();
 
         // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
         final Assertion assertion = newSamlObject(Assertion.class);

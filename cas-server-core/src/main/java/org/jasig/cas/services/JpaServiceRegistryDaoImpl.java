@@ -51,7 +51,7 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
-        final boolean isNew = registeredService.getId() == -1;
+        final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
         final RegisteredService r = this.entityManager.merge(registeredService);
 

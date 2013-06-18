@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
+import javax.security.auth.login.FailedLoginException;
+
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -52,40 +52,39 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
 
     @Test
     public void testSupports() {
-        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredentials("test", "test")));
-        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredentials()));
+        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
+        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
     public void testTGTWithSameId() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test");
+        final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertTrue(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        assertEquals("test", this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testTGTThatIsExpired() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test");
+        final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
         t.markTicketExpired();
-        assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testTGTWithDifferentId() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test1");
+        final OpenIdCredential c = new OpenIdCredential("test", "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
-        assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
+        this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
     protected TicketGrantingTicket getTicketGrantingTicket() {
-        final Authentication authentication = new MutableAuthentication(new SimplePrincipal("test"));
-        return new TicketGrantingTicketImpl("test", authentication, new NeverExpiresExpirationPolicy());
+        return new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

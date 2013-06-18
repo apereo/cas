@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import javax.security.auth.login.FailedLoginException;
+
 import static org.junit.Assert.*;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.HandlerResult;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +40,6 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     @Before
     public void setUp() throws Exception {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        this.authenticationHandler.setPasswordEncoder(new PlainTextPasswordEncoder());
     }
 
     @Test
@@ -54,53 +53,15 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    public void testValidUsernamePassword() throws AuthenticationException {
-        assertTrue(this.authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+    public void testValidUsernamePassword() throws Exception {
+        final HandlerResult result = authenticationHandler.authenticate(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
-    @Test
-    public void testInvalidUsernamePassword() {
-        try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword()));
-        } catch (final AuthenticationException ae) {
-            ae.printStackTrace();
-        }
+    @Test(expected = FailedLoginException.class)
+    public void testInvalidUsernamePassword() throws Exception {
+        this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 
-    @Test
-    public void testNullUsernamePassword() {
-        try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                    .getCredentialsWithSameUsernameAndPassword(null)));
-        } catch (final AuthenticationException ae) {
-            ae.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testAlternateClass() {
-        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
-        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
-    }
-
-    @Test
-    public void testAlternateClassWithSubclassSupport() {
-        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
-        this.authenticationHandler.setSupportSubClasses(true);
-        assertTrue(this.authenticationHandler.supports(new ExtendedCredentials()));
-    }
-
-    @Test
-    public void testAlternateClassWithNoSubclassSupport() {
-        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
-        this.authenticationHandler.setSupportSubClasses(false);
-        assertFalse(this.authenticationHandler.supports(new ExtendedCredentials()));
-    }
-
-    protected class ExtendedCredentials extends UsernamePasswordCredentials {
-
-        private static final long serialVersionUID = 406992293105518363L;
-        // nothing to see here
-    }
 }

@@ -24,14 +24,17 @@ import java.security.cert.X509Certificate;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -108,54 +111,46 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
 
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-                && X509CertificateCredentials.class.isAssignableFrom(credentials
+    public boolean supports(final Credential credential) {
+        return credential != null
+                && X509CertificateCredential.class.isAssignableFrom(credential
                         .getClass());
     }
 
+    /** {@inheritDoc} */
     @Override
-    protected final boolean doAuthentication(final Credentials credentials)
-            throws AuthenticationException {
+    protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
-        final X509CertificateCredentials x509Credentials = (X509CertificateCredentials) credentials;
-        final X509Certificate[] certificates = x509Credentials.getCertificates();
+        final X509CertificateCredential x509Credential = (X509CertificateCredential) credential;
+        final X509Certificate[] certificates = x509Credential.getCertificates();
 
         X509Certificate clientCert = null;
-        boolean valid = true;
         boolean hasTrustedIssuer = false;
         for (int i = certificates.length - 1; i >= 0; i--) {
             final X509Certificate certificate = certificates[i];
-            try {
-                logger.debug("Evaluating {}", CertUtils.toString(certificate));
+            logger.debug("Evaluating {}", CertUtils.toString(certificate));
 
-                validate(certificate);
+            validate(certificate);
 
-                if (!hasTrustedIssuer) {
-                    hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
-                }
+            if (!hasTrustedIssuer) {
+                hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
+            }
 
-                // getBasicConstraints returns pathLenContraint which is
-                // >=0 when this is a CA cert and -1 when it's not
-                int pathLength = certificate.getBasicConstraints();
-                if (pathLength < 0) {
-                    logger.debug("Found valid client certificate");
-                    clientCert = certificate;
-                } else {
-                    logger.debug("Found valid CA certificate");
-                }
-            } catch (final GeneralSecurityException e) {
-                logger.warn("Failed to validate {}", CertUtils.toString(certificate), e);
-                valid = false;
+            // getBasicConstraints returns pathLenContraint which is generally
+            // >=0 when this is a CA cert and -1 when it's not
+            int pathLength = certificate.getBasicConstraints();
+            if (pathLength < 0) {
+                logger.debug("Found valid client certificate");
+                clientCert = certificate;
+            } else {
+                logger.debug("Found valid CA certificate");
             }
         }
-        if (valid && hasTrustedIssuer && clientCert != null) {
-            x509Credentials.setCertificate(clientCert);
-            logger.info("Successfully authenticated {}", credentials);
-            return true;
+        if (hasTrustedIssuer && clientCert != null) {
+            x509Credential.setCertificate(clientCert);
+            return new HandlerResult(this, x509Credential, new SimplePrincipal(x509Credential.getId()));
         }
-        logger.info("Failed to authenticate {}", credentials);
-        return false;
+        throw new FailedLoginException();
     }
 
     public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
@@ -213,19 +208,19 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         int pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
-                throw new GeneralSecurityException(
+                throw new FailedLoginException(
                         "Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
             }
             if (this.checkKeyUsage && !isValidKeyUsage(cert)) {
-                throw new GeneralSecurityException(
+                throw new FailedLoginException(
                         "Certificate keyUsage constraint forbids SSL client authentication.");
             }
         } else {
             // Check pathLength for CA cert
-            if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
-                throw new GeneralSecurityException("Unlimited certificate path length not allowed by configuration.");
+            if (pathLength == Integer.MAX_VALUE && this.maxPathLengthAllowUnspecified != true) {
+                throw new FailedLoginException("Unlimited certificate path length not allowed by configuration.");
             } else if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
-                throw new GeneralSecurityException(String.format(
+                throw new FailedLoginException(String.format(
                         "Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength));
             }
         }

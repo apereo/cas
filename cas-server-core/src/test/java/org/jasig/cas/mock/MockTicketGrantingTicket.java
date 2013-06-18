@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -57,7 +58,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = new ImmutableAuthentication(new SimplePrincipal(principal));
+        authentication = new AuthenticationBuilder(new SimplePrincipal(principal)).build();
         created = new Date();
     }
 
@@ -80,6 +81,14 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public boolean isRoot() {
         return true;
+    }
+
+    public TicketGrantingTicket getRoot() {
+        return this;
+    }
+
+    public List<Authentication> getSupplementalAuthentications() {
+        return Collections.emptyList();
     }
 
     public List<Authentication> getChainedAuthentications() {

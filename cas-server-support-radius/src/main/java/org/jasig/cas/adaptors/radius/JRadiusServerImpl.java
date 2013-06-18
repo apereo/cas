@@ -33,7 +33,7 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,15 +164,12 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     @Override
-    public boolean authenticate(
-            final UsernamePasswordCredentials usernamePasswordCredentials) {
+    public boolean authenticate(final String username, final String password) throws PreventedException {
         final RadiusClient radiusClient = getNewRadiusClient();
 
         final AttributeList attributeList = new AttributeList();
-        attributeList.add(new Attr_UserName(usernamePasswordCredentials
-                .getUsername()));
-        attributeList.add(new Attr_UserPassword(usernamePasswordCredentials
-                .getPassword()));
+        attributeList.add(new Attr_UserName(username));
+        attributeList.add(new Attr_UserPassword(password));
 
         final AccessRequest request = new AccessRequest(radiusClient,
                 attributeList);
@@ -183,25 +180,19 @@ public final class JRadiusServerImpl implements RadiusServer {
 
             // accepted
             if (response instanceof AccessAccept) {
-                LOGGER.debug("Authentication request suceeded for host: {} and username {}",
-                        this.inetAddress.getCanonicalHostName(),
-                        usernamePasswordCredentials.getUsername());
+                LOGGER.debug("Authentication request suceeded for host {} and username {}",
+                        this.inetAddress.getCanonicalHostName(), username);
                 return true;
             }
 
             // rejected
-            LOGGER.debug("Authentication request failed for host: {} and username {}",
-                    this.inetAddress.getCanonicalHostName(),
-                    usernamePasswordCredentials.getUsername());
+            LOGGER.debug("Authentication request failed for host {} and username {}",
+                    this.inetAddress.getCanonicalHostName(), username);
             return false;
         } catch (final UnknownAttributeException e) {
-            throw new IllegalArgumentException(
-                    "Passed an unknown attribute to RADIUS client: "
-                            + e.getMessage());
+            throw new PreventedException(e);
         } catch (final RadiusException e) {
-            throw new IllegalStateException(
-                    "Received response that puts RadiusClient into illegal state: "
-                            + e.getMessage());
+            throw new PreventedException(e);
         }
     }
 

@@ -91,10 +91,10 @@ public final class SafeDispatcherServlet extends HttpServlet {
                 + "The Spring DispatcherServlet we wrap threw on init.\n"
                 + "But for our having caught this error, the servlet would not have initialized.";
 
-            // log it via Commons Logging
+            // logger it via Commons Logging
             LOGGER.error(message, t);
 
-            // log it to the ServletContext
+            // logger it to the ServletContext
             ServletContext context = config.getServletContext();
             context.log(message, t);
 

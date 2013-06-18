@@ -139,7 +139,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Log out of a service through back channel.
      *
-     * @param service the service to log out.
+     * @param service the service to logger out.
      * @param ticketId the ticket id.
      * @return if the logout has been performed.
      */

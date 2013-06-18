@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockValidationSpecification;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.HttpClient;
@@ -35,7 +34,11 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Scott Battaglia
@@ -63,7 +66,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
     }
 
-    private HttpServletRequest getHttpServletRequest() throws TicketException {
+    private HttpServletRequest getHttpServletRequest() throws Exception {
         final String tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(
                         TestUtils.getCredentialsWithSameUsernameAndPassword());

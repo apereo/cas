@@ -20,7 +20,9 @@ package org.jasig.cas.login;
 
 import java.io.IOException;
 
-
+/**
+ * Base class for Web compatibility tests around CAS login form.
+ */
 public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibilityTests {
     public static final String FORM_USERNAME = "username";
     public static final String FORM_PASSWORD = "password";

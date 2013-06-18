@@ -18,10 +18,15 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
+import java.security.GeneralSecurityException;
 
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
+
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -32,6 +37,8 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
+ * @author Marvin S. Addison
+ *
  * @since 3.0
  */
 
@@ -51,15 +58,22 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     private String sql;
 
+    /** {@inheritDoc} */
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
-            throws AuthenticationException {
-        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-        final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
 
-        final int count = getJdbcTemplate().queryForInt(this.sql, transformedUsername, encyptedPassword);
-
-        return count > 0;
+        final String encyptedPassword = getPasswordEncoder().encode(password);
+        final int count;
+        try {
+            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, encyptedPassword);
+        } catch (final DataAccessException e) {
+            throw new PreventedException("SQL exception while executing query for " + username, e);
+        }
+        if (count == 0) {
+            throw new FailedLoginException(username + " not found with SQL query.");
+        }
+        return new SimplePrincipal(username);
     }
 
     @Override
