@@ -18,6 +18,10 @@
  */
 package org.jasig.cas;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,4 +62,5 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }
+
 }

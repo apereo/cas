@@ -20,20 +20,17 @@ package org.jasig.cas.support.saml.web.view;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertion;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -68,16 +65,15 @@ public class Saml10SuccessResponseViewTests {
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
 
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
-        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        authAttributes.put(
+                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
-        authentication.getAttributes().put("testSamlAttribute", "value");
+        authAttributes.put("testSamlAttribute", "value");
 
-        final List<Authentication> authentications = new ArrayList<Authentication>();
-        authentications.add(authentication);
-
-        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
-
+        final Authentication primary = TestUtils.getAuthentication(principal, authAttributes);
+        final Assertion assertion = new ImmutableAssertion(
+                primary, Collections.singletonList(primary), TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -103,16 +99,16 @@ public class Saml10SuccessResponseViewTests {
 
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
 
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
-        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        authAttributes.put(
+                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
-        authentication.getAttributes().put("testSamlAttribute", "value");
+        authAttributes.put("testSamlAttribute", "value");
 
-        final List<Authentication> authentications = new ArrayList<Authentication>();
-        authentications.add(authentication);
+        final Authentication primary = TestUtils.getAuthentication(principal, authAttributes);
 
-        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
-
+        final Assertion assertion = new ImmutableAssertion(
+                primary, Collections.singletonList(primary), TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -133,12 +129,10 @@ public class Saml10SuccessResponseViewTests {
         attributes.put("testAttribute", "testValue");
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
 
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
-        final List<Authentication> authentications = new ArrayList<Authentication>();
-        authentications.add(authentication);
+        final Authentication primary = TestUtils.getAuthentication(principal);
 
-        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
-
+        final Assertion assertion = new ImmutableAssertion(
+                primary, Collections.singletonList(primary), TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();

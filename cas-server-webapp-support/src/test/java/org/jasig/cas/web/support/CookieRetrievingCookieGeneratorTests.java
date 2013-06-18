@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,7 +51,7 @@ public final class CookieRetrievingCookieGeneratorTests {
     @Test
     public void testCookieAddWithRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(RememberMeCredentials.REQUEST_PARAMETER_REMEMBER_ME, "true");
+        request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
         this.g.addCookie(request, response, "test");

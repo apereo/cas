@@ -1,0 +1,6 @@
+# This is a template for the userdetails.properties file required
+# for unit test execution.
+
+# The format of each entry is username=ldapusername:ROLE_A|ROLE_B|ROLE_C
+username1=ldapuser1:ROLE_ADMIN|ROLE_USER
+username2=ldapuser2:ROLE_ADMIN

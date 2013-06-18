@@ -29,7 +29,9 @@ import org.hibernate.annotations.IndexColumn;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.ElementCollection;
@@ -37,6 +39,7 @@ import javax.persistence.Entity;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.GeneratedValue;
@@ -64,7 +67,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = -1;
+    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @JoinTable(name = "rs_attributes", joinColumns = @JoinColumn(name = "RegisteredServiceImpl_id"))
@@ -120,6 +123,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      */
     @Transient
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
+
+    @Lob
+    @Column(name = "required_handlers")
+    private HashSet<String> requiredHandlers = new HashSet<String>();
 
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -330,9 +337,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(this.getEvaluationOrder(), other.getEvaluationOrder())
-                .append(this.getName().toLowerCase(), other.getName().toLowerCase())
-                .append(this.getServiceId(), other.getServiceId()).toComparison();
+        return new CompareToBuilder()
+                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                  .append(this.getServiceId(), other.getServiceId())
+                  .toComparison();
     }
 
     public String toString() {
@@ -355,5 +364,22 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public RegisteredServiceAttributeFilter getAttributeFilter() {
         return this.attributeFilter;
+    }
+
+    public Set<String> getRequiredHandlers() {
+        if (this.requiredHandlers == null) {
+            this.requiredHandlers = new HashSet<String>();
+        }
+        return this.requiredHandlers;
+    }
+
+    public void setRequiredHandlers(final Set<String> handlers) {
+        getRequiredHandlers().clear();
+        if (handlers == null) {
+            return;
+        }
+        for (final String handler : handlers) {
+            getRequiredHandlers().add(handler);
+        }
     }
 }

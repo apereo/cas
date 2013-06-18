@@ -18,12 +18,15 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import static org.junit.Assert.*;
+import javax.security.auth.login.FailedLoginException;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.HttpClient;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -50,42 +53,40 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void testAcceptsProperCertificateCredentials() {
-        assertTrue(this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials()));
+    public void testAcceptsProperCertificateCredentials() throws Exception {
+        assertNotNull(this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials()));
+    }
+
+    @Test(expected = FailedLoginException.class)
+    public void testRejectsInProperCertificateCredentials() throws Exception {
+        this.authenticationHandler.authenticate(
+                TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
+    }
+
+    @Test(expected = FailedLoginException.class)
+    public void testRejectsNonHttpsCredentials() throws Exception {
+        this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
     }
 
     @Test
-    public void testRejectsInProperCertificateCredentials() {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org")));
-    }
-
-    @Test
-    public void testRejectsNonHttpsCredentials() {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("http://www.jasig.org")));
-    }
-
-    @Test
-    public void testAcceptsNonHttpsCredentials() {
+    public void testAcceptsNonHttpsCredentials() throws Exception {
         this.authenticationHandler.setHttpClient(new HttpClient());
         this.authenticationHandler.setRequireSecure(false);
-        assertTrue(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("http://www.jasig.org")));
+        assertNotNull(this.authenticationHandler.authenticate(
+                TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org")));
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testNoAcceptableStatusCode() throws Exception {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
+        this.authenticationHandler.authenticate(
+                TestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
     }
 
-    @Test
+    @Test(expected = FailedLoginException.class)
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
         final HttpClient httpClient = new HttpClient();
         httpClient.setAcceptableCodes(new int[] {900});
         this.authenticationHandler.setHttpClient(httpClient);
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("https://www.ja-sig.org")));
+        this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }
 }

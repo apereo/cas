@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
+import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -25,39 +27,52 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.util.Assert;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
  * authentication to JAAS.
+ *
  * <p>
  * Using the JAAS Authentication Handler requires you to configure the
  * appropriate JAAS modules. You can specify the location of a jass.conf file
- * using the VM parameter
- * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf.
+ * using the following VM parameter:
+ * <pre>
+ * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf
+ * </pre>
+ *
  * <p>
  * This example jaas.conf would try Kerberos based authentication, then try LDAP
- * authentication CAS { com.sun.security.auth.module.Krb5LoginModule sufficient
- * client=TRUE debug=FALSE useTicketCache=FALSE;
- * edu.uconn.netid.jaas.LDAPLoginModule sufficient<br />
- * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"<br />
- * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"<br />
- * java.naming.security.credentials="password" Attribute="uid" startTLS="true"; };<br />
+ * authentication:
+ * <pre>
+ * CAS {
+ *   com.sun.security.auth.module.Krb5LoginModule sufficient
+ *     client=TRUE
+ *     debug=FALSE
+ *     useTicketCache=FALSE;
+ *   edu.uconn.netid.jaas.LDAPLoginModule sufficient
+ *     java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"
+ *     java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"
+ *     java.naming.security.credentials="password"
+ *     Attribute="uid"
+ *     startTLS="true";
+ * };
+ * </pre>
  *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
-
+ * @author Marvin S. Addison
+ *
  * @since 3.0.5
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
  */
-public class JaasAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
     private static final String DEFAULT_REALM = "CAS";
@@ -71,27 +86,27 @@ public class JaasAuthenticationHandler extends
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    /** {@inheritDoc} */
+    @Override
+    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+            throws GeneralSecurityException, PreventedException {
 
-        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-
+        final LoginContext lc = new LoginContext(
+                this.realm,
+                new UsernamePasswordCallbackHandler(username, password));
         try {
-            logger.debug("Attempting authentication for: {}", transformedUsername);
-            final LoginContext lc = new LoginContext(this.realm,
-                new UsernamePasswordCallbackHandler(transformedUsername,
-                    credentials.getPassword()));
-
+            logger.debug("Attempting authentication for: {}", username);
             lc.login();
+        } finally {
             lc.logout();
-        } catch (final LoginException fle) {
-            logger.debug("Authentication failed for: {}", transformedUsername);
-            return false;
         }
 
-        logger.debug("Authentication succeeded for: {}", transformedUsername);
-        return true;
+        Principal principal = null;
+        final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+        if (principals != null && principals.size() > 0) {
+            principal = new SimplePrincipal(principals.iterator().next().getName());
+        }
+        return principal;
     }
 
     public void setRealm(final String realm) {

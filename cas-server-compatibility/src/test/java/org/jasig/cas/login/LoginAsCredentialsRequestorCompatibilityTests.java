@@ -149,7 +149,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
 
     /**
-     * Test that /login?gateway=&service=whatever is the same as /login?gateway=true&service=whatever
+     * Test that /login?gateway=&service=whatever is the same as /login?gateway=true&service=whatever.
      * @throws IOException
      */
     public void testGatewayEqualsBlankWithServiceWithTgt() throws IOException {

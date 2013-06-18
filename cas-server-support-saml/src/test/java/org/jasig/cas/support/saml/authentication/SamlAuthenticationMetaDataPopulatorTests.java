@@ -25,9 +25,15 @@ import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Principal;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,42 +53,56 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testAuthenticationTypeFound() {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        this.populator.populateAttributes(builder, credentials);
+        final Authentication auth = builder.build();
 
-        final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-
-        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"),
+        assertEquals(
+                auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD),
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
     }
 
     @Test
     public void testAuthenticationTypeNotFound() {
-        final CustomCredentials credentials = new CustomCredentials();
-        final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
+        final CustomCredential credentials = new CustomCredential();
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        this.populator.populateAttributes(builder, credentials);
+        final Authentication auth = builder.build();
 
-        final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-
-        assertNull(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
+        assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test
     public void testAuthenticationTypeFoundCustom() {
-        final CustomCredentials credentials = new CustomCredentials();
+        final CustomCredential credentials = new CustomCredential();
 
         final Map<String, String> added = new HashMap<String, String>();
-        added.put(CustomCredentials.class.getName(), "FF");
+        added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
 
-        final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        this.populator.populateAttributes(builder, credentials);
+        final Authentication auth = builder.build();
 
-        final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-
-        assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
+        assertEquals(
+                "FF",
+                auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
-    protected class CustomCredentials implements Credentials {
-        private static final long serialVersionUID = -3387599342233073148L;
+    protected class CustomCredential implements Credential {
+
+        public String getId() {
+            return "nobody";
+        }
+    }
+
+    private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        return new AuthenticationBuilder(principal)
+                .addCredential(meta)
+                .addSuccess("test", new HandlerResult(handler, meta));
     }
 }

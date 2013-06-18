@@ -53,7 +53,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == -1) {
+        if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
         }
 
