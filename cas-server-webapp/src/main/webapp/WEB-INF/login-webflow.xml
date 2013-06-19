@@ -29,9 +29,12 @@
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
 
-	<decision-state id="ticketGrantingTicketExistsCheck">
-		<if test="flowScope.ticketGrantingTicketId != null" then="hasServiceCheck" else="gatewayRequestCheck" />
-	</decision-state>
+	<action-state id="ticketGrantingTicketCheckAction">
+        <evaluate expression="ticketGrantingTicketCheckAction.checkValidity(flowRequestContext)"/>
+        <transition on="notExists" to="gatewayRequestCheck"/>
+        <transition on="invalid" to="generateLoginTicket"/>
+        <transition on="valid" to="hasServiceCheck"/>
+	</action-state>
     
 	<decision-state id="gatewayRequestCheck">
 		<if test="requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null" then="gatewayServicesManagementCheck" else="serviceAuthorizationCheck" />

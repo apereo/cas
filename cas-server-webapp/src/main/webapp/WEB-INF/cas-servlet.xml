@@ -245,4 +245,8 @@
 
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
+
+  <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
+        c:registry-ref="ticketRegistry"
+        c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
 </beans>
