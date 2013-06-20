@@ -31,9 +31,9 @@ import org.springframework.webflow.execution.RequestContext;
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
  *
  * <ol>
- *     <li><code>notExists</code> - TGT not found in flow request context.</li>
- *     <li><code>invalid</code> - TGT has expired or is not found in ticket registry.</li>
- *     <li><code>valid</code> - TGT found in ticket registry and has not expired.</li>
+ *     <li>{@link #NOT_EXISTS} - TGT not found in flow request context.</li>
+ *     <li>{@link #INVALID} TGT has expired or is not found in ticket registry.</li>
+ *     <li>{@link #VALID} - TGT found in ticket registry and has not expired.</li>
  * </ol>
  *
  * @author Marvin S. Addison
@@ -41,13 +41,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TicketGrantingTicketCheckAction {
 
-    /** TGT does not exist event ID. */
+    /** TGT does not exist event ID={@value}. */
     public static final String NOT_EXISTS = "notExists";
 
-    /** TGT invalid event ID. */
+    /** TGT invalid event ID={@value} */
     public static final String INVALID = "invalid";
 
-    /** TGT valid event ID. */
+    /** TGT valid event ID={@value}. */
     public static final String VALID = "valid";
 
     /** Ticket registry searched for TGT by ID. */
@@ -69,7 +69,7 @@ public class TicketGrantingTicketCheckAction {
      *
      * @param requestContext Flow request context.
      *
-     * @return <code>notExists</code>, <code>invalid</code>, or <code>valid</code>.
+     * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
      */
     public Event checkValidity(final RequestContext requestContext) {
 
