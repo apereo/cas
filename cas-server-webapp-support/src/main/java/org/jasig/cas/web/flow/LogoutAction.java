@@ -24,13 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,18 +45,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class LogoutAction extends AbstractLogoutAction {
 
-    /** The CORE to which we delegate for all CAS functionality. */
-    @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
-
-    /** CookieGenerator for TGT Cookie. */
-    @NotNull
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    /** CookieGenerator for Warn Cookie. */
-    @NotNull
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-
     /** The services manager. */
     @NotNull
     private ServicesManager servicesManager;
@@ -72,13 +59,10 @@ public final class LogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
             final RequestContext context) throws Exception {
 
-        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         boolean needFrontSlo = false;
-        if (ticketGrantingTicketId != null) {
-            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService
-                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
-            context.getFlowScope().put(LOGOUT_REQUESTS, logoutRequests);
-            context.getFlowScope().put(LOGOUT_INDEX,  0);
+        putLogoutIndex(context, 0);
+        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+        if (logoutRequests != null) {
             for (LogoutRequest logoutRequest : logoutRequests) {
                 // if some logout request must still be attempted
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
@@ -86,9 +70,6 @@ public final class LogoutAction extends AbstractLogoutAction {
                     break;
                 }
             }
-
-            this.ticketGrantingTicketCookieGenerator.removeCookie(response);
-            this.warnCookieGenerator.removeCookie(response);
         }
 
         final String service = request.getParameter("service");
@@ -107,24 +88,6 @@ public final class LogoutAction extends AbstractLogoutAction {
             // otherwise, finish the logout process
             return new Event(this, FINISH_EVENT);
         }
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(
-        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    /**
-     * @param centralAuthenticationService The centralAuthenticationService to
-     * set.
-     */
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
