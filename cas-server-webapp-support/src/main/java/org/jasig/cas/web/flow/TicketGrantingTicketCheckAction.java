@@ -23,10 +23,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -39,8 +36,8 @@ import org.springframework.webflow.execution.RequestContext;
  *     <li><code>valid</code> - TGT found in ticket registry and has not expired.</li>
  * </ol>
  *
- * For the <code>invalid</code> case, expired tickets found in the registry are removed and the browser cookie deleted.
  * @author Marvin S. Addison
+ * @since 4.0
  */
 public class TicketGrantingTicketCheckAction {
 
@@ -53,26 +50,18 @@ public class TicketGrantingTicketCheckAction {
     /** TGT valid event ID. */
     public static final String VALID = "valid";
 
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Ticket registry searched for TGT by ID. */
     @NotNull
     private final TicketRegistry ticketRegistry;
-
-    /** Cookie generator that handles storage of TGT. */
-    private final CookieGenerator tgtCookieGenerator;
 
 
     /**
      * Creates a new instance with the given ticket registry.
      *
      * @param registry Ticket registry to query for valid tickets.
-     * @param tgtCookieGenerator Cookie generator that handles storage of TGT in a browser cookie.
      */
-    public TicketGrantingTicketCheckAction(final TicketRegistry registry, final CookieGenerator tgtCookieGenerator) {
+    public TicketGrantingTicketCheckAction(final TicketRegistry registry) {
         this.ticketRegistry = registry;
-        this.tgtCookieGenerator = tgtCookieGenerator;
     }
 
     /**
@@ -90,20 +79,6 @@ public class TicketGrantingTicketCheckAction {
         }
 
         final Ticket ticket = this.ticketRegistry.getTicket(tgtId);
-        boolean valid = false;
-        if (ticket != null) {
-            if (ticket.isExpired()) {
-                logger.debug("Removing expired ticket {}", tgtId);
-                this.ticketRegistry.deleteTicket(tgtId);
-                this.tgtCookieGenerator.removeCookie(WebUtils.getHttpServletResponse(requestContext));
-            } else {
-                valid = true;
-            }
-        } else {
-            logger.debug("Removing cookie for non-existent ticket {}", tgtId);
-            this.tgtCookieGenerator.removeCookie(WebUtils.getHttpServletResponse(requestContext));
-
-        }
-        return new Event(this, valid ? VALID : INVALID);
+        return new Event(this, ticket != null && !ticket.isExpired() ? VALID : INVALID);
     }
 }

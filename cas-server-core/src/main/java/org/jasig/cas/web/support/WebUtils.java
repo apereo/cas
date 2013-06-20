@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.logout.LogoutRequest;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -126,5 +127,13 @@ public final class WebUtils {
 
     public static String getLoginTicketFromRequest(final RequestContext context) {
        return context.getRequestParameters().get("lt");
+    }
+
+    public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
+        context.getFlowScope().put("logoutRequests", requests);
+    }
+
+    public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
+        return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
     }
 }

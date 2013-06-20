@@ -34,9 +34,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractLogoutAction extends AbstractAction {
 
-    /** A constant for the logout requests in web flow. */
-    public static final String LOGOUT_REQUESTS = "logoutRequests";
-
     /** A constant for the logout index in web flow. */
     public static final String LOGOUT_INDEX = "logoutIndex";
 
@@ -82,5 +79,14 @@ public abstract class AbstractLogoutAction extends AbstractAction {
         response.setDateHeader("Expires", 1L);
         response.setHeader("Cache-Control", "no-cache");
         response.addHeader("Cache-Control", "no-store");
+    }
+
+    protected final void putLogoutIndex(final RequestContext context, final int index) {
+        context.getFlowScope().put(LOGOUT_INDEX, index);
+    }
+
+    protected final int getLogoutIndex(final RequestContext context) {
+        final Object value = context.getFlowScope().get(LOGOUT_INDEX);
+        return value == null ? 0 : (Integer) value;
     }
 }
