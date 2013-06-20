@@ -35,7 +35,7 @@
     <transition on="redirectApp" to="redirectToFrontApp" />
   </action-state>
 
-  <view-state id="redirectToFrontApp" view="externalRedirect:${currentEvent.attributes.logoutUrl}&amp;RelayState=${flowExecutionContext.key}">
+  <view-state id="redirectToFrontApp" view="externalRedirect:#{currentEvent.attributes.logoutUrl}&amp;RelayState=#{flowExecutionContext.key}">
     <transition on="next" to="frontLogout" />
   </view-state>
 
@@ -43,7 +43,7 @@
     <if test="flowScope.logoutRedirectUrl != null" then="redirectView" else="logoutView" />
   </decision-state>
 
-  <end-state id="redirectView" view="externalRedirect:${flowScope.logoutRedirectUrl}" />
+  <end-state id="redirectView" view="externalRedirect:#{flowScope.logoutRedirectUrl}" />
 
   <view-state id="logoutView" view="casLogoutView" />
 

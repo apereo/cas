@@ -161,8 +161,12 @@
 
   <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
-  <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"
-        p:conversionService-ref="logoutConversionService" />
+  <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
+        c:conversionService-ref="logoutConversionService">
+    <constructor-arg>
+        <bean class="org.springframework.expression.spel.standard.SpelExpressionParser" />
+    </constructor-arg>
+  </bean>
 
   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
     <property name="viewResolvers">
