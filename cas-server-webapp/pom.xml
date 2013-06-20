@@ -28,12 +28,17 @@
   <packaging>war</packaging>
   <name>Jasig CAS Web Application</name>
   <dependencies>
-
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-webapp-support</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
