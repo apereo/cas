@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -57,8 +58,8 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
             final RequestContext context) throws Exception {
 
-        final List<LogoutRequest> logoutRequests = (List<LogoutRequest>) context.getFlowScope().get(LOGOUT_REQUESTS);
-        final Integer startIndex = (Integer) context.getFlowScope().get(LOGOUT_INDEX);
+        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+        final Integer startIndex = getLogoutIndex(context);
         if (logoutRequests != null && startIndex != null) {
             for (int i = startIndex; i < logoutRequests.size(); i++) {
                 final LogoutRequest logoutRequest = logoutRequests.get(i);
@@ -67,7 +68,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
                     logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
 
                     // save updated index
-                    context.getFlowScope().put(LOGOUT_INDEX, i + 1);
+                    putLogoutIndex(context, i + 1);
 
                     // redirect to application with SAML logout message
                     final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(logoutRequest.getService().getId());

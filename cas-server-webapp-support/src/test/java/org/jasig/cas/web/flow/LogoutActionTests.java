@@ -36,6 +36,7 @@ import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
+import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -92,9 +93,6 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
         this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
 
         this.logoutAction = new LogoutAction();
-        this.logoutAction.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.logoutAction.setWarnCookieGenerator(this.warnCookieGenerator);
-        this.logoutAction.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         this.logoutAction.setServicesManager(this.serviceManager);
     }
 
@@ -152,11 +150,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void testLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
-        CentralAuthenticationService centralAuthenticationService = mock(CentralAuthenticationService.class);
         LogoutRequest logoutRequest = new LogoutRequest("", null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        when(centralAuthenticationService.destroyTicketGrantingTicket("test")).thenReturn(Arrays.asList(logoutRequest));
-        this.logoutAction.setCentralAuthenticationService(centralAuthenticationService);
+        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
@@ -166,14 +162,11 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void testLogoutRequestFront() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
-        final CentralAuthenticationService centralAuthenticationService = mock(CentralAuthenticationService.class);
         final LogoutRequest logoutRequest = new LogoutRequest("", null);
-        when(centralAuthenticationService.destroyTicketGrantingTicket("test")).thenReturn(Arrays.asList(logoutRequest));
-        this.logoutAction.setCentralAuthenticationService(centralAuthenticationService);
+        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
-        List<LogoutRequest> logoutRequests =
-                (List<LogoutRequest>) this.requestContext.getFlowScope().get(LogoutAction.LOGOUT_REQUESTS);
+        List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));
     }

@@ -29,12 +29,17 @@
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
 
-	<action-state id="ticketGrantingTicketCheckAction">
+	<action-state id="ticketGrantingTicketCheck">
         <evaluate expression="ticketGrantingTicketCheckAction.checkValidity(flowRequestContext)"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
-        <transition on="invalid" to="generateLoginTicket"/>
+        <transition on="invalid" to="terminateSession"/>
         <transition on="valid" to="hasServiceCheck"/>
 	</action-state>
+
+    <action-state id="terminateSession">
+        <evaluate expression="terminateSessionAction.terminate(flowRequestContext)"/>
+        <transition to="generateLoginTicket"/>
+    </action-state>
     
 	<decision-state id="gatewayRequestCheck">
 		<if test="requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null" then="gatewayServicesManagementCheck" else="serviceAuthorizationCheck" />
