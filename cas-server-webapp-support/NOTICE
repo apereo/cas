@@ -39,20 +39,18 @@ This project includes:
   Inspektr - Spring Framework Support under Apache 2.0 License
   Jasig CAS Core under Apache 2
   Jasig CAS Generic Support under Apache 2
-  Jasig CAS Web Application under Apache 2
+  Jasig CAS Web Application support under Apache 2
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
-  Javassist under MPL 1.1
+  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   jaxb-api under Commons Development and Distribution License, Version 1.0
   jaxb-impl under Commons Development and Distribution License, Version 1.0
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
-  jstl under Commons Development and Distribution License, Version 1.0
   JUnit under Common Public License Version 1.0
   Mockito under The MIT License
   Objenesis under MIT License
-  OGNL - Object Graph Navigation Library under The OpenSymphony Software License, Version 1.1
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
@@ -79,7 +77,6 @@ This project includes:
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  standard under Apache License, Version 2.0
   Streaming API for XML under Sun Binary Code License
   Transaction 1.1 API under lgpl
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
