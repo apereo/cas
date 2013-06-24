@@ -44,7 +44,7 @@ public class TicketGrantingTicketCheckAction {
     /** TGT does not exist event ID={@value}. */
     public static final String NOT_EXISTS = "notExists";
 
-    /** TGT invalid event ID={@value} */
+    /** TGT invalid event ID={@value}. */
     public static final String INVALID = "invalid";
 
     /** TGT valid event ID={@value}. */
