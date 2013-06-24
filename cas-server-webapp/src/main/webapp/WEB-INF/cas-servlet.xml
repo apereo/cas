@@ -202,9 +202,6 @@
         p:casTicketSuffix="${host.name}" c:ticketRegistry-ref="ticketRegistry" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         p:servicesManager-ref="servicesManager"
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
 
@@ -245,4 +242,12 @@
 
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
+
+  <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
+        c:registry-ref="ticketRegistry" />
+
+  <bean id="terminateSessionAction" class="org.jasig.cas.web.flow.TerminateSessionAction"
+        c:cas-ref="centralAuthenticationService"
+        c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        c:warnCookieGenerator-ref="warnCookieGenerator"/>
 </beans>
