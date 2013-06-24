@@ -23,6 +23,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
+  <action-state id="terminateSession">
+    <evaluate expression="terminateSessionAction.terminate(flowRequestContext)" />
+    <transition to="doLogout" />
+  </action-state>
+
   <action-state id="doLogout">
     <evaluate expression="logoutAction" />
     <transition on="finish" to="finishLogout" />
