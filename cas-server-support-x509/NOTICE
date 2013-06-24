@@ -24,6 +24,7 @@ This project includes:
   AspectJ weaver under Eclipse Public License - v 1.0
   Bean Validation API under Apache License, Version 2.0
   Bouncy Castle Provider under Bouncy Castle Licence
+  Central Authentication Service under Jasig License
   Commons CLI under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons Collections under The Apache Software License, Version 2.0
@@ -38,6 +39,8 @@ This project includes:
   Inspektr - Auditing API under Apache 2.0 License
   Inspektr - Common API under Apache 2.0 License
   Jasig CAS Core under Apache 2
+  Jasig CAS Generic Support under Apache 2
+  Jasig CAS Legacy Support under Apache 2
   Jasig CAS X.509 Client Certificate Support under Apache 2
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
