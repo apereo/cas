@@ -70,7 +70,7 @@
         <property name="authenticationMetaDataPopulators">
            <util:list>
               <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
-                    c:credentialCache-ref="credentialsCache" />
+                    c:credentialCache-ref="encryptedMap" />
            </util:list>
         </property>
         -->
