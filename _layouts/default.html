@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="CAS - Single Sign-On for the Web" />
+    {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
+    {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="{{ relative }}stylesheets/stylesheet.css">
+
+    <title>{{ page.title }}</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/serac/cas">View on GitHub</a>
+          <div id="project_title">
+            <a href="{{ relative }}"><img src="{{ relative }}images/cas_logo.png"/></a>
+          </div>
+          <h2 id="project_tagline">Single Sign-On for the Web</h2>
+        </header>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar_wrap" class="outer">
+      <section id="sidebar_content" class="inner">
+        {% include sidebar.html %}
+      </section>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        {{ content }}
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a></p>
+      </footer>
+    </div>
+    
+  </body>
+</html>
