@@ -70,7 +70,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
 }
 
@@ -81,7 +81,7 @@ h2 {
 }
 
 h3 {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 h4 {
@@ -121,6 +121,14 @@ a {
   -ms-transition: text-shadow 0.5s ease;
 }
 
+a.undecorated {
+  transition: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  -ms-transition: none;
+}
+
 #main_content a:hover {
   color: #0069ba;
   text-shadow: #0090ff 0px 0px 2px;
@@ -152,6 +160,16 @@ img {
   -moz-box-shadow: 0 0 5px #ebebeb;
   -o-box-shadow: 0 0 5px #ebebeb;
   -ms-box-shadow: 0 0 5px #ebebeb;
+}
+
+img.undecorated {
+  width: auto;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  -ms-box-shadow: none;
+  border: none;
 }
 
 pre, code {
@@ -255,6 +273,7 @@ img {
   max-width: 100%;
 }
 
+
 /*******************************************************************************
 Full-Width Styles
 *******************************************************************************/
@@ -298,24 +317,6 @@ Full-Width Styles
   padding: 0;
 }
 
-#project_title a {
-  transition: none;
-  -webkit-transition: none;
-  -moz-transition: none;
-  -o-transition: none;
-  -ms-transition: none;
-}
-
-#project_title img {
-  width: auto;
-  box-shadow: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -o-box-shadow: none;
-  -ms-box-shadow: none;
-  border: none;
-}
-
 #project_tagline {
   position: absolute;
   top: 30px;
@@ -329,9 +330,27 @@ Full-Width Styles
   text-shadow: #111 0px 0px 8px;
 }
 
+#navbar_wrap {
+  border-top: 1px solid #999;
+  background-color: #0090ff;
+  border-bottom: 1px solid #666;
+}
+
+#navbar_wrap .inner {
+  padding: 0;
+}
+
+.navlink {
+  display: inline;
+  margin: 2px 14px;
+}
+
+.navlink a {
+  color: #fff;
+}
+
 #main_content_wrap {
   background: #fff;
-  border-top: 1px solid #111;
   border-bottom: 1px solid #111;
 }
 
@@ -347,8 +366,8 @@ Full-Width Styles
   float: right;
   color: #3d664f;
   background-color: #fff;
-  border-left:1px solid #ddd;
-  margin-top:1px;
+  border-left: 1px solid #ddd;
+  margin-top: 1px;
   width: 200px;
   height: 100%;
 }
@@ -365,15 +384,22 @@ Full-Width Styles
 
 #sidebar_content {
   color: #666;
+}
+
+#sidebar_content a {
   font-size: 14px;
 }
 
 #sidebar_content h1 {
   margin: 4px 0 2px 0;
   color: #aaa;
-  font-size:16px;
-  text-transform: capitalize;
-  border-bottom: 1px solid #f58d6d;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#footer_wrap a {
+  color: #fff;
 }
 
 
