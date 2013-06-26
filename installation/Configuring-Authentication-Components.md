@@ -443,7 +443,7 @@ will be used subsequently to configure the `JCIFSConfig` component.
 ##### Create Keytab File
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
 domain controller serves the role of KDC in this context.
-The [`ktpass`](http://technet.microsoft.com/en-us/library/cc753771.aspx) tool is used to generate the keytab file,
+The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is used to generate the keytab file,
 which contains a cryptographic key. Be sure to execute the command from an Active Directory domain controller as
 administrator.
 
@@ -554,7 +554,8 @@ Update `deployerConfigContext.xml` according to the following template:
 </bean>
 {% endhighlight %}
 
-Provide a JAAS login.conf file in a location that agrees with the `loginConf` property of `JCIFSConfig` above.
+Provide a JAAS `login.conf` file in a location that agrees with the `loginConf` property of the `JCIFSConfig` bean
+above.
 
     jcifs.spnego.initiate {
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
