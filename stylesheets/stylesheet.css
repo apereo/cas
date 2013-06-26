@@ -350,16 +350,12 @@ Full-Width Styles
 }
 
 #main_content_wrap {
-  background: #fff;
-  border-bottom: 1px solid #111;
+  background-color: #fff;
+  min-height: 640px;
 }
 
 #main_content {
   padding-top: 40px;
-}
-
-#footer_wrap {
-  background: #3d664f;
 }
 
 #sidebar_wrap {
@@ -369,7 +365,6 @@ Full-Width Styles
   border-left: 1px solid #ddd;
   margin-top: 1px;
   width: 200px;
-  height: 100%;
 }
 
 #sidebar_content ul, #sidebar_content li, #sidebar_content h1 {
@@ -396,6 +391,12 @@ Full-Width Styles
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+#footer_wrap {
+  border-top: 1px solid #333;
+  background: #3d664f;
+  clear: both;
 }
 
 #footer_wrap a {
