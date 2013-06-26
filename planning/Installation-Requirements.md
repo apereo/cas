@@ -14,11 +14,17 @@ Requirements at a glance:
 
 Items marked with <strong>*</strong> are recommended but not required.
 
+Depending on choice of configuration components, there may be additional requirements such as LDAP directory,
+database, and caching infrastructure. In most cases, however, requirements should be self evident to deployers who
+choose components with clear hardware and software dependencies. In any case where additional requirements are
+not obvious, the discussion of component configuration should mention system, software, hardware, and other
+requirements.
+
 ## Servlet Containers
 There is no officially supported servlet container for CAS, but [Apache Tomcat](http://tomcat.apache.org/) is the most
 commonly used. Support for a particular servlet container depends on the expertise of community members, but the
 following are known to work well and should receive first-class support on the
-[Community Discussion Mailing List](http://www.jasig.org/cas/mailing-lists):
+[Community Discussion Mailing List](../Mailing-Lists.html):
 
 * [JBoss](http://www.jboss.org/)
 * [Jetty](http://www.eclipse.org/jetty/)
@@ -31,8 +37,8 @@ also strongly recommended for configuration management required for the CAS inst
 a complex software product that becomes embedded and tighly integrated into the software environemnt of an institution.
 For this reason it tends to require customization well beyond turnkey solutions, and the integration requirements tend
 to change over time. A source-based installation process like
-[Maven WAR Overlay](installation/Maven-Overlay-Installation.html) provides a straightforward and flexible solution to
-complex and dynamic requirements. While it admittedly requires a high up-front cost in learning, it reaps numerous
+[Maven WAR overlay](../installation/Maven-Overlay-Installation.html) provides a straightforward and flexible solution
+to complex and dynamic requirements. While it admittedly requires a high up-front cost in learning, it reaps numerous
 benefits in the long run
 
 ## Spring Framework
