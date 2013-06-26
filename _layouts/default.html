@@ -9,7 +9,8 @@
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ relative }}stylesheets/stylesheet.css">
-
+    <link rel="stylesheet" type="text/css" media="print"
+          href="{{ relative }}stylesheets/print.css">
     <title>{{ page.title }}</title>
   </head>
 
@@ -37,9 +38,9 @@
 
     <!-- SIDEBAR -->
     <div id="sidebar_wrap" class="outer">
-      <section id="sidebar_content" class="inner">
+      <header id="sidebar_content" class="inner">
         {% include sidebar.html %}
-      </section>
+      </header >
     </div>
 
     <!-- MAIN CONTENT -->

@@ -53,26 +53,10 @@ a {
   font-weight: bold;
 }
 
-header {
-  padding-top: 35px;
-  padding-bottom: 10px;
+header, footer {
+  display: none;
 }
 
-header h1 {
-  font-weight: bold;
-  letter-spacing: -1px;
-  font-size: 48px;
-  color: #303030;
-  line-height: 1.2;
-}
-
-header h2 {
-  letter-spacing: -1px;
-  font-size: 24px;
-  color: #aaa;
-  font-weight: normal;
-  line-height: 1.3;
-}
 #downloads {
   display: none;
 }
