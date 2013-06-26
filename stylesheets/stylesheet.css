@@ -109,16 +109,16 @@ a {
   color: #007edf;
   text-shadow: none;
 
-  transition: color 0.5s ease;
-  transition: text-shadow 0.5s ease;
-  -webkit-transition: color 0.5s ease;
-  -webkit-transition: text-shadow 0.5s ease;
-  -moz-transition: color 0.5s ease;
-  -moz-transition: text-shadow 0.5s ease;
-  -o-transition: color 0.5s ease;
-  -o-transition: text-shadow 0.5s ease;
-  -ms-transition: color 0.5s ease;
-  -ms-transition: text-shadow 0.5s ease;
+  transition: color 0.3s ease;
+  transition: text-shadow 0.3s ease;
+  -webkit-transition: color 0.3s ease;
+  -webkit-transition: text-shadow 0.3s ease;
+  -moz-transition: color 0.3s ease;
+  -moz-transition: text-shadow 0.3s ease;
+  -o-transition: color 0.3s ease;
+  -o-transition: text-shadow 0.3s ease;
+  -ms-transition: color 0.3s ease;
+  -ms-transition: text-shadow 0.3s ease;
 }
 
 a.undecorated {

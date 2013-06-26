@@ -32,6 +32,7 @@ A number of consulting firms offer paid support for CAS. We list a few here with
 and feel comfortable recommending.
 
 ### Unicon
-Unicon is a software consulting services firm that provides educational institutions with ‘best-fit’ open source
-solutions to IT business challenges. The company’s focus is enterprise deployments of open source software for campus
-portals, collaboration, learning, calendaring, email and integration technology for higher education.
+[Unicon](http://www.unicon.net/) is a software consulting services firm that provides educational institutions with
+‘best-fit’ open source solutions to IT business challenges. The company’s focus is enterprise deployments of open
+source software for campus portals, collaboration, learning, calendaring, email and integration technology for
+higher education.
