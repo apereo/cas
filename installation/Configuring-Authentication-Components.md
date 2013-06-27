@@ -5,16 +5,21 @@ title: CAS - Configuring Authentication Components
 # Configuring Authentication Components
 The CAS authentication process is performed by several related components:
 
-1. `AuthenticationManager` - Entry point into authentication subsystem. It accepts one or more credentials
-and delegates authentication to configured `AuthenticationHandler` components.
-It collects the results of each attempt and determines effective security policy.
-2. `AuthenticationHandler` - Authenticates a single credential and reports one of three possible results:
-success, failure, not attempted.
-3. `PrincipalResolver` - Converts information in the authentication credential into a security principal that
-commonly contains additional metadata attributes
-(i.e. user details such as affiliations, group membership, email, display name).
-4. `AuthenticationMetaDataPopulator` - Strategy component for setting arbitrary metadata about a successful
-authentication event; these are commonly used to set protocol-specific data.
+######`AuthenticationManager`
+Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
+configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
+security policy.
+
+######`AuthenticationHandler`
+Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
+
+######`PrincipalResolver`
+Converts information in the authentication credential into a security principal that commonly contains additional
+metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
+
+######`AuthenticationMetaDataPopulator`
+Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
+to set protocol-specific data.
 
 Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
 
@@ -27,12 +32,12 @@ For each given credential do the following:
 1. Iterate over all configured authentication handlers.
 2. Attempt to authenticate a credential if a handler supports it.
 3. On success attempt to resolve a principal.
-    1. Check whether a resolver is configured for the handler that authenticated the credential.
-    2. If a suitable resolver is found, attempt to resolve the principal.
-    3. If a suitable resolver is not found, use the principal resolved by the authentication handler.
+  1. Check whether a resolver is configured for the handler that authenticated the credential.
+  2. If a suitable resolver is found, attempt to resolve the principal.
+  3. If a suitable resolver is not found, use the principal resolved by the authentication handler.
 4. Check whether the security policy (e.g. any, all) is satisfied.
-    1. If security policy is met return immediately.
-    2. Continue if security policy is not met.
+  1. If security policy is met return immediately.
+  2. Continue if security policy is not met.
 5. After all credentials have been attempted check security policy again and throw `AuthenticationException`
 if not satisfied.
 
@@ -40,15 +45,20 @@ There is an implicit security policy that requires at least one handler to succe
 but the behavior can be further controlled by setting `#setAuthenticationPolicy(AuthenticationPolicy)`
 with one of the following policies.
 
-* `AnyAuthenticationPolicy` - (Default) Satisfied if any handler succeeds. Supports a `tryAll` flag to avoid short
-circuiting at step 4.1 above and try every handler even if one prior succeeded.
-* `AllAuthenticationPolicy` - Satisfied if and only if all given credentials are successfully authenticated.
-Support for multiple credentials is new in CAS 4.0 and this handler would only be acceptable in a multi-factor
-authentication situation.
-* `RequiredHandlerAuthenticationPolicy` - Satisfied if an only if a specified handler successfully authenticates
-its credential. Supports a `tryAll` flag to avoid short circuiting at step 4.1 above and try every handler even
-if one prior succeeded. This policy could be used to support a multi-factor authentication situation, for example,
-where username/password authentication is required but an additional OTP is optional.
+######`AnyAuthenticationPolicy`
+Satisfied if any handler succeeds. Supports a `tryAll` flag to avoid short circuiting at step 4.1 above and try every
+handler even if one prior succeeded. This policy is the default and provides backward-compatible behavior with the
+`AuthenticationManagerImpl` component of CAS 3.x.
+
+######`AllAuthenticationPolicy`
+Satisfied if and only if all given credentials are successfully authenticated. Support for multiple credentials is
+new in CAS 4.0 and this handler would only be acceptable in a multi-factor authentication situation.
+
+######`RequiredHandlerAuthenticationPolicy`
+Satisfied if an only if a specified handler successfully authenticates its credential. Supports a `tryAll` flag to
+avoid short circuiting at step 4.1 above and try every handler even if one prior succeeded. This policy could be
+used to support a multi-factor authentication situation, for example, where username/password authentication is
+required but an additional OTP is optional.
 
 The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
 straightforward multi-factor authentication case where username/password authentication is required and an additional
@@ -84,7 +94,9 @@ OTP credential is optional; in both cases principals are resolved from LDAP.
     </map>
   </constructor-arg>
   <property name="authenticationMetaDataPopulators">
-    <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
   </property>
 </bean>
 {% endhighlight %}
@@ -100,8 +112,9 @@ interest.
 * [OpenID](#openid)
 * [OAuth 1.0/2.0](#oauth)
 * [RADIUS](#radius)
-* [Windows (SPNEGO)](#spnego)
-* X.509 (client SSL certificate)
+* [SPNEGO](#spnego) (Windows)
+* [Trusted](#trusted) (REMOTE_USER)
+* [X.509](#x_509) (client SSL certificate)
 
 There are some additional handlers for small deployments and special cases:
 * Whilelist
@@ -117,12 +130,17 @@ Database authentication components are enabled by including the following depend
     </dependency>
 
 CAS provides 3 components to accommodate different database authentication needs:
-* `QueryDatabaseAuthenticationHandler` - Authenticates a user by comparing the (hashed) user password against the
-password on record determined by an configurable database query.
-* `SearchModeSearchDatabaseAuthenticationHandler` - Searches for a user record by querying against a username and
-(hashed) password; the user is authenticated if at least one result is found.
-* `BindModeSearchDatabaseAuthenticationHandler` - Authenticates a user by attempting to create a database connection
-using the username and (hashed) password.
+
+######`QueryDatabaseAuthenticationHandler`
+Authenticates a user by comparing the (hashed) user password against the password on record determined by a
+configurable database query.
+
+######`SearchModeSearchDatabaseAuthenticationHandler`
+Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
+least one result is found.
+
+######`BindModeSearchDatabaseAuthenticationHandler`
+Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 `QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to configure for anyone proficient with
 SQL, but `SearchModeSearchDatabaseAuthenticationHandler` provides a limited alternative for simple queries based
@@ -162,7 +180,7 @@ The following example uses a SHA1 hash algorithm to authenticate users.
       p:fieldPassword="password" />
 {% endhighlight %}
 
-#### BindModeSearchDatabaseAuthenticationHandler
+#### BindModeSearchDatabaseAuthenticationHandler Example
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
 passwords to the appropriate format required by the underlying database. Note authentication is equivalent to the
 ability to establish a connection with username/password credentials. This handler is the easiest to configure
@@ -420,24 +438,16 @@ The `JRadiusServerImpl` component representing a RADIUS server has the following
 {% endhighlight %}
 
 ### SPNEGO
-SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
-
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-spnego</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
-
-#### SPNEGO Overview
+[SPNEGO](http://en.wikipedia.org/wiki/SPNEGO) is an authentication technology that is primarily used to provide
+transparent CAS authentication to browsers running on Windows running under Active Directory domain credentials.
 There are three actors involved: the client, the CAS server, and the Active Directory Domain Controller/KDC.
 
-Assumptions:
-* Client is logged in to a windows domain.
-* Client is Windows XP pro SP2 or greater running IE 6 or IE 7. (SPNEGO will not work with IE8 and JDK1.6 before 6u19.)
-* CAS is running on a UNIX server configured for kerberos against the AD server in the windows domain.
+#### SPNEGO Requirements
+* Client is logged in to a Windows domain.
+* Supported browser and JDK.
+* CAS is running MIT kerberos against the AD domain controller.
 
-SPNEGO Authentication Process:
-
+#### SPNEGO Authentication Process
     1. Client sends CAS:               HTTP GET to CAS  for cas protected page
     2. CAS responds:                   HTTP 401 - Access Denied WWW-Authenticate: Negotiate
     3. Client sends ticket request:    Kerberos(KRB_TGS_REQ) Requesting ticket for HTTP/cas.example.com@REALM
@@ -450,6 +460,13 @@ the user session. Once CAS grants a ticket-granting ticket, the SPNEGO process w
 ticket expires.
 
 #### SPNEGO Components
+SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-spnego</artifactId>
+      <version>${cas.version}</version>
+    </dependency>
 
 ##### JCIFSSpnegoAuthenticationHandler
 The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
@@ -595,7 +612,9 @@ Update `deployerConfigContext.xml` according to the following template:
     </map>
   </constructor-arg>
   <property name="authenticationMetaDataPopulators">
-    <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
   </property>
 </bean>
 {% endhighlight %}
@@ -609,3 +628,280 @@ above.
     jcifs.spnego.accept {
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
+
+### Trusted
+The trusted authentication handler provides support for trusting authentication performed by some other component
+in the HTTP request handling chain. Proxies (including Apache in a reverse proxy scenario) are the most common
+components that perform authentication in front of CAS.
+
+Trusted authentication handler support is enabled by including the following dependency in the Maven WAR overlay:
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-trusted</artifactId>
+      <version>${cas.version}</version>
+    </dependency>
+
+#### Configure Trusted Authentication Handler
+Modify `deployerConfigContext.xml` according to the following template:
+
+{% highlight xml %}
+<bean id="trustedHandler"
+      class="org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler" />
+
+<bean id="trustedPrincipalResolver"
+      class="org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver" />
+
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+  <constructor-arg>
+    <map>
+      <entry key-ref="trustedHandler" value-ref="trustedPrincipalResolver"/>
+    </map>
+  </constructor-arg>
+  <property name="authenticationMetaDataPopulators">
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
+  </property>
+</bean>
+{% endhighlight %}
+
+#### Configure Webflow Components
+Add an additional state to `login-webflow.xml`:
+
+{% highlight xml %}
+<action-state id="remoteAuthenticate">
+  <evaluate expression="principalFromRemoteAction" />.
+  <transition on="success" to="sendTicketGrantingTicket" />
+  <transition on="error" to="viewLoginForm" />
+</action-state>
+{% endhighlight %}
+
+Replace references to `viewLoginForm` in existing states with `remoteAuthenticate`.
+
+Install the Webflow action into the Spring context by adding the following bean to `cas-servlet.xml`:
+
+{% highlight xml %}
+<bean id="principalFromRemoteAction"
+      class="org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction"
+      p:centralAuthenticationService-ref="centralAuthenticationService" />
+{% endhighlight %}
+
+### X.509
+CAS X.509 authentication components provide a mechanism to authenticate users who present client certificates during
+the SSL/TLS handshake process. The X.509 components require configuration ouside the CAS application since the
+SSL handshake happens outside the servlet layer where the CAS application resides. There is no particular requirement
+on deployment architecture (i.e. Apache reverse proxy, load balancer SSL termination) other than any client
+certificate presented in the SSL handshake be accessible to the servlet container as a request attribute named
+`javax.servlet.request.X509Certificate`. This happens naturally for configurations that terminate SSL connections
+directly at the servlet container and when using Apache/mod_jk; for other architectures it may be necessary to do
+additional work.
+
+#### X.509 Components
+CAS provides an X.509 authentication handler, a handful of X.509-specific prinicpal resolvers, some certificate
+revocation machinery, and some Webflow actions to provide for non-interactive authentication.
+
+##### X509CredentialsAuthenticationHandler
+Configuration properties:
+* `regExTrustedIssuerDnPattern` - Regular expression defining allowed issuer DNs. (must be specified)
+* `regExSubjectDnPattern` - Regular expression defining allowed subject DNs. (default=`.*`)
+* `maxPathLength` - Maximum number of certs allowed in certificate chain. (default=1)
+* `maxPathLengthAllowUnspecified` - True to allow unspecified path length, false otherwise. (default=false)
+* `checkKeyUsage` - True to enforce certificate `keyUsage` field (if present), false otherwise. (default=false)
+* `requireKeyUsage` - True to require the existence of a `keyUsage` certificate field, false otherwise. (default=false)
+* `revocationChecker` - Instance of `RevocationChecker` used for certificate expiration checks.
+(default=`NoOpRevocationChecker`)
+
+##### Principal Resolvers
+
+######`X509SubjectPrincipalResolver`
+Creates a principal ID from a format string composed of components from the subject distinguished name.
+The following configuration snippet produces prinicpals of the form _cn@example.com_. For example, given a
+certificate with the subject _DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto_ it would produce the ID
+_jacky@vt.edu_.
+
+{% highlight xml %}
+<bean id="x509SubjectResolver"
+      class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+      p:descriptor="$CN@$DC.$DC" />
+{% endhighlight %}
+
+See the Javadocs for a thorough discussion of the format string specification.
+
+######`X509SubjectDNPrincipalResolver`
+Creates a principal ID from the certificate subject distinguished name.
+
+######`X509SerialNumberPrincipalResolver`
+Creates a principal ID from the certificate serial number.
+
+######`X509SerialNumberAndIssuerDNPrincipalResolver`
+Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
+The serial number may be prefixed with an optional string. See the Javadocs for more information.
+
+##### RevocationChecker
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
+configurability in the revocation machinery built into the JSSE.
+
+######`ResourceCRLRevocationChecker`
+Performs a certificate revocation check against a CRL hosted at a fixed location. Any resource type supported by the
+Spring [`Resource`]() class may be specified for the CRL resource. The CRL is fetched at periodic intervals and cached.
+
+Configuration properties:
+
+* `crl` - Spring resource describing the location/kind of CRL resource. (must be specified)
+* `refreshInterval` - Periodic CRL refresh interval in seconds. (default=3600)
+* `unavailableCRLPolicy` - Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
+* `expiredCRLPolicy` - Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+
+The following policies are available by default:
+
+* `AllowRevocationPolicy` - Deny policy
+* `DenyRevocationPolicy` - Deny policy
+* `ThresholdExpiredCRLRevocationPolicy` - Deny if CRL is more than X seconds expired.
+
+`ResourceCRLRevocationChecker` Example:
+{% highlight xml %}
+<bean id="crlResource"
+      class="org.springframework.core.io.UrlResource"
+      c:path="https://pki.example.com/exampleca/crl" />
+
+<bean id="allowPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy" />
+
+<bean id="thresholdPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy"
+      p:threshold="3600" />
+
+<bean id="revocationChecker"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationChecker"
+      c:crl-ref="crlResource"
+      p:refreshInterval="600"
+      p:unavailableCRLPolicy-ref="allowPolicy"
+      p:thresholdPolicy-ref="thresholdPolicy" />
+{% endhighlight %}
+
+######`CRLDistributionPointRevocationChecker`
+Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
+extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
+if does not exist in the cache or if it is expired.
+
+Configuration properties:
+
+* `cache` - Ehcache `Cache` component.
+* `unavailableCRLPolicy` - Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
+* `expiredCRLPolicy` - Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+
+`CRLDistributionPointRevocationChecker` Example:
+{% highlight xml %}
+<!-- timeToLive, timeToIdle are in seconds -->
+<bean id="crlCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+      p:cacheName="CRLCache"
+      p:eternal="false"
+      p:overflowToDisk="false"
+      p:maxElementsInMemory="100"
+      p:timeToLive="36000"
+      p:timeToIdle="36000">
+  <property name="cacheManager">
+    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+  </property>
+</bean>
+
+<bean id="denyPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
+
+<bean id="thresholdPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy"
+      p:threshold="3600" />
+
+<bean id="revocationChecker"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker"
+      c:cache-ref="crlCache"
+      p:unavailableCRLPolicy-ref="denyPolicy"
+      p:thresholdPolicy-ref="thresholdPolicy" />
+{% endhighlight %}
+
+#### Webflow Components
+A single Webflow component, `X509CertificateCredentialsNonInteractiveAction` is required to extract the certificate
+from the HTTP request context and perform non-interactive authentication.
+
+#### X.509 Configuration
+X.509 configuration requires substantial configuration outside the CAS Web application. The configuration of Web
+server SSL components varies dramatically with software and is outside the scope of this document. We offer some
+general advice for SSL configuration:
+
+* Configuring SSL components for optional client certicate behavior generally provides better user experience.
+Requiring client certificates prevents SSL negotiation in cases where the certificate is not present, which prevents
+user-friendly server-side error messages.
+* Accept certificates only from trusted issuers, generally those within your PKI.
+* Specify all certificates in the certificate chain(s) of allowed issuers.
+
+##### Configure Authentication Components
+Use the following template to configure authentication in `deployerConfigContext`:
+{% highlight xml %}
+<bean id="crlResource"
+      class="org.springframework.core.io.UrlResource"
+      c:path="https://pki.example.com/exampleca/crl" />
+
+<bean id="allowPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy" />
+
+<bean id="thresholdPolicy"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy"
+      p:threshold="3600" />
+
+<bean id="revocationChecker"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationChecker"
+      c:crl-ref="crlResource"
+      p:refreshInterval="600"
+      p:unavailableCRLPolicy-ref="allowPolicy"
+      p:thresholdPolicy-ref="thresholdPolicy" />
+
+<bean id="x509Handler"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler"
+      p:trustedIssuerDnPattern="CN=(DEV )*Virginia Tech [A-Za-z ]*User CA.*"
+      p:maxPathLength="2147483647"
+      p:maxPathLengthAllowUnspecified="true"
+      p:checkKeyUsage="true"
+      p:requireKeyUsage="true"
+      p:revocationChecker-ref="revocationChecker">      
+
+<bean id="x509PrincipalResolver"
+      class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+      p:descriptor="$UID" />
+
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+  <constructor-arg>
+    <map>
+      <entry key-ref="x509Handler" value-ref="x509PrincipalResolver"/>
+    </map>
+  </constructor-arg>
+  <property name="authenticationMetaDataPopulators">
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
+  </property>
+</bean>
+{% endhighlight %}
+
+##### X.509 Webflow Configuration
+Uncomment the `startAuthenticate` state in `login-webflow.xml`:
+
+{% highlight xml %}
+<action-state id="startAuthenticate">
+  <action bean="x509Check" />
+  <transition on="success" to="sendTicketGrantingTicket" />
+  <transition on="warn" to="warn" />
+  <transition on="error" to="generateLoginTicket" />
+</action-state>
+{% endhighlight %} 
+
+Replace all instances of the `generateLoginTicket` transition in other states with `startAuthenticate`.
+
+Define the `x509Check` bean in `cas-servlet.xml`:
+{% highlight xml %}
+<bean id="x509Check"
+   class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction"
+   p:centralAuthenticationService-ref="centralAuthenticationService" />
+{% endhighlight %}
