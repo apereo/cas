@@ -78,6 +78,7 @@ h2 {
   padding-bottom: 10px;
   font-size: 26px;
   background: url('../images/bg_hr.png') repeat-x bottom;
+  width: 70%;
 }
 
 h3 {
@@ -293,7 +294,7 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 740px;
+  max-width: 760px;
   padding: 20px 10px;
   margin: 0 auto;
 }
@@ -372,8 +373,8 @@ Full-Width Styles
   color: #3d664f;
   background-color: #fff;
   border-left: 1px solid #ddd;
-  margin-top: 1px;
-  width: 200px;
+  margin: 0 0 0 16px;
+  width: 210px;
 }
 
 #sidebar_content ul, #sidebar_content li, #sidebar_content h1 {
