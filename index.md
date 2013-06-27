@@ -17,6 +17,7 @@ Fortune 500 companies and small special-purpose installations.
 ## Getting Started
 We recommend reading the following documentation in order to plan and execute a CAS deployment.
 
+* [Architecture](planning/Architecture.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Security Guide](planning/Security-Guide.html)
 * [Maven Overlay Installation](installation/Maven-Overlay-Installation.html)
