@@ -8,11 +8,9 @@ Requirements at a glance:
 
 1. Java >=1.6
 2. Servlet container supporting servlet specification >=2.5
-3. [Apache Maven](http://maven.apache.org/) >=3.0<sup>*</sup>
+3. [Apache Maven](http://maven.apache.org/) >=3.0
 4. Familiarity with the [Spring Framework](http://www.springsource.org/)
-5. Internet connectivity<sup>*</sup>
-
-Items marked with <strong>*</strong> are recommended but not required.
+5. Internet connectivity
 
 Depending on choice of configuration components, there may be additional requirements such as LDAP directory,
 database, and caching infrastructure. In most cases, however, requirements should be self evident to deployers who
@@ -34,7 +32,7 @@ following are known to work well and should receive first-class support on the
 ## Apache Maven
 CAS uses Maven for building and creating a deployable package for instllation into a Java servlet container. Maven is
 also strongly recommended for configuration management required for the CAS installation process. CAS is fundamentally
-a complex software product that becomes embedded and tighly integrated into the software environemnt of an institution.
+a complex software product that becomes embedded and tighly integrated into the software environment of an institution.
 For this reason it tends to require customization well beyond turnkey solutions, and the integration requirements tend
 to change over time. A source-based installation process like
 [Maven WAR overlay](../installation/Maven-Overlay-Installation.html) provides a straightforward and flexible solution
@@ -58,3 +56,7 @@ Internet connectivity is generally required for the build phase of any Maven-bas
 Maven WAR overlays used to install CAS. Maven resolves dependencies by searching online repositories containing
 artifacts (jar files in most cases) that are downloaded and installed locally. While it is possible to override this
 behavior by alterning Maven configuration settings, it is considered advanced usage and not supported.
+
+A common solution to overcoming lack of Internet connectivity on a CAS server is to build CAS on a dedicated build
+host with internet connectivity. The `cas.war` file produced by the build is subsequently copied to the CAS server
+for deployment.
