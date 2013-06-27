@@ -699,6 +699,14 @@ directly at the servlet container and when using Apache/mod_jk; for other archit
 additional work.
 
 #### X.509 Components
+X.509 support is enabled by including the following dependency in the Maven WAR overlay:
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-x509</artifactId>
+      <version>${cas.version}</version>
+    </dependency>
+
 CAS provides an X.509 authentication handler, a handful of X.509-specific prinicpal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
@@ -822,7 +830,7 @@ Configuration properties:
 {% endhighlight %}
 
 #### Webflow Components
-A single Webflow component, `X509CertificateCredentialsNonInteractiveAction` is required to extract the certificate
+A single Webflow component, `X509CertificateCredentialsNonInteractiveAction`, is required to extract the certificate
 from the HTTP request context and perform non-interactive authentication.
 
 #### X.509 Configuration
@@ -830,14 +838,14 @@ X.509 configuration requires substantial configuration outside the CAS Web appli
 server SSL components varies dramatically with software and is outside the scope of this document. We offer some
 general advice for SSL configuration:
 
-* Configuring SSL components for optional client certicate behavior generally provides better user experience.
+* Configuring SSL components for optional client certificate behavior generally provides better user experience.
 Requiring client certificates prevents SSL negotiation in cases where the certificate is not present, which prevents
 user-friendly server-side error messages.
 * Accept certificates only from trusted issuers, generally those within your PKI.
 * Specify all certificates in the certificate chain(s) of allowed issuers.
 
 ##### Configure Authentication Components
-Use the following template to configure authentication in `deployerConfigContext`:
+Use the following template to configure authentication in `deployerConfigContext.xml`:
 {% highlight xml %}
 <bean id="crlResource"
       class="org.springframework.core.io.UrlResource"
