@@ -45,6 +45,7 @@ policy and provide some support for centralized security policy. (Note that CAS 
 decentralized security policy model.) Some highlights of service management controls:
 
 * Authorized services
+* Forced authentication
 * Attribute release
 * Proxy control
 * Theme control
