@@ -10,7 +10,7 @@ The output of a Maven WAR overlay build is a `cas.war` file that can be deployed
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 A simple Maven WAR overlay project is provided for reference and study:
 
-[cas-maven-war-overlay]
+TODO: link to cas-maven-war-overlay project
 
 The following list of CAS components are those most often customized by deployers:
 
