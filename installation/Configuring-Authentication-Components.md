@@ -329,17 +329,67 @@ LDAP integration is enabled by including the following dependency in the Maven W
     </dependency>
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
-or OpenLDAP. The following configuration snippet provides a template for LDAP authentication where it should be
-sufficient for most deployments to simply provide values for property placeholders. The example makes use of LDAP
-connection pooling, which is _strongly_ recommended for all environments.
+or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
 
-#### LdapAuthenticationHandler Example
-The following configuration excerpt from `deployerConfigContext.xml` demonstrates how to configure LDAP
-authentication components to authenticate using the typical 2-step procedure:
+1. [Active Directory](#active_directory_authentication) - Users authenticate with sAMAAccount name.
+2. [Authenticated Search](#ldap_requiring_authenticated_search) - Manager bind/search followed by user simple bind.
+3. [Anonymous Search](#ldap_supporting_anonymous_search) - Anonymous search followed by user simple bind.
+4. [Direct Bind](#ldap_supporting_direct_bind) - Compute user DN from format string and perform simple bind.
 
-1. Search for an entry using the username provided on the CAS login form.
-2. Attempt to bind with the entry DN and password from the CAS login form.
+See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
+#### Active Directory Authentication
+The following configuration authenticates users with the [Fast Bind](http://www.ldaptive.org/docs/guide/ad/fastbind)
+mechanism, which should be sufficient for most Active Directory deployments. Simply copy the configuration to
+`deployerConfigContext.xml` and provide values for property placeholders.
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="sAMAccountName"
+      c:authenticator-ref="authenticator">
+  <property name="principalAttributeMap">
+      <map>
+          <!--
+             | This map provides a simple attribute resolution mechanism.
+             | Keys are LDAP attribute names, values are CAS attribute names.
+             | Use this facility instead of a PrincipalResolver if LDAP is
+             | the only attribute source.
+             --> 
+          <entry key="displayName" value="displayName" />
+          <entry key="mail" value="mail" />
+          <entry key="memberOf" value="memberOf" />
+      </map>
+  </property>
+</bean>
+
+<bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+      c:resolver-ref="dnResolver"
+      c:handler-ref="authHandler" />
+
+<bean id="dnResolver"
+      class="org.ldaptive.auth.FormatDnResolver"
+      c:format="${ldap.authn.format}" />
+
+<bean id="authHandler"
+      class="org.ldaptive.auth.BindAuthenticationHandler"
+      p:connectionFactory="connectionFactory" />
+
+<bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+    p:connectionConfig-ref="connectionConfig" />
+
+<bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+      p:ldapUrl="${ldap.url}"
+      p:connectTimeout="${ldap.connectTimeout}"
+      p:useStartTLS="${ldap.useStartTLS}"
+      p:connectionInitializer-ref="fastBindConnectionInitializer" />
+
+<bean id="fastBindConnectionInitializer"
+      class="org.ldaptive.ad.extended.FastBindOperation.FastBindConnectionInitializer" />
+{% endhighlight %}
+
+#### LDAP Requiring Authenticated Search
+The following configuration snippet provides a template for LDAP authentication performed with manager credentials
+followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
@@ -350,10 +400,10 @@ authentication components to authenticate using the typical 2-step procedure:
           <!--
              | This map provides a simple attribute resolution mechanism.
              | Keys are LDAP attribute names, values are CAS attribute names.
-             | This facility can be used instead or in addition to PrincipalResolver
-             | components.
+             | Use this facility instead of a PrincipalResolver if LDAP is
+             | the only attribute source.
              --> 
-          <entry key="member" value="memberOf" />
+          <entry key="member" value="member" />
           <entry key="eduPersonAffiliation" value="affiliation" />
           <entry key="mail" value="mail" />
           <entry key="displayName" value="displayName" />
@@ -361,20 +411,52 @@ authentication components to authenticate using the typical 2-step procedure:
   </property>
 </bean>
 
-<!--
-   | NOTE:
-   | The sslConfig property provides a route to configure custom key/trust stores.
-   | The connectionInitializer property provides a means (possibly in addition to sslConfig)
-   | to support SASL EXTERNAL binds.
-   | See http://www.ldaptive.org/docs/guide/connections for more information.
-   -->
-<bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+<bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+      c:resolver-ref="dnResolver"
+      c:handler-ref="authHandler" />
+
+<bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+      p:baseDn="${ldap.authn.baseDn}"
+      p:allowMultipleDns="false"
+      p:connectionFactory-ref="searchPooledLdapConnectionFactory"
+      p:userFilter="${ldap.authn.searchFilter}" />
+
+<bean id="searchPooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="searchConnectionPool" />
+
+<bean id="searchConnectionPool" parent="abstractConnectionPool"
+      p:connectionFactory-ref="searchConnectionFactory" />
+
+<bean id="searchConnectionFactory"
+      class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="searchConnectionConfig" />
+
+<bean id="searchConnectionConfig" parent="abstractConnectionConfig"
+      p:connectionInitializer-ref="bindConnectionInitializer" />
+
+<bean id="bindConnectionInitializer"
+      class="org.ldaptive.BindConnectionInitializer"
+      p:bindDn="${ldap.authn.managerDN}">
+  <property name="credential">
+    <bean class="org.ldaptive.Credential"
+          c:password="${ldap.authn.managerPassword}" />
+  </property>
+</bean>
+
+<bean id="abstractConnectionPool" abstract="true"
+      class="org.ldaptive.pool.BlockingConnectionPool"
+      init-method="initialize"
+      p:poolConfig-ref="ldapPoolConfig"
+      p:blockWaitTime="${ldap.pool.blockWaitTime}"
+      p:validator-ref="searchValidator"
+      p:pruneStrategy-ref="pruneStrategy" />
+
+<bean id="abstractConnectionConfig" abstract="true"
+      class="org.ldaptive.ConnectionConfig"
       p:ldapUrl="${ldap.url}"
       p:connectTimeout="${ldap.connectTimeout}"
       p:useStartTLS="${ldap.useStartTLS}" />
-
-<bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-    p:connectionConfig-ref="connectionConfig" />
 
 <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
       p:minPoolSize="${ldap.pool.minSize}"
@@ -389,7 +471,66 @@ authentication components to authenticate using the typical 2-step procedure:
 
 <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
-<bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
+<bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+      p:connectionFactory-ref="bindPooledLdapConnectionFactory" />
+
+<bean id="bindPooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="bindConnectionPool" />
+
+<bean id="bindConnectionPool" parent="abstractConnectionPool"
+      p:connectionFactory-ref="bindConnectionFactory" />
+
+<bean id="bindConnectionFactory"
+      class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="bindConnectionConfig" />
+
+<bean id="bindConnectionConfig" parent="abstractConnectionConfig" />
+{% endhighlight %}
+
+
+#### LDAP Supporting Anonymous Search
+The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
+followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="uid"
+      c:authenticator-ref="authenticator">
+  <property name="principalAttributeMap">
+      <map>
+          <!--
+             | This map provides a simple attribute resolution mechanism.
+             | Keys are LDAP attribute names, values are CAS attribute names.
+             | Use this facility instead of a PrincipalResolver if LDAP is
+             | the only attribute source.
+             --> 
+          <entry key="member" value="member" />
+          <entry key="eduPersonAffiliation" value="affiliation" />
+          <entry key="mail" value="mail" />
+          <entry key="displayName" value="displayName" />
+      </map>
+  </property>
+</bean>
+
+<bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+      c:resolver-ref="dnResolver"
+      c:handler-ref="authHandler" />
+
+<bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+      p:baseDn="${ldap.authn.baseDn}"
+      p:allowMultipleDns="false"
+      p:connectionFactory-ref="searchPooledLdapConnectionFactory"
+      p:userFilter="${ldap.authn.searchFilter}" />
+
+<bean id="searchPooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="searchConnectionPool" />
+
+<bean id="searchConnectionPool" parent="abstractConnectionPool" />
+
+<bean id="abstractConnectionPool" abstract="true"
+      class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
@@ -397,31 +538,110 @@ authentication components to authenticate using the typical 2-step procedure:
       p:pruneStrategy-ref="pruneStrategy"
       p:connectionFactory-ref="connectionFactory" />
 
-<bean id="pooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
-      p:connectionPool-ref="connectionPool" />
+<bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+      p:minPoolSize="${ldap.pool.minSize}"
+      p:maxPoolSize="${ldap.pool.maxSize}"
+      p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+      p:validatePeriodically="${ldap.pool.validatePeriodically}"
+      p:validatePeriod="${ldap.pool.validatePeriod}" />
 
-<!--
-   | This configuration uses a connection pool for both search and bind operations.
-   | Pooling all operations is strongly recommended.
-   -->
+<bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="connectionConfig" />
+
+<bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+      p:ldapUrl="${ldap.url}"
+      p:connectTimeout="${ldap.connectTimeout}"
+      p:useStartTLS="${ldap.useStartTLS}" />
+
+<bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+      p:prunePeriod="${ldap.pool.prunePeriod}"
+      p:idleTime="${ldap.pool.idleTime}" />
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+<bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+      p:connectionFactory-ref="bindPooledLdapConnectionFactory" />
+
+<bean id="bindPooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="bindConnectionPool" />
+
+<bean id="bindConnectionPool" parent="abstractConnectionPool" />
+{% endhighlight %}
+
+#### LDAP Supporting Direct Bind
+The following configuration snippet provides a template for LDAP authentication where no search is required to
+compute the DN needed for a bind operation. There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
+
+Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="uid"
+      c:authenticator-ref="authenticator">
+  <property name="principalAttributeMap">
+      <map>
+          <!--
+             | This map provides a simple attribute resolution mechanism.
+             | Keys are LDAP attribute names, values are CAS attribute names.
+             | Use this facility instead of a PrincipalResolver if LDAP is
+             | the only attribute source.
+             --> 
+          <entry key="member" value="member" />
+          <entry key="eduPersonAffiliation" value="affiliation" />
+          <entry key="mail" value="mail" />
+          <entry key="displayName" value="displayName" />
+      </map>
+  </property>
+</bean>
+
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
       c:resolver-ref="dnResolver"
       c:handler-ref="authHandler" />
 
-<!--
-   | Contrast with org.ldaptive.auth.FormatDnResolver, which constructs bind DN
-   | based on a format string using the username as input.
-   | FormatDnResolver is preferable for directories that support it, such as Active Directory.
-   -->
-<bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.authn.baseDn}"
-      p:allowMultipleDns="false"
-      p:connectionFactory-ref="pooledLdapConnectionFactory"
-      p:userFilter="${ldap.authn.searchFilter}" />
+<bean id="dnResolver"
+      class="org.ldaptive.auth.FormatDnResolver"
+      c:format="${ldap.authn.format}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-      p:connectionFactory-ref="pooledLdapConnectionFactory"
-      p:authenticationControls-ref="authControls" />
+      p:connectionFactory-ref="pooledLdapConnectionFactory" />
+
+<bean id="pooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="connectionPool" />
+
+<bean id="connectionPool" abstract="true"
+      class="org.ldaptive.pool.BlockingConnectionPool"
+      init-method="initialize"
+      p:poolConfig-ref="ldapPoolConfig"
+      p:blockWaitTime="${ldap.pool.blockWaitTime}"
+      p:validator-ref="searchValidator"
+      p:pruneStrategy-ref="pruneStrategy"
+      p:connectionFactory-ref="connectionFactory" />
+
+<bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+      p:minPoolSize="${ldap.pool.minSize}"
+      p:maxPoolSize="${ldap.pool.maxSize}"
+      p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+      p:validatePeriodically="${ldap.pool.validatePeriodically}"
+      p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+<bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="connectionConfig" />
+
+<bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+      p:ldapUrl="${ldap.url}"
+      p:connectTimeout="${ldap.connectTimeout}"
+      p:useStartTLS="${ldap.useStartTLS}" />
+
+<bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+      p:prunePeriod="${ldap.pool.prunePeriod}"
+      p:idleTime="${ldap.pool.idleTime}" />
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 {% endhighlight %}
 
 #### LDAP Properties Starter
@@ -464,34 +684,26 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     # pool before it is liable to be removed/destroyed
     ldap.pool.idleTime=600
 
-Please see the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate more
-complex configurations.
+    #========================================
+    # Authentication
+    #========================================
 
-#### Authentication Strategies
-Avoid searching if possible. Any time a DN can be constructed without searching, the ldaptive `FormatDnResolver`
-component should be used to construct the DN directly from the username provided on the CAS login form. For example,
-if users are exclusively under a branch `ou=Users,dc=example,dc=org` and have DNs like the following
+    # Base DN of users to be authenticated
+    ldap.authn.baseDn=ou=Users,dc=example,dc=org
 
-    uid=usernanme,ou=Users,dc=example,dc=org
+    # Manager DN for authenticated searches
+    ldap.authn.managerDN=uid=manager,ou=Users,dc=example,dc=org
 
-where `username` is the username provided on the CAS login form, then `FormatDnResolver` should be used:
-{% highlight xml %}
-<bean id="dnResolver"
-      class="org.ldaptive.auth.FormatDnResolver"
-      c:format="uid=%s,ou=Users,dc=example,dc=org" />
-{% endhighlight %}
+    # Manager password for authenticated searches
+    ldap.authn.managerPassword=nonsense
 
-_NOTE_:
-This strategy is encouraged for Active Directory deployments that support logging in with _sAMAccountName_.
-For an active directory domain _example.local_, the following configuration may be used:
-{% highlight xml %}
-<bean id="dnResolver"
-      class="org.ldaptive.auth.FormatDnResolver"
-      c:format="%s@example.local" />
-{% endhighlight %}
-
-Active Directory supports a further optimization called _Fast Bind_ that may be used in some circumstances.
-See the [Fast Bind ldaptive documentation](http://www.ldaptive.org/docs/guide/ad/fastbind) for more information.
+    # Search filter used for configurations that require searching for DNs
+    #ldap.authn.searchFilter=(&(uid=%s)(accountState=active))
+    ldap.authn.searchFilter=(uid=%s)
+    
+    # Search filter used for configurations that require searching for DNs
+    #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
+    ldap.authn.format=%s@example.com
 
 ### OpenID
 _TBD_: @leleuj
