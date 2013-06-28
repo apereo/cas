@@ -377,7 +377,7 @@ mechanism, which should be sufficient for most Active Directory deployments. Sim
       class="org.ldaptive.pool.PooledConnectionFactory"
       p:connectionPool-ref="connectionPool" />
 
-<bean id="connectionPool" abstract="true"
+<bean id="connectionPool"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
       p:poolConfig-ref="ldapPoolConfig"
@@ -638,7 +638,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
       class="org.ldaptive.pool.PooledConnectionFactory"
       p:connectionPool-ref="connectionPool" />
 
-<bean id="connectionPool" abstract="true"
+<bean id="connectionPool"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
       p:poolConfig-ref="ldapPoolConfig"
