@@ -128,7 +128,7 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 {% endhighlight %}
 
-## Deploying and Configuring the Service Management Console Webapp
+## Installing the Service Management Webapp
 
 TODO: @leleuj
 
