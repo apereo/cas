@@ -23,7 +23,7 @@ to set protocol-specific data.
 
 Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
 
-## AuthenticationManager
+## Authentication Manager
 CAS ships with a single yet flexible authentication manager, `PolicyBasedAuthenticationManager`, that should be
 sufficient for most needs. It performs authentication according to the following contract.
 
@@ -101,7 +101,7 @@ OTP credential is optional; in both cases principals are resolved from LDAP.
 </bean>
 {% endhighlight %}
 
-## AuthenticationHandler
+## Authentication Handlers
 CAS ships with support for authenticating against many common kinds of authentication systems.
 The following list provides a complete list of supported authentication technologies; jump to the section(s) of
 interest.
@@ -121,73 +121,153 @@ There are some additional handlers for small deployments and special cases:
 * Blacklist
 
 ### Database
-Database authentication components are enabled by including the following dependency in the Maven WAR overlay:
+Database authentication components are enabled by including the following dependencies in the Maven WAR overlay:
 
     <dependency>
          <groupId>org.jasig.cas</groupId>
          <artifactId>cas-server-support-ldap</artifactId>
          <version>${cas.version}</version>
     </dependency>
+    <dependency>
+        <groupId>c3p0</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.1.2</version>
+    </dependency>
 
-CAS provides 3 components to accommodate different database authentication needs:
+#### Connection Pooling
+All database authentication components require a `DataSource` for acquiring connections to the underlying database.
+The use of connection pooling is _strongly_ recommended, and the [c3p0 library](http://www.mchange.com/projects/c3p0/)
+is a good choice that we discuss here.
+[Tomcat JDBC Pool](http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html) is another competent alternative.
+Note that the connection pool dependency mentioned above should be modified according to the choice of connection pool
+components.
+
+##### Pooled Data Source Example
+A bean named `dataSource` must be defined for CAS components that use a database. A bean like the following should be
+defined in `deployerConfigContext.xml`.
+{% highlight xml %}
+<bean id="dataSource"
+  class="com.mchange.v2.c3p0.ComboPooledDataSource"
+  p:driverClass="${database.driverClass}"
+  p:jdbcUrl="${database.url}"
+  p:user="${database.user}"
+  p:password="${database.password}"
+  p:initialPoolSize="${database.pool.minSize}"
+  p:minPoolSize="${database.pool.minSize}"
+  p:maxPoolSize="${database.pool.maxSize}"
+  p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime}"
+  p:checkoutTimeout="${database.pool.maxWait}"
+  p:acquireIncrement="${database.pool.acquireIncrement}"
+  p:acquireRetryAttempts="${database.pool.acquireRetryAttempts}"
+  p:acquireRetryDelay="${database.pool.acquireRetryDelay}"
+  p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod}"
+  p:preferredTestQuery="${database.pool.connectionHealthQuery}" />
+{% endhighlight %}
+
+The following properties may be used as a starting point for connection pool configuration/tuning.
+
+    # == Basic database connection pool configuration ==
+    database.driverClass=org.postgresql.Driver
+    database.url=jdbc:postgresql://database.example.com/cas?ssl=true
+    database.user=somebody
+    database.password=meaningless
+    database.pool.minSize=6
+    database.pool.maxSize=18
+     
+    # Maximum amount of time to wait in ms for a connection to become
+    # available when the pool is exhausted
+    database.pool.maxWait=10000
+     
+    # Amount of time in seconds after which idle connections
+    # in excess of minimum size are pruned.
+    database.pool.maxIdleTime=120
+     
+    # Number of connections to obtain on pool exhaustion condition.
+    # The maximum pool size is always respected when acquiring
+    # new connections.
+    database.pool.acquireIncrement=6
+     
+    # == Connection testing settings ==
+     
+    # Period in s at which a health query will be issued on idle
+    # connections to determine connection liveliness.
+    database.pool.idleConnectionTestPeriod=30
+     
+    # Query executed periodically to test health
+    database.pool.connectionHealthQuery=select 1
+     
+    # == Database recovery settings ==
+     
+    # Number of times to retry acquiring a _new_ connection
+    # when an error is encountered during acquisition.
+    database.pool.acquireRetryAttempts=5
+     
+    # Amount of time in ms to wait between successive aquire retry attempts.
+    database.pool.acquireRetryDelay=2000
+
+
+#### Database Components
+CAS provides 3 components to accommodate different database authentication needs.
 
 ######`QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
-configurable database query.
+configurable database query. `QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to
+configure for anyone proficient with SQL, but `SearchModeSearchDatabaseAuthenticationHandler` provides an alternative
+for simple queries based solely on username and password and builds the SQL query using straightforward inputs.
 
-######`SearchModeSearchDatabaseAuthenticationHandler`
-Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
-least one result is found.
-
-######`BindModeSearchDatabaseAuthenticationHandler`
-Authenticates a user by attempting to create a database connection using the username and (hashed) password.
-
-`QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to configure for anyone proficient with
-SQL, but `SearchModeSearchDatabaseAuthenticationHandler` provides a limited alternative for simple queries based
-solely on username and password and builds the SQL query using straightforward inputs. The following database schema
-for user information is assumed in subsequent examples:
+The following database schema for user data is assumed in the following two examples that leverage SQL queries
+to authenticate users.
 
     create table users (
         username varchar(50) not null,
         password varchar(50) not null,
         active bit not null );
 
-#### QueryDatabaseAuthenticationHandler Example
 The following example uses an MD5 hash algorithm and searches exclusively for _active_ users.
-
 {% highlight xml %}
-<bean id="passwordEncoder" class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
+<bean id="passwordEncoder"
+      class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
       c:encodingAlgorithm="MD5"
       p:characterEncoding="UTF-8" />
 
-<bean id="dbAuthHandler" class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
+<bean id="dbAuthHandler"
+      class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
+      p:dataSource-ref="dataSource"
       p:passwordEncoder-ref="passwordEncoder"
       p:sql="select password from users where username=? and active=1" />
 {% endhighlight %}
 
-#### SearchModeSearchDatabaseAuthenticationHandler Example
-The following example uses a SHA1 hash algorithm to authenticate users.
+######`SearchModeSearchDatabaseAuthenticationHandler`
+Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
+least one result is found.
 
+The following example uses a SHA1 hash algorithm to authenticate users.
 {% highlight xml %}
-<bean id="passwordEncoder" class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
+<bean id="passwordEncoder"
+      class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
       c:encodingAlgorithm="SHA1"
       p:characterEncoding="UTF-8" />
 
-<bean id="dbAuthHandler" class="org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler"
+<bean id="dbAuthHandler"
+      class="org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler"
+      p:dataSource-ref="dataSource"
       p:passwordEncoder-ref="passwordEncoder"
       p:tableUsers="users"
       p:fieldUser="username"
       p:fieldPassword="password" />
 {% endhighlight %}
 
-#### BindModeSearchDatabaseAuthenticationHandler Example
+######`BindModeSearchDatabaseAuthenticationHandler`
+Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
 passwords to the appropriate format required by the underlying database. Note authentication is equivalent to the
 ability to establish a connection with username/password credentials. This handler is the easiest to configure
 (usually none required), but least flexible, of the database authentication components.
-    
 {% highlight xml %}
-<bean id="dbAuthHandler" class="org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler"/>
+<bean id="dbAuthHandler"
+      class="org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler"
+      p:dataSource-ref="dataSource" />
 {% endhighlight %}
 
 ### JAAS
@@ -196,8 +276,11 @@ authentication and authorization API. JAAS is configured via externalized plain 
 Using JAAS with CAS allows modification of the authentication process without having to rebuild and redeploy CAS
 and allows for PAM-style multi-module "stacked" authentication.
 
-#### JaasAuthenticationHandler
-`JaasAuthenticationHandler` delegates to the built-in JAAS subsystem to perform authentication according to the
+#### JAAS Components
+JAAS components are provided in the CAS core module and require no additional dependencies to use.
+
+######`JaasAuthenticationHandler`
+The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file. The handler only exposes a single configuration property:
 
 * `realm` - JAAS realm name. (Defaults to _CAS_.)
@@ -251,6 +334,12 @@ sufficient for most deployments to simply provide values for property placeholde
 connection pooling, which is _strongly_ recommended for all environments.
 
 #### LdapAuthenticationHandler Example
+The following configuration excerpt from `deployerConfigContext.xml` demonstrates how to configure LDAP
+authentication components to authenticate using the typical 2-step procedure:
+
+1. Search for an entry using the username provided on the CAS login form.
+2. Attempt to bind with the entry DN and password from the CAS login form.
+
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
@@ -316,21 +405,21 @@ connection pooling, which is _strongly_ recommended for all environments.
    | Pooling all operations is strongly recommended.
    -->
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-      c:resolver-ref="pooledSearchDnResolver"
-      c:handler-ref="pooledBindHandler" />
+      c:resolver-ref="dnResolver"
+      c:handler-ref="authHandler" />
 
 <!--
    | Contrast with org.ldaptive.auth.FormatDnResolver, which constructs bind DN
    | based on a format string using the username as input.
    | FormatDnResolver is preferable for directories that support it, such as Active Directory.
    -->
-<bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+<bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
       p:baseDn="${ldap.authn.baseDn}"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
       p:userFilter="${ldap.authn.searchFilter}" />
 
-<bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+<bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
       p:authenticationControls-ref="authControls" />
 {% endhighlight %}
@@ -378,6 +467,32 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
 Please see the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate more
 complex configurations.
 
+#### Authentication Strategies
+Avoid searching if possible. Any time a DN can be constructed without searching, the ldaptive `FormatDnResolver`
+component should be used to construct the DN directly from the username provided on the CAS login form. For example,
+if users are exclusively under a branch `ou=Users,dc=example,dc=org` and have DNs like the following
+
+    uid=usernanme,ou=Users,dc=example,dc=org
+
+where `username` is the username provided on the CAS login form, then `FormatDnResolver` should be used:
+{% highlight xml %}
+<bean id="dnResolver"
+      class="org.ldaptive.auth.FormatDnResolver"
+      c:format="uid=%s,ou=Users,dc=example,dc=org" />
+{% endhighlight %}
+
+_NOTE_:
+This strategy is encouraged for Active Directory deployments that support logging in with _sAMAccountName_.
+For an active directory domain _example.local_, the following configuration may be used:
+{% highlight xml %}
+<bean id="dnResolver"
+      class="org.ldaptive.auth.FormatDnResolver"
+      c:format="%s@example.local" />
+{% endhighlight %}
+
+Active Directory supports a further optimization called _Fast Bind_ that may be used in some circumstances.
+See the [Fast Bind ldaptive documentation](http://www.ldaptive.org/docs/guide/ad/fastbind) for more information.
+
 ### OpenID
 _TBD_: @leleuj
 
@@ -393,8 +508,9 @@ RADIUS support is enabled by including the following dependency in the Maven WAR
       <version>${cas.version}</version>
     </dependency>
 
-#### Configuration Parameters
-`RadiusAuthenticationHandler` accepts username/password credentials and delegates authentication to one or more RADIUS
+#### RADIUS Components
+######`RadiusAuthenticationHandler`
+The RADIUS handler accepts username/password credentials and delegates authentication to one or more RADIUS
 servers. It supports two types of failovers: failover on an authentication failure, and failover on a server exception.
 
 * `failoverOnAuthenticationFailure` - True to continue to the next configured RADIUS server on authentication failure,
@@ -404,7 +520,8 @@ failure, false otherwise. This flag is typically set to support highly available
 should proceed in the face of one or more RADIUS server failures.
 * `servers` - Array of RADIUS servers to delegate to for authentication.
 
-The `JRadiusServerImpl` component representing a RADIUS server has the following configuration properties.
+######`JRadiusServerImpl`
+Component representing a RADIUS server has the following configuration properties.
 
 * `hostName` - the hostname of the RADIUS server.
 * `sharedSecret` - the secret key used to communicate with the server.
@@ -414,7 +531,7 @@ The `JRadiusServerImpl` component representing a RADIUS server has the following
 * `socketTimeout` - the amount of time to wait before timing out.
 * `retries` - the number of times to keep retrying a particular server on communication failure/timeout.
 
-#### RadiusAuthenticationHandler Example
+#### RADIUS Configuration Example
 {% highlight xml %}
 <bean id="papAuthenticator" class="net.jradius.client.auth.PAPAuthenticator" />
 
@@ -443,7 +560,7 @@ transparent CAS authentication to browsers running on Windows running under Acti
 There are three actors involved: the client, the CAS server, and the Active Directory Domain Controller/KDC.
 
 #### SPNEGO Requirements
-* Client is logged in to a Windows domain.
+* Client is logged in to a Windows Active Directory domain.
 * Supported browser and JDK.
 * CAS is running MIT kerberos against the AD domain controller.
 
@@ -468,14 +585,14 @@ SPNEGO support is enabled by including the following dependency in the Maven WAR
       <version>${cas.version}</version>
     </dependency>
 
-##### JCIFSSpnegoAuthenticationHandler
+######`JCIFSSpnegoAuthenticationHandler`
 The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
 Configuration properties:
 
 * `principalWithDomainName` - True to include the domain name in the CAS principal ID, false otherwise.
 * `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
 
-##### JCIFSConfig
+######`JCIFSConfig`
 Configuration helper for JCIFS and the Spring framework. Configuration properties:
 
 * `jcifsServicePrincipal` - service principal name.
@@ -486,12 +603,12 @@ Configuration helper for JCIFS and the Spring framework. Configuration propertie
 * `loginConf` - Path to the login.conf JAAS configuration file.
 
 
-##### SpnegoNegociateCredentialsAction
+######`SpnegoNegociateCredentialsAction`
 CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
 header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
 `SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
 
-##### SpnegoCredentialsAction
+######`SpnegoCredentialsAction`
 Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
 authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
 `JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
@@ -710,8 +827,12 @@ X.509 support is enabled by including the following dependency in the Maven WAR 
 CAS provides an X.509 authentication handler, a handful of X.509-specific prinicpal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-##### X509CredentialsAuthenticationHandler
-Configuration properties:
+######`X509CredentialsAuthenticationHandler`
+The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
+by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
+certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
+acceptable client certificates.
+
 * `regExTrustedIssuerDnPattern` - Regular expression defining allowed issuer DNs. (must be specified)
 * `regExSubjectDnPattern` - Regular expression defining allowed subject DNs. (default=`.*`)
 * `maxPathLength` - Maximum number of certs allowed in certificate chain. (default=1)
