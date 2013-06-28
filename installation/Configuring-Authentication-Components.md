@@ -370,12 +370,31 @@ mechanism, which should be sufficient for most Active Directory deployments. Sim
       class="org.ldaptive.auth.FormatDnResolver"
       c:format="${ldap.authn.format}" />
 
-<bean id="authHandler"
-      class="org.ldaptive.auth.BindAuthenticationHandler"
-      p:connectionFactory="connectionFactory" />
+<bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+      p:connectionFactory-ref="pooledLdapConnectionFactory" />
+
+<bean id="pooledLdapConnectionFactory"
+      class="org.ldaptive.pool.PooledConnectionFactory"
+      p:connectionPool-ref="connectionPool" />
+
+<bean id="connectionPool" abstract="true"
+      class="org.ldaptive.pool.BlockingConnectionPool"
+      init-method="initialize"
+      p:poolConfig-ref="ldapPoolConfig"
+      p:blockWaitTime="${ldap.pool.blockWaitTime}"
+      p:validator-ref="searchValidator"
+      p:pruneStrategy-ref="pruneStrategy"
+      p:connectionFactory-ref="connectionFactory" />
+
+<bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+      p:minPoolSize="${ldap.pool.minSize}"
+      p:maxPoolSize="${ldap.pool.maxSize}"
+      p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+      p:validatePeriodically="${ldap.pool.validatePeriodically}"
+      p:validatePeriod="${ldap.pool.validatePeriod}" />
 
 <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-    p:connectionConfig-ref="connectionConfig" />
+      p:connectionConfig-ref="connectionConfig" />
 
 <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
       p:ldapUrl="${ldap.url}"
@@ -385,6 +404,12 @@ mechanism, which should be sufficient for most Active Directory deployments. Sim
 
 <bean id="fastBindConnectionInitializer"
       class="org.ldaptive.ad.extended.FastBindOperation.FastBindConnectionInitializer" />
+
+<bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+      p:prunePeriod="${ldap.pool.prunePeriod}"
+      p:idleTime="${ldap.pool.idleTime}" />
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 {% endhighlight %}
 
 #### LDAP Requiring Authenticated Search
