@@ -723,8 +723,8 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     ldap.authn.managerPassword=nonsense
 
     # Search filter used for configurations that require searching for DNs
-    #ldap.authn.searchFilter=(&(uid=%s)(accountState=active))
-    ldap.authn.searchFilter=(uid=%s)
+    #ldap.authn.searchFilter=(&(uid={user})(accountState=active))
+    ldap.authn.searchFilter=(uid={user})
     
     # Search filter used for configurations that require searching for DNs
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
