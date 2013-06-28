@@ -35,9 +35,8 @@ ticket validation response.
 
 Historically any service could obtain a proxy-granting ticket and from it a proxy ticket to access any other service.
 In other words, the security model is decentralized rather than centralized. You can centralize some of this through
-the [Service Management](#service_management) facility by restricting which services
-are allowed to obtain proxy tickets. Without explicitly controlling proxy ticket capability, it is not possible to
-know which services are requesting proxy tickets.
+the service management facility by restricting which services are allowed to obtain proxy tickets. Without explicitly
+controlling proxy ticket capability, it is not possible to know which services are requesting proxy tickets.
 
 ## Service Management
 The service management facility provides a number of service-specific configuration controls that affect security
@@ -52,7 +51,7 @@ decentralized security policy model.) Some highlights of service management cont
 
 The service management facility is comprised of a service registry containing one or more registered services, each
 of which specifies the management controls above. The service registry can be controlled via static configuration files,
-a Web user interface, or both. See the [Service Management](installation/Service-Management.html) section for more
+a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
 information.
 
 ## Ticket Expiration Policies
