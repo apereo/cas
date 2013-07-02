@@ -22,7 +22,13 @@ It's worth pointing out some important characteristics of this architecture:
 * Loss of a cache node MAY cause loss of SSO state data in non-replicating caches (e.g. memcached).
 * Loss of SSO state data is always graceful: users simply reauthenticate.
 
-Further details of the recommended architecture are discussed in following sections.
+Before proceeding into a detailed discussion of various aspects of the recommended architecture, we offer a guiding
+principle for planning a highly available deployment:
+
+*Design the simplest solution that meets performance and availability requirements.*
+
+Experience has shown that simplicity is a vital system characteristic of successful and robust HA deployments.
+Strive for simplicity and you will be well served.
 
 ### Multiple CAS Server Nodes
 A highly available CAS deployment is composed of two or more nodes behind a hardware load balancer in either
@@ -85,10 +91,12 @@ differences that impact availability and performance characteristics. Cache syst
 of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
 store the ticket on exactly 1 node and use a deterministic algorithm to locate the node containing the ticket:
 
-    N' = f(T)
+    N' = f(h(T), N1, N2, N3, ... Nm)
 
-where _N'_ is the node containing ticket _T_. These sorts of cache systems do not require replication and generally
-provide for simplicity at the expense of some durability.
+where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes, and _N'_ ∈ _N ... Nm_.
+
+These sorts of cache systems do not require replication and generally provide for simplicity at the expense of some
+durability.
 
 ### Connection Pooling
 We _strongly_ recommend that all IO connections to a back-end data stores, such as LDAP directories and databases,
