@@ -371,8 +371,7 @@ underlying spymemcached library. There are two choices:
 2. [CONSISTENT](https://github.com/couchbase/spymemcached/blob/2.9.0/src/main/java/net/spy/memcached/KetamaNodeLocator.java)
 
 The array modulus mechanism is the default and suitable for cases when the number of nodes in the memcached pool is
-expected to be consistent. The algorithm simply computes an index into the array of memcached nodes by computing
-the following:
+expected to be consistent. The algorithm simply computes an index into the array of memcached nodes:
 
     hash(key) % length(nodes)
 
