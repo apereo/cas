@@ -5,11 +5,9 @@ title: CAS - High Availability Guide
 # High Availability Guide (HA/Clustering)
 
 A highly available CAS deployment is one that offers resilience in response to various failure modes such that CAS
-continues to offer SSO services despite failed components.
-We offer a recommended architecture that provides fault tolerance in CAS and dependent components as a reference
-for executing a CAS deployment that meets institutional performance and availability characteristics.
-It also provides a framework for understanding component requirements in various subsystems that are involved in
-CAS installation and maintenance.
+continues to offer SSO services despite failures. We offer a recommended architecture that provides a starting point
+for planning and executing a CAS deployment that meets institutional performance and availability requirements.
+It also provides a framework for understanding CAS software component requirements imposed by HA considerations.
 
 ## Recommended Architecture
 The following diagram highlights the vital aspects of a highly available CAS deployment.
