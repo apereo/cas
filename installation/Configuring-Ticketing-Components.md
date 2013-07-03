@@ -342,9 +342,9 @@ Memcached stores data in exactly one node among many in a distributed cache, thu
 or otherwise share data between nodes. A deterministic function is used to locate the node, _N'_, on which to store
 key _K_:
 
-    N' = f(K, N1, N2, N3, ... Nm)
+    N' = f(h(K), N1, N2, N3, ... Nm)
 
-where _N1 ... Nm_ is the set of cache nodes and _N'_ ∈ _N ... Nm_.
+where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and _N'_ ∈ _N ... Nm_.
 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
@@ -427,10 +427,24 @@ The following configuration is a template for `ticketRegistry.xml` Spring config
 
 #### High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with
-`failureMode="Redistribute"`. In this mode, a write failure will simply cause the client to rekey the item and write
-it to an available node. It will continue to read and write from a backup node until the failed node returns, at
-which time if the key is still available in the resurrected node it will supercede the value known to the backup node.
-The most relevant consequence is that the set of services accessed during the SSO session may have two distinct values,
-which may affect single sign-out. If possible the memcached service on the failed node should be restarted prior to
-rejoining the cache pool to avoid this behavior.
+`failureMode="Redistribute"`. In this mode a write failure will simply cause the client to flag the node as failed
+and remove it from the set of available nodes. It subsequently recomputes the node location function with the reduced
+node set to find a new node on which to store the key. If the node location function selects the same node,
+which is likely for the _CONSISTENT_ strategy, a backup node will be computed. The value is written to and read from
+the failover node until the primary node recovers. The client will periodically check the failed node for liveliness
+and restore it to the node pool as soon as it recovers. When the primary node is resurrected, if it contains a value
+for a particular key, it would supercede the value known to the failover node. The most common effect on CAS behavior
+in this circumstance would occur when ticket-granting tickets have duplicate values, which could affect single sign-out
+and prevent access to services. In particular, services accessed and forced authentications that occur while the
+failover service is active would be lost when the failed node recovers. In most cases this behavior is tolerable,
+but it can be avoided by restarting the memcached service on the failed node prior to rejoining the cache pool.
 
+A read failure in _Redistribute_ mode causes the node to be removed from the set of available nodes, a failover node
+is computed, and a value is read from that node. In most cases this results in a key not found situation. The effect
+on CAS behavior depends on the type of ticket requested:
+
+* Service ticket - Service access would be denied for the requested ticket, but permitted for subsequent attempts since
+a new ticket would be generated and validated.
+* Ticket-granting ticket - The SSO session would be terminated and reauthentication would be required.
+
+Read failures are thus entirely innocuous for environments where reauthentication is acceptable.
