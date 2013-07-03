@@ -418,6 +418,7 @@ The following configuration is a template for `ticketRegistry.xml` Spring config
 
     expiration.policy.tgt.validity_period=7201
     expiration.policy.st.validity_period=5
+    # It is common to run memcached on every CAS node
     memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
     memcached.hashAlgorithm=FNV1_64_HASH
     memcached.protocol=BINARY
