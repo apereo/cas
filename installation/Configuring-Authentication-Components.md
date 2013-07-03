@@ -1271,3 +1271,28 @@ Define the `x509Check` bean in `cas-servlet.xml`:
    class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction"
    p:centralAuthenticationService-ref="centralAuthenticationService" />
 {% endhighlight %}
+
+## Principal Resolution
+TBD: @serac
+
+## Authentication Metadata
+TBD: @serac
+
+## Long Term Authentication (Remember Me)
+TBD: @serac
+
+## Proxy Authentication
+TBD: @serac
+
+## Multi-factor Authentication
+TBD: @serac
+
+## Login Throttling
+TBD: @serac
+
+## ClearPass
+TBD: @mmoayyed
+
+## Single Sign-Out
+TBD: @serac
+
