@@ -1311,7 +1311,6 @@ in following sections by the following property:
     # Long term authentication session length in seconds
     rememberMeDuration=1209600
 
-#### Spring Component Configuration
 The duration of the long term authentication session is configured in two different places:
 1. `ticketExpirationPolicies.xml`
 2. `ticketGrantingTicketCookieGenerator.xml`
