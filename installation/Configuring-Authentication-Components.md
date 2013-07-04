@@ -1278,7 +1278,10 @@ TBD: @serac
 ## Authentication Metadata
 TBD: @serac
 
-## Long Term Authentication (Remember Me)
+## Long Term Authentication
+This feature, also known as *Remember Me*, extends the length of the SSO session beyond the typical period of hours
+such that users can go days or weeks without having to log in to CAS.
+
 TBD: @serac
 
 ## Proxy Authentication
@@ -1289,10 +1292,3 @@ TBD: @serac
 
 ## Login Throttling
 TBD: @serac
-
-## ClearPass
-TBD: @mmoayyed
-
-## Single Sign-Out
-TBD: @serac
-

@@ -99,8 +99,7 @@ section for detailed discussion of configuration concerns and implementation rec
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
 and replay on demand as needed to access legacy services. While [proxy authentication](#proxy_authentication)
 is recommended in lieu of password replay, it may be required to integrate legacy services with CAS. See the
-[ClearPass configuration](../installation/Configuring-Authentication-Components.html#clearpass) documentation for
-detailed information.
+[ClearPass](../integration/ClearPass.html) documentation for detailed information.
 
 ### Service Management
 The service management facility provides a number of service-specific configuration controls that affect security
@@ -168,6 +167,11 @@ may improve overall security.
 It is important to note that forced authentication supercedes long term authentication, thus if a service were
 configured for forced authentication, authentication would be required for service access even in the context of a
 long-term session.
+
+Long term authentication support must be explicitly enabled through
+[configuration and UI customization](../installation/Configuring-Authentication-Components.html#long_term_authentication)
+during the installation process. Thus deployers choose to offer long-term authentication support, and when available
+users may elect to use it via selection on the CAS login form.
 
 ### Warn
 CAS supports optional notification of service access during an established SSO session. By default CAS
