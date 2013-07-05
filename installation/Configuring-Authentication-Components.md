@@ -1355,7 +1355,6 @@ TODO: provide configuration example
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 See the [X.509 principal resolver](#x_509) section for more information.
-The following configuration snippet produces prinicpals of the form _cn
 
 ######`X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
