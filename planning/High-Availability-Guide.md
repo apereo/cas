@@ -77,9 +77,9 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 The following cache-based ticket storage components provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups:
 
-* EhCacheTicketRegistry
-* MemcachedTicketRegistry
-* JBossTicketRegistry
+* [EhCacheTicketRegistry](../installation/Ehcache-Ticket-Registry.html)
+* [JBossTicketRegistry](../installation/JBoss-Cache-Ticket-Registry.html)
+* [MemCacheTicketRegistry](../installation/Memcached-Ticket-Registry.html)
 
 The particular choice of caching technology should be driven by infrastructure and expertise as much as performance
 and availability considerations. It's hardly valuable to have a high-performance cache for which you lack the
