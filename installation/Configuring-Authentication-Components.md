@@ -1385,7 +1385,7 @@ for discussion of security concerns related to long term authentication.
 While users can elect to establish a long term authentication session, the duration is established through
 configuration as a matter of security policy. Deployers must determine the length of long term authentication sessions
 by weighing convenience against security risks. The length of the long term authentication session is configured
-(somewhat unhepfully) in seconds, but the Google calculator provides a convenient converter:
+(somewhat unhelpfully) in seconds, but the Google calculator provides a convenient converter:
 
 [2 weeks in seconds](https://www.google.com/search?q=2+weeks+in+seconds&oq=2+weeks+in+seconds)
 
