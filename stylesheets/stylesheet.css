@@ -78,25 +78,25 @@ h1 {
 h2 {
   color:#555;
   padding-bottom: 10px;
-  font-size: 30px;
+  font-size: 28px;
   background: url('../images/bg_hr.png') repeat-x bottom;
   width: 75%;
 }
 
 h3 {
-  font-size: 26px;
+  font-size: 24px;
 }
 
 h4 {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 h5 {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 h6 {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 p {
