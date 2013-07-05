@@ -64,37 +64,39 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin: 10px 0;
   font-weight: 700;
-  color:#222222;
   font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
+  color:#666;
   letter-spacing: -1px;
 }
 
 h1 {
-  font-size: 30px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 900;
+  color: #296643;
 }
 
 h2 {
+  color:#555;
   padding-bottom: 10px;
-  font-size: 26px;
+  font-size: 30px;
   background: url('../images/bg_hr.png') repeat-x bottom;
   width: 75%;
 }
 
 h3 {
-  font-size: 22px;
+  font-size: 26px;
 }
 
 h4 {
-  font-size: 18px;
+  font-size: 22px;
 }
 
 h5 {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 h6 {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 p {
@@ -272,6 +274,7 @@ h6 code {
   top: 5px;
   padding: 0;
   margin: 0;
+  font-style: normal;
   font-size: 16px;
   letter-spacing: 0.2px;
   box-shadow: none;
