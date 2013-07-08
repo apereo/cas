@@ -176,24 +176,22 @@ img.undecorated {
 }
 
 pre, code {
-  width: 100%;
   color: #296643;
-  background-color: #fff;
-
   font-family: "Consolas", "Andale Mono", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   font-size: 15px;
 }
 
-pre {
-  width: 100%;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-  overflow: auto;
+.highlight {
+  background: #fff;
 }
 
-pre code {
-  display: block;
-  box-shadow: none;
+pre {
+  width: 94%;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #f8f8f4;
+  border: 1px solid #ececec;
+  overflow: auto;
 }
 
 blockquote {
