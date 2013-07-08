@@ -422,12 +422,33 @@ Simple factory class that produces contextual security policies that always pass
 default in some cases to provide backward compatibility with CAS 3.x.
 
 ######`RequiredHandlerAuthenticationPolicyFactory`
-Factory that produces contextual policy objects based on the security context of a particular service requesting a
-ticket. The policy objects thus created allow restricting access to a service based on the types of credentials
-authenticated by particular `AuthenticationHandler` components as defined for the particular service in the
-[service management facility](../installation/Service-Management.html). This component can be configured by modifying
-the `CentralAuthenticationServiceImpl` bean definition in  `applicationContext.xml` as follows:
+Factory that produces policy objects based on the security context of the service requesting a ticket. In particular
+the security context is based on the required authentication handlers that must have successfully validated credentials
+in order to access the service. A clarifying example is helpful; assume the following authentication components
+are defined in `deployerConfigContext.xml`:
+{% highlight xml %}
+<bean id="ldapHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:name="ldapHandler">
+      <!-- Details elided for simplicity -->
+</bean>
 
+<bean id="oneTimePasswordHandler"
+      class="com.example.cas.authentication.CustomOTPAuthenticationHandler"
+      p:name="oneTimePasswordHandler" />
+
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+  <constructor-arg>
+    <map>
+      <entry key-ref="passwordHandler" />
+      <entry key-ref="oneTimePasswordHandler" />
+    </map>
+  </constructor-arg>
+</bean>
+{% endhighlight %}
+
+Assume also the following beans are defined in `applicationContext.xml`:
 {% highlight xml %}
 <bean id="centralAuthenticationService"
       class="org.jasig.cas.CentralAuthenticationServiceImpl"
@@ -445,7 +466,14 @@ the `CentralAuthenticationServiceImpl` bean definition in  `applicationContext.x
 <bean id="casAuthenticationPolicy"
       class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory" />
 {% endhighlight %}
-  
+
+With the above configuration in mind, the [service management facility](../installation/Service-Management.html)
+may now be leveraged to register services that require specific kinds of credentials be used to access the service.
+The kinds of required credentials are specified by naming the authentication handlers that accept them, for example,
+`ldapHandler` and `oneTimePasswordHandler`. Thus a service could be registered that imposes security constraints like
+the following:
+
+_Only permit users with SSO sessions created from both a username/password and OTP token to access this service._
 
 ## Login Throttling
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
