@@ -92,7 +92,7 @@ handler and an RSA SecureID authentication handler.
 Since multi-factor authentication requires development of institutional security policy, advanced component
 configuration (and possibly custom component development), and UI design, it should be regarded more as a framework
 than a feature. See the
-[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor_authentication)
+[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor_authentication_mfa)
 section for detailed discussion of configuration concerns and implementation recommendations.
 
 ### Credential Caching and Replay
