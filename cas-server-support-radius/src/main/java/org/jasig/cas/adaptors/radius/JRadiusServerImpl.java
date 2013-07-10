@@ -150,6 +150,18 @@ public final class JRadiusServerImpl implements RadiusServer {
                 accountingPort, DEFAULT_SOCKET_TIMEOUT, DEFAULT_NUMBER_OF_RETRIES);
     }
 
+    /**
+     * Constructor that accepts the host name, shared secret, authentication type,
+     * authentication port, accounting port, timeout and number of retries.
+     * @param hostName the host name of the RADIUS server.
+     * @param sharedSecret the shared secret with that server.
+     * @param radiusAuthenticator the RADIUS authenticator to use.
+     * @param authenticationPort the port to use to authenticate on.
+     * @param accountingPort the port to use to do accounting.
+     * @param socketTimeout the time before the RADIUS request times out.
+     * @param retries the number of retries for authentication.
+     * @throws UnknownHostException if the hostname cannot be resolved.
+     */
     public JRadiusServerImpl(final String hostName, final String sharedSecret,
             final RadiusAuthenticator radiusAuthenticator,
             final int authenticationPort, final int accountingPort,
@@ -175,8 +187,9 @@ public final class JRadiusServerImpl implements RadiusServer {
                 attributeList);
 
         try {
+            RadiusAuthenticator thisAuth = getNewRadiusAuthenticator();
             final RadiusPacket response = radiusClient.authenticate(request,
-                    this.radiusAuthenticator, this.retries);
+                    thisAuth, this.retries);
 
             // accepted
             if (response instanceof AccessAccept) {
@@ -199,5 +212,26 @@ public final class JRadiusServerImpl implements RadiusServer {
     private RadiusClient getNewRadiusClient() {
         return new RadiusClient(this.inetAddress, this.sharedSecret,
                 this.authenticationPort, this.accountingPort, this.socketTimeout);
+    }
+
+    /**
+     * Function that returns a new instance of an authenticator for EAP only.
+     * @return tempAuth The new authentication instance (in case of EAP), otherwise the given instance
+     */
+    private RadiusAuthenticator getNewRadiusAuthenticator() {
+        RadiusAuthenticator tempAuth = null;
+        if (this.radiusAuthenticator.getAuthName().startsWith("eap-")) {
+            Class <?> c = this.radiusAuthenticator.getClass();
+            try {
+                tempAuth = (RadiusAuthenticator) c.newInstance();
+            } catch (final Exception e) {
+                LOGGER.error("Unable to create new instance of authenticator", e);
+                tempAuth = this.radiusAuthenticator;
+            }
+        } else {
+            tempAuth = this.radiusAuthenticator;
+        }
+
+        return tempAuth;
     }
 }
