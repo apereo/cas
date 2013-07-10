@@ -171,9 +171,9 @@ public final class JRadiusServerImpl implements RadiusServer {
         this.inetAddress = InetAddress.getByName(hostName);
     }
 
-   	public boolean authenticate(
+    public boolean authenticate(
         final UsernamePasswordCredentials usernamePasswordCredentials) {
-    	final RadiusClient radiusClient = getNewRadiusClient();
+        final RadiusClient radiusClient = getNewRadiusClient();
 
         final AttributeList attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(usernamePasswordCredentials
@@ -187,7 +187,7 @@ public final class JRadiusServerImpl implements RadiusServer {
         try {
             RadiusAuthenticator thisAuth = getNewRadiusAuthenticator();
             final RadiusPacket response = radiusClient.authenticate(request,
-            	thisAuth, this.retries);
+                thisAuth, this.retries);
             
             // accepted
             if (response instanceof AccessAccept) {
@@ -220,20 +220,20 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     private RadiusAuthenticator getNewRadiusAuthenticator() {
-    	RadiusAuthenticator tempAuth = null;
-    	if ( this.radiusAuthenticator.getAuthName().startsWith("eap-") ) {
-	    	Class <?> c = this.radiusAuthenticator.getClass();
-	        try {
-	            tempAuth = (RadiusAuthenticator)c.newInstance();
-	        }
-	        catch(Exception e) { 
-	            LOG.error("Unable to create new instance of authenticator", e);
-	            tempAuth = this.radiusAuthenticator;
-	        }
-    	}
-    	else
-    		tempAuth = this.radiusAuthenticator;
+        RadiusAuthenticator tempAuth = null;
+        if ( this.radiusAuthenticator.getAuthName().startsWith("eap-") ) {
+            Class <?> c = this.radiusAuthenticator.getClass();
+            try {
+                tempAuth = (RadiusAuthenticator)c.newInstance();
+            }
+            catch(Exception e) { 
+                LOG.error("Unable to create new instance of authenticator", e);
+                tempAuth = this.radiusAuthenticator;
+            }
+        }
+        else
+            tempAuth = this.radiusAuthenticator;
 
-    	return tempAuth;
+        return tempAuth;
     }
 }
