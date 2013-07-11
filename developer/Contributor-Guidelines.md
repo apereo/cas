@@ -19,7 +19,7 @@ a fork of the Jasig CAS repository:
 
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
 
-The following shell commands may be used to grab the source from your forked repository:
+The following shell commands may be used to grab the source from a forked repository:
 {% highlight bash %}
 git clone --recursive git@github.com:$USER/cas.git
 cd cas
@@ -43,7 +43,7 @@ number MUST be the first word of a commit message; for example, _CAS-9999 Provid
 ### Development Walk-Through
 #### 1. Create Topic Branch
 
-    git checkout CAS-123
+    git checkout -b CAS-123
 
 We encourage naming the branch the same as the Jira issue number corresponding to the feature or bug fix.
 
