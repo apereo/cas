@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
@@ -74,7 +75,13 @@ public class TerminateSessionAction {
      * @return "success"
      */
     public Event terminate(final RequestContext context) {
-        final String tgtId = WebUtils.getTicketGrantingTicketId(context);
+        // in login's webflow : we can get the value from context as it has already been stored
+        String tgtId = WebUtils.getTicketGrantingTicketId(context);
+        // for logout, we need to get the cookie's value
+        if (tgtId == null) {
+            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        }
         if (tgtId != null) {
             WebUtils.putLogoutRequests(context, this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId));
         }
