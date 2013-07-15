@@ -153,7 +153,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         examineAccountState(response);
 
         if (response.getResult()) {
-            doPostAuthentication(response);
+            return doPostAuthentication(response);
         }
 
         throw new FailedLoginException("LDAP authentication failed.");
