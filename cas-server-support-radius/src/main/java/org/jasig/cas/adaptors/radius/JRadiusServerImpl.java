@@ -216,7 +216,7 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     /**
      * Function that returns a new instance of an authenticator.
-     * @return tempAuth The new authentication instance.
+     * @return radiusAuthenticator The new authentication instance.
      */
     private RadiusAuthenticator getNewRadiusAuthenticator() {
         RadiusAuthenticator radiusAuthenticator = null;
