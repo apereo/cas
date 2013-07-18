@@ -187,9 +187,9 @@ public final class JRadiusServerImpl implements RadiusServer {
                 attributeList);
 
         try {
-            RadiusAuthenticator thisAuth = getNewRadiusAuthenticator();
+            RadiusAuthenticator radiusAuthenticator = getNewRadiusAuthenticator();
             final RadiusPacket response = radiusClient.authenticate(request,
-                    thisAuth, this.retries);
+                    radiusAuthenticator, this.retries);
 
             // accepted
             if (response instanceof AccessAccept) {
@@ -215,23 +215,18 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * Function that returns a new instance of an authenticator for EAP only.
-     * @return tempAuth The new authentication instance (in case of EAP), otherwise the given instance
+     * Function that returns a new instance of an authenticator.
+     * @return tempAuth The new authentication instance.
      */
     private RadiusAuthenticator getNewRadiusAuthenticator() {
-        RadiusAuthenticator tempAuth = null;
-        if (this.radiusAuthenticator.getAuthName().startsWith("eap-")) {
-            Class <?> c = this.radiusAuthenticator.getClass();
-            try {
-                tempAuth = (RadiusAuthenticator) c.newInstance();
-            } catch (final Exception e) {
-                LOGGER.error("Unable to create new instance of authenticator", e);
-                tempAuth = this.radiusAuthenticator;
-            }
-        } else {
-            tempAuth = this.radiusAuthenticator;
+        RadiusAuthenticator radiusAuthenticator = null;
+        Class <?> c = this.radiusAuthenticator.getClass();
+        try {
+            radiusAuthenticator = (RadiusAuthenticator) c.newInstance();
+        } catch (final Exception e) {
+            LOGGER.error("Unable to create new instance of authenticator", e);
+            radiusAuthenticator = this.radiusAuthenticator;
         }
-
-        return tempAuth;
+        return radiusAuthenticator;
     }
 }
