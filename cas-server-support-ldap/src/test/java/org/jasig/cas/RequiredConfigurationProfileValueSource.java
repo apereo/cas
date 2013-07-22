@@ -42,7 +42,7 @@ import org.springframework.test.annotation.ProfileValueSource;
  */
 public class RequiredConfigurationProfileValueSource implements ProfileValueSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequiredConfigurationProfileValueSource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequiredConfigurationProfileValueSource.class);
 
     private static final String TRUE = "true";
 
@@ -88,9 +88,9 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
         String result = FALSE;
         if (resources != null) {
             for (Resource res : resources) {
-                LOG.debug("Checking for {}", res);
+                LOGGER.debug("Checking for {}", res);
                 if (!res.exists()) {
-                    LOG.info("Required configuration resource {} not found", res);
+                    LOGGER.info("Required configuration resource {} not found", res);
                     return result;
                 }
             }

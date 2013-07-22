@@ -19,9 +19,6 @@
 package org.jasig.cas.monitor;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;

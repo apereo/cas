@@ -19,12 +19,10 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import java.security.GeneralSecurityException;
-import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
 
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
@@ -72,7 +70,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
         try {
             this.authenticationHandler.authenticate(credentials);
             fail("An AuthenticationException should have been thrown");
-        } catch (GeneralSecurityException e) {
+        } catch (final GeneralSecurityException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }
