@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
@@ -35,6 +34,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.Protocol;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.RequiresHttpAction;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
@@ -126,8 +126,8 @@ public final class ClientAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
             // get client
-            final BaseClient<org.pac4j.core.credentials.Credentials, CommonProfile> client =
-                    (BaseClient<org.pac4j.core.credentials.Credentials, CommonProfile>) this.clients
+            final BaseClient<Credentials, CommonProfile> client =
+                    (BaseClient<Credentials, CommonProfile>) this.clients
                     .findClient(clientName);
             logger.debug("client : {}", client);
 
@@ -137,7 +137,7 @@ public final class ClientAction extends AbstractAction {
             }
 
             // get credentials
-            final org.pac4j.core.credentials.Credentials credentials;
+            final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
                 logger.debug("credentials : {}", credentials);
@@ -156,22 +156,17 @@ public final class ClientAction extends AbstractAction {
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
 
-            // create credentials
-            final ClientCredential clientCredentials = new ClientCredential(credentials);
-            try {
+            // credentials not null -> try to authenticate
+            if (credentials != null) {
                 WebUtils.putTicketGrantingTicketInRequestScope(context,
-                        this.centralAuthenticationService.createTicketGrantingTicket(clientCredentials));
+                        this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials)));
                 return success();
-            } catch (final TicketException e) {
-                // error
-                prepareForLoginPage(context);
-                return error();
             }
-        } else {
-            // no authentication : go to login page
-            prepareForLoginPage(context);
-            return error();
         }
+
+        // no or aborted authentication : go to login page
+        prepareForLoginPage(context);
+        return error();
     }
 
     /**
