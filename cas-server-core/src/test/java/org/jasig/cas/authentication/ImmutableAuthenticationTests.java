@@ -31,6 +31,8 @@ import javax.security.auth.login.FailedLoginException;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Scott Battaglia
@@ -38,6 +40,7 @@ import org.junit.Test;
  * @since 3.0
  */
 public class ImmutableAuthenticationTests {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void testImmutable() {
@@ -63,18 +66,26 @@ public class ImmutableAuthenticationTests {
         try {
             auth.getAuthenticatedDate().setTime(100);
             fail("Should have failed");
-        } catch (RuntimeException e) {}
+        } catch (final RuntimeException e) {
+            logger.debug("Setting authenticate date/time failed correctly");
+        }
         try {
             auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
             fail("Should have failed");
-        } catch (RuntimeException e) {}
+        } catch (final RuntimeException e) {
+            logger.debug("Adding authentication credential metadata failed correctly");
+        }
         try {
             auth.getSuccesses().put("test", new HandlerResult(authenticationHandler, credential1));
             fail("Should have failed");
-        } catch (RuntimeException e) {}
+        } catch (final RuntimeException e) {
+            logger.debug("Adding authentication success event failed correctly");
+        }
         try {
             auth.getFailures().put("test", new FailedLoginException());
             fail("Should have failed");
-        } catch (RuntimeException e) {}
+        } catch (final RuntimeException e) {
+            logger.debug("Adding authentication failure event failed correctly");
+        }
     }
 }
