@@ -31,7 +31,6 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link PooledConnectionFactoryMonitor} class.
  *
  * @author Middleware Services
- * @version $Revision: $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})

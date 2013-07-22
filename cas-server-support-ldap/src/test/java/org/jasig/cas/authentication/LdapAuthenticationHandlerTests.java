@@ -39,7 +39,6 @@ import static org.junit.Assert.fail;
  * Unit test for {@link LdapAuthenticationHandler}.
  *
  * @author Middleware Services
- * @version $Revision: $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})
@@ -70,7 +69,7 @@ public class LdapAuthenticationHandlerTests {
                 final HandlerResult result;
                 try {
                     result = this.handler.authenticate(newCredentials(username, password));
-                } catch (GeneralSecurityException e) {
+                } catch (final GeneralSecurityException e) {
                     fail(username + " authentication should have succeeded but failed with error: " + e);
                     continue;
                 }
@@ -81,7 +80,7 @@ public class LdapAuthenticationHandlerTests {
                 try {
                     handler.authenticate(newCredentials(username, password));
                     fail(username + " authentication succeeded but should have thrown " + expectedResult);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     assertEquals(expectedResult, e.getClass().getSimpleName());
                 }
             }
