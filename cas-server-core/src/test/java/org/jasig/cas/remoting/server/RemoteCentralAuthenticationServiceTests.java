@@ -64,7 +64,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                     TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("AuthenticationException expected.");
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             return;
         }
     }

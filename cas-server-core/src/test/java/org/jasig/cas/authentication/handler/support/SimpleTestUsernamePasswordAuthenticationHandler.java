@@ -53,7 +53,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<String, Exception>();
 
     /** Instance of logging for subclasses. */
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Map of special usernames to exceptions that are raised when a user with that name attempts authentication. */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
@@ -68,7 +68,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     }
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        log.warn(
+        logger.warn(
                 "{} is only to be used in a testing environment.  NEVER enable this in a production environment.",
                 getName());
     }
@@ -78,7 +78,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     }
 
     @Override
-    public final HandlerResult authenticate(final Credential credential)
+    public HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
         final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
@@ -93,14 +93,14 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
         } else if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
         } else if (exception != null) {
-            log.debug("Cannot throw checked exception {} since it is not declared by method signature.", exception);
+            logger.debug("Cannot throw checked exception {} since it is not declared by method signature.", exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
-            log.debug("User [{}] was successfully authenticated.", username);
+            logger.debug("User [{}] was successfully authenticated.", username);
             return new HandlerResult(this, new BasicCredentialMetaData(credential));
         }
-        log.debug("User [{}] failed authentication", username);
+        logger.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();
     }
 
