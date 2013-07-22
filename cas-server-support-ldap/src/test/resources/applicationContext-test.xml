@@ -104,7 +104,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
     c:resolver-ref="pooledSearchDnResolver" c:handler-ref="pooledBindHandler"
     p:authenticationResponseHandlers-ref="authResponseHandlers" />
-  
+
   <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
         p:baseDn="${ldap.authn.baseDn}"
         p:allowMultipleDns="false"
@@ -114,13 +114,13 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
         p:connectionFactory-ref="authnPooledLdapConnectionFactory"
         p:authenticationControls-ref="authControls" />
-  
+
   <util:list id="authControls">
-    <bean class="org.ldaptive.control.PasswordPolicyControl" 
+    <bean class="org.ldaptive.control.PasswordPolicyControl"
           p:graceAuthNsRemaining="10" p:timeBeforeExpiration="10"
           c:critical="${ldap.auth.control.critical:false}" />
-  </util:list> 
-  
+  </util:list>
+
   <!--
      +========================================================================
      | LDAP credential to principal resolver beans
@@ -148,7 +148,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:timeLimit="5000"
             p:searchScope="2" />
     </property>
-    
+
   </bean>
 
   <bean id="resolver"
@@ -168,7 +168,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:baseDn="${ldap.userdetails.user.baseDn}"
         p:searchFilter="${ldap.resolver.searchFilter}"
         p:returnAttributes-ref="userDetailsUserAttributes" />
-  
+
   <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
         p:baseDn="${ldap.userdetails.role.baseDn}"
         p:searchFilter="${ldap.userdetails.role.searchFilter}"
@@ -211,10 +211,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
         c:factory-ref="userDetailsPooledLdapConnectionFactory"
         c:roleSearchExecutor-ref="searchExecutorRole"
-        c:userSearchExecutor-ref="searchExecutorUser" 
+        c:userSearchExecutor-ref="searchExecutorUser"
         c:userAttributeName="${ldap.userdetails.user.attribute}"
         c:roleAttributeName="${ldap.userdetails.role.attribute}" />
-                  
+
   <util:list id="userDetailsUserAttributes">
     <value>${ldap.userdetails.user.attribute}</value>
   </util:list>
@@ -222,5 +222,5 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <util:list id="userDetailsRoleAttributes">
     <value>${ldap.userdetails.role.attribute}</value>
   </util:list>
-  
+
 </beans>

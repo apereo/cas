@@ -68,7 +68,7 @@ public class RejectUsersAuthenticationHandlerTests {
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
     }

@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 import java.net.URL;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.junit.Test;
 
 /**
