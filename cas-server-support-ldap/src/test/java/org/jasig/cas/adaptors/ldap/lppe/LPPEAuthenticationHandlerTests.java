@@ -41,7 +41,6 @@ import static org.junit.Assert.fail;
  * Unit test for {@link LPPEAuthenticationHandler}.
  *
  * @author Middleware Services
- * @version $Revision: $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})
@@ -71,7 +70,7 @@ public class LPPEAuthenticationHandlerTests {
                 final HandlerResult result;
                 try {
                     result = this.handler.authenticate(newCredentials(username, password));
-                } catch (GeneralSecurityException e) {
+                } catch (final GeneralSecurityException e) {
                     fail(username + " authentication should have succeeded but failed with error: " + e);
                     continue;
                 }
