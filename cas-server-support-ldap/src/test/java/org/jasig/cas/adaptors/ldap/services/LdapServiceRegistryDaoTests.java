@@ -57,10 +57,10 @@ public class LdapServiceRegistryDaoTests {
         for (final RegisteredService registeredService : list1) {
             this.dao.delete(registeredService);
         }
-        
+
         list1 = this.dao.load();
         assertEquals(0, list1.size());
-        
+
         AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setAllowedToProxy(false);
@@ -73,7 +73,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
 
         this.dao.save(rs);
-        
+
         rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setAllowedToProxy(false);
@@ -92,11 +92,11 @@ public class LdapServiceRegistryDaoTests {
 
         AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(list1.get(0).getId());
         assertNotNull(rs2);
-        
+
         rs2.setEvaluationOrder(9999);
         rs2.setAllowedAttributes(Arrays.asList("test3"));
         rs2.setName("Another Test Service");
-        
+
         rs2 = (AbstractRegisteredService) this.dao.save(rs2);
         assertNotNull(rs2);
     }
