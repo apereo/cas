@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;

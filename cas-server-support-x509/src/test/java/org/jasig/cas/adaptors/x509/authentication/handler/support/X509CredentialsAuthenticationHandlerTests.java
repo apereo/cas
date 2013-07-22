@@ -280,7 +280,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                     fail("Authentication succeeded when it should have failed with " + this.expectedResult);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (this.expectedResult instanceof Exception) {
                 assertEquals(this.expectedResult.getClass(), e.getClass());
             } else {
@@ -305,7 +305,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             try {
                 certs[i++] = (X509Certificate) CryptReader.readCertificate(
                         new ClassPathResource(file).getInputStream());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Error creating certificate at " + file, e);
             }
         }
