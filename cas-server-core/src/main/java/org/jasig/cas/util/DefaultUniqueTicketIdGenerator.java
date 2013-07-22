@@ -18,6 +18,13 @@
  */
 package org.jasig.cas.util;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
  * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
@@ -27,11 +34,11 @@ package org.jasig.cas.util;
  * </p>
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
-public final class DefaultUniqueTicketIdGenerator implements
-    UniqueTicketIdGenerator {
+public final class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUniqueTicketIdGenerator.class);
 
     /** The numeric generator to generate the static part of the id. */
     private final NumericGenerator numericGenerator;
@@ -43,7 +50,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
      * values.
      */
-    private final String suffix;
+    private String suffix;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -76,12 +83,7 @@ public final class DefaultUniqueTicketIdGenerator implements
     public DefaultUniqueTicketIdGenerator(final String suffix) {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
         this.randomStringGenerator = new DefaultRandomStringGenerator();
-
-        if (suffix != null) {
-            this.suffix = "-" + suffix;
-        } else {
-            this.suffix = null;
-        }
+        prepareTicketSuffix(suffix);
     }
 
     /**
@@ -97,12 +99,7 @@ public final class DefaultUniqueTicketIdGenerator implements
         final String suffix) {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
-
-        if (suffix != null) {
-            this.suffix = "-" + suffix;
-        } else {
-            this.suffix = null;
-        }
+        prepareTicketSuffix(suffix);
     }
 
     public String getNewTicketId(final String prefix) {
@@ -122,5 +119,20 @@ public final class DefaultUniqueTicketIdGenerator implements
         }
 
         return buffer.toString();
+    }
+
+    private void prepareTicketSuffix(final String suffix) {
+        this.suffix = null;
+
+        if (StringUtils.isEmpty(suffix)) {
+            try {
+                this.suffix = InetAddress.getLocalHost().getCanonicalHostName();
+                LOGGER.debug("Automatically determined ticket suffix to be [{}].", this.suffix);
+            } catch (final UnknownHostException e) {
+                LOGGER.debug("Host name could not be determined automatically for the ticket suffix.", e);
+            }
+        } else {
+            this.suffix = "-" + suffix;
+        }
     }
 }

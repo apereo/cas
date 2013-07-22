@@ -20,6 +20,9 @@ package org.jasig.cas.util;
 
 import static org.junit.Assert.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.junit.Test;
 
 /**
@@ -31,18 +34,20 @@ public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
     public void testUniqueGenerationOfTicketIds() {
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
-            10);
-
-        assertNotSame(generator.getNewTicketId("TEST"), generator
-            .getNewTicketId("TEST"));
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10);
+        assertNotSame(generator.getNewTicketId("TEST"), generator.getNewTicketId("TEST"));
     }
 
     @Test
     public void testSuffix() {
         final String SUFFIX = "suffix";
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
-
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
         assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+    }
+
+    @Test
+    public void testBlankSuffix() throws UnknownHostException {
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator();
+        assertTrue(generator.getNewTicketId("test").endsWith(InetAddress.getLocalHost().getCanonicalHostName()));
     }
 }
