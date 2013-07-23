@@ -81,11 +81,11 @@ public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
-    private static UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
+    private static UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
 
-    private static ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
+    private static ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -156,16 +156,16 @@ public class JpaTicketRegistryTests {
         final Principal principal = new SimplePrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
-                idGenerator.getNewTicketId("TGT"),
+                ID_GENERATOR.getNewTicketId("TGT"),
                 TestUtils.getAuthentication(principal),
-                expirationPolicyTGT);
+                EXP_POLICY_TGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
        return parent.grantServiceTicket(
-               idGenerator.getNewTicketId("ST"),
+               ID_GENERATOR.getNewTicketId("ST"),
                new MockService("https://service.example.com"),
-               expirationPolicyST,
+               EXP_POLICY_ST,
                false);
     }
 

@@ -40,9 +40,6 @@ public class FileAuthenticationHandlerTests  {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
     @Before
     public void setUp() throws Exception {
         this.authenticationHandler = new FileAuthenticationHandler();
@@ -66,7 +63,7 @@ public class FileAuthenticationHandlerTests  {
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"));
             assertFalse(this.authenticationHandler.supports(c));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");
         }
     }
