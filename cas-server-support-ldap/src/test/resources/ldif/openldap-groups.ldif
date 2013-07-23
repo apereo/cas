@@ -1,0 +1,21 @@
+dn: cn=Administrators,${ldapBaseDn}
+cn: Administrators
+contactPerson: uid=9000000100,${ldapBaseDn}
+creationDate: 2012-12-21T00:00:00
+objectClass: virginiaTechGroup
+objectClass: top
+member:uid=9000000100,${ldapBaseDn}
+uid: 31415926535
+uugid: Administrators
+-
+
+dn: cn=Users,${ldapBaseDn}
+cn: Users
+contactPerson: uid=9000000100,${ldapBaseDn}
+creationDate: 2012-12-21T00:00:00
+objectClass: virginiaTechGroup
+objectClass: top
+member:uid=9000000100,${ldapBaseDn}
+uid: 31415926536
+uugid: Users
+-

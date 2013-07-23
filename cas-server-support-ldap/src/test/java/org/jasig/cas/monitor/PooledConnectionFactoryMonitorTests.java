@@ -34,8 +34,8 @@ import static org.junit.Assert.assertEquals;
  * @version $Revision: $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/applicationContext-test.xml"})
-@IfProfileValue(name = "monitorConfig", value = "true")
+@ContextConfiguration(locations = {"/openldap-poolmonitor-test.xml"})
+@IfProfileValue(name = "enableLdapTests", value = "true")
 public class PooledConnectionFactoryMonitorTests {
 
     @Autowired

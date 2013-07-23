@@ -1,5 +1,2 @@
-credential.properties
-extraConfigContext.xml
-ldap*.properties
-principals.json
-userdetails.properties
+ad.properties
+openldap.properties
