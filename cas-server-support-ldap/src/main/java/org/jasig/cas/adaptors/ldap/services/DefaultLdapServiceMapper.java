@@ -50,19 +50,19 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapServiceMapper.class);
 
     @NotNull
-    private String objectclass = "casService";
+    private String objectClass = "casRegisteredService";
 
     @NotNull
     private String serviceIdAttribute = "casServiceUrlPattern";
 
     @NotNull
-    private String idAttribute = "casServiceId";
+    private String idAttribute = "uid";
 
     @NotNull
     private String serviceDescriptionAttribute = "description";
 
     @NotNull
-    private String namingAttribute = "cn";
+    private String serviceNameAttribute = "cn";
 
     @NotNull
     private String serviceEnabledAttribute = "casServiceEnabled";
@@ -86,6 +86,9 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private String serviceAllowedAttributesAttribute = "casAllowedAttributes";
 
     @NotNull
+    private String ignoreAttributesAttribute = "casIgnoreAttributes";
+
+    @NotNull
     private String evaluationOrderAttribute = "casEvaluationOrder";
 
     @NotNull
@@ -94,26 +97,25 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
-        final String newDn = getDnForRegisteredService(dn, svc);
-        LOGGER.debug("Creating new DN entry [{}]", newDn);
 
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) svc).setId(newDn.hashCode());
+            ((AbstractRegisteredService) svc).setId(System.nanoTime());
         }
+        final String newDn = getDnForRegisteredService(dn, svc);
+        LOGGER.debug("Creating entry {}", newDn);
 
         final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
         attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
-        attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
-
+        attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
+        attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
+        attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
         attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
         attrs.add(new LdapAttribute(this.serviceAllowedToProxyAttribute, Boolean.toString(svc.isAllowedToProxy()).toUpperCase()));
         attrs.add(new LdapAttribute(this.serviceAnonymousAccessAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
         attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
-
-        attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
-
+        attrs.add(new LdapAttribute(this.ignoreAttributesAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
+        attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
         attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
-        attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
         attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
 
         if (svc.getAllowedAttributes().size() > 0) {
@@ -124,7 +126,7 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
             attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[] {})));
         }
 
-        attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass));
+        attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectClass));
 
         return new LdapEntry(newDn, attrs);
     }
@@ -141,19 +143,17 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setId(LdapUtils.getLong(entry, this.idAttribute, Long.valueOf(entry.getDn().hashCode())));
 
                 s.setServiceId(LdapUtils.getString(entry, this.serviceIdAttribute));
-                s.setName(LdapUtils.getString(entry, this.namingAttribute));
+                s.setName(LdapUtils.getString(entry, this.serviceNameAttribute));
                 s.setDescription(LdapUtils.getString(entry, this.serviceDescriptionAttribute));
+                s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
                 s.setTheme(LdapUtils.getString(entry, this.serviceThemeAttribute));
-
                 s.setEvaluationOrder(LdapUtils.getLong(entry, this.evaluationOrderAttribute).intValue());
                 s.setUsernameAttribute(LdapUtils.getString(entry, this.usernameAttribute));
-
-                s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
                 s.setAllowedToProxy(LdapUtils.getBoolean(entry, this.serviceAllowedToProxyAttribute));
                 s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
-
                 s.setAllowedAttributes(new ArrayList<String>(getMultiValuedAttributeValues(entry, this.serviceAllowedAttributesAttribute)));
+                s.setIgnoreAttributes(LdapUtils.getBoolean(entry, this.ignoreAttributesAttribute));
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
             }
             return s;
@@ -161,20 +161,32 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return null;
     }
 
-    public void setServiceIdAttribute(final String serviceIdAttribute) {
-        this.serviceIdAttribute = serviceIdAttribute;
+    public String getObjectClass() {
+        return this.objectClass;
+    }
+
+    public void setObjectClass(final String objectClass) {
+        this.objectClass = objectClass;
+    }
+
+    public String getIdAttribute() {
+        return this.idAttribute;
     }
 
     public void setIdAttribute(final String idAttribute) {
         this.idAttribute = idAttribute;
     }
 
+    public void setServiceIdAttribute(final String serviceIdAttribute) {
+        this.serviceIdAttribute = serviceIdAttribute;
+    }
+
     public void setServiceDescriptionAttribute(final String serviceDescriptionAttribute) {
         this.serviceDescriptionAttribute = serviceDescriptionAttribute;
     }
 
-    public void setNamingAttribute(final String namingAttribute) {
-        this.namingAttribute = namingAttribute;
+    public void setServiceNameAttribute(final String serviceNameAttribute) {
+        this.serviceNameAttribute = serviceNameAttribute;
     }
 
     public void setServiceEnabledAttribute(final String serviceEnabledAttribute) {
@@ -201,8 +213,26 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.serviceAllowedAttributesAttribute = serviceAllowedAttributesAttribute;
     }
 
+    public void setIgnoreAttributesAttribute(final String ignoreAttributesAttribute) {
+        this.ignoreAttributesAttribute = ignoreAttributesAttribute;
+    }
+
     public void setRequiredHandlersAttribute(final String handlers) {
         this.requiredHandlersAttribute = handlers;
+    }
+
+
+    public void setUsernameAttribute(final String usernameAttribute) {
+        this.usernameAttribute = usernameAttribute;
+    }
+
+    public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
+        this.evaluationOrderAttribute = evaluationOrderAttribute;
+    }
+
+    @Override
+    public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
+        return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);
     }
 
     private boolean isValidRegexPattern(final String pattern) {
@@ -232,18 +262,5 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
             return new RegisteredServiceImpl();
         }
         return null;
-    }
-
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
-    }
-
-    public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
-        this.evaluationOrderAttribute = evaluationOrderAttribute;
-    }
-
-    @Override
-    public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
-        return String.format("%s=%s,%s", this.namingAttribute, svc.getName(), parentDn);
     }
 }

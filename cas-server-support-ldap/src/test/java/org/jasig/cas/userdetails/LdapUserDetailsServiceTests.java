@@ -18,59 +18,108 @@
  */
 package org.jasig.cas.userdetails;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Properties;
 
-import org.jasig.cas.RequiredConfigurationProfileValueSource;
+import org.jasig.cas.authentication.AbstractLdapTests;
+import org.jasig.cas.util.LdapTestUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.ldaptive.Connection;
+import org.ldaptive.LdapEntry;
+import org.springframework.core.io.Resource;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the {@link LdapUserDetailsService} class.
+ * <p>
+ * The virginiaTechGroup schema MUST be installed on the target directories prior to running this test.
  *
  * @author Marvin Addison
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/applicationContext-test.xml"})
-@ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
-@IfProfileValue(name = "userDetailsConfig", value = "true")
-public class LdapUserDetailsServiceTests {
+@RunWith(Parameterized.class)
+public class LdapUserDetailsServiceTests extends AbstractLdapTests {
 
-    @Autowired
+    private Resource groupsLdif;
+
+    private Collection<LdapEntry> groupEntries;
+
     private LdapUserDetailsService userDetailsService;
 
-    @Autowired
-    @Qualifier("testUserDetails")
-    private Properties testUserDetails;
+    public LdapUserDetailsServiceTests(
+            final LdapTestUtils.DirectoryType directoryType, final String ... contextPaths) {
 
+        this.directoryType = directoryType;
+        this.contextPaths = contextPaths;
+    }
+
+    @Parameters
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(new Object[][]{
+                {
+                        LdapTestUtils.DirectoryType.OpenLdap,
+                        new String[]{"/ldap-provision-context.xml", "/openldap-userdetails-test.xml"},
+                },
+        });
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        this.groupsLdif = context.getBean("groupsLdif", Resource.class);
+        this.groupEntries = LdapTestUtils.readLdif(this.groupsLdif, this.baseDn);
+        final Connection connection = getConnection();
+        try {
+            connection.open();
+            LdapTestUtils.createLdapEntries(connection, this.directoryType, this.groupEntries);
+        } finally {
+            connection.close();
+        }
+        this.userDetailsService = this.context.getBean(LdapUserDetailsService.class);
+    }
 
     @Test
     public void testLoadUserByUsername() throws Exception {
-        User expected;
-        for (String user : testUserDetails.stringPropertyNames()) {
-            expected = parseUserDetails(testUserDetails.get(user).toString());
-            assertEquals(expected, userDetailsService.loadUserByUsername(user));
+        UserDetails user;
+        String username;
+        for (final LdapEntry entry : this.testEntries) {
+            username = getUsername(entry);
+            user = userDetailsService.loadUserByUsername(username);
+            assertEquals(username, user.getUsername());
+            assertTrue(hasAuthority(user, "ROLE_ADMINISTRATORS"));
+            assertTrue(hasAuthority(user, "ROLE_USERS"));
         }
     }
 
-    private User parseUserDetails(final String s) {
-        final String[] userRoles = s.split(":");
-        final String[] roles = userRoles[1].split("\\|");
-        final Collection<SimpleGrantedAuthority> roleAuthorities = new ArrayList<SimpleGrantedAuthority>(roles.length);
-        for (String role : roles) {
-            roleAuthorities.add(new SimpleGrantedAuthority(role));
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (!this.enableLdapTests) {
+            return;
         }
-        return new User(userRoles[0], LdapUserDetailsService.UNKNOWN_PASSWORD, roleAuthorities);
+        final Connection connection = getConnection();
+        try {
+            connection.open();
+            LdapTestUtils.removeLdapEntries(connection, this.groupEntries);
+        } finally {
+            connection.close();
+        }
+    }
+
+    private boolean hasAuthority(final UserDetails user, final String name) {
+        for (final GrantedAuthority authority : user.getAuthorities()) {
+            if (authority.getAuthority().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

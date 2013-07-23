@@ -1,0 +1,110 @@
+objectIdentifier VTMiddlewareRoot 1.3.6.1.4.1.6760.6
+objectIdentifier VTCASRoot VTMiddlewareRoot:4
+objectIdentifier VTCASAttributeType VTCASRoot:1
+objectIdentifier VTCASObjectClass VTCASRoot:2
+
+attributetype (
+    VTCASAttributeType:1
+    NAME 'casServiceUrlPattern'
+    DESC 'Service URL pattern.'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:2
+    NAME 'casServiceEnabled'
+    DESC 'Service enabled flag.'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:3
+    NAME 'casServiceSsoEnabled'
+    DESC 'TRUE to participate in SSO, FALSE to force authentication.'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:4
+    NAME 'casServiceAnonymousAccess'
+    DESC 'TRUE to use opaque, anonymous identifier for NetID, FALSE otherwise.'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:5
+    NAME 'casServiceAllowedToProxy'
+    DESC 'TRUE to enable proxy authentication support, FALSE otherwise.'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:6
+    NAME 'casServiceTheme'
+    DESC 'Spring theme name to use for service.'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:7
+    NAME 'casUsernameAttribute'
+    DESC 'Attribute name whose value should be used for service-specific NetID.'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:8
+    NAME 'casAllowedAttributes'
+    DESC 'Names of attributes to be released to service. Facilitates service-specific attribute release.'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype (
+    VTCASAttributeType:9
+    NAME 'casIgnoreAttributes'
+    DESC 'TRUE to disable service-specific attribute release, FALSE otherwise. Supersedes casAllowedAttributes.'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:10
+    NAME 'casEvaluationOrder'
+    DESC 'Numerical evaluation order of this service.'
+    EQUALITY integerMatch
+    ORDERING integerOrderingMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+    SINGLE-VALUE )
+
+attributetype (
+    VTCASAttributeType:11
+    NAME 'casRequiredHandlers'
+    DESC 'Names of authentication handlers that must succeed to gain access to this service. Part of MFA support.'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+########################################################
+#  Objectclasses below                                 #
+########################################################
+
+objectclass (
+    VTCASObjectClass:1
+    NAME 'casRegisteredService'
+    DESC 'CAS registered service.'
+    MUST ( uid $ casServiceUrlPattern $ cn )
+    MAY ( description $ casServiceEnabled $ casServiceSsoEnabled $ casServiceAnonymousAccess $
+          casServiceAllowedToProxy $ casServiceTheme $ casUsernameAttribute $ casAllowedAttributes $
+          casIgnoreAttributes $ casEvaluationOrder $ casRequiredHandlers ))
+
