@@ -18,21 +18,17 @@
  */
 package org.jasig.cas.persondir;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
 
-import org.jasig.cas.RequiredConfigurationProfileValueSource;
-import org.jasig.cas.authentication.principal.TestPrincipal;
+import org.jasig.cas.authentication.AbstractLdapTests;
+import org.jasig.cas.util.LdapTestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.Resource;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runners.Parameterized;
+import org.ldaptive.LdapEntry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -44,51 +40,57 @@ import static org.junit.Assert.assertTrue;
  * @author Marvin S. Addison
  * @since 4.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/applicationContext-test.xml"})
-@ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
-@IfProfileValue(name = "resolverConfig", value = "true")
-public class LdapPersonAttributeDaoTests {
+@RunWith(Parameterized.class)
+public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
 
-    @Autowired
     private LdapPersonAttributeDao attributeDao;
 
-    @Autowired
-    @Qualifier("testPrincipals")
-    private Resource testPrincipals;
+    public LdapPersonAttributeDaoTests(
+            final LdapTestUtils.DirectoryType directoryType, final String ... contextPaths) {
+
+        this.directoryType = directoryType;
+        this.contextPaths = contextPaths;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(new Object[][]{
+                {
+                        LdapTestUtils.DirectoryType.OpenLdap,
+                        new String[]{"/ldap-provision-context.xml", "/openldap-persondir-test.xml"},
+                },
+        });
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        this.attributeDao = this.context.getBean(LdapPersonAttributeDao.class);
+    }
 
     @Test
     public void testGetPerson() throws Exception {
         IPersonAttributes actual;
-        for (TestPrincipal expected : TestPrincipal.loadFromResource(testPrincipals)) {
-            actual = attributeDao.getPerson(expected.getUserName());
+        String username;
+        for (final LdapEntry entry : this.testEntries) {
+            username = getUsername(entry);
+            actual = attributeDao.getPerson(username);
             assertNotNull(actual);
-            assertEquals(expected.getId(), actual.getName());
-            assertAttributesSame(expected.getAttributes(), actual.getAttributes());
+            assertEquals(username, actual.getName());
+            assertSameValues(entry.getAttribute("mail").getStringValues(), actual.getAttributes().get("mail"));
         }
     }
 
     /**
      * Determines whether the given attribute maps are equal irrespective of value ordering.
      *
-     * @param a First set of attributes.
-     * @param b Second set of attributes.
+     * @param a Expected attribute values.
+     * @param b Actual attribute values.
      */
-    private static void assertAttributesSame(final Map<String, Object> a, final Map<String, List<Object>> b) {
+    private static void assertSameValues(final Collection<String> a, final Collection<Object> b) {
         assertEquals(a.size(), b.size());
-        Object valueA;
-        List<Object> valueB;
-        for (String key : a.keySet()) {
-            valueA = a.get(key);
-            valueB = b.get(key);
-            if (valueA instanceof List) {
-                for (Object item : ((List) valueA)) {
-                    assertTrue(valueB.contains(item));
-                }
-            } else {
-                assertEquals(1, valueB.size());
-                assertEquals(valueA, valueB.get(0));
-            }
+        for (final String item : a) {
+            assertTrue(b.contains(item));
         }
     }
 }

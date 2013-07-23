@@ -73,7 +73,8 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * @see #validateAccountPasswordExpirationPolicy()
      */
     @Override
-    protected final HandlerResult doPostAuthentication(final AuthenticationResponse response)
+    protected final HandlerResult doPostAuthentication(
+            final UsernamePasswordCredential credential, final AuthenticationResponse response)
             throws LoginException {
 
         final LdapEntry entry = response.getLdapEntry();
@@ -86,8 +87,8 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
         final List<Message> warnings = this.validateAccountPasswordExpirationPolicy(result);
         return new HandlerResult(
                 this,
-                new BasicCredentialMetaData(new UsernamePasswordCredential()),
-                super.createPrincipal(entry), warnings);
+                new BasicCredentialMetaData(credential),
+                super.createPrincipal(credential.getUsername(), entry), warnings);
     }
 
     /**

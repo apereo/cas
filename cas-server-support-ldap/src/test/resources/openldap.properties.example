@@ -1,10 +1,10 @@
-# This is a template for the ldap.properties file required
-# for unit test execution.
-
 #========================================
 # General properties
 #========================================
-ldap.url=ldap://directory.ldaptive.org
+ldap.url=ldap://ldap-test-1.middleware.vt.edu:10389
+
+# Base DN of users to be authenticated
+ldap.baseDn=ou=CASTest,dc=vt,dc=edu
 
 # LDAP connection timeout in milliseconds
 ldap.connectTimeout=3000
@@ -12,11 +12,19 @@ ldap.connectTimeout=3000
 # Whether to use StartTLS (probably needed if not SSL connection)
 ldap.useStartTLS=true
 
+# SSL certificate of LDAP directory to trust
+ldap.trustedCert=file:/path/to/ldap-test-1.middleware.vt.edu.pem
+
+# Manager credential DN
+ldap.managerDn=uid=1,ou=Test,dc=vt,dc=edu
+
+# Manager credential password
+ldap.managerPassword=notthepass
 
 #========================================
 # LDAP connection pool configuration
 #========================================
-ldap.pool.minSize=3
+ldap.pool.minSize=1
 ldap.pool.maxSize=10
 ldap.pool.validateOnCheckout=false
 ldap.pool.validatePeriodically=true
@@ -36,29 +44,19 @@ ldap.pool.prunePeriod=300
 # pool before it is liable to be removed/destroyed
 ldap.pool.idleTime=600
 
+#========================================
+# Authentication
+#========================================
+ldap.authn.searchFilter=(mail={user})
 
 #========================================
-# Authentication properties
+# User Details
 #========================================
-ldap.authn.baseDn=ou=people,dc=ldaptive,dc=org
-ldap.authn.searchFilter=uid={user}
-
-
-#========================================
-# Principal resolution properties
-#========================================
-ldap.resolver.baseDn=ou=people,dc=ldaptive,dc=org
-ldap.resolver.searchFilter=uid={0}
-ldap.resolver.userNameAttribute=mail
-
+ldap.role.baseDn=ou=CASTest,dc=vt,dc=edu
+ldap.role.searchFilter=(member={0})
+ldap.user.searchFilter=(mail={0})
 
 #========================================
-# User details properties
+# Registered Service
 #========================================
-ldap.userdetails.user.baseDn=ou=people,dc=ldaptive,dc=org
-ldap.userdetails.role.baseDn=ou=groups,dc=ldaptive,dc=org
-ldap.userdetails.user.searchFilter=uid={0}
-ldap.userdetails.role.searchFilter=member={0}
-ldap.userdetails.user.attribute=uid
-ldap.userdetails.role.attribute=ou
-
+ldap.service.baseDn=ou=CASTest,dc=vt,dc=edu

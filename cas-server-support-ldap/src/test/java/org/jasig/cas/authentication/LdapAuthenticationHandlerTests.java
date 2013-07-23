@@ -18,18 +18,19 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.Collection;
 
-import org.jasig.cas.RequiredConfigurationProfileValueSource;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+
+import org.jasig.cas.util.LdapTestUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.ldaptive.LdapEntry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,60 +39,103 @@ import static org.junit.Assert.fail;
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/applicationContext-test.xml"})
-@ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
-@IfProfileValue(name = "authenticationConfig", value = "true")
-public class LdapAuthenticationHandlerTests {
+@RunWith(Parameterized.class)
+public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
-    @Autowired
     private LdapAuthenticationHandler handler;
 
-    @Autowired
-    @Qualifier("testCredentials")
-    private Properties testCredentials;
+    private boolean supportsNotFound;
 
+    public LdapAuthenticationHandlerTests(
+            final LdapTestUtils.DirectoryType directoryType,
+            final boolean supportsNotFound,
+            final String ... contextPaths) {
+
+        this.directoryType = directoryType;
+        this.supportsNotFound = supportsNotFound;
+        this.contextPaths = contextPaths;
+    }
+
+    @Parameters
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(new Object[][] {
+                {
+                        LdapTestUtils.DirectoryType.ActiveDirectory,
+                        false,
+                        new String[] {"/ldap-provision-context.xml", "/ad-authn-test.xml"},
+                },
+                {
+                        LdapTestUtils.DirectoryType.OpenLdap,
+                        true,
+                        new String[] {"/ldap-provision-context.xml", "/openldap-searchbind-authn-test.xml"},
+                },
+                {
+                        LdapTestUtils.DirectoryType.OpenLdap,
+                        true,
+                        new String[] {"/ldap-provision-context.xml", "/openldap-anonsearchbind-authn-test.xml"},
+                },
+                {
+                        LdapTestUtils.DirectoryType.OpenLdap,
+                        false,
+                        new String[] {"/ldap-provision-context.xml", "/openldap-directbind-authn-test.xml"},
+                },
+        });
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        this.handler = this.context.getBean(LdapAuthenticationHandler.class);
+    }
 
     @Test
-    public void testAuthenticate() throws Exception {
-        String [] values;
-        String password;
-        String expectedPrincipal;
-        String expectedResult;
-        for (String username : testCredentials.stringPropertyNames()) {
-            values = testCredentials.get(username).toString().split("\\|");
-            expectedPrincipal = values[0];
-            password = values[1];
-            expectedResult = values[2];
-            if (Boolean.TRUE.toString().equalsIgnoreCase(expectedResult)) {
-                final HandlerResult result;
-                try {
-                    result = this.handler.authenticate(newCredentials(username, password));
-                } catch (GeneralSecurityException e) {
-                    fail(username + " authentication should have succeeded but failed with error: " + e);
-                    continue;
-                }
-                assertEquals(this.handler.getName(), result.getHandlerName());
-                assertNotNull(result.getPrincipal());
-                assertEquals(expectedPrincipal, result.getPrincipal().getId());
-            } else {
-                try {
-                    handler.authenticate(newCredentials(username, password));
-                    fail(username + " authentication succeeded but should have thrown " + expectedResult);
-                } catch (Exception e) {
-                    assertEquals(expectedResult, e.getClass().getSimpleName());
-                }
+    public void testAuthenticateSuccess() throws Exception {
+        String username;
+        for (final LdapEntry entry : this.testEntries) {
+            username = getUsername(entry);
+            final HandlerResult result = this.handler.authenticate(
+                    new UsernamePasswordCredential(username, LdapTestUtils.getPassword(entry)));
+            assertNotNull(result.getPrincipal());
+            assertEquals(username, result.getPrincipal().getId());
+            assertEquals(
+                    entry.getAttribute("displayName").getStringValue(),
+                    result.getPrincipal().getAttributes().get("displayName"));
+            assertEquals(
+                    entry.getAttribute("mail").getStringValue(),
+                    result.getPrincipal().getAttributes().get("mail"));
+        }
+    }
+
+    @Test
+    public void testAuthenticateFailure() throws Exception {
+        String username;
+        for (final LdapEntry entry : this.testEntries) {
+            username = getUsername(entry);
+            try {
+                this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
+                fail("Should have thrown FailedLoginException.");
+            } catch (final FailedLoginException e) {
+                assertNotNull(e.getMessage());
             }
         }
     }
 
-    private UsernamePasswordCredential newCredentials(final String user, final String pass) {
-        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        credentials.setUsername(user);
-        credentials.setPassword(pass);
-        return credentials;
+    @Test
+    public void testAuthenticateNotFound() throws Exception {
+        if (!this.supportsNotFound) {
+            return;
+        }
+        String username;
+        for (final LdapEntry entry : this.testEntries) {
+            username = getUsername(entry);
+            try {
+                this.handler.authenticate(new UsernamePasswordCredential("nobody", "badpassword"));
+                fail("Should have thrown AccountNotFoundException.");
+            } catch (final AccountNotFoundException e) {
+                assertNotNull(e.getMessage());
+            }
+        }
     }
 }
