@@ -41,28 +41,28 @@ public class ActiveDirectoryAccountStateTests {
                 org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS);
         state.getError().throwSecurityException();
     }
-    
+
     @Test(expected=AccountDisabledException.class)
     public void testAccountStateDisabled() throws LoginException {
         final ActiveDirectoryAccountState state = new ActiveDirectoryAccountState(
                 org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED);
         state.getError().throwSecurityException();
     }
-    
+
     @Test(expected=InvalidLoginLocationException.class)
     public void testAccountStateInvalidLocation() throws LoginException {
         final ActiveDirectoryAccountState state = new ActiveDirectoryAccountState(
                 org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.INVALID_WORKSTATION);
         state.getError().throwSecurityException();
     }
-    
+
     @Test(expected=AccountPasswordMustChangeException.class)
     public void testAccountStatePswMustChange() throws LoginException {
         final ActiveDirectoryAccountState state = new ActiveDirectoryAccountState(
                 org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE);
         state.getError().throwSecurityException();
     }
-    
+
     @Test(expected=AccountLockedException.class)
     public void testAccountStateNormalException() throws LoginException {
         final ActiveDirectoryAccountState state = new ActiveDirectoryAccountState(
