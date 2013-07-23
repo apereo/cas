@@ -23,10 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;

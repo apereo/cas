@@ -32,7 +32,6 @@ import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509Certific
 import org.jasig.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;

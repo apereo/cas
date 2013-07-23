@@ -113,7 +113,7 @@ public final class TestUtils {
         final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
     }
