@@ -84,6 +84,9 @@ public final class ClientCredential implements Credential, Serializable {
 
     @Override
     public String getId() {
-        return this.userProfile.getTypedId();
+        if (this.userProfile != null) {
+            return this.userProfile.getTypedId();
+        }
+        return null;
     }
 }
