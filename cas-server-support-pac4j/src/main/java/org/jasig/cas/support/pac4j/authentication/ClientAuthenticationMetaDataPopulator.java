@@ -18,17 +18,14 @@
  */
 package org.jasig.cas.support.pac4j.authentication;
 
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 
 /**
- * This class is a meta data populator for authentication. As attributes are stored in ClientCredential (inside the
- * user profile), they are added to the returned principal. The client name associated to the authentication is also
- * added to the authentication attributes.
+ * This class is a meta data populator for authentication. The client name associated to the authentication is added
+ * to the authentication attributes.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -46,12 +43,8 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         if (credential instanceof ClientCredential) {
-            final ClientCredential clientCredentials = (ClientCredential) credential;
-            final Authentication temp = builder.build();
-            builder.setPrincipal(new SimplePrincipal(
-                    temp.getPrincipal().getId(),
-                    clientCredentials.getUserProfile().getAttributes()));
-            builder.addAttribute(CLIENT_NAME, clientCredentials.getCredentials().getClientName());
+            final ClientCredential clientCredential = (ClientCredential) credential;
+            builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
         }
     }
 }
