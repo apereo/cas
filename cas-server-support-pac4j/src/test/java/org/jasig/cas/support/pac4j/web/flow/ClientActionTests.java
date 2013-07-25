@@ -113,8 +113,7 @@ public final class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final FacebookClient facebookClient = mock(FacebookClient.class);
-        when(facebookClient.getName()).thenReturn("FacebookClient");
+        final FacebookClient facebookClient = new MockFacebookClient();
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
 
         final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
