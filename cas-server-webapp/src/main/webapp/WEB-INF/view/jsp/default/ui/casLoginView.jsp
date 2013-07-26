@@ -52,7 +52,7 @@
       NOTE: Certain browsers will offer the option of caching passwords for a user.  There is a non-standard attribute,
       "autocomplete" that when set to "off" will tell certain browsers not to prompt to cache credentials.  For more
       information, see the following web page:
-      http://www.geocities.com/technofundo/tech/web/ie_autocomplete.html
+      http://www.technofundo.com/tech/web/ie_autocomplete.html
       --%>
       <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
       <form:password cssClass="required" cssErrorClass="error" id="password" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
