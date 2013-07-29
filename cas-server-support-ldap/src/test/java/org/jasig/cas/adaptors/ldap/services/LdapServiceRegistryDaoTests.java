@@ -24,43 +24,46 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.jasig.cas.RequiredConfigurationProfileValueSource;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
+ * Unit test for {@link LdapServiceRegistryDao} class.
+ * <p>
+ * The casRegisteredService schema MUST be installed on the target OpenLDAP server prior to running this test.
+ *
  * @author Misagh Moayyed
+ * @author Marvin S. Addison
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/applicationContext-test.xml" })
-@ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
-@IfProfileValue(name = "authenticationConfig", value = "true")
+@ContextConfiguration(locations = { "/openldap-regservice-test.xml" })
+@IfProfileValue(name = "enableLdapTests", value = "true")
 public class LdapServiceRegistryDaoTests {
 
     @Autowired
     private LdapServiceRegistryDao dao;
 
+    @Before
+    public void setUp() throws Exception {
+        for (final RegisteredService service : this.dao.load()) {
+            this.dao.delete(service);
+        }
+    }
+
     @Test
     public void testServices() throws Exception {
 
-        List<RegisteredService> list1 = this.dao.load();
-
-        for (final RegisteredService registeredService : list1) {
-            this.dao.delete(registeredService);
-        }
-
-        list1 = this.dao.load();
-        assertEquals(0, list1.size());
-
+        assertEquals(0, this.dao.load().size());
+        
         AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setAllowedToProxy(false);
@@ -73,7 +76,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
 
         this.dao.save(rs);
-
+        
         rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setAllowedToProxy(false);
@@ -87,18 +90,23 @@ public class LdapServiceRegistryDaoTests {
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
         this.dao.save(rs);
 
-        list1 = this.dao.load();
-        assertEquals(2, list1.size());
+        final List<RegisteredService> services = this.dao.load();
+        assertEquals(2, services.size());
 
-        AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(list1.get(0).getId());
+        AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
         assertNotNull(rs2);
-
+        
         rs2.setEvaluationOrder(9999);
         rs2.setAllowedAttributes(Arrays.asList("test3"));
         rs2.setName("Another Test Service");
-
+        
         rs2 = (AbstractRegisteredService) this.dao.save(rs2);
         assertNotNull(rs2);
+
+        for (final RegisteredService registeredService : services) {
+            this.dao.delete(registeredService);
+        }
+        assertEquals(0, this.dao.load().size());
     }
 
 }

@@ -33,8 +33,8 @@ import static org.junit.Assert.assertEquals;
  * @author Middleware Services
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/applicationContext-test.xml"})
-@IfProfileValue(name = "monitorConfig", value = "true")
+@ContextConfiguration(locations = {"/openldap-monitor-test.xml"})
+@IfProfileValue(name = "enableLdapTests", value = "true")
 public class ConnectionFactoryMonitorTests {
 
     @Autowired
