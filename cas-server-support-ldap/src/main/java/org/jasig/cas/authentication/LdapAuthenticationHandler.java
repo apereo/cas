@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
@@ -38,7 +39,9 @@ import org.ldaptive.LdapException;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,6 +147,13 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
+            // NOTE
+            // revisit when ldaptive provides support for conveying authentication request attributes to
+            // red entry resolver internally
+            if (this.authenticator.getEntryResolver() instanceof SearchEntryResolver) {
+                ((SearchEntryResolver) this.authenticator.getEntryResolver()).setReturnAttributes(
+                        this.authenticatedEntryAttributes);
+            }
             response = this.authenticator.authenticate(request);
         } catch (final LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
@@ -153,25 +163,29 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         examineAccountState(response);
 
         if (response.getResult()) {
-            doPostAuthentication(response);
+            return doPostAuthentication(upc, response);
         }
 
-        throw new FailedLoginException("LDAP authentication failed.");
+        if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
+            throw new AccountNotFoundException(upc.getUsername() + " not found.");
+        }
+        throw new FailedLoginException("Invalid credentials.");
     }
 
-    protected void examineAccountState(final AuthenticationResponse response) throws
-            LoginException {
+    protected void examineAccountState(final AuthenticationResponse response) throws LoginException {
         final AccountState state = response.getAccountState();
         if (state != null && state.getError() != null) {
             state.getError().throwSecurityException();
         }
     }
 
-    protected HandlerResult doPostAuthentication(final AuthenticationResponse response) throws LoginException {
+    protected HandlerResult doPostAuthentication(
+            final UsernamePasswordCredential credential,
+            final AuthenticationResponse response) throws LoginException {
         return new HandlerResult(
                 this,
-                new BasicCredentialMetaData(new UsernamePasswordCredential()),
-                createPrincipal(response.getLdapEntry()));
+                new BasicCredentialMetaData(credential),
+                createPrincipal(credential.getUsername(), response.getLdapEntry()));
     }
 
     @Override
@@ -187,23 +201,34 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     /**
      * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.
      *
+     * @param username Username that was successfully authenticated which is used for principal ID when
+     *                 {@link #setPrincipalIdAttribute(String)} is not specified.
      * @param ldapEntry LDAP entry that may contain principal attributes.
      *
      * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
      *
      * @throws LoginException On security policy errors related to principal creation.
      */
-    protected Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
-        final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
-        if (principalAttr == null || principalAttr.size() == 0) {
-            return null;
-        }
-        if (principalAttr.size() > 1) {
-            if (this.allowMultiplePrincipalAttributeValues) {
-                logger.warn("Found multiple values for principal ID attribute: {}.  Using first value.", principalAttr);
-            } else {
-                throw new LoginException("Multiple principal values not allowed: " + principalAttr);
+    protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws LoginException {
+        final String id;
+        if (this.principalIdAttribute != null) {
+            final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
+            if (principalAttr == null || principalAttr.size() == 0) {
+                throw new LoginException(this.principalIdAttribute + " attribute not found for " + username);
             }
+            if (principalAttr.size() > 1) {
+                if (this.allowMultiplePrincipalAttributeValues) {
+                    logger.warn(
+                            "Found multiple values for principal ID attribute: {}. Using first value={}.",
+                            principalAttr,
+                            principalAttr.getStringValue());
+                } else {
+                    throw new LoginException("Multiple principal values not allowed: " + principalAttr);
+                }
+            }
+            id = principalAttr.getStringValue();
+        } else {
+            id = username;
         }
         final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
         for (String ldapAttrName : this.principalAttributeMap.keySet()) {
@@ -218,7 +243,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
                 }
             }
         }
-        return new SimplePrincipal(principalAttr.getStringValue(), attributeMap);
+        return new SimplePrincipal(id, attributeMap);
     }
 
     @PostConstruct
