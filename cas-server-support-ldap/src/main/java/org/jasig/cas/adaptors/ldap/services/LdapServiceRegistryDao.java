@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
@@ -46,7 +47,6 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
  *
  * @author Misagh Moayyed
+ * @author Marvin S. Addison
  */
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
@@ -65,8 +66,6 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @NotNull
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapServiceMapper();
 
-    private Cache<SearchRequest> cacheStrategy = null;
-
     @NotNull
     private String searchFilter;
 
@@ -75,6 +74,13 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     @NotNull
     private SearchRequest searchRequest;
+
+
+    @PostConstruct
+    public void init() {
+        this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() +  "={0})";
+        this.loadFilter = "(objectClass=" + this.ldapServiceMapper.getObjectClass() + ')';
+    }
 
     @Override
     public RegisteredService save(final RegisteredService rs) {
@@ -101,9 +107,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         Connection connection = null;
         try {
             connection = this.connectionFactory.getConnection();
-            final Response<SearchResult> result = searchForServiceById(connection, rs.getId());
-            if (result.getResult() != null) {
-                final String currentDn = result.getResult().getEntry().getDn();
+            final Response<SearchResult> response = searchForServiceById(connection, rs.getId());
+            if (hasResults(response)) {
+                final String currentDn = response.getResult().getEntry().getDn();
 
                 connection = this.connectionFactory.getConnection();
                 final ModifyOperation operation = new ModifyOperation(connection);
@@ -131,10 +137,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         try {
             connection = this.connectionFactory.getConnection();
 
-            final Response<SearchResult> result = searchForServiceById(connection, registeredService.getId());
-            if (result.getResult() != null) {
-                final LdapEntry entry = result.getResult().getEntry();
-
+            final Response<SearchResult> response = searchForServiceById(connection, registeredService.getId());
+            if (hasResults(response)) {
+                final LdapEntry entry = response.getResult().getEntry();
                 final DeleteOperation delete = new DeleteOperation(connection);
                 final DeleteRequest request = new DeleteRequest(entry.getDn());
                 final Response<Void> res = delete.execute(request);
@@ -155,10 +160,10 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         final List<RegisteredService> list = new LinkedList<RegisteredService>();
         try {
             connection = this.connectionFactory.getConnection();
-            final SearchFilter filter = new SearchFilter(this.loadFilter);
-            final Response<SearchResult> result = executeSearchOperation(connection, filter);
-            if (result.getResult() != null) {
-                for (final LdapEntry entry : result.getResult().getEntries()) {
+            final Response<SearchResult> response =
+                    executeSearchOperation(connection, new SearchFilter(this.loadFilter));
+            if (hasResults(response)) {
+                for (final LdapEntry entry : response.getResult().getEntries()) {
                     final RegisteredService svc = this.ldapServiceMapper.mapToRegisteredService(entry);
                     list.add(svc);
                 }
@@ -177,9 +182,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         try {
             connection = this.connectionFactory.getConnection();
 
-            final Response<SearchResult> result = searchForServiceById(connection, id);
-            if (result.getResult() != null) {
-                return this.ldapServiceMapper.mapToRegisteredService(result.getResult().getEntry());
+            final Response<SearchResult> response = searchForServiceById(connection, id);
+            if (hasResults(response)) {
+                return this.ldapServiceMapper.mapToRegisteredService(response.getResult().getEntry());
             }
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
@@ -190,42 +195,53 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         return null;
     }
 
-    private Response<SearchResult> searchForServiceById(final Connection connection, final long id) throws LdapException {
+    private Response<SearchResult> searchForServiceById(final Connection connection, final long id)
+            throws LdapException {
+
         final SearchFilter filter = new SearchFilter(this.searchFilter);
         filter.setParameter(0, id);
         return executeSearchOperation(connection, filter);
     }
 
-    private Response<SearchResult> executeSearchOperation(final Connection connection, final SearchFilter filter) throws LdapException {
-        final SearchOperation searchOperation = new SearchOperation(connection, this.cacheStrategy);
+    private Response<SearchResult> executeSearchOperation(final Connection connection, final SearchFilter filter)
+            throws LdapException {
 
-        this.searchRequest.setSearchFilter(filter);
-
-        logger.debug("Using search request [{}]", searchRequest.toString());
-        return searchOperation.execute(searchRequest);
+        final SearchOperation searchOperation = new SearchOperation(connection);
+        final SearchRequest request = newRequest(filter);
+        logger.debug("Using search request {}", request.toString());
+        return searchOperation.execute(request);
     }
 
     public void setConnectionFactory(@NotNull final ConnectionFactory factory) {
         this.connectionFactory = factory;
     }
 
-    public void setCacheStrategy(@NotNull final Cache<SearchRequest> cache) {
-        this.cacheStrategy = cache;
-    }
-
     public void setLdapServiceMapper(final LdapRegisteredServiceMapper ldapServiceMapper) {
         this.ldapServiceMapper = ldapServiceMapper;
     }
 
-    public void setSearchFilter(@NotNull final String filter) {
-        this.searchFilter = filter;
-    }
-
-    public void setLoadFilter(@NotNull final String filter) {
-        this.loadFilter = filter;
-    }
-
     public void setSearchRequest(@NotNull final SearchRequest request) {
         this.searchRequest = request;
+    }
+
+    private boolean hasResults(final Response<SearchResult> response) {
+        return response.getResult() != null && response.getResult().getEntry() != null;
+    }
+
+    private SearchRequest newRequest(final SearchFilter filter) {
+        final SearchRequest sr = new SearchRequest(this.searchRequest.getBaseDn(), filter);
+        sr.setBinaryAttributes(this.searchRequest.getBinaryAttributes());
+        sr.setDerefAliases(this.searchRequest.getDerefAliases());
+        sr.setSearchEntryHandlers(this.searchRequest.getSearchEntryHandlers());
+        sr.setSearchReferenceHandlers(this.searchRequest.getSearchReferenceHandlers());
+        sr.setFollowReferrals(this.searchRequest.getFollowReferrals());
+        sr.setReturnAttributes(this.searchRequest.getReturnAttributes());
+        sr.setSearchScope(this.searchRequest.getSearchScope());
+        sr.setSizeLimit(this.searchRequest.getSizeLimit());
+        sr.setSortBehavior(this.searchRequest.getSortBehavior());
+        sr.setTimeLimit(this.searchRequest.getTimeLimit());
+        sr.setTypesOnly(this.searchRequest.getTypesOnly());
+        sr.setControls(this.searchRequest.getControls());
+        return sr;
     }
 }
