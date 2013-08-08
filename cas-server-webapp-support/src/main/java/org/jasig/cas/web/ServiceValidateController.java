@@ -41,7 +41,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Process the /validate and /serviceValidate URL requests.
+ * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
  * <p>
  * Obtain the Service Ticket and Service information and present them to the CAS
  * validation services. Receive back an Assertion containing the user Principal
