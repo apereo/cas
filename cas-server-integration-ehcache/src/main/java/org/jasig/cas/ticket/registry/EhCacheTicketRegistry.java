@@ -93,6 +93,16 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         if (StringUtils.isBlank(ticketId)) {
             return false;
         }
+        
+        Ticket ticket = getTicket(ticketId);
+        if (ticket instanceof ServiceTicket) {
+            this.serviceTicketsCache.put(new Element(ticket.getId(),null));
+        } else if (ticket instanceof TicketGrantingTicket) {
+            this.ticketGrantingTicketsCache.put(new Element(ticket.getId(), null));
+        } else {
+            throw new IllegalArgumentException("Invalid ticket type " + ticket);
+        }
+        
         return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
     }
 
