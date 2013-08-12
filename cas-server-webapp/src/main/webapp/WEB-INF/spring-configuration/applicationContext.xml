@@ -78,11 +78,11 @@
           p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
-    <bean id="httpClient" class="org.jasig.cas.util.HttpClient"
+    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
           p:readTimeout="5000"
           p:connectionTimeout="5000"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.HttpClient" parent="httpClient"
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
           p:followRedirects="false" />
 
     <bean id="persistentIdGenerator"
