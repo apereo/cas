@@ -18,8 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.pool.DirContextType;
 import org.springframework.ldap.pool.validation.DirContextValidator;
@@ -31,6 +35,7 @@ import org.springframework.ldap.pool.validation.DirContextValidator;
  * @since 3.5.1
  */
 public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private final LdapContextSource contextSource;
@@ -51,9 +56,23 @@ public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
     }
 
     public Status observe() {
-        if (dirContextValidator.validateDirContext(DirContextType.READ_ONLY, contextSource.getReadOnlyContext())) {
-            return Status.OK;
+        final DirContext context;
+        try {
+            context = this.contextSource.getReadOnlyContext();
+        } catch (final Exception e) {
+            logger.error("Error getting LDAP connection to monitor", e);
+            return Status.ERROR;
         }
-        return Status.ERROR;
+        try {
+            return this.dirContextValidator.validateDirContext(DirContextType.READ_ONLY, context)
+                    ? Status.OK
+                    : Status.ERROR;
+        } finally {
+            try {
+                context.close();
+            } catch (final NamingException e) {
+                logger.warn("Error closing LDAP connection {}", context, e);
+            }
+        }
     }
 }
