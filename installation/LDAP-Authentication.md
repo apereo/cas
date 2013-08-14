@@ -14,7 +14,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
 or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
 
-1. [Active Directory](#active_directory_authentication) - Users authenticate with sAMAAccount name.
+1. [Active Directory](#active_directory_authentication) - Users authenticate with _sAMAAccountName_.
 2. [Authenticated Search](#ldap_requiring_authenticated_search) - Manager bind/search followed by user simple bind.
 3. [Anonymous Search](#ldap_supporting_anonymous_search) - Anonymous search followed by user simple bind.
 4. [Direct Bind](#ldap_supporting_direct_bind) - Compute user DN from format string and perform simple bind.
@@ -22,36 +22,44 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
 ## Active Directory Authentication
-The following configuration authenticates users with the [Fast Bind](http://www.ldaptive.org/docs/guide/ad/fastbind)
-mechanism, which should be sufficient for most Active Directory deployments. Simply copy the configuration to
-`deployerConfigContext.xml` and provide values for property placeholders.
+The following configuration authenticates users by _sAMAccountName_ without performing a search,
+which requires manager/administrator credentials in most cases. It is therefore the most performant and secure
+solution for the typical Active Directory deployment. Note that the resolved principal ID, which becomes the NetID
+passed to CAS client applications, is the _sAMAccountName_ in the following example.
+Simply copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 {% highlight xml %}
+<!--
+   | Change principalIdAttribute to use another directory attribute,
+   | e.g. userPrincipalName, for the NetID
+   -->
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator">
-  <property name="principalAttributeMap">
-      <map>
-          <!--
-             | This map provides a simple attribute resolution mechanism.
-             | Keys are LDAP attribute names, values are CAS attribute names.
-             | Use this facility instead of a PrincipalResolver if LDAP is
-             | the only attribute source.
-             --> 
-          <entry key="displayName" value="displayName" />
-          <entry key="mail" value="mail" />
-          <entry key="memberOf" value="memberOf" />
-      </map>
-  </property>
+    <property name="principalAttributeMap">
+        <map>
+            <!--
+               | This map provides a simple attribute resolution mechanism.
+               | Keys are LDAP attribute names, values are CAS attribute names.
+               | Use this facility instead of a PrincipalResolver if LDAP is
+               | the only attribute source.
+               -->
+            <entry key="displayName" value="displayName" />
+            <entry key="mail" value="mail" />
+            <entry key="memberOf" value="memberOf" />
+        </map>
+    </property>
 </bean>
 
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
       c:resolver-ref="dnResolver"
-      c:handler-ref="authHandler" />
+      c:handler-ref="authHandler"
+      p:entryResolver-ref="entryResolver" />
 
+<!-- Active Directory UPN format. -->
 <bean id="dnResolver"
       class="org.ldaptive.auth.FormatDnResolver"
-      c:format="${ldap.authn.format}" />
+      c:format="%s@${ldap.domain}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory" />
@@ -83,16 +91,24 @@ mechanism, which should be sufficient for most Active Directory deployments. Sim
       p:ldapUrl="${ldap.url}"
       p:connectTimeout="${ldap.connectTimeout}"
       p:useStartTLS="${ldap.useStartTLS}"
-      p:connectionInitializer-ref="fastBindConnectionInitializer" />
+      p:sslConfig-ref="sslConfig"/>
 
-<bean id="fastBindConnectionInitializer"
-      class="org.ldaptive.ad.extended.FastBindOperation.FastBindConnectionInitializer" />
+<bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.X509CredentialConfig"
+              p:trustCertificates="${ldap.trustedCert}" />
+    </property>
+</bean>
 
 <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
       p:prunePeriod="${ldap.pool.prunePeriod}"
       p:idleTime="${ldap.pool.idleTime}" />
 
 <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+<bean id="entryResolver"
+      class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
+      p:baseDn="${ldap.baseDn}" />
 {% endhighlight %}
 
 #### LDAP Requiring Authenticated Search
@@ -101,22 +117,21 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:principalIdAttribute="uid"
+      p:principalIdAttribute="mail"
       c:authenticator-ref="authenticator">
-  <property name="principalAttributeMap">
-      <map>
-          <!--
-             | This map provides a simple attribute resolution mechanism.
-             | Keys are LDAP attribute names, values are CAS attribute names.
-             | Use this facility instead of a PrincipalResolver if LDAP is
-             | the only attribute source.
-             --> 
-          <entry key="member" value="member" />
-          <entry key="eduPersonAffiliation" value="affiliation" />
-          <entry key="mail" value="mail" />
-          <entry key="displayName" value="displayName" />
-      </map>
-  </property>
+    <property name="principalAttributeMap">
+        <map>
+            <!--
+               | This map provides a simple attribute resolution mechanism.
+               | Keys are LDAP attribute names, values are CAS attribute names.
+               | Use this facility instead of a PrincipalResolver if LDAP is
+               | the only attribute source.
+               -->
+            <entry key="member" value="member" />
+            <entry key="mail" value="mail" />
+            <entry key="displayName" value="displayName" />
+        </map>
+    </property>
 </bean>
 
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
@@ -124,7 +139,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.authn.baseDn}"
+      p:baseDn="${ldap.baseDn}"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
       p:userFilter="${ldap.authn.searchFilter}" />
@@ -145,11 +160,11 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 
 <bean id="bindConnectionInitializer"
       class="org.ldaptive.BindConnectionInitializer"
-      p:bindDn="${ldap.authn.managerDN}">
-  <property name="credential">
-    <bean class="org.ldaptive.Credential"
-          c:password="${ldap.authn.managerPassword}" />
-  </property>
+      p:bindDn="${ldap.managerDn}">
+    <property name="bindCredential">
+        <bean class="org.ldaptive.Credential"
+              c:password="${ldap.managerPassword}" />
+    </property>
 </bean>
 
 <bean id="abstractConnectionPool" abstract="true"
@@ -164,7 +179,8 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       class="org.ldaptive.ConnectionConfig"
       p:ldapUrl="${ldap.url}"
       p:connectTimeout="${ldap.connectTimeout}"
-      p:useStartTLS="${ldap.useStartTLS}" />
+      p:useStartTLS="${ldap.useStartTLS}"
+      p:sslConfig-ref="sslConfig" />
 
 <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
       p:minPoolSize="${ldap.pool.minSize}"
@@ -172,6 +188,13 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
       p:validatePeriodically="${ldap.pool.validatePeriodically}"
       p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+<bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.X509CredentialConfig"
+              p:trustCertificates="${ldap.trustedCert}" />
+    </property>
+</bean>
 
 <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
       p:prunePeriod="${ldap.pool.prunePeriod}"
@@ -202,22 +225,21 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:principalIdAttribute="uid"
+      p:principalIdAttribute="mail"
       c:authenticator-ref="authenticator">
-  <property name="principalAttributeMap">
-      <map>
-          <!--
-             | This map provides a simple attribute resolution mechanism.
-             | Keys are LDAP attribute names, values are CAS attribute names.
-             | Use this facility instead of a PrincipalResolver if LDAP is
-             | the only attribute source.
-             --> 
-          <entry key="member" value="member" />
-          <entry key="eduPersonAffiliation" value="affiliation" />
-          <entry key="mail" value="mail" />
-          <entry key="displayName" value="displayName" />
-      </map>
-  </property>
+    <property name="principalAttributeMap">
+        <map>
+            <!--
+               | This map provides a simple attribute resolution mechanism.
+               | Keys are LDAP attribute names, values are CAS attribute names.
+               | Use this facility instead of a PrincipalResolver if LDAP is
+               | the only attribute source.
+               -->
+            <entry key="member" value="member" />
+            <entry key="mail" value="mail" />
+            <entry key="displayName" value="displayName" />
+        </map>
+    </property>
 </bean>
 
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
@@ -225,7 +247,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.authn.baseDn}"
+      p:baseDn="${ldap.baseDn}"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
       p:userFilter="${ldap.authn.searchFilter}" />
@@ -258,7 +280,15 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
       p:ldapUrl="${ldap.url}"
       p:connectTimeout="${ldap.connectTimeout}"
-      p:useStartTLS="${ldap.useStartTLS}" />
+      p:useStartTLS="${ldap.useStartTLS}"
+      p:sslConfig-ref="sslConfig" />
+
+<bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.X509CredentialConfig"
+              p:trustCertificates="${ldap.trustedCert}" />
+    </property>
+</bean>
 
 <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
       p:prunePeriod="${ldap.pool.prunePeriod}"
@@ -289,29 +319,32 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="uid"
       c:authenticator-ref="authenticator">
-  <property name="principalAttributeMap">
-      <map>
-          <!--
-             | This map provides a simple attribute resolution mechanism.
-             | Keys are LDAP attribute names, values are CAS attribute names.
-             | Use this facility instead of a PrincipalResolver if LDAP is
-             | the only attribute source.
-             --> 
-          <entry key="member" value="member" />
-          <entry key="eduPersonAffiliation" value="affiliation" />
-          <entry key="mail" value="mail" />
-          <entry key="displayName" value="displayName" />
-      </map>
-  </property>
+    <property name="principalAttributeMap">
+        <map>
+            <!--
+               | This map provides a simple attribute resolution mechanism.
+               | Keys are LDAP attribute names, values are CAS attribute names.
+               | Use this facility instead of a PrincipalResolver if LDAP is
+               | the only attribute source.
+               -->
+            <entry key="member" value="member" />
+            <entry key="mail" value="mail" />
+            <entry key="displayName" value="displayName" />
+        </map>
+    </property>
 </bean>
 
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
       c:resolver-ref="dnResolver"
       c:handler-ref="authHandler" />
 
+<!--
+   | The following DN format works for many directories, but may need to be
+   | customized.
+   -->
 <bean id="dnResolver"
       class="org.ldaptive.auth.FormatDnResolver"
-      c:format="${ldap.authn.format}" />
+      c:format="uid=%s,${ldap.baseDn}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory" />
@@ -342,7 +375,15 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
 <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
       p:ldapUrl="${ldap.url}"
       p:connectTimeout="${ldap.connectTimeout}"
-      p:useStartTLS="${ldap.useStartTLS}" />
+      p:useStartTLS="${ldap.useStartTLS}"
+      p:sslConfig-ref="sslConfig" />
+
+<bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.X509CredentialConfig"
+              p:trustCertificates="${ldap.trustedCert}" />
+    </property>
+</bean>
 
 <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
       p:prunePeriod="${ldap.pool.prunePeriod}"
