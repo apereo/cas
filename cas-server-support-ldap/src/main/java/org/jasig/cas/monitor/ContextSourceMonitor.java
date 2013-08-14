@@ -22,6 +22,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.util.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -68,11 +69,7 @@ public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
                     ? Status.OK
                     : Status.ERROR;
         } finally {
-            try {
-                context.close();
-            } catch (final NamingException e) {
-                logger.warn("Error closing LDAP connection {}", context, e);
-            }
+            LdapUtils.closeContext(context);
         }
     }
 }
