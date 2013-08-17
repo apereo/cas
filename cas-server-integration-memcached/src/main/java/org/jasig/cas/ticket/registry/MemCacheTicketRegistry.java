@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -42,7 +43,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 
     /** Memcached client. */
     @NotNull
-    private final MemcachedClient client;
+    private final MemcachedClientIF client;
 
     /**
      * TGT cache entry timeout in seconds.
@@ -99,7 +100,7 @@ final int serviceTicketTimeOut) {
      * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
-    public MemCacheTicketRegistry(final MemcachedClient client, final int ticketGrantingTicketTimeOut,
+    public MemCacheTicketRegistry(final MemcachedClientIF client, final int ticketGrantingTicketTimeOut,
             final int serviceTicketTimeOut) {
         this.tgtTimeout = ticketGrantingTicketTimeOut;
         this.stTimeout = serviceTicketTimeOut;
