@@ -37,7 +37,7 @@ import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.SimpleHttpClient;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() throws Exception {
-        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class), new HttpClient());
+        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class), new SimpleHttpClient());
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
         this.request = new MockHttpServletRequest();

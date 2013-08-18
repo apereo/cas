@@ -36,10 +36,10 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class HttpClientTests  {
+public class SimpleHttpClientTests  {
 
-    private HttpClient getHttpClient() {
-        final HttpClient httpClient = new HttpClient();
+    private SimpleHttpClient getHttpClient() {
+        final SimpleHttpClient httpClient = new SimpleHttpClient();
         httpClient.setConnectionTimeout(1000);
         httpClient.setReadTimeout(1000);
         return httpClient;
@@ -63,7 +63,7 @@ public class HttpClientTests  {
 
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
-        final HttpClient client = this.getHttpClient();
+        final SimpleHttpClient client = this.getHttpClient();
         client.setSSLSocketFactory(this.getFriendlyToAllSSLSocketFactory());
         client.setHostnameVerifier(this.getFriendlyToAllHostnameVerifier());
         client.setAcceptableCodes(new int[] {200, 403});
