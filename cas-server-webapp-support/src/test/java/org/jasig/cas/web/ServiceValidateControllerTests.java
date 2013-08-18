@@ -25,7 +25,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
-import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.SimpleHttpClient;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.junit.Before;
@@ -60,7 +60,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController
         .setCentralAuthenticationService(getCentralAuthenticationService());
         final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
-        proxyHandler.setHttpClient(new HttpClient());
+        proxyHandler.setHttpClient(new SimpleHttpClient());
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());

@@ -24,7 +24,7 @@ import java.net.URL;
 
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class Cas20ProxyHandlerTests {
     @Before
     public void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
-        this.handler.setHttpClient(new HttpClient());
+        this.handler.setHttpClient(new SimpleHttpClient());
         this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
     }
 
@@ -59,7 +59,7 @@ public class Cas20ProxyHandlerTests {
 
     @Test
     public void testNonValidProxyTicket() throws Exception {
-        final HttpClient httpClient = new HttpClient();
+        final SimpleHttpClient httpClient = new SimpleHttpClient();
         httpClient.setAcceptableCodes(new int[] {900});
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
