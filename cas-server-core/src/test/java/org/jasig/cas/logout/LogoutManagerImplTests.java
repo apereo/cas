@@ -32,7 +32,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +59,7 @@ public class LogoutManagerImplTests {
     @Before
     public void setUp() {
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, new HttpClient());
+        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient());
         this.tgt = mock(TicketGrantingTicket.class);
         this.services = new HashMap<String, Service>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
