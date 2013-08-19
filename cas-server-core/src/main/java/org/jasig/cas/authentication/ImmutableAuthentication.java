@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
@@ -40,10 +42,10 @@ import org.springframework.util.Assert;
 public final class ImmutableAuthentication implements Authentication, Serializable {
 
     /** UID for serializing. */
-    private static final long serialVersionUID = -8486217210984574698L;
+    private static final long serialVersionUID = 3206127526058061391L;
 
-    /** Authentication date. */
-    private final ImmutableDate authenticatedDate;
+    /** Authentication date stamp. */
+    private final long authenticatedDate;
 
     /** List of metadata about credentials presented at authentication. */
     private final List<CredentialMetaData> credentials;
@@ -59,6 +61,16 @@ public final class ImmutableAuthentication implements Authentication, Serializab
 
     /** Map of handler name to handler authentication failure cause. */
     private final Map<String, Exception> failures;
+
+    /** No-arg constructor for serialization support. */
+    private ImmutableAuthentication() {
+        this.authenticatedDate = 0;
+        this.credentials = null;
+        this.principal = null;
+        this.attributes = null;
+        this.successes = null;
+        this.failures = null;
+    }
 
     /**
      * Creates a new instance with the given data.
@@ -85,7 +97,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
         Assert.notEmpty(credentials, "Credential cannot be empty");
         Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticatedDate = new ImmutableDate(date.getTime());
+        this.authenticatedDate = date.getTime();
         this.credentials = credentials;
         this.principal = principal;
         this.attributes = attributes.isEmpty() ? null : attributes;
@@ -99,7 +111,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     }
 
     public Date getAuthenticatedDate() {
-        return this.authenticatedDate;
+        return new ImmutableDate(this.authenticatedDate);
     }
 
     @Override
@@ -122,6 +134,37 @@ public final class ImmutableAuthentication implements Authentication, Serializab
         return wrap(this.failures);
     }
 
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
+        builder.append(this.principal);
+        builder.append(this.authenticatedDate);
+        builder.append(this.attributes);
+        builder.append(this.credentials);
+        builder.append(this.successes);
+        builder.append(this.failures);
+        return builder.toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof Authentication)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        final Authentication other = (Authentication) obj;
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder.append(this.principal, other.getPrincipal());
+        builder.append(this.credentials, other.getCredentials());
+        builder.append(this.successes, other.getSuccesses());
+        builder.append(this.authenticatedDate, other.getAuthenticatedDate().getTime());
+        builder.append(wrap(this.attributes), other.getAttributes());
+        builder.append(wrap(this.failures), other.getFailures());
+        return builder.isEquals();
+    }
+
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
@@ -141,6 +184,9 @@ public final class ImmutableAuthentication implements Authentication, Serializab
      * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
+
+        /** No-arg constructor for serialization support. */
+        private ImmutableDate() {}
 
         /**
          * Creates a new instance with the given epoch time in milliseconds.

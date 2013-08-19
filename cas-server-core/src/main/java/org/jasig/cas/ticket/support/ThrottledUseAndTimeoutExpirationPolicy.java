@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.ticket.support;
 
+import java.io.Serializable;
+
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.slf4j.Logger;
@@ -32,13 +34,12 @@ import org.slf4j.LoggerFactory;
 
  * @since 3.0.5
  */
-public final class ThrottledUseAndTimeoutExpirationPolicy implements
-    ExpirationPolicy {
+public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
-    /** Static ID for serialization. */
-    private static final long serialVersionUID = -848036845536731268L;
+    /** Serialization support. */
+    private static final long serialVersionUID = 205979491183779408L;
 
     /** The time to kill in milliseconds. */
     private long timeToKillInMilliSeconds;

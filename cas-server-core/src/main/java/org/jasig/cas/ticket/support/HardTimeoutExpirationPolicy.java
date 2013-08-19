@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.ticket.support;
 
+import java.io.Serializable;
+
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
@@ -29,13 +31,18 @@ import org.jasig.cas.ticket.TicketState;
 
  * @since 3.1.2
  */
-public final class HardTimeoutExpirationPolicy implements ExpirationPolicy {
+public final class HardTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = -1465997330804816888L;
+    /** Serialization support. */
+    private static final long serialVersionUID = 6728077010285422290L;
 
     /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
+
+    /** No-arg constructor for serialization support. */
+    private HardTimeoutExpirationPolicy() {
+        this.timeToKillInMilliSeconds = 0;
+    }
 
     public HardTimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
