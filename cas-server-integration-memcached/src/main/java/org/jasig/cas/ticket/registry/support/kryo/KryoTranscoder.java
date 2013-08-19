@@ -28,20 +28,17 @@ import java.util.Map;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.SerializationException;
 import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serialize.ClassSerializer;
 import com.esotericsoftware.kryo.serialize.DateSerializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.support.kryo.serial.HardTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.MultiTimeUseOrTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.SimplePrincipalSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.TimeoutExpirationPolicySerializer;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -68,9 +65,6 @@ public class KryoTranscoder implements Transcoder<Object> {
 
     /** Maximum size of single encoded object in bytes. */
     private final int bufferSize;
-
-    /** Field reflection helper class. */
-    private final FieldHelper fieldHelper = new FieldHelper();
 
     /** Map of class to serializer that handles it. */
     private Map<Class<?>, Serializer> serializerMap;
@@ -99,30 +93,22 @@ public class KryoTranscoder implements Transcoder<Object> {
     public void initialize() {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
+        kryo.register(BasicCredentialMetaData.class);
+        kryo.register(Class.class, new ClassSerializer(kryo));
         kryo.register(Date.class, new DateSerializer());
-        kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(fieldHelper));
+        kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
+        kryo.register(HandlerResult.class);
         kryo.register(ImmutableAuthentication.class);
-        kryo.register(
-                MultiTimeUseOrTimeoutExpirationPolicy.class,
-                new MultiTimeUseOrTimeoutExpirationPolicySerializer(fieldHelper));
-        kryo.register(
-                NeverExpiresExpirationPolicy.class,
-                new FieldSerializer(kryo, NeverExpiresExpirationPolicy.class));
-        kryo.register(
-                RememberMeDelegatingExpirationPolicy.class,
-                new FieldSerializer(kryo, RememberMeDelegatingExpirationPolicy.class));
+        kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
+        kryo.register(NeverExpiresExpirationPolicy.class);
+        kryo.register(RememberMeDelegatingExpirationPolicy.class);
         kryo.register(ServiceTicketImpl.class);
-        kryo.register(SimplePrincipal.class, new SimplePrincipalSerializer(kryo));
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(kryo));
+        kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
+        kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
-        kryo.register(
-                ThrottledUseAndTimeoutExpirationPolicy.class,
-                new FieldSerializer(kryo, ThrottledUseAndTimeoutExpirationPolicy.class));
-        kryo.register(
-                TicketGrantingTicketExpirationPolicy.class,
-                new FieldSerializer(kryo, TicketGrantingTicketExpirationPolicy.class));
-        kryo.register(TimeoutExpirationPolicy.class, new TimeoutExpirationPolicySerializer(fieldHelper));
+        kryo.register(TimeoutExpirationPolicy.class);
 
         // Register other types
         if (serializerMap != null) {
