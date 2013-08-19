@@ -68,40 +68,47 @@ compact data, which benefits both storage requirements and throughput.
 ## Component Configuration
 The following configuration is a template for `ticketRegistry.xml` Spring configuration:
 {% highlight xml %}
-<bean id="ticketRegistry"
-      class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry"
-      p:client-ref="memcachedClient"
-      p:ticketGrantingTicketTimeOut="${expiration.policy.tgt.validity_period}"
-      p:serviceTicketTimeOut="${expiration.policy.st.validity_period}" />
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
-      p:servers="${memcached.servers}"
-      p:protocol="${memcached.protocol}"
-      p:locatorType="${memcached.locatorType}"
-      p:failureMode="${memcached.failureMode}"
-      p:transcoder-ref="kryoTranscoder">
-  <property name="hashAlg">
-    <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.${memcached.hashAlgorithm}" />
-  </property>
-</bean>
+    <bean id="ticketRegistry"
+          class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry"
+          c:client-ref="memcachedClient"
+          c:ticketGrantingTicketTimeOut="${tgt.maxTimeToLiveInSeconds}"
+          c:serviceTicketTimeOut="${st.timeToKillInSeconds}" />
 
-<bean id="kryoTranscoder"
-      class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
-      init-method="initialize"
-      initialBufferSize="8192" />
+    <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+          p:servers="${memcached.servers}"
+          p:protocol="${memcached.protocol}"
+          p:locatorType="${memcached.locatorType}"
+          p:failureMode="${memcached.failureMode}"
+          p:transcoder-ref="kryoTranscoder">
+        <property name="hashAlg">
+            <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.${memcached.hashAlgorithm}" />
+        </property>
+    </bean>
+
+    <bean id="kryoTranscoder"
+          class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
+          init-method="initialize"
+          c:initialBufferSize="8192" />
+</beans>
 {% endhighlight %}
 
 `MemCacheTicketRegistry` properties reference:
 
-    expiration.policy.tgt.validity_period=7201
-    expiration.policy.st.validity_period=5
     # It is common to run memcached on every CAS node
     memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
     memcached.hashAlgorithm=FNV1_64_HASH
     memcached.protocol=BINARY
     memcached.locatorType=ARRAY_MOD
     memcached.failureMode=Redistribute
-    memcached.transcoder.initBufSize=12288
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with
