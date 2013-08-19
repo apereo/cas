@@ -22,6 +22,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,17 +32,23 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0
  */
-public final class MultiTimeUseOrTimeoutExpirationPolicy implements
-    ExpirationPolicy {
+public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
 
-    /** Serializable Unique ID. */
-    private static final long serialVersionUID = 3257844372614558261L;
+    /** Serialization support. */
+    private static final long serialVersionUID = -5704993954986738308L;
 
     /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
 
     /** The maximum number of uses before expiration. */
     private final int numberOfUses;
+
+
+    /** No-arg constructor for serialization support. */
+    private MultiTimeUseOrTimeoutExpirationPolicy() {
+        this.timeToKillInMilliSeconds = 0;
+        this.numberOfUses = 0;
+    }
 
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
         final long timeToKillInMilliSeconds) {

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,12 +36,12 @@ import java.util.concurrent.TimeUnit;
 
  * @since 3.4.10
  */
-public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
+public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
-    /** Static ID for serialization. */
-    private static final long serialVersionUID = 2136490343650084287L;
+    /** Serialization support. */
+    private static final long serialVersionUID = 7670537200691354820L;
 
     /** Maximum time this ticket is valid.  */
     private long maxTimeToLiveInMilliSeconds;

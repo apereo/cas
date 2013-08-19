@@ -18,14 +18,27 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -34,6 +47,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -47,9 +61,14 @@ public class KryoTranscoderTests {
 
     public KryoTranscoderTests(final int bufferSize) {
         transcoder = new KryoTranscoder(bufferSize);
-        transcoder.setSerializerMap(Collections.<Class<?>, Serializer>singletonMap(
+        final Map<Class<?>, Serializer> serializerMap = new HashMap<Class<?>, Serializer>();
+        serializerMap.put(
                 MockServiceTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class)));
+                new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class));
+        serializerMap.put(
+                MockTicketGrantingTicket.class,
+                new FieldSerializer(transcoder.getKryo(), MockTicketGrantingTicket.class));
+        transcoder.setSerializerMap(serializerMap);
         transcoder.initialize();
     }
 
@@ -67,9 +86,14 @@ public class KryoTranscoderTests {
 
     @Test
     public void testEncodeDecode() throws Exception {
-        final ServiceTicket expected =
+        final ServiceTicket expectedST =
                 new MockServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK");
-        assertEquals(expected, transcoder.decode(transcoder.encode(expected)));
+        assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
+
+        final TicketGrantingTicket expectedTGT =
+                new MockTicketGrantingTicket("TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1");
+        expectedTGT.grantServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK", null, null, false);
+        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }
 
     static class MockServiceTicket implements ServiceTicket {
@@ -120,6 +144,137 @@ public class KryoTranscoderTests {
 
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+        }
+    }
+
+    static class MockTicketGrantingTicket implements TicketGrantingTicket {
+        private String id;
+
+        private int usageCount = 0;
+
+        private Date creationDate = new Date();
+
+        private final Authentication authentication;
+
+        /** Constructor for serialization support. */
+        MockTicketGrantingTicket() {
+            this(null);
+        }
+
+        public MockTicketGrantingTicket(final String id) {
+            this.id = id;
+            final Credential credental = new UsernamePasswordCredential("handymanbob", "foo");
+            final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credental);
+            final AuthenticationBuilder builder = new AuthenticationBuilder();
+            final Map<String, Object> attributes = new HashMap<String, Object>();
+            attributes.put("nickname", "bob");
+            builder.setPrincipal(new SimplePrincipal("handymanbob", attributes));
+            builder.setAuthenticationDate(new Date());
+            builder.addCredential(credentialMetaData);
+            final AuthenticationHandler handler = new MockAuthenticationHandler();
+            try {
+                builder.addSuccess(handler.getName(), handler.authenticate(credental));
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+            this.authentication = builder.build();
+        }
+
+        @Override
+        public Authentication getAuthentication() {
+            return this.authentication;
+        }
+
+        @Override
+        public List<Authentication> getSupplementalAuthentications() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public ServiceTicket grantServiceTicket(
+                final String id,
+                final Service service,
+                final ExpirationPolicy expirationPolicy,
+                final boolean credentialsProvided) {
+            this.usageCount++;
+            return new MockServiceTicket(id);
+        }
+
+        @Override
+        public Map<String, Service> getServices() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public void removeAllServices() {}
+
+        @Override
+        public void markTicketExpired() {}
+
+        @Override
+        public boolean isRoot() {
+            return true;
+        }
+
+        @Override
+        public TicketGrantingTicket getRoot() {
+            return this;
+        }
+
+        @Override
+        public List<Authentication> getChainedAuthentications() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public String getId() {
+            return this.id;
+        }
+
+        @Override
+        public boolean isExpired() {
+            return false;
+        }
+
+        @Override
+        public TicketGrantingTicket getGrantingTicket() {
+            return this;
+        }
+
+        @Override
+        public long getCreationTime() {
+            return this.creationDate.getTime();
+        }
+
+        @Override
+        public int getCountOfUses() {
+            return this.usageCount;
+        }
+
+        public boolean equals(final Object other) {
+            return other instanceof MockTicketGrantingTicket
+                    && ((MockTicketGrantingTicket) other).getId().equals(this.id)
+                    && ((MockTicketGrantingTicket) other).getCountOfUses() == this.usageCount
+                    && ((MockTicketGrantingTicket) other).getCreationTime() == this.creationDate.getTime()
+                    && ((MockTicketGrantingTicket) other).getAuthentication().equals(this.authentication);
+        }
+    }
+
+    public static class MockAuthenticationHandler implements AuthenticationHandler {
+
+        @Override
+        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+            return new HandlerResult(this, new BasicCredentialMetaData(credential));
+        }
+
+        @Override
+        public boolean supports(final Credential credential) {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            return "MockAuthenticationHandler";
         }
     }
 }
