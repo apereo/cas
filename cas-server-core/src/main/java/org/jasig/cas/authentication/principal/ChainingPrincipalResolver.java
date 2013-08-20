@@ -44,7 +44,9 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     private List<PrincipalResolver> chain;
 
     /**
-     * Sets the resolver chain.
+     * Sets the resolver chain. The resolvers other than the first one MUST be capable of performing resolution
+     * on the basis of {@link org.jasig.cas.authentication.Credential#getId()} alone;
+     * {@link PersonDirectoryPrincipalResolver} notably meets that requirement.
      *
      * @param chain List of delegate resolvers that are invoked in a chain.
      */
@@ -52,7 +54,15 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         this.chain = chain;
     }
 
-    @Override
+    /**
+     * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
+     * {@link PrincipalResolver#supports(org.jasig.cas.authentication.Credential)} method is called only for the
+     * first configured resolver.
+     *
+     * @param credential Authenticated credential.
+     *
+     * @return The principal from the last configured resolver in the chain.
+     */
     public Principal resolve(final Credential credential) {
         Principal result = null;
         Credential input = credential;
@@ -65,7 +75,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         return result;
     }
 
-    @Override
+    /**
+     * Determines whether the credential is supported by this component by delegating to the first configured
+     * resolver in the chain.
+     *
+     * @param credential The credential to check for support.
+     *
+     * @return True if the first configured resolver in the chain supports the credential, false otherwise.
+     */
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
     }
