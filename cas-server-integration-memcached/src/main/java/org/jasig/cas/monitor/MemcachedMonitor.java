@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 
 /**
- * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClient}.
+ * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
  *
  * @author Marvin S. Addison
  * @since 3.5.1
@@ -37,7 +37,7 @@ import net.spy.memcached.MemcachedClient;
 public class MemcachedMonitor extends AbstractCacheMonitor {
 
     @NotNull
-    private final MemcachedClient memcachedClient;
+    private final MemcachedClientIF memcachedClient;
 
 
     /**
@@ -45,7 +45,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      *
      * @param client Memcached client.
      */
-    public MemcachedMonitor(final MemcachedClient client) {
+    public MemcachedMonitor(final MemcachedClientIF client) {
         this.memcachedClient = client;
     }
 
@@ -74,7 +74,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
 
 
     /**
-     * Get cache statistics for all memcached hosts known to {@link MemcachedClient}.
+     * Get cache statistics for all memcached hosts known to {@link MemcachedClientIF}.
      *
      * @return Statistics for all available hosts.
      */
