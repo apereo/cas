@@ -20,6 +20,7 @@ package org.jasig.cas.authentication;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
@@ -39,6 +40,11 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
 
     /** Type of original credential. */
     private Class<? extends Credential> credentialClass;
+
+    /** No-arg constructor for serialization support. */
+    private BasicCredentialMetaData() {
+        this.id = null;
+    }
 
     /**
      * Creates a new instance from the given credential.
@@ -75,6 +81,9 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
             return false;
         }
         final BasicCredentialMetaData md = (BasicCredentialMetaData) other;
-        return this.id.equals(md.getId()) && this.credentialClass.equals(md.getCredentialClass());
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder.append(this.id, md.id);
+        builder.append(this.credentialClass, md.credentialClass);
+        return builder.isEquals();
     }
 }
