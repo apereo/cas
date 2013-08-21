@@ -115,13 +115,15 @@ public class SessionMonitorTests {
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }
-        String id;
-        for (int i = 0; i < stCount; i++) {
-            registry.addTicket(ticket.grantServiceTicket(
-                    GENERATOR.getNewTicketId("ST"),
-                    new MockService("junit"),
-                    TEST_EXP_POLICY,
-                    false));
+        
+        if (ticket != null) {
+          for (int i = 0; i < stCount; i++) {
+              registry.addTicket(ticket.grantServiceTicket(
+                      GENERATOR.getNewTicketId("ST"),
+                      new MockService("junit"),
+                      TEST_EXP_POLICY,
+                      false));
+          }
         }
     }
 }
