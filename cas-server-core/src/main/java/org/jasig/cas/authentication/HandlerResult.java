@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.principal.Principal;
@@ -39,7 +40,7 @@ import org.springframework.util.StringUtils;
 public class HandlerResult implements Serializable {
 
     /** Serialization support. */
-    private static final long serialVersionUID = 5767801575062385921L;
+    private static final long serialVersionUID = -3113998493287982485L;
 
     /** The name of the authentication handler that successfully authenticated a credential. */
     private String handlerName;
@@ -53,18 +54,20 @@ public class HandlerResult implements Serializable {
     /** List of warnings issued by the authentication source while authenticating the credential. */
     private List<Message> warnings;
 
+    /** No-arg constructor for serialization support. */
+    private HandlerResult() {}
 
     public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, Collections.<Message>emptyList());
+        this(source, metaData, null, null);
     }
 
     public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
-        this(source, metaData, p, Collections.<Message>emptyList());
+        this(source, metaData, p, null);
     }
 
     public HandlerResult(
             final AuthenticationHandler source, final CredentialMetaData metaData, final List<Message> warnings) {
-        this(source, metaData, null, Collections.<Message>emptyList());
+        this(source, metaData, null, null);
     }
 
     public HandlerResult(
@@ -74,7 +77,6 @@ public class HandlerResult implements Serializable {
             final List<Message> warnings) {
         Assert.notNull(source, "Source cannot be null.");
         Assert.notNull(metaData, "Credential metadata cannot be null.");
-        Assert.notNull(warnings, "Warnings cannot be null.");
         this.handlerName = source.getName();
         if (!StringUtils.hasText(this.handlerName)) {
             this.handlerName = source.getClass().getSimpleName();
@@ -97,7 +99,9 @@ public class HandlerResult implements Serializable {
     }
 
     public List<Message> getWarnings() {
-        return Collections.unmodifiableList(this.warnings);
+        return this.warnings == null
+                ? Collections.<Message>emptyList()
+                : Collections.unmodifiableList(this.warnings);
     }
 
     @Override
@@ -119,10 +123,12 @@ public class HandlerResult implements Serializable {
             return true;
         }
         final HandlerResult other = (HandlerResult) obj;
-        return this.handlerName.equals(other.getHandlerName())
-                && this.credentialMetaData.equals(other.getCredentialMetaData())
-                && this.principal.equals(other.getPrincipal())
-                && this.warnings.equals(other.getWarnings());
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder.append(this.handlerName, other.handlerName);
+        builder.append(this.credentialMetaData, other.credentialMetaData);
+        builder.append(this.principal, other.principal);
+        builder.append(this.warnings, other.warnings);
+        return builder.isEquals();
     }
 
     @Override
