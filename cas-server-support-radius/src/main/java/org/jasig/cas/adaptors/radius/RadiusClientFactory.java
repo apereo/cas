@@ -19,6 +19,7 @@
 package org.jasig.cas.adaptors.radius;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -83,10 +84,14 @@ public class RadiusClientFactory {
     /**
      * RADIUS server network address.
      *
-     * @param address Network address.
+     * @param address Network address as a string.
      */
-    public void setInetAddress(final InetAddress address) {
-        this.inetAddress = address;
+    public void setInetAddress(final String address) {
+        try {
+            this.inetAddress = InetAddress.getByName(address);
+        } catch (final UnknownHostException e) {
+            throw new RuntimeException("Invalid address " + address);
+        }
     }
 
     /**
