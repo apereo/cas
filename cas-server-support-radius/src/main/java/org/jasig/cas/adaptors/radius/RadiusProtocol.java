@@ -40,4 +40,13 @@ public enum RadiusProtocol {
     RadiusProtocol(final String name) {
         this.name = name;
     }
+
+    /**
+     * Gets the radius protocol name required by {@link net.jradius.client.RadiusClient.getAuthProtocol()}.
+     *
+     * @return RADIUS protocol name known to {@link net.jradius.client.RadiusClient}.
+     */
+    public String getName() {
+        return this.name;
+    }
 }
