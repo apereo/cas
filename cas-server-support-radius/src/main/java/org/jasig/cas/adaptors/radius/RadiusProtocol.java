@@ -29,7 +29,9 @@ public enum RadiusProtocol {
     EAP_MD5("eap-md5"),
     EAP_MSCHAPv2("eap-mschapv2"),
     EAP_TLS("eap-tls"),
-    EAP_TTLS("eap-ttls"),
+    EAP_TTLS_PAP("eap-ttls:innerProtocol=pap"),
+    EAP_TTLS_MD5("eap-ttls:innerProtocol=md5"),
+    EAP_TTLS_EAP_MSCHAPv2("eap-ttls:innerProtocol=eap-mschapv2"),
     MSCHAPv1("mschapv1"),
     MSCHAPv2("mschapv2"),
     PAP("pap"),
@@ -42,7 +44,7 @@ public enum RadiusProtocol {
     }
 
     /**
-     * Gets the radius protocol name required by {@link net.jradius.client.RadiusClient.getAuthProtocol()}.
+     * Gets the radius protocol name required by {@link net.jradius.client.RadiusClient.getAuthProtocol(String)}.
      *
      * @return RADIUS protocol name known to {@link net.jradius.client.RadiusClient}.
      */
