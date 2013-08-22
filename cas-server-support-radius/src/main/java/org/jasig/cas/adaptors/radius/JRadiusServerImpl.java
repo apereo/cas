@@ -86,7 +86,7 @@ public final class JRadiusServerImpl implements RadiusServer {
             final AccessRequest request = new AccessRequest(client, attributeList);
             final RadiusPacket response = client.authenticate(
                     request,
-                    RadiusClient.getAuthProtocol(this.protocol.name()),
+                    RadiusClient.getAuthProtocol(this.protocol.getName()),
                     this.retries);
 
             LOGGER.debug("RADIUS response from {}: {}",
