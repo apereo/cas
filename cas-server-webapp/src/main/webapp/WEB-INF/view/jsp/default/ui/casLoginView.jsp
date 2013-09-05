@@ -36,14 +36,16 @@
   
     <section class="row">
       <label for="username"><spring:message code="screen.welcome.label.netid" /></label>
-      <c:if test="${not empty sessionScope.openIdLocalId}">
-        <strong>${sessionScope.openIdLocalId}</strong>
-        <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
-      </c:if>
-      <c:if test="${empty sessionScope.openIdLocalId}">
-        <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
-        <form:input cssClass="required" cssErrorClass="error" id="username" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="off" htmlEscape="true" />
-      </c:if>
+      <c:choose>
+        <c:when test="${not empty sessionScope.openIdLocalId}">
+          <strong>${sessionScope.openIdLocalId}</strong>
+          <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
+        </c:when>
+        <c:otherwise>
+          <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
+          <form:input cssClass="required" cssErrorClass="error" id="username" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="off" htmlEscape="true" />
+        </c:otherwise>
+      </c:choose>
     </section>
     
     <section class="row">
