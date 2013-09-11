@@ -21,21 +21,21 @@ attributetype (
     SINGLE-VALUE )
 
 attributetype (
-    VTMiddlewareAttributeType:36    
+    VTMiddlewareAttributeType:36
     NAME 'administrator'
     DESC 'These are the DNs of the people who may administer this group'
     EQUALITY distinguishedNameMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 
 attributetype (
-    VTMiddlewareAttributeType:37    
+    VTMiddlewareAttributeType:37
     NAME 'contactPerson'
-    DESC 'The DN of the person to who should recieve correspondence for this group.'
+    DESC 'The DN of the person to who should receive correspondence for this group.'
     EQUALITY distinguishedNameMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 
 attributetype (
-    VTMiddlewareAttributeType:40    
+    VTMiddlewareAttributeType:40
     NAME 'groupData'
     DESC 'This field allows a group to store additional information about the group, which may be displayed along with other group information'
     EQUALITY caseIgnoreMatch
@@ -43,7 +43,7 @@ attributetype (
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype (
-    VTMiddlewareAttributeType:44    
+    VTMiddlewareAttributeType:44
     NAME 'uugid'
     DESC 'This Universally Unique Group Identifier is the unique identifier of a group within the directory'
     EQUALITY caseIgnoreMatch
