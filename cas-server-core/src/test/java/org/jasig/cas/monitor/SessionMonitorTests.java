@@ -115,7 +115,7 @@ public class SessionMonitorTests {
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }
-        
+
         if (ticket != null) {
           for (int i = 0; i < stCount; i++) {
               registry.addTicket(ticket.grantServiceTicket(
