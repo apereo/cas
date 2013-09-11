@@ -967,7 +967,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
-    <ehcache.version>2.7.0</ehcache.version>
+    <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.2</joda-time.version>
 	
