@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public final class Response {
     /** Pattern to detect unprintable ASCII characters. */
     private static final Pattern NON_PRINTABLE =
-        Pattern.compile("[\\x00-\\x19\\x7F]+");
+        Pattern.compile("[\\x00-\\x1F\\x7F]+");
 
     /** Log instance. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
