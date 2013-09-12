@@ -924,7 +924,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
     <jdk.version>1.6</jdk.version>
-    <ehcache.version>2.6.0</ehcache.version>
+    <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.1</joda-time.version>
   </properties>
