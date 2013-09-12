@@ -182,7 +182,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Trailing spaces"/>  
     <property name="severity" value="error"/>
-    <property name="format" value=".\s+$"/>
+    <property name="format" value="\w+\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <module name="RegexpSingleline">
