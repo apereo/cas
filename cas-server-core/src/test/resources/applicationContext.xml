@@ -103,7 +103,7 @@
                     <property name="name" value="EduPerson Test Invalid Service" />
                     <property name="serviceId" value="eduPersonTestInvalid" />
                     <property name="evaluationOrder" value="4" />
-                    <property name="usernameAttribute" value="eduPersonAffiliation" />
+                    <property name="usernameAttribute" value="nonExistentAttributeName" />
                     <property name="allowedAttributes">
                     	<list>
                     		<value>groupMembership</value>
