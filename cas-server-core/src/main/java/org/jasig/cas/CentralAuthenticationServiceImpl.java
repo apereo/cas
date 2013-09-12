@@ -244,7 +244,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -436,9 +436,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(), principal.getAttributes(), registeredService);
+            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(),
+                    principal.getAttributes(), registeredService);
             if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease, registeredService);
+                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(),
+                        attributesToRelease, registeredService);
             }
 
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
@@ -465,8 +467,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
      *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default
      *  principal id is returned.</li>
-     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed
-     *  attributes for the service, the corresponding attribute value will be returned.
+     *  <li>If the username attribute is available as part of the principal's attributes,
+     *  the corresponding attribute value will be returned.
      *  </li>
      *   <li>Otherwise, the default principal's id is returned as the username attribute
      *   with an additional warning.</li>
@@ -489,8 +491,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute))
-                    && principal.getAttributes().containsKey(serviceUsernameAttribute)) {
+            if (principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
             } else {
                 principalId = principal.getId();
