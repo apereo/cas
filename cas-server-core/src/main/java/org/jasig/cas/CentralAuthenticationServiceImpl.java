@@ -441,8 +441,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) &&
-                 principal.getAttributes().containsKey(serviceUsernameAttribute)) {
+            if (principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(registeredService.getUsernameAttribute()).toString();
             } else {
                 principalId = principal.getId();
