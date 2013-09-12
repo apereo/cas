@@ -350,17 +350,17 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     
     @Test
     public void testValidateServiceTicketWithInvalidUsernameAttribute() throws TicketException {
-        UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
         
-        Service svc = TestUtils.getService("eduPersonTestInvalid");
+        final Service svc = TestUtils.getService("eduPersonTestInvalid");
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
             
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
         final Authentication auth = assertion.getChainedAuthentications().get(0);
         
         /*
-         * The attribute specified for this service is not allows in the list of returned attributes.
+         * The attribute specified for this service does not resolve.
          * Therefore, we expect the default to be returned. 
          */
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
