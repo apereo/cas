@@ -22,22 +22,42 @@ package org.jasig.cas.services;
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public class UnauthorizedServiceException extends RuntimeException {
 
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
-
-    /** The code description. */
-    private static final String CODE = "service.not.authorized";
-
-    public UnauthorizedServiceException() {
-        this(CODE);
+    
+    /** Exception object that indicates the service is unauthorized for use. **/
+    public static final UnauthorizedServiceException UNAUTHZ_SVC_EXCEPTION = 
+            new UnauthorizedServiceException("screen.service.error.message", "");
+    
+    /** Exception object that indicates the service manager is empty with no service definitions. **/
+    public static final UnauthorizedServiceException EMPTY_SVC_MGMR_EXCEPTION = 
+            new UnauthorizedServiceException("screen.service.empty.error.message", "");
+    
+    private String code = null;
+    
+    /**
+     * Construct the exception object with the associated error code.
+     * @param message the error message
+     */
+    public UnauthorizedServiceException(final String message) {
+        super(message);
     }
-
-
+    
+    /**
+     * Constructs an UnauthorizedServiceException with a custom message and the
+     * root cause of this exception.
+     *
+     * @param message an explanatory message.
+     * @param code the error code mapped to the messaged bundle.
+     */
+    public UnauthorizedServiceException(final String code, final String message) {
+        this(message);
+        this.code = code;
+    }
     /**
      * Constructs an UnauthorizedServiceException with a custom message and the
      * root cause of this exception.
@@ -45,17 +65,14 @@ public class UnauthorizedServiceException extends RuntimeException {
      * @param message an explanatory message.
      * @param cause the root cause of the exception.
      */
-    public UnauthorizedServiceException(final String message,
-        final Throwable cause) {
+    public UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
     }
-
     /**
-     * Constructs an exception with a custom message.
-     *
-     * @param message an explanatory message.
+     * The error code associated with this exception.
+     * @return the error code.
      */
-    public UnauthorizedServiceException(final String message) {
-        super(message);
+    public String getCode() {
+        return this.code;
     }
 }

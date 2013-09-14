@@ -263,7 +263,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (registeredService == null || !registeredService.isEnabled()) {
             logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
-            throw new UnauthorizedServiceException();
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         }
 
         if (!registeredService.isSsoEnabled() && credentials == null
@@ -406,10 +406,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled, and thus not allowed to validate tickets.",
-                                             service.getId());
+            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled"
+                    + " and thus not allowed to validate tickets.", service.getId());
             logger.warn(msg);
-            throw new UnauthorizedServiceException(msg);
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         }
 
         if (serviceTicket == null) {
