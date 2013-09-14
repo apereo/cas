@@ -55,18 +55,24 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         if (service == null) {
             return success();
         }
+        
+        if (this.servicesManager.getAllServices().size() == 0) {
+            logger.warn("No service definitions are found in the service manager. Service [{}] "
+                    + "will not be automatically authorized to request authentication.", service.getId());
+            throw UnauthorizedServiceException.EMPTY_SVC_MGMR_EXCEPTION;
+        }
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
             logger.warn(
-                    "Unauthorized Service Access for Service: [ {} ] - service is not defined in the service registry.",
+                    "Unauthorized Service Access for Service: [{}] - service is not defined in the service registry.",
                     service.getId());
-            throw new UnauthorizedServiceException();
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         } else if (!registeredService.isEnabled()) {
             logger.warn(
-                    "Unauthorized Service Access for Service: [ {} ] - service is not enabled in the service registry.",
+                    "Unauthorized Service Access for Service: [{}] - service is not enabled in the service registry.",
                     service.getId());
-            throw new UnauthorizedServiceException();
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         }
 
         return success();
