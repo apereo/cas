@@ -30,7 +30,7 @@ public enum RadiusProtocol {
     EAP_MSCHAPv2("eap-mschapv2"),
     EAP_TLS("eap-tls"),
     EAP_TTLS_PAP("eap-ttls:innerProtocol=pap"),
-    EAP_TTLS_MD5("eap-ttls:innerProtocol=md5"),
+    EAP_TTLS_MD5("eap-ttls:innerProtocol=eap-md5"),
     EAP_TTLS_EAP_MSCHAPv2("eap-ttls:innerProtocol=eap-mschapv2"),
     MSCHAPv1("mschapv1"),
     MSCHAPv2("mschapv2"),
