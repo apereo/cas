@@ -79,6 +79,7 @@
                     <property name="name" value="Test Service"/>
                     <property name="serviceId" value="test$"/>
                     <property name="evaluationOrder" value="1"/>
+                    <property name="allowedToProxy" value="true" />
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
