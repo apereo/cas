@@ -18,7 +18,7 @@ CAS provides enterprise single sign-on service:
 ## Requirements
 CAS requires J2SE 1.6, J2EE1.3 and a servlet container that can handle JSP 2.0 (e.g., Tomcat 5.0.28)
 
-## Build
+## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png)](http://travis-ci.org/Jasig/cas)
 It is recommended to build and deploy CAS locally using the [Maven War Overlay method](https://wiki.jasig.org/display/CASUM/Best+Practice+-+Setting+Up+CAS+Locally+using+the+Maven2+WAR+Overlay+Method). This approach does not require the adopter to *explicitly* download any version of CAS, but rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local customozations to further ease future upgrades and maintenance.
 
 ## Download
