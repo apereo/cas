@@ -45,6 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
+ * @author John Gasper
  * @version $Revision$ $Date$
  * @since 3.1
  */
@@ -52,6 +53,8 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /** Whether this is using the NTLM protocol or not. */
     private boolean ntlm = false;
+
+    private boolean mixedModeAuthentication = false;
 
     private List<String> supportedBrowser;
 
@@ -81,8 +84,11 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
                         : SpnegoConstants.NEGOTIATE);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 // The responseComplete flag tells the pausing view-state not to render the response
-                // because another object has taken care of it.
-                context.getExternalContext().recordResponseComplete();
+                // because another object has taken care of it. If mixed mode (failing to forms base)
+                // auth is used, we it shouldn't be called.
+                if (!this.mixedModeAuthentication) {
+                    context.getExternalContext().recordResponseComplete();
+                }
             }
         }
         return success();
@@ -95,6 +101,10 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     public void setSupportedBrowser(final List<String> supportedBrowser) {
         this.supportedBrowser = supportedBrowser;
+    }
+
+    public void setMixedModeAuthentication(final boolean enabled) {
+        this.mixedModeAuthentication = enabled;
     }
 
     public void afterPropertiesSet() throws Exception {
