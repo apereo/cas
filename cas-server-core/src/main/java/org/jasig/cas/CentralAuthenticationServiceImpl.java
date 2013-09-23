@@ -244,7 +244,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -261,11 +261,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        if (registeredService == null || !registeredService.isEnabled()) {
-            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
-            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
-        }
-
+        verifyRegisteredServiceProperties(registeredService, service);
+        
         if (!registeredService.isSsoEnabled() && credentials == null
             && ticketGrantingTicket.getCountOfUses() > 0) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
@@ -368,8 +365,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager
                 .findServiceBy(serviceTicket.getService());
 
-        if (registeredService == null || !registeredService.isEnabled()
-                || !registeredService.isAllowedToProxy()) {
+        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
+        
+        if (!registeredService.isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
@@ -400,23 +398,18 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
-
+ 
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
-
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-
-        if (registeredService == null || !registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled"
-                    + " and thus not allowed to validate tickets.", service.getId());
-            logger.warn(msg);
-            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
-        }
 
         if (serviceTicket == null) {
             logger.info("ServiceTicket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+
+        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
+        
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
@@ -436,9 +429,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(), principal.getAttributes(), registeredService);
+            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(),
+                    principal.getAttributes(), registeredService);
             if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease, registeredService);
+                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(),
+                        attributesToRelease, registeredService);
             }
 
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
@@ -465,8 +460,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
      *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default
      *  principal id is returned.</li>
-     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed
-     *  attributes for the service, the corresponding attribute value will be returned.
+     *  <li>If the username attribute is available as part of the principal's attributes,
+     *  the corresponding attribute value will be returned.
      *  </li>
      *   <li>Otherwise, the default principal's id is returned as the username attribute
      *   with an additional warning.</li>
@@ -489,8 +484,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute))
-                    && principal.getAttributes().containsKey(serviceUsernameAttribute)) {
+            if (principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
             } else {
                 principalId = principal.getId();
@@ -574,5 +568,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
+    }
+    
+    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+        if (registeredService == null) {
+            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
+            throw new UnauthorizedServiceException();
+        }
+        if (!registeredService.isEnabled()) {
+            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not "
+             + "enabled in service registry.", service.getId());
+            throw new UnauthorizedServiceException();
+        }
     }
 }
