@@ -573,12 +573,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
         if (registeredService == null) {
             logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
-            throw new UnauthorizedServiceException();
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         }
         if (!registeredService.isEnabled()) {
             logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not "
              + "enabled in service registry.", service.getId());
-            throw new UnauthorizedServiceException();
+            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
         }
     }
 }
