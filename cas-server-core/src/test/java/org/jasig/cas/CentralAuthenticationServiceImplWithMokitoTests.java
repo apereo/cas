@@ -37,6 +37,7 @@ import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -114,7 +115,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         this.cas.delegateTicketGrantingTicket("bad-st", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
-    @Test(expected=UnauthorizedProxyingException.class)
+    @Test(expected=UnauthorizedServiceException.class)
     public void testInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket("st-id", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
