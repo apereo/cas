@@ -29,14 +29,12 @@ public class UnauthorizedServiceException extends RuntimeException {
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
     
-    /** Exception object that indicates the service is unauthorized for use. **/
-    public static final UnauthorizedServiceException UNAUTHZ_SVC_EXCEPTION = 
-            new UnauthorizedServiceException("screen.service.error.message", "");
+    /** Error code that indicates the service is unauthorized for use. **/
+    public static final String CODE_UNAUTHZ_SERVICE = "screen.service.error.message";
     
     /** Exception object that indicates the service manager is empty with no service definitions. **/
-    public static final UnauthorizedServiceException EMPTY_SVC_MGMR_EXCEPTION = 
-            new UnauthorizedServiceException("screen.service.empty.error.message", "");
-    
+    public static final String CODE_EMPTY_SVC_MGMR = "screen.service.empty.error.message";
+        
     private String code = null;
     
     /**
@@ -51,7 +49,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      * Constructs an UnauthorizedServiceException with a custom message and the
      * root cause of this exception.
      *
-     * @param message an explanatory message.
+     * @param message an explanatory message. Maybe null or blank.
      * @param code the error code mapped to the messaged bundle.
      */
     public UnauthorizedServiceException(final String code, final String message) {
@@ -68,11 +66,12 @@ public class UnauthorizedServiceException extends RuntimeException {
     public UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
     }
+    
     /**
      * The error code associated with this exception.
      * @return the error code.
      */
-    public String getCode() {
+    public final String getCode() {
         return this.code;
     }
 }
