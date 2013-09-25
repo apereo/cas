@@ -44,6 +44,10 @@ public class GatewayServicesManagementCheck extends AbstractAction {
     @NotNull
     private final ServicesManager servicesManager;
 
+    /**
+     * Initialize the component with an instance of the services manager.
+     * @param servicesManager the service registry instance.
+     */
     public GatewayServicesManagementCheck(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
@@ -58,7 +62,9 @@ public class GatewayServicesManagementCheck extends AbstractAction {
             return success();
         }
 
-        logger.warn("Service [{}] is not authorized to use CAS.", service.getId());
-        throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
+        final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                + "Service [%s] does not match entries in service registry.", service.getId());
+        logger.warn(msg);
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
     }
 }

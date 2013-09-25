@@ -570,15 +570,25 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
     
+    /**
+     * Ensure that the service is found and enabled in the service registry.
+     * @param registeredService the located entry in the registry
+     * @param service authenticating service
+     * @throws UnauthorizedServiceException
+     */
     private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
         if (registeredService == null) {
-            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
-            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service [%s] is not found in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.isEnabled()) {
-            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not "
-             + "enabled in service registry.", service.getId());
-            throw UnauthorizedServiceException.UNAUTHZ_SVC_EXCEPTION;
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service %s] is not enabled in service registry.", service.getId());
+            
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
     }
 }
