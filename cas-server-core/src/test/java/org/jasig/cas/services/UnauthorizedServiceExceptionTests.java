@@ -24,14 +24,6 @@ import org.junit.Test;
 
 public class UnauthorizedServiceExceptionTests {
 
-    private static final String CODE = "service.not.authorized";
-
-    @Test
-    public void testGetCode() {
-        UnauthorizedServiceException e = new UnauthorizedServiceException();
-        assertEquals(CODE, e.getMessage());
-    }
-
     @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";

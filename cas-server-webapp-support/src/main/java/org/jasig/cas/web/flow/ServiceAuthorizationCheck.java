@@ -44,6 +44,10 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Initialize the component with an instance of the services manager.
+     * @param servicesManager the service registry instance.
+     */
     public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
@@ -55,18 +59,27 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         if (service == null) {
             return success();
         }
+        
+        if (this.servicesManager.getAllServices().size() == 0) {
+            final String msg = String.format("No service definitions are found in the service manager. "
+                    + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR);
+        }
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            logger.warn(
-                    "Unauthorized Service Access for Service: [ {} ] - service is not defined in the service registry.",
-                    service.getId());
-            throw new UnauthorizedServiceException();
-        } else if (!registeredService.isEnabled()) {
-            logger.warn(
-                    "Unauthorized Service Access for Service: [ {} ] - service is not enabled in the service registry.",
-                    service.getId());
-            throw new UnauthorizedServiceException();
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service [%s] is not found in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!registeredService.isEnabled()) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service %s] is not enabled in service registry.", service.getId());
+            
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
 
         return success();
