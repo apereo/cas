@@ -84,8 +84,8 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
                                 : SpnegoConstants.NEGOTIATE);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 // The responseComplete flag tells the pausing view-state not to render the response
-                // because another object has taken care of it. If mixed mode (failing to forms base)
-                // auth is used, we it shouldn't be called.
+                // because another object has taken care of it. If mixed mode authentication is allowed
+                // then responseComplete should not be called so that webflow will display the login page.
                 if (!this.mixedModeAuthentication) {
                     context.getExternalContext().recordResponseComplete();
                 }
@@ -103,6 +103,19 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.supportedBrowser = supportedBrowser;
     }
 
+   /**
+    * Sets whether mixed mode authentication should be enabled. If it is
+    * enabled then control is allowed to pass back to the Spring Webflow
+    * instead of immediately terminating the page after issuing the
+    * unauthorized (401) header. This has the effect of displaying the login
+    * page on unsupported/configured browsers.
+    * <p>
+    * If this is set to false then the page is immediately closed after the
+    * unauthorized header is sent. This is ideal in environments that only
+    * want to use Windows Integrated Auth/SPNEGO and not forms auth.
+    *
+    * @param  final should mixed mode authentication be allowed. Default is false.
+    */
     public void setMixedModeAuthentication(final boolean enabled) {
         this.mixedModeAuthentication = enabled;
     }
