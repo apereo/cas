@@ -261,11 +261,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        if (registeredService == null || !registeredService.isEnabled()) {
-            logger.warn("ServiceManagement: Unauthorized Service Access. Service [{}] is not found in service registry.", service.getId());
-            throw new UnauthorizedServiceException();
-        }
-
+        verifyRegisteredServiceProperties(registeredService, service);
+        
         if (!registeredService.isSsoEnabled() && credentials == null
             && ticketGrantingTicket.getCountOfUses() > 0) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
@@ -368,8 +365,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager
                 .findServiceBy(serviceTicket.getService());
 
-        if (registeredService == null || !registeredService.isEnabled()
-                || !registeredService.isAllowedToProxy()) {
+        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
+        
+        if (!registeredService.isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
@@ -400,23 +398,18 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
-
+ 
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
-
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-
-        if (registeredService == null || !registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled, and thus not allowed to validate tickets.",
-                                             service.getId());
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(msg);
-        }
 
         if (serviceTicket == null) {
             logger.info("ServiceTicket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+
+        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
+        
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
@@ -575,5 +568,27 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
+    }
+    
+    /**
+     * Ensure that the service is found and enabled in the service registry.
+     * @param registeredService the located entry in the registry
+     * @param service authenticating service
+     * @throws UnauthorizedServiceException
+     */
+    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+        if (registeredService == null) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service [%s] is not found in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!registeredService.isEnabled()) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service %s] is not enabled in service registry.", service.getId());
+            
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
     }
 }

@@ -52,9 +52,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
 
-    /** Default service to return if none have been registered. */
-    private RegisteredService disabledRegisteredService;
-
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
         this(serviceRegistryDao, new ArrayList<String>());
@@ -70,7 +67,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao,
             final List<String> defaultAttributes) {
         this.serviceRegistryDao = serviceRegistryDao;
-        this.disabledRegisteredService = constructDefaultRegisteredService(defaultAttributes);
 
         load();
     }
@@ -99,10 +95,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Override
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = convertToTreeSet();
-
-        if (c.isEmpty()) {
-            return this.disabledRegisteredService;
-        }
 
         for (final RegisteredService r : c) {
             if (r.matches(service)) {
@@ -160,20 +152,5 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
         this.services = localServices;
         logger.info(String.format("Loaded %s services.", this.services.size()));
-    }
-
-    private RegisteredService constructDefaultRegisteredService(final List<String> attributes) {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setAllowedToProxy(true);
-        r.setAnonymousAccess(false);
-        r.setEnabled(true);
-        r.setSsoEnabled(true);
-        r.setAllowedAttributes(attributes);
-
-        if (attributes == null || attributes.isEmpty()) {
-            r.setIgnoreAttributes(true);
-        }
-
-        return r;
     }
 }

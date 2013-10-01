@@ -53,7 +53,6 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
         this.logoutManager = logoutManager;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
             final RequestContext context) throws Exception {

@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -54,9 +58,16 @@ public class ServiceAuthorizationCheckTests {
         RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
         unauthorizedRegisteredService.setEnabled(false);
 
+        List<RegisteredService> list = new ArrayList<RegisteredService>();
+        list.add(authorizedRegisteredService);
+        list.add(unauthorizedRegisteredService);
+        
         when(this.servicesManager.findServiceBy(this.authorizedService)).thenReturn(authorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.unauthorizedService)).thenReturn(unauthorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.undefinedService)).thenReturn(null);
+        
+        when(this.servicesManager.getAllServices()).thenReturn(list);
+        
         this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager);
     }
 
