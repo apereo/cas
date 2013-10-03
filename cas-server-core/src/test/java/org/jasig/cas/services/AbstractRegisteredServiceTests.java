@@ -50,6 +50,14 @@ public class AbstractRegisteredServiceTests {
     };
 
     @Test
+    public void testAllowToProxyIsFalseByDefault() {
+        RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
+        assertFalse(regexRegisteredService.isAllowedToProxy());
+        RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
+        assertFalse(registeredServiceImpl.isAllowedToProxy());
+    }
+
+    @Test
     public void testSettersAndGetters() {
         final long ID = 1000;
         final String DESCRIPTION = "test";
