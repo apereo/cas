@@ -90,7 +90,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
-    private boolean allowedToProxy = true;
+    private boolean allowedToProxy = false;
 
     private boolean enabled = true;
 
