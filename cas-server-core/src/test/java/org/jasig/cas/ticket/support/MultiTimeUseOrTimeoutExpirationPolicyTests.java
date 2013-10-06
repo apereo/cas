@@ -35,13 +35,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
-    private static final long TIMEOUT_SECONDS = 5L;
-
-    private static final long TIMEOUT_MILLISECONDS = 5000L;
+    private static final long TIMEOUT_MILLISECONDS = 100L;
 
     private static final int NUMBER_OF_USES = 5;
 
-    private static final int TIMEOUT_BUFFER = 100;
+    private static final int TIMEOUT_BUFFER = 50;
 
     private ExpirationPolicy expirationPolicy;
 
@@ -49,8 +47,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     @Before
     public void setUp() throws Exception {
-        this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS,
-                TimeUnit.SECONDS);
+        this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_MILLISECONDS,
+                TimeUnit.MILLISECONDS);
 
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), this.expirationPolicy);
 
@@ -67,13 +65,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketIsExpiredByTime() {
-        try {
+    public void testTicketIsExpiredByTime() throws InterruptedException {
             Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
-        } catch (final InterruptedException e) {
-            fail(e.getMessage());
-        }
     }
 
     @Test
