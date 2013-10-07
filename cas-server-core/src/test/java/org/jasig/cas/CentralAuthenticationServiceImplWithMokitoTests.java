@@ -213,11 +213,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         assertTrue(assertion.getChainedAuthentications().size()  == 2);
         for (int i = 0; i < assertion.getChainedAuthentications().size(); i++) {
             final Authentication auth = assertion.getChainedAuthentications().get(i);
-            assertEquals(auth.getAuthenticatedDate(), authentication.getAuthenticatedDate());
-            assertEquals(auth.getPrincipal(), auth.getPrincipal());
-            assertEquals(auth.getAttributes(), auth.getAttributes());
-            assertEquals(auth.getCredentials(), auth.getCredentials());
-            assertEquals(auth.getSuccesses(), auth.getSuccesses());
+            assertEquals(auth, authentication);
         }
     }
 }
