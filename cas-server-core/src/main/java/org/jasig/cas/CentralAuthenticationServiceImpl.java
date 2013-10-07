@@ -443,7 +443,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             return new ImmutableAssertion(
                     builder.build(),
-                    root.getChainedAuthentications(),
+                    serviceTicket.getGrantingTicket().getChainedAuthentications(),
                     serviceTicket.getService(),
                     serviceTicket.isFromNewLogin());
         } finally {
