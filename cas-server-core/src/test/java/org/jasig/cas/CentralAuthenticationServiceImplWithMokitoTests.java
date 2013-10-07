@@ -127,7 +127,6 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
         when(stMock.getGrantingTicket()).thenReturn(tgtMock);
         
-        //
         final Service service2 = TestUtils.getService(SVC2_ID);
         final ServiceTicket stMock2 = mock(ServiceTicket.class);
         when(stMock2.getService()).thenReturn(service2);
