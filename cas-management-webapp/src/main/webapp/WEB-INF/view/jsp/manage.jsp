@@ -19,6 +19,7 @@
 
 --%>
 <%@include file="includes/top.jsp"%>
+<script type="text/javascript" src="<c:url value="/js/MyInfusion.js" />"></script>
 <h1><spring:message code="${pageTitle}" /></h1>
 <c:if test="${fn:length(services) eq 0}">
        <div id="msg" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
