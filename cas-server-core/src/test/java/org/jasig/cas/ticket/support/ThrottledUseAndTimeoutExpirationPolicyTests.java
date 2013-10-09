@@ -32,7 +32,9 @@ import org.junit.Test;
  */
 public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
-    private static final long TIMEOUT = 5000;
+    private static final long TIMEOUT = 50;
+
+    private static final long TIMEOUT_BUFFER = 10;
 
     private ThrottledUseAndTimeoutExpirationPolicy expirationPolicy;
 
@@ -42,7 +44,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
     public void setUp() throws Exception {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
         this.expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
-        this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(1000);
+        this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(TIMEOUT / 5);
 
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils
             .getAuthentication(), this.expirationPolicy);
@@ -55,24 +57,16 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
     }
 
     @Test
-    public void testTicketIsExpired() {
-        try {
-            Thread.sleep(TIMEOUT + 100);
-            assertTrue(this.ticket.isExpired());
-        } catch (final InterruptedException e) {
-            fail(e.getMessage());
-        }
+    public void testTicketIsExpired() throws InterruptedException {
+        Thread.sleep(TIMEOUT + TIMEOUT_BUFFER);
+        assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketUsedButWithTimeout() {
-        try {
-            this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
-            Thread.sleep(TIMEOUT -100);
-            assertFalse(this.ticket.isExpired());
-        } catch (final InterruptedException e) {
-            fail(e.getMessage());
-        }
+    public void testTicketUsedButWithTimeout() throws InterruptedException {
+        this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
+        Thread.sleep(TIMEOUT - TIMEOUT_BUFFER);
+        assertFalse(this.ticket.isExpired());
     }
 
     @Test
