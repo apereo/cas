@@ -295,13 +295,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
-        // this code is a bit brittle by depending on the class name.  Future versions (i.e. CAS4 will know inherently how to identify themselves)
-        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
-            .get(service.getClass().getName());
+        final String uniqueTicketIdGenKey = service.getClass().getName();
+        if (!this.uniqueTicketIdGeneratorsForService.containsKey(uniqueTicketIdGenKey)) {
+            logger.warn("Cannot create service ticket because the key [{}] for service [{}] is not linked to a ticket id generator",
+                    uniqueTicketIdGenKey, service.getId());
+            throw new UnauthorizedSsoServiceException();
+        }
+        
+        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
+                this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
 
-        final ServiceTicket serviceTicket = ticketGrantingTicket
-            .grantServiceTicket(serviceTicketUniqueTicketIdGenerator
-                .getNewTicketId(ServiceTicket.PREFIX), service,
+        final String generatedServiceTicketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
+        logger.debug("Generated service ticket id [{}] for ticket granting ticket [{}]",
+                generatedServiceTicketId, ticketGrantingTicket.getId());
+        
+        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(generatedServiceTicketId, service,
                 this.serviceTicketExpirationPolicy, credentials != null);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
@@ -443,7 +451,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             return new ImmutableAssertion(
                     builder.build(),
-                    root.getChainedAuthentications(),
+                    serviceTicket.getGrantingTicket().getChainedAuthentications(),
                     serviceTicket.getService(),
                     serviceTicket.isFromNewLogin());
         } finally {
