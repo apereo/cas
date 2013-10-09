@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.view;
 
+import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +44,35 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
+    private String basename;
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Override
     protected String getDefaultMessage(final String code) {
         final String messageToReturn = super.getDefaultMessage(code);
         if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
-            logger.warn("The key [{}] cannot be found in the requested and default language bundles. The "
-                    + "code [{}] itself will be used.", code, code);
+            logger.warn("The code [{}] cannot be found in the default language bundle and will "
+                    + "be used as the message itself.", code);
         }
         return messageToReturn;
+    }
+
+    @Override
+    protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
+        final String filename = this.basename + "_" + locale.getLanguage();
+        final PropertiesHolder holder= this.getProperties(filename);
+        if (holder == null || holder.getProperty(code) == null) {
+            logger.warn("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+        }
+        
+        return super.getMessageInternal(code, args, locale);
+    }
+
+    @Override
+    public void setBasename(final String basename) {
+        this.basename = basename;
+        super.setBasename(basename);
     }
 
 }
