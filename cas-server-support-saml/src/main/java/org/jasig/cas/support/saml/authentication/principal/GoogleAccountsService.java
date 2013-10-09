@@ -23,11 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -41,8 +41,6 @@ import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.SamlDateUtils;
 import org.jdom.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -56,9 +54,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsService.class);
-
-    private static Random RANDOM_GENERATOR = new Random();
+    private static SecureRandom RANDOM_GENERATOR = new SecureRandom();
 
     private static final char[] CHAR_MAPPINGS = {
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
