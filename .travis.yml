@@ -3,4 +3,3 @@ language: java
 branches:
   only:
     - master
-    - 3.5.x
