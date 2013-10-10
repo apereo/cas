@@ -45,6 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
+ * @author John Gasper
  * @version $Revision$ $Date$
  * @since 3.1
  */
@@ -52,6 +53,8 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /** Whether this is using the NTLM protocol or not. */
     private boolean ntlm = false;
+
+    private boolean mixedModeAuthentication = false;
 
     private List<String> supportedBrowser;
 
@@ -81,8 +84,11 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
                         : SpnegoConstants.NEGOTIATE);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 // The responseComplete flag tells the pausing view-state not to render the response
-                // because another object has taken care of it.
-                context.getExternalContext().recordResponseComplete();
+                // because another object has taken care of it. If mixed mode authentication is allowed
+                // then responseComplete should not be called so that webflow will display the login page.
+                if (!this.mixedModeAuthentication) {
+                    context.getExternalContext().recordResponseComplete();
+                }
             }
         }
         return success();
@@ -95,6 +101,23 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     public void setSupportedBrowser(final List<String> supportedBrowser) {
         this.supportedBrowser = supportedBrowser;
+    }
+
+   /**
+    * Sets whether mixed mode authentication should be enabled. If it is
+    * enabled then control is allowed to pass back to the Spring Webflow
+    * instead of immediately terminating the page after issuing the
+    * unauthorized (401) header. This has the effect of displaying the login
+    * page on unsupported/configured browsers.
+    * <p>
+    * If this is set to false then the page is immediately closed after the
+    * unauthorized header is sent. This is ideal in environments that only
+    * want to use Windows Integrated Auth/SPNEGO and not forms auth.
+    *
+    * @param  final should mixed mode authentication be allowed. Default is false.
+    */
+    public void setMixedModeAuthentication(final boolean enabled) {
+        this.mixedModeAuthentication = enabled;
     }
 
     public void afterPropertiesSet() throws Exception {
