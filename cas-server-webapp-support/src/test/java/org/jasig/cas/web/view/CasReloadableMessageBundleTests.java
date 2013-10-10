@@ -37,7 +37,7 @@ public class CasReloadableMessageBundleTests {
         this.loader  = new CasReloadableMessageBundle();
         this.loader.setFallbackToSystemLocale(false);
         this.loader.setDefaultEncoding("UTF-8");
-        this.loader.setBasenames("classpath:messages", "custom_messages");
+        this.loader.setBasenames("classpath:messages", "classpath:custom_messages");
     }
     
     @Test

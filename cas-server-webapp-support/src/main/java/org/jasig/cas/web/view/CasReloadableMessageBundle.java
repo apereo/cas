@@ -69,7 +69,6 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
               logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
               final PropertiesHolder holder = this.getProperties(filename);
               foundCode =  holder != null && holder.getProperties() != null
-                                     && holder.getProperties().size() > 0
                                      && holder.getProperty(code) != null;  
           }       
           
