@@ -48,8 +48,8 @@
           p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
     
     <util:list id="basenames">
-        <value>classpath:messages</value>
         <value>classpath:custom_messages</value>
+        <value>classpath:messages</value>
     </util:list>
           
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
