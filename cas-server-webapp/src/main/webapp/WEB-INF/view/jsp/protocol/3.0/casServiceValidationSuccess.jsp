@@ -23,7 +23,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
-        <cas:user>${fn:escapeXml(assertion.chainedAuthentications[fn:length(assertion.chainedAuthentications)-1].principal.id)}</cas:user>
+        <cas:user>${fn:escapeXml(assertion.primaryAuthentication.principal.id)}</cas:user>
         <c:if test="${not empty pgtIou}">
             <cas:proxyGrantingTicket>${pgtIou}</cas:proxyGrantingTicket>
         </c:if>
@@ -36,12 +36,12 @@
             </cas:proxies>
         </c:if>
 
-        <c:if test="${fn:length(assertion.chainedAuthentications[fn:length(assertion.chainedAuthentications)-1].principal.attributes) > 0}">
+        <c:if test="${fn:length(assertion.primaryAuthentication.principal.attributes) > 0}">
             <cas:attributes>
                 <c:forEach var="attr"
-                           items="${assertion.chainedAuthentications[fn:length(assertion.chainedAuthentications)-1].principal.attributes}"
+                           items="${assertion.primaryAuthentication.principal.attributes}"
                            varStatus="loopStatus" begin="0"
-                           end="${fn:length(assertion.chainedAuthentications[fn:length(assertion.chainedAuthentications)-1].principal.attributes)}"
+                           end="${fn:length(assertion.primaryAuthentication.principal.attributes)}"
                            step="1">
                     <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attr.value)}</cas:${fn:escapeXml(attr.key)}>
                 </c:forEach>
