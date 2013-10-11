@@ -83,7 +83,7 @@ public abstract class AbstractRegisteredService
 
     private String theme;
 
-    private boolean allowedToProxy = true;
+    private boolean allowedToProxy = false;
 
     private boolean enabled = true;
 
