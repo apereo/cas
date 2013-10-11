@@ -29,6 +29,9 @@ import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.validation.Assertion;
+import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
+import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -304,5 +307,32 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
          * Therefore, we expect the default to be returned.
          */
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
+    }
+
+    /**
+     * This test simulates :
+     * - a first authentication for a default service
+     * - a second authentication with the renew parameter and the same service (and same credentials)
+     * - a validation of the second ticket.
+     * 
+     * When supplemental authentications were returned with the chained authentications, the validation specification
+     * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
+     * chained authentications. Both concepts are orthogonal.
+     *  
+     * @throws TicketException
+     * @throws AuthenticationException
+     */
+    @Test
+    public void authenticateTwiceWithRenew() throws TicketException, AuthenticationException {
+        CentralAuthenticationService cas = getCentralAuthenticationService();
+        Service svc = TestUtils.getService("testDefault");
+        UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        String tgtId = cas.createTicketGrantingTicket(goodCredential);
+        cas.grantServiceTicket(tgtId, svc);
+        // simulate renew with new good same credentials
+        String st2Id = cas.grantServiceTicket(tgtId, svc, goodCredential);
+        Assertion assertion = cas.validateServiceTicket(st2Id, svc);
+        ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        assertTrue(validationSpecification.isSatisfiedBy(assertion));
     }
 }
