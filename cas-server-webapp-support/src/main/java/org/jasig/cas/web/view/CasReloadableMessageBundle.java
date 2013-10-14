@@ -44,7 +44,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
-    private String basename;
+    private String[] basenames;
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -60,19 +60,32 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        final String filename = this.basename + "_" + locale.getLanguage();
-        final PropertiesHolder holder= this.getProperties(filename);
-        if (holder == null || holder.getProperty(code) == null) {
-            logger.warn("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
-        }
+        boolean foundCode = false;
         
+        if (!locale.equals(Locale.ENGLISH)) {
+          for (int i = 0; !foundCode && i < this.basenames.length; i++) {
+              final String filename = this.basenames[i] + "_" + locale.getLanguage();
+              
+              logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
+              final PropertiesHolder holder = this.getProperties(filename);
+              foundCode =  holder != null && holder.getProperties() != null
+                                     && holder.getProperty(code) != null;  
+          }       
+          
+          if (!foundCode) {
+              logger.warn("The code [{}] cannot be found in the language bundle for the locale [{}]",
+                      code, locale);
+          }
+        }
         return super.getMessageInternal(code, args, locale);
     }
 
     @Override
-    public void setBasename(final String basename) {
-        this.basename = basename;
-        super.setBasename(basename);
+    public void setBasenames(final String... basenames) {
+        this.basenames = basenames;
+        super.setBasenames(basenames);
     }
+    
+    
 
 }
