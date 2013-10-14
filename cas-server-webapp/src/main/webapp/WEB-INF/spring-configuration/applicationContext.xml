@@ -23,9 +23,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you
@@ -58,9 +60,14 @@
         The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
     -->
     <bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
-          p:basename="classpath:messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
+          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
           p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
 
+    <util:list id="basenames">
+        <value>classpath:custom_messages</value>
+        <value>classpath:messages</value>
+    </util:list>
+    
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
         c:serviceRegistryDao-ref="serviceRegistryDao" />
 
