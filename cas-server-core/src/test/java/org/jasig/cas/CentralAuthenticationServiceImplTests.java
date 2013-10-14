@@ -324,15 +324,15 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      */
     @Test
     public void authenticateTwiceWithRenew() throws TicketException, AuthenticationException {
-        CentralAuthenticationService cas = getCentralAuthenticationService();
-        Service svc = TestUtils.getService("testDefault");
-        UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        String tgtId = cas.createTicketGrantingTicket(goodCredential);
+        final CentralAuthenticationService cas = getCentralAuthenticationService();
+        final Service svc = TestUtils.getService("testDefault");
+        final UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final String tgtId = cas.createTicketGrantingTicket(goodCredential);
         cas.grantServiceTicket(tgtId, svc);
         // simulate renew with new good same credentials
-        String st2Id = cas.grantServiceTicket(tgtId, svc, goodCredential);
-        Assertion assertion = cas.validateServiceTicket(st2Id, svc);
-        ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+        final String st2Id = cas.grantServiceTicket(tgtId, svc, goodCredential);
+        final Assertion assertion = cas.validateServiceTicket(st2Id, svc);
+        final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
         assertTrue(validationSpecification.isSatisfiedBy(assertion));
     }
 }
