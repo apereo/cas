@@ -34,9 +34,9 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 100L;
 
-    private static final long SLIDING_TIMEOUT = 20L; 
+    private static final long SLIDING_TIMEOUT = 60L; 
 
-    private static final long TIMEOUT_BUFFER = 5L; // needs to be long enough for timeouts to be triggered
+    private static final long TIMEOUT_BUFFER = 20L; // needs to be long enough for timeouts to be triggered
 
     private TicketGrantingTicketExpirationPolicy expirationPolicy;
 
