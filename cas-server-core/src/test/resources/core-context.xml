@@ -28,6 +28,9 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean id="persistentIdGenerator"
+          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          p:salt="casrocks"/>
 
     <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
           c:authenticationManager-ref="authenticationManager"
@@ -38,7 +41,8 @@
           c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
           c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
           c:ticketRegistry-ref="ticketRegistry"
-          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"/>
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
+          p:persistentIdGenerator-ref="persistentIdGenerator" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
@@ -110,6 +114,14 @@
                             <value>groupMembership</value>
                         </list>
                     </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="4"/>
+                    <property name="name" value="Test Service anonymous"/>
+                    <property name="serviceId" value="testAnonymous"/>
+                    <property name="evaluationOrder" value="5"/>
+                    <property name="anonymousAccess" value="true" />
                 </bean>
             </list>
         </property>
