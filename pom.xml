@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jasig.parent</groupId>
     <artifactId>jasig-parent</artifactId>
-    <version>34</version>
+    <version>35</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -374,10 +374,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.2.1</version>
         <configuration>
           <mavenExecutorId>forked-path</mavenExecutorId>
           <tagNameFormat>v@{project.version}</tagNameFormat>
+          <arguments>-Psonatype-oss-release,jasig-release,nocheck</arguments>
         </configuration>
       </plugin>
       <!-- CAS-988 generate hashes for assembly artifacts -->
@@ -906,6 +906,16 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   </reporting>
 
   <profiles>
+    <profile>
+      <id>nocheck</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <checkstyle.skip>true</checkstyle.skip>
+        <license.skip>true</license.skip>
+        <notice.skip>true</notice.skip>
+        <versions.skip>true</versions.skip>
+      </properties>
+    </profile>
     <profile>
       <id>ci</id>
       <build>
