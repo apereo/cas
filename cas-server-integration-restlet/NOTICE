@@ -64,6 +64,7 @@ This project includes:
   Spring Context under The Apache Software License, Version 2.0
   Spring Context Support under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
+  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JavaScript under Apache License, Version 2.0
   Spring JavaScript Resources under Apache License, Version 2.0
   Spring JDBC under The Apache Software License, Version 2.0
@@ -73,10 +74,7 @@ This project includes:
   Spring Web under The Apache Software License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
-  spring-asm under Apache License, Version 2.0
-  spring-expression under Apache License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
-  Streaming API for XML under Sun Binary Code License
+  stax-api under Sun Binary Code License
   Transaction 1.1 API under lgpl
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
 
