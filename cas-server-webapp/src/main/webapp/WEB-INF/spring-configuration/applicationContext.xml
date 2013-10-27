@@ -100,7 +100,7 @@
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
         c:servicesManager-ref="servicesManager"
         c:httpClient-ref="noRedirectHttpClient"
-        p:disableSingleSignOut="${slo.callbacks.disabled:false}" 
+        p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
         p:issueSynchronousCallbacks="${slo.callbacks.synchronous:true}"/>
        
     <!-- CentralAuthenticationService -->
