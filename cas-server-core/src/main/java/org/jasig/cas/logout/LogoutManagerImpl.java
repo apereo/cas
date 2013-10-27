@@ -74,6 +74,9 @@ public final class LogoutManagerImpl implements LogoutManager {
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
 
+    /** Whether messages to endpoints would be sent in a synchronous fashion. */
+    private boolean issueSynchronousCallbacks = true;
+    
     /**
      * Build the logout manager.
      * @param servicesManager the services manager.
@@ -150,7 +153,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         service.setLoggedOutAlready(true);
 
-        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, true);
+        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, this.issueSynchronousCallbacks);
     }
 
     /**
@@ -190,5 +193,14 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
         this.disableSingleSignOut = disableSingleSignOut;
+    }
+    
+    /**
+     * Set if messages are sent in a synchronous fashion.
+     *
+     * @param syncCallbacks if message is synchronously sent
+     */
+    public void setIssueSynchronousCallbacks(final boolean syncCallbacks) {
+        this.issueSynchronousCallbacks = disableSingleSignOut;
     }
 }
