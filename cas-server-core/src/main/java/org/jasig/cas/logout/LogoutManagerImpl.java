@@ -33,6 +33,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.CallableMessageSender;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.SamlDateUtils;
@@ -69,7 +70,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** An HTTP client. */
     @NotNull
-    private final HttpClient httpClient;
+    private final HttpClient<Boolean> httpClient;
 
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
@@ -79,7 +80,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param servicesManager the services manager.
      * @param httpClient an HTTP client.
      */
-    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient) {
+    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient<Boolean> httpClient) {
         this.servicesManager = servicesManager;
         this.httpClient = httpClient;
     }
@@ -150,7 +151,8 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         service.setLoggedOutAlready(true);
 
-        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, true);
+        final CallableLogoutMessageSender sender = new CallableLogoutMessageSender(service.getOriginalUrl(), logoutRequest);
+        return this.httpClient.sendMessageToEndPoint(true, sender);
     }
 
     /**
@@ -190,5 +192,22 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
         this.disableSingleSignOut = disableSingleSignOut;
+    }
+        
+    private static class CallableLogoutMessageSender extends CallableMessageSender {
+        /**
+         * @param url The url to send the message to
+         * @param message Message to send to the url
+         */
+        public CallableLogoutMessageSender(final String url, final String message) {
+            super(url, message);
+            setContentType("application/xml");
+        }
+
+        @Override
+        protected final String formatOutputMessageInternal(final String message) {
+            return "logoutRequest=" + super.formatOutputMessageInternal(message);
+        }
+        
     }
 }
