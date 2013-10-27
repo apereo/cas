@@ -31,11 +31,14 @@ import org.slf4j.LoggerFactory;
  * @since 3.1.2
  *
  */
-public abstract class AbstractArgumentExtractor implements
-    ArgumentExtractor {
+public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    /**
+     * Logger instance.
+     */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public final WebApplicationService extractService(final HttpServletRequest request) {
         final WebApplicationService service = extractServiceInternal(request);
 
