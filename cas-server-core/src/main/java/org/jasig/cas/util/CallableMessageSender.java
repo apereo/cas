@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A {@link Callable} instance that encapsulates the task of sending a message to a given
+ * endpoint. 
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -83,6 +85,8 @@ public class CallableMessageSender implements Callable<Boolean> {
     public final Boolean call() throws Exception {
         HttpURLConnection connection = null;
         BufferedReader in = null;
+        DataOutputStream printout = null;
+                
         try {
             LOGGER.debug("Attempting to access {}", url);
             final URL logoutUrl = new URL(url);
@@ -97,11 +101,10 @@ public class CallableMessageSender implements Callable<Boolean> {
             connection.setInstanceFollowRedirects(this.followRedirects);
             connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
             connection.setRequestProperty("Content-Type", this.contentType);
-            final DataOutputStream printout = new DataOutputStream(connection.getOutputStream());
+            printout = new DataOutputStream(connection.getOutputStream());
             printout.writeBytes(output);
             printout.flush();
-            printout.close();
-
+            
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             boolean readInput = true;
@@ -118,6 +121,7 @@ public class CallableMessageSender implements Callable<Boolean> {
             LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
             return false;
         } finally {
+            IOUtils.closeQuietly(printout);
             IOUtils.closeQuietly(in);
             if (connection != null) {
                 connection.disconnect();
