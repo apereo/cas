@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.oauth.profile;
 
-import java.util.Map;
+
 
 import org.scribe.up.profile.UserProfile;
 
@@ -39,11 +39,5 @@ public class CasWrapperProfile extends UserProfile {
         super();
     }
     
-    public CasWrapperProfile(final Object id) {
-        super(id);
-    }
     
-    public CasWrapperProfile(final Object id, final Map<String, Object> attributes) {
-        super(id, attributes);
-    }
 }
