@@ -57,8 +57,8 @@ public class UsernamePasswordCredential implements Credential, Serializable {
      * @param password Non-null password.
      */
     public UsernamePasswordCredential(final String userName, final String password) {
-        this.username = userName;
-        this.password = password;
+        this.setUsername(userName);
+        this.setPassword(password);
     }
 
     /**
@@ -86,7 +86,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
      * @param userName The userName to set.
      */
     public final void setUsername(final String userName) {
-        this.username = userName;
+        this.username = userName.trim();
     }
 
     /** {@inheritDoc} */
