@@ -71,7 +71,8 @@
                           p:timeToLive="21600"
                           p:timeToIdle="21600">
                         <property name="cacheManager">
-                            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+                            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+                                 p:shared="false" p:cacheManagerName="crlcache-mgmr" />
                         </property>
                     </bean>
                 </constructor-arg>

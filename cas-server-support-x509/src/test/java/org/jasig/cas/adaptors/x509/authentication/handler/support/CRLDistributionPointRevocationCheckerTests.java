@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 
 import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
@@ -92,7 +93,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Test case #1
         // Valid certificate on valid CRL data
         cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
                 defaultPolicy,
@@ -104,7 +105,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Test case #2
         // Revoked certificate on valid CRL data
         cache = new Cache("crlCache-2", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
                 defaultPolicy,
@@ -116,7 +117,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Test case #3
         // Valid certificate on expired CRL data
         cache = new Cache("crlCache-3", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
                 zeroThresholdPolicy,
@@ -129,7 +130,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Valid certificate on expired CRL data with custom expiration
         // policy to always allow expired CRL data
         cache = new Cache("crlCache-4", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
                 new RevocationPolicy<X509CRL>() {
@@ -145,7 +146,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Valid certificate with no CRL distribution points defined but with
         // "AllowRevocationPolicy" set to allow unavailable CRL data
         cache = new Cache("crlCache-5", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         final CRLDistributionPointRevocationChecker checker5 = new CRLDistributionPointRevocationChecker(cache);
         checker5.setUnavailableCRLPolicy(new AllowRevocationPolicy());
         params.add(new Object[] {
@@ -163,7 +164,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // the escaping of reserved characters in RFC 2396.
         // Make sure we can convert given URI to valid URI and confirm it's revoked
         cache = new Cache("crlCache-6", 100, false, false, 20, 10);
-        cache.initialise();
+        CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
                 defaultPolicy,
