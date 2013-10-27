@@ -72,7 +72,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     private final HttpClient httpClient;
 
     /** Whether single sign out is disabled or not. */
-    private boolean disableSingleSignOut = false;
+    private boolean singleLogoutCallbacksDisabled = false;
 
     /** Whether messages to endpoints would be sent in a synchronous fashion. */
     private boolean issueSynchronousCallbacks = true;
@@ -106,7 +106,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
         // if SLO is not disabled
-        if (!disableSingleSignOut) {
+        if (!this.singleLogoutCallbacksDisabled) {
             // through all services
             for (final String ticketId : services.keySet()) {
                 final Service service = services.get(ticketId);
@@ -189,10 +189,10 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Set if the logout is disabled.
      *
-     * @param disableSingleSignOut if the logout is disabled.
+     * @param singleLogoutCallbacksDisabled if the logout is disabled.
      */
-    public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
-        this.disableSingleSignOut = disableSingleSignOut;
+    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
     }
     
     /**
@@ -201,6 +201,6 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param syncCallbacks if message is synchronously sent
      */
     public void setIssueSynchronousCallbacks(final boolean syncCallbacks) {
-        this.issueSynchronousCallbacks = disableSingleSignOut;
+        this.issueSynchronousCallbacks = syncCallbacks;
     }
 }
