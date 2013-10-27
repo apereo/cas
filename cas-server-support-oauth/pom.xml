@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.scribe</groupId>
 			<artifactId>scribe-up</artifactId>
-			<version>1.2.0</version>
+			<version>1.3.1</version>
 		</dependency>
     </dependencies>
 </project>
