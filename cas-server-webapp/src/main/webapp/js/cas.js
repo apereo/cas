@@ -25,12 +25,33 @@ $(document).ready(function(){
 
     //flash success box
     $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
+
     //flash confirm box
     $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
-    /* 
-     * Using the JavaScript Debug library, you may issue log messages such as: 
+
+    /*
+     * Using the JavaScript Debug library, you may issue log messages such as:
      * debug.log("Welcome to Central Authentication Service");
      */
+
+    //display the dialog when the app session times out
+    $(function() {
+        $( "#session-timeout-message" ).dialog({
+          show: {
+            effect: "explode",
+            duration: 1000
+          },
+          modal: true,
+          position: { my: "left center", at: "left center", of: "#fm1" },
+          autoOpen: false,
+          resizable: false,
+          draggable: false,
+          buttons: {
+            Ok: function() {
+              $( this ).dialog( "close" );
+              window.location.reload();
+            }
+          }
+        });
+      });
 });
