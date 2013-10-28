@@ -359,7 +359,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
         <executions>
           <execution>
             <goals>
@@ -370,6 +370,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <configuration>
           <source>${project.build.sourceVersion}</source>
           <target>${project.build.targetVersion}</target>
+          <complianceLevel>${project.build.sourceVersion}</complianceLevel>
         </configuration>
       </plugin>
       <plugin>
@@ -965,7 +966,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <ldaptive.version>1.0.1</ldaptive.version>
     <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.7.2</aspectj.version>
+    <aspectj.version>1.7.3</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
     <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
