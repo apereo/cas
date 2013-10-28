@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -47,5 +49,17 @@ public final class CalendarUtils {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
+    }
+    
+    public static String getCurrentDateAndTime() {
+        return getFormattedDateAndTime(new Date());
+    }
+
+    public static String getFormattedDateAndTime(final Date date) {
+        final DateFormat dateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss'Z'");
+        // Google Does not set this.
+        // dateFormat.setTimeZone(UTC_TIME_ZONE);
+        return dateFormat.format(date);
     }
 }
