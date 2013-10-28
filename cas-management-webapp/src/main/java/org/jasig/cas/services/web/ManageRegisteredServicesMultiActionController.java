@@ -23,14 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -40,31 +43,20 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class ManageRegisteredServicesMultiActionController extends MultiActionController {
+@Controller
+public final class ManageRegisteredServicesMultiActionController {
 
     /** View name for the Manage Services View. */
     private static final String VIEW_NAME = "manageServiceView";
 
     /** Instance of ServicesManager. */
     @NotNull
-    private final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    private ServicesManager servicesManager;
 
     @NotNull
-    private final String defaultServiceUrl;
-
-    /**
-     * Constructor that takes the required {@link ServicesManager}.
-     *
-     * @param servicesManager the Services Manager that manages the
-     * RegisteredServices.
-     * @param defaultServiceUrl the service management tool's url.
-     */
-    public ManageRegisteredServicesMultiActionController(
-            final ServicesManager servicesManager, final String defaultServiceUrl) {
-        super();
-        this.servicesManager = servicesManager;
-        this.defaultServiceUrl = defaultServiceUrl;
-    }
+    @Value("${cas-management.securityContext.serviceProperties.service}")
+    private String defaultServiceUrl;
 
     /**
      * Method to delete the RegisteredService by its ID.
@@ -72,6 +64,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
      * @param response the HttpServletResponse
      * @return the Model and View to go to after the service is deleted.
      */
+    @RequestMapping("deleteRegisteredService.html")
     public ModelAndView deleteRegisteredService(
             final HttpServletRequest request, final HttpServletResponse response) {
         final String id = request.getParameter("id");
@@ -90,12 +83,10 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
 
     /**
      * Method to show the RegisteredServices.
-     * @param request the HttpServletRequest
-     * @param response the HttpServletResponse
      * @return the Model and View to go to after the services are loaded.
      */
-    public ModelAndView manage(final HttpServletRequest request,
-            final HttpServletResponse response) {
+    @RequestMapping("manage.html")
+    public ModelAndView manage() {
         final Map<String, Object> model = new HashMap<String, Object>();
 
         final List<RegisteredService> services = new ArrayList<RegisteredService>(this.servicesManager.getAllServices());
@@ -121,6 +112,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
      * or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.
      * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      */
+    @RequestMapping("updateRegisteredServiceEvaluationOrder.html")
     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
         long id = Long.parseLong(request.getParameter("id"));
         int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
