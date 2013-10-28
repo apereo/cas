@@ -68,6 +68,6 @@ public final class OAuth10LoginControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authorize?oauth_token="));
+        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authenticate?oauth_token="));
     }
 }
