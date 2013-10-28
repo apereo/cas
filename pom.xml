@@ -404,8 +404,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </headerDefinitions>
           <aggregate>true</aggregate>
           <excludes>
-            <exclude>**/bin/**</exclude>
-            <exclude>**/*.ldif</exclude>       
+            <exclude>**/bin/**</exclude>    
             <exclude>LICENSE</exclude>
             <exclude>**/INSTALL*</exclude>
             <exclude>**/NOTICE*</exclude>
@@ -433,6 +432,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.md</exclude>
             <exclude>**/*.pdf</exclude>
             <exclude>**/*.schema</exclude>
+            <exclude>**/*.ldif</exclude>   
             <exclude>**/*.yml</exclude>
           </excludes>
         </configuration>
