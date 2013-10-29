@@ -71,7 +71,7 @@ public class LogoutManagerImplTests {
 
     @Test
     public void testLogoutDisabled() {
-        this.logoutManager.setDisableSingleSignOut(true);
+        this.logoutManager.setSingleLogoutCallbacksDisabled(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
