@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
@@ -33,6 +31,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -58,18 +57,16 @@ public final class ManageRegisteredServicesMultiActionController {
     @Value("${cas-management.securityContext.serviceProperties.service}")
     private String defaultServiceUrl;
 
+    public ManageRegisteredServicesMultiActionController() {}
+    
     /**
      * Method to delete the RegisteredService by its ID.
-     * @param request the HttpServletRequest
-     * @param response the HttpServletResponse
      * @return the Model and View to go to after the service is deleted.
      */
     @RequestMapping("deleteRegisteredService.html")
     public ModelAndView deleteRegisteredService(
-            final HttpServletRequest request, final HttpServletResponse response) {
-        final String id = request.getParameter("id");
-        final long idAsLong = Long.parseLong(id);
-
+            @RequestParam("id") final long idAsLong) {
+        
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
                 "manage.html", true), "status", "deleted");
 
@@ -101,9 +98,7 @@ public final class ManageRegisteredServicesMultiActionController {
     /**
      * Updates the {@link RegisteredService#getEvaluationOrder()}. Expects an <code>id</code> parameter to indicate
      * the {@link RegisteredService#getId()} and the new <code>evaluationOrder</code> integer parameter from the request.
-     * @param request The request object that is expected to contain the <code>id</code> and <code>evaluationOrder</code>
      * as parameters.
-     * @param response The response object.
      * @returns {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
      * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccesful.
      * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
@@ -113,10 +108,8 @@ public final class ManageRegisteredServicesMultiActionController {
      * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      */
     @RequestMapping("updateRegisteredServiceEvaluationOrder.html")
-    public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
-        long id = Long.parseLong(request.getParameter("id"));
-        int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
-
+    public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long id,
+            @RequestParam("evaluationOrder") final int evaluationOrder) {
         final RegisteredService svc = this.servicesManager.findServiceBy(id);
         if (svc == null) {
             throw new IllegalArgumentException("Service id " + id + " cannot be found.");
