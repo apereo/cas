@@ -74,8 +74,8 @@ public final class LogoutManagerImpl implements LogoutManager {
     /** Whether single sign out is disabled or not. */
     private boolean singleLogoutCallbacksDisabled = false;
 
-    /** Whether messages to endpoints would be sent in a synchronous fashion. */
-    private boolean issueSynchronousCallbacks = true;
+    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
+    private boolean issueAsynchronousCallbacks = true;
     
     /**
      * Build the logout manager.
@@ -153,7 +153,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         service.setLoggedOutAlready(true);
 
-        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, this.issueSynchronousCallbacks);
+        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, this.issueAsynchronousCallbacks);
     }
 
     /**
@@ -196,11 +196,11 @@ public final class LogoutManagerImpl implements LogoutManager {
     }
     
     /**
-     * Set if messages are sent in a synchronous fashion.
+     * Set if messages are sent in an asynchronous fashion.
      *
-     * @param syncCallbacks if message is synchronously sent
+     * @param asyncCallbacks if message is synchronously sent
      */
-    public void setIssueSynchronousCallbacks(final boolean syncCallbacks) {
-        this.issueSynchronousCallbacks = syncCallbacks;
+    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
+        this.issueAsynchronousCallbacks = asyncCallbacks;
     }
 }
