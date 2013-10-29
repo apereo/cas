@@ -37,6 +37,8 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -70,6 +72,10 @@ public final class RegisteredServiceSimpleFormController {
     @Resource(name="attributeRepository")
     private IPersonAttributeDao personAttributeDao;
     
+    @NotNull
+    @Resource(name="registeredServiceValidator")
+    private Validator validator;
+    
     public RegisteredServiceSimpleFormController() {}
     
     public RegisteredServiceSimpleFormController(
@@ -79,6 +85,9 @@ public final class RegisteredServiceSimpleFormController {
         this.personAttributeDao = attributeRepository;
     }
     
+    public void setValidator(final Validator v) {
+        this.validator = v;
+    }
     /**
      * Sets the require fields and the disallowed fields from the
      * HttpServletRequest.
@@ -96,8 +105,14 @@ public final class RegisteredServiceSimpleFormController {
      * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
      */
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView onSubmit(@ModelAttribute(COMMAND_NAME) final RegisteredService service) throws Exception {
-       
+    protected ModelAndView onSubmit(@ModelAttribute(COMMAND_NAME) final RegisteredService service,
+            final BindingResult result) throws Exception {
+        
+        this.validator.validate(service, result);
+        if (result.hasErrors()) {
+            return new ModelAndView(VIEW_NAME);
+        }
+        
         RegisteredService svcToUse = service;
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
                 && service.getServiceId().startsWith("^")) {
@@ -135,10 +150,8 @@ public final class RegisteredServiceSimpleFormController {
         model.addAttribute("availableUsernameAttributes", possibleUsernameAttributeNames);
         
         final String path = request.getServletPath().replace("/", "").replace(".html", "").concat("ServiceView");
-                
         model.addAttribute("pageTitle", path);
-        model.addAttribute("commandName", COMMAND_NAME);
-        
+
         return new ModelAndView(VIEW_NAME);
     }
     
