@@ -403,6 +403,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
           <aggregate>true</aggregate>
+          <mapping>
+            <schema>SCRIPT_STYLE</schema>
+          </mapping>
           <excludes>
             <exclude>**/bin/**</exclude>    
             <exclude>LICENSE</exclude>
@@ -431,7 +434,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.jmx</exclude>
             <exclude>**/*.md</exclude>
             <exclude>**/*.pdf</exclude>
-            <exclude>**/*.schema</exclude>
             <exclude>**/*.ldif</exclude>   
             <exclude>**/*.yml</exclude>
           </excludes>
