@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
@@ -57,6 +58,7 @@ public final class RegisteredServiceSimpleFormController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
     
     private static final String COMMAND_NAME = "registeredService";
+    private static final String VIEW_NAME = "editServiceView";
     
     /** Instance of ServiceRegistryManager. */
     @NotNull
@@ -94,18 +96,24 @@ public final class RegisteredServiceSimpleFormController {
      * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
      */
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView onSubmit(@ModelAttribute final RegexRegisteredService submittedService) throws Exception {
+    protected ModelAndView onSubmit(@ModelAttribute(COMMAND_NAME) final RegisteredService service) throws Exception {
        
-        // only change object class if there isn't an explicit RegisteredService class set
-        RegisteredService regexService = (RegisteredService) submittedService;
+        RegisteredService svcToUse = service;
+        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
+                && service.getServiceId().startsWith("^")) {
+            LOGGER.debug("Detected regular expression starting with ^");
+            final RegexRegisteredService regexService = new RegexRegisteredService();
+            regexService.copyFrom(service);
+            svcToUse = regexService;
+        } 
 
-        this.servicesManager.save(regexService);
-        LOGGER.info("Saved changes to service " + regexService.getId());
+        this.servicesManager.save(svcToUse);
+        LOGGER.info("Saved changes to service " + svcToUse.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html#" + regexService.getId(), true));
+                "manage.html#" + svcToUse.getId(), true));
         modelAndView.addObject("action", "add");
-        modelAndView.addObject("id", regexService.getId());
+        modelAndView.addObject("id", svcToUse.getId());
 
         return modelAndView;
     }
@@ -116,20 +124,6 @@ public final class RegisteredServiceSimpleFormController {
             final ModelMap model)
             throws Exception {
         
-        if (StringUtils.hasText(id)) {
-            final RegisteredService regService = this.servicesManager.findServiceBy(Long.parseLong(id));
-    
-            if (regService != null) {
-                LOGGER.debug("Loaded service " + regService.getServiceId());
-                model.addAttribute(COMMAND_NAME, regService);
-            } else {
-                LOGGER.debug("Invalid service id specified.");
-                model.addAttribute(COMMAND_NAME, new RegexRegisteredService());
-            }
-        } else {
-            LOGGER.debug("Preparing registered service to add...");
-            model.addAttribute(COMMAND_NAME, new RegexRegisteredService());
-        }
         final List<String> possibleAttributeNames = new ArrayList<String>();
         possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
         Collections.sort(possibleAttributeNames);
@@ -145,6 +139,26 @@ public final class RegisteredServiceSimpleFormController {
         model.addAttribute("pageTitle", path);
         model.addAttribute("commandName", COMMAND_NAME);
         
-        return new ModelAndView("editServiceView");
+        return new ModelAndView(VIEW_NAME);
+    }
+    
+    @ModelAttribute(COMMAND_NAME)
+    public RegisteredService getCommand(@RequestParam(value="id", required=false) final String id) {
+
+        if (!StringUtils.hasText(id)) {
+            final RegisteredService service = new RegisteredServiceImpl();
+            LOGGER.debug("Created new service of type " + service.getClass().getName());
+            return service;
+        }
+
+        final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
+
+        if (service != null) {
+            LOGGER.debug("Loaded service " + service.getServiceId());
+        } else {
+            LOGGER.debug("Invalid service id specified.");
+        }
+
+        return service;
     }
 }
