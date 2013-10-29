@@ -24,9 +24,12 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -37,6 +40,8 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component
+@Qualifier(value="registeredServiceValidator")
 public final class RegisteredServiceValidator implements Validator {
 
     /** Default length, which matches what is in the view. */
@@ -44,6 +49,7 @@ public final class RegisteredServiceValidator implements Validator {
 
     /** {@link ServicesManager} to look up services. */
     @NotNull
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     /** The maximum length of the description we will accept. */
@@ -52,6 +58,7 @@ public final class RegisteredServiceValidator implements Validator {
 
     /** {@link IPersonAttributeDao} to manage person attributes. */
     @NotNull
+    @Resource(name="attributeRepository")
     private IPersonAttributeDao personAttributeDao;
 
     /**
