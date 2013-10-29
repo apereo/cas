@@ -101,7 +101,7 @@
         c:servicesManager-ref="servicesManager"
         c:httpClient-ref="noRedirectHttpClient"
         p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
-        p:issueSynchronousCallbacks="${slo.callbacks.synchronous:true}"/>
+        p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
        
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
