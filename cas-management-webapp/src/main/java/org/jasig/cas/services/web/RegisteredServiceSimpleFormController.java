@@ -78,13 +78,6 @@ public final class RegisteredServiceSimpleFormController {
     
     public RegisteredServiceSimpleFormController() {}
     
-    public RegisteredServiceSimpleFormController(
-            final ServicesManager servicesManager,
-            final IPersonAttributeDao attributeRepository) {
-        this.servicesManager = servicesManager;
-        this.personAttributeDao = attributeRepository;
-    }
-    
     public void setValidator(final Validator v) {
         this.validator = v;
     }
