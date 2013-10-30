@@ -99,7 +99,9 @@ public final class RegisteredServiceSimpleFormController {
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView onSubmit(@ModelAttribute(COMMAND_NAME) final RegisteredService service,
-            final BindingResult result) throws Exception {
+            final BindingResult result, final ModelMap model, final HttpServletRequest request) throws Exception {
+        
+        updateModelMap(model, request);
         
         this.validator.validate(service, result);
         if (result.hasErrors()) {
@@ -132,6 +134,11 @@ public final class RegisteredServiceSimpleFormController {
             final ModelMap model)
             throws Exception {
         
+        updateModelMap(model, request);
+        return new ModelAndView(VIEW_NAME);
+    }
+    
+    private void updateModelMap(final ModelMap model, final HttpServletRequest request) {
         final List<String> possibleAttributeNames = new ArrayList<String>();
         possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
         Collections.sort(possibleAttributeNames);
@@ -143,9 +150,7 @@ public final class RegisteredServiceSimpleFormController {
         model.addAttribute("availableUsernameAttributes", possibleUsernameAttributeNames);
         
         final String path = request.getServletPath().replace("/", "").replace(".html", "").concat("ServiceView");
-        model.addAttribute("pageTitle", path);
-
-        return new ModelAndView(VIEW_NAME);
+        model.addAttribute("pageTitle", path);    
     }
     
     @ModelAttribute(COMMAND_NAME)
