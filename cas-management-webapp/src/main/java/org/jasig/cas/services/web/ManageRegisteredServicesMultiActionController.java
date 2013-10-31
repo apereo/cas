@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,14 +50,17 @@ public final class ManageRegisteredServicesMultiActionController {
 
     /** Instance of ServicesManager. */
     @NotNull
-    @Resource(name="servicesManager")
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     @NotNull
-    @Value("${cas-management.securityContext.serviceProperties.service}")
     private String defaultServiceUrl;
 
-    public ManageRegisteredServicesMultiActionController() {}
+    @Autowired
+    public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
+            @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
+        this.servicesManager = servicesManager;
+        this.defaultServiceUrl = defaultServiceUrl;
+    }
     
     /**
      * Method to delete the RegisteredService by its ID.

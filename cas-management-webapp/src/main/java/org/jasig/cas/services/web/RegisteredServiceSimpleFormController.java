@@ -33,6 +33,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -64,22 +65,21 @@ public final class RegisteredServiceSimpleFormController {
     
     /** Instance of ServiceRegistryManager. */
     @NotNull
-    @Resource(name="servicesManager")
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /** Instance of AttributeRegistry. */
     @NotNull
-    @Resource(name="attributeRepository")
-    private IPersonAttributeDao personAttributeDao;
+    private final IPersonAttributeDao personAttributeDao;
     
     @NotNull
     @Resource(name="registeredServiceValidator")
     private Validator validator;
-    
-    public RegisteredServiceSimpleFormController() {}
-    
-    public void setValidator(final Validator v) {
-        this.validator = v;
+
+    @Autowired
+    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager, 
+            final IPersonAttributeDao personAttributeDao) {
+        this.personAttributeDao = personAttributeDao;
+        this.servicesManager = servicesManager;
     }
     /**
      * Sets the require fields and the disallowed fields from the
