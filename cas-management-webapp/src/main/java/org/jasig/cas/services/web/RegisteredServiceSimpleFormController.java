@@ -81,6 +81,13 @@ public final class RegisteredServiceSimpleFormController {
         this.personAttributeDao = personAttributeDao;
         this.servicesManager = servicesManager;
     }
+    
+    RegisteredServiceSimpleFormController(final ServicesManager servicesManager, 
+            final IPersonAttributeDao personAttributeDao, final Validator validator) {
+        this(servicesManager, personAttributeDao);
+        this.validator = validator;
+    }
+    
     /**
      * Sets the require fields and the disallowed fields from the
      * HttpServletRequest.
