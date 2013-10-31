@@ -41,10 +41,9 @@ import static org.junit.Assert.*;
  */
 public class RegisteredServiceValidatorTests {
 
-    private Validator getValidator(final boolean returnValue) {
+    private RegisteredServiceValidator getValidator(final boolean returnValue) {
         final IPersonAttributeDao dao = new StubPersonAttributeDao();
         final RegisteredServiceValidator validator = new RegisteredServiceValidator(new TestServicesManager(returnValue), dao);
-        validator.setMaxDescriptionLength(1);
         return validator;
     }
     
@@ -65,7 +64,7 @@ public class RegisteredServiceValidatorTests {
 
     @Test
     public void testIdDoesNotExist3() {
-        checkId(true, 0, null);
+        checkId(true, 1, null);
     }
 
     @Test
@@ -83,7 +82,8 @@ public class RegisteredServiceValidatorTests {
 
         final BindException exception = new BindException(impl, "registeredService");
 
-        final Validator validator = getValidator(false);
+        final RegisteredServiceValidator validator = getValidator(false);
+        validator.setMaxDescriptionLength(1);
         validator.validate(impl, exception);
 
         assertEquals(1, exception.getErrorCount());
@@ -92,6 +92,8 @@ public class RegisteredServiceValidatorTests {
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
         final Validator validator = getValidator(exists);
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        impl.setName("name");
+        impl.setDescription("Test service");
         impl.setServiceId(name);
 
         final BindException exception = new BindException(impl, "registeredService");
