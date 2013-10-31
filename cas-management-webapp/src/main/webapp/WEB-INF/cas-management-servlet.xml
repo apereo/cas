@@ -84,10 +84,6 @@
       class="org.springframework.web.servlet.mvc.ParameterizableViewController"
       p:viewName="serviceLogoutView"/>
 
-  <bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
-        p:servicesManager-ref="servicesManager" 
-        p:personAttributeDao-ref="attributeRepository" />
-
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
 
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"

@@ -24,12 +24,12 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -41,7 +41,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 @Component
-@Qualifier(value="registeredServiceValidator")
+@Qualifier("registeredServiceValidator")
 public final class RegisteredServiceValidator implements Validator {
 
     /** Default length, which matches what is in the view. */
@@ -49,8 +49,7 @@ public final class RegisteredServiceValidator implements Validator {
 
     /** {@link ServicesManager} to look up services. */
     @NotNull
-    @Resource(name="servicesManager")
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /** The maximum length of the description we will accept. */
     @Min(0)
@@ -58,9 +57,14 @@ public final class RegisteredServiceValidator implements Validator {
 
     /** {@link IPersonAttributeDao} to manage person attributes. */
     @NotNull
-    @Resource(name="attributeRepository")
-    private IPersonAttributeDao personAttributeDao;
+    private final IPersonAttributeDao personAttributeDao;
 
+    @Autowired
+    public RegisteredServiceValidator(final ServicesManager servicesManager, 
+            final IPersonAttributeDao personAttributeDao) {
+        this.personAttributeDao = personAttributeDao;
+        this.servicesManager = servicesManager;
+    }
     /**
      * {@inheritDoc}
      * Supports {@link RegisteredService} objects.
@@ -109,15 +113,8 @@ public final class RegisteredServiceValidator implements Validator {
         }
     }
 
-    public void setServicesManager(final ServicesManager serviceRegistry) {
-        this.servicesManager = serviceRegistry;
-    }
-
     public void setMaxDescriptionLength(final int maxLength) {
         this.maxDescriptionLength = maxLength;
     }
 
-    public void setPersonAttributeDao(final IPersonAttributeDao personAttributeDao) {
-        this.personAttributeDao = personAttributeDao;
-    }
 }
