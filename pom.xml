@@ -546,8 +546,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
       
@@ -979,7 +979,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
     <checkstyle.version>5.6</checkstyle.version>
-    <commons.lang.version>3.1</commons.lang.version>
+    <commons.lang.version>2.5</commons.lang.version>
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
