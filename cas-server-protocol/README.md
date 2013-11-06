@@ -7,7 +7,7 @@ To generate output-files in other formats, we recommend the usage of [Pandoc](ht
 
 Example conversion to HTML:
 
-`pandoc -s -S --toc --self-contained cas_protocol_3_0.md -t html5 -o cas_protocol_3_0.html`
+`pandoc -s -S --toc --self-contained --template ../pandoc/html_template.pandoc cas_protocol_3_0.md -t html5 -o cas_protocol_3_0.html`
 
 
 Example conversion to PDF:

@@ -21,139 +21,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>CAS Protocol 3.0 specification</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <!--[if lt IE 9]>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+            <title>CAS Protocol 3.0 specification</title>
+    <style type="text/css">code{white-space: pre;}</style>
+    <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <style type="text/css">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
-  </style>
-</head>
+    <![endif]-->
+            <style type="text/css">
+        table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+          margin: 0; padding: 0; vertical-align: baseline; border: none; }
+        table.sourceCode { width: 100%; line-height: 100%; }
+        td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+        td.sourceCode { padding-left: 5px; }
+        code > span.kw { color: #007020; font-weight: bold; }
+        code > span.dt { color: #902000; }
+        code > span.dv { color: #40a070; }
+        code > span.bn { color: #40a070; }
+        code > span.fl { color: #40a070; }
+        code > span.ch { color: #4070a0; }
+        code > span.st { color: #4070a0; }
+        code > span.co { color: #60a0b0; font-style: italic; }
+        code > span.ot { color: #007020; }
+        code > span.al { color: #ff0000; font-weight: bold; }
+        code > span.fu { color: #06287e; }
+        code > span.er { color: #ff0000; font-weight: bold; }
+    </style>
+                </head>
 <body>
 <header>
-<h1 class="title">CAS Protocol 3.0 specification</h1>
-</header>
+    <h1 class="title">CAS Protocol 3.0 specification</h1>
+            </header>
 <nav id="TOC">
-<ul>
-<li><a href="#authors-version"><strong>Authors, Version</strong></a></li>
-<li><a href="#introduction"><strong>1. Introduction</strong></a><ul>
-<li><a href="#conventions-definitions"><strong>1.1. Conventions &amp; Definitions</strong></a></li>
-<li><a href="#reference-implementation"><strong>1.2 Reference Implementation</strong></a></li>
-</ul></li>
-<li><a href="#cas-uris"><strong>2. CAS URIs</strong></a><ul>
-<li><a href="#login-as-credential-requestor"><strong>2.1. /login as credential requestor</strong></a><ul>
-<li><a href="#parameters"><strong>2.1.1. parameters</strong></a></li>
-<li><a href="#url-examples-of-login"><strong>2.1.2. URL examples of /login</strong></a></li>
-<li><a href="#response-for-usernamepassword-authentication"><strong>2.1.3. response for username/password authentication</strong></a></li>
-<li><a href="#response-for-trust-authentication"><strong>2.1.4. response for trust authentication</strong></a></li>
-<li><a href="#response-for-single-sign-on-authentication"><strong>2.1.5. response for single sign-on authentication</strong></a></li>
-</ul></li>
-<li><a href="#login-as-credential-acceptor"><strong>2.2. /login as credential acceptor</strong></a><ul>
-<li><a href="#parameters-common-to-all-types-of-authentication"><strong>2.2.1. parameters common to all types of authentication</strong></a></li>
-<li><a href="#parameters-for-usernamepassword-authentication"><strong>2.2.2. parameters for username/password authentication</strong></a></li>
-<li><a href="#parameters-for-trust-authentication"><strong>2.2.3. parameters for trust authentication</strong></a></li>
-<li><a href="#response"><strong>2.2.4. response</strong></a></li>
-</ul></li>
-<li><a href="#logout"><strong>2.3. /logout</strong></a><ul>
-<li><a href="#parameters-1"><strong>2.3.1. parameters</strong></a></li>
-<li><a href="#response-1"><strong>2.3.2. response</strong></a></li>
-<li><a href="#single-logout"><strong>2.3.3 Single Logout</strong></a></li>
-</ul></li>
-<li><a href="#validate-cas-1.0"><strong>2.4. /validate [CAS 1.0]</strong></a><ul>
-<li><a href="#parameters-2"><strong>2.4.1. parameters</strong></a></li>
-<li><a href="#response-2"><strong>2.4.2. response</strong></a></li>
-<li><a href="#url-examples-of-validate"><strong>2.4.3. URL examples of /validate</strong></a></li>
-</ul></li>
-<li><a href="#servicevalidate-cas-2.0"><strong>2.5. /serviceValidate [CAS 2.0]</strong></a><ul>
-<li><a href="#parameters-3"><strong>2.5.1. parameters</strong></a></li>
-<li><a href="#response-3"><strong>2.5.2. response</strong></a></li>
-<li><a href="#error-codes"><strong>2.5.3. error codes</strong></a></li>
-<li><a href="#proxy-callback"><strong>2.5.4. proxy callback</strong></a></li>
-<li><a href="#attributes-cas-3.0"><strong>2.5.5. attributes [CAS 3.0]</strong></a></li>
-<li><a href="#url-examples-of-servicevalidate"><strong>2.5.6. URL examples of /serviceValidate</strong></a></li>
-<li><a href="#example-response-with-custom-attributes"><strong>2.5.7 Example response with custom attributes</strong></a></li>
-</ul></li>
-<li><a href="#proxyvalidate-cas-2.0"><strong>2.6. /proxyValidate [CAS 2.0]</strong></a><ul>
-<li><a href="#parameters-4"><strong>2.6.1. parameters</strong></a></li>
-<li><a href="#response-4"><strong>2.6.2. response</strong></a></li>
-<li><a href="#error-codes-1"><strong>2.6.3 error codes</strong></a></li>
-<li><a href="#url-examples-of-proxyvalidate"><strong>2.6.4 URL examples of /proxyValidate</strong></a></li>
-</ul></li>
-<li><a href="#proxy-cas-2.0"><strong>2.7. /proxy [CAS 2.0]</strong></a><ul>
-<li><a href="#parameters-5"><strong>2.7.1. parameters</strong></a></li>
-<li><a href="#response-5"><strong>2.7.2. response</strong></a></li>
-<li><a href="#error-codes-2"><strong>2.7.3. error codes</strong></a></li>
-<li><a href="#url-example-of-proxy"><strong>2.7.4. URL example of /proxy</strong></a></li>
-<li><a href="#service-ticket-lifecycle-implications"><strong>2.7.4 Service Ticket Lifecycle implications</strong></a></li>
-</ul></li>
-</ul></li>
-<li><a href="#cas-entities"><strong>3. CAS Entities</strong></a><ul>
-<li><a href="#service-ticket"><strong>3.1. service ticket</strong></a><ul>
-<li><a href="#service-ticket-properties"><strong>3.1.1. service ticket properties</strong></a></li>
-</ul></li>
-<li><a href="#proxy-ticket"><strong>3.2. proxy ticket</strong></a><ul>
-<li><a href="#proxy-ticket-properties"><strong>3.2.1. proxy ticket properties</strong></a></li>
-</ul></li>
-<li><a href="#proxy-granting-ticket"><strong>3.3. proxy-granting ticket</strong></a><ul>
-<li><a href="#proxy-granting-ticket-properties"><strong>3.3.1. proxy-granting ticket properties</strong></a></li>
-</ul></li>
-<li><a href="#proxy-granting-ticket-iou"><strong>3.4. proxy-granting ticket IOU</strong></a><ul>
-<li><a href="#proxy-granting-ticket-iou-properties"><strong>3.4.1. proxy-granting ticket IOU properties</strong></a></li>
-</ul></li>
-<li><a href="#login-ticket"><strong>3.5. login ticket</strong></a><ul>
-<li><a href="#login-ticket-properties"><strong>3.5.1. login ticket properties</strong></a></li>
-</ul></li>
-<li><a href="#ticket-granting-cookie"><strong>3.6. ticket-granting cookie</strong></a><ul>
-<li><a href="#ticket-granting-cookie-properties"><strong>3.6.1. ticket-granting cookie properties</strong></a></li>
-</ul></li>
-<li><a href="#ticket-and-ticket-granting-cookie-character-set"><strong>3.7. ticket and ticket-granting cookie character set</strong></a></li>
-</ul></li>
-<li><a href="#optional-features"><strong>4. Optional Features</strong></a><ul>
-<li><a href="#long-term-tickets---remember-me-cas-3.0"><strong>4.1 Long-Term Tickets - Remember-Me [CAS 3.0]</strong></a><ul>
-<li><a href="#enabling-remember-me-login-page"><strong>4.1.1 Enabling Remember-Me (Login Page)</strong></a></li>
-<li><a href="#security-implications"><strong>4.1.2 Security implications</strong></a></li>
-<li><a href="#cas-validation-response-attributes"><strong>4.1.3 CAS Validation Response Attributes</strong></a></li>
-<li><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></li>
-</ul></li>
-<li><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a><ul>
-<li><a href="#parameters-6"><strong>4.2.1 parameters</strong></a></li>
-<li><a href="#http-request-method-and-body"><strong>4.2.2 HTTP Request Method and Body</strong></a></li>
-<li><a href="#saml-request-values"><strong>4.2.3 SAML request values</strong></a></li>
-<li><a href="#example-of-samlvalidate-post-request"><strong>4.2.4 Example of /samlValidate POST request</strong></a></li>
-<li><a href="#saml-response"><strong>4.2.5 SAML response</strong></a></li>
-<li><a href="#saml-cas-response-attributes"><strong>4.2.5.1 SAML CAS response attributes</strong></a></li>
-</ul></li>
-</ul></li>
-<li><a href="#appendix-a-cas-response-xml-schema"><strong>Appendix A: CAS response XML schema</strong></a></li>
-<li><a href="#appendix-b-safe-redirection"><strong>Appendix B: Safe redirection</strong></a></li>
-<li><a href="#appendix-c-logout-xml-document"><strong>Appendix C: Logout XML document</strong></a></li>
-<li><a href="#appendix-d-references"><strong>Appendix D: References</strong></a></li>
-<li><a href="#appendix-e-cas-license"><strong>Appendix E: CAS License</strong></a></li>
-<li><a href="#appendix-f-yale-license"><strong>Appendix F: YALE License</strong></a></li>
-<li><a href="#appendix-f-changes-to-this-document"><strong>Appendix F: Changes to this Document</strong></a></li>
-</ul>
+    <ul>
+    <li><a href="#cas-protocol-3.0-specification"><em>CAS Protocol 3.0 Specification</em></a></li>
+    <li><a href="#authors-version"><strong>Authors, Version</strong></a></li>
+    <li><a href="#introduction"><strong>1. Introduction</strong></a><ul>
+    <li><a href="#conventions-definitions"><strong>1.1. Conventions &amp; Definitions</strong></a></li>
+    <li><a href="#reference-implementation"><strong>1.2 Reference Implementation</strong></a></li>
+    </ul></li>
+    <li><a href="#cas-uris"><strong>2. CAS URIs</strong></a><ul>
+    <li><a href="#login-as-credential-requestor"><strong>2.1. /login as credential requestor</strong></a><ul>
+    <li><a href="#parameters"><strong>2.1.1. parameters</strong></a></li>
+    <li><a href="#url-examples-of-login"><strong>2.1.2. URL examples of /login</strong></a></li>
+    <li><a href="#response-for-usernamepassword-authentication"><strong>2.1.3. response for username/password authentication</strong></a></li>
+    <li><a href="#response-for-trust-authentication"><strong>2.1.4. response for trust authentication</strong></a></li>
+    <li><a href="#response-for-single-sign-on-authentication"><strong>2.1.5. response for single sign-on authentication</strong></a></li>
+    </ul></li>
+    <li><a href="#login-as-credential-acceptor"><strong>2.2. /login as credential acceptor</strong></a><ul>
+    <li><a href="#parameters-common-to-all-types-of-authentication"><strong>2.2.1. parameters common to all types of authentication</strong></a></li>
+    <li><a href="#parameters-for-usernamepassword-authentication"><strong>2.2.2. parameters for username/password authentication</strong></a></li>
+    <li><a href="#parameters-for-trust-authentication"><strong>2.2.3. parameters for trust authentication</strong></a></li>
+    <li><a href="#response"><strong>2.2.4. response</strong></a></li>
+    </ul></li>
+    <li><a href="#logout"><strong>2.3. /logout</strong></a><ul>
+    <li><a href="#parameters-1"><strong>2.3.1. parameters</strong></a></li>
+    <li><a href="#response-1"><strong>2.3.2. response</strong></a></li>
+    <li><a href="#single-logout"><strong>2.3.3 Single Logout</strong></a></li>
+    </ul></li>
+    <li><a href="#validate-cas-1.0"><strong>2.4. /validate [CAS 1.0]</strong></a><ul>
+    <li><a href="#parameters-2"><strong>2.4.1. parameters</strong></a></li>
+    <li><a href="#response-2"><strong>2.4.2. response</strong></a></li>
+    <li><a href="#url-examples-of-validate"><strong>2.4.3. URL examples of /validate</strong></a></li>
+    </ul></li>
+    <li><a href="#servicevalidate-cas-2.0"><strong>2.5. /serviceValidate [CAS 2.0]</strong></a><ul>
+    <li><a href="#parameters-3"><strong>2.5.1. parameters</strong></a></li>
+    <li><a href="#response-3"><strong>2.5.2. response</strong></a></li>
+    <li><a href="#error-codes"><strong>2.5.3. error codes</strong></a></li>
+    <li><a href="#proxy-callback"><strong>2.5.4. proxy callback</strong></a></li>
+    <li><a href="#attributes-cas-3.0"><strong>2.5.5. attributes [CAS 3.0]</strong></a></li>
+    <li><a href="#url-examples-of-servicevalidate"><strong>2.5.6. URL examples of /serviceValidate</strong></a></li>
+    <li><a href="#example-response-with-custom-attributes"><strong>2.5.7 Example response with custom attributes</strong></a></li>
+    </ul></li>
+    <li><a href="#proxyvalidate-cas-2.0"><strong>2.6. /proxyValidate [CAS 2.0]</strong></a><ul>
+    <li><a href="#parameters-4"><strong>2.6.1. parameters</strong></a></li>
+    <li><a href="#response-4"><strong>2.6.2. response</strong></a></li>
+    <li><a href="#error-codes-1"><strong>2.6.3 error codes</strong></a></li>
+    <li><a href="#url-examples-of-proxyvalidate"><strong>2.6.4 URL examples of /proxyValidate</strong></a></li>
+    </ul></li>
+    <li><a href="#proxy-cas-2.0"><strong>2.7. /proxy [CAS 2.0]</strong></a><ul>
+    <li><a href="#parameters-5"><strong>2.7.1. parameters</strong></a></li>
+    <li><a href="#response-5"><strong>2.7.2. response</strong></a></li>
+    <li><a href="#error-codes-2"><strong>2.7.3. error codes</strong></a></li>
+    <li><a href="#url-example-of-proxy"><strong>2.7.4. URL example of /proxy</strong></a></li>
+    <li><a href="#service-ticket-lifecycle-implications"><strong>2.7.4 Service Ticket Lifecycle implications</strong></a></li>
+    </ul></li>
+    </ul></li>
+    <li><a href="#cas-entities"><strong>3. CAS Entities</strong></a><ul>
+    <li><a href="#service-ticket"><strong>3.1. service ticket</strong></a><ul>
+    <li><a href="#service-ticket-properties"><strong>3.1.1. service ticket properties</strong></a></li>
+    </ul></li>
+    <li><a href="#proxy-ticket"><strong>3.2. proxy ticket</strong></a><ul>
+    <li><a href="#proxy-ticket-properties"><strong>3.2.1. proxy ticket properties</strong></a></li>
+    </ul></li>
+    <li><a href="#proxy-granting-ticket"><strong>3.3. proxy-granting ticket</strong></a><ul>
+    <li><a href="#proxy-granting-ticket-properties"><strong>3.3.1. proxy-granting ticket properties</strong></a></li>
+    </ul></li>
+    <li><a href="#proxy-granting-ticket-iou"><strong>3.4. proxy-granting ticket IOU</strong></a><ul>
+    <li><a href="#proxy-granting-ticket-iou-properties"><strong>3.4.1. proxy-granting ticket IOU properties</strong></a></li>
+    </ul></li>
+    <li><a href="#login-ticket"><strong>3.5. login ticket</strong></a><ul>
+    <li><a href="#login-ticket-properties"><strong>3.5.1. login ticket properties</strong></a></li>
+    </ul></li>
+    <li><a href="#ticket-granting-cookie"><strong>3.6. ticket-granting cookie</strong></a><ul>
+    <li><a href="#ticket-granting-cookie-properties"><strong>3.6.1. ticket-granting cookie properties</strong></a></li>
+    </ul></li>
+    <li><a href="#ticket-and-ticket-granting-cookie-character-set"><strong>3.7. ticket and ticket-granting cookie character set</strong></a></li>
+    </ul></li>
+    <li><a href="#optional-features"><strong>4. Optional Features</strong></a><ul>
+    <li><a href="#long-term-tickets---remember-me-cas-3.0"><strong>4.1 Long-Term Tickets - Remember-Me [CAS 3.0]</strong></a><ul>
+    <li><a href="#enabling-remember-me-login-page"><strong>4.1.1 Enabling Remember-Me (Login Page)</strong></a></li>
+    <li><a href="#security-implications"><strong>4.1.2 Security implications</strong></a></li>
+    <li><a href="#cas-validation-response-attributes"><strong>4.1.3 CAS Validation Response Attributes</strong></a></li>
+    <li><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></li>
+    </ul></li>
+    <li><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a><ul>
+    <li><a href="#parameters-6"><strong>4.2.1 parameters</strong></a></li>
+    <li><a href="#http-request-method-and-body"><strong>4.2.2 HTTP Request Method and Body</strong></a></li>
+    <li><a href="#saml-request-values"><strong>4.2.3 SAML request values</strong></a></li>
+    <li><a href="#example-of-samlvalidate-post-request"><strong>4.2.4 Example of /samlValidate POST request</strong></a></li>
+    <li><a href="#saml-response"><strong>4.2.5 SAML response</strong></a></li>
+    <li><a href="#saml-cas-response-attributes"><strong>4.2.5.1 SAML CAS response attributes</strong></a></li>
+    </ul></li>
+    </ul></li>
+    <li><a href="#appendix-a-cas-response-xml-schema"><strong>Appendix A: CAS response XML schema</strong></a></li>
+    <li><a href="#appendix-b-safe-redirection"><strong>Appendix B: Safe redirection</strong></a></li>
+    <li><a href="#appendix-c-logout-xml-document"><strong>Appendix C: Logout XML document</strong></a></li>
+    <li><a href="#appendix-d-references"><strong>Appendix D: References</strong></a></li>
+    <li><a href="#appendix-e-cas-license"><strong>Appendix E: CAS License</strong></a></li>
+    <li><a href="#appendix-f-yale-license"><strong>Appendix F: YALE License</strong></a></li>
+    <li><a href="#appendix-f-changes-to-this-document"><strong>Appendix F: Changes to this Document</strong></a></li>
+    </ul>
 </nav>
 <p><a name="headTop"></a></p>
+<h1 id="cas-protocol-3.0-specification"><a href="#cas-protocol-3.0-specification"><em>CAS Protocol 3.0 Specification</em></a></h1>
 <h1 id="authors-version"><a href="#authors-version"><strong>Authors, Version</strong></a></h1>
 <p>Author: Drew Mazurek</p>
 <p>Contributors:</p>
@@ -164,7 +166,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><p>Andrew Petro</p></li>
 <li><p>Robert Oschwald [CAS 3.0]</p></li>
 </ul>
-<p>Version: 3.0</p>
+<p>Version: 3.0 RC1</p>
 <p>Release Date: T.B.D.</p>
 <p>Copyright © 2005, Yale University</p>
 <p>Copyright © 2013, JA-SIG, Inc.</p>
@@ -232,7 +234,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3 id="parameters"><a href="#parameters"><strong>2.1.1. parameters</strong></a></h3>
 <p>The following HTTP request parameters may be passed to /login while it is acting as a credential requestor. They are all case-sensitive, and they all MUST be handled by /login.</p>
 <ul>
-<li><p>service [OPTIONAL] - the identifier of the application the client is trying to access. In almost all cases, this will be the URL of the application. As a HTTP request parameter, this URL value MUST be URL-encoded as described in Section 2.2 of RFC 3986 [<a href="#4">4</a>]. If a service is not specified and a single sign-on session does not yet exist, CAS SHOULD request credentials from the user to initiate a single sign-on session. If a service is not specified and a single sign-on session already exists, CAS SHOULD display a message notifying the client that it is already logged in.</p></li>
+<li><p>service [OPTIONAL] - the identifier of the application the client is trying to access. In almost all cases, this will be the URL of the application. As a HTTP request parameter, this URL value MUST be URL-encoded as described in section 2.2 of RFC 3986 [<a href="#4">4</a>]. If a service is not specified and a single sign-on session does not yet exist, CAS SHOULD request credentials from the user to initiate a single sign-on session. If a service is not specified and a single sign-on session already exists, CAS SHOULD display a message notifying the client that it is already logged in.</p></li>
 <li><p>renew [OPTIONAL] - if this parameter is set, single sign-on will be bypassed. In this case, CAS will require the client to present credentials regardless of the existence of a single sign-on session with CAS. This parameter is not compatible with the “gateway” parameter. Services redirecting to the /login URI and login form views posting to the /login URI SHOULD NOT set both the “renew” and “gateway” request parameters. Behavior is undefined if both are set. It is RECOMMENDED that CAS implementations ignore the “gateway” parameter if “renew” is set. It is RECOMMENDED that when the renew parameter is set its value be “true”.</p></li>
 <li><p>gateway [OPTIONAL] - if this parameter is set, CAS will not ask the client for credentials. If the client has a pre-existing single sign-on session with CAS, or if a single sign-on session can be established through non-interactive means (i.e. trust authentication), CAS MAY redirect the client to the URL specified by the “service” parameter, appending a valid service ticket. (CAS also MAY interpose an advisory page informing the client that a CAS authentication has taken place.) If the client does not have a single sign-on session with CAS, and a non-interactive authentication cannot be established, CAS MUST redirect the client to the URL specified by the “service” parameter with no “ticket” parameter appended to the URL. If the “service” parameter is not specified and “gateway” is set, the behavior of CAS is undefined. It is RECOMMENDED that in this case, CAS request credentials as if neither parameter was specified. This parameter is not compatible with the “renew” parameter. Behavior is undefined if both are set. It is RECOMMENDED that when the gateway parameter is set its value be “true”.</p></li>
 <li><p>method [OPTIONAL, CAS 3.0] - The method to be used when sending responses. While native HTTP redirects (GET) may be utilized as the default method, applications that require a POST response can use this parameter to indicate the method type. It is up to the CAS server implementation to determine whether or not POST responses are supported.</p></li>
@@ -874,7 +876,7 @@ mce_href=<span class="st">&quot;https://portal.yale.edu/Login?ticket=ST-...&quot
 <p><a name="5"></a>[5] Kristol, D., Montulli, L., “HTTP State Management Mechanism”, <a href="http://www.ietf.org/rfc/rfc2965.txt">RFC 2965</a>, Bell Laboratories/Lucent Technologies, Epinions.com, Inc., October 2000.</p>
 <p><a name="6"></a>[6] Braden, R., “Requirements for Internet Hosts - Application and Support”, <a href="http://www.ietf.org/rfc/rfc1123.txt">RFC 1123</a>, Internet Engineering Task Force, October 1989.</p>
 <p><a name="7"></a>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.</p>
-<p><a name="8"></a>[8 ] JASIG <a href="http://www.jasig.org/cas">CAS Server</a> reference implementation</p>
+<p><a name="8"></a>[8] JASIG <a href="http://www.jasig.org/cas">CAS Server</a> reference implementation</p>
 <p><a name="head_appdx_e"></a></p>
 <h1 id="appendix-e-cas-license"><a href="#appendix-e-cas-license"><strong>Appendix E: CAS License</strong></a></h1>
 <p>Licensed to Jasig under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. Jasig licenses this file to you under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at the following location:</p>
