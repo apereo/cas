@@ -1,6 +1,9 @@
+% CAS Protocol 3.0 specification
+
+\newpage
 <a name="headTop"/>
 
-**CAS Protocol 3.0**
+**Authors, Version**
 ====================
 
 Author: Drew Mazurek
@@ -19,7 +22,7 @@ Contributors:
 
 Version: 3.0
 
-Release Date: TBD
+Release Date: T.B.D.
 
 Copyright &copy; 2005, Yale University
 
@@ -31,6 +34,13 @@ Copyright &copy; 2013, JA-SIG, Inc.
 ===================
 
 This is the official specification of the CAS 1.0, 2.0 and 3.0 protocols.
+
+The Central Authentication Service (CAS) is a single-sign-on / single-sign-off protocol
+for the web.
+It permits a user to access multiple applications while providing their
+credentials (such as userid and password) only once to a central CAS Server
+application.
+
 
 <a name="head1.1"/>
 
@@ -59,14 +69,28 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "\<LF\>" is a bare line feed (ASCII value 0x0a).
 
-<a name="head2"/>
+<a name="1.2"/>
+
+**1.2 Reference Implementation**
+--------------------------------
+The JASIG CAS-Server [8](<#8>)\ref{8} is the official reference implementation of the CAS protocol specification.
+
 
 **2. CAS URIs**
 ===============
 
 CAS is an HTTP[2](<#2>),[3](<#3>)-based protocol that requires each of its
 components to be accessible through specific URIs. This section will discuss
-each of the URIs.
+each of the URIs:
+
+URI              Description
+------           ------
+/login           credential requestor / acceptor
+/logout          destroy CAS session (logout)
+/validate        service ticket validation
+/serviceValidate service ticket validation [CAS 2.0]
+/proxyValidate   service- / proxy ticket validation [CAS 2.0]
+/proxy           proxy ticket service [CAS 2.0]
 
 <a name="head2.1"/>
 
@@ -379,9 +403,10 @@ If the client supports SLO POST request handling, the client SHALL return a HTTP
 status code.
 
 
+
 <a name="head2.4"/>
 
-### **2.4. /validate [CAS 1.0]**
+## **2.4. /validate [CAS 1.0]**
 
 /validate checks the validity of a service ticket. /validate is part of the CAS
 1.0 protocol and thus does not handle proxy authentication. CAS MUST respond
@@ -545,7 +570,7 @@ as the body of the \<cas:authenticationFailure\> block of the XML response.
 ### **2.5.4. proxy callback**
 
 If a service wishes to proxy a client's authentication to a back-end service, it
-must acquire a proxy-granting ticket. Acquisition of this ticket is handled
+must acquire a proxy-granting ticket (PGT). Acquisition of this ticket is handled
 through a proxy callback URL. This URL will uniquely and securely identify the
 service that is proxying the client's authentication. The back-end service can
 then decide whether or not to accept the credentials based on the proxying
@@ -553,7 +578,7 @@ service identifying callback URL.
 
 The proxy callback mechanism works as follows:
 
-1.  The service that is requesting a proxy-granting ticket specifies upon
+1.  The service that is requesting a proxy-granting ticket (PGT) specifies upon
     initial service ticket or proxy ticket validation the HTTP request parameter
     "pgtUrl" to /serviceValidate (or /proxyValidate). This is a callback URL of
     the service to which CAS will connect to verify the service's identity. This
@@ -594,11 +619,11 @@ The proxy callback mechanism works as follows:
 
 <a name="head2.5.5"/>
 
-### **2.5.5 Attributes**
+### **2.5.5. attributes [CAS 3.0]**
 
 [CAS 3.0] The response document MAY include an optional \<cas:attributes\>
 element for additional authentication and/or user attributes. See [Appendix
-A](<#head_appdx_b>).
+A](<#head_appdx_b>) for details.
 
 
 
@@ -731,7 +756,6 @@ See section [2.5.3](<#head2.5.3>)
 tickets and will be proxying authentication to back-end services.
 
 
-
 <a name="head2.7.1"/>
 
 ### **2.7.1. parameters**
@@ -806,7 +830,12 @@ Simple proxy request:
 
 
 
+\newpage
 <a name="head3"/>
+
+### **2.7.4 Service Ticket Lifecycle implications**
+The CAS Server implementation MAY update the parent Service Ticket (ST) lifetime upon proxy ticket generation.
+
 
 **3. CAS Entities**
 ===================
@@ -911,7 +940,7 @@ it is connecting.
 **3.3. proxy-granting ticket**
 ------------------------------
 
-A proxy-granting ticket is an opaque string that is used by a service to obtain
+A proxy-granting ticket (PGT) is an opaque string that is used by a service to obtain
 proxy tickets for obtaining access to a back-end service on behalf of a client.
 Proxy-granting tickets are obtained from CAS upon validation of a service ticket
 or a proxy ticket. Proxy-granting ticket issuance is described fully in Section
@@ -1046,12 +1075,11 @@ and the hyphen character "-"}.
 
 
 
+\newpage
 <a name="head4"/>
 
 **4. Optional Features**
 ========================
-
-
 
 <a name="head4.1"/>
 
@@ -1118,10 +1146,10 @@ ticket validation methods supported by the CAS Server (See Sections
 
 ### **4.1.4 CAS Client requirements**
 
-If the CAS client needs to handle Remember-Me logins specially (e.g. access to
-sensitive areas of the CAS client application), the CAS client MUST NOT use the
-/validate CAS validation URL, as this URL does not support CAS attributes in the
-validation response document.
+If the CAS client needs to handle Remember-Me logins special (e.g. deny access to
+sensitive areas of the CAS client application on a remembered login), the CAS
+client MUST NOT use the /validate CAS validation URL, as this URL does not
+support CAS attributes in the validation response document.
 
 
 
@@ -1292,6 +1320,7 @@ The following additional attributes might be provided within the SAML response:
 
 
 
+\newpage
 <a name="head_appdx_a"/>
 
 **Appendix A: CAS response XML schema**
@@ -1381,7 +1410,7 @@ under the License.
             <xs:element name="longTermAuthenticationRequestTokenUsed" type="xs:boolean"
                 minOccurs="0">
                 <xs:annotation><xs:documentation>
-                    true if a long-term (Remember-Me token was used)
+                    true if a long-term (Remember-Me) token was used
                 </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="isFromNewLogin" type="xs:boolean" minOccurs="0">
@@ -1420,7 +1449,7 @@ under the License.
 >   as \<cas:attributes name="NAME"\>VALUE\</cas:attributes\>.
 
 
-
+\newpage
 <a name="head_appdx_b"/>
 
 **Appendix B: Safe redirection**
@@ -1481,7 +1510,7 @@ was successful, and provide a link to the requested service. The client must
 then manually click to proceed.
 
 
-
+\newpage
 <a name="head_appdx_c"/>
 
 **Appendix C: Logout XML document**
@@ -1502,7 +1531,7 @@ following SAML Logout Request XML document:
   </samlp:LogoutRequest>`
 ```
 
-
+\newpage
 <a name="head_appdx_d"/>
 
 **Appendix D: References**
@@ -1535,8 +1564,10 @@ Engineering Task Force, October 1989.
 
 <a name="7"/>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.
 
+<a name="8"/>![8 \label{8}] JASIG [CAS Server](<http://www.jasig.org/cas>) reference
+implementation
 
-
+\newpage
 <a name="head_appdx_e"/>
 
 **Appendix E: CAS License**
@@ -1556,6 +1587,8 @@ CONDITIONS OF ANY KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations under the License.
 
 
+**Appendix F: YALE License**
+===========================
 
 Copyright (c) 2000-2005 Yale University. All rights reserved.
 
@@ -1586,7 +1619,7 @@ met:
     promote products derived from this software.
 
 
-
+\newpage
 <a name="head_appdx_f"/>
 
 **Appendix F: Changes to this Document**
