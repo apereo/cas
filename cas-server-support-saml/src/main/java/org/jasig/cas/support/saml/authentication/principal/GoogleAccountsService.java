@@ -39,7 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.util.SamlUtils;
-import org.jasig.cas.util.ISOStandardDateFormatUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
 
@@ -193,7 +193,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             }
         }
 
-        final String currentDateTime = ISOStandardDateFormatUtils.getInstance().getCurrentDateAndTime();
+        final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
         samlResponse = samlResponse.replace("<ISSUE_INSTANT>", currentDateTime);
