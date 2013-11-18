@@ -35,7 +35,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.ISOStandardDateFormatUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +179,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private String createBackChannelLogoutMessage(final String ticketId) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-                ISOStandardDateFormatUtils.getInstance().getCurrentDateAndTime(), ticketId);
+                new ISOStandardDateFormat().getCurrentDateAndTime(), ticketId);
         return logoutRequest;
     }
 
