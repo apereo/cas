@@ -26,25 +26,16 @@ import org.apache.commons.lang.time.FastDateFormat;
  * A fast date format based on the ISO-8601 standard.
  * @author Misagh Moayyed
  */
-public final class ISOStandardDateFormatUtils extends FastDateFormat {
+public final class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;
 
-    private static ISOStandardDateFormatUtils INSTANCE = null;
-    
-    private ISOStandardDateFormatUtils() {
+    public ISOStandardDateFormat() {
         super("yyyy-MM-dd'T'HH:mm:ss'Z'", null, null);
-        init();
-    }
-
-    public static ISOStandardDateFormatUtils getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ISOStandardDateFormatUtils();
-        }
-        return INSTANCE;
+        super.init();
     }
     
     public String getCurrentDateAndTime() {
-        return getInstance().format(new Date());
+        return format(new Date());
     }
 }
