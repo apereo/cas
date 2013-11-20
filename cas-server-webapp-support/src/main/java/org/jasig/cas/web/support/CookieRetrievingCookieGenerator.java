@@ -18,29 +18,49 @@
  */
 package org.jasig.cas.web.support;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
+ * The cookie is automatically marked as httpOnly, if the servlet container has support for it.
+ * 
  * <p>
  * Also has support for RememberMe Services
  *
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  *
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     /** The maximum age the cookie should be remembered for.
      * The default is three months (7889231 in seconds, according to Google) */
     private int rememberMeMaxAge = 7889231;
 
+    public CookieRetrievingCookieGenerator() {
+        super();
+        final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
+        if(setHttpOnlyMethod != null) {
+            super.setCookieHttpOnly(true);
+        } else {
+            logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
+        }
+    }
+    
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
 
         if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
