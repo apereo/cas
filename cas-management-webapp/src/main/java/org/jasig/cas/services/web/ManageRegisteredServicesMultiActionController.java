@@ -46,7 +46,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public final class ManageRegisteredServicesMultiActionController {
 
     /** View name for the Manage Services View. */
-    private static final String VIEW_NAME = "manageServiceView";
+    public static final String VIEW_NAME = "manageServiceView";
 
     /** Instance of ServicesManager. */
     @NotNull
@@ -66,7 +66,7 @@ public final class ManageRegisteredServicesMultiActionController {
      * Method to delete the RegisteredService by its ID.
      * @return the Model and View to go to after the service is deleted.
      */
-    @RequestMapping("deleteRegisteredService.html")
+    @RequestMapping(value="deleteRegisteredService.html")
     public ModelAndView deleteRegisteredService(
             @RequestParam("id") final long idAsLong) {
         
@@ -74,9 +74,7 @@ public final class ManageRegisteredServicesMultiActionController {
                 "manage.html", true), "status", "deleted");
 
         final RegisteredService r = this.servicesManager.delete(idAsLong);
-
-        modelAndView.addObject("serviceName", r != null
-                ? r.getName() : "");
+        modelAndView.addObject("serviceName", r != null ? r.getName() : "");
 
         return modelAndView;
     }
