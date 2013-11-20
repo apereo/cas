@@ -59,6 +59,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
+    private static final int IV_LEN = 16;
+
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f'};
 
@@ -257,14 +259,14 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
+            
+            byte[] iv_ciphertext = decode(value.getBytes());
+            byte[] iv = Arrays.copyOfRange(iv_ciphertext, 0, IV_LEN);
+            byte[] decrypted64ByteValue = Arrays.copyOfRange(iv_ciphertext, IV_LEN, iv_ciphertext.length);
 
-            byte[] ivByteArray = algorithmParametersHashMap.get(hashedKey).getIV();
-            IvParameterSpec ivSpec = new IvParameterSpec(ivByteArray);
-
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
             cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] decrypted64ByteValue = new Base64().decode(valueByteArray);
             byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
 
             return new String(decryptedByteArray);
@@ -272,6 +274,21 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static byte[] generateIV() {
+        SecureRandom srand = new SecureRandom();
+        byte[] iv = new byte[IV_LEN];
+        srand.nextBytes(iv);
+        return iv;
+    }
+
+    private static byte[] encode(byte[] bytes) {
+        return new Base64().encode(bytes);
+    }
+
+    private static byte[] decode(byte[] bytes) {
+        return new Base64().decode(bytes);
     }
 
     protected String encrypt(final String value) {
@@ -285,20 +302,20 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            cipher.init(Cipher.ENCRYPT_MODE, this.key);
-            AlgorithmParameters params = cipher.getParameters();
 
-            if (hashedKey != null) {
-                algorithmParametersHashMap.put(hashedKey, params.getParameterSpec(IvParameterSpec.class));
-            }
+            byte[] iv = generateIV();
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] encryptedByteArray = cipher.doFinal(valueByteArray);
-            byte[] encrypted64ByteValue = new Base64().encode(encryptedByteArray);
+            cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
+            byte[] ciphertext = cipher.doFinal(value.getBytes());
 
-            return new String(encrypted64ByteValue);
+            byte[] iv_ciphertext = new byte[iv.length + ciphertext.length];
+            System.arraycopy(iv, 0, iv_ciphertext, 0, iv.length);
+            System.arraycopy(ciphertext, 0, iv_ciphertext, iv.length, ciphertext.length);
 
-        } catch (final Exception e) {
+            return new String(encode(iv_ciphertext));
+
+        } catch(final Exception e) {
             throw new RuntimeException(e);
         }
     }
