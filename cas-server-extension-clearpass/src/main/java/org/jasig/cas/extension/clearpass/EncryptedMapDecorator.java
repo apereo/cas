@@ -277,6 +277,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     }
 
     protected String encrypt(String plaintext, String ignore) {
+        if (plaintext == null)
+            return null;
+
         try {
             final Cipher cipher = getCipherObject();
 
@@ -298,9 +301,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     }
 
     protected String decrypt(String iv_ciphertext_encoded, String ignore) {
+        if (iv_ciphertext_encoded == null)
+            return null;
+
         try {
             final Cipher cipher = getCipherObject();
-
+            
             byte[] iv_ciphertext = decode(iv_ciphertext_encoded.getBytes());
             byte[] iv = Arrays.copyOfRange(iv_ciphertext, 0, IV_LEN);
             byte[] ciphertext = Arrays.copyOfRange(iv_ciphertext, IV_LEN, iv_ciphertext.length);
