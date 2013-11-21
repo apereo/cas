@@ -60,7 +60,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
-    private static final int IV_LEN = 16;
+    private static final int INTEGER_LEN = 4;
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f'};
@@ -78,6 +78,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     @NotNull
     private final Key key;
+
+    @NotNull
+    private byte[] iv_size;
 
     @NotNull
     private final String secretKeyAlgorithm;
@@ -154,6 +157,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.salt = salt;
         this.secretKeyAlgorithm = secretKeyAlgorithm;
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
+        this.iv_size = getIvLen();
     }
 
     private static String getRandomSalt(final int size) {
@@ -262,13 +266,15 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             final Cipher cipher = getCipherObject();
             
             byte[] iv_ciphertext = decode(value.getBytes());
-            byte[] iv = Arrays.copyOfRange(iv_ciphertext, 0, IV_LEN);
-            byte[] decrypted64ByteValue = Arrays.copyOfRange(iv_ciphertext, IV_LEN, iv_ciphertext.length);
 
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
+            byte[] iv_size = Arrays.copyOfRange(iv_ciphertext, 0, INTEGER_LEN);
+            byte[] iv_value = Arrays.copyOfRange(iv_ciphertext, INTEGER_LEN, (INTEGER_LEN + getInt(iv_size)));
+            byte[] ciphertext = Arrays.copyOfRange(iv_ciphertext, INTEGER_LEN + getInt(iv_size), iv_ciphertext.length);
 
-            byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
+            IvParameterSpec iv_spec = new IvParameterSpec(iv_value);
+            cipher.init(Cipher.DECRYPT_MODE, this.key, iv_spec);
+
+            byte[] plaintext = cipher.doFinal(ciphertext);
 
             return new String(decryptedByteArray);
 
@@ -277,11 +283,19 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         }
     }
 
-    private static byte[] generateIV() {
+    private static byte[] getIvLen() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return ByteBuffer.allocate(4).putInt(Cipher.getInstance(CIPHER_ALGORITHM).getBlockSize()).array();
+    }
+
+    private static int getInt(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getInt();
+    }
+
+    private static byte[] generateIV(final int size) {
         SecureRandom srand = new SecureRandom();
-        byte[] iv = new byte[IV_LEN];
-        srand.nextBytes(iv);
-        return iv;
+        byte[] iv_value = new byte[size];
+        srand.nextBytes(iv_value);
+        return iv_value;
     }
 
     private static byte[] encode(byte[] bytes) {
@@ -304,15 +318,17 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
 
-            byte[] iv = generateIV();
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+            byte[] iv_value = generateIV(getInt(this.iv_size));
+            IvParameterSpec iv_spec = new IvParameterSpec(iv_value);
 
-            cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, this.key, iv_spec);
             byte[] ciphertext = cipher.doFinal(value.getBytes());
 
-            byte[] iv_ciphertext = new byte[iv.length + ciphertext.length];
-            System.arraycopy(iv, 0, iv_ciphertext, 0, iv.length);
-            System.arraycopy(ciphertext, 0, iv_ciphertext, iv.length, ciphertext.length);
+            byte[] iv_ciphertext = new byte[INTEGER_LEN + getInt(this.iv_size) + ciphertext.length];
+
+            System.arraycopy(this.iv_size, 0, iv_ciphertext, 0, INTEGER_LEN);
+            System.arraycopy(iv_value, 0, iv_ciphertext, INTEGER_LEN, getInt(this.iv_size));
+            System.arraycopy(ciphertext, 0, iv_ciphertext, INTEGER_LEN + getInt(this.iv_size), ciphertext.length);
 
             return new String(encode(iv_ciphertext));
 
