@@ -158,7 +158,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.salt = salt;
         this.secretKeyAlgorithm = secretKeyAlgorithm;
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
-        this.iv_size = getIvLen();
+
+        try {
+            this.iv_size = getIvLen();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String getRandomSalt(final int size) {
