@@ -277,7 +277,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
             byte[] plaintext = cipher.doFinal(ciphertext);
 
-            return new String(decryptedByteArray);
+            return new String(plaintext);
 
         } catch (final Exception e) {
             throw new RuntimeException(e);
