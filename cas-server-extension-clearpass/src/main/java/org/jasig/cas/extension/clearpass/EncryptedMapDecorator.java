@@ -19,7 +19,6 @@
 package org.jasig.cas.extension.clearpass;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.MessageDigest;
@@ -81,7 +80,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private final Key key;
 
     @NotNull
-    private byte[] iv_size;
+    private byte[] ivSize;
 
     @NotNull
     private final String secretKeyAlgorithm;
@@ -160,7 +159,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
 
         try {
-            this.iv_size = getIvLen();
+            this.ivSize = getIvLen();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -273,12 +272,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             
             byte[] ivCiphertext = decode(value.getBytes());
 
-            byte[] iv_size = Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN);
-            byte[] iv_value = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + getInt(iv_size)));
-            byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + getInt(iv_size), ivCiphertext.length);
+            byte[] ivSize = Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN);
+            byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + getInt(ivSize)));
+            byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + getInt(ivSize), ivCiphertext.length);
 
-            IvParameterSpec iv_spec = new IvParameterSpec(iv_value);
-            cipher.init(Cipher.DECRYPT_MODE, this.key, iv_spec);
+            IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
+            cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
 
             byte[] plaintext = cipher.doFinal(ciphertext);
 
@@ -299,9 +298,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static byte[] generateIV(final int size) {
         SecureRandom srand = new SecureRandom();
-        byte[] iv_value = new byte[size];
-        srand.nextBytes(iv_value);
-        return iv_value;
+        byte[] ivValue = new byte[size];
+        srand.nextBytes(ivValue);
+        return ivValue;
     }
 
     private static byte[] encode(final byte[] bytes) {
@@ -324,17 +323,17 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
 
-            byte[] iv_value = generateIV(getInt(this.iv_size));
-            IvParameterSpec iv_spec = new IvParameterSpec(iv_value);
+            byte[] ivValue = generateIV(getInt(this.ivSize));
+            IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
 
-            cipher.init(Cipher.ENCRYPT_MODE, this.key, iv_spec);
+            cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
             byte[] ciphertext = cipher.doFinal(value.getBytes());
 
-            byte[] ivCiphertext = new byte[INTEGER_LEN + getInt(this.iv_size) + ciphertext.length];
+            byte[] ivCiphertext = new byte[INTEGER_LEN + getInt(this.ivSize) + ciphertext.length];
 
-            System.arraycopy(this.iv_size, 0, ivCiphertext, 0, INTEGER_LEN);
-            System.arraycopy(iv_value, 0, ivCiphertext, INTEGER_LEN, getInt(this.iv_size));
-            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + getInt(this.iv_size), ciphertext.length);
+            System.arraycopy(this.ivSize, 0, ivCiphertext, 0, INTEGER_LEN);
+            System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, getInt(this.ivSize));
+            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + getInt(this.ivSize), ciphertext.length);
 
             return new String(encode(ivCiphertext));
 
