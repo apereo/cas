@@ -18,8 +18,9 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.io.UnsupportedEncodingException;
-import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -265,11 +266,11 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
             
-            byte[] iv_ciphertext = decode(value.getBytes());
+            byte[] ivCiphertext = decode(value.getBytes());
 
-            byte[] iv_size = Arrays.copyOfRange(iv_ciphertext, 0, INTEGER_LEN);
-            byte[] iv_value = Arrays.copyOfRange(iv_ciphertext, INTEGER_LEN, (INTEGER_LEN + getInt(iv_size)));
-            byte[] ciphertext = Arrays.copyOfRange(iv_ciphertext, INTEGER_LEN + getInt(iv_size), iv_ciphertext.length);
+            byte[] iv_size = Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN);
+            byte[] iv_value = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + getInt(iv_size)));
+            byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + getInt(iv_size), ivCiphertext.length);
 
             IvParameterSpec iv_spec = new IvParameterSpec(iv_value);
             cipher.init(Cipher.DECRYPT_MODE, this.key, iv_spec);
@@ -287,7 +288,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return ByteBuffer.allocate(4).putInt(Cipher.getInstance(CIPHER_ALGORITHM).getBlockSize()).array();
     }
 
-    private static int getInt(byte[] bytes) {
+    private static int getInt(final byte[] bytes) {
         return ByteBuffer.wrap(bytes).getInt();
     }
 
@@ -298,11 +299,11 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return iv_value;
     }
 
-    private static byte[] encode(byte[] bytes) {
+    private static byte[] encode(final byte[] bytes) {
         return new Base64().encode(bytes);
     }
 
-    private static byte[] decode(byte[] bytes) {
+    private static byte[] decode(final byte[] bytes) {
         return new Base64().decode(bytes);
     }
 
@@ -324,13 +325,13 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             cipher.init(Cipher.ENCRYPT_MODE, this.key, iv_spec);
             byte[] ciphertext = cipher.doFinal(value.getBytes());
 
-            byte[] iv_ciphertext = new byte[INTEGER_LEN + getInt(this.iv_size) + ciphertext.length];
+            byte[] ivCiphertext = new byte[INTEGER_LEN + getInt(this.iv_size) + ciphertext.length];
 
-            System.arraycopy(this.iv_size, 0, iv_ciphertext, 0, INTEGER_LEN);
-            System.arraycopy(iv_value, 0, iv_ciphertext, INTEGER_LEN, getInt(this.iv_size));
-            System.arraycopy(ciphertext, 0, iv_ciphertext, INTEGER_LEN + getInt(this.iv_size), ciphertext.length);
+            System.arraycopy(this.iv_size, 0, ivCiphertext, 0, INTEGER_LEN);
+            System.arraycopy(iv_value, 0, ivCiphertext, INTEGER_LEN, getInt(this.iv_size));
+            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + getInt(this.iv_size), ciphertext.length);
 
-            return new String(encode(iv_ciphertext));
+            return new String(encode(ivCiphertext));
 
         } catch(final Exception e) {
             throw new RuntimeException(e);
