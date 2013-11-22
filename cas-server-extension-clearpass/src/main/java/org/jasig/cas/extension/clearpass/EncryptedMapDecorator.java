@@ -80,7 +80,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private final Key key;
 
     @NotNull
-    private byte[] ivSize;
+    private int ivSize;
 
     @NotNull
     private final String secretKeyAlgorithm;
@@ -159,7 +159,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
 
         try {
-            this.ivSize = getIvLen();
+            this.ivSize = getIvSize();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -272,9 +272,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             
             byte[] ivCiphertext = decode(value.getBytes());
 
-            byte[] ivSize = Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN);
-            byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + getInt(ivSize)));
-            byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + getInt(ivSize), ivCiphertext.length);
+            int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
+            byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
+            byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
 
             IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
             cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
@@ -288,12 +288,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         }
     }
 
-    private static byte[] getIvLen() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        return ByteBuffer.allocate(4).putInt(Cipher.getInstance(CIPHER_ALGORITHM).getBlockSize()).array();
-    }
-
-    private static int getInt(final byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getInt();
+    private static int getIvSize() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return Cipher.getInstance(CIPHER_ALGORITHM).getBlockSize();
     }
 
     private static byte[] generateIV(final int size) {
@@ -323,23 +319,31 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
 
-            byte[] ivValue = generateIV(getInt(this.ivSize));
+            byte[] ivValue = generateIV(this.ivSize);
             IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
 
             cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
             byte[] ciphertext = cipher.doFinal(value.getBytes());
 
-            byte[] ivCiphertext = new byte[INTEGER_LEN + getInt(this.ivSize) + ciphertext.length];
+            byte[] ivCiphertext = new byte[INTEGER_LEN + this.ivSize + ciphertext.length];
 
-            System.arraycopy(this.ivSize, 0, ivCiphertext, 0, INTEGER_LEN);
-            System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, getInt(this.ivSize));
-            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + getInt(this.ivSize), ciphertext.length);
+            System.arraycopy(int2byte(this.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
+            System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
+            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
             return new String(encode(ivCiphertext));
 
         } catch(final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected static byte[] int2byte(final int i) throws UnsupportedEncodingException {
+        return ByteBuffer.allocate(4).putInt(i).array();
+    }
+
+    protected static int byte2int(final byte[] bytes) throws UnsupportedEncodingException {
+        return ByteBuffer.wrap(bytes).getInt();
     }
 
     protected static String byte2char(final byte[] bytes) throws UnsupportedEncodingException {
