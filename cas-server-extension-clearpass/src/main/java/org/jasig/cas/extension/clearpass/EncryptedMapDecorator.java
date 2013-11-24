@@ -283,13 +283,13 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
 
-            byte[] iv = generateIV();
+            final byte[] iv = generateIV();
             IvParameterSpec iv_spec = new IvParameterSpec(iv);
 
             cipher.init(Cipher.ENCRYPT_MODE, this.key, iv_spec);
-            byte[] ciphertext = cipher.doFinal(plaintext.getBytes());
+            final byte[] ciphertext = cipher.doFinal(plaintext.getBytes());
 
-            byte[] iv_ciphertext = new byte[iv.length + ciphertext.length];
+            final byte[] iv_ciphertext = new byte[iv.length + ciphertext.length];
             System.arraycopy(iv, 0, iv_ciphertext, 0, iv.length);
             System.arraycopy(ciphertext, 0, iv_ciphertext, iv.length, ciphertext.length);
 
@@ -307,14 +307,14 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final Cipher cipher = getCipherObject();
             
-            byte[] iv_ciphertext = decode(iv_ciphertext_encoded.getBytes());
-            byte[] iv = Arrays.copyOfRange(iv_ciphertext, 0, IV_LEN);
-            byte[] ciphertext = Arrays.copyOfRange(iv_ciphertext, IV_LEN, iv_ciphertext.length);
+            final byte[] iv_ciphertext = decode(iv_ciphertext_encoded.getBytes());
+            final byte[] iv = Arrays.copyOfRange(iv_ciphertext, 0, IV_LEN);
+            final byte[] ciphertext = Arrays.copyOfRange(iv_ciphertext, IV_LEN, iv_ciphertext.length);
 
             IvParameterSpec iv_spec = new IvParameterSpec(iv);
             cipher.init(Cipher.DECRYPT_MODE, this.key, iv_spec);
 
-            byte[] plaintext = cipher.doFinal(ciphertext);
+            final byte[] plaintext = cipher.doFinal(ciphertext);
 
             return new String(plaintext);
 
