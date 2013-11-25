@@ -290,8 +290,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     }
 
     private static byte[] generateIV(final int size) {
-        SecureRandom srand = new SecureRandom();
-        byte[] ivValue = new byte[size];
+        final SecureRandom srand = new SecureRandom();
+        final byte[] ivValue = new byte[size];
         srand.nextBytes(ivValue);
         return ivValue;
     }
