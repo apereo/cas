@@ -165,6 +165,7 @@
     <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
     <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
     <transition on="FailedLoginException" to="generateLoginTicket"/>
+    <transition on="AccountNotFoundException" to="generateLoginTicket"/>
     <transition on="UNKNOWN" to="generateLoginTicket"/>
   </action-state>
 
