@@ -31,7 +31,6 @@ import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
 
 /**
@@ -81,7 +80,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void testIgnoreAttributeReleaseToolFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
 
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
+        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap);
         assertEquals(attrs.size(), 7);
     }
 
@@ -89,7 +88,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void testPatternFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
 
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
+        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap);
         assertEquals(attrs.size(), 7);
 
         assertFalse(attrs.containsKey("phone"));
@@ -99,6 +98,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
+        @SuppressWarnings("unchecked")
         final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey("uid"));
         assertTrue(mapAttributes.containsKey("familyName"));
