@@ -21,34 +21,27 @@ package org.jasig.cas;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
-import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
-import org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -62,8 +55,6 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.perf4j.aop.Profiled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -96,81 +87,8 @@ import org.springframework.util.Assert;
  * @author Dmitry Kopylenko
  * @since 3.0
  */
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
-    /** Log instance for logging events, info, warnings, errors, etc. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /** TicketRegistry for storing and retrieving tickets as needed. */
-    @NotNull
-    private final TicketRegistry ticketRegistry;
-
-    /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @NotNull
-    private final TicketRegistry serviceTicketRegistry;
-
-    /**
-     * AuthenticationManager for authenticating credentials for purposes of
-     * obtaining tickets.
-     */
-    @NotNull
-    private final AuthenticationManager authenticationManager;
-
-    /**
-     * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
-     * created.
-     */
-    @NotNull
-    private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-
-    /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
-    @NotNull
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
-    /** Implementation of Service Manager. */
-    @NotNull
-    private final ServicesManager servicesManager;
-
-    /** The logout manager. **/
-    @NotNull
-    private final LogoutManager logoutManager;
-
-    /** Expiration policy for ticket granting tickets. */
-    @NotNull
-    private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    /** ExpirationPolicy for Service Tickets. */
-    @NotNull
-    private ExpirationPolicy serviceTicketExpirationPolicy;
-
-    /** Encoder to generate PseudoIds. */
-    @NotNull
-    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
-
-    /** The default attribute filter to match principal attributes against that of a registered service. **/
-    private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
-
-    /**
-     * Authentication policy that uses a service context to produce stateful security policies to apply when
-     * authenticating credentials.
-     */
-    @NotNull
-    private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
-            new AcceptAnyAuthenticationPolicyFactory();
-
-    /**
-     * Build the central authentication service implementation.
-     *
-     * @param ticketRegistry the tickets registry.
-     * @param serviceTicketRegistry the service tickets registry.
-     * @param authenticationManager the authentication manager.
-     * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
-     * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
-     * @param ticketGrantingTicketExpirationPolicy the TGT expiration policy.
-     * @param serviceTicketExpirationPolicy the service ticket expiration policy.
-     * @param servicesManager the services manager.
-     * @param logoutManager the logout manager.
-     */
     public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
                                             final TicketRegistry serviceTicketRegistry,
                                             final AuthenticationManager authenticationManager,
@@ -180,19 +98,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                                             final ExpirationPolicy serviceTicketExpirationPolicy,
                                             final ServicesManager servicesManager,
                                             final LogoutManager logoutManager) {
-        this.ticketRegistry = ticketRegistry;
-        if (serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        } else {
-            this.serviceTicketRegistry = serviceTicketRegistry;
-        }
-        this.authenticationManager = authenticationManager;
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-        this.servicesManager = servicesManager;
-        this.logoutManager = logoutManager;
+       super(ticketRegistry, serviceTicketRegistry, authenticationManager,
+               ticketGrantingTicketUniqueTicketIdGenerator, uniqueTicketIdGeneratorsForService, 
+               ticketGrantingTicketExpirationPolicy, serviceTicketExpirationPolicy,
+               servicesManager, logoutManager);
     }
 
     /**
@@ -539,34 +448,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return ticketGrantingTicket.getId();
     }
 
-    public void setPersistentIdGenerator(
-        final PersistentIdGenerator persistentIdGenerator) {
-        this.persistentIdGenerator = persistentIdGenerator;
-    }
-
-    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
-        this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    /**
-     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
-     */
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-    }
-
-    /**
-     * @param serviceTicketExpirationPolicy a ST expiration policy.
-     */
-    public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
     private Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(context);
+                this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
