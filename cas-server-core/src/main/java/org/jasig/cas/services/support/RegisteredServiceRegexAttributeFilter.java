@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +65,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
-            final RegisteredService registeredService) {
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);

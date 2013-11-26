@@ -147,9 +147,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
-    /** The default attribute filter to match principal attributes against that of a registered service. **/
-    private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
-
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
@@ -341,7 +338,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         try {
-            return this.grantServiceTicket(ticketGrantingTicketId, service, null);
+            return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
         } catch (final AuthenticationException e) {
             throw new IllegalStateException("Unexpected authentication exception", e);
         }
@@ -437,11 +434,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(),
-                    principal.getAttributes(), registeredService);
+            final RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter(registeredService);
+            Map<String, Object> attributesToRelease = defaultAttributeFilter.filter(principal.getId(), principal.getAttributes());
             if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(),
-                        attributesToRelease, registeredService);
+                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease);
             }
 
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
