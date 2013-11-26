@@ -42,9 +42,14 @@ import org.slf4j.LoggerFactory;
 public final class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final RegisteredService registeredService;
+    
+    public RegisteredServiceDefaultAttributeFilter(final RegisteredService svc) {
+        this.registeredService = svc;
+    }
+    
     @Override
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
-            final RegisteredService registeredService) {
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
 
         if (registeredService.isIgnoreAttributes()) {
