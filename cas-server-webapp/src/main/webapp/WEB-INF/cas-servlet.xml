@@ -123,8 +123,8 @@
     </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <!-- logout webflow configuration -->
@@ -151,8 +151,8 @@
     </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/logout-webflow.xml" id="logout" />
+  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
