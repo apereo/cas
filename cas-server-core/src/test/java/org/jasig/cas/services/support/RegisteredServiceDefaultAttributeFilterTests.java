@@ -47,8 +47,6 @@ public class RegisteredServiceDefaultAttributeFilterTests {
     private RegisteredService registeredService;
 
     public RegisteredServiceDefaultAttributeFilterTests() {
-        this.filter = new RegisteredServiceDefaultAttributeFilter();
-
         this.givenAttributesMap = new HashMap<String, Object>();
         this.givenAttributesMap.put("uid", "loggedInTestUid");
         this.givenAttributesMap.put("phone", "1234567890");
@@ -66,16 +64,18 @@ public class RegisteredServiceDefaultAttributeFilterTests {
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
         when(this.registeredService.getAllowedAttributes()).thenReturn(
                 Arrays.asList("uid", "givenName", "memberOf", "isNotAllowed"));
+        
+        this.filter = new RegisteredServiceDefaultAttributeFilter(this.registeredService);
     }
 
     @Test
     public void testDefaultFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
-        Map<String, Object> map = this.filter.filter("uid", this.givenAttributesMap, this.registeredService);
+        Map<String, Object> map = this.filter.filter("uid", this.givenAttributesMap);
         assertEquals(map.size(), 3);
 
         when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
-        map = this.filter.filter("uid", this.givenAttributesMap, this.registeredService);
+        map = this.filter.filter("uid", this.givenAttributesMap);
         assertEquals(map.size(), this.givenAttributesMap.size());
         assertEquals(map, this.givenAttributesMap);
 
