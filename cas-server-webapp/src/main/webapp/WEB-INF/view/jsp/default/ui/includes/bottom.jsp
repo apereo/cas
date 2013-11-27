@@ -22,10 +22,6 @@
 
       </div> <!-- END #content -->
       
-      <div id="session-timeout-message" title="Session Timeout">
-        <spring:message code="web.session.timeout" /> 
-      </div>
-      
       <footer>
         <div id="copyright">
           <p><spring:message code="copyright" /></p>
@@ -37,7 +33,6 @@
     
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" />
     <%-- 
         JavaScript Debug: A simple wrapper for console.log 
         See this link for more info: http://benalman.com/projects/javascript-debug-console-log/
@@ -46,14 +41,6 @@
     
     <spring:theme code="cas.javascript.file" var="casJavascriptFile" text="" />
     <script type="text/javascript" src="<c:url value="${casJavascriptFile}" />"></script>
-    
-    <script type="text/javascript">
-        var secondsBeforeExpire = ${pageContext.session.maxInactiveInterval};
-        setTimeout(function() {
-            debug.log("Application session timed out. Notifying the user...");
-            $("#session-timeout-message").dialog("open");
-        }, secondsBeforeExpire * 1000);
-    </script>
     
   </body>
 </html>
