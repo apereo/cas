@@ -223,7 +223,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             return Collections.emptyList();
         }
 
-        logger.debug("Ticket found. Performing back channel logout and then deleting the ticket...");
+        logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
         final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
 
