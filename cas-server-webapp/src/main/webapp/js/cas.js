@@ -33,25 +33,4 @@ $(document).ready(function(){
      * Using the JavaScript Debug library, you may issue log messages such as:
      * debug.log("Welcome to Central Authentication Service");
      */
-
-    //display the dialog when the app session times out
-    $(function() {
-        $( "#session-timeout-message" ).dialog({
-          show: {
-            effect: "explode",
-            duration: 1000
-          },
-          modal: true,
-          position: { my: "left center", at: "left center", of: "#fm1" },
-          autoOpen: false,
-          resizable: false,
-          draggable: false,
-          buttons: {
-            Ok: function() {
-              $( this ).dialog( "close" );
-              window.location.reload();
-            }
-          }
-        });
-      });
 });
