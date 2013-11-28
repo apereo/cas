@@ -47,6 +47,6 @@ public final class MockExpireUpdateTicketLogoutManager implements LogoutManager 
 
     @Override
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

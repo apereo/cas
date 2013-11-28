@@ -65,6 +65,6 @@ public final class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        throw new IllegalArgumentException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
