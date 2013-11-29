@@ -19,11 +19,14 @@
 package org.jasig.cas;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
+
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -42,13 +45,11 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
-import org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -434,12 +435,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            final RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter(registeredService);
-            Map<String, Object> attributesToRelease = defaultAttributeFilter.filter(principal.getId(), principal.getAttributes());
-            if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease);
-            }
-
+            final Map<String, Object> attributesToRelease = filterAllowedAttributesForPrincipal(principal, registeredService);
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
@@ -510,6 +506,44 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return principalId;
     }
 
+    /**
+     * The default filter that is responsible to make sure only the allowed attributes for a given
+     * registered service are released. The allowed attributes are cross checked against
+     * the list of principal attributes and those that are a match will be released.
+     *
+     * <p>If the registered service is set to ignore the attribute release policy, the filter
+     * will release all principal attributes.
+     * 
+     * @param principal the authenticated principal
+     * @param registeredService the current registered service
+     * @return collection of allowed attributes for the service to be released
+     */
+    private Map<String, Object> filterAllowedAttributesForPrincipal(final Principal principal, final RegisteredService registeredService) {
+        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> givenAttributes = principal.getAttributes();
+        
+        if (registeredService.isIgnoreAttributes()) {
+            logger.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.",
+                    registeredService.getName());
+            attributes.putAll(givenAttributes);
+        } else {
+            for (final String attribute : registeredService.getAllowedAttributes()) {
+                final Object value = givenAttributes.get(attribute);
+
+                if (value != null) {
+                    logger.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute,
+                            registeredService.getName());
+                    attributes.put(attribute, value);
+                }
+            }
+            if (registeredService.getAttributeFilter() != null) {
+                return registeredService.getAttributeFilter().filter(principal.getId(), attributes);
+            }
+        }
+                
+        return Collections.unmodifiableMap(attributes);
+    }
+    
     /**
      * @throws IllegalArgumentException if the credentials are null.
      */
