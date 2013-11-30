@@ -255,7 +255,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(this.salt);
-        messageDigest.update(key.getBytes());
+        messageDigest.update(key.toLowerCase().getBytes());
         final String hash = getFormattedText(messageDigest.digest());
 
         logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
