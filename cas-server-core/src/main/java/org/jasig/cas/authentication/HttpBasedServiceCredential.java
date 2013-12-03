@@ -43,6 +43,14 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     private final String callbackUrlAsString;
 
     /**
+     * Empty constructor used by Kryo for de-serialization.
+     */
+    public HttpBasedServiceCredential() {
+        this.callbackUrl =  null;
+        this.callbackUrlAsString = null;
+    }
+
+    /**
      * Creates a new instance for an HTTP endpoint located at the given URL.
      *
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
