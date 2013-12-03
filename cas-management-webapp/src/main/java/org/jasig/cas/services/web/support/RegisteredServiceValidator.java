@@ -80,22 +80,6 @@ public final class RegisteredServiceValidator implements Validator {
     public void validate(final Object o, final Errors errors) {
         final RegisteredService r = (RegisteredService) o;
         
-        if (StringUtils.isBlank(r.getServiceId())) {
-            errors.rejectValue("serviceId", "service.id.required");
-            return;
-        }
-        
-        if (StringUtils.isBlank(r.getName())) {
-            errors.rejectValue("name", "service.name.required");
-            return;
-        }
-        
-        if (StringUtils.isBlank(r.getDescription())) {
-            errors.rejectValue("description", "service.desc.required");
-            return;
-        }
-        
-        
         if (r.getServiceId() != null) {
             for (final RegisteredService service : this.servicesManager.getAllServices()) {
                 if (r.getServiceId().equals(service.getServiceId())
