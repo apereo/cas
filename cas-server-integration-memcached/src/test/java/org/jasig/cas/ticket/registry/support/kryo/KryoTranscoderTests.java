@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -100,11 +101,16 @@ public class KryoTranscoderTests {
         expectedTGT.grantServiceTicket(ST_ID, null, null, false);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
 
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL("http://localhost"));
-        final TicketGrantingTicket expectedTGT2 =
+        internalProxyTest("http://localhost");
+        internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
+    }
+
+    private void internalProxyTest(String proxyUrl) throws MalformedURLException {
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
+        final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, proxyCredential);
-        expectedTGT2.grantServiceTicket(ST_ID, null, null, false);
-        assertEquals(expectedTGT2, transcoder.decode(transcoder.encode(expectedTGT2)));
+        expectedTGT.grantServiceTicket(ST_ID, null, null, false);
+        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));        
     }
 
     static class MockServiceTicket implements ServiceTicket {
