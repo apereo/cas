@@ -32,7 +32,7 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
     private static final long serialVersionUID = -7307803750894078575L;
 
     /** The code description. */
-    private static final String CODE = "service.not.authorized.proxy";
+    private static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";
 
     public UnauthorizedProxyingException() {
         super(CODE);
