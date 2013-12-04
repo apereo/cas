@@ -203,16 +203,26 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     @Override
     public String get(final Object key) {
         final String hashedKey = constructHashedKey(key == null ? null : key.toString());
-        return decrypt(this.decoratedMap.get(hashedKey), hashedKey);
+        
+        try {
+            final String hashedValue = this.decoratedMap.get(hashedKey);
+            return decrypt(hashedValue, hashedKey);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public String put(final String key, final String value) {
         final String hashedKey = constructHashedKey(key);
         final String hashedValue = encrypt(value, hashedKey);
-        final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
-
-        return decrypt(oldValue, hashedKey);
+        
+        try {
+            final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
+            return decrypt(oldValue, hashedKey);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
