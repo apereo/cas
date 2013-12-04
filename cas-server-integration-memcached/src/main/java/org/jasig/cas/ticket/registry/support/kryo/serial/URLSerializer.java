@@ -44,12 +44,9 @@ public final class URLSerializer extends SimpleSerializer<URL> {
     
     @Override
     public URL read(final ByteBuffer buffer) {
-        final String protocol = kryo.readObjectData(buffer, String.class);
-        final String host = kryo.readObjectData(buffer, String.class);
-        final int port = kryo.readObjectData(buffer, Integer.class);
-        final String file = kryo.readObjectData(buffer, String.class);
+        final String url = kryo.readObjectData(buffer, String.class);
         try {
-            return new URL(protocol, host, port, file);
+            return new URL(url);
         } catch (final MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -57,9 +54,6 @@ public final class URLSerializer extends SimpleSerializer<URL> {
 
     @Override
     public void write(final ByteBuffer buffer, final URL url) {
-        kryo.writeObjectData(buffer, url.getProtocol());
-        kryo.writeObjectData(buffer, url.getHost());
-        kryo.writeObjectData(buffer, url.getPort());
-        kryo.writeObjectData(buffer, url.getFile());
+        kryo.writeObjectData(buffer, url.toExternalForm());
     }
 }
