@@ -92,6 +92,13 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         this.separator = separator;
     }
 
+    /**
+     * Gets the password on record.
+     *
+     * @param username the username
+     * @return the password on record
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private String getPasswordOnRecord(final String username) throws IOException {
         BufferedReader bufferedReader = null;
         try {
