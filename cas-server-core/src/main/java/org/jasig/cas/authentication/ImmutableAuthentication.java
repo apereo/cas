@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +38,7 @@ import org.springframework.util.Assert;
  *
  * @since 3.0
  */
-public final class ImmutableAuthentication implements Authentication, Serializable {
+public final class ImmutableAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
