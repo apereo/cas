@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
@@ -52,19 +53,21 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @NotNull
     private String ticketGrantingTicketPrefix = "TGT";
 
-
+    @Override
     protected void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
 
     @Transactional(readOnly = false)
+    @Override
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
         logger.debug("Added ticket [{}] to registry.", ticket);
     }
 
     @Transactional(readOnly = false)
+    @Override
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getRawTicket(ticketId);
 
@@ -83,6 +86,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         return true;
     }
 
+    /**
+     * Delete the TGt and all of its service tickets.
+     *
+     * @param ticket the ticket
+     */
     private void deleteTicketAndChildren(final Ticket ticket) {
         final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
             .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id",
@@ -107,6 +115,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         removeTicket(ticket);
     }
 
+    /**
+     * Removes the ticket.
+     *
+     * @param ticket the ticket
+     */
     private void removeTicket(final Ticket ticket) {
         try {
             if (logger.isDebugEnabled()) {
@@ -120,10 +133,17 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     }
 
     @Transactional(readOnly=true)
+    @Override
     public Ticket getTicket(final String ticketId) {
         return getProxiedTicketInstance(getRawTicket(ticketId));
     }
 
+    /**
+     * Gets the ticket from the database, as is.
+     *
+     * @param ticketId the ticket id
+     * @return the raw ticket
+     */
     private Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
@@ -138,6 +158,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     }
 
     @Transactional(readOnly=true)
+    @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = entityManager
             .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
@@ -163,16 +184,24 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     }
 
     @Transactional(readOnly=true)
+    @Override
     public int sessionCount() {
         return countToInt(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Transactional(readOnly=true)
+    @Override
     public int serviceTicketCount() {
         return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
+    /**
+     * Count the result into a numeric value.
+     *
+     * @param result the result
+     * @return the int
+     */
     private int countToInt(final Object result) {
         final int intval;
         if (result instanceof Long) {
