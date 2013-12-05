@@ -48,10 +48,16 @@ public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializ
         this.timeToKillInMilliSeconds = 0;
     }
 
+    /**
+     * Instantiates a new timeout expiration policy.
+     *
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
             || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
