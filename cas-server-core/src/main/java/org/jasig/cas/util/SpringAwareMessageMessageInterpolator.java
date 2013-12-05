@@ -25,6 +25,7 @@ import org.springframework.context.MessageSourceAware;
 
 import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
+
 import java.util.Locale;
 
 /**
@@ -45,10 +46,12 @@ public final class SpringAwareMessageMessageInterpolator implements MessageInter
         this.messageSource = messageSource;
     }
 
+    @Override
     public String interpolate(final String s, final Context context) {
         return interpolate(s, context, LocaleContextHolder.getLocale());
     }
 
+    @Override
     public String interpolate(final String s, final Context context, final Locale locale) {
         try {
             return this.messageSource.getMessage(s,

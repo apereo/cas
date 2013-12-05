@@ -56,6 +56,12 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 
+    /**
+     * Instantiates a new registered service simple form controller.
+     *
+     * @param servicesManager the services manager
+     * @param attributeRepository the attribute repository
+     */
     public RegisteredServiceSimpleFormController(
             final ServicesManager servicesManager,
             final IPersonAttributeDao attributeRepository) {

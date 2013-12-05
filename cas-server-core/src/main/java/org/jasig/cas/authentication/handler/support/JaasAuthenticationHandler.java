@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.security.GeneralSecurityException;
 import java.util.Set;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -81,6 +82,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @NotNull
     private String realm = DEFAULT_REALM;
 
+    /**
+     * Instantiates a new jaas authentication handler.
+     */
     public JaasAuthenticationHandler() {
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
@@ -140,6 +144,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         }
 
+        @Override
         public void handle(final Callback[] callbacks)
             throws UnsupportedCallbackException {
             for (final Callback callback : callbacks) {

@@ -64,6 +64,13 @@ public class CacheStatus extends Status {
     }
 
 
+    /**
+     * Builds the description string for the retrieved statistics.
+     *
+     * @param desc the desc
+     * @param statistics the statistics
+     * @return the string
+     */
     private static String buildDescription(final String desc, final CacheStatistics... statistics) {
         if (statistics == null || statistics.length == 0) {
             return desc;
