@@ -51,6 +51,13 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private boolean loggedOutAlready = false;
 
+    /**
+     * Instantiates a new abstract web application service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     */
     protected AbstractWebApplicationService(final String id, final String originalUrl,
             final String artifactId) {
         this.id = id;
@@ -58,6 +65,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.artifactId = artifactId;
     }
 
+    @Override
     public final String toString() {
         return this.id;
     }
@@ -74,6 +82,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return EMPTY_MAP;
     }
 
+    /**
+     * Cleanup the url. Removes jsession ids and query strings.
+     *
+     * @param url the url
+     * @return sanitized url.
+     */
     protected static String cleanupUrl(final String url) {
         if (url == null) {
             return null;
