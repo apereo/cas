@@ -207,8 +207,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final String hashedValue = this.decoratedMap.get(hashedKey);
             return decrypt(hashedValue, hashedKey);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+        } catch (final RuntimeException e) {
+            log.debug("Could not retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
+            return null;
         }
     }
 
@@ -220,8 +221,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
             return decrypt(oldValue, hashedKey);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+        } catch (final RuntimeException e) {
+            log.debug("Could not store hashed value for key [" + hashedKey + "]: " + e.getMessage());
+            return null;
         }
     }
 
