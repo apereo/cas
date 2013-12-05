@@ -92,7 +92,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         /** Credential identifier. */
         private final String id;
 
-        /** Creates a new instance with the given ID. */
+        /**
+         * Creates a new instance with the given ID.
+         *
+         * @param id the credential id
+         */
         public IdentifiableCredential(final String id) {
             this.id = id;
         }
