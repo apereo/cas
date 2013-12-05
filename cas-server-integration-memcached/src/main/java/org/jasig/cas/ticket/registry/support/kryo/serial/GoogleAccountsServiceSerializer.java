@@ -24,6 +24,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import com.esotericsoftware.kryo.Kryo;
+
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
@@ -57,6 +58,15 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
         }
     }
 
+    /**
+     * Instantiates a new google accounts service serializer.
+     *
+     * @param kryo the kryo
+     * @param helper the helper
+     * @param publicKey the public key
+     * @param privateKey the private key
+     * @param alternateUsername the alternate username
+     */
     public GoogleAccountsServiceSerializer(
             final Kryo kryo,
             final FieldHelper helper,
@@ -70,12 +80,14 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
         this.alternateUsername = alternateUsername;
     }
 
+    @Override
     public void write(final ByteBuffer buffer, final GoogleAccountsService service) {
         super.write(buffer, service);
         kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "requestId"));
         kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "relayState"));
     }
 
+    @Override
     protected GoogleAccountsService createService(
             final ByteBuffer buffer,
             final String id,

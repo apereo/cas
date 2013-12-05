@@ -30,6 +30,13 @@ import java.util.Map;
 public final class FieldHelper {
     private final Map<String, Field> fieldCache = new HashMap<String, Field>();
 
+    /**
+     * Gets the field value.
+     *
+     * @param target the target
+     * @param fieldName the field name
+     * @return the field value
+     */
     public Object getFieldValue(final Object target, final String fieldName) {
         final Field f = getField(target, fieldName);
         try {
@@ -39,6 +46,13 @@ public final class FieldHelper {
         }
     }
 
+    /**
+     * Sets the field value.
+     *
+     * @param target the target
+     * @param fieldName the field name
+     * @param value the value
+     */
     public void setFieldValue(final Object target, final String fieldName, final Object value) {
         final Field f = getField(target, fieldName);
         try {
@@ -48,6 +62,13 @@ public final class FieldHelper {
         }
     }
 
+    /**
+     * Gets the field.
+     *
+     * @param target the target
+     * @param name the name
+     * @return the field
+     */
     private Field getField(final Object target, final String name) {
         Class<?> clazz = target.getClass();
         final String key = new StringBuilder().append(clazz.getName()).append('.').append(name).toString();
