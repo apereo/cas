@@ -74,7 +74,13 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }
 
-    @Override
+    
+    /**
+     * Gets the next value.
+     *
+     * @return the next value. If the count has reached {@link Long#MAX_VALUE}, 
+     * then {@link Long#MAX_VALUE} is returned. Otherwise, the next increment.
+     */
     protected long getNextValue() {
         if (this.count.compareAndSet(Long.MAX_VALUE, 0)) {
             return Long.MAX_VALUE;

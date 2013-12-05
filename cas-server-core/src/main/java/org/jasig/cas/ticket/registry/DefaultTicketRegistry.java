@@ -39,6 +39,9 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
 
+    /**
+     * Instantiates a new default ticket registry.
+     */
     public DefaultTicketRegistry() {
         this.cache = new ConcurrentHashMap<String, Ticket>();
     }
@@ -72,6 +75,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         this.cache.put(ticket.getId(), ticket);
     }
 
+    @Override
     public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
             return null;
@@ -87,6 +91,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return ticket;
     }
 
+    @Override
     public boolean deleteTicket(final String ticketId) {
         if (ticketId == null) {
             return false;
@@ -99,6 +104,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 
+    @Override
     public int sessionCount() {
         int count = 0;
         for (Ticket t : this.cache.values()) {
@@ -109,6 +115,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return count;
     }
 
+    @Override
     public int serviceTicketCount() {
         int count = 0;
         for (Ticket t : this.cache.values()) {
