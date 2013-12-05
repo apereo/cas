@@ -78,6 +78,7 @@ public class AuthenticationException extends Exception {
      * Creates a new instance for the case when there are both handler successes and failures and a custom
      * error message is required.
      *
+     * @param message the message associated with this error.
      * @param handlerErrors Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
