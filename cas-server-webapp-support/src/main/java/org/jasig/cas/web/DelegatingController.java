@@ -64,6 +64,14 @@ public class DelegatingController extends AbstractController {
         return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
     }
 
+    /**
+     * Generate error view based on {@link #setFailureView(String)}.
+     *
+     * @param code the code
+     * @param description the description
+     * @param args the args
+     * @return the model and view
+     */
     private ModelAndView generateErrorView(final String code, final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(this.failureView);
         final String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);

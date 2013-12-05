@@ -35,6 +35,11 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     /** Flag to try all credentials before policy is satisfied. */
     private boolean tryAll = false;
 
+    /**
+     * Instantiates a new required handler authentication policy.
+     *
+     * @param requiredHandlerName the required handler name
+     */
     public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
         this.requiredHandlerName = requiredHandlerName;
     }

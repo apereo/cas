@@ -160,6 +160,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     boolean matches(final Service service);
 
+    
+    /**
+     * Clone this service.
+     *
+     * @return the registered service
+     * @throws CloneNotSupportedException the clone not supported exception
+     */
     RegisteredService clone() throws CloneNotSupportedException;
 
     /**

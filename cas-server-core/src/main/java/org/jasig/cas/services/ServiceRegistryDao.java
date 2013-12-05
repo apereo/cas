@@ -52,5 +52,11 @@ public interface ServiceRegistryDao {
      */
     List<RegisteredService> load();
 
+    /**
+     * Find service by the numeric id.
+     *
+     * @param id the id
+     * @return the registered service
+     */
     RegisteredService findServiceById(long id);
 }

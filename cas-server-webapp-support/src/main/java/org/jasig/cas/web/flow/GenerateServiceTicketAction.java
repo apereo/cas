@@ -68,6 +68,12 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    /**
+     * Checks if is gateway present in the request params.
+     *
+     * @param context the context
+     * @return true, if is gateway present
+     */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get("gateway"));
