@@ -26,8 +26,9 @@ package org.jasig.cas.authentication.handler;
 
  * @since 3.0
  */
-public abstract class UncategorizedAuthenticationException extends
-    AuthenticationException {
+public abstract class UncategorizedAuthenticationException extends AuthenticationException {
+
+    private static final long serialVersionUID = 872764495107139229L;
 
     /**
      * Constructor that allows for providing a custom error code for this class.
