@@ -37,10 +37,21 @@ public abstract class AuthenticationException extends RootCasException {
      /** The error type that provides additional info about the nature of the exception cause. **/
     private String type = "error";
 
+    /**
+     * Instantiates a new authentication exception.
+     *
+     * @param code the code
+     */
     public AuthenticationException(final String code) {
         super(code);
     }
 
+    /**
+     * Instantiates a new authentication exception.
+     *
+     * @param code the code
+     * @param msg the msg
+     */
     public AuthenticationException(final String code, final String msg) {
         super(code, msg);
     }
