@@ -185,6 +185,8 @@ public final class ImmutableAuthentication implements Authentication, Serializab
      */
     private static final class ImmutableDate extends Date {
 
+        private static final long serialVersionUID = 6275827030191703183L;
+
         /** No-arg constructor for serialization support. */
         private ImmutableDate() {}
 
