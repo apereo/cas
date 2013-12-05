@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
@@ -34,7 +32,7 @@ import org.jasig.cas.ticket.TicketState;
 
  * @since 3.0
  */
-public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class TimeoutExpirationPolicy implements ExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -7636642464326939536L;
