@@ -31,9 +31,17 @@ public class AccountPasswordMustChangeException extends CredentialExpiredExcepti
     /** Serialization metadata. */
     private static final long serialVersionUID = 7487835035108753209L;
 
+    /**
+     * Instantiates a new account password must change exception.
+     */
     public AccountPasswordMustChangeException() {
     }
 
+    /**
+     * Instantiates a new account password must change exception.
+     *
+     * @param msg the msg
+     */
     public AccountPasswordMustChangeException(final String msg) {
         super(msg);
     }
