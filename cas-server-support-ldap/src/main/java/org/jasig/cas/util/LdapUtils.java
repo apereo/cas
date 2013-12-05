@@ -38,6 +38,9 @@ public final class LdapUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
+    /**
+     * Instantiates a new ldap utils.
+     */
     private LdapUtils() {
         // private constructor so that no one can instantiate.
     }
@@ -90,6 +93,7 @@ public final class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
+     * @return the long value
      */
     public static Long getLong(final LdapEntry ctx, final String attribute) {
         return getLong(ctx, attribute, Long.MIN_VALUE);
@@ -101,6 +105,7 @@ public final class LdapUtils {
      * @param ctx       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
+     * @return the long value
      */
     public static Long getLong(final LdapEntry ctx, final String attribute, final Long nullValue) {
         final String v = getString(ctx, attribute, nullValue.toString());
@@ -115,6 +120,7 @@ public final class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
+     * @return the string
      */
     public static String getString(final LdapEntry ctx, final String attribute) {
         return getString(ctx, attribute, null);
@@ -126,6 +132,7 @@ public final class LdapUtils {
      * @param ctx       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
+     * @return the string
      */
     public static String getString(final LdapEntry ctx, final String attribute, final String nullValue) {
         final LdapAttribute attr = ctx.getAttribute(attribute);
