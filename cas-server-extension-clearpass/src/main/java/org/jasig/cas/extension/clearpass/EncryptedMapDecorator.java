@@ -211,8 +211,6 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             }
 
             return decrypt(hashedValue, hashedKey);
-        } catch (final InterruptedException e) {
-            logger.error("Interrupted while retrieving hashed value for key [" + hashedKey + "]");
         } catch (final Exception e) {
             logger.error("Failed to retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
@@ -232,8 +230,6 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             }
 
             return decrypt(oldValue, hashedKey);
-        } catch (final InterruptedException e) {
-            logger.error("Interrupted while storing hashed value for key [" + hashedKey + "]");
         } catch (final Exception e) {
             logger.error("Failed to stored hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
