@@ -63,6 +63,11 @@ public final class ClearPassController extends AbstractController {
     @NotNull
     private final Map<String, String> credentialsCache;
 
+    /**
+     * Instantiates a new clear pass controller.
+     *
+     * @param credentialsCache the credentials cache
+     */
     public ClearPassController(final Map<String, String> credentialsCache) {
         this.credentialsCache = credentialsCache;
     }
@@ -91,6 +96,12 @@ public final class ClearPassController extends AbstractController {
         return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
     }
 
+    /**
+     * Return error based on {@link #setFailureView(String)}.
+     *
+     * @param description the description
+     * @return the model and view
+     */
     protected ModelAndView returnError(final String description) {
         final ModelAndView mv = new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
