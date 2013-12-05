@@ -42,6 +42,11 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     @NotNull
     private Map<String, String> credentialCache;
 
+    /**
+     * Instantiates a new cache credentials meta data populator.
+     *
+     * @param credentialCache the credential cache
+     */
     public CacheCredentialsMetaDataPopulator(final Map<String, String> credentialCache) {
         this.credentialCache = credentialCache;
     }
