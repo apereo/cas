@@ -58,6 +58,11 @@ public final class StatisticsController extends AbstractController {
 
     private String casTicketSuffix;
 
+    /**
+     * Instantiates a new statistics controller.
+     *
+     * @param ticketRegistry the ticket registry
+     */
     public StatisticsController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
