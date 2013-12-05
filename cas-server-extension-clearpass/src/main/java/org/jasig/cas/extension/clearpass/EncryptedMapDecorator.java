@@ -209,13 +209,15 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             if (hashedValue == null) {
                 logger.warn("Retrieving hashed value for key [" + hashedKey + "] returned null");
             }
+
+            return decrypt(hashedValue, hashedKey);
         } catch (final InterruptedException e) {
-            log.error("Interrupted while retrieving hashed value for key [" + hashedKey + "]");
+            logger.error("Interrupted while retrieving hashed value for key [" + hashedKey + "]");
         } catch (final Exception e) {
-            log.error("Failed to retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
+            logger.error("Failed to retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
-        
-        return decrypt(hashedValue, hashedKey);
+
+        return null;
     }
 
     @Override
@@ -228,13 +230,15 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             if (oldValue == null) {
                 logger.warn("Storing hashed value for key [" + hashedKey + "] returned null");
             }
+
+            return decrypt(oldValue, hashedKey);
         } catch (final InterruptedException e) {
-            log.error("Interrupted while storing hashed value for key [" + hashedKey + "]");
+            logger.error("Interrupted while storing hashed value for key [" + hashedKey + "]");
         } catch (final Exception e) {
-            log.error("Failed to stored hashed value for key [" + hashedKey + "]: " + e.getMessage());
+            logger.error("Failed to stored hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
-        
-        return decrypt(oldValue, hashedKey);
+
+        return null;
     }
 
     @Override
