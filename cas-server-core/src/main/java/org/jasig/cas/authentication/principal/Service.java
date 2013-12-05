@@ -32,7 +32,18 @@ package org.jasig.cas.authentication.principal;
  */
 public interface Service extends Principal {
 
+    /**
+     * Sets the principal.
+     *
+     * @param principal the new principal
+     */
     void setPrincipal(Principal principal);
 
+    /**
+     * Whether the services matches another.
+     *
+     * @param service the service
+     * @return true, if successful
+     */
     boolean matches(Service service);
 }

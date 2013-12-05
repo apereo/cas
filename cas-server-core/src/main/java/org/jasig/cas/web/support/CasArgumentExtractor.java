@@ -31,6 +31,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  */
 public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
+    @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
