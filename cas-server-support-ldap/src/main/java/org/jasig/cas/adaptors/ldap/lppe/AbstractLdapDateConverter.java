@@ -40,6 +40,11 @@ public abstract class AbstractLdapDateConverter implements LdapDateConverter, In
         this.timeZone = timeZone;
     }
 
+    /**
+     * Sets the time zone id.
+     *
+     * @param timeZoneId the new time zone id
+     */
     public void setTimeZoneId(final String timeZoneId) {
         setTimeZone(DateTimeZone.forID(timeZoneId));
     }

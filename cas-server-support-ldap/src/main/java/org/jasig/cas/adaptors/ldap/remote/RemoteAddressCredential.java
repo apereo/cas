@@ -33,6 +33,11 @@ public final class RemoteAddressCredential extends AbstractCredential {
 
     private final String remoteAddress;
 
+    /**
+     * Instantiates a new remote address credential.
+     *
+     * @param remoteAddress the remote address
+     */
     public RemoteAddressCredential(final String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
