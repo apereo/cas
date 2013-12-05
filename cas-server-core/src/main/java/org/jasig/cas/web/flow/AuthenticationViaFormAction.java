@@ -163,10 +163,6 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
-        return (AuthenticationException) e.getCause();
-    }
-
     /**
      * New event based on the given id.
      *
