@@ -53,6 +53,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
 
     private String ticketGrantingTicketId;
 
+    @Override
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
@@ -60,12 +61,20 @@ public final class TicketGrantingTicketResource extends ServerResource {
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
     }
 
+    /**
+     * Removes the TGT.
+     */
     @Delete
     public void removeRepresentations() {
         this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
         getResponse().setStatus(Status.SUCCESS_OK);
     }
 
+    /**
+     * Accept service and attempt to grant service ticket.
+     *
+     * @param entity the entity
+     */
     @Post
     public void acceptRepresentation(final Representation entity) {
         final Form form = new Form(entity);
