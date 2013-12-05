@@ -203,14 +203,19 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     @Override
     public String get(final Object key) {
         final String hashedKey = constructHashedKey(key == null ? null : key.toString());
-        
+
         try {
             final String hashedValue = this.decoratedMap.get(hashedKey);
-            return decrypt(hashedValue, hashedKey);
-        } catch (final RuntimeException e) {
-            logger.debug("Could not retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
-            return null;
+            if (hashedValue == null) {
+                logger.warn("Retrieving hashed value for key [" + hashedKey + "] returned null");
+            }
+        } catch (final InterruptedException e) {
+            log.error("Interrupted while retrieving hashed value for key [" + hashedKey + "]");
+        } catch (final Exception e) {
+            log.error("Failed to retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
+        
+        return decrypt(hashedValue, hashedKey);
     }
 
     @Override
@@ -220,11 +225,16 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         
         try {
             final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
-            return decrypt(oldValue, hashedKey);
-        } catch (final RuntimeException e) {
-            logger.debug("Could not store hashed value for key [" + hashedKey + "]: " + e.getMessage());
-            return null;
+            if (oldValue == null) {
+                logger.warn("Storing hashed value for key [" + hashedKey + "] returned null");
+            }
+        } catch (final InterruptedException e) {
+            log.error("Interrupted while storing hashed value for key [" + hashedKey + "]");
+        } catch (final Exception e) {
+            log.error("Failed to stored hashed value for key [" + hashedKey + "]: " + e.getMessage());
         }
+        
+        return decrypt(oldValue, hashedKey);
     }
 
     @Override
