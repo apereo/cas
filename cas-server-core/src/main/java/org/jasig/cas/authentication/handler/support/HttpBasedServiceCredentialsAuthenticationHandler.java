@@ -75,9 +75,11 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credential provided are not null and the credential
      * are a subclass of (or equal to) HttpBasedServiceCredential.
      */
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof HttpBasedServiceCredential;
     }
