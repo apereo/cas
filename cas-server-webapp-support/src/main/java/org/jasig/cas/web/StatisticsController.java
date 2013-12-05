@@ -129,6 +129,14 @@ public final class StatisticsController extends AbstractController {
         return modelAndView;
     }
 
+    /**
+     * Calculate uptime.
+     *
+     * @param difference the difference
+     * @param calculations the calculations
+     * @param labels the labels
+     * @return the uptime as a string.
+     */
     protected String calculateUptime(final double difference, final Queue<Integer> calculations, final Queue<String> labels) {
         if (calculations.isEmpty()) {
             return "";
