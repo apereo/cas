@@ -90,6 +90,9 @@ public class PasswordPolicyConfiguration {
     /** static password expiration date beyond which passwords are considered expired. **/
     private String staticPasswordExpirationDate = null;
 
+    /**
+     * Instantiates a new password policy configuration.
+     */
     public PasswordPolicyConfiguration() {
     }
 
@@ -144,7 +147,8 @@ public class PasswordPolicyConfiguration {
     /**
      * The attribute value in days will be added to expiration date to construct the
      * final expiration policy.
-     * @param validDaysAttributeName
+     *
+     * @param validDaysAttributeName the new valid password number of days attribute name
      * @see #setStaticPasswordExpirationDate(String)
      */
     public void setValidPasswordNumberOfDaysAttributeName(final String validDaysAttributeName) {
@@ -175,7 +179,8 @@ public class PasswordPolicyConfiguration {
      * Provides a constant password expiration date value, beyond which
      * the account will be considered expired. When provided, the
      * number of days the password may remain valid is set to zero
-     * @param date
+     *
+     * @param date the new static password expiration date
      * @see #setDateTimeFormatter(DateTimeFormatter)
      */
     public void setStaticPasswordExpirationDate(final String date) {
@@ -282,6 +287,13 @@ public class PasswordPolicyConfiguration {
         return new PasswordPolicyResult(this);
     }
 
+    /**
+     * Builds the policy internally.
+     *
+     * @param entry the entry
+     * @param result the result
+     * @return the password policy result
+     */
     protected PasswordPolicyResult buildInternal(final LdapEntry entry, final PasswordPolicyResult result) {
         return result;
     }
@@ -295,6 +307,13 @@ public class PasswordPolicyConfiguration {
         return Boolean.valueOf(value) || (NumberUtils.toLong(value) > 0);
     }
 
+    /**
+     * Gets the password policy attribute value.
+     *
+     * @param entry the entry
+     * @param attrName the attr name
+     * @return the password policy attribute value
+     */
     protected String getPasswordPolicyAttributeValue(final LdapEntry entry, final String attrName) {
         if (attrName != null) {
             logger.debug("Retrieving attribute [{}]", attrName);
@@ -308,6 +327,11 @@ public class PasswordPolicyConfiguration {
         return null;
     }
 
+    /**
+     * Gets the password policy attributes map.
+     *
+     * @return the password policy attributes map
+     */
     protected Map<String, String> getPasswordPolicyAttributesMap() {
         final Map<String, String> principalAttributeMap = new HashMap<String, String>();
 

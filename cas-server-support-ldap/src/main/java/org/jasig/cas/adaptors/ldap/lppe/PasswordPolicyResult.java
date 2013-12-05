@@ -75,6 +75,11 @@ public class PasswordPolicyResult {
      */
     private final List<String> ignorePasswordExpirationWarningFlags;
 
+    /**
+     * Instantiates a new password policy result.
+     *
+     * @param configuration the configuration
+     */
     public PasswordPolicyResult(@NotNull final PasswordPolicyConfiguration configuration) {
         this.passwordExpirationDateTime = configuration.getDateConverter().convert(getPasswordExpirationDate());
         this.ignorePasswordExpirationWarningFlags = configuration.getIgnorePasswordExpirationWarningFlags();

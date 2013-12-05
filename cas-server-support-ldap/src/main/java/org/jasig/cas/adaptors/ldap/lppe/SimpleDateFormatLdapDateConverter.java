@@ -39,10 +39,21 @@ public class SimpleDateFormatLdapDateConverter extends AbstractLdapDateConverter
 
     private DateTimeZone timeZone = DateTimeZone.UTC;
 
+    /**
+     * Instantiates a new simple date format ldap date converter.
+     *
+     * @param passwordExpirationDateFormat the password expiration date format
+     */
     public SimpleDateFormatLdapDateConverter(@NotNull final String passwordExpirationDateFormat) {
         this.passwordExpirationDateFormat = passwordExpirationDateFormat;
     }
 
+    /**
+     * Instantiates a new simple date format ldap date converter.
+     *
+     * @param passwordExpirationDateFormat the password expiration date format
+     * @param timeZone the time zone
+     */
     public SimpleDateFormatLdapDateConverter(@NotNull final String passwordExpirationDateFormat,
             @NotNull final DateTimeZone timeZone) {
         this(passwordExpirationDateFormat);

@@ -38,13 +38,28 @@ public class TimeUnitLdapDateConverter extends AbstractLdapDateConverter {
 
     private DateTime sinceDateTime = null;
 
+    /**
+     * Instantiates a new time unit ldap date converter.
+     */
     public TimeUnitLdapDateConverter() {
+        
     }
 
+    /**
+     * Instantiates a new time unit ldap date converter.
+     *
+     * @param timeUnit the time unit
+     */
     public TimeUnitLdapDateConverter(final TimeUnit timeUnit) {
         setTimeUnit(timeUnit);
     }
 
+    /**
+     * Instantiates a new time unit ldap date converter.
+     *
+     * @param timeUnit the time unit
+     * @param sinceDateTime the since date time
+     */
     public TimeUnitLdapDateConverter(final TimeUnit timeUnit, final DateTime sinceDateTime) {
         this(timeUnit);
         setSinceDateTime(sinceDateTime);
