@@ -30,6 +30,9 @@ import java.util.Date;
  */
 public final class SamlDateUtils {
 
+    /**
+     * Instantiates a new saml date utils.
+     */
     private SamlDateUtils() {
         // nothing to do
     }
@@ -38,6 +41,12 @@ public final class SamlDateUtils {
         return getFormattedDateAndTime(new Date());
     }
 
+    /**
+     * Gets the formatted date and time based on the format <code>yyyy-MM-dd'T'HH:mm:ss'Z'</code>.
+     *
+     * @param date the date
+     * @return the formatted date and time
+     */
     public static String getFormattedDateAndTime(final Date date) {
         final DateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss'Z'");
