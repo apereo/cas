@@ -94,6 +94,11 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         return success();
     }
 
+    /**
+     * Sets the ntlm. Generates the message prefix as well.
+     *
+     * @param ntlm the new ntlm
+     */
     public void setNtlm(final boolean ntlm) {
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
@@ -114,7 +119,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
     * unauthorized header is sent. This is ideal in environments that only
     * want to use Windows Integrated Auth/SPNEGO and not forms auth.
     *
-    * @param  final should mixed mode authentication be allowed. Default is false.
+    * @param enabled should mixed mode authentication be allowed. Default is false.
     */
     public void setMixedModeAuthentication(final boolean enabled) {
         this.mixedModeAuthentication = enabled;
@@ -130,11 +135,22 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         }
     }
 
+    /**
+     * Construct message prefix.
+     *
+     * @return the string
+     */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                 + " ";
     }
 
+    /**
+     * Checks if is supported browser.
+     *
+     * @param userAgent the user agent
+     * @return true, if is supported browser
+     */
     protected boolean isSupportedBrowser(final String userAgent) {
         for (final String supportedBrowser : this.supportedBrowser) {
             if (userAgent.contains(supportedBrowser)) {
