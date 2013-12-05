@@ -26,20 +26,27 @@ package org.jasig.cas.validation;
  * proxied authentications.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
-public class Cas20WithoutProxyingValidationSpecification extends
-    AbstractCasProtocolValidationSpecification {
+public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
+    /**
+     * Instantiates a new cas20 without proxying validation specification.
+     */
     public Cas20WithoutProxyingValidationSpecification() {
         super();
     }
 
+    /**
+     * Instantiates a new cas20 without proxying validation specification.
+     *
+     * @param renew the renew
+     */
     public Cas20WithoutProxyingValidationSpecification(final boolean renew) {
         super(renew);
     }
 
+    @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
         return (assertion.getChainedAuthentications().size() == 1);
     }
