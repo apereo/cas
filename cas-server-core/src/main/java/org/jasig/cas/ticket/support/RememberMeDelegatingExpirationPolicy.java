@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
@@ -34,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.2.1
  *
  */
-public final class RememberMeDelegatingExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class RememberMeDelegatingExpirationPolicy implements ExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -2735975347698196127L;

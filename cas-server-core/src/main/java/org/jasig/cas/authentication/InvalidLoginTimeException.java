@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import javax.security.auth.login.AccountException;
 
 /**
@@ -28,7 +27,7 @@ import javax.security.auth.login.AccountException;
  * @author Marvin S. Addison
  * @version 4.0
  */
-public class InvalidLoginTimeException extends AccountException implements Serializable {
+public class InvalidLoginTimeException extends AccountException {
 
     private static final long serialVersionUID = -6699752791525619208L;
 

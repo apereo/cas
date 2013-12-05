@@ -130,7 +130,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.  Use {@link JdbcLockingStrategy}
+     * such as JPA, in a clustered CAS environment.  Use {@link JpaLockingStrategy}
      * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
      * CAS environment.
      */
