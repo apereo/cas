@@ -64,6 +64,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
 
+    /**
+     * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
+     *
+     * @param auditTrailManager the audit trail manager
+     * @param dataSource the data source
+     */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
             final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
@@ -132,6 +138,13 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         this.authenticationFailureCode = authenticationFailureCode;
     }
 
+    /**
+     * Construct username from the request.
+     *
+     * @param request the request
+     * @param usernameParameter the username parameter
+     * @return the string
+     */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
         return "[username: " + (username != null ? username : "") + "]";

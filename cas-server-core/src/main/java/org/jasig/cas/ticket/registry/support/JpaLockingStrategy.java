@@ -183,7 +183,13 @@ public class JpaLockingStrategy implements LockingStrategy {
         return uniqueId;
     }
 
-
+    /**
+     * Acquire the lock object.
+     *
+     * @param em the em
+     * @param lock the lock
+     * @return true, if successful
+     */
     private boolean acquire(final EntityManager em, final Lock lock) {
         lock.setUniqueId(uniqueId);
         if (lockTimeout > 0) {
