@@ -31,10 +31,12 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
         return new String[] {AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString()};
     }
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         return new String[] {AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString()};
     }

@@ -57,6 +57,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = false;
 
+    /**
+     * Instantiates a new service ticket impl.
+     */
     public ServiceTicketImpl() {
         // exists for JPA purposes
     }
@@ -108,6 +111,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
+    @Override
     public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
@@ -127,6 +131,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return null;
     }
 
+    @Override
     public boolean equals(final Object object) {
         if (object == null
             || !(object instanceof ServiceTicket)) {
