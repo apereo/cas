@@ -34,14 +34,28 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
     /** The code description. */
     private static final String CODE = "service.not.authorized.proxy";
 
+    /**
+     * Instantiates a new unauthorized proxying exception.
+     */
     public UnauthorizedProxyingException() {
         super(CODE);
     }
 
+    /**
+     * Instantiates a new unauthorized proxying exception.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public UnauthorizedProxyingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Instantiates a new unauthorized proxying exception.
+     *
+     * @param message the message
+     */
     public UnauthorizedProxyingException(final String message) {
         super(message);
     }
