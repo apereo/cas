@@ -46,10 +46,23 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
 
     private static final long serialVersionUID = 8334068957483758042L;
 
+    /**
+     * Instantiates a new simple web application service impl.
+     *
+     * @param id the id
+     */
     public SimpleWebApplicationServiceImpl(final String id) {
         this(id, id, null, null);
     }
 
+    /**
+     * Instantiates a new simple web application service impl.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param responseType the response type
+     */
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
         final ResponseType responseType) {
@@ -57,6 +70,12 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
         this.responseType = responseType;
     }
 
+    /**
+     * Creates the service from the request.
+     *
+     * @param request the request
+     * @return the simple web application service impl
+     */
     public static SimpleWebApplicationServiceImpl createServiceFrom(
         final HttpServletRequest request) {
         final String targetService = request
@@ -77,6 +96,7 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
                 : ResponseType.REDIRECT);
     }
 
+    @Override
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
 
