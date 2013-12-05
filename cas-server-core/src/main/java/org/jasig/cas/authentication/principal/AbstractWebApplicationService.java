@@ -119,6 +119,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.originalUrl;
     }
 
+    @Override
     public boolean equals(final Object object) {
         if (object == null) {
             return false;
@@ -133,6 +134,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return false;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 41;
         int result = 1;
@@ -149,6 +151,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.principal = principal;
     }
 
+    @Override
     public boolean matches(final Service service) {
         return this.id.equals(service.getId());
     }
