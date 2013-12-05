@@ -41,6 +41,11 @@ public final class EhcacheBackedMap implements Map<String, String> {
     @NotNull
     private final Cache cache;
 
+    /**
+     * Instantiates a new ehcache backed map.
+     *
+     * @param cache the cache
+     */
     public EhcacheBackedMap(final Cache cache) {
         this.cache = cache;
     }
@@ -138,6 +143,11 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
         private final Element element;
 
+        /**
+         * Instantiates a new element map entry.
+         *
+         * @param element the element
+         */
         public ElementMapEntry(final Element element) {
             this.element = element;
         }
