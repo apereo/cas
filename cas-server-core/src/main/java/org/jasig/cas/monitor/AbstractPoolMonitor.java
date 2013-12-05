@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -116,6 +117,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
 
     private class Validator implements Callable<StatusCode> {
+        @Override
         public StatusCode call() throws Exception {
             return checkPool();
         }

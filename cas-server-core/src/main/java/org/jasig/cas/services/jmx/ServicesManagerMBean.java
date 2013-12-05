@@ -34,6 +34,11 @@ import org.springframework.jmx.export.annotation.ManagedResource;
         currencyTimeLimit = 15)
 public final class ServicesManagerMBean extends AbstractServicesManagerMBean<ServicesManager> {
 
+    /**
+     * Instantiates a new services manager m bean.
+     *
+     * @param servicesManager the services manager
+     */
     public ServicesManagerMBean(final ServicesManager servicesManager) {
         super(servicesManager);
     }

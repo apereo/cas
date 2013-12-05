@@ -55,6 +55,7 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     @NotNull
     private HttpClient httpClient;
 
+    @Override
     public String handle(final Credential credential,
         final String proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
