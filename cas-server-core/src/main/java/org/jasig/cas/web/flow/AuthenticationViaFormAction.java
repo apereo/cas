@@ -141,10 +141,6 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
-        return (AuthenticationException) e.getCause();
-    }
-
     private Event newEvent(final String id) {
         return new Event(this, id);
     }
