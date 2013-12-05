@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +35,12 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
 
+    @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
     }
 
+    @Override
     public RegisteredService findServiceById(final long id) {
         for (final RegisteredService r : this.registeredServices) {
             if (r.getId() == id) {
@@ -48,10 +51,12 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
         return null;
     }
 
+    @Override
     public List<RegisteredService> load() {
         return this.registeredServices;
     }
 
+    @Override
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
