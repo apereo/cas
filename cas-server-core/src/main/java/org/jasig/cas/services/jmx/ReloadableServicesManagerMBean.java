@@ -47,8 +47,10 @@ public final class ReloadableServicesManagerMBean extends AbstractServicesManage
         super(reloadableServicesManager);
     }
 
+    /**
+     * Reload services that are provided by the manager.
+     */
     @ManagedOperation(description = "Reloads the list of the services from the persistence storage.")
-    @Override
     public void reload() {
         getServicesManager().reload();
     }

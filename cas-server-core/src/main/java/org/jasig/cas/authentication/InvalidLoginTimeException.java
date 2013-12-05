@@ -32,10 +32,18 @@ public class InvalidLoginTimeException extends AccountException implements Seria
 
     private static final long serialVersionUID = -6699752791525619208L;
 
+    /**
+     * Instantiates a new invalid login time exception.
+     */
     public InvalidLoginTimeException() {
         super();
     }
 
+    /**
+     * Instantiates a new invalid login time exception.
+     *
+     * @param message the message
+     */
     public InvalidLoginTimeException(final String message) {
         super(message);
     }

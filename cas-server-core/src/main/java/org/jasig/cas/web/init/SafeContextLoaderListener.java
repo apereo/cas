@@ -70,6 +70,7 @@ public final class SafeContextLoaderListener implements ServletContextListener {
     /** The actual ContextLoaderListener to which we will delegate to. */
     private final ContextLoaderListener delegate = new ContextLoaderListener();
 
+    @Override
     public void contextInitialized(final ServletContextEvent sce) {
         try {
             this.delegate.contextInitialized(sce);
@@ -101,6 +102,7 @@ public final class SafeContextLoaderListener implements ServletContextListener {
         }
     }
 
+    @Override
     public void contextDestroyed(final ServletContextEvent sce) {
         this.delegate.contextDestroyed(sce);
     }
