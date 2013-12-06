@@ -125,10 +125,23 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         private String name;
         private final String[] values;
 
+        /**
+         * Instantiates a new attribute context.
+         *
+         * @param name the name
+         * @param values the values
+         */
         public AttributeContext(final String name, final String[] values) {
             this.values = values;
         }
 
+  
+        /**
+         * Retrieve the next value, by incrementing the current index.
+         *
+         * @return the string
+         * @throws IllegalStateException if no values are remaining.
+         */
         public String nextValue() {
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute " + this.name);
