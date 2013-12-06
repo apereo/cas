@@ -31,6 +31,11 @@ import org.jasig.cas.adaptors.ldap.lppe.PasswordPolicyResult;
 public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
     private long userAccountControl = -1;
 
+    /**
+     * Instantiates a new active directory password policy result.
+     *
+     * @param configuration the configuration
+     */
     public ActiveDirectoryPasswordPolicyResult(final PasswordPolicyConfiguration configuration) {
         super(configuration);
     }
@@ -51,6 +56,11 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
 
         private long value;
 
+        /**
+         * Instantiates a new active directory user account control flags.
+         *
+         * @param id the account control id
+         */
         ActiveDirectoryUserAccountControlFlags(final long id) {
             this.value = id;
         }
@@ -60,6 +70,11 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
         }
     }
 
+    /**
+     * Checks if is user account control set to disable account.
+     *
+     * @return true, if is user account control set to disable account
+     */
     private boolean isUserAccountControlSetToDisableAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE)) {
             logger.debug("User account control flag is set. Account [{}] is disabled", getDn());
@@ -68,6 +83,11 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
         return false;
     }
 
+    /**
+     * Checks if is user account control set to lock account.
+     *
+     * @return true, if is user account control set to lock account
+     */
     private boolean isUserAccountControlSetToLockAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT)) {
             logger.debug("User account control flag is set. Account [{}] is locked", getDn());
@@ -89,12 +109,23 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
         return this.userAccountControl;
     }
 
+    /**
+     * Sets the user account control to the given flag.
+     *
+     * @param userAccountControl the new user account control
+     */
     protected void setUserAccountControl(final String userAccountControl) {
         if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
             this.userAccountControl = Long.parseLong(userAccountControl);
         }
     }
 
+    /**
+     * Checks if is user account control bit set.
+     *
+     * @param bit the bit
+     * @return true, if is user account control bit set
+     */
     private boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
         if (getUserAccountControl() > 0) {
             return ((getUserAccountControl() & bit.getValue()) == bit.getValue());
