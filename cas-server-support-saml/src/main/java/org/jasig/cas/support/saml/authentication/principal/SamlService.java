@@ -64,10 +64,23 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
+    /**
+     * Instantiates a new saml service.
+     *
+     * @param id the service id
+     */
     protected SamlService(final String id) {
         super(id, id, null);
     }
 
+    /**
+     * Instantiates a new saml service.
+     *
+     * @param id the service id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param requestId the request id
+     */
     protected SamlService(final String id, final String originalUrl,
             final String artifactId, final String requestId) {
         super(id, originalUrl, artifactId);
@@ -87,6 +100,12 @@ public final class SamlService extends AbstractWebApplicationService {
         return this.requestId;
     }
 
+    /**
+     * Creates the saml service from the request.
+     *
+     * @param request the request
+     * @return the saml service
+     */
     public static SamlService createServiceFrom(
             final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
@@ -142,6 +161,12 @@ public final class SamlService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
+    /**
+     * Extract request id from the body.
+     *
+     * @param requestBody the request body
+     * @return the string
+     */
     protected static String extractRequestId(final String requestBody) {
         if (!requestBody.contains("RequestID")) {
             return null;
@@ -158,6 +183,12 @@ public final class SamlService extends AbstractWebApplicationService {
         }
     }
 
+    /**
+     * Gets the request body from the request.
+     *
+     * @param request the request
+     * @return the request body
+     */
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
         try {
