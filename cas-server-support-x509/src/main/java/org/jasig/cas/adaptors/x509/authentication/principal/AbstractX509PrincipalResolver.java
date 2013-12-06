@@ -41,5 +41,11 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         return credential instanceof X509CertificateCredential;
     }
 
+    /**
+     * Resolve principal internally, and return the id.
+     *
+     * @param certificate the certificate
+     * @return the string
+     */
     protected abstract String resolvePrincipalInternal(final X509Certificate certificate);
 }
