@@ -172,6 +172,13 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         throw new FailedLoginException("Invalid credentials.");
     }
 
+    /**
+     * Examine account state to see if any errors are present.
+     * If so, throws the relevant security exception.
+     *
+     * @param response the response
+     * @throws LoginException the login exception
+     */
     protected void examineAccountState(final AuthenticationResponse response) throws LoginException {
         final AccountState state = response.getAccountState();
         if (state != null && state.getError() != null) {
@@ -179,6 +186,14 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         }
     }
 
+    /**
+     * Handle post authentication processing.
+     *
+     * @param credential the credential
+     * @param response the response
+     * @return the handler result
+     * @throws LoginException the login exception
+     */
     protected HandlerResult doPostAuthentication(
             final UsernamePasswordCredential credential,
             final AuthenticationResponse response) throws LoginException {
@@ -246,6 +261,9 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         return new SimplePrincipal(id, attributeMap);
     }
 
+    /**
+     * Initialize the handler, setup the authentication entry attributes.
+     */
     @PostConstruct
     public void initialize() {
         initializeInternal();
@@ -257,6 +275,9 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
     }
 
+    /**
+     * Initialize the handler internally.
+     */
     protected void initializeInternal() {
     }
 }

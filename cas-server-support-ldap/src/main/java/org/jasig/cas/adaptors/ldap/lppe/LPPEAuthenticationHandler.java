@@ -54,6 +54,12 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     /** The ldap configuration constructed based on given the policy. **/
     private final PasswordPolicyConfiguration configuration;
 
+    /**
+     * Instantiates a new lPPE authentication handler.
+     *
+     * @param authenticator the authenticator
+     * @param configuration the configuration
+     */
     public LPPEAuthenticationHandler(@NotNull final Authenticator authenticator,
             @NotNull final PasswordPolicyConfiguration configuration) {
         super(authenticator);
@@ -100,7 +106,9 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * <li>Expired: {@link CredentialExpiredException}</li>
      * <li>Password Must Change: {@link AccountPasswordMustChangeException}</li>
      * </ul>
+     *
      * @param response the ldaptive authentication response.
+     * @param result the result
      * @throws LoginException if the above conditions match, an instance of LoginException
      * mapped to the error is thrown.
      */
@@ -145,8 +153,12 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
 
     /**
      * Calculates the number of days left to the expiration date.
+     *
+     * @param expireDate the expire date
+     * @param result the result
      * @return Number of days left to the expiration date or -1 if the no expiration warning is
      * calculated based on the defined policy.
+     * @throws LoginException the login exception
      */
     protected int getDaysToExpirationDate(final DateTime expireDate, final PasswordPolicyResult result) throws LoginException {
         final DateTimeZone timezone = configuration.getDateConverter().getTimeZone();
@@ -185,11 +197,13 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
     /**
      * Determines the expiration date to use based on the password policy configuration.
      * Converts the password expiration date based on the
+     *
+     * @param result the result
+     * @return the configured expiration date to use.
      * {@link PasswordPolicyConfiguration#setDateConverter(LdapDateConverter)} and returns
      * that value is the policy is set to evaluate against a static password expiration date.
      * Otherwise, adds {@link PasswordPolicyConfiguration#getValidPasswordNumberOfDays()} days
      * and returns the expiration date.
-     * @return the configured expiration date to use.
      */
     private DateTime getExpirationDateToUse(final PasswordPolicyResult result) {
         final DateTime dateValue = result.getPasswordExpirationDateTime();
