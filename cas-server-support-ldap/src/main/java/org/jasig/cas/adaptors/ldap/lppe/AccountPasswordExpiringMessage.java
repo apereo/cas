@@ -33,6 +33,12 @@ public class AccountPasswordExpiringMessage extends Message {
 
     private long numberOfDaysToPasswordExpiration;
 
+    /**
+     * Instantiates a new account password expiring message.
+     *
+     * @param defaultMsg the default msg
+     * @param days the days
+     */
     public AccountPasswordExpiringMessage(final String defaultMsg, final long days) {
         super(CODE, defaultMsg);
         this.numberOfDaysToPasswordExpiration = days;

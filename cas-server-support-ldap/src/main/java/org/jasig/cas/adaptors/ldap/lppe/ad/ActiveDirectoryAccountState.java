@@ -53,7 +53,8 @@ class ActiveDirectoryAccountState extends org.ldaptive.auth.ext.ActiveDirectoryA
     static {
         MAPPINGS.put(org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, InvalidLoginTimeException.class);
         MAPPINGS.put(org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, InvalidLoginLocationException.class);
-        MAPPINGS.put(org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, AccountPasswordMustChangeException.class);
+        MAPPINGS.put(org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE,
+                AccountPasswordMustChangeException.class);
         MAPPINGS.put(org.ldaptive.auth.ext.ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, AccountDisabledException.class);
     }
 
@@ -80,7 +81,12 @@ class ActiveDirectoryAccountState extends org.ldaptive.auth.ext.ActiveDirectoryA
             }
         }
 
-        private LoginException createException() throws RuntimeException {
+        /**
+         * Creates the login exception.
+         *
+         * @return the login exception
+         */
+        private LoginException createException() {
             try {
                 final Class<?> exception = MAPPINGS.get(this.error);
                 final Constructor<?> ctor = exception.getDeclaredConstructor(String.class);
@@ -92,6 +98,11 @@ class ActiveDirectoryAccountState extends org.ldaptive.auth.ext.ActiveDirectoryA
         }
     }
 
+    /**
+     * Instantiates a new active directory account state.
+     *
+     * @param error the error
+     */
     public ActiveDirectoryAccountState(final Error error) {
         super(error);
         this.error = new ActiveDirectoryError();

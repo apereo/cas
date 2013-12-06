@@ -32,10 +32,30 @@ import org.ldaptive.LdapEntry;
  */
 public interface LdapRegisteredServiceMapper {
 
+    /**
+     * Map to registered service from ldap.
+     *
+     * @param result the result
+     * @return the registered service
+     */
     RegisteredService mapToRegisteredService(final LdapEntry result);
 
+    /**
+     * Map from registered service to ldap.
+     *
+     * @param dn the dn
+     * @param svc the svc
+     * @return the ldap entry
+     */
     LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc);
 
+    /**
+     * Gets the dn for registered service.
+     *
+     * @param parentDn the parent dn
+     * @param svc the svc
+     * @return the dn for registered service
+     */
     String getDnForRegisteredService(String parentDn, RegisteredService svc);
 
     /**
