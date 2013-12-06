@@ -113,6 +113,13 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         response.getAssertions().add(assertion);
     }
 
+    /**
+     * New conditions element.
+     *
+     * @param issuedAt the issued at
+     * @param serviceId the service id
+     * @return the conditions
+     */
     private Conditions newConditions(final DateTime issuedAt, final String serviceId) {
         final Conditions conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(issuedAt);
@@ -125,6 +132,12 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         return conditions;
     }
 
+    /**
+     * New subject element.
+     *
+     * @param identifier the identifier
+     * @return the subject
+     */
     private Subject newSubject(final String identifier) {
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         final ConfirmationMethod method = newSamlObject(ConfirmationMethod.class);
@@ -138,6 +151,12 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         return subject;
     }
 
+    /**
+     * New authentication statement.
+     *
+     * @param authentication the authentication
+     * @return the authentication statement
+     */
     private AuthenticationStatement newAuthenticationStatement(final Authentication authentication) {
         final String authenticationMethod = (String) authentication.getAttributes().get(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
@@ -151,6 +170,14 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         return authnStatement;
     }
 
+    /**
+     * New attribute statement.
+     *
+     * @param subject the subject
+     * @param attributes the attributes
+     * @param isRemembered the is remembered
+     * @return the attribute statement
+     */
     private AttributeStatement newAttributeStatement(
             final Subject subject, final Map<String, Object> attributes, final boolean isRemembered) {
 
@@ -186,6 +213,12 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         return attrStatement;
     }
 
+    /**
+     * New attribute value.
+     *
+     * @param value the value
+     * @return the xS string
+     */
     private XSString newAttributeValue(final Object value) {
         final XSString stringValue = this.attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         if (value instanceof String) {

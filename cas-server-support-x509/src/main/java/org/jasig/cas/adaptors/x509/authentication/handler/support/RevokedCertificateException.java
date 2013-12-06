@@ -56,6 +56,12 @@ public class RevokedCertificateException extends GeneralSecurityException {
         PrivilegeWithdrawn,
         AACompromise;
 
+        /**
+         * Convert code to reason.
+         *
+         * @param code the code
+         * @return the reason
+         */
         public static Reason fromCode(final int code) {
             for (int i = 0; i < Reason.values().length; i++) {
                 if (i == code) {
@@ -72,16 +78,34 @@ public class RevokedCertificateException extends GeneralSecurityException {
 
     private Reason reason;
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param revoked the revoked
+     * @param serial the serial
+     */
     public RevokedCertificateException(final Date revoked, final BigInteger serial) {
         this(revoked, serial, null);
     }
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param revoked the revoked
+     * @param serial the serial
+     * @param reason the reason
+     */
     public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
         this.revocationDate = revoked;
         this.serial = serial;
         this.reason = reason;
     }
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param entry the entry
+     */
     public RevokedCertificateException(final X509CRLEntry entry) {
         this.revocationDate = entry.getRevocationDate();
         this.serial = entry.getSerialNumber();
