@@ -62,6 +62,15 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return internalHandleRequest(method, request, response);
     }
 
+    /**
+     * Internal handle request.
+     *
+     * @param method the method
+     * @param request the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 
