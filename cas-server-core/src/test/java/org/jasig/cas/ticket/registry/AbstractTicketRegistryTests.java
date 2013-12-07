@@ -52,6 +52,7 @@ public abstract class AbstractTicketRegistryTests {
      * return the TicketRegistry they wish to test.
      *
      * @return the TicketRegistry we wish to test
+     * @throws Exception the exception
      */
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
 
