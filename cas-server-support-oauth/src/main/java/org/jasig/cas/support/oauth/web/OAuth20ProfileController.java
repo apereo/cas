@@ -58,6 +58,11 @@ public final class OAuth20ProfileController extends AbstractController {
 
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
+    /**
+     * Instantiates a new o auth20 profile controller.
+     *
+     * @param ticketRegistry the ticket registry
+     */
     public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
