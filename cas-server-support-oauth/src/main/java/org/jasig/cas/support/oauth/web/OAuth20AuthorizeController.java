@@ -48,6 +48,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
 
     private final ServicesManager servicesManager;
 
+    /**
+     * Instantiates a new o auth20 authorize controller.
+     *
+     * @param servicesManager the services manager
+     * @param loginUrl the login url
+     */
     public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
         this.servicesManager = servicesManager;
         this.loginUrl = loginUrl;
