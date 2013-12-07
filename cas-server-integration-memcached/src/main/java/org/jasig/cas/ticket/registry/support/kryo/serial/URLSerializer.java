@@ -36,7 +36,7 @@ public final class URLSerializer extends SimpleSerializer<URL> {
     private final Kryo kryo;
     
     /**
-     * @param kryo
+     * @param kryo the kyro instance.
      */
     public URLSerializer(final Kryo kryo) {
         this.kryo = kryo;
