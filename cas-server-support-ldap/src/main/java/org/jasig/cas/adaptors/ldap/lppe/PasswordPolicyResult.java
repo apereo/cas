@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PasswordPolicyResult {
 
+    /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Password expiration date in raw format. **/
