@@ -43,7 +43,12 @@ public final class Response {
 
     /** An enumeration of different response types. **/
     public static enum ResponseType {
-        POST, REDIRECT
+        
+        /** The post. */
+        POST, 
+        
+        /** The redirect. */
+        REDIRECT
     }
 
     private final ResponseType responseType;
