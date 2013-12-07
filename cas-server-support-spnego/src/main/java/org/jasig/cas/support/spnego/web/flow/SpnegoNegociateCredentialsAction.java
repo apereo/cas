@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
  * then return <code>success()</code></li>
  * </ul>
  *
- * @see <a href='http://ietfreport.isoc.org/idref/rfc4559/#page-2'>RFC 4559</a>
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia

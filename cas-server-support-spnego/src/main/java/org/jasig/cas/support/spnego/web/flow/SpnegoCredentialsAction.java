@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @see <a href='http://ietfreport.isoc.org/idref/rfc4559/#page-2'>RFC 4559</a>
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
 public final class SpnegoCredentialsAction extends
