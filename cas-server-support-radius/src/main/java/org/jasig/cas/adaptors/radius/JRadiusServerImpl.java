@@ -69,6 +69,12 @@ public final class JRadiusServerImpl implements RadiusServer {
         .loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
     }
 
+    /**
+     * Instantiates a new j radius server impl.
+     *
+     * @param protocol the protocol
+     * @param clientFactory the client factory
+     */
     public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
