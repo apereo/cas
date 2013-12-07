@@ -37,6 +37,7 @@ public final class OpenIdProviderController extends AbstractController {
     @NotNull
     private String loginUrl;
 
+    @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
         final HttpServletResponse response) throws Exception {
         return new ModelAndView("openIdProviderView", "openid_server", this.loginUrl);
