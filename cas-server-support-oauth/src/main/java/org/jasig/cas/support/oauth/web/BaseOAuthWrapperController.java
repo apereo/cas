@@ -39,17 +39,22 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
+    /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
 
+    /** The login url. */
     @NotNull
     protected String loginUrl;
 
+    /** The services manager. */
     @NotNull
     protected ServicesManager servicesManager;
 
+    /** The ticket registry. */
     @NotNull
     protected TicketRegistry ticketRegistry;
 
+    /** The timeout. */
     @NotNull
     protected long timeout;
 
