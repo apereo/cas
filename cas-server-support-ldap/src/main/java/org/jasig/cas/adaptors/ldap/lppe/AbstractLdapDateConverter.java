@@ -32,6 +32,8 @@ import org.springframework.beans.factory.InitializingBean;
  * @version 4.0.0
  */
 public abstract class AbstractLdapDateConverter implements LdapDateConverter, InitializingBean {
+    
+    /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private DateTimeZone timeZone = DateTimeZone.getDefault();

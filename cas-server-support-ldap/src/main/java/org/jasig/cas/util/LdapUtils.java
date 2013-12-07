@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class LdapUtils {
 
+    /** The Constant OBJECTCLASS_ATTRIBUTE. */
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);

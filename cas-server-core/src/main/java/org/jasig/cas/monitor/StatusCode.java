@@ -25,10 +25,20 @@ package org.jasig.cas.monitor;
  * @since 3.5.0
  */
 public enum StatusCode {
+    
+    /** The error. */
     ERROR(500),
+    
+    /** The warn. */
     WARN(400),
+    
+    /** The info. */
     INFO(300),
+    
+    /** The ok. */
     OK(200),
+    
+    /** The unknown. */
     UNKNOWN(100);
 
     /** Status code numerical value. */

@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PasswordPolicyConfiguration {
 
+    /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The ldap converter used in calculating the expiration date attribute value.*/
@@ -96,50 +97,110 @@ public class PasswordPolicyConfiguration {
     public PasswordPolicyConfiguration() {
     }
 
+    /**
+     * Sets the ignore password expiration warning flags.
+     *
+     * @param values the new ignore password expiration warning flags
+     */
     public void setIgnorePasswordExpirationWarningFlags(@NotNull final List<String> values) {
         this.ignorePasswordExpirationWarningFlags = values;
     }
 
+    /**
+     * Gets the ignore password expiration warning flags.
+     *
+     * @return the ignore password expiration warning flags
+     */
     public List<String> getIgnorePasswordExpirationWarningFlags() {
         return this.ignorePasswordExpirationWarningFlags;
     }
 
+    /**
+     * Checks if is always display password expiration warning.
+     *
+     * @return true, if is always display password expiration warning
+     */
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
 
+    /**
+     * Sets the always display password expiration warning.
+     *
+     * @param alwaysDisplayPasswordExpirationWarning the new always display password expiration warning
+     */
     public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
         this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
     }
 
+    /**
+     * Gets the password policy url.
+     *
+     * @return the password policy url
+     */
     public String getPasswordPolicyUrl() {
         return this.passwordPolicyUrl;
     }
 
+    /**
+     * Sets the password policy url.
+     *
+     * @param passwordPolicyUrl the new password policy url
+     */
     public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
         this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
+    /**
+     * Sets the account disabled attribute name.
+     *
+     * @param accountDisabledAttributeName the new account disabled attribute name
+     */
     public void setAccountDisabledAttributeName(final String accountDisabledAttributeName) {
         this.accountDisabledAttributeName = accountDisabledAttributeName;
     }
 
+    /**
+     * Gets the account disabled attribute name.
+     *
+     * @return the account disabled attribute name
+     */
     public String getAccountDisabledAttributeName() {
         return this.accountDisabledAttributeName;
     }
 
+    /**
+     * Sets the account locked attribute name.
+     *
+     * @param accountLockedAttributeName the new account locked attribute name
+     */
     public void setAccountLockedAttributeName(final String accountLockedAttributeName) {
         this.accountLockedAttributeName = accountLockedAttributeName;
     }
 
+    /**
+     * Gets the account locked attribute name.
+     *
+     * @return the account locked attribute name
+     */
     public String getAccountLockedAttributeName() {
         return this.accountLockedAttributeName;
     }
 
+    /**
+     * Sets the account password must change attribute name.
+     *
+     * @param accountPasswordMustChange the new account password must change attribute name
+     */
     public void setAccountPasswordMustChangeAttributeName(final String accountPasswordMustChange) {
         this.accountPasswordMustChangeAttributeName = accountPasswordMustChange;
     }
 
+    /**
+     * Gets the account password must change attribute name.
+     *
+     * @return the account password must change attribute name
+     */
     public String getAccountPasswordMustChangeAttributeName() {
         return this.accountPasswordMustChangeAttributeName;
     }
@@ -155,22 +216,47 @@ public class PasswordPolicyConfiguration {
         this.validPasswordNumberOfDaysAttributeName = validDaysAttributeName;
     }
 
+    /**
+     * Gets the valid password number of days attribute name.
+     *
+     * @return the valid password number of days attribute name
+     */
     public String getValidPasswordNumberOfDaysAttributeName() {
         return this.validPasswordNumberOfDaysAttributeName;
     }
 
+    /**
+     * Sets the password warning number of days attribute name.
+     *
+     * @param warningDaysAttributeName the new password warning number of days attribute name
+     */
     public void setPasswordWarningNumberOfDaysAttributeName(final String warningDaysAttributeName) {
         this.passwordWarningNumberOfDaysAttributeName = warningDaysAttributeName;
     }
 
+    /**
+     * Gets the password warning number of days attribute name.
+     *
+     * @return the password warning number of days attribute name
+     */
     public String getPasswordWarningNumberOfDaysAttributeName() {
         return this.passwordWarningNumberOfDaysAttributeName;
     }
 
+    /**
+     * Sets the default valid password number of days.
+     *
+     * @param days the new default valid password number of days
+     */
     public void setDefaultValidPasswordNumberOfDays(final int days) {
         this.defaultValidPasswordNumberOfDays = days;
     }
 
+    /**
+     * Sets the default password warning number of days.
+     *
+     * @param days the new default password warning number of days
+     */
     public void setDefaultPasswordWarningNumberOfDays(final int days) {
         this.defaultPasswordWarningNumberOfDays = days;
     }
@@ -187,6 +273,11 @@ public class PasswordPolicyConfiguration {
         this.staticPasswordExpirationDate = date;
     }
 
+    /**
+     * Sets the date time formatter.
+     *
+     * @param fmt the new date time formatter
+     */
     public void setDateTimeFormatter(final DateTimeFormatter fmt) {
         this.datetimeFormatter = fmt;
     }
@@ -204,26 +295,56 @@ public class PasswordPolicyConfiguration {
         return null;
     }
 
+    /**
+     * Gets the ignore password expiration warning attribute name.
+     *
+     * @return the ignore password expiration warning attribute name
+     */
     public String getIgnorePasswordExpirationWarningAttributeName() {
         return this.ignorePasswordExpirationWarningAttributeName;
     }
 
+    /**
+     * Sets the ignore password expiration warning attribute name.
+     *
+     * @param value the new ignore password expiration warning attribute name
+     */
     public void setIgnorePasswordExpirationWarningAttributeName(final String value) {
         this.ignorePasswordExpirationWarningAttributeName = value;
     }
 
+    /**
+     * Sets the password expiration date attribute name.
+     *
+     * @param value the new password expiration date attribute name
+     */
     public void setPasswordExpirationDateAttributeName(final String value) {
         this.passwordExpirationDateAttributeName = value;
     }
 
+    /**
+     * Gets the password expiration date attribute name.
+     *
+     * @return the password expiration date attribute name
+     */
     public String getPasswordExpirationDateAttributeName() {
         return this.passwordExpirationDateAttributeName;
     }
 
+    /**
+     * Gets the date converter.
+     *
+     * @return the date converter
+     */
     public LdapDateConverter getDateConverter() {
         return this.ldapDateConverter;
     }
 
+    /**
+     * Sets the date converter.
+     *
+     * @param converter the new date converter
+     */
     public void setDateConverter(final LdapDateConverter converter) {
         this.ldapDateConverter = converter;
     }
@@ -283,6 +404,11 @@ public class PasswordPolicyConfiguration {
         return buildInternal(entry, result);
     }
 
+    /**
+     * Gets the password policy result instance.
+     *
+     * @return the password policy result instance
+     */
     protected PasswordPolicyResult getPasswordPolicyResultInstance() {
         return new PasswordPolicyResult(this);
     }
