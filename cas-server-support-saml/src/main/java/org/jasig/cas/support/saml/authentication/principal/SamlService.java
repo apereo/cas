@@ -65,7 +65,7 @@ public final class SamlService extends AbstractWebApplicationService {
     private static final long serialVersionUID = -6867572626767140223L;
 
     /**
-     * Instantiates a new saml service.
+     * Instantiates a new SAML service.
      *
      * @param id the service id
      */
@@ -74,7 +74,7 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     /**
-     * Instantiates a new saml service.
+     * Instantiates a new SAML service.
      *
      * @param id the service id
      * @param originalUrl the original url
@@ -101,10 +101,10 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     /**
-     * Creates the saml service from the request.
+     * Creates the SAML service from the request.
      *
      * @param request the request
-     * @return the saml service
+     * @return the SAML service
      */
     public static SamlService createServiceFrom(
             final HttpServletRequest request) {

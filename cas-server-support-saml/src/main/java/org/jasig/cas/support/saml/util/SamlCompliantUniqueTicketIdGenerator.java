@@ -54,7 +54,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     private final SecureRandom random;
 
     /**
-     * Instantiates a new saml compliant unique ticket id generator.
+     * Instantiates a new SAML compliant unique ticket id generator.
      *
      * @param sourceId the source id
      */

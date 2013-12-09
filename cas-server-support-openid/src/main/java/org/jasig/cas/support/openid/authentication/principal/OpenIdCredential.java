@@ -33,7 +33,7 @@ public final class OpenIdCredential implements Credential {
     private final String username;
 
     /**
-     * Instantiates a new open id credential.
+     * Instantiates a new OpenID credential.
      *
      * @param ticketGrantingTicketId the ticket granting ticket id
      * @param username the username

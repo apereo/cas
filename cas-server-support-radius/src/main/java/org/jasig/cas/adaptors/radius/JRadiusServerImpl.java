@@ -70,7 +70,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * Instantiates a new j radius server impl.
+     * Instantiates a new JRadius server impl.
      *
      * @param protocol the protocol
      * @param clientFactory the client factory
