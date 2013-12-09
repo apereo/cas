@@ -37,7 +37,7 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
     private final Cache cache;
 
     /**
-     * Instantiates a new eh cache monitor.
+     * Instantiates a new EhCache monitor.
      *
      * @param cache the cache
      */

@@ -31,7 +31,7 @@ import java.util.Date;
 public final class SamlDateUtils {
 
     /**
-     * Instantiates a new saml date utils.
+     * Instantiates a new SAML date utils.
      */
     private SamlDateUtils() {
         // nothing to do
