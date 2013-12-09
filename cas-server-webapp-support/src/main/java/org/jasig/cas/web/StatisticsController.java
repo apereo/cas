@@ -130,7 +130,7 @@ public final class StatisticsController extends AbstractController {
     }
 
     /**
-     * Calculate uptime.
+     * Calculates the up time.
      *
      * @param difference the difference
      * @param calculations the calculations
