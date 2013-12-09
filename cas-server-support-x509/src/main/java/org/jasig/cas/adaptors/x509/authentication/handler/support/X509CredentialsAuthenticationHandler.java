@@ -239,7 +239,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
      *          
      * @param certificate the certificate
-     * @return true, if is valid key usage
+     * @return true, if  valid key usage
      */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
         logger.debug("Checking certificate keyUsage extension");
@@ -266,7 +266,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *
      * @param certificate the certificate
      * @param extensionOid the extension oid
-     * @return true, if is critical
+     * @return true, if  critical
      */
     private boolean isCritical(final X509Certificate certificate, final String extensionOid) {
         final Set<String> criticalOids = certificate.getCriticalExtensionOIDs();
@@ -282,7 +282,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * Checks if is certificate allowed based no the pattern given.
      *
      * @param cert the cert
-     * @return true, if is certificate allowed
+     * @return true, if  certificate allowed
      */
     private boolean isCertificateAllowed(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
@@ -292,7 +292,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * Checks if is certificate from trusted issuer based on the regex pattern.
      *
      * @param cert the cert
-     * @return true, if is certificate from trusted issuer
+     * @return true, if  certificate from trusted issuer
      */
     private boolean isCertificateFromTrustedIssuer(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getIssuerDN(), this.regExTrustedIssuerDnPattern);
