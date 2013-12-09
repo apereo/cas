@@ -108,7 +108,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * available for release based on this registered service and the filter's policy.
      */
     @Transient
-    private RegisteredServiceAttributeFilter attributeFilter = null;
+    private AttributeFilter attributeFilter = null;
 
     /**
      * Name of the user attribute that this service expects as the value of the username payload in the
@@ -358,11 +358,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     protected abstract AbstractRegisteredService newInstance();
 
-    public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
+    public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
     }
 
-    public RegisteredServiceAttributeFilter getAttributeFilter() {
+    public AttributeFilter getAttributeFilter() {
         return this.attributeFilter;
     }
 
