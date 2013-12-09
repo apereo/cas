@@ -142,6 +142,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Adds the url to the list.
      * Build URI by components to facilitate proper encoding of querystring.
      * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
+     * 
      * @param list the list
      * @param uriString the uri string
      */
