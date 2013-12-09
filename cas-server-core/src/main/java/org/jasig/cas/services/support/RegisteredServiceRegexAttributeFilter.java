@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services.support;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,12 +77,12 @@ public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
                     final String[] filteredAttributes = filterArrayAttributes(
                             ((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
+                        attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue.getClass().isArray()) {
                     final String[] filteredAttributes = filterArrayAttributes((String[]) attributeValue, attributeName);
                     if (filteredAttributes.length > 0) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
+                        attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue instanceof Map) {
                     final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
