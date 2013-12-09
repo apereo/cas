@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
+import org.jasig.cas.services.AttributeFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ import org.mockito.MockitoAnnotations;
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private RegisteredServiceAttributeFilter filter;
+    private AttributeFilter filter;
     private Map<String, Object> givenAttributesMap = null;
 
     @Mock
