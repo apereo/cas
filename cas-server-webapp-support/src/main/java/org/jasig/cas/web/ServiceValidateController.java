@@ -191,7 +191,8 @@ public class ServiceValidateController extends DelegateController {
     }
 
     /**
-     * Implement on successful validation events.
+     * Triggered on successful validation events. Extensions are to
+     * use this as hook to plug in behvior.
      *
      * @param serviceTicketId the service ticket id
      * @param assertion the assertion
