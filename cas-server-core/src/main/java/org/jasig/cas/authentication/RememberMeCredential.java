@@ -37,7 +37,7 @@ public interface RememberMeCredential extends Credential {
     /**
      * Checks if remember-me is enabled.
      *
-     * @return true, if is remember me
+     * @return true, if  remember me
      */
     boolean isRememberMe();
 

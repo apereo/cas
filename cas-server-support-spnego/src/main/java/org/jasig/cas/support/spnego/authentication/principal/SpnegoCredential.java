@@ -109,7 +109,7 @@ public final class SpnegoCredential implements Credential, Serializable {
      * Checks if is token ntlm.
      *
      * @param token the token
-     * @return true, if is token ntlm
+     * @return true, if  token ntlm
      */
     private boolean isTokenNtlm(final byte[] token) {
         if (token == null || token.length < 8) {

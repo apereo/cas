@@ -50,7 +50,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
      * Checks if is renew present.
      *
      * @param context the context
-     * @return true, if is renew present
+     * @return true, if  renew present
      */
     protected final boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getRequestParameters().get("renew"));

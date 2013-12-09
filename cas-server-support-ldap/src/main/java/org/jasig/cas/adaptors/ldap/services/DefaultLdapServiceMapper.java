@@ -239,7 +239,7 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
      * Checks if is valid regex pattern.
      *
      * @param pattern the pattern
-     * @return true, if is valid regex pattern
+     * @return true, if  valid regex pattern
      */
     private boolean isValidRegexPattern(final String pattern) {
         try {
