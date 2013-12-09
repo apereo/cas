@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
+import org.jasig.cas.services.AttributeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public RegisteredServiceRegexAttributeFilter(final String regex) {

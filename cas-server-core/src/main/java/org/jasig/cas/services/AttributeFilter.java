@@ -28,13 +28,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public interface RegisteredServiceAttributeFilter {
+public interface AttributeFilter {
     /**
      * Filters the received principal attributes for the given registered service.
      *
-     * @param principalId the principal id for whom attributes are to be released
      * @param givenAttributes the map for the original given attributes
      * @return a map that contains the filtered attributes.
      */
-    Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes);
+    Map<String, Object> filter(final Map<String, Object> givenAttributes);
 }
