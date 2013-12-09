@@ -203,16 +203,38 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     @Override
     public String get(final Object key) {
         final String hashedKey = constructHashedKey(key == null ? null : key.toString());
-        return decrypt(this.decoratedMap.get(hashedKey), hashedKey);
+
+        try {
+            final String hashedValue = this.decoratedMap.get(hashedKey);
+            if (hashedValue == null) {
+                logger.warn("Retrieving hashed value for key [" + hashedKey + "] returned null");
+            }
+
+            return decrypt(hashedValue, hashedKey);
+        } catch (final Exception e) {
+            logger.error("Failed to retrieve hashed value for key [" + hashedKey + "]: " + e.getMessage());
+        }
+
+        return null;
     }
 
     @Override
     public String put(final String key, final String value) {
         final String hashedKey = constructHashedKey(key);
         final String hashedValue = encrypt(value, hashedKey);
-        final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
+        
+        try {
+            final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
+            if (oldValue == null) {
+                logger.warn("Storing hashed value for key [" + hashedKey + "] returned null");
+            }
 
-        return decrypt(oldValue, hashedKey);
+            return decrypt(oldValue, hashedKey);
+        } catch (final Exception e) {
+            logger.error("Failed to stored hashed value for key [" + hashedKey + "]: " + e.getMessage());
+        }
+
+        return null;
     }
 
     @Override
