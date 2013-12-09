@@ -47,7 +47,7 @@ public final class SamlServiceSerializer extends AbstractWebApplicationServiceSe
     }
 
     /**
-     * Instantiates a new saml service serializer.
+     * Instantiates a new SAML service serializer.
      *
      * @param kryo the kryo
      * @param helper the helper

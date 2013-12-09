@@ -205,9 +205,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
-     * Construct saml response.
+     * Construct SAML response.
      *
-     * @return the saml response
+     * @return the SAML response
      */
     private String constructSamlResponse() {
         String samlResponse = TEMPLATE_SAML_RESPONSE;
@@ -245,7 +245,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
-     * Creates the saml id.
+     * Creates the SAML id.
      *
      * @return the id
      */

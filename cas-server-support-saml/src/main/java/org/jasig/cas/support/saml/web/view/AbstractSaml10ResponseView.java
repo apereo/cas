@@ -154,7 +154,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     /**
-     * Create a new saml object.
+     * Create a new SAML object.
      *
      * @param <T> the generic type
      * @param objectType the object type
@@ -178,7 +178,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     /**
-     * Create a new saml status object.
+     * Create a new SAML status object.
      *
      * @param codeValue the code value
      * @param statusMessage the status message

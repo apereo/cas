@@ -58,7 +58,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     private final Map<String, String> authenticationMethods = new HashMap<String, String>();
 
     /**
-     * Instantiates a new saml authentication meta data populator.
+     * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
         this.authenticationMethods.put(

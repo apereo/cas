@@ -72,7 +72,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     }
 
     /**
-     * Resolve the principal from the join point given..
+     * Resolve the principal from the join point given.
      *
      * @param joinPoint the join point
      * @return the principal id, or {@link PrincipalResolver#UNKNOWN_USER}
