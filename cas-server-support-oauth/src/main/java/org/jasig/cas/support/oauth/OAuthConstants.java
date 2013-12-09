@@ -89,6 +89,6 @@ public interface OAuthConstants {
     /** The profile url. */
     String PROFILE_URL = "profile";
 
-    /** The expires. */
+    /** The remaining time in seconds before expiration with syntax : expires=3600... */
     String EXPIRES = "expires";
 }

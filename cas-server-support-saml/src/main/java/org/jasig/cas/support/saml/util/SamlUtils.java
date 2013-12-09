@@ -72,9 +72,9 @@ public final class SamlUtils {
     }
 
     /**
-     * Sign saml response.
+     * Sign SAML response.
      *
-     * @param samlResponse the saml response
+     * @param samlResponse the SAML response
      * @param privateKey the private key
      * @param publicKey the public key
      * @return the response
@@ -109,7 +109,7 @@ public final class SamlUtils {
     }
 
     /**
-     * Sign saml element.
+     * Sign SAML element.
      *
      * @param element the element
      * @param privKey the priv key

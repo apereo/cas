@@ -59,14 +59,14 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     private boolean supportRegistryState = true;
 
     /**
-     * Instantiates a new eh cache ticket registry.
+     * Instantiates a new EhCache ticket registry.
      */
     public EhCacheTicketRegistry() {
         
     }
 
     /**
-     * Instantiates a new eh cache ticket registry.
+     * Instantiates a new EhCache ticket registry.
      *
      * @param serviceTicketsCache the service tickets cache
      * @param ticketGrantingTicketsCache the ticket granting tickets cache
@@ -78,7 +78,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     /**
-     * Instantiates a new eh cache ticket registry.
+     * Instantiates a new EhCache ticket registry.
      *
      * @param serviceTicketsCache the service tickets cache
      * @param ticketGrantingTicketsCache the ticket granting tickets cache

@@ -47,7 +47,7 @@ public final class OAuthUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
 
     /**
-     * Instantiates a new o auth utils.
+     * Instantiates a new OAuth utils.
      */
     private OAuthUtils() {}
 

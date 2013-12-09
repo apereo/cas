@@ -58,12 +58,12 @@ public final class OpenIdService extends AbstractWebApplicationService {
     private final ParameterList requestParameters;
 
     /**
-     * Instantiates a new open id service.
+     * Instantiates a new OpenID service.
      *
      * @param id the id
      * @param originalUrl the original url
      * @param artifactId the artifact id
-     * @param openIdIdentity the open id identity
+     * @param openIdIdentity the OpenID identity
      * @param signature the signature
      * @param parameterList the parameter list
      */
@@ -163,7 +163,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
      * Creates the service from the request.
      *
      * @param request the request
-     * @return the open id service
+     * @return the OpenID service
      */
     public static OpenIdService createServiceFrom(
             final HttpServletRequest request) {
