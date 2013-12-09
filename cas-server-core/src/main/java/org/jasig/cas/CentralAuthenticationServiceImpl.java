@@ -19,7 +19,6 @@
 package org.jasig.cas;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -435,7 +434,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            final Map<String, Object> attributesToRelease = filterAllowedAttributesForPrincipal(principal, registeredService);
+            final Map<String, Object> attributesToRelease = registeredService.getAttributeFilteringPolicy().getAttributes(principal);
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
@@ -504,44 +503,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         logger.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].",
                 new Object[]{registeredService.getName(), principal.getId(), principalId});
         return principalId;
-    }
-
-    /**
-     * The default filter that is responsible to make sure only the allowed attributes for a given
-     * registered service are released. The allowed attributes are cross checked against
-     * the list of principal attributes and those that are a match will be released.
-     *
-     * <p>If the registered service is set to ignore the attribute release policy, the filter
-     * will release all principal attributes.
-     * 
-     * @param principal the authenticated principal
-     * @param registeredService the current registered service
-     * @return collection of allowed attributes for the service to be released
-     */
-    private Map<String, Object> filterAllowedAttributesForPrincipal(final Principal principal, final RegisteredService registeredService) {
-        final Map<String, Object> attributes = new HashMap<String, Object>();
-        final Map<String, Object> givenAttributes = principal.getAttributes();
-        
-        if (registeredService.isIgnoreAttributes()) {
-            logger.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.",
-                    registeredService.getName());
-            attributes.putAll(givenAttributes);
-        } else {
-            for (final String attribute : registeredService.getAllowedAttributes()) {
-                final Object value = givenAttributes.get(attribute);
-
-                if (value != null) {
-                    logger.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute,
-                            registeredService.getName());
-                    attributes.put(attribute, value);
-                }
-            }
-            if (registeredService.getAttributeFilter() != null) {
-                return registeredService.getAttributeFilter().filter(principal.getId(), attributes);
-            }
-        }
-                
-        return Collections.unmodifiableMap(attributes);
     }
     
     /**
