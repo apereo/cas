@@ -118,7 +118,7 @@ public class PasswordPolicyConfiguration {
     /**
      * Checks if is always display password expiration warning.
      *
-     * @return true, if is always display password expiration warning
+     * @return true, if  always display password expiration warning
      */
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;

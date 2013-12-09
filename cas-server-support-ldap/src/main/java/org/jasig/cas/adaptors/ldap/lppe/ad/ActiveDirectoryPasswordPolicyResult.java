@@ -73,7 +73,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
     /**
      * Checks if is user account control set to disable account.
      *
-     * @return true, if is user account control set to disable account
+     * @return true, if  user account control set to disable account
      */
     private boolean isUserAccountControlSetToDisableAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_ACCOUNT_DISABLE)) {
@@ -86,7 +86,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
     /**
      * Checks if is user account control set to lock account.
      *
-     * @return true, if is user account control set to lock account
+     * @return true, if  user account control set to lock account
      */
     private boolean isUserAccountControlSetToLockAccount() {
         if (isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.ADS_UF_LOCKOUT)) {
@@ -124,7 +124,7 @@ public class ActiveDirectoryPasswordPolicyResult extends PasswordPolicyResult {
      * Checks if is user account control bit set.
      *
      * @param bit the bit
-     * @return true, if is user account control bit set
+     * @return true, if  user account control bit set
      */
     private boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
         if (getUserAccountControl() > 0) {

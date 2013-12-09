@@ -149,7 +149,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
      * Checks if is supported browser.
      *
      * @param userAgent the user agent
-     * @return true, if is supported browser
+     * @return true, if  supported browser
      */
     protected boolean isSupportedBrowser(final String userAgent) {
         for (final String supportedBrowser : this.supportedBrowser) {
