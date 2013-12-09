@@ -72,7 +72,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
      * Checks if <code>gateway</code> is present in the request params.
      *
      * @param context the context
-     * @return true, if is gateway present
+     * @return true, if gateway present
      */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
