@@ -70,7 +70,6 @@ public class AbstractRegisteredServiceTests {
         final boolean SSO_ENABLED = false;
         final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
 
-        this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
         this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
         this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
         this.r.setDescription(DESCRIPTION);
@@ -81,7 +80,6 @@ public class AbstractRegisteredServiceTests {
         this.r.setSsoEnabled(SSO_ENABLED);
         this.r.setTheme(THEME);
 
-        assertEquals(ALLOWED_ATTRIBUTES, this.r.getAllowedAttributes());
         assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
         assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
         assertEquals(DESCRIPTION, this.r.getDescription());
@@ -95,9 +93,6 @@ public class AbstractRegisteredServiceTests {
         assertFalse(this.r.equals(null));
         assertFalse(this.r.equals(new Object()));
         assertTrue(this.r.equals(this.r));
-
-        this.r.setAllowedAttributes(null);
-        assertNotNull(this.r.getAllowedAttributes());
     }
 
     @Test

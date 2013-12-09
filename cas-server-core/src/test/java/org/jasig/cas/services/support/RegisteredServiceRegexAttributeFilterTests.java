@@ -72,23 +72,12 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(
-                Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
-    }
-
-    @Test
-    public void testIgnoreAttributeReleaseToolFilter() {
-        when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
-
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap);
-        assertEquals(attrs.size(), 7);
     }
 
     @Test
     public void testPatternFilter() {
-        when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
 
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap);
+        final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), 7);
 
         assertFalse(attrs.containsKey("phone"));

@@ -25,16 +25,12 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.IndexColumn;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,10 +39,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.Transient;
 
 /**
@@ -68,12 +61,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
-
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "rs_attributes", joinColumns = @JoinColumn(name = "RegisteredServiceImpl_id"))
-    @Column(name = "a_name", nullable = false)
-    @IndexColumn(name = "a_id")
-    private List<String> allowedAttributes = new ArrayList<String>();
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
@@ -98,17 +85,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     private boolean anonymousAccess = false;
 
-    private boolean ignoreAttributes = false;
-
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
-
-    /**
-     * The attribute filter instance that is responsible for determining the collection of attributes
-     * available for release based on this registered service and the filter's policy.
-     */
-    @Transient
-    private AttributeFilter attributeFilter = null;
 
     /**
      * Name of the user attribute that this service expects as the value of the username payload in the
@@ -128,16 +106,15 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "required_handlers")
     private HashSet<String> requiredHandlers = new HashSet<String>();
 
+    /** The attribute filtering policy. */
+    private AttributeFilteringPolicy attributeFilteringPolicy = new ReturnAllAttributeFilteringPolicy();
+    
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
 
     public void setAnonymousAccess(final boolean anonymousAccess) {
         this.anonymousAccess = anonymousAccess;
-    }
-
-    public List<String> getAllowedAttributes() {
-        return this.allowedAttributes;
     }
 
     public long getId() {
@@ -190,26 +167,18 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return new EqualsBuilder().append(this.allowedToProxy, that.allowedToProxy)
                 .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
                 .append(this.evaluationOrder, that.evaluationOrder)
-                .append(this.ignoreAttributes, that.ignoreAttributes).append(this.ssoEnabled, that.ssoEnabled)
-                .append(this.allowedAttributes, that.allowedAttributes).append(this.description, that.description)
+                .append(this.ssoEnabled, that.ssoEnabled)
+                .append(this.description, that.description)
                 .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
                 .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
                 .isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder(7, 31).append(this.allowedAttributes).append(this.description)
+        return new HashCodeBuilder(7, 31).append(this.description)
                 .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
-                .append(this.ssoEnabled).append(this.anonymousAccess).append(this.ignoreAttributes)
+                .append(this.ssoEnabled).append(this.anonymousAccess)
                 .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
-    }
-
-    public void setAllowedAttributes(final List<String> allowedAttributes) {
-        if (allowedAttributes == null) {
-            this.allowedAttributes = new ArrayList<String>();
-        } else {
-            this.allowedAttributes = allowedAttributes;
-        }
     }
 
     public void setAllowedToProxy(final boolean allowedToProxy) {
@@ -240,14 +209,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setTheme(final String theme) {
         this.theme = theme;
-    }
-
-    public boolean isIgnoreAttributes() {
-        return this.ignoreAttributes;
-    }
-
-    public void setIgnoreAttributes(final boolean ignoreAttributes) {
-        this.ignoreAttributes = ignoreAttributes;
     }
 
     public void setEvaluationOrder(final int evaluationOrder) {
@@ -313,7 +274,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      */
     public void copyFrom(final RegisteredService source) {
         this.setId(source.getId());
-        this.setAllowedAttributes(new ArrayList<String>(source.getAllowedAttributes()));
         this.setAllowedToProxy(source.isAllowedToProxy());
         this.setDescription(source.getDescription());
         this.setEnabled(source.isEnabled());
@@ -322,7 +282,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setSsoEnabled(source.isSsoEnabled());
         this.setTheme(source.getTheme());
         this.setAnonymousAccess(source.isAnonymousAccess());
-        this.setIgnoreAttributes(source.isIgnoreAttributes());
         this.setEvaluationOrder(source.getEvaluationOrder());
         this.setUsernameAttribute(source.getUsernameAttribute());
         this.setLogoutType(source.getLogoutType());
@@ -351,20 +310,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("description", this.description);
         toStringBuilder.append("serviceId", this.serviceId);
         toStringBuilder.append("usernameAttribute", this.usernameAttribute);
-        toStringBuilder.append("attributes", this.allowedAttributes.toArray());
 
         return toStringBuilder.toString();
     }
 
     protected abstract AbstractRegisteredService newInstance();
-
-    public final void setAttributeFilter(final AttributeFilter filter) {
-        this.attributeFilter = filter;
-    }
-
-    public AttributeFilter getAttributeFilter() {
-        return this.attributeFilter;
-    }
 
     public Set<String> getRequiredHandlers() {
         if (this.requiredHandlers == null) {
@@ -381,5 +331,19 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         for (final String handler : handlers) {
             getRequiredHandlers().add(handler);
         }
+    }
+    
+    /**
+     * Sets the attribute filtering policy.
+     *
+     * @param policy the new attribute filtering policy
+     */
+    public final void setAttributeFilteringPolicy(final AttributeFilteringPolicy policy) {
+        this.attributeFilteringPolicy = policy;
+    }
+
+    @Override
+    public final AttributeFilteringPolicy getAttributeFilteringPolicy() {
+        return this.attributeFilteringPolicy;
     }
 }

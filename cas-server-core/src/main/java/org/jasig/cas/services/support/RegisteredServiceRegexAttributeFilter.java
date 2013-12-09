@@ -65,7 +65,7 @@ public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes) {
+    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
