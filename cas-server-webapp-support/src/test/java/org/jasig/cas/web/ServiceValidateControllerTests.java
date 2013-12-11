@@ -46,10 +46,6 @@ import static org.junit.Assert.fail;
  */
 public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
-    private static final String CONST_SUCCESS_VIEW = "casServiceSuccessView";
-
-    private static final String CONST_FAILURE_VIEW = "casServiceFailureView";
-
     private ServiceValidateController serviceValidateController;
 
     @Before
@@ -88,8 +84,6 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     public void testAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController
         .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
-        this.serviceValidateController.setSuccessView(CONST_SUCCESS_VIEW);
-        this.serviceValidateController.setFailureView(CONST_FAILURE_VIEW);
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
     }
 
@@ -113,7 +107,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
                 .getId());
         request.addParameter("ticket", sId);
 
-        assertEquals(CONST_SUCCESS_VIEW,
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -121,7 +115,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     @Test
     public void testValidServiceTicketInvalidSpec() throws Exception {
 
-        assertEquals(CONST_FAILURE_VIEW,
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(
                         getHttpServletRequest(), new MockHttpServletResponse())
                         .getViewName());
@@ -132,7 +126,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController
         .setValidationSpecificationClass(MockValidationSpecification.class);
 
-        assertEquals(CONST_FAILURE_VIEW,
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(
                         getHttpServletRequest(), new MockHttpServletResponse())
                         .getViewName());
@@ -154,7 +148,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
                 .getId());
         request.addParameter("ticket", sId);
 
-        assertEquals(CONST_FAILURE_VIEW,
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -175,7 +169,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         request
         .addParameter("pgtUrl", "https://www.acs.rutgers.edu");
 
-        assertEquals(CONST_SUCCESS_VIEW,
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -197,8 +191,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
         final ModelAndView modelAndView = this.serviceValidateController
                 .handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(CONST_SUCCESS_VIEW, modelAndView
-                .getViewName());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
@@ -219,8 +212,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
         final ModelAndView modelAndView = this.serviceValidateController
                 .handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(CONST_SUCCESS_VIEW, modelAndView
-                .getViewName());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }
