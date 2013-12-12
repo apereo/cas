@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import java.net.URL;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -109,6 +111,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
+        kryo.register(URL.class, new URLSerializer(kryo));
 
         // Register other types
         if (serializerMap != null) {
