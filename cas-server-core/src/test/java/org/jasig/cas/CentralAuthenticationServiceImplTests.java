@@ -27,16 +27,18 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Battaglia
@@ -394,5 +396,27 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final Assertion assertion = cas.validateServiceTicket(st2Id, svc);
         final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
         assertTrue(validationSpecification.isSatisfiedBy(assertion));
+    }
+    
+    /**
+     * This test checks that the TGT destruction happens properly for a remote registry.
+     * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.
+     *
+     * @throws AuthenticationException
+     * @throws TicketException
+     */
+    @Test
+    public void testDestroyRemoteRegistry() throws TicketException, AuthenticationException {
+        final MockOnlyOneTicketRegistry registry = new MockOnlyOneTicketRegistry();
+        final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class),
+                mock(ExpirationPolicy.class));
+        final MockExpireUpdateTicketLogoutManager logoutManager = new MockExpireUpdateTicketLogoutManager(registry);
+        // consider authentication has happened and the TGT is in the registry
+        registry.addTicket(tgt);
+        // create a new CASimpl
+        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null,  null, null, null, null, null,
+                null, logoutManager);
+        // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
+        cas.destroyTicketGrantingTicket(tgt.getId());
     }
 }

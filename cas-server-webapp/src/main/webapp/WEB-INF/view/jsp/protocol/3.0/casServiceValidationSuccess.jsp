@@ -43,7 +43,10 @@
                            varStatus="loopStatus" begin="0"
                            end="${fn:length(assertion.primaryAuthentication.principal.attributes)}"
                            step="1">
-                    <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attr.value)}</cas:${fn:escapeXml(attr.key)}>
+                    <%--If attribute is multi-valued, list each value under the same attribute name --%>
+                    <c:forEach var="attrval" items="${attr.value}">
+                        <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attrval)}</cas:${fn:escapeXml(attr.key)}>
+                    </c:forEach>
                 </c:forEach>
             </cas:attributes>
         </c:if>
