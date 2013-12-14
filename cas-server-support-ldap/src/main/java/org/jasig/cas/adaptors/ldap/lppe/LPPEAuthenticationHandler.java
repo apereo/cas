@@ -191,7 +191,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * and returns the expiration date.
      * @return the configured expiration date to use.
      */
-    private DateTime getExpirationDateToUse(final PasswordPolicyResult result) {
+    protected DateTime getExpirationDateToUse(final PasswordPolicyResult result) {
         final DateTime dateValue = result.getPasswordExpirationDateTime();
 
         if (configuration.getStaticPasswordExpirationDate() == null) {
