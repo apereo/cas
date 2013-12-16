@@ -57,10 +57,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServiceValidateController extends DelegateController {
 
     /** View if Service Ticket Validation Fails. */
-    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
+    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
     /** View if Service Ticket Validation Succeeds. */
-    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "casServiceSuccessView";
+    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
 
     /** Constant representing the PGTIOU in the model. */
     private static final String MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
