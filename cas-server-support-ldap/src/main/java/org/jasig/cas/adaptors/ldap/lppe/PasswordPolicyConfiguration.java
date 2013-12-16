@@ -215,11 +215,11 @@ public class PasswordPolicyConfiguration {
         return this.passwordExpirationDateAttributeName;
     }
 
-    public LdapDateConverter getDateConverter() {
+    public LdapDateConverter getLdapDateConverter() {
         return this.ldapDateConverter;
     }
 
-    public void setDateConverter(final LdapDateConverter converter) {
+    public void setLdapDateConverter(final LdapDateConverter converter) {
         this.ldapDateConverter = converter;
     }
 
