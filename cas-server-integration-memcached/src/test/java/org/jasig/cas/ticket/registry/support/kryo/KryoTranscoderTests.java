@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.FailedLoginException;
+
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import org.jasig.cas.authentication.Authentication;
@@ -194,6 +196,7 @@ public class KryoTranscoderTests {
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
+            builder.addFailure(handler.getName(), FailedLoginException.class);
             this.authentication = builder.build();
         }
 
