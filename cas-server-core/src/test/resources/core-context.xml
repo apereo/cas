@@ -60,8 +60,7 @@
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="httpClient"
-          c:logoutMessageBuilder-ref="logoutBuilder"
-          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
+          c:logoutMessageBuilder-ref="logoutBuilder"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageBuilder" />
 
