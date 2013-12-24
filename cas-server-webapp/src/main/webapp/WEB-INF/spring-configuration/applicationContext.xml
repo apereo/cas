@@ -97,12 +97,14 @@
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           p:salt="casrocks"/>
 
-    <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl">
-        <constructor-arg index="0" ref="servicesManager"/>
-        <constructor-arg index="1" ref="noRedirectHttpClient"/>
-        <property name="disableSingleSignOut" value="${slo.callbacks.disabled:false}" />         
-    </bean>
+    <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"
+          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
 
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageBuilder" />
+    
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
         <constructor-arg index="0" ref="ticketRegistry"/>
