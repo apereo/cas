@@ -59,7 +59,7 @@ public class LogoutManagerImplTests {
     @Before
     public void setUp() {
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient());
+        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient(), new SamlCompliantLogoutMessageBuilder());
         this.tgt = mock(TicketGrantingTicket.class);
         this.services = new HashMap<String, Service>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
@@ -91,6 +91,7 @@ public class LogoutManagerImplTests {
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
+        
     }
 
     @Test
