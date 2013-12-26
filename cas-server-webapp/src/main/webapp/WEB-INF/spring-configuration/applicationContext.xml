@@ -99,7 +99,7 @@
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
-          c:httpClient-ref="httpClient"
+          c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
           p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
 
