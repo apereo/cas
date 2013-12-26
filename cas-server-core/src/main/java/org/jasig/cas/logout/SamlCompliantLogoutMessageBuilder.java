@@ -50,7 +50,7 @@ public final class SamlCompliantLogoutMessageBuilder implements LogoutMessageBui
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 SamlDateUtils.getCurrentDateAndTime(), request.getTicketId());
         
-        LOGGER.debug("Generated back-channel logout message: [{}]", logoutRequest);
+        LOGGER.debug("Generated logout message: [{}]", logoutRequest);
         return logoutRequest;
     }
     
