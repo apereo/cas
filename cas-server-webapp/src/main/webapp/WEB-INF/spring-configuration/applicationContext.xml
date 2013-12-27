@@ -103,7 +103,7 @@
           c:logoutMessageBuilder-ref="logoutBuilder"
           p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
 
-    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageBuilder" />
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
     
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">

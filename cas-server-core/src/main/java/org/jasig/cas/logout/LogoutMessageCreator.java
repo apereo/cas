@@ -24,12 +24,12 @@ package org.jasig.cas.logout;
  * @author Misagh Moayyed
  * @since 4.0
  */
-public interface LogoutMessageBuilder {
+public interface LogoutMessageCreator {
     /**
      * Builds the logout message to be sent.
      *
      * @param request the request
      * @return the message. Message may or may not be encoded.
      */
-    String build(LogoutRequest request);
+    String create(LogoutRequest request);
 }

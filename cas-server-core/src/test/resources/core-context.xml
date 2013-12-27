@@ -62,7 +62,7 @@
           c:httpClient-ref="httpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"/>
 
-    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageBuilder" />
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
 
     <bean id="attributeRepository"
           class="org.jasig.services.persondir.support.StubPersonAttributeDao">
