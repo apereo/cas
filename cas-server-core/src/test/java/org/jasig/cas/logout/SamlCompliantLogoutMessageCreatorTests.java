@@ -35,9 +35,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class SamlCompliantLogoutMessageBuilderTests {
+public class SamlCompliantLogoutMessageCreatorTests {
 
-    private final LogoutMessageBuilder builder = new SamlCompliantLogoutMessageBuilder();
+    private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
     @Test
     public void testMessageBuilding() throws Exception {
@@ -45,7 +45,7 @@ public class SamlCompliantLogoutMessageBuilderTests {
         final SingleLogoutService service = mock(SingleLogoutService.class);
         final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
 
-        final String msg = builder.build(request);
+        final String msg = builder.create(request);
 
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder builder = factory.newDocumentBuilder();

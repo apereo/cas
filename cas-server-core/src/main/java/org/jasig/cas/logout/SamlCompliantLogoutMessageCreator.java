@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
  * @since 4.0
  * @see LogoutRequest
  */
-public final class SamlCompliantLogoutMessageBuilder implements LogoutMessageBuilder {
+public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.class);
     
     /** A ticket Id generator. */
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -46,7 +46,7 @@ public final class SamlCompliantLogoutMessageBuilder implements LogoutMessageBui
             + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     @Override
-    public String build(final LogoutRequest request) {
+    public String create(final LogoutRequest request) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 SamlDateUtils.getCurrentDateAndTime(), request.getTicketId());
         

@@ -60,7 +60,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     private final HttpClient httpClient;
 
     @NotNull
-    private final LogoutMessageBuilder logoutMessageBuilder;
+    private final LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
@@ -72,7 +72,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param logoutMessageBuilder the builder to construct logout messages.
      */
     public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
-                             final LogoutMessageBuilder logoutMessageBuilder) {
+                             final LogoutMessageCreator logoutMessageBuilder) {
         this.servicesManager = servicesManager;
         this.httpClient = httpClient;
         this.logoutMessageBuilder = logoutMessageBuilder;
@@ -137,7 +137,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return if the logout has been performed.
      */
     private boolean performBackChannelLogout(final LogoutRequest request) {
-        final String logoutRequest = this.logoutMessageBuilder.build(request);
+        final String logoutRequest = this.logoutMessageBuilder.create(request);
         request.getService().setLoggedOutAlready(true);
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
@@ -151,7 +151,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return a front SAML logout message.
      */
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        final String logoutMessage = this.logoutMessageBuilder.build(logoutRequest);
+        final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         final Deflater deflater = new Deflater();
         deflater.setInput(logoutMessage.getBytes(ASCII));
         deflater.finish();
