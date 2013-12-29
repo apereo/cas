@@ -55,8 +55,11 @@
           c:serviceRegistryDao-ref="serviceRegistryDao" />
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
-        c:servicesManager-ref="servicesManager"
-        c:httpClient-ref="httpClient" />
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder" />
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
 
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
