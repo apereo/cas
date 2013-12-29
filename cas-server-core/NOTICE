@@ -73,6 +73,7 @@ This project includes:
   Spring Web Flow under Apache License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
-  stax-api under Sun Binary Code License
+  Streaming API for XML under Sun Binary Code License
   Transaction 1.1 API under lgpl
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
 
