@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.support;
 
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.SearchEntryResolver;
 
@@ -54,11 +55,13 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
 
     /** {@inheritDoc} */
     @Override
-    protected SearchRequest createSearchRequest(final AuthenticationCriteria ac, final String[] returnAttributes){
+    protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {
         final SearchRequest sr = new SearchRequest();
+        sr.setSearchScope(SearchScope.OBJECT);
         sr.setBaseDn(this.baseDn);
         sr.setSearchFilter(new SearchFilter(UPN_ATTR + '=' + ac.getDn()));
-        sr.setReturnAttributes(getReturnAttributes());
+        sr.setSearchEntryHandlers(getSearchEntryHandlers());
+        sr.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
         return sr;
     }
 }
