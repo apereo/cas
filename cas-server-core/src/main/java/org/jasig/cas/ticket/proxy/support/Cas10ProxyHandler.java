@@ -26,7 +26,6 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  * 1.0 has no proxying capabilities.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public final class Cas10ProxyHandler implements ProxyHandler {
@@ -34,6 +33,11 @@ public final class Cas10ProxyHandler implements ProxyHandler {
     public String handle(final Credential credential,
         final String proxyGrantingTicketId) {
         return null;
+    }
+
+    @Override
+    public boolean canHandle(final Credential credential) {
+        return false;
     }
 
 }
