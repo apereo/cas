@@ -566,7 +566,7 @@ The proxy callback mechanism works as follows:
     the service to which CAS will connect to verify the service's identity. This
     URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust.
     Building trust at a minimum involves utilizing PKIX and employing container trust to 
-    validate the signature, chain and the expiration window of the certificate of the.
+    validate the signature, chain and the expiration window of the certificate of the
     callback url. The generation of the proxy-granting-ticket or the corresponding
     proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum 
     security requirements such as failure to establishing trust between peers or unresponsiveness
