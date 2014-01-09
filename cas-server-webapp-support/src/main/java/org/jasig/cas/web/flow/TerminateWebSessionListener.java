@@ -49,14 +49,16 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
     public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome,
                              final AttributeMap output) {
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        // get session but don't create it if it doesn't already exist
-        final HttpSession webSession = request.getSession(false);
+        if ( session.isRoot() ) {
+            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            // get session but don't create it if it doesn't already exist
+            final HttpSession webSession = request.getSession(false);
 
-        if (webSession != null) {
-            LOGGER.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
-            // set the web session to die in timeToDieInSeconds
-            webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
+            if (webSession != null) {
+                LOGGER.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
+                // set the web session to die in timeToDieInSeconds
+                webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
+            }
         }
     }
 
