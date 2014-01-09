@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Frederic Esnault
  * @since 3.5
  */
-public abstract class DelegateController extends AbstractController{
+public abstract class DelegateController extends AbstractController {
     
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
