@@ -149,7 +149,7 @@ public class LPPEAuthenticationHandler extends LdapAuthenticationHandler {
      * calculated based on the defined policy.
      */
     protected int getDaysToExpirationDate(final DateTime expireDate, final PasswordPolicyResult result) throws LoginException {
-        final DateTimeZone timezone = configuration.getDateConverter().getTimeZone();
+        final DateTimeZone timezone = configuration.getLdapDateConverter().getTimeZone();
         final DateTime currentTime = new DateTime(timezone);
         logger.debug("Current date is {}. Expiration date is {}", currentTime, expireDate);
 
