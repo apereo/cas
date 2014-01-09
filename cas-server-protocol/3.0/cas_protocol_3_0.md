@@ -524,6 +524,13 @@ servers MUST implement. Implementations MAY include others.
 
 -   INVALID_REQUEST - not all of the required request parameters were present
 
+-   INVALID_TICKET_SPEC - failure to meet the requirements of validation specification
+
+-   UNAUTHORIZED_SERVICE_PROXY - the service is not authorized to perform proxy authentication
+
+-   INVALID_PROXY_CALLBACK - The proxy callback specified is invalid. The credentials specified
+    for proxy authentication do not meet the security requirements
+
 -   INVALID_TICKET - the ticket provided was not valid, or the ticket did not
     come from an initial login and "renew" was set on validation. The body of
     the \<cas:authenticationFailure\> block of the XML response SHOULD describe
@@ -557,15 +564,17 @@ The proxy callback mechanism works as follows:
     initial service ticket or proxy ticket validation the HTTP request parameter
     "pgtUrl" to /serviceValidate (or /proxyValidate). This is a callback URL of
     the service to which CAS will connect to verify the service's identity. This
-    URL MUST be HTTPS, and CAS MUST verify both that the SSL certificate is
-    valid and that its name matches that of the service. If the certificate
-    fails validation, no proxy-granting ticket will be issued, and the CAS
+    URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust.
+    Building trust at a minimum involves utilizing PKIX and employing container trust to 
+    validate the signature, chain and the expiration window of the certificate of the.
+    callback url. The generation of the proxy-granting-ticket or the corresponding
+    proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum 
+    security requirements such as failure to establishing trust between peers or unresponsiveness
+    of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS
     service response as described in Section [2.5.2](#head2.5.2) MUST NOT contain a
     \<proxyGrantingTicket\> block. At this point, the issuance of a
-    proxy-granting ticket is halted, but service ticket validation will
-    continue, returning success or failure as appropriate. If certificate
-    validation is successful, issuance of a proxy-granting ticket proceeds as in
-    step 2.
+    proxy-granting ticket is halted and service ticket validation will
+    fail. Otherwise, the process will proceed normally to step 2.
 
 2.  CAS uses an HTTP GET request to pass the HTTP request parameters "pgtId" and
     "pgtIou" to the pgtUrl. These entities are discussed in Sections [3.3](#head3.3) and
