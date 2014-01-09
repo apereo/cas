@@ -39,5 +39,4 @@ public final class Cas10ProxyHandler implements ProxyHandler {
     public boolean canHandle(final Credential credential) {
         return false;
     }
-
 }
