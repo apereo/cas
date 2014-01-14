@@ -111,15 +111,12 @@ registered service storage. The configuration assumes a `dataSource` bean is def
       p:generateDdl="true"
       p:showSql="true" />
 
-<bean id="serviceRegistryDao"
+<bean id="`"
       class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" />
 
 <bean id="transactionManager"
       class="org.springframework.orm.jpa.JpaTransactionManager"
       p:entityManagerFactory-ref="factoryBean" />
-
-<bean id="ticketRegistry"
-      class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
 
 <!--
    | Injects EntityManager/Factory instances into beans with
@@ -128,7 +125,57 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 {% endhighlight %}
 
-## Installing the Service Management Webapp
+## Installing the Services Management Webapp
 
-TODO: @leleuj
+Since CAS 4.0, the services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
+
+Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
+* the management webapp is used to add/edit/delete all the CAS services
+* the CAS server loads/relies on all these defined CAS services to process all incoming requests.
+
+You can install the services management webapp in your favourite applications server, there is no restriction.
+Though, you need at first to configure it according to your environment. Towards that goal, the best way to proceed is to create your own services management webapp using a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
+
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-management-webapp</artifactId>
+  <version>4.0.0</version>
+  <type>war</type>
+  <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
+### Authentication method
+
+By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
+
+### Urls configuration
+
+The urls configuration of the CAS server and management applications can be done by overriding the default `WEB-INF/cas-management.properties` file:
+
+    # CAS
+    cas.host=http://localhost:8080
+    cas.prefix=${cas.host}/cas
+    cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
+    cas.securityContext.ticketValidator.casServerUrlPrefix=${cas.prefix}
+    # Management
+    cas-management.host=${cas.host}
+    cas-management.prefix=${cas-management.host}/cas-management
+    cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/j_spring_cas_security_check
+    cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
+
+When authenticating against a CAS server, the services management webapp will be processed as a regular CAS service and thus, needs to be defined in the services registry (of the CAS server).
+
+### Services registry
+
+You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
+
+### UI
+
+The services management webapp is pretty simple to use:
+* use the "Manage Services" link to see the list of all CAS services
+* click the "Add New Service" link to add a new CAS service
+* click the "edit" link with the pen image (on the right of a CAS service definition) to edit a specific CAS service
+* click the "delete" link with the trash image (on the right of a CAS service definition) to delete a specific CAS service (after a confirmation alert).
 
