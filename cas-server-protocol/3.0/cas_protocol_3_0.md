@@ -609,8 +609,13 @@ The proxy callback mechanism works as follows:
     fail. Otherwise, the process will proceed normally to step 2.
 
 2.  CAS uses an HTTP GET request to pass the HTTP request parameters "pgtId" and
-    "pgtIou" to the pgtUrl. These entities are discussed in Sections [3.3](#head3.3) and
-    [3.4](#head3.4), respectively.
+    "pgtIou" to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
+    [3.4](#head3.4), respectively. If the proxy callback url specifies any parameters, those
+    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying 
+    the response HTTP status code from the GET request, as detailed in step #3. If the
+    proxy service fails to authenticate or the endpoint responds with an unacceptable status
+    code, proxy authentication MUST fail and CAS MUST respond with the appropriate error code
+    as is described in section [2.5.3](<#head2.5.3>).
 
 3.  If the HTTP GET returns an HTTP status code of 200 (OK), CAS MUST respond to
     the /serviceValidate (or /proxyValidate) request with a service response
@@ -1462,7 +1467,7 @@ under the License.
 
 >   Note: As userAttributes can be extended by the CAS Server implementor (see
 >   \<xs:any\> schema definition), it is recommended to form custom attributes
->   as \<cas:attributes name="NAME"\>VALUE\</cas:attributes\>.
+>   as \<cas:attributes\>\<cas:attribute name="NAME"\>VALUE\<cas:attribute\>\</cas:attributes\>.
 
 
 \newpage
