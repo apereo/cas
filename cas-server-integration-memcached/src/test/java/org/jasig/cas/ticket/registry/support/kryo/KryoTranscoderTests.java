@@ -61,8 +61,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
 
-    private final static String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
-    private final static String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
+    private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
+    private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
     
     private final KryoTranscoder transcoder;
 
@@ -107,7 +107,7 @@ public class KryoTranscoderTests {
         internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
     }
 
-    private void internalProxyTest(String proxyUrl) throws MalformedURLException {
+    private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
         final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, proxyCredential);

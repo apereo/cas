@@ -55,9 +55,9 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
-        String exactExpectedResponse = LEGACY_NO_RESPONSE;
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
+        final String exactExpectedResponse = LEGACY_NO_RESPONSE;
 
         assertEquals(exactExpectedResponse, validateOutput);
     }
@@ -74,8 +74,8 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
     }
@@ -96,7 +96,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=" + serviceTicket);
         assertTextPresent("yes");
@@ -104,9 +104,9 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 
@@ -117,7 +117,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String secondValidateOutput = htDialog.getResponseText();
+        final String secondValidateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
 
@@ -143,7 +143,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?service=" + URLEncoder.encode(validateService, "UTF-8") + "&ticket=" + serviceTicket);
         assertTextPresent("no");
@@ -151,7 +151,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
 
@@ -162,7 +162,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String secondValidateOutput = htDialog.getResponseText();
+        final String secondValidateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
 
@@ -187,7 +187,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?ticket=" + serviceTicket);
         assertTextPresent("no");
@@ -195,7 +195,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
 

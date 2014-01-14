@@ -31,14 +31,14 @@ public class Cas20ProtocolValidationSpecificationTests {
 
     @Test
     public void testRenewGettersAndSettersFalse() {
-        Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
+        final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     @Test
     public void testRenewGettersAndSettersTrue() {
-        Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
+        final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }
