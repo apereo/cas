@@ -83,7 +83,7 @@ public class SafeDispatcherServletTests {
          * the particular exception that the underlying DispatcherServlet throws
          * under these circumstances;
          */
-        BeanDefinitionStoreException bdse = (BeanDefinitionStoreException) this.mockContext
+        final BeanDefinitionStoreException bdse = (BeanDefinitionStoreException) this.mockContext
             .getAttribute(SafeDispatcherServlet.CAUGHT_THROWABLE_KEY);
         assertNotNull(bdse);
 
@@ -97,8 +97,8 @@ public class SafeDispatcherServletTests {
     public void testService() throws ServletException, IOException {
         this.safeServlet.init(this.mockConfig);
 
-        ServletRequest mockRequest = new MockHttpServletRequest();
-        ServletResponse mockResponse = new MockHttpServletResponse();
+        final ServletRequest mockRequest = new MockHttpServletRequest();
+        final ServletResponse mockResponse = new MockHttpServletResponse();
 
         try {
             this.safeServlet.service(mockRequest, mockResponse);
@@ -115,8 +115,8 @@ public class SafeDispatcherServletTests {
         this.mockConfig = new MockServletConfig(this.mockContext, "cas");
         this.safeServlet.init(this.mockConfig);
 
-        ServletRequest mockRequest = new MockHttpServletRequest();
-        ServletResponse mockResponse = new MockHttpServletResponse();
+        final ServletRequest mockRequest = new MockHttpServletRequest();
+        final ServletResponse mockResponse = new MockHttpServletResponse();
 
         try {
             this.safeServlet.service(mockRequest, mockResponse);

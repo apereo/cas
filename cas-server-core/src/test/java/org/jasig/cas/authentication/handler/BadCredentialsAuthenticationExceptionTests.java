@@ -33,7 +33,7 @@ public final class BadCredentialsAuthenticationExceptionTests {
 
     @Test
     public void testGetCode() {
-        AuthenticationException e = new BadCredentialsAuthenticationException();
+        final AuthenticationException e = new BadCredentialsAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }

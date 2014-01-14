@@ -91,7 +91,7 @@ public final class RegisteredServiceValidator implements Validator {
                 errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
                         "This attribute is not available for this service.");
             } else {
-                Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
+                final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
                 if (availableAttributes != null) {
                     if (!availableAttributes.contains(r.getUsernameAttribute())) {
                         errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",

@@ -126,7 +126,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
      * @throws IOException
      */
     public void testLoginAsSomeoneElse() throws IOException {
-        String encodedService = URLEncoder.encode(getServiceUrl(), "UTF-8");
+        final String encodedService = URLEncoder.encode(getServiceUrl(), "UTF-8");
 
         // establish SSO session as the first user
 
@@ -137,7 +137,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
 
         // get the service ticket
 
-        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // now login via renew as someone else
 
@@ -149,7 +149,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
 
         // get the service ticket
 
-        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // validate the second service ticket
 

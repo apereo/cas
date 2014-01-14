@@ -138,7 +138,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
             // getBasicConstraints returns pathLenContraint which is generally
             // >=0 when this is a CA cert and -1 when it's not
-            int pathLength = certificate.getBasicConstraints();
+            final int pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
                 logger.debug("Found valid client certificate");
                 clientCert = certificate;
@@ -205,7 +205,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         cert.checkValidity();
         this.revocationChecker.check(cert);
 
-        int pathLength = cert.getBasicConstraints();
+        final int pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
                 throw new FailedLoginException(
