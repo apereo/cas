@@ -139,7 +139,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
 
     @Test
     public void testLogoutCookie() throws Exception {
-        Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
@@ -149,7 +149,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void testLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
-        LogoutRequest logoutRequest = new LogoutRequest("", null);
+        final LogoutRequest logoutRequest = new LogoutRequest("", null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -165,7 +165,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
-        List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
+        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));
     }

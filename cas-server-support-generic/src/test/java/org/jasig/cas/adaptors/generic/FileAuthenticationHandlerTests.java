@@ -50,7 +50,7 @@ public class FileAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");

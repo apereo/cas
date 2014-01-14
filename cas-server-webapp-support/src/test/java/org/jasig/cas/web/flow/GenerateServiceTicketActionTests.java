@@ -55,10 +55,10 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     @Test
     public void testServiceTicketFromCookie() throws Exception {
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
@@ -72,9 +72,9 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     @Test
     public void testTicketGrantingTicketFromRequest() throws Exception {
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
@@ -88,9 +88,9 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     @Test
     public void testTicketGrantingTicketNoTgt() throws Exception {
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
@@ -101,9 +101,9 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     @Test
     public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");

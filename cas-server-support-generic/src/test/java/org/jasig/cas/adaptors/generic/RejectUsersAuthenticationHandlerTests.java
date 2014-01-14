@@ -55,7 +55,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");

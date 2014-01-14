@@ -54,7 +54,7 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         }
 
         try {
-            MessageDigest messageDigest = MessageDigest
+            final MessageDigest messageDigest = MessageDigest
                 .getInstance(this.encodingAlgorithm);
 
             if (StringUtils.hasText(this.characterEncoding)) {

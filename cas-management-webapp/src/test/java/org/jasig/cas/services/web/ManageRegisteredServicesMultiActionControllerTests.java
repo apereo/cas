@@ -108,7 +108,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test
     public void updateEvaluationOrderOK() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
@@ -116,7 +116,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         this.servicesManager.save(r);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("id", String.valueOf(r.getId()));
         request.addParameter("evaluationOrder", "100");
 
@@ -125,13 +125,13 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertNotNull(modelAndView);
         assertEquals("jsonView", modelAndView.getViewName());
 
-        RegisteredService result = this.servicesManager.findServiceBy(r.getId());
+        final RegisteredService result = this.servicesManager.findServiceBy(r.getId());
         assertEquals(result.getEvaluationOrder(), 100);
     }
 
     @Test
     public void updateEvaluationOrderInvalidServiceId() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
@@ -140,7 +140,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.servicesManager.save(r);
 
         try {
-            MockHttpServletRequest request = new MockHttpServletRequest();
+            final MockHttpServletRequest request = new MockHttpServletRequest();
             request.addParameter("id", "5000");
             request.addParameter("evaluationOrder", "1000");
 
@@ -153,7 +153,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test
     public void updateEvaluationOrderInvalidEvalOrder() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
@@ -161,7 +161,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         this.servicesManager.save(r);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("id", "1000");
         request.addParameter("evaluationOrder", "TEST");
 

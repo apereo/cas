@@ -133,16 +133,16 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         beginAt(URLGW);
 
         // extract the service ticket
-        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // be sure it's valid
         assertNotNull(st);
 
         beginAt("/validate?ticket=" + st + "&service=" + encodedService);
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 
@@ -167,17 +167,17 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         beginAt(gatewayUrl);
 
         // extract the service ticket
-        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // be sure it's valid
         assertNotNull(st);
 
 
         beginAt("/validate?ticket=" + st + "&service=" + encodedService);
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 

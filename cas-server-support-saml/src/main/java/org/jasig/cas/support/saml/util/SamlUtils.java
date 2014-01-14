@@ -145,17 +145,17 @@ public final class SamlUtils {
             // Convert the JDOM document to w3c (Java XML signature API requires
             // w3c
             // representation)
-            org.w3c.dom.Element w3cElement = toDom(element);
+            final org.w3c.dom.Element w3cElement = toDom(element);
 
             // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
             // location of the resulting XMLSignature's parent element
-            DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
+            final DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
 
-            org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+            final org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
-            XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+            final XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
                     keyInfo);
             signature.sign(dsc);
 
