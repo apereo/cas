@@ -38,8 +38,8 @@ import org.ldaptive.auth.SearchEntryResolver;
  */
 public class UpnSearchEntryResolver extends SearchEntryResolver {
 
-    /** UPN attribute name. */
-    private static final String UPN_ATTR = "userPrincipalName";
+    /** UPN-based search filter. */
+    private static final String SEARCH_FILTER = "userPrincipalName={0}";
 
     /** Base DN of LDAP subtree search. */
     private String baseDn;
@@ -57,9 +57,9 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
     @Override
     protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {
         final SearchRequest sr = new SearchRequest();
-        sr.setSearchScope(SearchScope.OBJECT);
+        sr.setSearchScope(SearchScope.SUBTREE);
         sr.setBaseDn(this.baseDn);
-        sr.setSearchFilter(new SearchFilter(UPN_ATTR + '=' + ac.getDn()));
+        sr.setSearchFilter(new SearchFilter(SEARCH_FILTER, new Object[] {ac.getDn()}));
         sr.setSearchEntryHandlers(getSearchEntryHandlers());
         sr.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
         return sr;
