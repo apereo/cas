@@ -122,8 +122,8 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
      * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      */
     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
-        long id = Long.parseLong(request.getParameter("id"));
-        int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
+        final long id = Long.parseLong(request.getParameter("id"));
+        final int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
 
         final RegisteredService svc = this.servicesManager.findServiceBy(id);
         if (svc == null) {

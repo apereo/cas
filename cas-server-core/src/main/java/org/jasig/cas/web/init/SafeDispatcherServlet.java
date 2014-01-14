@@ -95,7 +95,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
             LOGGER.error(message, t);
 
             // logger it to the ServletContext
-            ServletContext context = config.getServletContext();
+            final ServletContext context = config.getServletContext();
             context.log(message, t);
 
             /*

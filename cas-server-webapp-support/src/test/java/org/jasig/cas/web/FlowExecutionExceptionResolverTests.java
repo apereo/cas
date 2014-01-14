@@ -52,7 +52,7 @@ public class FlowExecutionExceptionResolverTests {
 
     @Test
     public void testNoSuchFlowExecutionException() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         ModelAndView model = this.resolver.resolveException(request,
                 new MockHttpServletResponse(), null,
@@ -89,7 +89,7 @@ public class FlowExecutionExceptionResolverTests {
 
     @Test
     public void testNoSuchFlowExecutionExeptionWithQueryString() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         request.setQueryString("test=test");
         ModelAndView model = this.resolver.resolveException(request,

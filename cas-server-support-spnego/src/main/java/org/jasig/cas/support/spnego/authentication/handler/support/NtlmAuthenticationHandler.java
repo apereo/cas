@@ -74,7 +74,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             if (this.loadBalance) {
                 // find the first dc that matches the includepattern
                 if(this.includePattern != null){
-                    NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController, 0x1C, null, null);
+                    final NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController, 0x1C, null, null);
                     for (NbtAddress dc2 : dcs) {
                         if(dc2.getHostAddress().matches(this.includePattern)){
                             dc = new UniAddress(dc2);
@@ -102,7 +102,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     logger.debug("Type 3 received");
                     final Type3Message type3 = new Type3Message(src);
                     final byte[] lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
-                    byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
+                    final byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
                     final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);

@@ -88,9 +88,9 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
         logger.debug("Checking IP address: {} in ", ip, network, netmask);
 
-        byte[] networkBytes = network.getAddress();
-        byte[] netmaskBytes = netmask.getAddress();
-        byte[] ipBytes = ip.getAddress();
+        final byte[] networkBytes = network.getAddress();
+        final byte[] netmaskBytes = netmask.getAddress();
+        final byte[] ipBytes = ip.getAddress();
 
         /* check IPv4/v6-compatibility or parameters: */
         if(networkBytes.length != netmaskBytes.length
@@ -102,7 +102,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
 
         /* Check if the masked network and ip addresses match: */
         for(int i=0; i<netmaskBytes.length; i++) {
-            int mask = netmaskBytes[i] & 0xff;
+            final int mask = netmaskBytes[i] & 0xff;
             if((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
                 logger.debug("{} is not in {}/{}", ip, network, netmask);
                 return false;

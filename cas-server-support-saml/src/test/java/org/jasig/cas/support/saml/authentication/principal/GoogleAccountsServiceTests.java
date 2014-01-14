@@ -88,16 +88,16 @@ public class GoogleAccountsServiceTests {
 
 
     protected static String encodeMessage(final String xmlString) throws IOException {
-        byte[] xmlBytes = xmlString.getBytes("UTF-8");
-        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
+        final byte[] xmlBytes = xmlString.getBytes("UTF-8");
+        final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
                 byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
         deflaterOutputStream.close();
 
         // next, base64 encode it
-        Base64 base64Encoder = new Base64();
-        byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
+        final Base64 base64Encoder = new Base64();
+        final byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
                 .toByteArray());
         return new String(base64EncodedByteArray);
     }

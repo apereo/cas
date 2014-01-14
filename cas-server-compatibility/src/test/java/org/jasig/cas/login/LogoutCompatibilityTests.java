@@ -68,8 +68,8 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
      */
     public void testLogoutEndsSso() throws IOException {
         // demonstrate lack of SSO session
-        String serviceUrl = getServiceUrl();
-        String encodedService = URLEncoder.encode(serviceUrl, "UTF-8");
+        final String serviceUrl = getServiceUrl();
+        final String encodedService = URLEncoder.encode(serviceUrl, "UTF-8");
         beginAt("/login?service=" + encodedService);
 
         // verify that login screen is painted
@@ -81,7 +81,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
         setFormElement("password", getGoodPassword());
         submit();
 
-        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
         assertNotNull(firstServiceTicket);
 
         // Demonstrate successful validation of st before logout
@@ -93,7 +93,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
 
         beginAt("/login?service=" + encodedService);
 
-        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
         assertNotNull(secondServiceTicket);
         assertFalse(firstServiceTicket.equals(secondServiceTicket));
 
