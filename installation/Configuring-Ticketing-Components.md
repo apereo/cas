@@ -101,7 +101,7 @@ The never expires policy allows tickets to exist indefinitely.
 Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage, e.g. JpaTicketRegistry and BerkleyDB. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.
 
 #####Usage Example
-{% highlight %}
+{% highlight xml %}
 <!-- TGT never expires -->
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
 {% endhighlight %}
@@ -110,7 +110,7 @@ Use of this policy has significant consequences to overall security policy and s
 This policy implements the [Remember Me feature](RememberMe-Authentication.html) for long-term ticket-granting tickets. 
 
 #####Usage Example
-{% highlight %}
+{% highlight xml %}
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy">
    <property name="sessionExpirationPolicy">
         <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy"
@@ -134,7 +134,7 @@ This is the default policy applied to service tickets where a ticket is expired 
 * `timeUnit` - The unit of time based on which `timeToKill` will be calculated.
 
 #####Usage Example
-{% highlight %}
+{% highlight xml %}
 <!-- ST may be used exactly once and must be validated within 10 seconds. -->
 <util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>
 <bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy"
