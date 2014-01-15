@@ -47,7 +47,7 @@ Ticket expiration policies are not specific to a particular kind of ticket, so i
 ### Ticket-Granting Ticket Policies
 TGT expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) TGT without having to reauthenticate. An attempt to grant a ST with an expired TGT would require the user to reauthenticate to obtain a new (valid) TGT.
 
-#### `TimeoutExpirationPolicy`
+####`TimeoutExpirationPolicy`
 The default expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout. For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise it would be marked as expired.
 
 ##### Parameters
@@ -61,7 +61,7 @@ The default expiration policy applied to TGTs provides for most-recently-used ex
       c:timeToKillInMilliSeconds="7200000" />
 {% endhighlight %}
 
-#### `HardTimeoutExpirationPolicy`
+####`HardTimeoutExpirationPolicy`
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired and the user will be forced to reauthenticate.
 
 ##### Parameters
@@ -75,7 +75,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 {% endhighlight %}
 
 
-#### `ThrottledUseAndTimeoutExpirationPolicy`
+####`ThrottledUseAndTimeoutExpirationPolicy`
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
 ##### Parameters
@@ -95,7 +95,7 @@ TGT expires under one of two conditions:
 />
 {% endhighlight %}
 
-#### `NeverExpiresExpirationPolicy`
+####`NeverExpiresExpirationPolicy`
 The never expires policy allows tickets to exist indefinitely.
 
 Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage, e.g. JpaTicketRegistry and BerkleyDB. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.
@@ -106,8 +106,8 @@ Use of this policy has significant consequences to overall security policy and s
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
 {% endhighlight %}
 
-#### `RememberMeDelegatingExpirationPolicy`
-This policy implements the ["Remember Me" feature](RememberMe-Authentication.html) for long-term ticket-granting tickets. 
+####`RememberMeDelegatingExpirationPolicy`
+This policy implements the [Remember Me feature](RememberMe-Authentication.html) for long-term ticket-granting tickets. 
 
 #####Usage Example
 {% highlight %}
@@ -121,6 +121,24 @@ This policy implements the ["Remember Me" feature](RememberMe-Authentication.htm
                 c:timeToKillInMilliSeconds="xxxxxx" />
    </property>
 </bean>
+{% endhighlight %}
+
+### Service Ticket Policies
+
+####`MultiTimeUseOrTimeoutExpirationPolicy`
+This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum period of inactivity elapses.
+
+#####Parameters
+* `numberOfUses` - Maximum number of times the ticket can be used.
+* `timeToKill` - Maximum amount of inactivity from the last time the ticket was used beyond which it is considered expired.
+* `timeUnit` - The unit of time based on which `timeToKill` will be calculated.
+
+#####Usage Example
+{% highlight %}
+<!-- ST may be used exactly once and must be validated within 10 seconds. -->
+<util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>
+<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy"
+      c:numberOfUses="1" c:timeToKillInMilliSeconds="10" c:timeUnit-ref="SECONDS" />
 {% endhighlight %}
 
 
