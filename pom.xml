@@ -961,9 +961,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
-    <spring.version>3.2.2.RELEASE</spring.version>
+    <spring.version>3.2.6.RELEASE</spring.version>
     <ldaptive.version>1.0.2</ldaptive.version>
-    <spring.security.version>3.1.2.RELEASE</spring.security.version>
+    <spring.security.version>3.2.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.7.2</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
