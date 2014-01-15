@@ -30,4 +30,4 @@ Adapts and converts a CAS 4 username/password credential into a CAS 3.x username
       class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter"
       c:legacy-ref="cas3LegacyAuthenticationHandler"
       c:adapter-ref="usernamePasswordCredentialsAdapter" />
-{% endhighlight %
+{% endhighlight %}
