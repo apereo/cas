@@ -118,8 +118,8 @@ interest.
 * [X.509](X509-Authentication.html) (client SSL certificate)
 
 There are some additional handlers for small deployments and special cases:
-* Whilelist
-* Blacklist
+* [Whilelist](Whitelist-Authentication.html)
+* [Blacklist](Blacklist-Authentication.html)
 
 ## Principal Resolution
 A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
