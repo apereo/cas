@@ -388,6 +388,26 @@ below and the aspects related to proxy authentication may either be commented ou
       p:argumentExtractor-ref="casArgumentExtractor"/>
 {% endhighlight %}
 
+### Proxy Handlers
+Components responsible to determine what needs to be done to handle proxies.
+
+####`CAS10ProxyHandler`
+Proxy handler compliant with CAS v1 protocol that is designed to not handle proxy requests and simply return nothing as proxy support in the protocol is absent.
+
+{% highlight xml %}
+<bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
+{% endhighlight %}
+
+####`CAS20ProxyHandler`
+Protocol handler compliant with CAS v2 protocol that is responsible to callback the URL provided and give it a pgtIou and a pgtId. 
+
+{% highlight xml %}
+<bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
+          p:httpClient-ref="httpClient"
+          p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
+{% endhighlight %}
+
+
 ## Multi-factor Authentication (MFA)
 CAS 4 provides a framework for multi-factor authentication (MFA). The design philosophy for MFA support follows from
 the observation that institutional security policies with respect to MFA vary dramatically. We provide first class

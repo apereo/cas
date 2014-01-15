@@ -98,7 +98,7 @@ TGT expires under one of two conditions:
 ####`NeverExpiresExpirationPolicy`
 The never expires policy allows tickets to exist indefinitely.
 
-Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage, e.g. JpaTicketRegistry and BerkleyDB. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.
+<div class="alert alert-warning">Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.</div>
 
 #####Usage Example
 {% highlight xml %}
@@ -107,7 +107,7 @@ Use of this policy has significant consequences to overall security policy and s
 {% endhighlight %}
 
 ####`RememberMeDelegatingExpirationPolicy`
-This policy implements the [Remember Me feature](RememberMe-Authentication.html) for long-term ticket-granting tickets. 
+This policy implements applies to [long term authentication](Configuring-Authentication-Components.html) features of CAS known as "Remember Me". 
 
 #####Usage Example
 {% highlight xml %}
