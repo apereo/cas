@@ -1,5 +1,4 @@
 # CAS Documentation
-===================
 
 ## Requirements
 Strictly speaking, the only tools required to craft documentation are the standard development tools. You'll need [jekyll](http://jekyllrb.com/) to generate the site for preview purposes, but it's not strictly required.  

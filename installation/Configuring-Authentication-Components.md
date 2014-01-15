@@ -109,6 +109,7 @@ interest.
 * [Database](Database-Authentication.html)
 * [JAAS](JAAS-Authentication.html)
 * [LDAP](LDAP-Authentication.html)
+* [Legacy](Legacy-Authentication.md)
 * [OpenID](OpenID-Authentication.html)
 * [OAuth 1.0/2.0](OAuth-Authentication.html)
 * [RADIUS](RADIUS-Authentication.html)
