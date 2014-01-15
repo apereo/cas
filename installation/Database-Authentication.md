@@ -7,7 +7,7 @@ Database authentication components are enabled by including the following depend
 
     <dependency>
          <groupId>org.jasig.cas</groupId>
-         <artifactId>cas-server-support-ldap</artifactId>
+         <artifactId>cas-server-support-jdbc</artifactId>
          <version>${cas.version}</version>
     </dependency>
     <dependency>
