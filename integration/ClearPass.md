@@ -44,6 +44,20 @@ Support is enabled by including the following dependency in the Maven WAR overla
        <scope>runtime</scope>
     </dependency>
 
+###`CacheCredentialsMetaDataPopulator`
+Retrieve and store the password in our cache.
+ 
+###`ClearPassController`
+A controller that returns the password based on some external authentication/authorization rules. Attempts to obtain the password from the cache and render the appropriate output.
+
+###`EncryptedMapDecorator`
+A `Map` implementation that will hash and store cached credentials.
+
+###`EhcacheBackedMap`
+A `Map` implementation that will use Ehcache as the backend storage.
+
+###`TicketRegistryDecorator`
+A ticket registry implementation that dispatches ticketing operations to the *real* registry while mapping tickets to user names and placing them in the provided cache.
 
 ## Single Node Configuration
 
