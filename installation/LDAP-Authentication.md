@@ -2,6 +2,7 @@
 layout: default
 title: CAS - LDAP Authentication
 ---
+<a name="LDAPAuthentication">  </a>
 # LDAP Authentication
 LDAP integration is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -21,6 +22,7 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
+<a name="ActiveDirectoryAuthentication">  </a>
 ## Active Directory Authentication
 The following configuration authenticates users by _sAMAccountName_ without performing a search,
 which requires manager/administrator credentials in most cases. It is therefore the most performant and secure
@@ -111,6 +113,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
       p:baseDn="${ldap.baseDn}" />
 {% endhighlight %}
 
+<a name="LDAPRequiringAuthenticatedSearch">  </a>
 #### LDAP Requiring Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
@@ -219,6 +222,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="bindConnectionConfig" parent="abstractConnectionConfig" />
 {% endhighlight %}
 
+<a name="LDAPSupportingAnonymousSearch">  </a>
 ## LDAP Supporting Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
@@ -306,6 +310,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="bindConnectionPool" parent="abstractConnectionPool" />
 {% endhighlight %}
 
+<a name="LDAPSupportingDirectBind">  </a>
 ## LDAP Supporting Direct Bind
 The following configuration snippet provides a template for LDAP authentication where no search is required to
 compute the DN needed for a bind operation. There are two requirements for this use case:
@@ -392,6 +397,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
 <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 {% endhighlight %}
 
+<a name="LDAPPropertiesStarter">  </a>
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
 authentication handler. The `ldap.url` property must be changed at a minumum. LDAP properties may be added to the

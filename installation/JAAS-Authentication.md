@@ -2,15 +2,18 @@
 layout: default
 title: CAS - JAAS Authentication
 ---
+<a name="JAASAuthentication">  </a>
 # JAAS Authentication
 [JAAS](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jaas/JAASRefGuide.html) is a Java standard
 authentication and authorization API. JAAS is configured via externalized plain text configuration file.
 Using JAAS with CAS allows modification of the authentication process without having to rebuild and redeploy CAS
 and allows for PAM-style multi-module "stacked" authentication.
 
+<a name="JAASComponents">  </a>
 ## JAAS Components
 JAAS components are provided in the CAS core module and require no additional dependencies to use.
 
+<a name="JaasAuthenticationHandler">  </a>
 ######`JaasAuthenticationHandler`
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file. The handler only exposes a single configuration property:
@@ -24,6 +27,7 @@ The following configuration excerpt demonstrates how to configure the JAAS handl
       p:realm="CustomCasRealm" />
 {% endhighlight %}
 
+<a name="JAASConfigurationFile">  </a>
 ## JAAS Configuration File
 The default JAAS configuration file is located at `$JRE_HOME/lib/security/java.security`. It's important to note
 that JAAS configuration applies to the entire JVM. The path to the JAAS configuration file in effect may be altered

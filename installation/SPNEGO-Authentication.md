@@ -2,6 +2,7 @@
 layout: default
 title: CAS - SPNEGO Authentication
 ---
+<a name="SPNEGOAuthentication">  </a>
 # SPNEGO Authentication
 [SPNEGO](http://en.wikipedia.org/wiki/SPNEGO) is an authentication technology that is primarily used to provide
 transparent CAS authentication to browsers running on Windows running under Active Directory domain credentials.
@@ -18,11 +19,13 @@ The above interaction occurs only for the first request, when there is no CAS ti
 the user session. Once CAS grants a ticket-granting ticket, the SPNEGO process will not happen again until the CAS
 ticket expires.
 
+<a name="SPNEGORequirements">  </a>
 ## SPNEGO Requirements
 * Client is logged in to a Windows Active Directory domain.
 * Supported browser and JDK.
 * CAS is running MIT kerberos against the AD domain controller.
 
+<a name="SPNEGOComponents">  </a>
 ## SPNEGO Components
 SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -32,6 +35,7 @@ SPNEGO support is enabled by including the following dependency in the Maven WAR
       <version>${cas.version}</version>
     </dependency>
 
+<a name="JCIFSSpnegoAuthenticationHandler">  </a>
 ######`JCIFSSpnegoAuthenticationHandler`
 The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
 Configuration properties:
@@ -39,6 +43,7 @@ Configuration properties:
 * `principalWithDomainName` - True to include the domain name in the CAS principal ID, false otherwise.
 * `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
 
+<a name="JCIFSConfig">  </a>
 ######`JCIFSConfig`
 Configuration helper for JCIFS and the Spring framework. Configuration properties:
 
@@ -50,23 +55,28 @@ Configuration helper for JCIFS and the Spring framework. Configuration propertie
 * `loginConf` - Path to the login.conf JAAS configuration file.
 
 
+<a name="SpnegoNegociateCredentialsAction">  </a>
 ######`SpnegoNegociateCredentialsAction`
 CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
 header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
 `SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
 
+<a name="SpnegoCredentialsAction">  </a>
 ######`SpnegoCredentialsAction`
 Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
 authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
 `JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
 authentication succeeded or failed.
 
+<a name="SPNEGOConfiguration">  </a>
 ## SPNEGO Configuration
 
+<a name="CreateSPNAccount">  </a>
 ### Create SPN Account
 Create an Active Directory account for the Service Principal Name (SPN) and record the username and password, which
 will be used subsequently to configure the `JCIFSConfig` component.
 
+<a name="CreateKeytabFile">  </a>
 ### Create Keytab File
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
 domain controller serves the role of KDC in this context.
@@ -74,6 +84,7 @@ The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is
 which contains a cryptographic key. Be sure to execute the command from an Active Directory domain controller as
 administrator.
 
+<a name="TestSPNAccount">  </a>
 ### Test SPN Account
 Install and configure MIT Kerberos V on the CAS server host(s). The following sample `krb5.conf` file may be used
 as a reference.
@@ -110,12 +121,14 @@ Then verify that your are able to read the keytab file:
     kinit a_user_in_the_realm@YOUR.REALM.HERE
     klist
 
+<a name="BrowserConfiguration">  </a>
 ### Browser Configuration
 * Internet Explorer - Enable _Integrated Windows Authentication_ and add the CAS server URL to the _Local Intranet_
 zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. https://cas.example.com.
 
+<a name="CASComponentConfiguration">  </a>
 ### CAS Component Configuration
 Define two new action states in `login-webflow.xml` before the `viewLoginForm` state:
 

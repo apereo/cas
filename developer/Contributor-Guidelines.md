@@ -2,8 +2,10 @@
 layout: default
 title: CAS - Contributor Guidelines
 ---
+<a name="ContributorGuidelines">  </a>
 # Contributor Guidelines
 
+<a name="Licensing">  </a>
 ## Licensing
 All developers that contribute source to CAS must complete and file a Jasig
 [Individual Contributor License Agreement](https://wiki.jasig.org/x/u4WcAQ) (ICLA). This agreement provides legal
@@ -11,6 +13,7 @@ protection to both the CAS project and to individual developers while preserving
 Any patch or pull request submitted by a developer will only be accepted if there is an ICLA on file for the
 developer.
 
+<a name="GettingStarted">  </a>
 ## Getting Started
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
 a fork of the Jasig CAS repository:
@@ -29,6 +32,7 @@ git fetch --all
 
 We encourage reading [Pro Git](http://git-scm.com/book/) prior to beginning development if you are unfamiliar with Git.
 
+<a name="DevelopmentProcess">  </a>
 ## Development Process
 All CAS contributions SHOULD be submitted via GitHub pull requests. The following guidelines facilitate pull requests
 that have a high likelihood of acceptance:
@@ -40,13 +44,16 @@ A [Jira](https://issues.jasig.org/browse/CAS) issue MUST be created prior to wor
 It is helpful to name the topic branch the same as the Jira issue number, e.g. _CAS-123_. Additionally, the Jira issue
 number MUST be the first word of a commit message; for example, _CAS-9999 Provide OAuth 3.0 protocol support_.
 
+<a name="DevelopmentWalk-Through">  </a>
 ### Development Walk-Through
+<a name="1.CreateTopicBranch">  </a>
 #### 1. Create Topic Branch
 
     git checkout -b CAS-123
 
 We encourage naming the branch the same as the Jira issue number corresponding to the feature or bug fix.
 
+<a name="2.EditSourceandCommit">  </a>
 #### 2. Edit Source and Commit
 Edit source files and commit in logical chunks. We encourage numerous small commits over one large commit. Small,
 focused commits facilitate review and will be more likely to be accepted. It is vital to summarize changes with
@@ -65,11 +72,13 @@ commit message provides a good model:
 	4. Delete deprecated and superfluous resolver components.
 	5. Rename some X.509 resolver components for clarity/consistency.
 
+<a name="3.PushtoForkedRepository">  </a>
 #### 3. Push to Forked Repository
 You must push your local branch to your forked repository to facilitate a pull request.
 
     git push origin CAS-123
 
+<a name="4.SubmitPullRequest">  </a>
 #### 4. Submit Pull Request
 Submit a pull request from your topic branch onto the target branch of Jasig CAS, typically _master_. See the GitHub
 [Using Pull Requests](https://help.github.com/articles/using-pull-requests) page for help.
@@ -77,6 +86,7 @@ Submit a pull request from your topic branch onto the target branch of Jasig CAS
 Be prepared to sync changes with the target branch of the Jasig CAS repository since the target branch may move during
 review and consideration of the pull request.
 
+<a name="PullRequests">  </a>
 ### Pull Requests
 A pull request should contain the following:
 

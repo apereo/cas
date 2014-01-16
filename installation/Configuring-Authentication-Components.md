@@ -2,27 +2,33 @@
 layout: default
 title: CAS - Configuring Authentication Components
 ---
+<a name="ConfiguringAuthenticationComponents">  </a>
 # Configuring Authentication Components
 The CAS authentication process is performed by several related components:
 
+<a name="AuthenticationManager">  </a>
 ######`AuthenticationManager`
 Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
 configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
 security policy.
 
+<a name="AuthenticationHandler">  </a>
 ######`AuthenticationHandler`
 Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
 
+<a name="PrincipalResolver">  </a>
 ######`PrincipalResolver`
 Converts information in the authentication credential into a security principal that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
 
+<a name="AuthenticationMetaDataPopulator">  </a>
 ######`AuthenticationMetaDataPopulator`
 Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
 to set protocol-specific data.
 
 Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
 
+<a name="AuthenticationManager">  </a>
 ## Authentication Manager
 CAS ships with a single yet flexible authentication manager, `PolicyBasedAuthenticationManager`, that should be
 sufficient for most needs. It performs authentication according to the following contract.
@@ -45,15 +51,18 @@ There is an implicit security policy that requires at least one handler to succe
 but the behavior can be further controlled by setting `#setAuthenticationPolicy(AuthenticationPolicy)`
 with one of the following policies.
 
+<a name="AnyAuthenticationPolicy">  </a>
 ######`AnyAuthenticationPolicy`
 Satisfied if any handler succeeds. Supports a `tryAll` flag to avoid short circuiting at step 4.1 above and try every
 handler even if one prior succeeded. This policy is the default and provides backward-compatible behavior with the
 `AuthenticationManagerImpl` component of CAS 3.x.
 
+<a name="AllAuthenticationPolicy">  </a>
 ######`AllAuthenticationPolicy`
 Satisfied if and only if all given credentials are successfully authenticated. Support for multiple credentials is
 new in CAS 4.0 and this handler would only be acceptable in a multi-factor authentication situation.
 
+<a name="RequiredHandlerAuthenticationPolicy">  </a>
 ######`RequiredHandlerAuthenticationPolicy`
 Satisfied if an only if a specified handler successfully authenticates its credential. Supports a `tryAll` flag to
 avoid short circuiting at step 4.1 above and try every handler even if one prior succeeded. This policy could be
@@ -101,6 +110,7 @@ OTP credential is optional; in both cases principals are resolved from LDAP.
 </bean>
 {% endhighlight %}
 
+<a name="AuthenticationHandlers">  </a>
 ## Authentication Handlers
 CAS ships with support for authenticating against many common kinds of authentication systems.
 The following list provides a complete list of supported authentication technologies; jump to the section(s) of
@@ -121,6 +131,7 @@ There are some additional handlers for small deployments and special cases:
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 
+<a name="PrincipalResolution">  </a>
 ## Principal Resolution
 A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
 services. A principal also contains optional [attributes that may be released](../integration/Attribute-Release.html)
@@ -137,8 +148,10 @@ arises with X.509 authentication. It is common to store certificates in an LDAP 
 resolve the principal ID and attributes from directory attributes. The `X509CertificateAuthenticationHandler` may
 be be combined with an LDAP-based principal resolver to accommodate this case.
 
+<a name="PrincipalResolverComponents">  </a>
 ### PrincipalResolver Components
 
+<a name="PersonDirectoryPrincipalResolver">  </a>
 ######`PersonDirectoryPrincipalResolver`
 Uses the Jasig Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
@@ -168,10 +181,12 @@ We present a stub configuration here that can be modified accordingly by consult
       p:returnNullIfNoAttributes="true" />
 {% endhighlight %}
 
+<a name="OpenIdPrincipalResolver">  </a>
 ######`OpenIdPrincipalResolver`
 Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with OpenID credentials. The configuration
 of this component is identical to that of `PersonDirectoryPrincipalResolver`.
 
+<a name="SpnegoPrincipalResolver">  </a>
 ######`SpnegoPrincipalResolver`
 Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with SPNEGO credentials. The configuration
 is the same as that of `PersonDirectoryPrincipalResolver` but with an additional property, `transformPrincipalId`,
@@ -190,6 +205,7 @@ that provides a simple case transform on the principal ID. The following values 
       p:transformPrincipalId="UPPERCASE" />
 {% endhighlight %}
 
+<a name="CredentialsToLdapAttributePrincipalResolver">  </a>
 ######`CredentialsToLdapAttributePrincipalResolver`
 Provides an LDAP resolver based on the ldaptive library. This components provides a two-phase principal resolution
 strategy:
@@ -200,17 +216,21 @@ strategy:
 TODO: provide configuration example
 @mmoayyed
 
+<a name="X509SubjectPrincipalResolver">  </a>
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 See the [X.509 principal resolver](#x_509) section for more information.
 
+<a name="X509SubjectDNPrincipalResolver">  </a>
 ######`X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
+<a name="PrincipalResolverVersusAuthenticationHandler">  </a>
 ### PrincipalResolver Versus AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.
 
+<a name="AuthenticationMetadata">  </a>
 ## Authentication Metadata
 `AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the
 authentication subsystem for consumption by other subsystems or external components. Some notable uses of metadata
@@ -223,12 +243,14 @@ populators:
 The default authentication metadata populators should be sufficient for most deployments. Where the components are
 required to support optional CAS features, they will be explicitly identified and configuration will be provided.
 
+<a name="LongTermAuthentication">  </a>
 ## Long Term Authentication
 This feature, also known as *Remember Me*, extends the length of the SSO session beyond the typical period of hours
 such that users can go days or weeks without having to log in to CAS. See the
 [security guide](../planning/Security-Guide.html)
 for discussion of security concerns related to long term authentication.
 
+<a name="PolicyandDeploymentConsiderations">  </a>
 ### Policy and Deployment Considerations
 While users can elect to establish a long term authentication session, the duration is established through
 configuration as a matter of security policy. Deployers must determine the length of long term authentication sessions
@@ -248,6 +270,7 @@ the former provides durable storage for persistent long-term authentication tick
 durable storage for ephemeral service tickets. Thus deployers could mix `JpaTicketRegistry` and
 `MemcachedTicketRegistry`, for example, to take advantage of their strengths, durability and speed respectively.
 
+<a name="ComponentConfiguration">  </a>
 ### Component Configuration
 Long term authentication requires configuring CAS components in Spring configuration, modification of the CAS login
 webflow, and UI customization of the login form. The length of the long term authentication session is represented
@@ -316,6 +339,7 @@ Modify the `PolicyBasedAuthenticationManager` bean in `deployerConfigContext.xml
 </bean>
 {% endhighlight %}
 
+<a name="WebflowConfiguration">  </a>
 ### Webflow Configuration
 Two sections of `login-webflow.xml` require changes:
 1. `credentials` variable declaration
@@ -343,6 +367,7 @@ Change the `viewLoginForm` action state as follows:
 </view-state>
 {% endhighlight %}
 
+<a name="UserInterfaceCustomization">  </a>
 ### User Interface Customization
 A checkbox or other suitable control must be added to the CAS login form to allow user selection of long term
 authentication. We recommend adding a checkbox control to `casLoginView.jsp` as in the following code snippet.
@@ -352,6 +377,7 @@ The only functional consideration is that the name of the form element is _remem
 <label for="rememberMe">Remember Me</label>
 {% endhighlight %}
 
+<a name="ProxyAuthentication">  </a>
 ## Proxy Authentication
 Proxy authentication support for CASv2 and CASv3 protocols is enabled by default, thus it is entirely a matter of CAS
 client configuration to leverage proxy authentication features.
@@ -388,9 +414,11 @@ below and the aspects related to proxy authentication may either be commented ou
       p:argumentExtractor-ref="casArgumentExtractor"/>
 {% endhighlight %}
 
+<a name="ProxyHandlers">  </a>
 ### Proxy Handlers
 Components responsible to determine what needs to be done to handle proxies.
 
+<a name="CAS10ProxyHandler">  </a>
 ####`CAS10ProxyHandler`
 Proxy handler compliant with CAS v1 protocol that is designed to not handle proxy requests and simply return nothing as proxy support in the protocol is absent.
 
@@ -398,6 +426,7 @@ Proxy handler compliant with CAS v1 protocol that is designed to not handle prox
 <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 {% endhighlight %}
 
+<a name="CAS20ProxyHandler">  </a>
 ####`CAS20ProxyHandler`
 Protocol handler compliant with CAS v2 protocol that is responsible to callback the URL provided and give it a pgtIou and a pgtId. 
 
@@ -408,6 +437,7 @@ Protocol handler compliant with CAS v2 protocol that is responsible to callback 
 {% endhighlight %}
 
 
+<a name="Multi-factorAuthentication(MFA)">  </a>
 ## Multi-factor Authentication (MFA)
 CAS 4 provides a framework for multi-factor authentication (MFA). The design philosophy for MFA support follows from
 the observation that institutional security policies with respect to MFA vary dramatically. We provide first class
@@ -426,22 +456,27 @@ CAS ships with support for applying policy in the following areas:
 * Credential authentication success and failure.
 * Service-specific authentication requirements.
 
+<a name="PolicyBasedAuthenticationManager">  </a>
 ######`PolicyBasedAuthenticationManager`
 CAS ships with an authentication manager component that is fundamentally MFA-aware. It supports a number of
 policies, discussed above, that could facilitate a simple MFA design; for example, where multiple credentials are
 invariably required to start a CAS SSO session.
 
+<a name="ContextualAuthenticationPolicy">  </a>
 ######`ContextualAuthenticationPolicy`
 Strategy pattern component for applying security policy in an arbitrary context. These components are assumed to be
 stateful once created.
 
+<a name="ContextualAuthenticationPolicyFactory">  </a>
 ######`ContextualAuthenticationPolicyFactory`
 Factory class for creating stateful instances of `ContextualAuthenticationPolicy` that apply to a particular context.
 
+<a name="AcceptAnyAuthenticationPolicyFactory">  </a>
 ######`AcceptAnyAuthenticationPolicyFactory`
 Simple factory class that produces contextual security policies that always pass. This component is configured by
 default in some cases to provide backward compatibility with CAS 3.x.
 
+<a name="RequiredHandlerAuthenticationPolicyFactory">  </a>
 ######`RequiredHandlerAuthenticationPolicyFactory`
 Factory that produces policy objects based on the security context of the service requesting a ticket. In particular
 the security context is based on the required authentication handlers that must have successfully validated credentials
@@ -496,6 +531,7 @@ the following:
 
 _Only permit users with SSO sessions created from both a username/password and OTP token to access this service._
 
+<a name="LoginThrottling">  </a>
 ## Login Throttling
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
 A couple strategies are provided for tracking failed attempts:
@@ -515,10 +551,12 @@ A failure rate of more than 1 per 3 seconds is indicative of an automated authen
 reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
+<a name="ThrottlingComponents">  </a>
 ### Throttling Components
 The CAS login throttling components are listed below along with a sample configuration that implements a policy
 preventing more than 1 failed login every 3 seconds.
 
+<a name="InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter">  </a>
 ######`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts from the same IP address.
 {% highlight xml %}
@@ -528,6 +566,7 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
       p:failureThreshold="1" />
 {% endhighlight %}
 
+<a name="InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter">  </a>
 ######`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 {% highlight xml %}
@@ -537,6 +576,7 @@ Uses a memory map to prevent successive failed login attempts for a particular u
       p:failureThreshold="1" />
 {% endhighlight %}
 
+<a name="InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter">  </a>
 ######`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
@@ -566,6 +606,7 @@ username from the same IP address. This component requires that the
       p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 {% endhighlight %}
 
+<a name="HighAvailabilityConsiderationsforThrottling">  </a>
 ### High Availability Considerations for Throttling
 All of the throttling components are suitable for a CAS deployment that satisfies the
 [recommended HA architecture](../planning/High-Availability-Guide.html). In particular deployments with multiple CAS
@@ -582,6 +623,7 @@ For stateless CAS clusters where there is no session affinity, the in-memory com
 they cannot apply the rate strictly since requests to CAS hosts would be split across N systems.
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
+<a name="ConfiguringLoginThrottling">  </a>
 ### Configuring Login Throttling
 Login throttling configuration consists of two core components:
 

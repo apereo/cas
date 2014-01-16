@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Service Management
 ---
+<a name="ServiceManagement">  </a>
 # Service Management
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
@@ -17,6 +18,7 @@ containing metadata that drives a number of CAS behaviors:
 The service management console is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
 
+<a name="Considerations">  </a>
 ## Considerations
 It is not required to use the service management facility explicitly. CAS ships with a default configuration that is
 suitable for deployments that do not need or want to leverage the capabilities above. The default configuration allows
@@ -32,6 +34,7 @@ It is perfectly acceptable to avoid the service management console Web applicati
 In fact, configuration-driven methods (e.g. XML, JSON) may be preferable in environments where strict configuration
 management controls are required.
 
+<a name="RegisteredServices">  </a>
 ## Registered Services
 
 Registered services present the following metadata:
@@ -63,8 +66,10 @@ the value of _User Attributes_ (`allowedAttributes`) to be ignored.
 services. This flag is particularly important in cases where two service URL expressions cover the same services;
 evaluation order determines which registration is evaluated first.
 
+<a name="PersistingRegisteredServiceData">  </a>
 ## Persisting Registered Service Data
 
+<a name="InMemoryServiceRegistryDaoImpl">  </a>
 ######`InMemoryServiceRegistryDaoImpl`
 CAS uses in-memory services management by default, with the registry seeded from registration beans wired via Spring.
 
@@ -86,6 +91,7 @@ This component is _NOT_ suitable for use with the service managment console sinc
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
+<a name="JpaServiceRegistryDaoImpl">  </a>
 ######`JpaServiceRegistryDaoImpl`
 Stores registered service data in a database; the preferred choice when using the service management console.
 The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
@@ -125,6 +131,7 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 {% endhighlight %}
 
+<a name="InstallingtheServicesManagementWebapp">  </a>
 ## Installing the Services Management Webapp
 
 Since CAS 4.0, the services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
@@ -146,10 +153,12 @@ Though, you need at first to configure it according to your environment. Towards
 </dependency>
 {% endhighlight %}
 
+<a name="Authenticationmethod">  </a>
 ### Authentication method
 
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
 
+<a name="Urlsconfiguration">  </a>
 ### Urls configuration
 
 The urls configuration of the CAS server and management applications can be done by overriding the default `WEB-INF/cas-management.properties` file:
@@ -167,10 +176,12 @@ The urls configuration of the CAS server and management applications can be done
 
 When authenticating against a CAS server, the services management webapp will be processed as a regular CAS service and thus, needs to be defined in the services registry (of the CAS server).
 
+<a name="Servicesregistry">  </a>
 ### Services registry
 
 You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
 
+<a name="UI">  </a>
 ### UI
 
 The services management webapp is pretty simple to use:

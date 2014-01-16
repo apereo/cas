@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Mailing Lists
 ---
+<a name="MailingLists">  </a>
 # Mailing Lists
 
 The CAS project uses the WiscList mailing list software and infrastructure graciously provided by the
@@ -12,6 +13,7 @@ It's important to note that, while CAS has an international audience, discussion
 The community is very understanding of non-native English speakers and generally exercises patience and persistence
 in those circumstances. _Please post in English._
 
+<a name="CASCommunityDiscussionList(cas-user)">  </a>
 ## CAS Community Discussion List (cas-user)
 _Focus_: support, troubleshooting, general questions.
 
@@ -20,6 +22,7 @@ Post to this list if you have a question about installing, configuring, or troub
 [Subscribe](https://lists.wisc.edu/read/all_forums/subscribe?name=cas-user)
 [Archives](https://groups.google.com/forum/#!forum/jasig-cas-user)
 
+<a name="CASDeveloperList(cas-dev)">  </a>
 ## CAS Developer List (cas-dev)
 _Focus_: CAS developer discussion and collaboration.
 
@@ -29,6 +32,7 @@ requests, software design, and offering contributions. _Please do not post suppo
 [Subscribe](https://lists.wisc.edu/read/all_forums/subscribe?name=cas-dev)
 [Archives](https://groups.google.com/forum/#!forum/jasig-cas-dev)
 
+<a name="CASAnnouncementsList(cas-announce)">  </a>
 ## CAS Announcements List (cas-announce)
 _Focus_: release accouncements.
 
@@ -36,6 +40,7 @@ This is a low-traffic list to receive notifications about CAS releases including
 
 [Subscribe](https://lists.wisc.edu/read/all_forums/subscribe?name=cas-announce)
 
+<a name="Unsubscribing">  </a>
 ## Unsubscribing
 Send a message to the following address: `leave-[listname]@lists.wisc.edu`. The subject and body may be empty.
 You should receive a confirmation message indicating you have successfully unsubscribed.
@@ -44,6 +49,7 @@ _NOTE_: The most common mistake unsubscribing from a mailing list is sending a m
 That has the effect of announcing intent to leave without actually accomplishing anything.
 It's the mailing list equivalent of storming out of a room and walking into a closed door. Embarrassing.
 
+<a name="ForeignLanguageLists">  </a>
 ## Foreign Language Lists
 
 The ESUP-Portail project has fostered the growth of several French-language

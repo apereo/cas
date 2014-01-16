@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Database Authentication
 ---
+<a name="DatabaseAuthentication">  </a>
 # Database Authentication
 Database authentication components are enabled by including the following dependencies in the Maven WAR overlay:
 
@@ -16,6 +17,7 @@ Database authentication components are enabled by including the following depend
         <version>0.9.1.2</version>
     </dependency>
 
+<a name="ConnectionPooling">  </a>
 ## Connection Pooling
 All database authentication components require a `DataSource` for acquiring connections to the underlying database.
 The use of connection pooling is _strongly_ recommended, and the [c3p0 library](http://www.mchange.com/projects/c3p0/)
@@ -24,6 +26,7 @@ is a good choice that we discuss here.
 Note that the connection pool dependency mentioned above should be modified according to the choice of connection pool
 components.
 
+<a name="PooledDataSourceExample">  </a>
 ### Pooled Data Source Example
 A bean named `dataSource` must be defined for CAS components that use a database. A bean like the following should be
 defined in `deployerConfigContext.xml`.
@@ -88,9 +91,11 @@ The following properties may be used as a starting point for connection pool con
     database.pool.acquireRetryDelay=2000
 
 
+<a name="DatabaseComponents">  </a>
 ## Database Components
 CAS provides 3 components to accommodate different database authentication needs.
 
+<a name="QueryDatabaseAuthenticationHandler">  </a>
 ######`QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query. `QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to
@@ -119,6 +124,7 @@ The following example uses an MD5 hash algorithm and searches exclusively for _a
       p:sql="select password from users where username=? and active=1" />
 {% endhighlight %}
 
+<a name="SearchModeSearchDatabaseAuthenticationHandler">  </a>
 ######`SearchModeSearchDatabaseAuthenticationHandler`
 Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
 least one result is found.
@@ -139,6 +145,7 @@ The following example uses a SHA1 hash algorithm to authenticate users.
       p:fieldPassword="password" />
 {% endhighlight %}
 
+<a name="BindModeSearchDatabaseAuthenticationHandler">  </a>
 ######`BindModeSearchDatabaseAuthenticationHandler`
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 

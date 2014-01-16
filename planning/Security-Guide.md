@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Security Guide
 ---
+<a name="SecurityGuide">  </a>
 # Security Guide
 CAS is security software that provides secure Web-based single sign-on to Web-based applications. Single sign-on
 provides a win/win in terms of security and convenience: it reduces password exposure to a single, trusted credential
@@ -9,8 +10,10 @@ broker while transparently providing access to multiple services without repetit
 improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
 be considered to achieve suitable security.
 
+<a name="SystemSecurityConsiderations">  </a>
 ## System Security Considerations
 
+<a name="SecureTransport(https)">  </a>
 ### Secure Transport (https)
 All communication with the CAS server MUST occur over a secure channel (i.e. SSLv3, TLSv1). There are two primary
 justifications for this requirement:
@@ -21,17 +24,20 @@ justifications for this requirement:
 Since the disclosure of either data would allow impersonation attacks, it's vitally important to secure the
 communication channel between CAS clients and the CAS server.
 
+<a name="ConnectionstoDependentSystems">  </a>
 ### Connections to Dependent Systems
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
 be compensating controls that make secure transport uncessary. Private networks and corporate networks with strict
 acces controls are common exceptions, but secure transport is recommended nonetheless.
 
+<a name="Deployment-DrivenSecurityFeatures">  </a>
 ## Deployment-Driven Security Features
 CAS supports a number of features that can be leveraged to implement various security policies.
 The following features are provided through CAS configuration and CAS client integration. Note that many features
 are available out of the box, while others require explicit setup.
 
+<a name="ForcedAuthentication">  </a>
 ### Forced Authentication
 Many CAS clients and supported protocols support the concept of forced authentication whereby a user must
 reauthenticate to access a particular service. The CAS protocols support forced authentication via the _renew_
@@ -43,12 +49,14 @@ provides some support for implementing forced authentication as a matter of cent
 Forced authentication may be combined with [multi-factor authentication](#multifactor_authentication) features to
 implement arbitrary service-specific access control policy.
 
+<a name="PassiveAuthentication">  </a>
 ### Passive Authentication
 Some CAS protocols support passive authentication where access to a CAS-protected service is granted anonymously
 when requested. The CASv2 and CASv3 protocols support this capability via the _gateway_ feature. Passive authentication
 complements forced authentication; where forced authentication requires authentication to access a service, passive
 authentication permits service access, albeit anonymously, without authentication.
 
+<a name="ProxyAuthentication">  </a>
 ### Proxy Authentication
 Proxy authentication, or delegated authentication, provides a powerful, important, and potentially security-improving
 feature of CAS. Proxy authentication is supported by the CASv2 and CASv3 protocols and is mediated by proxy tickets
@@ -71,6 +79,7 @@ In other words, the security model is decentralized rather than centralized. The
 some centralized control of proxy authentication by exposing a proxy authentication flag that can enabled or disabled
 on a per-service basis. By default registered services are not granted proxy authentication capability.
 
+<a name="Multi-factorAuthentication">  </a>
 ### Multi-factor Authentication
 CAS 4 provides support for multi-factor authentication in one of two modes: global and per-service. The global case
 where multiple credentials are invariably required on the login form is straightforward: the user interface is
@@ -95,12 +104,14 @@ than a feature. See the
 [multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor_authentication_mfa)
 section for detailed discussion of configuration concerns and implementation recommendations.
 
+<a name="CredentialCachingandReplay">  </a>
 ### Credential Caching and Replay
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
 and replay on demand as needed to access legacy services. While [proxy authentication](#proxy_authentication)
 is recommended in lieu of password replay, it may be required to integrate legacy services with CAS. See the
 [ClearPass](../integration/ClearPass.html) documentation for detailed information.
 
+<a name="ServiceManagement">  </a>
 ### Service Management
 The service management facility provides a number of service-specific configuration controls that affect security
 policy and provide some support for centralized security policy. (Note that CAS has historically supported the
@@ -118,6 +129,7 @@ of which specifies the management controls above. The service registry can be co
 a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
 information.
 
+<a name="TicketExpirationPolicies">  </a>
 ### Ticket Expiration Policies
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
 control of some important aspects of CAS SSO session behavior:
@@ -128,6 +140,7 @@ control of some important aspects of CAS SSO session behavior:
 See the [Configuring Ticketing Components](../installation/Configuring-Ticketing-Components.html) section for a
 detailed discussion of the various expiration policies and configuration instructions.
 
+<a name="SingleSign-Out">  </a>
 ### Single Sign-Out
 Single sign-out, or single log-out (SLO), is a feature by which CAS services are notified of the termination of a CAS
 SSO session with the expectation that services terminate access for the SSO session owner. While single sign-out can
@@ -139,6 +152,7 @@ single sign-out shortcomings:
 * Reduce application session timeouts
 * Reduce SSO session duration
 
+<a name="LoginThrottling">  </a>
 ### Login Throttling
 CAS supports a policy-driven feature to limit successive failed authentication attempts to help prevent brute force
 and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
@@ -148,9 +162,11 @@ systems including CAS. See the
 [login throttling configuration](../installation/Configuring-Authentication-Components.html#login_throttling)
 section for further information.
 
+<a name="User-DrivenSecurityFeatures">  </a>
 ## User-Driven Security Features
 The following features may be employed to afford some user control of the SSO experience.
 
+<a name="LongTermAuthentication">  </a>
 ### Long Term Authentication
 The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the
 CAS login form to avoid reauthentication for an extended period of time. Long term authentication allows users to elect
@@ -173,6 +189,7 @@ Long term authentication support must be explicitly enabled through
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 
+<a name="Warn">  </a>
 ### Warn
 CAS supports optional notification of service access during an established SSO session. By default CAS
 transparently requests tickets needed for service access and presents them to the target service for validation,
