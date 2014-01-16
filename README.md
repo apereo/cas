@@ -29,3 +29,10 @@ jekyll build -d /path/to/output/directory
 ```
 
 Browse to the output directory, e.g. file:///path/to/output/directory, in a browser to preview the generated site.
+
+## Troubleshooting
+If you have trouble getting jekyll to build, try the following:
+
+* Make sure python is included in your $PATH
+* If you are receiving unicode incompatibility errors, try the command `chcp 65001`
+* There exists a bug with Jekyll 1.4.3 that does not properly utilize file separators. You may have to downgrade to Jekyll 1.4.2 or upgrade to the next 2.x release.

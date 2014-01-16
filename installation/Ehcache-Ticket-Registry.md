@@ -245,8 +245,7 @@ Your maven overlay `pom.xml` will also need to declare the following dependencie
 	<groupId>net.sf.ehcache</groupId>
 	<artifactId>ehcache-jgroupsreplication</artifactId>
 	<version>${ehcache-jgroups.version}</version>
-</dependency>
-                        
+</dependency>                   
 {% endhighlight %}
 
 
