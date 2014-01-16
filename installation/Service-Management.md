@@ -84,9 +84,43 @@ CAS uses in-memory services management by default, with the registry seeded from
 </util:list>
 {% endhighlight %}
 
-This component is _NOT_ suitable for use with the service managment console since it does not persist data.
+This component is _NOT_ suitable for use with the service management console since it does not persist data.
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
+
+######`LdapServiceRegistryDao`
+Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `ui` attribute.
+
+{% highlight xml %}
+<bean id="serviceRegistryDao"
+      class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
+      p:connectionFactory-ref="pooledLdapConnectionFactory"
+      p:searchRequest-ref="searchRequest"
+      p:ldapServiceMapper-ref="ldapMapper" />
+
+<bean id="ldapMapper"
+      class="org.jasig.cas.adaptors.ldap.services.DefaultLdapServiceMapper"/>
+{% endhighlight %}
+
+<p/>
+#######`DefaultLdapServiceMapper`
+The default mapper has support for the following items:
+
+* `objectClass`: default -> "casRegisteredService"
+* `serviceIdAttribute`: default -> "casServiceUrlPattern"
+* `idAttribute`: default -> "uid"
+* `serviceDescriptionAttribute`: default -> "description"
+* `serviceNameAttribute`: default -> "cn"
+* `serviceEnabledAttribute`: default -> "casServiceEnabled"
+* `serviceSsoEnabledAttribute`: default -> "casServiceSsoEnabled"
+* `serviceAnonymousAccessAttribute`: default -> "casServiceAnonymousAccess"
+* `serviceAllowedToProxyAttribute`: default -> "casServiceAllowedToProxy"
+* `serviceThemeAttribute`: default -> "casServiceTheme"
+* `usernameAttribute`: default -> "casUsernameAttribute"
+* `serviceAllowedAttributesAttribute`: default -> "casAllowedAttributes"
+* `ignoreAttributesAttribute`: default -> "casIgnoreAttributes"
+* `evaluationOrderAttribute`: default -> "casEvaluationOrder"
+* `requiredHandlersAttribute`: default -> "casRequiredHandlers"
 
 <a name="JpaServiceRegistryDaoImpl">  </a>
 ######`JpaServiceRegistryDaoImpl`
