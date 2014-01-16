@@ -93,7 +93,7 @@ If you're using the JPA ticket registry, your configuration should likely be sim
       <bean class="org.jasig.cas.ticket.registry.support.JdbcLockingStrategy"
          p:uniqueId="my_unique_machine"
          p:applicationId="cas"
-         p:dataSource-ref"dataSource" />
+         p:dataSource-ref="dataSource" />
    </property>
 </bean>
  
