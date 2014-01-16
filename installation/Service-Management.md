@@ -49,8 +49,7 @@ service defines one or more URLs where a service or services are located.
 that may be used to customize the CAS UI when the service requests a ticket.
 * _Enabled_ (`enabled`) - Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent
 to a non-existent entry.
-* _SSO Participant_ (`ssoEnabled`) - Set to false to force users to authenticate to the service regardless of protocol
-flags (e.g. renew).
+* _SSO Participant_ (`ssoEnabled`) - Set to false to force users to authenticate to the service regardless of protocol flags (e.g. renew).
 This flag provides some support for centralized application of security policy.
 * _Anonymous Access_ (`anonymousAccess`) - Set to true to provide an opaque identifier for the username instead of
 the principal ID. The default behavior (false) is to release the principal ID. The identifier conforms to the
@@ -60,10 +59,8 @@ attribute.
 whether the service is able to proxy authentication, not whether the service accepts proxy authentication.
 * _User Attributes_ (`allowedAttributes`) - Optional field that allows restricting the global set of user attributes
 on a per-service basis. Only the attributes specified in this field will be released.
-* _Ignore Attribute Management_ (`ignoreAttributes`) - True to ignore per-service attribute management, which causes
-the value of _User Attributes_ (`allowedAttributes`) to be ignored.
-* _Evaluation Order_ (`evaluationOrder`) - Required value that determines relative order of evaluation of registered
-services. This flag is particularly important in cases where two service URL expressions cover the same services;
+* _Ignore Attribute Management_ (`ignoreAttributes`) - True to ignore per-service attribute management, which causes the value of _User Attributes_ (`allowedAttributes`) to be ignored.
+* _Evaluation Order_ (`evaluationOrder`) - Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services;
 evaluation order determines which registration is evaluated first.
 
 <a name="PersistingRegisteredServiceData">  </a>
@@ -134,7 +131,7 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <a name="InstallingtheServicesManagementWebapp">  </a>
 ## Installing the Services Management Webapp
 
-Since CAS 4.0, the services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
+The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
 Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
 * the management webapp is used to add/edit/delete all the CAS services
@@ -147,7 +144,7 @@ Though, you need at first to configure it according to your environment. Towards
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-management-webapp</artifactId>
-  <version>4.0.0</version>
+  <version>${cas.version}</version>
   <type>war</type>
   <scope>runtime</scope>
 </dependency>
