@@ -31,6 +31,7 @@ All three arguments map to those of the [`ConcurrentHashMap` constructor](http:/
       c:concurrencyLevel="20" />
 {% endhighlight %}
 
+
 ### Cache-Based Ticket Registries
 Cached-based ticket registries provide a high-performance solution for ticket storage in high availability
 deployments. Components for the following caching technologies are provided:
@@ -38,6 +39,84 @@ deployments. Components for the following caching technologies are provided:
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [JBoss Cache](JBoss-Cache-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
+
+### RDBMS Ticket Registries
+RDBMS-based ticket registries provide a distributed ticket store across multiple CAS nodes. Components for the following caching technologies are provided:
+
+* [JPA](JPA-Ticket-Registry.html)
+
+### Ticket Registry Cleaner
+The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementation such as Memcached of Ehcache do not require a registry cleaner.
+
+####Components
+
+#####`RegistryCleaner`
+Strategy interface to denote the start of cleaning the registry.
+
+#####`DefaultTicketRegistryCleaner`
+The default ticket registry cleaner scans the entire CAS ticket registry for expired tickets and removes them.  This process is only required so that the size of the ticket registry will not grow beyond a reasonable size.
+The functionality of CAS is not dependent on a ticket being removed as soon as it is expired. Locking strategies may be used to support high availability environments. In a clustered CAS environment with several CAS nodes executing ticket cleanup, it is desirable to execute cleanup from only one CAS node at a time. 
+
+#####`LockingStrategy`
+Strategy pattern for defining a locking strategy in support of exclusive execution of some process.
+
+#####`NoOpLockingStrategy`
+No-Op locking strategy that allows the use of `DefaultTicketRegistryCleaner` in environments where exclusive access to the registry for cleaning is either unnecessary or not possible.
+
+#####`JpaLockingStrategy`
+JPA 2.0 implementation of an exclusive, non-reentrant lock, to be used with the JPA-backed ticket registry.
+
+####Configuration
+If you're using the default ticket registry configuration, your `/cas-server-webapp/WEB-INF/spring-configuration/ticketRegistry.xml` probably looks like this:
+
+{% highlight xml %}
+<!-- TICKET REGISTRY CLEANER -->
+<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+    p:ticketRegistry-ref="ticketRegistry" />
+
+<bean id="jobDetailTicketRegistryCleaner"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+    p:targetObject-ref="ticketRegistryCleaner"
+    p:targetMethod="clean" />
+
+<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+    p:startDelay="20000"
+    p:repeatInterval="5000000" />
+{% endhighlight %}
+
+If you're using the JPA ticket registry, your configuration should likely be similar to the following:
+
+{% highlight xml %}
+<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+    p:ticketRegistry-ref="ticketRegistry">
+   <property name="lock">
+      <bean class="org.jasig.cas.ticket.registry.support.JdbcLockingStrategy"
+         p:uniqueId="my_unique_machine"
+         p:applicationId="cas"
+         p:dataSource-ref"dataSource" />
+   </property>
+</bean>
+ 
+<bean id="jobDetailTicketRegistryCleaner"
+       class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="ticketRegistryCleaner"
+        p:targetMethod="clean" />
+ 
+<bean id="triggerJobDetailTicketRegistryCleaner" 
+    class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+        p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+        p:startDelay="20000"
+        p:repeatInterval="5000000" />
+{% endhighlight %}
+
+This will configure the cleaner with the following defaults:
+* tableName = "LOCKS"
+* uniqueIdColumnName = "UNIQUE_ID"
+* applicationIdColumnName = "APPLICATION_ID"
+* expirationDataColumnName = "EXPIRATION_DATE"
+* platform = SQL92
+* lockTimeout = 3600 (1 hour)
+
 
 ## Ticket Expiration Policies
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting tickets (TGT) and service tickets (ST). Both TGT and ST expiration policy beans are defined in the `/cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/ticketExpirationPolicies.xml` file in the CAS distribution. 
