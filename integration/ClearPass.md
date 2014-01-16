@@ -44,7 +44,8 @@ Support is enabled by including the following dependency in the Maven WAR overla
        <scope>runtime</scope>
     </dependency>
 
-## Configuration
+
+## Single Node Configuration
 
 ###`AuthenticationMetaDataPopulator` in `deployerConfigContext.xml`
 Uncomment the below element that is responsible for capturing and caching the password:
@@ -120,3 +121,133 @@ Replace:
     <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 with:
     <bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+
+##Multiple Nodes Configuration
+ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a Distributed Ticket Registry like the `MemcacheTicketRegistry` or the `EhcacheTicketRegistry` so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
+
+###EhCache-based Map
+By default ClearPass is setup to use a non-distrbuted EhCache to store its passwords. If you are using the `EhcacheTicketRegistry` you will want to ensure that your ehcacheClearPass.xml file is setup to replicate the ClearPass Ehcache to all your CAS servers. 
+
+####Configuration
+
+#####Sample `clearpass-configuration.xml`
+{% highlight xml %}
+<!--  Credentials Cache implementation -->
+<bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <property name="configLocation" value="file:/etc/cas/clearpass-replicated.xml" />
+    <property name="shared" value="false" />
+    <property name="cacheManagerName" value="clearPassEhCacheManager" />
+</bean>
+
+<bean id="clearPassEhCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+    p:cacheManager-ref="ehCacheManager"
+    p:bootstrapCacheLoader-ref="ticketCacheBootstrapCacheLoader" 
+    p:cacheEventListeners-ref="ticketRMISynchronousCacheReplicator"
+    p:cacheName="org.jasig.cas.extension.clearpass.CACHE"
+    p:timeToIdle="720"
+    p:timeToLive="720" />
+
+<bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
+    <constructor-arg name="replicatePuts" value="true"/> 
+    <constructor-arg name="replicatePutsViaCopy" value="true"/> 
+    <constructor-arg name="replicateUpdates" value="true"/>  
+    <constructor-arg name="replicateUpdatesViaCopy" value="true"/>  
+    <constructor-arg name="replicateRemovals" value="true"/>       
+</bean>
+
+<bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+    <constructor-arg name="asynchronous" value="true"/>  
+    <constructor-arg name="maximumChunkSize" value="5000000"/>  
+</bean>
+
+<bean id="credentialsCache" class="org.jasig.cas3.extensions.clearpass.EhcacheBackedMap">
+    <constructor-arg index="0" ref="clearPassEhCache" />
+</bean>
+
+<bean id="ticketRegistry" class="org.jasig.cas3.extensions.clearpass.TicketRegistryDecorator">
+    <constructor-arg index="0" ref="ticketRegistryValue"/>
+    <constructor-arg index="1" ref="credentialsCache"/>
+</bean>
+
+<!-- implementation of the clear pass vending service -->
+<bean id="clearPassController" class="org.jasig.cas3.extensions.clearpass.ClearPassController">
+    <constructor-arg index="0" ref="credentialsCache" />
+</bean>
+
+<bean id="handlerMappingClearPass" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+    p:alwaysUseFullPath="true">
+	<property name="mappings">
+		<props>
+			<prop key="/clearPass">
+                clearPassController
+            </prop>
+        </props>
+	</property>
+</bean>
+{% endhighlight %}
+
+#####Sample `clearpass-replicated.xml`
+{% highlight xml %}
+<ehcache name="clearPassEhCacheManager" updateCheck="false" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:noNamespaceSchemaLocation="http://ehcache.sf.net/ehcache.xsd">
+
+   <diskStore path="java.io.tmpdir/cas"/>
+	
+	 <cacheManagerPeerProviderFactory 
+                class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+                properties="peerDiscovery=manual,
+                rmiUrls=//10.1.1.123:40002/org.jasig.cas.extension.clearpass.CACHE" />
+   
+   <!-- Port where it listens for peers. Should be different from peer provider port defined above -->
+   <cacheManagerPeerListenerFactory 
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+            properties="port=40002" />
+</ehcache>
+{% endhighlight %}
+
+Note that the above uses manual peer discovery with RMI replication to transfer cached objects that are obtained by ClearPass. The IP addresses need to be changed for each CAS node to point to each other.
+
+###Memcached  Map
+The spymemcached java client includes a Memcached Map implementation called `CacheMap`. 
+
+####Configuration
+
+#####Sample `clearpass-configuration.xml`
+{% highlight xml %}
+<bean id="CPserialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
+    p:compressionThreshold="2048" />
+     
+<bean id="memcachedMap" class="net.spy.memcached.CacheMap">
+  <constructor-arg index="0">
+    <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+          p:servers="memcache1.college.edu:11211,memcache2.college.edu:11211"
+          p:protocol="BINARY"
+          p:locatorType="ARRAY_MOD"
+          p:failureMode="Redistribute"
+          p:transcoder-ref="CPserialTranscoder">
+      <property name="hashAlg">
+        <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.FNV1A_64_HASH" />
+      </property>
+    </bean>
+  </constructor-arg>
+  <!-- this is the timeout for the cache in seconds -->
+  <constructor-arg index="1" value="7200" />
+  <!-- this is the prefix for the keys stored in the map --> 
+  <constructor-arg index="2" value="clearPass_" /> 
+</bean>  
+ 
+<bean id="credentialsCache" class="org.jasig.cas.extension.clearpass.EncryptedMapDecorator">
+  <constructor-arg index="0" ref="memcachedMap" />
+  <!-- Replace the salt and secret key with one of your choosing -->      
+  <constructor-arg index="1" value="salt1234" />
+  <constructor-arg index="2" value="seCretKey0123456" />
+</bean>
+
+<bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator">
+  <constructor-arg index="0" ref="ticketRegistryValue"/>
+  <constructor-arg index="1" ref="credentialsCache"/>
+</bean>
+{% endhighlight %}
+
+Note that if you are using an SSH tunnel for your Memcached connections the Encrypted Map Decorator would not be necessary.
