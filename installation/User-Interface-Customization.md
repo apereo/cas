@@ -26,6 +26,23 @@ standard.custom.css.file=/css/cas.css
 cas.javascript.file=/js/cas.js
 {% endhighlight %}
 
+###CSS per Locale
+Selecting CSS files per enabled locale would involve changing the `top.jsp` file to include the below sample code:
+
+{% highlight jsp %}
+<%
+    String cssFileName = "cas.css"; // default
+    Locale locale = request.getLocale();
+ 
+    if (locale != null && locale.getLanguage() != null){
+       String languageCssFileName = "cas_" + locale.getLanguage() + ".css";
+       cssFileName = languageCssFileName; //ensure this file exists
+    }
+ 
+%>
+<link href="/path/to/css/<%=cssFileName%>" rel="stylesheet" type="text/css"/>
+{% endhighlight %}
+
 ###Responsive Design
 CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file. Below follows an example:
 
@@ -77,3 +94,119 @@ The following JSP tag libraries are used by the user interface:
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 {% endhighlight %}
+
+####Glossary of Views
+- **`casAccountDisabledView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
+
+- **`casAccountLockedView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
+
+- **`casBadHoursView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication within the current time window in the underlying account store (i.e. LDAP)
+
+- **`casBadWorkstationView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication from the current workstation in the underlying account store (i.e. LDAP)
+
+- **`casExpiredPassView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that has expired in the underlying account store (i.e. LDAP)
+
+- **`casMustChangePassView`**  
+Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that must change its password in the underlying account store (i.e. LDAP)
+
+- **`casWarnPassView`**  
+Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
+
+- **`authorizationFailure`**  
+Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
+
+- **`casConfirmView`**  
+Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+
+- **`casGenericSuccess`**  
+Displayed when the user has been logged in without providing a service to be redirected to.
+
+- **`casLoginView`**  
+Main login form.
+
+- **`casLogoutView`**  
+Displayed when the user logs out.
+
+- **`errors`** 
+Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
+
+- **`serviceErrorView`**  
+Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
+
+- **`serviceErrorSsoView`**   
+Displayed when a user would otherwise have experienced noninteractive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
+
+##Localization
+The CAS Web application includes a number of localized message files:
+
+- English (US)
+- Spanish
+- French
+- Russian
+- Netherlands (Nederlands)
+- Swedish (Svenskt)
+- Italian (Italiano)
+- Urdu
+- Chinese (Simplified)
+- Dutch (Deutsch)
+- Japanese
+- Croatian
+- Czech
+- Slovenian
+- Polish
+- Portuguese (Brazil)
+- Turkish
+- Farsi
+- Arabic
+
+In order to "invoke" a specific language for the UI, the `/login` endpoint may be passed a `locale` parameter as such:
+
+    https://cas.server.edu/login?locale=it
+
+###Configuration
+All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there any custom messages that need to be presented into views, they may also be formatted under `custom_messages_xx.properties` files.
+
+Messages are parsed and loaded via the following configuration:
+
+{% highlight xml %}
+<bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
+          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
+          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
+    
+<util:list id="basenames">
+    <value>classpath:custom_messages</value>
+    <value>classpath:messages</value>
+</util:list>
+{% endhighlight %}
+
+Messages are then read on each JSP view via the following sample configuration:
+
+{% highlight jsp %}
+<spring:message code="message.key" />
+{% endhighlight %}
+
+In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
+
+##Themes
+With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
+
+###Components
+Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
+{% highlight xml %}
+<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
+    p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
+    p:servicesManager-ref="servicesManager"
+    p:argumentExtractors-ref="argumentExtractors" />
+{% endhighlight %}
+
+Furthermore, deployers may be able to use the functionality provided by the `` of Spring framework to provide theme configuration per each request. 
+
+###Configuration
+- Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
+- Add the location of related styling files, such as CSS and Javascript in the file above.
+- Specify the name of your theme for the service definition under the `theme` property.
