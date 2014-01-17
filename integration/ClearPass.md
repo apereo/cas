@@ -146,8 +146,11 @@ with:
 Obtain a copy of the [`ticketRegistry.xml`](https://github.com/Jasig/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml) file and place that in your project's `WEB-INF/spring-configuration` directory.
 
 Replace:
+
     <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+
 with:
+
     <bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 
 <a name="MultipleNodesConfiguration">  </a>
