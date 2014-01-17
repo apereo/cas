@@ -3,11 +3,14 @@ layout: default
 title: CAS - Logout & Single Logout
 ---
 
+<a name="Logout">  </a>
 #Logout
 
+<a name="Overview">  </a>
 ##Overview
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter. 
 
+<a name="Configuration">  </a>
 ###Configuration
 The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
 
@@ -18,11 +21,13 @@ The redirect behavior is turned off by default, and is activated via the followi
 
 The specified url must be registered in the service registry of CAS and enabled.
 
+<a name="SingleLogout(SLO)">  </a>
 #Single Logout (SLO)
 CAS is designed to support single sign out. Whenever a Ticket Granting Ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
+<a name="Overview">  </a>
 ##Overview
 When a CAS session ends, it will callback to each of the services (using their _original_ url) that are registered with the system and send a POST request with the following:
 
@@ -35,6 +40,7 @@ When a CAS session ends, it will callback to each of the services (using their _
 
 The session identifier is the same as the CAS Service Ticket which may be sufficiently long to be secure. The session identifier should map back to a session which can be terminated (i.e. deleted from a database, expired, etc.)
 
+<a name="Components">  </a>
 ##Components
 Logout protocol is effectively managed by the `LogoutManagerImpl` component:
 
@@ -46,6 +52,7 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
 </bean>
 {% endhighlight %}
 
+<a name="TurningOffSingleLogout">  </a>
 ##Turning Off Single Logout
 To disable single logout, adjust the following setting in `cas.properties` file:
 
@@ -55,6 +62,7 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 {% endhighlight %}
 
 
+<a name="TicketRegistryBehavior">  </a>
 ###Ticket Registry Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
 
@@ -67,6 +75,7 @@ Furthermore, the default behavior is to issue single sign out callbacks in respo
 
 Note that certain ticket registries don't use or need a registry cleaner. For such registries, the option of having a ticker registry cleaner is entirely done away with and is currently not implemented. With that being absent, you will no longer receive automatic SLO callbacks upon TGT expiration. As such, the only thing that would reach back to the should then be explicit logout requests per the CAS protocol.
 
+<a name="WithTicketRegistryCleaner">  </a>
 ####With `TicketRegistryCleaner`
 1. Single Logout is turned on
 2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired. 
@@ -75,6 +84,7 @@ Note that certain ticket registries don't use or need a registry cleaner. For su
     - If the ticket is already expired, the mechanism will issue the SLO callback.
     - If the ticket is not already expired, it will be marked as expired and the SLO callback will be issued.
 
+<a name="WithoutTicketRegistryCleaner">  </a>
 ####Without `TicketRegistryCleaner`
 1. Single Logout is turned on
 2. There’s no cleaner, so nothing runs in the background or otherwise to “expire” and delete tickets from the registry and thus, no SLO callbacks will be issued automatically. 
