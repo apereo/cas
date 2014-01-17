@@ -204,7 +204,7 @@ Configuration of service-specific themes is backed by the Spring framework and p
     p:argumentExtractors-ref="argumentExtractors" />
 {% endhighlight %}
 
-Furthermore, deployers may be able to use the functionality provided by the `` of Spring framework to provide theme configuration per each request. 
+Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request. 
 
 ###Configuration
 - Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
