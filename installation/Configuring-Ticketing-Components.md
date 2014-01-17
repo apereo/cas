@@ -12,8 +12,7 @@ There are two core configurable ticketing components:
 <a name="TicketRegistry">  </a>
 ## Ticket Registry
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component.
-A cache-backed implementation is recommended for HA deployments, while the default `DefaultTicketRegistry` in-memory
-component may be suitable for small deployments.
+A cache-backed implementation is recommended for HA deployments, while the default `DefaultTicketRegistry` in-memory component may be suitable for small deployments.
 
 <a name="Default(In-Memory)TicketRegistry">  </a>
 ### Default (In-Memory) Ticket Registry
@@ -76,7 +75,7 @@ No-Op locking strategy that allows the use of `DefaultTicketRegistryCleaner` in 
 
 <a name="JpaLockingStrategy">  </a>
 #####`JpaLockingStrategy`
-JPA 2.0 implementation of an exclusive, non-reentrant lock, to be used with the JPA-backed ticket registry.
+JPA 2.0 implementation of awn exclusive, non-reentrant lock, to be used with the JPA-backed ticket registry.
 
 <a name="Configuration">  </a>
 ####Configuration
