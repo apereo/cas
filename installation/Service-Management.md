@@ -300,4 +300,5 @@ The services management webapp is pretty simple to use:
 * click the "Add New Service" link to add a new CAS service
 * click the "edit" link with the pen image (on the right of a CAS service definition) to edit a specific CAS service
 * click the "delete" link with the trash image (on the right of a CAS service definition) to delete a specific CAS service (after a confirmation alert).
+* The app takes advantage of the Infusion Javascript framework in order to add drag&drop functionality onto the screen.
 
