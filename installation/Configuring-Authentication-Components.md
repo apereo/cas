@@ -630,9 +630,7 @@ Login throttling configuration consists of two core components:
 1. A login throttle modeled as a Spring `HandlerInterceptorAdapter` component.
 2. A scheduled task that periodically cleans up state to allow the throttle to relax.
 
-The period of scheduled task execution MUST be less than that defined by `failureRangeInSeconds` for proper throttle
-policy enforcement. For example, if `failureRangeInSeconds` is 3, then the quartz trigger that drives the task would
-be configured for less than 3000 (ms).
+The period of scheduled task execution MUST be less than that defined by `failureRangeInSeconds` for proper throttle policy enforcement. For example, if `failureRangeInSeconds` is 3, then the quartz trigger that drives the task would be configured for less than 3000 (ms).
 
 It is convenient to place Spring configuration for login throttling components in `deployerConfigContext.xml`.
 {% highlight xml %}
