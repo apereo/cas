@@ -64,6 +64,7 @@ on a per-service basis. Only the attributes specified in this field will be rele
 * _Username Attribute_ (`usernameAttribute`) - Name of the attribute that would identify the principal for this service definition only. 
 * _Required Handlers_ (`requiredHandlers`) - Set of authentication handler names that must successfully authenticate credentials in order to access the service.
 * _Attribute Filter_ (`attributeFilter`) - A filter associated with this service to perform additional processing on the allowed attributes at release time.
+* _Logout Type_ (`logoutType`) - Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL` or `LogoutType.FRONT_CHANNEL`. See [this guide](Logout-Single-Signout.html) for more details on logout.
 
 <a name="PersistingRegisteredServiceData">  </a>
 ## Persisting Registered Service Data
