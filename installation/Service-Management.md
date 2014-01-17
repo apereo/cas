@@ -60,8 +60,10 @@ whether the service is able to proxy authentication, not whether the service acc
 * _User Attributes_ (`allowedAttributes`) - Optional field that allows restricting the global set of user attributes
 on a per-service basis. Only the attributes specified in this field will be released.
 * _Ignore Attribute Management_ (`ignoreAttributes`) - True to ignore per-service attribute management, which causes the value of _User Attributes_ (`allowedAttributes`) to be ignored.
-* _Evaluation Order_ (`evaluationOrder`) - Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services;
-evaluation order determines which registration is evaluated first.
+* _Evaluation Order_ (`evaluationOrder`) - Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first.
+* _Username Attribute_ (`usernameAttribute`) - Name of the attribute that would identify the principal for this service definition only. 
+* _Required Handlers_ (`requiredHandlers`) - Set of authentication handler names that must successfully authenticate credentials in order to access the service.
+* _Attribute Filter_ (`attributeFilter`) - A filter associated with this service to perform additional processing on the allowed attributes at release time.
 
 <a name="PersistingRegisteredServiceData">  </a>
 ## Persisting Registered Service Data
@@ -188,6 +190,84 @@ Though, you need at first to configure it according to your environment. Towards
 ### Authentication method
 
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
+
+###Securing Access and Authorization
+Access to the management webapp is controlled via Spring Security. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
+
+####Static List of Users
+By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath. 
+
+{% highlight xml %}
+<sec:user-service id="userDetailsService" 
+   properties="${user.details.file.location:classpath:user-details.properties}" />
+{% endhighlight %}
+
+You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
+
+{% highlight bash %}
+##
+# User details file location that contains list of users
+# who are allowed access to the management webapp:
+# 
+# user.details.file.location = classpath:user-details.properties
+{% endhighlight %}
+
+The format of the file should be as such:
+
+{% highlight bash %}
+# The syntax of each entry should be in the form of:
+# 
+# username=password,grantedAuthority[,grantedAuthority][,enabled|disabled]
+
+# Example:
+# casuser=notused,ROLE_ADMIN
+{% endhighlight %}
+
+####LDAP-managed List of Users
+If you wish allow access to the services management application via an LDAP group/server, open up the `deployerConfigContext` file of the management web application and adjust for the following:
+
+{% highlight xml %}
+<sec:ldap-server id="ldapServer" url="ldap://myserver:13060/"
+                 manager-dn="cn=adminusername,cn=Users,dc=london-scottish,dc=com"
+                 manager-password="mypassword" />
+<sec:ldap-user-service id="userDetailsService" server-ref="ldapServer"
+            group-search-base="cn=Groups,dc=mycompany,dc=com" group-role-attribute="cn"
+            group-search-filter="(uniquemember={0})"
+            user-search-base="cn=Users,dc=mycompany,dc=com"
+            user-search-filter="(uid={0})"/>
+{% endhighlight %}
+
+You will also need to ensure that the `spring-security-ldap` dependency is available to your build at runtime:
+
+{% highlight xml %}
+<dependency>
+   <groupId>org.springframework.security</groupId>
+   <artifactId>spring-security-ldap</artifactId>
+   <version>${spring.security.ldap.version}</version>
+   <exclusions>
+     <exclusion>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-aop</artifactId>
+     </exclusion>
+     <exclusion>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-tx</artifactId>
+     </exclusion>
+     <exclusion>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-beans</artifactId>
+     </exclusion>
+     <exclusion>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-context</artifactId>
+     </exclusion>
+     <exclusion>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-core</artifactId>
+     </exclusion>
+   </exclusions>
+</dependency>
+{% endhighlight %}
 
 <a name="Urlsconfiguration">  </a>
 ### Urls configuration
