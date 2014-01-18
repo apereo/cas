@@ -128,3 +128,73 @@ CAS also uses the [Perf4J framework](http://perf4j.codehaus.org/), that provides
     <appender-ref ref="CoalescingStatistics" />
 </logger>
 {% endhighlight %}
+
+
+###Sample Output
+{% highlight bash %}
+Performance Statistics   2013-12-15 00:19:00 - 2013-12-15 00:20:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+
+Performance Statistics   2013-12-15 00:24:00 - 2013-12-15 00:25:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+CREATE_TICKET_GRANTING_TICKET                        42215.0       42215       42215         0.0           1
+GRANT_SERVICE_TICKET                                 21023.0       21023       21023         0.0           1
+{% endhighlight %}
+
+
+#Audits and Statistics
+CAS uses the [Inspektr framework](https://github.com/dima767/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
+
+##Components
+###`AuditTrailManagementAspect`
+Aspect modularizing management of an audit trail data concern.
+
+###`Slf4jLoggingAuditTrailManager`
+`AuditTrailManager` that dumps auditable information to a configured logger based on SLF4J, at the `INFO` level.
+
+###`JdbcAuditTrailManager`
+`AuditTrailManager` to persist the audit trail to the `AUDIT_TRAIL` table in a rational database.
+
+###`TicketAsFirstParameterResourceResolver`
+`ResourceResolver` that can determine the ticket id from the first parameter of the method call.
+
+###`TicketOrCredentialPrincipalResolver`
+`PrincipalResolver` that can retrieve the username from either the Ticket or from the `Credential`.
+
+##Configuration
+Audit functionality is specifically controlled by the `WEB-INF/spring-configuration/auditTrailContext.xml`. Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
+
+###Database Audits
+By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
+{% highlight xml %}
+<bean id="auditManager" class="com.github.inspektr.audit.support.JdbcAuditTrailManager">
+  <constructor-arg index="0" ref="inspektrTransactionTemplate" />
+  <property name="dataSource" ref="dataSource" />
+  <property name="cleanupCriteria" ref="auditCleanupCriteria" />
+</bean>
+<bean id="auditCleanupCriteria"
+  class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
+  <constructor-arg index="0" value="180" />
+</bean>
+{% endhighlight %}
+
+Refer to [Inspektr documentation](https://github.com/dima767/inspektr/wiki/Inspektr-Auditing) on how to create the database schema.
+
+##Sample Log Output
+{% highlight bash %}
+WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
+WHAT: supplied credentials: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
+ACTION: AUTHENTICATION_SUCCESS
+APPLICATION: CAS
+WHEN: Mon Aug 26 12:35:59 IST 2013
+CLIENT IP ADDRESS: 172.16.5.181
+SERVER IP ADDRESS: 192.168.200.22
+
+WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
+WHAT: TGT-9-qj2jZKQUmu1gQvXNf7tXQOJPOtROvOuvYAxybhZiVrdZ6pCUwW-cas01.example.org
+ACTION: TICKET_GRANTING_TICKET_CREATED
+APPLICATION: CAS
+WHEN: Mon Aug 26 12:35:59 IST 2013
+CLIENT IP ADDRESS: 172.16.5.181
+SERVER IP ADDRESS: 192.168.200.22
+{% endhighlight %}
