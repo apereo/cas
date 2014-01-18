@@ -85,8 +85,44 @@ The following Javascript libraries are utilized by CAS automatically:
 * JQuery UI
 * [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
 
+###Preserving Anchor Fragments
+Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
+
+####Changes to `cas.js`
+{% highlight javascript %}
+/**
+ * Prepares the login form for submission by appending any URI
+ * fragment (hash) to the form action in order to propagate it
+ * through the re-direct (i.e. store it client side).
+ * @param form The login form object.
+ * @returns true to allow the form to be submitted.
+ */
+function prepareSubmit(form) {
+    // Extract the fragment from the browser's current location.
+    var hash = decodeURIComponent(self.document.location.hash);
+ 
+    // The fragment value may not contain a leading # symbol
+    if (hash && hash.indexOf("#") === -1) {
+        hash = "#" + hash;
+    }
+   
+    // Append the fragment to the current action so that it persists to the redirected URL.
+    form.action = form.action + hash;
+    return true;
+}
+{% endhighlight %}
+
+####Changes to Login Form
+
+{% highlight jsp %}
+<form:form method="post" id="fm1" cssClass="fm-v clearfix" 
+        commandName="${commandName}" htmlEscape="true" 
+        onsubmit="return prepareSubmit(this);">
+{% endhighlight %}
+
+
 <a name="JSP">  </a>
-### JSP
+## JSP
 The default views are found at `WEB-INF/view/jsp/default/ui/`.
 
 Notice `top.jsp` and `bottom.jsp` include files located in the `../includes` directory. These serve as the layout template for the other JSP files, which get injected in between during compilation to create a complete HTML page.
