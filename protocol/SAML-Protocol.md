@@ -13,7 +13,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
       <version>${cas.version}</version>
     </dependency>
 
-##SAML 1.1
+#SAML 1.1
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -21,7 +21,7 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
-###Sample Request
+##Sample Request
 {% highlight xml %}
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
@@ -42,7 +42,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
-###Sample Response
+##Sample Response
 {% highlight xml %}
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -107,14 +107,86 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
-##SAML 2 (Google Apps Integration)
+##Configuration
+
+In addition to the `cas-server-support-saml` module dependency, the following 5 steps are required to enabled the SAML 1.1 support.
+
+###`Define the samlValidateController bean and map it to /samlValidate URL via handlerMappingC bean in cas-servlet.xml:`
+{% highlight xml %}
+<bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
+  p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+  p:centralAuthenticationService-ref="centralAuthenticationService"
+  p:proxyHandler-ref="proxy20Handler"
+  p:argumentExtractor-ref="samlArgumentExtractor"
+  p:successView="casSamlServiceSuccessView"
+  p:failureView="casSamlServiceFailureView"/>
+{% endhighlight %}
+
+{% highlight xml %}
+<bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+  <property name="mappings">
+    <props>
+      ...
+      <prop key="/samlValidate">samlValidateController</prop>
+      ...
+{% endhighlight %}
+
+###`Add the servlet mapping for /samlValidate URL in the web.xml file:`
+{% highlight xml %}
+<servlet-mapping>
+  <servlet-name>cas</servlet-name>
+  <url-pattern>/samlValidate</url-pattern>
+</servlet-mapping>
+{% endhighlight %}
+
+###`Add the appropriate SAML arguments extractor in the argumentExtractorsConfiguration.xml file:`
+{% highlight xml %}
+<bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
+
+<util:list id="argumentExtractors">
+  <ref bean="casArgumentExtractor" />
+  <ref bean="samlArgumentExtractor" />
+</util:list>
+{% endhighlight %}
+
+###`Add the SAML ID generator in the uniqueIdGenerators.xml file:`
+{% highlight xml %}
+<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator">
+  <constructor-arg index="0" value="https://localhost:8443" />
+</bean>
+
+<util:map id="uniqueIdGeneratorsMap">
+  <entry
+    key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+    value-ref="serviceTicketUniqueIdGenerator" />
+  <entry
+    key="org.jasig.cas.support.saml.authentication.principal.SamlService"
+    value-ref="samlServiceTicketUniqueIdGenerator" />
+</util:map>
+{% endhighlight %}
+
+###`Add the SAML views in the cas-servlet.xml file:`
+{% highlight xml %}
+<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver" p:order="0">
+  <property name="basenames">
+    <list>
+      <value>${cas.viewResolver.basename}</value>
+      <value>protocol_views</value>
+      <value>saml_views</value>
+    </list>
+  </property>
+</bean>
+{% endhighlight %}
+
+
+#SAML 2 (Google Apps Integration)
 Google Apps utilizes SAML 2 to provide [an integration point for external authentication services](https://developers.google.com/google-apps/sso/saml_reference_implementation). CAS includes an `ArgumentExtractor` and accompanying `Service` to provide process and understand SAML 2 requests from Google.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Though Google Accounts integration is enabled through the use of SAML 2 AuthenticationRequests and Assertions, it may not work with any SAML 2 compliant application. </p></div>
 
-###Configuration
+##Configuration
 
-####Generate DSA/RSA Keys
+###Generate DSA/RSA Keys
 The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions. After you've generated your keys, you will need to register the public key with Google. The keys will also need to be available to the CAS application but not publicly available over the Internet. It is recommended that you place the keys within the classpath (i.e. `WEB-INF/classes`) though any location accessible by the user running the web server instance and not served publicly to the Internet is acceptable. 
 
 {% highlight bash %}
@@ -126,7 +198,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `public.key` and `private.p8` must be in the classpath. The `x509.pem` file should be uploaded into Google Apps.
 
-####Configure CAS Server
+###Configure CAS Server
 Google Accounts integration within CAS is enabled by simply adding an additional `ArgumentExtractor` to the list of `ArgumentExtractors`. You'll need to modify the `WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`, and add the following:
 
 {% highlight xml %}
@@ -153,7 +225,20 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 
 Replace the `public.key` and `private.key` with the names of your key files. If you are using DSA instead of RSA, change the algorithm as appropriate.
 
-####Configure Google
+You'll also need to add a new generator in the `WEB-INF/spring-configuration/uniqueIdGenerators.xml` file:
+{% highlight xml %}
+<util:map id="uniqueIdGeneratorsMap">
+  <entry
+    key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+    value-ref="serviceTicketUniqueIdGenerator" />
+  <entry
+    key="org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService"
+    value-ref="serviceTicketUniqueIdGenerator" />
+</util:map>
+{% endhighlight %}
+
+
+###Configure Google
 You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will be redirected to when they log out of a hosted Google application.
 
 Use the following URLs when you are configuring for Google Apps
@@ -163,12 +248,12 @@ Use the following URLs when you are configuring for Google Apps
     Change password URL: http://whateverServerYouWouldLike
 
 
-####Register Google with CAS
+###Register Google with CAS
 
     Name : Google Apps
     Service URL : https://www.google.com/a/YourGoogleDomain/acs
 
-##Customizing the SAML Artifact
+#Customizing the SAML Artifact
 When constructing an instance of the `SamlCompliantUniqueTicketIdGenerator` available at `cas-server-webapp/WEB-INF/spring-configuration/uniqueIdGenerators.xml`, you may set the `saml2compliant` property to "true" in order to generate SAML2 artifacts. Otherwise SAML1 compliant artifacts are generated.
 {% highlight xml %}
 <bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
@@ -176,7 +261,4 @@ When constructing an instance of the `SamlCompliantUniqueTicketIdGenerator` avai
     <property name="saml2compliant" value="true" />
 </bean>
 {% endhighlight %}
-
-
-
 
