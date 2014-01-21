@@ -59,6 +59,10 @@ public class PasswordPolicyConfiguration {
         this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
+    public int getPasswordWarningNumberOfDays() {
+        return passwordWarningNumberOfDays;
+    }
+
     public void setPasswordWarningNumberOfDays(final int days) {
         this.passwordWarningNumberOfDays = days;
     }
