@@ -139,7 +139,7 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
 </servlet-mapping>
 {% endhighlight %}
 
-###`Add the appropriate SAML arguments extractor in the argumentExtractorsConfiguration.xml file:`
+###`Add the appropriate SAML argument extractor in the argumentExtractorsConfiguration.xml file:`
 {% highlight xml %}
 <bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
 

@@ -347,7 +347,7 @@ Two sections of `login-webflow.xml` require changes:
 
 Change the `credentials` variable declaration as follows:
 {% highlight xml %}
-<var name="credentials" class="org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredentials" />
+<var name="credentials" class="org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential" />
 {% endhighlight %}
 
 Change the `viewLoginForm` action state as follows:
