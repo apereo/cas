@@ -79,11 +79,13 @@ public class DefaultAccountStateHander implements AccountStateHandler {
         final List<Message> messages = new ArrayList<Message>();
         if (state.getWarning() != null) {
             final Calendar expDate = state.getWarning().getExpiration();
-            final Days ttl = Days.daysBetween(new Instant(expDate), Instant.now());
-            messages.add(new PasswordExpiringWarningMessage(
-                    "Password expires in {0} day(s). Please change your password at <href=\"{1}\">{1}</a>",
-                    ttl.getDays(),
-                    configuration.getPasswordPolicyUrl()));
+            final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
+            if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
+                messages.add(new PasswordExpiringWarningMessage(
+                        "Password expires in {0} day(s). Please change your password at <href=\"{1}\">{1}</a>",
+                        ttl.getDays(),
+                        configuration.getPasswordPolicyUrl()));
+            }
         }
         return messages;
     }
