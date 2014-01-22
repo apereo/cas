@@ -50,7 +50,7 @@ RDBMS-based ticket registries provide a distributed ticket store across multiple
 * [JPA](JPA-Ticket-Registry.html)
 
 ### Ticket Generators
-CAS presents a pluggable architecture for generating unique ticket ids for each ticket type. The configuration of each generator is defined at ``. Here's a brief sample:
+CAS presents a pluggable architecture for generating unique ticket ids for each ticket type. The configuration of each generator is defined at `src\main\webapp\WEB-INF\spring-configuration\uniqueIdGenerators.xml`. Here's a brief sample:
 
 {% highlight xml %}
 
@@ -75,6 +75,7 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 {% endhighlight %}
 
 ####Components
+
 #####`UniqueTicketIdGenerator`
 Strategy parent interface that describes operations needed to generate a unique id for a ticket.
 
