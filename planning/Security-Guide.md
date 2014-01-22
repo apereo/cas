@@ -162,23 +162,19 @@ systems including CAS. See the
 [login throttling configuration](../installation/Configuring-Authentication-Components.html#login_throttling)
 section for further information.
 
+###Credential Encryption
+An open source product called [Java Simplified Encryption](http://www.jasypt.org/cli.html)  allows you to replace clear text passwords in files with encrypted strings that are decrypted at run time. Jasypt can be integrated into the Spring configuration framework so that property values are decrypted as the configuration file is loaded.  Jasypt's approach replaces the the property management technique with one that recognizes encrypted strings and decrypts them. This method uses password-based encryption, which means that the system still needs a secret password in order to decrypt our credentials. We don't want to simply move the secret from one file to another, and Jasypt avoids that by passing the key as an environment variable or even directly to the application through a web interface each time it is deployed. 
+
+This ability is beneficial since it removes the need to embed plain-text credentials in configuration files, and allows the adopter to secure keep track of all encrypted settings in source control systems, safely sharing the build configuration with others. Sensitive pieces of data are only restricted to the deployment environment.
+
 <a name="User-DrivenSecurityFeatures">  </a>
 ## User-Driven Security Features
 The following features may be employed to afford some user control of the SSO experience.
 
 <a name="LongTermAuthentication">  </a>
 ### Long Term Authentication
-The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the
-CAS login form to avoid reauthentication for an extended period of time. Long term authentication allows users to elect
-additional convenience at the expense of reduced security. The extent of reduced security is a function of the
-characteristics of the device used to establish a CAS SSO session. A long-term SSO session established from a device
-owned or operated by a single user is marginally less secure than a standard CAS SSO session. The only real concern
-would be the increased lifetime and resulting increased exposure of the CAS ticket-granting ticket. Establishing a
-long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
-The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users,
-even in the face of single sign-out, may increase the likelihood of impersonation. While there are no feasible
-mitagations for improving security of long-term SSO sessions on a shared device, educating users on the inherent risks
-may improve overall security.
+The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the CAS login form to avoid reauthentication for an extended period of time. Long term authentication allows users to elect additional convenience at the expense of reduced security. The extent of reduced security is a function of the characteristics of the device used to establish a CAS SSO session. A long-term SSO session established from a device owned or operated by a single user is marginally less secure than a standard CAS SSO session. The only real concern would be the increased lifetime and resulting increased exposure of the CAS ticket-granting ticket. Establishing a long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
+The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users, even in the face of single sign-out, may increase the likelihood of impersonation. While there are no feasible mitigations for improving security of long-term SSO sessions on a shared device, educating users on the inherent risks may improve overall security.
 
 It is important to note that forced authentication supercedes long term authentication, thus if a service were
 configured for forced authentication, authentication would be required for service access even in the context of a
