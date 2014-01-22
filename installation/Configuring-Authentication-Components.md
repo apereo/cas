@@ -131,6 +131,36 @@ There are some additional handlers for small deployments and special cases:
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 
+##Argument Extractors
+Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
+
+Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
+
+{% highlight xml %}
+<bean id="casArgumentExtractor"	class="org.jasig.cas.web.support.CasArgumentExtractor" />
+
+<util:list id="argumentExtractors">
+	<ref bean="casArgumentExtractor" />
+</util:list>
+{% endhighlight %}
+
+###Components
+
+####`ArgumentExtractor`
+Strategy parent interface that defines operations needed to extract arguments from the http request.
+
+####`CasArgumentExtractor`
+Argument extractor that maps the request based on the specifications of the CAS protocol.
+
+####`GoogleAccountsArgumentExtractor`
+Argument extractor to be used to enable Google Apps integration and SAML v2 specification.
+
+####`SamlArgumentExtractor`
+Argument extractor compliant with SAML v1.1 specification.
+
+####`OpenIdArgumentExtractor`
+Argument extractor compliant with OpenId protocol.
+
 <a name="PrincipalResolution">  </a>
 ## Principal Resolution
 A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting

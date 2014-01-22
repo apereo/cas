@@ -49,6 +49,39 @@ RDBMS-based ticket registries provide a distributed ticket store across multiple
 
 * [JPA](JPA-Ticket-Registry.html)
 
+### Ticket Generators
+CAS presents a pluggable architecture for generating unique ticket ids for each ticket type. The configuration of each generator is defined at ``. Here's a brief sample:
+
+{% highlight xml %}
+<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+        c:maxLength="50" c:suffix="${host.name}" />
+
+<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+    c:maxLength="20" c:suffix="${host.name}" />
+
+<bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+    c:maxLength="30" c:suffix="${host.name}" />
+	
+<bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+    c:maxLength="20" c:suffix="${host.name}" />
+ 
+<util:map id="uniqueIdGeneratorsMap">
+	<entry
+		key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+		value-ref="serviceTicketUniqueIdGenerator" />
+</util:map>
+{% endhighlight %}
+
+####Components
+#####`UniqueTicketIdGenerator`
+Strategy parent interface that describes operations needed to generate a unique id for a ticket.
+
+#####`DefaultUniqueTicketIdGenerator`
+Uses numeric and random string generators to create a unique id, while supporting prefixes for each ticket type, as is outlined by the CAS protocol, as well as a suffix that typically is mapped to the CAS server node identifier in order to indicate which node is the author of this ticket. The latter configuration point helps with troubleshooting and diagnostics in a clustered CAS environment.
+
+#####`SamlCompliantUniqueTicketIdGenerator`
+Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifacts, that is also compliant with the SAML v2 specification.
+ 
 <a name="TicketRegistryCleaner">  </a>
 ### Ticket Registry Cleaner
 The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementation such as Memcached of Ehcache do not require a registry cleaner.
