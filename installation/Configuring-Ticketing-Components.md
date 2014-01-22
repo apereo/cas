@@ -53,6 +53,7 @@ RDBMS-based ticket registries provide a distributed ticket store across multiple
 CAS presents a pluggable architecture for generating unique ticket ids for each ticket type. The configuration of each generator is defined at ``. Here's a brief sample:
 
 {% highlight xml %}
+
 <bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
         c:maxLength="50" c:suffix="${host.name}" />
 
@@ -70,6 +71,7 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 		key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
 		value-ref="serviceTicketUniqueIdGenerator" />
 </util:map>
+
 {% endhighlight %}
 
 ####Components
