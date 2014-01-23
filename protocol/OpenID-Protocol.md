@@ -212,7 +212,9 @@ And finally, we need an applicationContext provider in the *spring-configuration
 <bean id="applicationContextProvider" class="org.jasig.cas.util.ApplicationContextProvider" />
 {% endhighlight %}
 
-#Delegate authentication to an OpenID provider
+***
 
-Using the OpenID protocol, the CAS server can also be configured to delegate the authentication to an [OpenID provider](../integration/Delegate-Authentication.html).
+#Or delegate the authentication to an OpenID provider
+
+Using the OpenID protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
 

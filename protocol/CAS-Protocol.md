@@ -26,20 +26,26 @@ Among all features, the most noticable update between versions 2.0 and 3.0 is th
 <a name="WebFlowDiagram">  </a>
 ## Web flow diagram
 
-![CAS Web flow diagram](../images/cas_flow_diagram.png "CAS Web flow diagram")
+<a href="../images/cas_flow_diagram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
 
 
 <a name="ProxyWebFlowDiagram">  </a>
 ## Proxy web flow diagram
 One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a proxy for another CAS service, transmitting the user identity.
 
-![CAS Proxy web flow diagram](../images/cas_proxy_flow_diagram.jpg "CAS Proxy web flow diagram")
+<a href="../images/cas_proxy_flow_diagram.jpg" target="_blank"><img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" /></a>
 
 
 <a name="OtherProtocols">  </a>
 ## Other protocols
-Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are available as extensions:
+Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are also supported as extensions:
 - [OpenID](../protocol/OpenID-Protocol.html)
 - [OAuth](../protocol/OAuth-Protocol.html)
 - [SAML](../protocol/SAML-Protocol.html)
+
+***
+
+<a name="DelegateAuthenticationCasServer">  </a>
+#Or delegate the authentication to another CAS server
+Using the CAS protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
 
