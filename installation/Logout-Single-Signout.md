@@ -63,7 +63,7 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 
 
 <a name="TicketRegistryBehavior">  </a>
-###Ticket Registry Behavior
+###Ticket Registry Cleaner Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
 
 {% highlight xml %}
