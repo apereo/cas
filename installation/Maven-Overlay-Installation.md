@@ -9,9 +9,10 @@ CAS installation is a fundamentally source-oriented process, and we recommend a
 customizations such as component configuration and UI design.
 The output of a Maven WAR overlay build is a `cas.war` file that can be deployed on a Java servlet container like
 [Tomcat](http://tomcat.apache.org/whichversion.html).
-A simple Maven WAR overlay project is provided for reference and study:
 
-TODO: link to cas-maven-war-overlay project
+A simple Maven WAR overlay project is provided for reference and study:
+[
+https://github.com/UniconLabs/simple-cas-overlay-template](https://github.com/UniconLabs/simple-cas-overlay-template)
 
 The following list of CAS components are those most often customized by deployers:
 
