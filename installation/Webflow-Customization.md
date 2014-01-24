@@ -163,7 +163,7 @@ Adding Spring Web Flow actions typically involves the following steps:
 
 Once the action bean is configured, you may define it inside the `login-webflow.xml`:
 
-{% highlight bash %}
+{% highlight xml %}
 <action-state id="actionStateId">
 	<action bean="customActionBeanId" />
 	<transition on="success" to="doThis" />
