@@ -18,13 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -78,6 +75,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LogoutManager logoutManager;
 
+    private TicketRegistryCleanerHelper registryCleanerHelper = new TicketRegistryCleanerHelper();
+
     /** If the user must be logged out of the services. */
     private boolean logUserOutOfServices = true;
 
@@ -93,23 +92,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
         }
         logger.debug("Acquired lock.  Proceeding with cleanup.");
         try {
-            final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
-            final Collection<Ticket> ticketsInCache;
-            ticketsInCache = this.ticketRegistry.getTickets();
-            for (final Ticket ticket : ticketsInCache) {
-                if (ticket.isExpired()) {
-                    ticketsToRemove.add(ticket);
-                }
-            }
-
-            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
-            for (final Ticket ticket : ticketsToRemove) {
-                // CAS-686: Expire TGT to trigger single sign-out
-                if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout((TicketGrantingTicket) ticket);
-                }
-                this.ticketRegistry.deleteTicket(ticket.getId());
-            }
+            final Collection<Ticket> ticketsInCache = this.ticketRegistry.getTickets();
+            registryCleanerHelper.deleteExpiredTickets(ticketRegistry, logoutManager, ticketsInCache, logUserOutOfServices);
         } finally {
             logger.debug("Releasing ticket cleanup lock.");
             this.lock.release();
