@@ -38,7 +38,6 @@ import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -169,32 +168,33 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         logger.debug("LDAP response: {}", response);
 
         if (response.getResult()) {
-            return doPostAuthentication(upc, response);
+            final List<Message> messageList;
+            if (this.ldapPasswordPolicyConfiguration != null) {
+                logger.debug("Applying password policy to {}", response);
+                messageList = this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
+                        response, ldapPasswordPolicyConfiguration);
+            } else {
+                messageList = Collections.emptyList();
+            }
+            return new HandlerResult(
+                    this,
+                    new BasicCredentialMetaData(credential),
+                    createPrincipal(upc.getUsername(), response.getLdapEntry()),
+                    messageList);
+        } else {
+            // The account state handler may raise exceptions on failure so it should be allowed to process
+            // the response on failure.
+            if (this.ldapPasswordPolicyConfiguration != null) {
+                logger.debug("Applying password policy to {}", response);
+                this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
+                        response, ldapPasswordPolicyConfiguration);
+            }
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials.");
-    }
-
-    protected HandlerResult doPostAuthentication(
-            final UsernamePasswordCredential credential,
-            final AuthenticationResponse response) throws LoginException {
-        List<Message> messageList = Collections.emptyList();
-        if (this.ldapPasswordPolicyConfiguration != null) {
-            final AccountState state = response.getAccountState();
-            if (state != null) {
-                logger.debug("Applying password policy to {}", state);
-                messageList = this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
-                        state, ldapPasswordPolicyConfiguration);
-            }
-        }
-        return new HandlerResult(
-                this,
-                new BasicCredentialMetaData(credential),
-                createPrincipal(credential.getUsername(), response.getLdapEntry()),
-                messageList);
     }
 
     @Override
