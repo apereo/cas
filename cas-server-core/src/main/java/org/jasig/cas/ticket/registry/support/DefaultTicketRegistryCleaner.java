@@ -20,14 +20,9 @@ package org.jasig.cas.ticket.registry.support;
 
 import java.util.Collection;
 
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.RegistryCleaner;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * The default ticket registry cleaner scans the entire CAS ticket registry
@@ -58,27 +53,10 @@ import javax.validation.constraints.NotNull;
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
  */
-public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
+public final class DefaultTicketRegistryCleaner extends AbstractTicketRegistryCleaner {
 
     /** The Commons Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /** The instance of the TicketRegistry to clean. */
-    @NotNull
-    private TicketRegistry ticketRegistry;
-
-    /** Execution locking strategy. */
-    @NotNull
-    private LockingStrategy lock = new NoOpLockingStrategy();
-
-    /** The logout manager. */
-    @NotNull
-    private LogoutManager logoutManager;
-
-    private TicketRegistryCleanerHelper registryCleanerHelper = new TicketRegistryCleanerHelper();
-
-    /** If the user must be logged out of the services. */
-    private boolean logUserOutOfServices = true;
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
@@ -86,58 +64,20 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     public void clean() {
         logger.info("Beginning ticket cleanup.");
         logger.debug("Attempting to acquire ticket cleanup lock.");
-        if (!this.lock.acquire()) {
+        if (!lock.acquire()) {
             logger.info("Could not obtain lock.  Aborting cleanup.");
             return;
         }
         logger.debug("Acquired lock.  Proceeding with cleanup.");
         try {
-            final Collection<Ticket> ticketsInCache = this.ticketRegistry.getTickets();
+            final Collection<Ticket> ticketsInCache = ticketRegistry.getTickets();
             registryCleanerHelper.deleteExpiredTickets(ticketRegistry, logoutManager, ticketsInCache, logUserOutOfServices);
         } finally {
             logger.debug("Releasing ticket cleanup lock.");
-            this.lock.release();
+            lock.release();
         }
 
         logger.info("Finished ticket cleanup.");
     }
 
-
-    /**
-     * @param ticketRegistry The ticketRegistry to set.
-     */
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-
-    /**
-     * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
-     * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.  Use {@link JdbcLockingStrategy}
-     * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
-     * CAS environment.
-     */
-    public void setLock(final LockingStrategy strategy) {
-        this.lock = strategy;
-    }
-
-    /**
-     * Whether to logger users out of services when we remove an expired ticket.  The default is true. Set this to
-     * false to disable.
-     *
-     * @param logUserOutOfServices whether to logger the user out of services or not.
-     */
-    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        this.logUserOutOfServices = logUserOutOfServices;
-    }
-
-    /**
-     * Set the logout manager.
-     *
-     * @param logoutManager the logout manager.
-     */
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
 }

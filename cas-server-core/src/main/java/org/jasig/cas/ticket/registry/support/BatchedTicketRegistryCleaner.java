@@ -19,14 +19,13 @@
 package org.jasig.cas.ticket.registry.support;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.BatchableTicketRegistry;
-import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 /**
@@ -40,30 +39,19 @@ import java.util.Collection;
  * @author Ahsan Rabbani
  * @since 4.0
  */
-public class BatchedTicketRegistryCleaner implements RegistryCleaner {
+public class BatchedTicketRegistryCleaner extends AbstractTicketRegistryCleaner {
 
     /** The Commons Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final int DEFAULT_BATCH_SIZE = 2000;
 
-    /** The instance of the TicketRegistry to clean. */
-    @NotNull
-    private BatchableTicketRegistry ticketRegistry;
-
-    /** Execution locking strategy. */
-    @NotNull
-    private LockingStrategy lock = new NoOpLockingStrategy();
-
-    /** The logout manager. */
-    @NotNull
-    private LogoutManager logoutManager;
-
-    private TicketRegistryCleanerHelper registryCleanerHelper = new TicketRegistryCleanerHelper();
-
-    private boolean logUserOutOfServices = true;
-
     private int batchSize = DEFAULT_BATCH_SIZE;
+
+    @PostConstruct
+    public void init() {
+        Assert.isInstanceOf(BatchableTicketRegistry.class, ticketRegistry, "ticketRegistry must be of type BatchableTicketRegistry");
+    }
 
     @Override
     public void clean() {
@@ -82,7 +70,7 @@ public class BatchedTicketRegistryCleaner implements RegistryCleaner {
                     new BatchedTicketRetriever() {
                         @Override
                         public Collection<Ticket> getBatch(final int offset, final int batchSize) {
-                            return ticketRegistry.getTicketGrantingTicketBatch(offset, batchSize);
+                            return ((BatchableTicketRegistry) ticketRegistry).getTicketGrantingTicketBatch(offset, batchSize);
                         }
                     }
             );
@@ -93,7 +81,7 @@ public class BatchedTicketRegistryCleaner implements RegistryCleaner {
                     new BatchedTicketRetriever() {
                         @Override
                         public Collection<Ticket> getBatch(final int offset, final int batchSize) {
-                            return ticketRegistry.getServiceTicketBatch(offset, batchSize);
+                            return ((BatchableTicketRegistry) ticketRegistry).getServiceTicketBatch(offset, batchSize);
                         }
                     }
             );
@@ -110,7 +98,7 @@ public class BatchedTicketRegistryCleaner implements RegistryCleaner {
         int offset = 0;
         int numTicketsRemoved = 0;
 
-        Collection<Ticket> ticketBatch = null;
+        Collection<Ticket> ticketBatch;
         while (CollectionUtils.isNotEmpty(ticketBatch = ticketRetriever.getBatch(offset, batchSize))) {
             int ticketsRemovedFromBatch = registryCleanerHelper.deleteExpiredTickets(
                     ticketRegistry,
@@ -130,53 +118,12 @@ public class BatchedTicketRegistryCleaner implements RegistryCleaner {
     }
 
     /**
-     * @param ticketRegistry The  ticketRegistry to set.
-     */
-    public void setTicketRegistry(final BatchableTicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-    /**
-     * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
-     * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.  Use {@link JdbcLockingStrategy}
-     * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
-     * CAS environment.
-     */
-    public void setLock(final LockingStrategy strategy) {
-        this.lock = strategy;
-    }
-
-    /**
-     * Whether to log users out of services when we remove an expired ticket.  The default is true. Set this to
-     * false to disable.
-     *
-     * @param logUserOutOfServices whether to log the user out of services or not.
-     */
-    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        this.logUserOutOfServices = logUserOutOfServices;
-    }
-
-    /**
-     * Set the logout manager.
-     *
-     * @param logoutManager the logout manager.
-     */
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
-
-    /**
      * Batch size to use when retrieving tickets from the registry to process. The default is 2000.
      *
      * @param batchSize batch size to use when retrieving tickets from the registry
      */
     public void setBatchSize(final int batchSize) {
         this.batchSize = batchSize;
-    }
-
-    void setRegistryCleanerHelper(final TicketRegistryCleanerHelper registryCleanerHelper) {
-        this.registryCleanerHelper = registryCleanerHelper;
     }
 
 }
