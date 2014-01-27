@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.support;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.joda.time.Days;
 import org.joda.time.Instant;
 import org.ldaptive.auth.AccountState;
+import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
 import org.ldaptive.auth.ext.EDirectoryAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
@@ -69,9 +71,13 @@ public class DefaultAccountStateHander implements AccountStateHandler {
     }
 
     @Override
-    public List<Message> handle(final AccountState state, final LdapPasswordPolicyConfiguration configuration)
+    public List<Message> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
             throws LoginException {
 
+        final AccountState state = response.getAccountState();
+        if (state == null) {
+            return Collections.emptyList();
+        }
         final LoginException error = ERROR_MAP.get(state.getError());
         if (error != null) {
             throw error;
@@ -82,9 +88,16 @@ public class DefaultAccountStateHander implements AccountStateHandler {
             final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
             if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
                 messages.add(new PasswordExpiringWarningMessage(
-                        "Password expires in {0} day(s). Please change your password at <href=\"{1}\">{1}</a>",
+                        "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
                         ttl.getDays(),
                         configuration.getPasswordPolicyUrl()));
+            }
+            if (state.getWarning().getLoginsRemaining() > 0) {
+                messages.add(new Message(
+                        "password.expiration.loginsRemaining",
+                        "You have {0} logins remaining before you MUST change your password.",
+                        state.getWarning().getLoginsRemaining()));
+
             }
         }
         return messages;
