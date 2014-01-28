@@ -40,6 +40,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,19 +201,49 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return this.decoratedMap.containsValue(encryptedValue);
     }
 
+    /**
+     * @throws Exception if decoratedMap#get returns null.  This may occur if there is a communication problem
+     * with the CacheMap server or if the hashedKey was renamed, deleted, or not properly stored in the first place. (CAS-1397)
+     */
     @Override
     public String get(final Object key) {
         final String hashedKey = constructHashedKey(key == null ? null : key.toString());
-        return decrypt(this.decoratedMap.get(hashedKey), hashedKey);
+
+        try {
+            final String hashedValue = this.decoratedMap.get(hashedKey);
+            if (StringUtils.isBlank(hashedValue)) {
+                throw new Exception("Failed to retrieve hashed value for key [" + hashedKey + "]. Get operation returned null.");
+            }
+
+            return decrypt(hashedValue, hashedKey);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
+    /**
+     * @throws Exception if decoratedMap#put failed.  This may occur if there is a communication problem
+     * with the CacheMap server or if the hashedKey could not be stored in the first place. (CAS-1397)
+     */
     @Override
     public String put(final String key, final String value) {
         final String hashedKey = constructHashedKey(key);
         final String hashedValue = encrypt(value, hashedKey);
-        final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
 
-        return decrypt(oldValue, hashedKey);
+        try {
+            final String oldValue = this.decoratedMap.put(hashedKey, hashedValue);
+            if (StringUtils.isBlank(oldValue)) {
+                throw new Exception("Failed to store hashed value for key [" + hashedKey + "]. Put operation returned null.");
+            }
+
+            return decrypt(oldValue, hashedKey);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
     @Override
@@ -262,6 +293,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return hash;
     }
 
+    // CAS-1386
     protected String decrypt(final String value, final String hashedKey) {
         if (value == null) {
             return null;
@@ -308,6 +340,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return encrypt(value, null);
     }
 
+    // CAS-1386
     protected String encrypt(final String value, final String hashedKey) {
         if (value == null) {
             return null;
