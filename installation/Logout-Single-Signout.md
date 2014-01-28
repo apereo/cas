@@ -3,15 +3,30 @@ layout: default
 title: CAS - Logout & Single Logout
 ---
 
-<a name="Logout">  </a>
-#Logout
+<a name="LogoutAndSingleLogout(SLO)"> </a>
+#Logout and Single Logout (SLO)
 
-<a name="Overview">  </a>
-##Overview
+There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
+logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. The scope of logout
+is determined by where the action takes place:
+
+1. Application logout - ends a single application session
+2. CAS logout - ends the CAS SSO session
+
+Note that the logout action in each case has no effect on the other in the simple case. Ending an application session
+does not end the CAS session and ending the CAS session does not affect application sessions. This is a common cause of
+confusion for new users and deployers of an SSO system.
+
+The single logout support in CAS attempts to reconcile the dispartity between CAS logout and application logout. When
+CAS is configured for SLO, it attempts to send logout messages to every application that requested authentication to
+CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
+user experience by creating symmetry between login and logout.
+
+<a name="CASLogout">  </a>
+##CAS Logout
+
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter. 
 
-<a name="Configuration">  </a>
-###Configuration
 The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
 
 {% highlight bash %}
@@ -22,26 +37,31 @@ The redirect behavior is turned off by default, and is activated via the followi
 The specified url must be registered in the service registry of CAS and enabled.
 
 <a name="SingleLogout(SLO)">  </a>
-#Single Logout (SLO)
-CAS is designed to support single sign out. Whenever a Ticket Granting Ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
+##Single Logout (SLO)
+CAS is designed to support single sign out. Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
-<a name="Overview">  </a>
-##Overview
-When a CAS session ends, it will callback to each of the services (using their _original_ url) that are registered with the system and send a POST request with the following:
+When a CAS session ends, it sends an HTTP POST message to each of the services that requested authentiation to CAS
+during the SSO session. The message is delivered to the URL presented in the _service_ parameter of the original CAS
+protocol ticket request. A sample SLO message:
 
 {% highlight xml %}
-<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="[RANDOM ID]" Version="2.0" IssueInstant="[CURRENT DATE/TIME]">
+<samlp:LogoutRequest
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="[RANDOM ID]"
+    Version="2.0"
+    IssueInstant="[CURRENT DATE/TIME]">
     <saml:NameID>@NOT_USED@</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
 </samlp:LogoutRequest>
 {% endhighlight %}
 
-The session identifier is the same as the CAS Service Ticket which may be sufficiently long to be secure. The session identifier should map back to a session which can be terminated (i.e. deleted from a database, expired, etc.)
+The session identifier is the CAS service ticket ID that was provided to the serivce when it originally authenticated
+to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
+session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
 
-<a name="Components">  </a>
-##Components
 Logout protocol is effectively managed by the `LogoutManagerImpl` component:
 
 {% highlight xml %}
@@ -53,7 +73,7 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
 {% endhighlight %}
 
 <a name="TurningOffSingleLogout">  </a>
-##Turning Off Single Logout
+###Turning Off Single Logout
 To disable single logout, adjust the following setting in `cas.properties` file:
 
 {% highlight bash %}
