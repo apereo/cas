@@ -359,7 +359,8 @@ Full-Width Styles
 
 #main_content_wrap {
   background-color: #fff;
-  min-height: 680px;
+  /* Main content min-height is relative to height of navbar. */
+  min-height: 55em;
 }
 
 #main_content {
