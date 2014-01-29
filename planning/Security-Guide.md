@@ -24,12 +24,23 @@ justifications for this requirement:
 Since the disclosure of either data would allow impersonation attacks, it's vitally important to secure the
 communication channel between CAS clients and the CAS server.
 
+Practically, it means that all CAS urls must use HTTPS, but it **also** means that all connections from the CAS server to the application must be done using HTTPS:
+- when the generated service ticket is sent back to the application on the "service" url
+- when a proxy callback url is called.
+
 <a name="ConnectionstoDependentSystems">  </a>
 ### Connections to Dependent Systems
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
 be compensating controls that make secure transport uncessary. Private networks and corporate networks with strict
 acces controls are common exceptions, but secure transport is recommended nonetheless.
+Client certification validation can be another good solution for LDAP to bring sufficient security.
+
+As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes, the same applies to the CAS server itself:
+if an EhCache tickets registry runs without any security issue on a single CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
+
+Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase protection whereas advanced encryption data mechanism should be used for the database disk storage.
+
 
 <a name="Deployment-DrivenSecurityFeatures">  </a>
 ## Deployment-Driven Security Features
