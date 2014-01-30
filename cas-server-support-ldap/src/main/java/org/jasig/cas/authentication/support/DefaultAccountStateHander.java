@@ -20,7 +20,6 @@ package org.jasig.cas.authentication.support;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,31 +74,81 @@ public class DefaultAccountStateHander implements AccountStateHandler {
             throws LoginException {
 
         final AccountState state = response.getAccountState();
-        if (state == null) {
-            return Collections.emptyList();
-        }
-        final LoginException error = ERROR_MAP.get(state.getError());
-        if (error != null) {
-            throw error;
+        final AccountState.Error error;
+        final AccountState.Warning warning;
+        if (state != null) {
+            error = state.getError();
+            warning = state.getWarning();
+        } else {
+            error = null;
+            warning = null;
         }
         final List<Message> messages = new ArrayList<Message>();
-        if (state.getWarning() != null) {
-            final Calendar expDate = state.getWarning().getExpiration();
-            final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
-            if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
-                messages.add(new PasswordExpiringWarningMessage(
-                        "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
-                        ttl.getDays(),
-                        configuration.getPasswordPolicyUrl()));
-            }
-            if (state.getWarning().getLoginsRemaining() > 0) {
-                messages.add(new Message(
-                        "password.expiration.loginsRemaining",
-                        "You have {0} logins remaining before you MUST change your password.",
-                        state.getWarning().getLoginsRemaining()));
-
-            }
-        }
+        handleError(error, response, configuration, messages);
+        handleWarning(warning, response, configuration, messages);
         return messages;
+    }
+
+    /**
+     * Handle an account state error produced by ldaptive account state machinery.
+     * <p>
+     * Override this method to provide custom error handling.
+     *
+     * @param error Account state error.
+     * @param response Ldaptive authentication response.
+     * @param configuration Password policy configuration.
+     * @param messages Container for messages produced by account state error handling.
+     *
+     * @throws LoginException On errors that should be communicated as login exceptions.
+     */
+    protected void handleError(
+            final AccountState.Error error,
+            final AuthenticationResponse response,
+            final LdapPasswordPolicyConfiguration configuration,
+            final List<Message> messages)
+            throws LoginException {
+
+        final LoginException ex = ERROR_MAP.get(error);
+        if (ex != null) {
+            throw ex;
+        }
+    }
+
+
+    /**
+     * Handle an account state warning produced by ldaptive account state machinery.
+     * <p>
+     * Override this method to provide custom warning message handling.
+     *
+     * @param error Account state warning.
+     * @param response Ldaptive authentication response.
+     * @param configuration Password policy configuration.
+     * @param messages Container for messages produced by account state warning handling.
+     */
+    protected void handleWarning(
+            final AccountState.Warning warning,
+            final AuthenticationResponse response,
+            final LdapPasswordPolicyConfiguration configuration,
+            final List<Message> messages) {
+
+        if (warning == null) {
+            return;
+        }
+
+        final Calendar expDate = warning.getExpiration();
+        final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
+        if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
+            messages.add(new PasswordExpiringWarningMessage(
+                    "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
+                    ttl.getDays(),
+                    configuration.getPasswordPolicyUrl()));
+        }
+        if (warning.getLoginsRemaining() > 0) {
+            messages.add(new Message(
+                    "password.expiration.loginsRemaining",
+                    "You have {0} logins remaining before you MUST change your password.",
+                    warning.getLoginsRemaining()));
+
+        }
     }
 }
