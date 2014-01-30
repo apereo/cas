@@ -82,6 +82,10 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     @NotNull
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
+    /** List of additional attributes to be fetched but are not principal attributes. */
+    @NotNull
+    protected List<String> additionalAttributes = Collections.emptyList();
+
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
 
@@ -139,6 +143,18 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
      */
     public void setPrincipalAttributeMap(final Map<String, String> attributeNameMap) {
         this.principalAttributeMap = attributeNameMap;
+    }
+
+    /**
+     * Sets the list of additional attributes to be fetched from the user entry during authentication.
+     * These attributes are <em>not</em> bound to the principal.
+     * <p>
+     * A common use case for these attributes is to support password policy machinery.
+     *
+     * @param additionalAttributes List of operational attributes to fetch when resolving an entry.
+     */
+    public void setAdditionalAttributes(final List<String> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
     }
 
     /**
@@ -262,6 +278,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             attributes.add(this.principalIdAttribute);
         }
         attributes.addAll(this.principalAttributeMap.keySet());
+        attributes.addAll(this.additionalAttributes);
         this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
     }
 }
