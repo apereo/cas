@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Delegate authentication
 ---
+<a name="Overview">  </a>
 #Overview
 The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
@@ -21,6 +22,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ##How to use CAS/OAuth/OpenID client support in CAS applications?
 
+<a name="Informationreturnedbyadelegatedauthentication">  </a>
 ###Information returned by a delegated authentication
 
 Once you have configured (see information below) your CAS server to act as an OAuth, CAS or OpenID client, users will be able to authenticate at a OAuth/CAS/OpenID provider (like Facebook) instead of authenticating directly inside the CAS server.
@@ -86,6 +88,7 @@ FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileHelper.
 
 and then use it in your application!
 
+<a name="Configuration">  </a>
 ##Configuration
 
 ###Add the required pac4j-* libraries
@@ -114,6 +117,7 @@ To add OpenID client support, add the following dependency:
       <version>1.4.1</version>
     </dependency>
 
+<a name="Addtheneededclients">  </a>
 ###Add the needed clients
 
 A provider is a server which can authenticate user (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. Clients classes are defined in the pac4j library.
@@ -167,6 +171,7 @@ To simplify configuration, all clients and the CAS server login url are gathered
 </bean>
 {% endhighlight %}
 
+<a name="Addtheclientactioninwebflow">  </a>
 ###Add the client action in webflow
 
 In the `login-webflow.xml` file, the `ClientAction` must be added at the beginning of the webflow. Its role is to intercept callback calls from providers (like Facebook, Twitter...) after a delegated authentication:
@@ -216,6 +221,7 @@ To be able to finish authenticating users in the CAS server after a remote authe
 </bean>
 {% endhighlight %}
 
+<a name="Addlinksontheloginpagetoauthenticateonremoteproviders">  </a>
 ###Add links on the login page to authenticate on remote providers
 
 To start authentication on a remote provider, these links must be added on the login page `casLoginView.jsp` (*ClientNameUrl* attributes are automatically created by the `ClientAction`):
@@ -235,6 +241,7 @@ To start authentication on a remote provider, these links must be added on the l
 </form>
 {% endhighlight %}
 
+<a name="Demo">  </a>
 ##Demo
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
