@@ -13,7 +13,7 @@
         currentVersion = href.substring(0, index);
       }
 
-      alert(currentVersion);
+      document.title = document.title + " - Version " + currentVersion;
       
       $('a').each(function() {
           var href = this.href;
