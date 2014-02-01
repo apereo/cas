@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: nosidebar
 title: CAS - Mailing Lists
 ---
 <a name="MailingLists">  </a>

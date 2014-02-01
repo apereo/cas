@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: nosidebar
 title: CAS - Support
 ---
 <a name="Support">  </a>

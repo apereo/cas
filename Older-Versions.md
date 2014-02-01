@@ -1,5 +1,5 @@
 ---
-layout: versions
+layout: nosidebar
 title: CAS - Documentation Versions
 ---
 # Older Versions
