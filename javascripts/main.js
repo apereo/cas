@@ -13,6 +13,8 @@
         currentVersion = href.substring(0, index);
       }
 
+      alert(currentVersion);
+      
       $('a').each(function() {
           var href = this.href;
           if (href.indexOf("$version") != -1) {
