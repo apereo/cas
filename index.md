@@ -23,7 +23,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Security Guide](planning/Security-Guide.html)
 * [Maven Overlay Installation](installation/Maven-Overlay-Installation.html)
-* Configuration sections as needed.
+* [UI Customization](installation/User-Interface-Customization.html)
 * [CAS Protocol](protocol/CAS-Protocol.html)
 * [CAS Clients](protocol/CAS-Clients.html)
 * [Attribute Release](integration/Attribute-Release.html)
