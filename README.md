@@ -29,10 +29,18 @@ The changes should be almost immediately available at http://jasig.github.io/cas
 Generating the site to preview changes _before_ commit is encouraged. Install [jekyll](http://jekyllrb.com/) and execute the following command from the documentation root directory:
 
 ```bash
-jekyll build -d /path/to/output/directory
+jekyll build --safe
 ```
 
-Browse to the output directory, e.g. file:///path/to/output/directory, in a browser to preview the generated site.
+Browse to the output directory `_site` in a browser to preview the generated site.
+
+Alternatively, you may also invoke the documentation build script:
+
+```bash
+build.[bat|sh]
+```
+
+The build will auto-generate tags for section headers.
 
 <a name="Troubleshooting">  </a>
 ## Troubleshooting
