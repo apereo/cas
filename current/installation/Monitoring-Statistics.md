@@ -2,6 +2,7 @@
 layout: default
 title: CAS - Monitoring & Statistics
 ---
+<a name="Monitoring">  </a>
 #Monitoring
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
@@ -23,6 +24,7 @@ cas.securityContext.status.allowedSubnet=127.0.0.1
 
 {% endhighlight %}
 
+<a name="SampleOutput">  </a>
 ##Sample Output
 
 {% highlight bash %}
@@ -31,6 +33,7 @@ Health: OK
 	1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+<a name="Statistics">  </a>
 #Statistics
 Furthermore, the `cas-management` web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance:
 

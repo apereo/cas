@@ -2,6 +2,7 @@
 layout: default
 title: CAS - OAuth Protocol
 ---
+<a name="Overview">  </a>
 #Overview
 You can configure the CAS server with OAuth server support, which means that you will be able to communicate with your CAS server through the [OAuth 2.0 protocol](http://oauth.net/2/), using the *Authorization Code* grant type.
 
@@ -25,8 +26,10 @@ Support is enabled by including the following dependency in the Maven WAR overla
     </dependency>
 
 
+<a name="Configuration">  </a>
 #Configuration
 
+<a name="AddtheOAuth20WrapperController">  </a>
 ##Add the OAuth20WrapperController
 
 To add the `OAuth20WrapperController`, you need to add the mapping between the /oauth2.0/* url and the CAS servlet in the *web.xml* file:
@@ -68,8 +71,10 @@ The *loginUrl* is the login url of the CAS server. The timeout is the lifetime o
 </bean>
 {% endhighlight %}
 
+<a name="AddtheneededCASservices">  </a>
 ##Add the needed CAS services
 
+<a name="CallbackAuthorization">  </a>
 ###Callback Authorization
 
 One service is needed to make the OAuth wrapper works in CAS. It defines the callback url after CAS authentication to return to the OAuth wrapper as a CAS service.  
@@ -90,6 +95,7 @@ One service is needed to make the OAuth wrapper works in CAS. It defines the cal
 ...
 {% endhighlight %}
 
+<a name="OAuthClients">  </a>
 ###OAuth Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
@@ -113,6 +119,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 ***
 
+<a name="OrdelegatetheauthenticationtoanOAuthprovider">  </a>
 #Or delegate the authentication to an OAuth provider
 
 Using the OAuth protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OAuth provider (like Facebook, Twitter, Google, Yahoo...)

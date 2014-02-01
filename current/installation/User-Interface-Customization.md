@@ -85,6 +85,7 @@ The following Javascript libraries are utilized by CAS automatically:
 * JQuery UI
 * [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
 
+<a name="PreservingAnchorFragments">  </a>
 ###Preserving Anchor Fragments
 Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
 
@@ -112,6 +113,7 @@ function prepareSubmit(form) {
 }
 {% endhighlight %}
 
+<a name="ChangestoLoginForm">  </a>
 ####Changes to Login Form
 
 {% highlight jsp %}

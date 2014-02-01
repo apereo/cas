@@ -16,6 +16,7 @@ CAS can be integrated with the [Shibboleth federated SSO platform](http://shibbo
 ###Configuration
 
 <a name="IncludeCASClientLibrariesinIfPDeployable">  </a>
+<a name="IncludeCASClientLibrariesinIdPDeployable">  </a>
 ####Include CAS Client Libraries in IdP Deployable
 
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are included in the `./lib` installer folder, then redeploy the Idp with these files:

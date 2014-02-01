@@ -49,6 +49,7 @@ RDBMS-based ticket registries provide a distributed ticket store across multiple
 
 * [JPA](JPA-Ticket-Registry.html)
 
+<a name="TicketGenerators">  </a>
 ### Ticket Generators
 CAS presents a pluggable architecture for generating unique ticket ids for each ticket type. The configuration of each generator is defined at `src\main\webapp\WEB-INF\spring-configuration\uniqueIdGenerators.xml`. Here's a brief sample:
 
@@ -76,12 +77,15 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 
 ####Components
 
+<a name="UniqueTicketIdGenerator">  </a>
 #####`UniqueTicketIdGenerator`
 Strategy parent interface that describes operations needed to generate a unique id for a ticket.
 
+<a name="DefaultUniqueTicketIdGenerator">  </a>
 #####`DefaultUniqueTicketIdGenerator`
 Uses numeric and random string generators to create a unique id, while supporting prefixes for each ticket type, as is outlined by the CAS protocol, as well as a suffix that typically is mapped to the CAS server node identifier in order to indicate which node is the author of this ticket. The latter configuration point helps with troubleshooting and diagnostics in a clustered CAS environment.
 
+<a name="SamlCompliantUniqueTicketIdGenerator">  </a>
 #####`SamlCompliantUniqueTicketIdGenerator`
 Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifacts, that is also compliant with the SAML v2 specification.
  

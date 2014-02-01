@@ -2,6 +2,7 @@
 layout: default
 title: CAS - CAS SAML Protocol
 ---
+<a name="Overview">  </a>
 #Overview
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
@@ -21,6 +22,7 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
+<a name="SampleRequest">  </a>
 ##Sample Request
 {% highlight xml %}
 POST /cas/samlValidate?ticket=
@@ -42,6 +44,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
+<a name="SampleResponse">  </a>
 ##Sample Response
 {% highlight xml %}
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -107,6 +110,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
+<a name="Configuration">  </a>
 ##Configuration
 
 In addition to the `cas-server-support-saml` module dependency, the following 5 steps are required to enabled the SAML 1.1 support.
@@ -179,6 +183,7 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
 {% endhighlight %}
 
 
+<a name="SAML2(GoogleAppsIntegration)">  </a>
 #SAML 2 (Google Apps Integration)
 Google Apps utilizes SAML 2 to provide [an integration point for external authentication services](https://developers.google.com/google-apps/sso/saml_reference_implementation). CAS includes an `ArgumentExtractor` and accompanying `Service` to provide process and understand SAML 2 requests from Google.
 
@@ -186,6 +191,7 @@ Google Apps utilizes SAML 2 to provide [an integration point for external authen
 
 ##Configuration
 
+<a name="GenerateDSA/RSAKeys">  </a>
 ###Generate DSA/RSA Keys
 The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions. After you've generated your keys, you will need to register the public key with Google. The keys will also need to be available to the CAS application but not publicly available over the Internet. It is recommended that you place the keys within the classpath (i.e. `WEB-INF/classes`) though any location accessible by the user running the web server instance and not served publicly to the Internet is acceptable. 
 
@@ -198,6 +204,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `public.key` and `private.p8` must be in the classpath. The `x509.pem` file should be uploaded into Google Apps.
 
+<a name="ConfigureCASServer">  </a>
 ###Configure CAS Server
 Google Accounts integration within CAS is enabled by simply adding an additional `ArgumentExtractor` to the list of `ArgumentExtractors`. You'll need to modify the `WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`, and add the following:
 
@@ -238,6 +245,7 @@ You'll also need to add a new generator in the `WEB-INF/spring-configuration/uni
 {% endhighlight %}
 
 
+<a name="ConfigureGoogle">  </a>
 ###Configure Google
 You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will be redirected to when they log out of a hosted Google application.
 
@@ -248,11 +256,13 @@ Use the following URLs when you are configuring for Google Apps
     Change password URL: http://whateverServerYouWouldLike
 
 
+<a name="RegisterGooglewithCAS">  </a>
 ###Register Google with CAS
 
     Name : Google Apps
     Service URL : https://www.google.com/a/YourGoogleDomain/acs
 
+<a name="CustomizingtheSAMLArtifact">  </a>
 #Customizing the SAML Artifact
 When constructing an instance of the `SamlCompliantUniqueTicketIdGenerator` available at `cas-server-webapp/WEB-INF/spring-configuration/uniqueIdGenerators.xml`, you may set the `saml2compliant` property to "true" in order to generate SAML2 artifacts. Otherwise SAML1 compliant artifacts are generated.
 {% highlight xml %}

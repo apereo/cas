@@ -3,6 +3,7 @@ layout: default
 title: CAS - CAS Protocol
 ---
 <a name="CasProtocol">  </a>
+<a name="CASprotocol">  </a>
 # CAS protocol
 The CAS protocol is a simple and powerful ticket-based protocol developed exclusively for CAS. A complete protocol specification may be found at [http://www.jasig.org/cas/protocol](http://www.jasig.org/cas/protocol).
 
@@ -24,12 +25,14 @@ Among all features, the most noticable update between versions 2.0 and 3.0 is th
 
 
 <a name="WebFlowDiagram">  </a>
+<a name="Webflowdiagram">  </a>
 ## Web flow diagram
 
 <a href="../images/cas_flow_diagram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
 
 
 <a name="ProxyWebFlowDiagram">  </a>
+<a name="Proxywebflowdiagram">  </a>
 ## Proxy web flow diagram
 One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a proxy for another CAS service, transmitting the user identity.
 
@@ -37,6 +40,7 @@ One of the most powerful feature of the CAS protocol is the ability for a CAS se
 
 
 <a name="OtherProtocols">  </a>
+<a name="Otherprotocols">  </a>
 ## Other protocols
 Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are also supported as extensions:
 - [OpenID](../protocol/OpenID-Protocol.html)
@@ -46,6 +50,7 @@ Even if the primary goal of the CAS server is to implement the CAS protocol, oth
 ***
 
 <a name="DelegateAuthenticationCasServer">  </a>
+<a name="OrdelegatetheauthenticationtoanotherCASserver">  </a>
 #Or delegate the authentication to another CAS server
 Using the CAS protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
 
