@@ -147,7 +147,7 @@ store the ticket on exactly 1 node and use a deterministic algorithm to locate t
 
     N' = f(h(T), N1, N2, N3, ... Nm)
 
-where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes, and _N'_ ∈ _N ... Nm_.
+where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes, and _N'_ is member of _N ... Nm_.
 
 These sorts of cache systems do not require replication and generally provide for simplicity at the expense of some
 durability.

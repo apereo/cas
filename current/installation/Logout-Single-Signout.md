@@ -109,7 +109,7 @@ Note that certain ticket registries don't use or need a registry cleaner. For su
 <a name="WithoutTicketRegistryCleaner">  </a>
 ####Without `TicketRegistryCleaner`
 1. Single Logout is turned on
-2. Thereâ€™s no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically. 
+2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically. 
 2. A logout request is received by CAS
 3. CAS will locate the TGT and will attempt to destroy the SSO session.
 4. In destroying the ticket, CAS will:

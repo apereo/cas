@@ -183,7 +183,7 @@ Once the action bean is configured, you may define it inside the `login-webflow.
 Adding Spring Web Flow views involves the following steps:
 
 - Add to `default_views.properties`
-- Viewâ€™s name directly referenced from the flow definition file
+- The name of the view directly referenced from the flow definition file
 
 A sample is presented here:
 
