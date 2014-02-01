@@ -5,7 +5,7 @@
 
       if (index == -1) {
   	  	var uri = new URI(document.location);
-  	  	currentVersion = uri.segment(0);
+  	  	currentVersion = uri.segment(1);
   	  } else {
         href = href.substring(index + 7);
         index = href.indexOf("/");
