@@ -7,7 +7,18 @@ $(function(){
       if (index == -1) {
       	var uri = new URI(document.location);
   	  	currentVersion = uri.segment(1);
-  	  	$("#sidebartoc").load("/cas/" + currentVersion + "/sidebar.html");
+
+  	  	var prefix = "/cas/" + currentVersion;
+  	  	$("#sidebartoc").load(prefix + "/sidebar.html");
+
+  	  	$('a').each(function() {
+          var href = this.href;
+          if (href.indexOf("$version") != -1) {
+            href = href.replace("$version", prefix);
+            $(this).attr('href', href);
+          }
+      	});
+
   	  } else {
         href = href.substring(index + 7);
         index = href.indexOf("/");
