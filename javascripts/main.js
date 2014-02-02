@@ -18,16 +18,14 @@ function getActiveDocumentationVersionInView() {
 }
 
 function loadSidebarForActiveVersion() {
-	var uri = new URI(document.location);
-	$("#sidebartoc").load("/" + uri.segment(0) + "/" + getActiveDocumentationVersionInView() + "/sidebar.html");
+	$("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
 }
 
 function generateSidebarLinksForActiveVersion() {
-	var uri = new URI(document.location);
 	$('a').each(function() {
 		var href = this.href;
 		if (href.indexOf("$version") != -1) {
-			href = href.replace("$version", uri.segment(0) "/" + getActiveDocumentationVersionInView());
+			href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
 			$(this).attr('href', href);
 		}
   	});
