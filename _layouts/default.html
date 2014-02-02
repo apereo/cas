@@ -41,7 +41,10 @@
       <!-- SIDEBAR -->
       <div id="sidebar_wrap" class="outer">
         <header id="sidebar_content" class="inner">
-          {% include sidebar.html %}
+          <span id="sidebartoc"></span>
+          <script>
+            $("#sidebartoc").load("current/sidebar.html");
+          </script>
         </header >
       </div>
 
@@ -55,7 +58,7 @@
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p>CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a></p>
+        <p>CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.</p>
       </footer>
     </div>
   </body>
