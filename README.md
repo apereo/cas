@@ -42,6 +42,16 @@ build.[bat|sh]
 
 The build will auto-generate tags for section headers.
 
+## Site Structure
+The documentation site is composed of the following blocks:
+
+- Each version of the documentation is moved to an appropriately named folder (i.e. `4.0.0`)
+- Each version contains its own version of the sidebar TOC. While the TOC is designed to be included in the default
+Jekyll layout, the site will load the appropriate version of the TOC on `jasig.github.io/cas`.
+- The `current` folder contains the version of the documentation in development
+- Developer-related documentation is hosted at the root under the `developer` directory
+- The root `index.html` always points to the `current\index.html` page.
+
 <a name="Troubleshooting">  </a>
 ## Troubleshooting
 If you have trouble getting jekyll to build, try the following:
