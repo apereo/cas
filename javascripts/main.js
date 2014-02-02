@@ -30,4 +30,4 @@ function generateSidebarLinksForActiveVersion() {
 
 $(function() {
 	loadSidebarForActiveVersion();
-}
+});
