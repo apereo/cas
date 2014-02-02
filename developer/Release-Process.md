@@ -1,5 +1,5 @@
 ---
-layout: nosidebar
+layout: default
 title: CAS - Release Process
 ---
 
