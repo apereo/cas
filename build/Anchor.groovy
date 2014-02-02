@@ -68,7 +68,7 @@ class Anchor {
                 }
 
                 if (line.startsWith('#') && codeBlockCount == 0) {
-                    def title = line.substring(line.lastIndexOf('#') + 1).trim().replaceAll("`| ", "")
+                    def title = line.substring(line.lastIndexOf('#') + 1).trim().replaceAll("`| |\"", "")
 
 
                     log.info("Found section header: " + title)
