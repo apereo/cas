@@ -6,7 +6,7 @@ function getActiveDocumentationVersionInView() {
     if (index == -1) {
 		var uri = new URI(document.location);
 
-		if (uri.segment(1) != null) {
+		if (uri.filename() != uri.segment(1)) {
 	  		currentVersion = uri.segment(1);
 		}
 	  } else {
