@@ -5,7 +5,10 @@ function getActiveDocumentationVersionInView() {
 
     if (index == -1) {
 		var uri = new URI(document.location);
-	  	currentVersion = uri.segment(1);
+
+		if (uri.segment(1) != null) {
+	  		currentVersion = uri.segment(1);
+		}
 	  } else {
 		href = href.substring(index + 7);
 		index = href.indexOf("/");
@@ -15,14 +18,16 @@ function getActiveDocumentationVersionInView() {
 }
 
 function loadSidebarForActiveVersion() {
-	$("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
+	var uri = new URI(document.location);
+	$("#sidebartoc").load("/" + uri.segment(0) + "/" + getActiveDocumentationVersionInView() + "/sidebar.html");
 }
 
 function generateSidebarLinksForActiveVersion() {
+	var uri = new URI(document.location);
 	$('a').each(function() {
 		var href = this.href;
 		if (href.indexOf("$version") != -1) {
-			href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
+			href = href.replace("$version", uri.segment(0) "/" + getActiveDocumentationVersionInView());
 			$(this).attr('href', href);
 		}
   	});
