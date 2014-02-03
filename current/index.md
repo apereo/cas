@@ -25,5 +25,5 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Maven Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [UI Customization](installation/User-Interface-Customization.html)
 * [CAS Protocol](protocol/CAS-Protocol.html)
-* [CAS Clients](protocol/CAS-Clients.html)
+* [CAS Clients](integration/CAS-Clients.html)
 * [Attribute Release](integration/Attribute-Release.html)
