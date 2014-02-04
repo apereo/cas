@@ -116,4 +116,25 @@ Note that certain ticket registries don't use or need a registry cleaner. For su
     - Ask the ticket to expire itself, which will issue SLO callbacks.
     - Delete the ticket from the registry
 
- 
+## SSO Session vs. Application Session
+In order to better understand the SSO session management of CAS and how it regards application sessions, one important note is to be first and foremost considered:
+
+<div class="alert alert-info"><strong>CAS is NOT a session manager</strong><p>Application session is the responsibility of the application.</p></div>
+
+CAS wants to maintain and control the SSO session in the form of
+the `TicketGrantingTicket` and a TGT id which is shared between the
+user-agent and the CAS server in the form of a secure cookie.
+
+CAS is not an application session manager in that it is the
+responsibility of the applications to maintain and control their own
+application sessions.  Once authentication is completed, CAS is
+typically out of the picture in terms of the application sessions. Therefore, the expiration policy
+of the application session itself is entirely independent of CAS and may be loosely coordinated
+and adjusted depending on the ideal user experience in the event that the application session expires.
+
+In the event that Single Logout is not activated, typically, application may expose a logout endpoint in order to destroy the session and next, redirect
+the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well. 
+
+Here's a brief diagram that demonstrates various application session configuration and interactions with CAS:
+
+![](http://i.imgur.com/0XyuLgz.png)
