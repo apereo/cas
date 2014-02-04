@@ -21,6 +21,7 @@ package org.jasig.cas.authentication;
 import java.util.Collection;
 
 import org.jasig.cas.util.LdapTestUtils;
+import org.jasig.cas.util.LdapUtils;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -81,7 +82,7 @@ public class AbstractLdapTests {
             connection.open();
             LdapTestUtils.createLdapEntries(connection, this.directoryType, this.testEntries);
         } finally {
-            connection.close();
+            LdapUtils.closeConnection(connection);
         }
     }
 
@@ -95,7 +96,7 @@ public class AbstractLdapTests {
             connection.open();
             LdapTestUtils.removeLdapEntries(connection, this.testEntries);
         } finally {
-            connection.close();
+        	LdapUtils.closeConnection(connection);
         }
     }
 
