@@ -57,7 +57,7 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
         try {
             return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
         } finally {
-        	LdapUtils.closeConnection(conn);
+            LdapUtils.closeConnection(conn);
         }
     }
 

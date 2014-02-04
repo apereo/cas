@@ -136,34 +136,34 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
     protected List<IPersonAttributes> getPeopleForQuery(final SearchFilter filter, final String userName) {
         Connection connection = null;
         try {
-	        try {
-	            connection = this.connectionFactory.getConnection();
-	        } catch (final LdapException e) {
-	            throw new RuntimeException("Failed getting LDAP connection", e);
-	        }
-	        final Response<SearchResult> response;
-	        try {
-	            response = new SearchOperation(connection).execute(createRequest(filter));
-	        } catch (final LdapException e) {
-	            throw new RuntimeException("Failed executing LDAP query " + filter, e);
-	        }
-	        final SearchResult result = response.getResult();
-	        final List<IPersonAttributes> peopleAttributes = new ArrayList<IPersonAttributes>(result.size());
-	        for (final LdapEntry entry : result.getEntries()) {
-	            final IPersonAttributes person;
-	            final String userNameAttribute = this.getConfiguredUserNameAttribute();
-	            final Map<String, List<Object>> attributes = convertLdapEntryToMap(entry);
-	            if (attributes.containsKey(userNameAttribute)) {
-	                person = new CaseInsensitiveAttributeNamedPersonImpl(userNameAttribute, attributes);
-	            } else {
-	                person = new CaseInsensitiveNamedPersonImpl(userName , attributes);
-	            }
-	            peopleAttributes.add(person);
-	        }
+            try {
+                connection = this.connectionFactory.getConnection();
+            } catch (final LdapException e) {
+                throw new RuntimeException("Failed getting LDAP connection", e);
+            }
+            final Response<SearchResult> response;
+            try {
+                response = new SearchOperation(connection).execute(createRequest(filter));
+            } catch (final LdapException e) {
+                throw new RuntimeException("Failed executing LDAP query " + filter, e);
+            }
+            final SearchResult result = response.getResult();
+            final List<IPersonAttributes> peopleAttributes = new ArrayList<IPersonAttributes>(result.size());
+            for (final LdapEntry entry : result.getEntries()) {
+                final IPersonAttributes person;
+                final String userNameAttribute = this.getConfiguredUserNameAttribute();
+                final Map<String, List<Object>> attributes = convertLdapEntryToMap(entry);
+                if (attributes.containsKey(userNameAttribute)) {
+                    person = new CaseInsensitiveAttributeNamedPersonImpl(userNameAttribute, attributes);
+                } else {
+                    person = new CaseInsensitiveNamedPersonImpl(userName , attributes);
+                }
+                peopleAttributes.add(person);
+            }
 
-	        return peopleAttributes;
+            return peopleAttributes;
         } finally {
-        	LdapUtils.closeConnection(connection);
+            LdapUtils.closeConnection(connection);
         }
     }
 
