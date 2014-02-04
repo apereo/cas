@@ -64,7 +64,7 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
      * @return  Status with code {@link StatusCode#OK} on success otherwise {@link StatusCode#ERROR}.
      */
     @Override
-	public Status observe() {
+    public Status observe() {
         Connection conn = null;
         try {
             conn = this.connectionFactory.getConnection();
@@ -75,7 +75,7 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
         } catch (final LdapException e) {
             logger.warn("Validation failed with error.", e);
         } finally {
-        	LdapUtils.closeConnection(conn);
+            LdapUtils.closeConnection(conn);
         }
         return ERROR;
     }
