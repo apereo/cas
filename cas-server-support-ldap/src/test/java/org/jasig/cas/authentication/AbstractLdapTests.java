@@ -96,7 +96,7 @@ public class AbstractLdapTests {
             connection.open();
             LdapTestUtils.removeLdapEntries(connection, this.testEntries);
         } finally {
-        	LdapUtils.closeConnection(connection);
+            LdapUtils.closeConnection(connection);
         }
     }
 
