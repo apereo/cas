@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -62,7 +63,8 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
      *
      * @return  Status with code {@link StatusCode#OK} on success otherwise {@link StatusCode#ERROR}.
      */
-    public Status observe() {
+    @Override
+	public Status observe() {
         Connection conn = null;
         try {
             conn = this.connectionFactory.getConnection();
@@ -73,9 +75,7 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
         } catch (final LdapException e) {
             logger.warn("Validation failed with error.", e);
         } finally {
-            if (conn != null && conn.isOpen()) {
-                conn.close();
-            }
+        	LdapUtils.closeConnection(conn);
         }
         return ERROR;
     }
