@@ -44,7 +44,7 @@ import org.ldaptive.auth.AuthenticationResponse;
  *
  * @author Marvin S. Addison
  */
-public class OptionalWarningAccountStateHandler extends DefaultAccountStateHander {
+public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
 
     /** Name of user attribute that describes whether or not to display expiration warnings. */
     @NotNull
