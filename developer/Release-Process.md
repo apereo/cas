@@ -67,6 +67,10 @@ mvn -DreleaseVersion=x.y.z -DdevelopmentVersion=a.b.c release:prepare
 
 <a name="PerformingtheRelease">  </a>
 ##Performing the Release
+{% highlight bash %}
+mvn release:perform
+{% endhighlight %}
+
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
@@ -91,7 +95,7 @@ Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard
 
 <a name="PostRelease">  </a>
 ##Post Release
-<div class="alert alert-warning"><strong>GA Releases</strong><p>The following steps should only be executed for public releases.</p></div>
+<div class="alert alert-warning"><strong>GA Releases</strong><p>The following steps should only be executed for public GA releases.</p></div>
 
 - Check out source from generated branch/tag
 - Build the assembly using the following command:
