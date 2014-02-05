@@ -47,7 +47,7 @@ import org.ldaptive.control.PasswordPolicyControl;
  *
  * @author Marvin S. Addison
  */
-public class DefaultAccountStateHander implements AccountStateHandler {
+public class DefaultAccountStateHandler implements AccountStateHandler {
 
     /** Map of account state error to CAS authentication exception. */
     private static final Map<AccountState.Error, LoginException> ERROR_MAP;
