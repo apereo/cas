@@ -183,28 +183,20 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         }
         logger.debug("LDAP response: {}", response);
 
+        final List<Message> messageList;
+        if (this.ldapPasswordPolicyConfiguration != null) {
+            logger.debug("Applying password policy to {}", response);
+            messageList = this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
+                    response, ldapPasswordPolicyConfiguration);
+        } else {
+            messageList = Collections.emptyList();
+        }
         if (response.getResult()) {
-            final List<Message> messageList;
-            if (this.ldapPasswordPolicyConfiguration != null) {
-                logger.debug("Applying password policy to {}", response);
-                messageList = this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
-                        response, ldapPasswordPolicyConfiguration);
-            } else {
-                messageList = Collections.emptyList();
-            }
             return new HandlerResult(
                     this,
                     new BasicCredentialMetaData(credential),
                     createPrincipal(upc.getUsername(), response.getLdapEntry()),
                     messageList);
-        } else {
-            // The account state handler may raise exceptions on failure so it should be allowed to process
-            // the response on failure.
-            if (this.ldapPasswordPolicyConfiguration != null) {
-                logger.debug("Applying password policy to {}", response);
-                this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
-                        response, ldapPasswordPolicyConfiguration);
-            }
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
