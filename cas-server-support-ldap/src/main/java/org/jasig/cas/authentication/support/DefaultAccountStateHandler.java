@@ -41,6 +41,8 @@ import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
 import org.ldaptive.auth.ext.EDirectoryAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default account state handler.
@@ -48,6 +50,9 @@ import org.ldaptive.control.PasswordPolicyControl;
  * @author Marvin S. Addison
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
+
+    /** Logger instance. */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Map of account state error to CAS authentication exception. */
     private static final Map<AccountState.Error, LoginException> ERROR_MAP;
@@ -80,6 +85,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             error = state.getError();
             warning = state.getWarning();
         } else {
+            logger.debug("Account state not defined");
             error = null;
             warning = null;
         }
@@ -108,10 +114,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<Message> messages)
             throws LoginException {
 
+        logger.debug("Handling {}", error);
         final LoginException ex = ERROR_MAP.get(error);
         if (ex != null) {
             throw ex;
         }
+        logger.debug("No LDAP error mapping defined for {}", error);
     }
 
 
@@ -132,11 +140,16 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<Message> messages) {
 
         if (warning == null) {
+            logger.debug("Account state warning not defined");
             return;
         }
 
         final Calendar expDate = warning.getExpiration();
         final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
+        logger.debug(
+                "Password expires in {} days. Expiration warning threshold is {} days.",
+                ttl.getDays(),
+                configuration.getPasswordWarningNumberOfDays());
         if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
             messages.add(new PasswordExpiringWarningMessage(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
