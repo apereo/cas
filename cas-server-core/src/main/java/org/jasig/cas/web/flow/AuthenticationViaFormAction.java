@@ -138,8 +138,8 @@ public class AuthenticationViaFormAction {
             WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
             putWarnCookieIfRequestParameterPresent(context);
             final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
-            for (Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
-                for (Message message : entry.getValue().getWarnings()) {
+            for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
+                for (final Message message : entry.getValue().getWarnings()) {
                     addWarningToContext(messageContext, message);
                 }
             }
