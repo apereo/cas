@@ -30,6 +30,13 @@
 	<packaging>jar</packaging>
 	<name>Jasig CAS LDAP Support</name>
 
+  <repositories>
+    <repository>
+      <id>vt-middleware</id>
+      <url>https://raw.github.com/vt-middleware/maven-repo/master</url>
+    </repository>
+  </repositories>
+
   <developers>
     <developer>
       <id>serac</id>
