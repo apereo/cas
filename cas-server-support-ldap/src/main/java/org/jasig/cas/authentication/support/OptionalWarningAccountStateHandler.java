@@ -43,6 +43,7 @@ import org.ldaptive.auth.AuthenticationResponse;
  * returned from the LDAP query for user details.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
 
