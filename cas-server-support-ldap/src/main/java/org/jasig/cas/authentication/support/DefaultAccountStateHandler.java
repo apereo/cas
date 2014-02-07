@@ -150,7 +150,8 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 "Password expires in {} days. Expiration warning threshold is {} days.",
                 ttl.getDays(),
                 configuration.getPasswordWarningNumberOfDays());
-        if (ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
+        if (configuration.isAlwaysDisplayPasswordExpirationWarning()
+                || ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
             messages.add(new PasswordExpiringWarningMessage(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
                     ttl.getDays(),
