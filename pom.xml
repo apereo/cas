@@ -842,7 +842,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-integration-ehcache</module>
     <module>cas-server-integration-restlet</module>
     <module>cas-server-uber-webapp</module>
-    <module>cas-server-documentation</module>
     <module>cas-server-extension-clearpass</module>
     <module>cas-management-webapp</module>
   </modules>
