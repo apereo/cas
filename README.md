@@ -16,7 +16,10 @@ CAS provides enterprise single sign-on service:
 - An extensive community of adopters
 
 ## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png)](http://travis-ci.org/Jasig/cas)
-It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. This approach does not require the adopter to *explicitly* download any version of CAS, but rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local customozations to further ease future upgrades and maintenance.
+It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
+This approach does not require the adopter to *explicitly* download any version of CAS, but 
+rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
+customizations to further ease future upgrades and maintenance.
 
 ## Download
 - Binary releases may be downloaded from [here](http://www.jasig.org/cas/download).
