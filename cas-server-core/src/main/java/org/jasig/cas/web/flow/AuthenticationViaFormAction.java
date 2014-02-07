@@ -39,8 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.binding.message.MessageCriteria;
-import org.springframework.binding.message.Severity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -88,6 +86,9 @@ public class AuthenticationViaFormAction {
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
+
+    /** Flag indicating whether message context contains warning messages. */
+    private boolean hasWarningMessages;
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -143,7 +144,7 @@ public class AuthenticationViaFormAction {
                     addWarningToContext(messageContext, message);
                 }
             }
-            if (hasWarningMessages(messageContext)) {
+            if (this.hasWarningMessages) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(SUCCESS);
@@ -220,23 +221,6 @@ public class AuthenticationViaFormAction {
                 .defaultText(warning.getDefaultMessage())
                 .args(warning.getParams());
         context.addMessage(builder.build());
-    }
-
-    /**
-     * Determines whether the message context contains warning messages.
-     *
-     * @param context Message context.
-     *
-     * @return True if context contains warning messages, false otherwise.
-     */
-    private boolean hasWarningMessages(final MessageContext context) {
-        final org.springframework.binding.message.Message[] warnings = context.getMessagesByCriteria(
-            new MessageCriteria() {
-                @Override
-                public boolean test(final org.springframework.binding.message.Message message) {
-                    return message.getSeverity() == Severity.WARNING;
-                }
-            });
-        return warnings.length > 0;
+        this.hasWarningMessages = true;
     }
 }
