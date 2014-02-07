@@ -29,6 +29,7 @@ import org.ldaptive.auth.AuthenticationResponse;
  * Strategy pattern for handling directory-specific account state data.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public interface AccountStateHandler {
     /**

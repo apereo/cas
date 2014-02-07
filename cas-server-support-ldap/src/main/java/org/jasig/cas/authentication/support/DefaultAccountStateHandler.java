@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * Default account state handler.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
 

@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
  * LDAP-specific password policy configuration container.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
