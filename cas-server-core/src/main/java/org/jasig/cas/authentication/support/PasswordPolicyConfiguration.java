@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
- * @version 4.0.0
+ * @since 4.0.0
  */
 public class PasswordPolicyConfiguration {
 
