@@ -1,0 +1,1 @@
+web:    java $JAVA_OPTS -jar cas-server-webapp/target/dependency/webapp-runner.jar --port $PORT cas-server-webapp/target/*.war
