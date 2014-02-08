@@ -429,6 +429,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.doc</exclude>
             <exclude>**/*.jmx</exclude>
             <exclude>**/tmp/**</exclude>
+            <exclude>**/tmp/*.h</exclude>
+            <exclude>**/tmp/*.sh</exclude>
           </excludes>
         </configuration>
         <executions>
