@@ -392,6 +392,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </target>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
@@ -919,7 +920,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <notice.skip>true</notice.skip>
         <versions.skip>true</versions.skip>
       </properties>
-    <profile>
+    </profile>
 
     <profile>
       <id>nocheck</id>
