@@ -18,6 +18,8 @@ containing metadata that drives a number of CAS behaviors:
 The service management console is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
 
+<div class="alert alert-info"><strong>Demo Website</strong><p>The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/](https://jasigcasmgmt.herokuapp.com/)</p></div>
+
 <a name="Considerations">  </a>
 ## Considerations
 It is not required to use the service management facility explicitly. CAS ships with a default configuration that is

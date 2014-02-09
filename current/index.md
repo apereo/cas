@@ -27,3 +27,6 @@ We recommend reading the following documentation in order to plan and execute a 
 * [CAS Protocol](protocol/CAS-Protocol.html)
 * [CAS Clients](integration/CAS-Clients.html)
 * [Attribute Release](integration/Attribute-Release.html)
+
+## Demo
+The CAS web application is available for demo at [https://jasigcas.herokuapp.com](https://jasigcas.herokuapp.com)</p></div>
