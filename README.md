@@ -51,6 +51,8 @@ Jekyll layout, the site will load the appropriate version of the TOC on `jasig.g
 - The `current` folder contains the version of the documentation in development
 - Developer-related documentation is hosted at the root under the `developer` directory
 - The root `index.html` always points to the `current\index.html` page.
+- Page titles are auto-calculated based on the first `h1` element on the page, followed by the version of the
+documentation (i.e. `Service Management (x.y.z)`)
 
 <a name="Troubleshooting">  </a>
 ## Troubleshooting
