@@ -1,5 +1,7 @@
+var CONST_CURRENT_VER = "current";
+
 function getActiveDocumentationVersionInView() {
-	var currentVersion = "current";
+	var currentVersion = CONST_CURRENT_VER;
 	var href = location.href;
     var index = href.indexOf("/_site/");
 
@@ -9,7 +11,7 @@ function getActiveDocumentationVersionInView() {
 		if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
 	  		currentVersion = uri.segment(1);
 		}
-	  } else {
+	} else {
 		href = href.substring(index + 7);
 		index = href.indexOf("/");
 		currentVersion = href.substring(0, index);
@@ -33,4 +35,12 @@ function generateSidebarLinksForActiveVersion() {
 
 $(function() {
 	loadSidebarForActiveVersion();
+
+	var formattedVersion = getActiveDocumentationVersionInView();
+	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+		formattedVersion = " (" + formattedVersion + ")"
+	} else {
+		formattedVersion = "";
+	}
+	document.title = $("h1").first().text() + formattedVersion;
 });
