@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--
 
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
@@ -18,11 +18,20 @@
     specific language governing permissions and limitations
     under the License.
 
--->
-<project name="Jasig CAS ${project.version}">
-    <body>        
-		<menu ref="parent" />
-        <menu ref="reports" name="Reports" inherit="top" />
-		<menu ref="modules" name="Modules" inherit="top" />
-    </body>
-</project>
+--%>
+<jsp:directive.include file="includes/top.jsp" />
+
+<div id="msg" class="warn">
+  <h2>Authentication Succeeded with Warnings</h2>
+
+<c:forEach items="${messages}" var="message">
+  <p class="message">${message.text}</p>
+</c:forEach>
+
+</div>
+
+<div id="big-buttons">
+ <a class="button" href="login?execution=${flowExecutionKey}&_eventId=proceed">Continue</a>
+</div>
+
+<jsp:directive.include file="includes/bottom.jsp" />

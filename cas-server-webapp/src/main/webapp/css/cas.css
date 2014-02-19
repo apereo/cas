@@ -48,11 +48,13 @@ header h1 { background: #210F7A; color: white; padding: 1.4em 1.4em; font-size: 
 #content { padding: 10px; overflow: hidden; }
 
 #msg { padding: 20px; margin-bottom: 10px; }
-#msg h2 { font-size: 1.4em; margin-bottom: 0.5em; }
+#msg h2 { font-size: 1.4em; margin-bottom: 1em; }
 #msg.errors { border: 1px dotted #BB0000; color: #BB0000; padding-left: 100px; background: url(../images/error.gif) no-repeat 20px center; }
 #msg.success { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/confirm.gif) no-repeat 20px center; }
 #msg.info { border: 1px dotted #008; color: #008; padding-left: 100px; background: url(../images/info.gif) no-repeat 20px center; }
 #msg.question { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/question.png) no-repeat 20px center; }
+#msg.warn { border: 1px dotted #960; color: #960; padding-left: 100px; background: #ffbc8f url(../images/info.gif) no-repeat 20px center; }
+#msg.warn .message { color: black; margin: 1em; font-size: 1.4em }
 
 #login { width: 320px; float: left; margin-right: 20px; }
 #fm1 { padding: 20px; background: #eee; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
@@ -91,4 +93,54 @@ footer { color: #999; margin: 20px 0; }
   #fm1 .row .btn-reset { display: none; }
   #sidebar { margin-top: 20px; }
   #sidebar .sidebar-content { padding: 0; }
+}
+
+a.button {
+    font-weight:bold;
+    height:1.7em;
+    padding:1.2em 1em .6em 1em;
+    text-align:center;
+    text-decoration:none;
+    color:white;
+    background-color:#79946c;
+    border-top:1px solid #82b36c;
+    border-left:1px solid #82b36c;
+    border-right:1px solid #304228;
+    border-bottom:1px solid #304228;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#big-buttons a.button {
+    display:block;
+    position:relative;
+    font-size: 1.6em;
+    margin:20px auto;
+    width:200px;
+    overflow: hidden;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+    border-top:2px solid #82b36c;
+    border-left:2px solid #82b36c;
+    border-right:2px solid #304228;
+    border-bottom:2px solid #304228;
+}
+
+a.button:hover {
+    color:#ffff94;
+    background-color:#819e73;
+}
+
+.button-down {
+    border-top:1px solid #304228;
+    border-left:1px solid #304228;
+    border-right:1px solid #82b36c;
+    border-bottom:1px solid #82b36c;
+}
+
+#big-buttons .button-down {
+    border-top:2px solid #304228;
+    border-left:2px solid #304228;
+    border-right:2px solid #82b36c;
+    border-bottom:2px solid #82b36c;
 }
