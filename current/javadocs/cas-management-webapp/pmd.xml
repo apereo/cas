@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2014-02-19T07:09:24.304">
+<file name="/home/travis/build/Jasig/cas/cas-management-webapp/src/main/java/org/jasig/cas/services/web/RegisteredServiceSimpleFormController.java">
+<violation beginline="102" endline="108" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas.services.web" class="RegisteredServiceSimpleFormController" method="onSubmit" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-management-webapp/src/main/java/org/jasig/cas/services/web/support/RegisteredServiceValidator.java">
+<violation beginline="96" endline="99" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas.services.web.support" class="RegisteredServiceValidator" method="validate" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+</pmd>

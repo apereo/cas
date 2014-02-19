@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SafeContextLoaderListener xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/org/jasig/cas/web/init/SafeContextLoaderListener.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Licensed to Jasig under one or more contributor license</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * agreements. See the NOTICE file distributed with this work</em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * for additional information regarding copyright ownership.</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * Jasig licenses this file to you under the Apache License,</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * Version 2.0 (the "License"); you may not use this file</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * except in compliance with the License.  You may obtain a</em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * copy of the License at the following location:</em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_comment"> *   <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing,</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_comment"> * software distributed under the License is distributed on an</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment"> * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> * KIND, either express or implied.  See the License for the</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> * specific language governing permissions and limitations</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_comment"> * under the License.</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.init;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> javax.servlet.ServletContext;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> javax.servlet.ServletContextEvent;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> javax.servlet.ServletContextListener;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.context.ContextLoaderListener;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * A {@link ServletContextListener} which wraps Spring's</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * {@link ContextLoaderListener} and catches anything that delegate throws so as</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * to prevent its having thrown a Throwable from aborting the initialization of</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * our entire web application context. Use of this ContextListener will not be</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * appropriate for all deployments of a web application. Sometimes, a context</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> * listener's aborting context initialization is exactly the desired behavior.</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> * This might be because the resulting application inavailability is acceptable</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment"> * or because another layer (Apache, a proxy, a balancer, etc.) detects the</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment"> * inavailability of the context and provides an appropriate user experience. Or</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment"> * because a root context handles all requests that aren't otherwise handled.</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment"> * There are many fine alternatives to this approach. However, when using the</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment"> * bare Tomcat container with CAS as the root context, if your desired behavior</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment"> * is that a failure at context initialization results in a dummy CAS context</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment"> * that presents a user-friendly "CAS is unavailable at this time" message,</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment"> * using this ContextListener in place of Spring's {@link ContextLoaderListener}</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment"> * should do the trick. The error page associated with this deployment failure</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment"> * is configured in the web.xml via the standard error handling mechanism.</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment"> * Rather than being a generic ContextListener wrapper that will make safe any</em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment"> * ContextListener, instead this implementation specifically wraps and delegates</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment"> * to a Spring {@link ContextLoaderListener}. As such, mapping this listener in</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment"> * web.xml is a one for one replacement for {@link ContextLoaderListener}.</em>
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment"> * The exception thrown is exposed in the Servlet Context under the key</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment"> * "exceptionCaughtByListener".</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment"> * @author Andrew Petro</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment"> * @see ContextLoaderListener</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/init/SafeContextLoaderListener.html">SafeContextLoaderListener</a> <strong class="jxr_keyword">implements</strong> ServletContextListener {
+<a class="jxr_linenumber" name="60" href="#60">60</a>  
+<a class="jxr_linenumber" name="61" href="#61">61</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Instance of Commons Logging. */</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
+<a class="jxr_linenumber" name="63" href="#63">63</a>  
+<a class="jxr_linenumber" name="64" href="#64">64</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * The name of the ServletContext attribute whereat we will place a List of</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * Throwables that we caught from our delegate context listeners.</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CAUGHT_THROWABLE_KEY = <span class="jxr_string">"exceptionCaughtByListener"</span>;
+<a class="jxr_linenumber" name="69" href="#69">69</a>  
+<a class="jxr_linenumber" name="70" href="#70">70</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The actual ContextLoaderListener to which we will delegate to. */</em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ContextLoaderListener delegate = <strong class="jxr_keyword">new</strong> ContextLoaderListener();
+<a class="jxr_linenumber" name="72" href="#72">72</a>  
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> contextInitialized(<strong class="jxr_keyword">final</strong> ServletContextEvent sce) {
+<a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="75" href="#75">75</a>              <strong class="jxr_keyword">this</strong>.delegate.contextInitialized(sce);
+<a class="jxr_linenumber" name="76" href="#76">76</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable t) {
+<a class="jxr_linenumber" name="77" href="#77">77</a>              <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="78" href="#78">78</a>  <em class="jxr_comment">             * no matter what went wrong, our role is to capture this error and</em>
+<a class="jxr_linenumber" name="79" href="#79">79</a>  <em class="jxr_comment">             * prevent it from blocking initialization of the context. logging</em>
+<a class="jxr_linenumber" name="80" href="#80">80</a>  <em class="jxr_comment">             * overkill so that our deployer will find a record of this problem</em>
+<a class="jxr_linenumber" name="81" href="#81">81</a>  <em class="jxr_comment">             * even if unfamiliar with Commons Logging and properly configuring</em>
+<a class="jxr_linenumber" name="82" href="#82">82</a>  <em class="jxr_comment">             * it.</em>
+<a class="jxr_linenumber" name="83" href="#83">83</a>  <em class="jxr_comment">             */</em>
+<a class="jxr_linenumber" name="84" href="#84">84</a>  
+<a class="jxr_linenumber" name="85" href="#85">85</a>              <strong class="jxr_keyword">final</strong> String message = <span class="jxr_string">"SafeContextLoaderListener: \n"</span>
+<a class="jxr_linenumber" name="86" href="#86">86</a>                  + <span class="jxr_string">"The Spring ContextLoaderListener we wrap threw on contextInitialized.\n"</span>
+<a class="jxr_linenumber" name="87" href="#87">87</a>                  + <span class="jxr_string">"But for our having caught this error, the web application context would not have initialized."</span>;
+<a class="jxr_linenumber" name="88" href="#88">88</a>  
+<a class="jxr_linenumber" name="89" href="#89">89</a>              <em class="jxr_comment">// logger it via Commons Logging</em>
+<a class="jxr_linenumber" name="90" href="#90">90</a>              logger.error(message, t);
+<a class="jxr_linenumber" name="91" href="#91">91</a>  
+<a class="jxr_linenumber" name="92" href="#92">92</a>              <em class="jxr_comment">// logger it to the ServletContext</em>
+<a class="jxr_linenumber" name="93" href="#93">93</a>              ServletContext context = sce.getServletContext();
+<a class="jxr_linenumber" name="94" href="#94">94</a>              context.log(message, t);
+<a class="jxr_linenumber" name="95" href="#95">95</a>  
+<a class="jxr_linenumber" name="96" href="#96">96</a>              <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_comment">             * record the error so that the application has access to later</em>
+<a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_comment">             * display a proper error message based on the exception.</em>
+<a class="jxr_linenumber" name="99" href="#99">99</a>  <em class="jxr_comment">             */</em>
+<a class="jxr_linenumber" name="100" href="#100">100</a>             context.setAttribute(CAUGHT_THROWABLE_KEY, t);
+<a class="jxr_linenumber" name="101" href="#101">101</a>         }
+<a class="jxr_linenumber" name="102" href="#102">102</a>     }
+<a class="jxr_linenumber" name="103" href="#103">103</a> 
+<a class="jxr_linenumber" name="104" href="#104">104</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> contextDestroyed(<strong class="jxr_keyword">final</strong> ServletContextEvent sce) {
+<a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">this</strong>.delegate.contextDestroyed(sce);
+<a class="jxr_linenumber" name="106" href="#106">106</a>     }
+<a class="jxr_linenumber" name="107" href="#107">107</a> 
+<a class="jxr_linenumber" name="108" href="#108">108</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

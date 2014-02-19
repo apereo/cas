@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2014-02-19T07:06:52.111">
+<file name="/home/travis/build/Jasig/cas/cas-server-webapp-support/src/main/java/org/jasig/cas/web/HealthCheckController.java">
+<violation beginline="40" endline="40" begincolumn="33" endcolumn="45" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.web" class="HealthCheckController" variable="HEADER_PREFIX" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'HEADER_PREFIX'.
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-webapp-support/src/main/java/org/jasig/cas/web/support/InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter.java">
+<violation beginline="120" endline="120" begincolumn="21" endcolumn="34" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.jasig.cas.web.support" class="InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter" method="recordThrottle" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+Avoid using java.lang.ThreadGroup; it is not thread safe
+</violation>
+</file>
+</pmd>

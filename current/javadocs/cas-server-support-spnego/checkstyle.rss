@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Jasig CAS SPNEGO/NTLM Support - Checkstyle report</title>
+    <link>http://www.jasig.org/cas/cas-server-support-spnego/</link>
+    <description>Jasig CAS SPNEGO/NTLM Support - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2004 - 2014 Jasig</copyright>
+    <item>
+      <title>File: 8,
+             Errors: 0,
+             Warnings: 1,
+             Infos: 31
+      </title>
+            <link>http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoNegociateCredentialsAction.java</a>
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoPrincipalResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler.java">org/jasig/cas/support/spnego/authentication/handler/support/JCIFSSpnegoAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.util.SpnegoConstants.java">org/jasig/cas/support/spnego/util/SpnegoConstants.java</a>
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.handler.support.JCIFSConfig.java">org/jasig/cas/support/spnego/authentication/handler/support/JCIFSConfig.java</a>
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler.java">org/jasig/cas/support/spnego/authentication/handler/support/NtlmAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoCredentialsAction.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredential.java</a>
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

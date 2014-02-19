@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Jasig CAS Memcached Integration - Checkstyle report</title>
+    <link>http://www.jasig.org/cas/cas-server-integration-memcached/</link>
+    <description>Jasig CAS Memcached Integration - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2004 - 2014 Jasig</copyright>
+    <item>
+      <title>File: 9,
+             Errors: 0,
+             Warnings: 0,
+             Infos: 37
+      </title>
+            <link>http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/SimpleWebApplicationServiceSerializer.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder.java">org/jasig/cas/ticket/registry/support/kryo/KryoTranscoder.java</a>
+                </td>
+                <td>
+                  10
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/URLSerializer.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.AbstractWebApplicationServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/AbstractWebApplicationServiceSerializer.java</a>
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.monitor.MemcachedMonitor.java">org/jasig/cas/monitor/MemcachedMonitor.java</a>
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.SamlServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/SamlServiceSerializer.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.GoogleAccountsServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/GoogleAccountsServiceSerializer.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
