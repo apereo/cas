@@ -85,10 +85,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.DefaultLdapServiceMapper.java">org/jasig/cas/adaptors/ldap/services/DefaultLdapServiceMapper.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.LdapAuthenticationHandler.java">org/jasig/cas/authentication/LdapAuthenticationHandler.java</a>
                 </td>
                 <td>
-                  3
+                  12
                 </td>
                 <td>
                   0
@@ -99,10 +99,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.LdapAuthenticationHandler.java">org/jasig/cas/authentication/LdapAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.DefaultLdapServiceMapper.java">org/jasig/cas/adaptors/ldap/services/DefaultLdapServiceMapper.java</a>
                 </td>
                 <td>
-                  12
+                  3
                 </td>
                 <td>
                   0
@@ -141,10 +141,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.util.LdapUtils.java">org/jasig/cas/util/LdapUtils.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
                 </td>
                 <td>
-                  6
+                  1
                 </td>
                 <td>
                   0
@@ -155,10 +155,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.util.LdapUtils.java">org/jasig/cas/util/LdapUtils.java</a>
                 </td>
                 <td>
-                  1
+                  6
                 </td>
                 <td>
                   0
@@ -197,6 +197,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressNonInteractiveCredentialsAction.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.userdetails.LdapUserDetailsService.java">org/jasig/cas/userdetails/LdapUserDetailsService.java</a>
                 </td>
                 <td>
@@ -211,7 +225,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressNonInteractiveCredentialsAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.AccountStateHandler.java">org/jasig/cas/authentication/support/AccountStateHandler.java</a>
                 </td>
                 <td>
                   0
@@ -229,20 +243,6 @@
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.AccountStateHandler.java">org/jasig/cas/authentication/support/AccountStateHandler.java</a>
-                </td>
-                <td>
-                  0
                 </td>
                 <td>
                   0
