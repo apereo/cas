@@ -57,20 +57,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_tr.properties">messages_tr.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  20
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_nl.properties">messages_nl.properties</a>
                 </td>
                 <td>
@@ -78,6 +64,20 @@
                 </td>
                 <td>
                   22
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_tr.properties">messages_tr.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  20
                 </td>
                 <td>
                   0
@@ -127,20 +127,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  20
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
                 </td>
                 <td>
@@ -148,6 +134,20 @@
                 </td>
                 <td>
                   18
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  20
                 </td>
                 <td>
                   0
@@ -197,20 +197,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ar.properties">messages_ar.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver.java">org/jasig/cas/web/view/AjaxAwareJsonExceptionResolver.java</a>
                 </td>
                 <td>
@@ -218,6 +204,20 @@
                 </td>
                 <td>
                   0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ar.properties">messages_ar.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
                 </td>
                 <td>
                   0
@@ -253,7 +253,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_sl.properties">messages_sl.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_cs.properties">messages_cs.properties</a>
                 </td>
                 <td>
                   0
@@ -267,7 +267,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_cs.properties">messages_cs.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_sl.properties">messages_sl.properties</a>
                 </td>
                 <td>
                   0
@@ -295,20 +295,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  53
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_PT.properties">messages_pt_PT.properties</a>
                 </td>
                 <td>
@@ -316,6 +302,20 @@
                 </td>
                 <td>
                   18
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  53
                 </td>
                 <td>
                   0

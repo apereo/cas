@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-02-20T19:00:21.038">
+<pmd version="4.3" timestamp="2014-02-20T18:59:50.517">
 <file name="/home/travis/build/Jasig/cas/cas-server-webapp-support/src/main/java/org/jasig/cas/web/HealthCheckController.java">
 <violation beginline="40" endline="40" begincolumn="33" endcolumn="45" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.web" class="HealthCheckController" variable="HEADER_PREFIX" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'HEADER_PREFIX'.
