@@ -29,10 +29,10 @@
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
                 </td>
                 <td>
-                  6
+                  3
                 </td>
                 <td>
                   0
@@ -57,10 +57,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
                 </td>
                 <td>
-                  3
+                  6
                 </td>
                 <td>
                   0

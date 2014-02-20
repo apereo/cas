@@ -211,7 +211,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp-support//checkstyle.html#org.jasig.cas.web.flow.CasDefaultFlowUrlHandler.java">org/jasig/cas/web/flow/CasDefaultFlowUrlHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp-support//checkstyle.html#org.jasig.cas.web.flow.SendTicketGrantingTicketAction.java">org/jasig/cas/web/flow/SendTicketGrantingTicketAction.java</a>
                 </td>
                 <td>
                   0
@@ -225,7 +225,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp-support//checkstyle.html#org.jasig.cas.web.flow.SendTicketGrantingTicketAction.java">org/jasig/cas/web/flow/SendTicketGrantingTicketAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp-support//checkstyle.html#org.jasig.cas.web.flow.CasDefaultFlowUrlHandler.java">org/jasig/cas/web/flow/CasDefaultFlowUrlHandler.java</a>
                 </td>
                 <td>
                   0
