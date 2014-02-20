@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2014-02-20T19:12:41.440">
+<file name="/home/travis/build/Jasig/cas/cas-server-support-oauth/src/main/java/org/jasig/cas/support/oauth/web/OAuth20AccessTokenController.java">
+<violation beginline="101" endline="142" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.support.oauth.web" class="OAuth20AccessTokenController" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused method parameters such as 'response'.
+</violation>
+</file>
+</pmd>

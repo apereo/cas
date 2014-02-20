@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2014-02-20T18:57:02.130">
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/CentralAuthenticationServiceImpl.java">
+<violation beginline="276" endline="282" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/HandlerResult.java">
+<violation beginline="68" endline="71" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.authentication" class="HandlerResult" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'warnings'.
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/PolicyBasedAuthenticationManager.java">
+<violation beginline="285" endline="285" begincolumn="44" endcolumn="100" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="org.jasig.cas.authentication" class="PolicyBasedAuthenticationManager" method="createAuthenticationException" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
+Avoid unused private methods such as 'createAuthenticationException(Authentication)'.
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/services/DefaultServicesManagerImpl.java">
+<violation beginline="67" endline="72" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.services" class="DefaultServicesManagerImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'defaultAttributes'.
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/ticket/AbstractTicket.java">
+<violation beginline="155" endline="155" begincolumn="22" endcolumn="31" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.jasig.cas.ticket" class="AbstractTicket" method="hashCode" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
+Ensure you override both equals() and hashCode()
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/ticket/InvalidTicketException.java">
+<violation beginline="52" endline="54" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.ticket" class="InvalidTicketException" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'ticketId'.
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/ticket/ServiceTicketImpl.java">
+<violation beginline="130" endline="130" begincolumn="20" endcolumn="46" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.jasig.cas.ticket" class="ServiceTicketImpl" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
+Ensure you override both equals() and hashCode()
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/ticket/TicketGrantingTicketImpl.java">
+<violation beginline="56" endline="56" begincolumn="33" endcolumn="38" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.ticket" class="TicketGrantingTicketImpl" variable="LOGGER" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'LOGGER'.
+</violation>
+<violation beginline="228" endline="228" begincolumn="20" endcolumn="46" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.jasig.cas.ticket" class="TicketGrantingTicketImpl" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
+Ensure you override both equals() and hashCode()
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/web/flow/AuthenticationViaFormAction.java">
+<violation beginline="168" endline="168" begincolumn="37" endcolumn="94" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="org.jasig.cas.web.flow" class="AuthenticationViaFormAction" method="getAuthenticationExceptionAsCause" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
+Avoid unused private methods such as 'getAuthenticationExceptionAsCause(TicketException)'.
+</violation>
+</file>
+</pmd>

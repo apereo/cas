@@ -1,0 +1,3 @@
+org.jasig.cas.authentication
+org.jasig.cas.authentication.handler
+org.jasig.cas.authentication.principal
