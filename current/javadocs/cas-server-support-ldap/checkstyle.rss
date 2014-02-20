@@ -141,20 +141,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.util.LdapUtils.java">org/jasig/cas/util/LdapUtils.java</a>
                 </td>
                 <td>
@@ -169,10 +155,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
                 </td>
                 <td>
-                  6
+                  1
                 </td>
                 <td>
                   0
@@ -197,10 +183,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressNonInteractiveCredentialsAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
                 </td>
                 <td>
-                  0
+                  6
                 </td>
                 <td>
                   0
@@ -215,6 +201,20 @@
                 </td>
                 <td>
                   4
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressNonInteractiveCredentialsAction.java</a>
+                </td>
+                <td>
+                  0
                 </td>
                 <td>
                   0
