@@ -1072,7 +1072,7 @@ and [2.5.1](<#head2.5.1>).
 ### **3.6.1. ticket-granting cookie properties**
 
 -   A ticket-granting cookie SHALL be set to expire at the end of the client's
-    browser session if Long-Term support is not active ([4.1.1](<#head4.1.1>)
+    browser session if Long-Term support is not active ([4.1.1](<#head4.1.1>))
     for the corresponding TGT.
 
 -   CAS SHALL set the cookie path to be as restrictive as possible. For example,
