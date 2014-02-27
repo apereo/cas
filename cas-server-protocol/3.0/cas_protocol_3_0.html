@@ -135,6 +135,7 @@
     <li><a href="#security-implications"><strong>4.1.2 Security implications</strong></a></li>
     <li><a href="#cas-validation-response-attributes"><strong>4.1.3 CAS Validation Response Attributes</strong></a></li>
     <li><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></li>
+    <li><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></li>
     </ul></li>
     <li><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a><ul>
     <li><a href="#parameters-6"><strong>4.2.1 parameters</strong></a></li>
@@ -570,9 +571,9 @@
 <p><a name="head3.6.1"></a></p>
 <h3 id="ticket-granting-cookie-properties"><a href="#ticket-granting-cookie-properties"><strong>3.6.1. ticket-granting cookie properties</strong></a></h3>
 <ul>
-<li><p>Ticket-granting cookies MUST be set to expire at the end of the client’s browser session.</p></li>
-<li><p>CAS MUST set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path MUST be set to /cas.</p></li>
-<li><p>The value of ticket-granting cookies MUST contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
+<li><p>A ticket-granting cookie SHALL be set to expire at the end of the client’s browser session if Long-Term support is not active (<a href="#head4.1.1">4.1.1</a>) for the corresponding TGT.</p></li>
+<li><p>CAS SHALL set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path SHALL be set to /cas.</p></li>
+<li><p>The value of ticket-granting cookies SHALL contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
 <li><p>The value of ticket-granting cookies SHOULD begin with the characters “TGC-”.</p></li>
 </ul>
 <p><a name="head3.7"></a></p>
@@ -603,6 +604,9 @@
 <p><a name="head4.1.4"></a></p>
 <h3 id="cas-client-requirements"><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></h3>
 <p>If the CAS client needs to handle Remember-Me logins special (e.g. deny access to sensitive areas of the CAS client application on a remembered login), the CAS client MUST NOT use the /validate CAS validation URL, as this URL does not support CAS attributes in the validation response document.</p>
+<h3 id="long-term-ticket-granting-cookie-properties"><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></h3>
+<p>When a Long-Term TGT was created by the CAS Server, the Ticket-granting cookie MUST NOT expire at the end of the client’s browser session as defined in <a href="#head3.6.1">3.6.1</a>. Instead, the Ticket Granting cookie SHALL expire at the defined Long-Term TGT ticket lifetime.</p>
+<p>The lifetime value definition of Long-Term Ticket Granting Tickets is up to the CAS Server implementor. The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.</p>
 <p><a name="head4.2"></a></p>
 <h2 id="samlvalidate-cas-3.0"><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a></h2>
 <p>/samlValidate checks the validity of a Service Ticket by a SAML 1.1 request document provided by a HTTP POST. A SAML (Secure Access Markup Language)<a href="#7">7</a> 1.1 response document MUST be returned. This allows the release of additional information (attributes) of the authenticated NetID. The Security Assertion Markup Language (SAML) describes a document and protocol framework by which security assertions (such as assertions about a prior act of authentication) can be exchanged.</p>
@@ -632,8 +636,8 @@ Content-Type: text/xml </code></pre>
   <span class="kw">&lt;SOAP-ENV:Header/&gt;</span>
   <span class="kw">&lt;SOAP-ENV:Body&gt;</span>
     <span class="kw">&lt;samlp:Request</span><span class="ot"> xmlns:samlphttp:</span><span class="er">//xmlnssamlp</span><span class="ot">=</span><span class="st">&quot;urn:oasis:names:tc:SAML:1.0:protocol&quot;</span><span class="ot"> MajorVersion=</span><span class="st">&quot;1&quot;</span>
-<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> MinorVersion=</span><span class="st">&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
-<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> IssueInstant=</span><span class="st">&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
+<span class="er">      MinorVersion=&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
+<span class="er">      IssueInstant=&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
       <span class="kw">&lt;samlp:AssertionArtifact&gt;</span>
         ST-1-u4hrm3td92cLxpCvrjylcas.example.com
       <span class="kw">&lt;/samlp:AssertionArtifact&gt;</span>
