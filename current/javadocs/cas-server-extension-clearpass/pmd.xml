@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-02-27T15:02:03.131">
+<pmd version="4.3" timestamp="2014-02-27T15:04:10.662">
 <file name="/home/travis/build/Jasig/cas/cas-server-extension-clearpass/src/main/java/org/jasig/cas/extension/clearpass/EncryptedMapDecorator.java">
 <violation beginline="90" endline="90" begincolumn="56" endcolumn="81" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.extension.clearpass" class="EncryptedMapDecorator" variable="algorithmParametersHashMap" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'algorithmParametersHashMap'.
