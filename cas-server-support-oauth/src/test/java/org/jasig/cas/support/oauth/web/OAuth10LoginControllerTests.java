@@ -48,7 +48,7 @@ public final class OAuth10LoginControllerTests {
     @Test
     public void testOK() throws Exception {
         // must be an OAuth 1.0 provider
-        final TwitterProvider twitterProvider = new TwitterProvider();
+        final SslTwitterProvider twitterProvider = new SslTwitterProvider();
         twitterProvider.setKey("OPEWaSoTuAe49K4dSoRvNw");
         twitterProvider.setSecret("aKmvleltXAmLKcnlMgzRjTsCnhV3QVMVDh153xJttCo");
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", MY_LOGIN_URL);
@@ -68,6 +68,6 @@ public final class OAuth10LoginControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authorize?oauth_token="));
+        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authenticate?oauth_token="));
     }
 }
