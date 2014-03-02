@@ -1,1 +1,3 @@
-<meta http-equiv="refresh" content="0; url=http://jasig.github.io/cas/developer/Contributor-Guidelines.html" />
+# Contributor Guidelines
+
+Please see the [Contributor Guidelines](http://jasig.github.io/cas/developer/Contributor-Guidelines.html) for more info.
