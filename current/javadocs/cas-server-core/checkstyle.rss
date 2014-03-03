@@ -2087,10 +2087,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.jmx.AbstractServicesManagerMBean.java">org/jasig/cas/services/jmx/AbstractServicesManagerMBean.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.DefaultRandomStringGenerator.java">org/jasig/cas/util/DefaultRandomStringGenerator.java</a>
                 </td>
                 <td>
-                  6
+                  5
                 </td>
                 <td>
                   0
@@ -2101,10 +2101,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.DefaultRandomStringGenerator.java">org/jasig/cas/util/DefaultRandomStringGenerator.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.jmx.AbstractServicesManagerMBean.java">org/jasig/cas/services/jmx/AbstractServicesManagerMBean.java</a>
                 </td>
                 <td>
-                  5
+                  6
                 </td>
                 <td>
                   0
