@@ -39,7 +39,7 @@ for sha in `git log --format=oneline "$RANGE" | cut '-d ' -f1`
 do
     echo -e "Checking commit message for SHA: $sha..."
     git rev-list --no-merges --format=%B --max-count=1 $sha|awk '
-    NR == 2 && !/^(CAS-|NOJIRA|\[maven-release-plugin\])/ {
+    NR == 2 && !/^(CAS-|CHECKSTYLE|JAVADOCS|NOJIRA|\[maven-release-plugin\])/ {
         print "Commit message does not comply with commit guidelines."
         print "Message:"
         print $0
