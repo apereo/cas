@@ -39,13 +39,22 @@ The specified url must be registered in the service registry of CAS and enabled.
 
 <a name="SingleLogout(SLO)">  </a>
 ##Single Logout (SLO)
-CAS is designed to support single sign out. Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
+CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
+Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
-When a CAS session ends, it sends an HTTP POST message to each of the services that requested authentiation to CAS
-during the SSO session. The message is delivered to the URL presented in the _service_ parameter of the original CAS
-protocol ticket request. A sample SLO message:
+When a CAS session ends, it notifies each of the services that requested authentiation to CAS during the SSO session.
+
+This can happen in two ways:
+1. the CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service
+2. the CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter ( _front channel_ communication): this is a new **experimental** implementation (inspired by SAML SLO), needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
+
+The way the notification is done ( _back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default and cannot be changed through the services management webapp UI at the moment.
+
+The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
+
+A sample SLO message:
 
 {% highlight xml %}
 <samlp:LogoutRequest
