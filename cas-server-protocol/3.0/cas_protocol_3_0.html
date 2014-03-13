@@ -636,8 +636,8 @@ Content-Type: text/xml </code></pre>
   <span class="kw">&lt;SOAP-ENV:Header/&gt;</span>
   <span class="kw">&lt;SOAP-ENV:Body&gt;</span>
     <span class="kw">&lt;samlp:Request</span><span class="ot"> xmlns:samlphttp:</span><span class="er">//xmlnssamlp</span><span class="ot">=</span><span class="st">&quot;urn:oasis:names:tc:SAML:1.0:protocol&quot;</span><span class="ot"> MajorVersion=</span><span class="st">&quot;1&quot;</span>
-<span class="er">      MinorVersion=&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
-<span class="er">      IssueInstant=&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
+<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> MinorVersion=</span><span class="st">&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
+<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> IssueInstant=</span><span class="st">&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
       <span class="kw">&lt;samlp:AssertionArtifact&gt;</span>
         ST-1-u4hrm3td92cLxpCvrjylcas.example.com
       <span class="kw">&lt;/samlp:AssertionArtifact&gt;</span>
@@ -797,14 +797,14 @@ Content-Type: text/xml </code></pre>
     <span class="kw">&lt;/xs:complexType&gt;</span>
     <span class="kw">&lt;xs:complexType</span><span class="ot"> name=</span><span class="st">&quot;AttributesType&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;xs:sequence&gt;</span>
-            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;authenticationDate&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:dateTime&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">/&gt;</span>
+            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;authenticationDate&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:dateTime&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span> <span class="kw">/&gt;</span>
             <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;longTermAuthenticationRequestTokenUsed&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span>
-<span class="ot">                minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+<span class="ot">                minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
                 <span class="kw">&lt;xs:annotation&gt;&lt;xs:documentation&gt;</span>
                     true if a long-term (Remember-Me) token was used
                 <span class="kw">&lt;/xs:documentation&gt;&lt;/xs:annotation&gt;</span>
             <span class="kw">&lt;/xs:element&gt;</span>
-            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;isFromNewLogin&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;isFromNewLogin&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
                 <span class="kw">&lt;xs:annotation&gt;&lt;xs:documentation&gt;</span>
                     true if this was from a new, interactive login.
                     If login was from a non-interactive login (e.g. Remember-Me), this value is false or might be omitted.
