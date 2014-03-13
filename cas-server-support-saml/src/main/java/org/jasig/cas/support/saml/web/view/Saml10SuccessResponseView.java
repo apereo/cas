@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -65,11 +66,6 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  */
 public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
-    /** Namespace for custom attributes. */
-    private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
-
-    private static final String REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
-
     private static final String REMEMBER_ME_ATTRIBUTE_VALUE = "true";
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
@@ -85,7 +81,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
     private long issueLength = 30000;
 
     @NotNull
-    private String rememberMeAttributeName = REMEMBER_ME_ATTRIBUTE_NAME;
+    private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
@@ -164,7 +160,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
             }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
-            attribute.setAttributeNamespace(NAMESPACE);
+            attribute.setAttributeNamespace(CasProtocolConstants.VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
                 for (final Object value : c) {
@@ -179,7 +175,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         if (isRemembered) {
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(this.rememberMeAttributeName);
-            attribute.setAttributeNamespace(NAMESPACE);
+            attribute.setAttributeNamespace(CasProtocolConstants.VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
             attribute.getAttributeValues().add(newAttributeValue(REMEMBER_ME_ATTRIBUTE_VALUE));
             attrStatement.getAttributes().add(attribute);
         }
