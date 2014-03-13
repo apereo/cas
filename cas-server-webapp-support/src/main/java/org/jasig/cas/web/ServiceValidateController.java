@@ -19,15 +19,19 @@
 package org.jasig.cas.web;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -62,15 +66,6 @@ public class ServiceValidateController extends DelegateController {
 
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
-
-    /** Constant representing the PGTIOU in the model. */
-    private static final String MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
-
-    /** Constant representing the Assertion in the model. */
-    private static final String MODEL_ASSERTION = "assertion";
-
-    /** Constant representing the proxy callback url parameter in the request. */
-    private static final String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
     
     /** The CORE which we will delegate all requests to. */
     @NotNull
@@ -105,12 +100,12 @@ public class ServiceValidateController extends DelegateController {
      * provided.
      */
     protected Credential getServiceCredentialsFromRequest(final HttpServletRequest request) {
-        final String pgtUrl = request.getParameter(PARAMETER_PROXY_CALLBACK_URL);
+        final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
                 return new HttpBasedServiceCredential(new URL(pgtUrl));
             } catch (final Exception e) {
-                logger.error("Error constructing pgtUrl", e);
+                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
 
@@ -129,7 +124,8 @@ public class ServiceValidateController extends DelegateController {
 
         if (service == null || serviceTicketId == null) {
             logger.debug("Could not identify service and/or service ticket. Service: {}, Service ticket id: {}", service, serviceTicketId);
-            return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
+                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null);
         }
 
         try {
@@ -147,7 +143,8 @@ public class ServiceValidateController extends DelegateController {
                 }
                 
                 if (StringUtils.isEmpty(proxyGrantingTicketId)) {
-                    return generateErrorView("INVALID_PROXY_CALLBACK", "INVALID_PROXY_CALLBACK",
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             new Object[] {serviceCredential.getId()});
                 }
             }
@@ -161,14 +158,16 @@ public class ServiceValidateController extends DelegateController {
 
             if (!validationSpecification.isSatisfiedBy(assertion)) {
                 logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
-                return generateErrorView("INVALID_TICKET", "INVALID_TICKET_SPEC", null);
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null);
             }
 
             String proxyIou = null;
             if (serviceCredential != null && proxyGrantingTicketId != null && this.proxyHandler.canHandle(serviceCredential)) {
                 proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
                 if (StringUtils.isEmpty(proxyIou)) {
-                    return generateErrorView("INVALID_PROXY_CALLBACK", "INVALID_PROXY_CALLBACK",
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             new Object[] {serviceCredential.getId()});
                 }
             }
@@ -203,12 +202,35 @@ public class ServiceValidateController extends DelegateController {
     }
     
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
+        final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
+        final Object o = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        final boolean isRemembered = (o == Boolean.TRUE && !assertion.isFromNewLogin());
+        
         final ModelAndView success = new ModelAndView(this.successView);
-        success.addObject(MODEL_ASSERTION, assertion);
-        success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_ASSERTION, assertion);
+        success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        success.addObject(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, isRemembered);
+        
+        final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
+        if (augmentedModelObjects != null) {
+            success.addAllObjects(augmentedModelObjects);
+        }
         return success;
     }
 
+    /**
+     * Augment success view model objects. Provides
+     * a way for extension of this controller to dynamically
+     * populate the model object with attributes
+     * that describe a custom nature of the validation protocol.
+     *
+     * @param assertion the assertion
+     * @return map of objects each keyed to a name
+     */
+    protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
+        return Collections.emptyMap();  
+    }
+    
     private ValidationSpecification getCommandClass() {
         try {
             return (ValidationSpecification) this.validationSpecificationClass.newInstance();
