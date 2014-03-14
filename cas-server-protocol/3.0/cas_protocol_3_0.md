@@ -72,13 +72,17 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "\<LF\>" is a bare line feed (ASCII value 0x0a).
 
-<a name="1.2"/>
+<a name="head1.2"/>
 
 **1.2 Reference Implementation**
 --------------------------------
 The JASIG CAS-Server [8](<#8>) is the official reference implementation of the
-CAS protocol specification.
+CAS Protocol Specification.
 
+JASIG CAS Server 4.x supports the CAS Protocol 3.0 Specification.
+
+
+<a name="head2"/>
 
 **2. CAS URIs**
 ===============
