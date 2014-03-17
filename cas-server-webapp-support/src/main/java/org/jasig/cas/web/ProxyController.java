@@ -49,10 +49,10 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class ProxyController extends AbstractController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */
-    private static final String CONST_PROXY_FAILURE = "casProxyFailureView";
+    private static final String CONST_PROXY_FAILURE = "cas2ProxyFailureView";
 
     /** View for if the creation of a "Proxy" Ticket Succeeds. */
-    private static final String CONST_PROXY_SUCCESS = "casProxySuccessView";
+    private static final String CONST_PROXY_SUCCESS = "cas2ProxySuccessView";
 
     /** Key to use in model for service tickets. */
     private static final String MODEL_SERVICE_TICKET = "ticket";

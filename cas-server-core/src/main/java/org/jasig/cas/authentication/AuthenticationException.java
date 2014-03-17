@@ -36,7 +36,7 @@ public class AuthenticationException extends Exception {
     private static final long serialVersionUID = -6032827784134751797L;
 
     /** Immutable map of handler names to the errors they raised. */
-    private final Map<String, Exception> handlerErrors;
+    private final Map<String, Class<? extends Exception>> handlerErrors;
 
     /** Immutable map of handler names to an authentication success metadata instance. */
     private final Map<String, HandlerResult> handlerSuccesses;
@@ -47,7 +47,7 @@ public class AuthenticationException extends Exception {
     public AuthenticationException() {
         this(
             "No supported authentication handlers found for given credentials.",
-            Collections.<String, Exception>emptyMap(),
+            Collections.<String, Class<? extends Exception>>emptyMap(),
             Collections.<String, HandlerResult>emptyMap());
     }
 
@@ -56,7 +56,7 @@ public class AuthenticationException extends Exception {
      *
      * @param handlerErrors Map of handler names to errors.
      */
-    public AuthenticationException(final Map<String, Exception> handlerErrors) {
+    public AuthenticationException(final Map<String, Class<? extends Exception>> handlerErrors) {
         this(handlerErrors, Collections.<String, HandlerResult>emptyMap());
     }
 
@@ -67,7 +67,7 @@ public class AuthenticationException extends Exception {
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public AuthenticationException(
-            final Map<String, Exception> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
+            final Map<String, Class<? extends Exception>> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
         this(
             String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()),
             handlerErrors,
@@ -84,7 +84,7 @@ public class AuthenticationException extends Exception {
      */
     public AuthenticationException(
             final String message,
-            final Map<String, Exception> handlerErrors,
+            final Map<String, Class<? extends Exception>> handlerErrors,
             final Map<String, HandlerResult> handlerSuccesses) {
         super(message);
         this.handlerErrors = Collections.unmodifiableMap(handlerErrors);
@@ -96,7 +96,7 @@ public class AuthenticationException extends Exception {
      *
      * @return Immutable map of handler names to errors.
      */
-    public Map<String, Exception> getHandlerErrors() {
+    public Map<String, Class<? extends Exception>> getHandlerErrors() {
         return this.handlerErrors;
     }
 
