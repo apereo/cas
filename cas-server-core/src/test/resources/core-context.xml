@@ -56,10 +56,13 @@
     <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
           p:readTimeout="5000"
           p:connectionTimeout="5000" />
-
+          
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
-          c:httpClient-ref="httpClient" />
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"/>
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
 
     <bean id="attributeRepository"
           class="org.jasig.services.persondir.support.StubPersonAttributeDao">

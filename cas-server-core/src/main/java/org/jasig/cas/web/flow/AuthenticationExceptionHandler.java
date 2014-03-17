@@ -112,11 +112,11 @@ public class AuthenticationExceptionHandler {
     public String handle(final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {
             for (final Class<? extends Exception> kind : this.errors) {
-                for (final Exception handlerError : e.getHandlerErrors().values()) {
-                    if (handlerError != null && handlerError.getClass().equals(kind)) {
-                        final String messageCode = this.messageBundlePrefix + handlerError.getClass().getSimpleName();
+                for (final Class<? extends Exception> handlerError : e.getHandlerErrors().values()) {
+                    if (handlerError != null && handlerError.equals(kind)) {
+                        final String messageCode = this.messageBundlePrefix + handlerError.getSimpleName();
                         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-                        return handlerError.getClass().getSimpleName();
+                        return handlerError.getSimpleName();
                     }
                 }
 
