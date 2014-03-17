@@ -19,6 +19,7 @@
 package org.jasig.cas.web;
 
 import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketValidationException;
@@ -50,15 +52,16 @@ import org.springframework.web.servlet.ModelAndView;
  * SAML, ...).
  *
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.0
  */
 public class ServiceValidateController extends DelegateController {
 
     /** View if Service Ticket Validation Fails. */
-    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
+    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
     /** View if Service Ticket Validation Succeeds. */
-    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "casServiceSuccessView";
+    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
 
     /** Constant representing the PGTIOU in the model. */
     private static final String MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
@@ -66,6 +69,9 @@ public class ServiceValidateController extends DelegateController {
     /** Constant representing the Assertion in the model. */
     private static final String MODEL_ASSERTION = "assertion";
 
+    /** Constant representing the proxy callback url parameter in the request. */
+    private static final String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
+    
     /** The CORE which we will delegate all requests to. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
@@ -99,7 +105,7 @@ public class ServiceValidateController extends DelegateController {
      * provided.
      */
     protected Credential getServiceCredentialsFromRequest(final HttpServletRequest request) {
-        final String pgtUrl = request.getParameter("pgtUrl");
+        final String pgtUrl = request.getParameter(PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
                 return new HttpBasedServiceCredential(new URL(pgtUrl));
@@ -128,24 +134,27 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            logger.debug(String.format("Could not process request; Service: %s, Service Ticket Id: %s", service, serviceTicketId));
+            logger.debug("Could not identify service and/or service ticket. Service: {}, Service ticket id: {}", service, serviceTicketId);
             return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
         }
 
         try {
             final Credential serviceCredential = getServiceCredentialsFromRequest(request);
             String proxyGrantingTicketId = null;
-
-            // XXX should be able to validate AND THEN use
+            
             if (serviceCredential != null) {
                 try {
-                    proxyGrantingTicketId = this.centralAuthenticationService
-                        .delegateTicketGrantingTicket(serviceTicketId,
+                    proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
                 } catch (final AuthenticationException e) {
-                    logger.info("Failed to authenticate " + serviceCredential);
+                    logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
-                    logger.error("TicketException generating ticket for: " + serviceCredential, e);
+                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                }
+                
+                if (StringUtils.isEmpty(proxyGrantingTicketId)) {
+                    return generateErrorView("INVALID_PROXY_CALLBACK", "INVALID_PROXY_CALLBACK",
+                            new Object[] {serviceCredential.getId()});
                 }
             }
 
@@ -157,34 +166,30 @@ public class ServiceValidateController extends DelegateController {
             binder.bind(request);
 
             if (!validationSpecification.isSatisfiedBy(assertion)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy validation specification.");
-                }
+                logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
                 return generateErrorView("INVALID_TICKET", "INVALID_TICKET_SPEC", null);
             }
 
+            String proxyIou = null;
+            if (serviceCredential != null && proxyGrantingTicketId != null && this.proxyHandler.canHandle(serviceCredential)) {
+                proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
+                if (StringUtils.isEmpty(proxyIou)) {
+                    return generateErrorView("INVALID_PROXY_CALLBACK", "INVALID_PROXY_CALLBACK",
+                            new Object[] {serviceCredential.getId()});
+                }
+            }
+
             onSuccessfulValidation(serviceTicketId, assertion);
-
-            final ModelAndView success = new ModelAndView(this.successView);
-            success.addObject(MODEL_ASSERTION, assertion);
-
-            if (serviceCredential != null && proxyGrantingTicketId != null) {
-                final String proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
-                success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
-            }
-
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Successfully validated service ticket [%s] for service [%s]",
-                        serviceTicketId, service.getId()));
-            }
-
-            return success;
+            logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+            return generateSuccessView(assertion, proxyIou);
         } catch (final TicketValidationException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
+        } catch (final UnauthorizedProxyingException e) {
+            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()});
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(e.getMessage(), e.getMessage(), null);
         }
@@ -216,6 +221,13 @@ public class ServiceValidateController extends DelegateController {
         modelAndView.addObject("description", convertedDescription);
 
         return modelAndView;
+    }
+    
+    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
+        final ModelAndView success = new ModelAndView(this.successView);
+        success.addObject(MODEL_ASSERTION, assertion);
+        success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        return success;
     }
 
     /**
