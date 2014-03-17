@@ -1,6 +1,5 @@
 import java.awt.Container;
 import java.awt.GraphicsConfiguration.DefaultBufferCapabilities;
-import java.lang.invoke.DirectMethodHandle.StaticAccessor;
 import java.util.logging.Logger;
 
 import groovy.swing.impl.DefaultAction;
