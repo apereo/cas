@@ -113,29 +113,34 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return the registered service
      */
     private RegisteredService update(final RegisteredService rs) {
-        Connection connection = null;
+        Connection searchConnection = null;
         try {
-            connection = this.connectionFactory.getConnection();
-            final Response<SearchResult> response = searchForServiceById(connection, rs.getId());
+            searchConnection = this.connectionFactory.getConnection();
+            final Response<SearchResult> response = searchForServiceById(searchConnection, rs.getId());
             if (hasResults(response)) {
                 final String currentDn = response.getResult().getEntry().getDn();
 
-                connection = this.connectionFactory.getConnection();
-                final ModifyOperation operation = new ModifyOperation(connection);
+                Connection modifyConnection = null;
+                try {
+                    modifyConnection = this.connectionFactory.getConnection();
+                    final ModifyOperation operation = new ModifyOperation(searchConnection);
 
-                final List<AttributeModification> mods = new ArrayList<AttributeModification>();
+                    final List<AttributeModification> mods = new ArrayList<AttributeModification>();
 
-                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
-                for (final LdapAttribute attr : entry.getAttributes()) {
-                    mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                    final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
+                    for (final LdapAttribute attr : entry.getAttributes()) {
+                        mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                    }
+                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
+                    operation.execute(request);
+                } finally {
+                    LdapUtils.closeConnection(modifyConnection);
                 }
-                final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
-                operation.execute(request);
             }
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            LdapUtils.closeConnection(connection);
+            LdapUtils.closeConnection(searchConnection);
         }
         return rs;
     }
