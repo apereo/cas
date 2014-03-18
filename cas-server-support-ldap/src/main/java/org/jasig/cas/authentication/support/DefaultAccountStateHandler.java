@@ -129,7 +129,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * <p>
      * Override this method to provide custom warning message handling.
      *
-     * @param error Account state warning.
+     * @param warning the account state warning messages.
      * @param response Ldaptive authentication response.
      * @param configuration Password policy configuration.
      * @param messages Container for messages produced by account state warning handling.
