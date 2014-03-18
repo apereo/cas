@@ -60,7 +60,9 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 3.0
  */
 public class ServiceValidateController extends DelegateController {
-
+    /** Constant representing the Assertion in the cas validation model. */
+    private static final String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
+    
     /** View if Service Ticket Validation Fails. */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
@@ -207,7 +209,7 @@ public class ServiceValidateController extends DelegateController {
         final boolean isRemembered = (o == Boolean.TRUE && !assertion.isFromNewLogin());
         
         final ModelAndView success = new ModelAndView(this.successView);
-        success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_ASSERTION, assertion);
+        success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);
         success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
         success.addObject(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, isRemembered);
         
