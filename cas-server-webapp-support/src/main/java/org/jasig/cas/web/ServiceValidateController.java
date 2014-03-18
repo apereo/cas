@@ -223,6 +223,13 @@ public class ServiceValidateController extends DelegateController {
         return modelAndView;
     }
     
+    /**
+     * Generate the success view. The result will contain the assertion and the proxy iou.
+     *
+     * @param assertion the assertion
+     * @param proxyIou the proxy iou
+     * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
+     */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(MODEL_ASSERTION, assertion);
