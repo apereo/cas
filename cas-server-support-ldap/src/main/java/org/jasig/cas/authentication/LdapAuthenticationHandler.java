@@ -216,9 +216,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
      * Handle post authentication processing.
      *
      * @param credential the credential
-     * @param response the response
      * @return the handler result
-     * @throws LoginException the login exception
      */
     @Override
     public boolean supports(final Credential credential) {
