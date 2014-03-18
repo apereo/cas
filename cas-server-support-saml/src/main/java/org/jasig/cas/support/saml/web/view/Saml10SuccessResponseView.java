@@ -65,7 +65,9 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  * @since 3.1
  */
 public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-
+    /** Namespace for custom attributes in the saml validation payload. */
+    private static final String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
+    
     private static final String REMEMBER_ME_ATTRIBUTE_VALUE = "true";
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
@@ -160,7 +162,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
             }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
-            attribute.setAttributeNamespace(CasProtocolConstants.VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
+            attribute.setAttributeNamespace(VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
                 for (final Object value : c) {
@@ -175,7 +177,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         if (isRemembered) {
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(this.rememberMeAttributeName);
-            attribute.setAttributeNamespace(CasProtocolConstants.VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
+            attribute.setAttributeNamespace(VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
             attribute.getAttributeValues().add(newAttributeValue(REMEMBER_ME_ATTRIBUTE_VALUE));
             attrStatement.getAttributes().add(attribute);
         }
