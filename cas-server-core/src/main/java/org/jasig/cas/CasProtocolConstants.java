@@ -32,12 +32,6 @@ public interface CasProtocolConstants {
     /** Constant representing the PGTIOU in the cas validation model. */
     String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
-    /** Constant representing the Assertion in the cas validation model. */
-    String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
-
-    /** Namespace for custom attributes in the saml validation payload. */
-    String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
-
     /** Constant representing the remember-me long term token in the validation payload. */
     String VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
     
