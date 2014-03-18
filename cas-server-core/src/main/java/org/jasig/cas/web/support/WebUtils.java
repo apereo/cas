@@ -136,6 +136,17 @@ public final class WebUtils {
     }
 
     /**
+     * Put ticket granting ticket in flow scope.
+     *
+     * @param context the context
+     * @param ticketValue the ticket value
+     */
+    public static void putTicketGrantingTicketInFlowScope(
+        final RequestContext context, final String ticketValue) {
+        context.getFlowScope().put("ticketGrantingTicketId", ticketValue);
+    }
+
+    /**
      * Gets the ticket granting ticket id from the request and flow scopes.
      *
      * @param context the context
