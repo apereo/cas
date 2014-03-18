@@ -135,6 +135,7 @@
     <li><a href="#security-implications"><strong>4.1.2 Security implications</strong></a></li>
     <li><a href="#cas-validation-response-attributes"><strong>4.1.3 CAS Validation Response Attributes</strong></a></li>
     <li><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></li>
+    <li><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></li>
     </ul></li>
     <li><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a><ul>
     <li><a href="#parameters-6"><strong>4.2.1 parameters</strong></a></li>
@@ -390,7 +391,7 @@
 <p>The proxy callback mechanism works as follows:</p>
 <ol type="1">
 <li><p>The service that is requesting a proxy-granting ticket (PGT) specifies upon initial service ticket or proxy ticket validation the HTTP request parameter “pgtUrl” to /serviceValidate (or /proxyValidate). This is a callback URL of the service to which CAS will connect to verify the service’s identity. This URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust. Building trust at a minimum involves utilizing PKIX and employing container trust to validate the signature, chain and the expiration window of the certificate of the callback url. The generation of the proxy-granting-ticket or the corresponding proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum security requirements such as failure to establishing trust between peers or unresponsiveness of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS service response as described in Section <a href="#head2.5.2">2.5.2</a> MUST NOT contain a &lt;proxyGrantingTicket&gt; block. At this point, the issuance of a proxy-granting ticket is halted and service ticket validation will fail. Otherwise, the process will proceed normally to step 2.</p></li>
-<li><p>CAS uses an HTTP GET request to pass the HTTP request parameters “pgtId” and “pgtIou” to the pgtUrl. These entities are discussed in Sections <a href="#head3.3">3.3</a> and <a href="#head3.4">3.4</a>, respectively.</p></li>
+<li><p>CAS uses an HTTP GET request to pass the HTTP request parameters “pgtId” and “pgtIou” to the pgtUrl endpoint. These entities are discussed in Sections <a href="#head3.3">3.3</a> and <a href="#head3.4">3.4</a>, respectively. If the proxy callback url specifies any parameters, those MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying the response HTTP status code from the GET request, as detailed in step #3. If the proxy service fails to authenticate or the endpoint responds with an unacceptable status code, proxy authentication MUST fail and CAS MUST respond with the appropriate error code as is described in section <a href="#head2.5.3">2.5.3</a>.</p></li>
 <li><p>If the HTTP GET returns an HTTP status code of 200 (OK), CAS MUST respond to the /serviceValidate (or /proxyValidate) request with a service response (Section <a href="#head2.5.2">2.5.2</a>) containing the proxy-granting ticket IOU (Section <a href="#head3.4">3.4</a>) within the &lt;cas:proxyGrantingTicket&gt; block. If the HTTP GET returns any other status code, except HTTP 3xx redirects, CAS MUST respond to the /serviceValidate (or /proxyValidate) request with a service response that MUST NOT contain a &lt;cas:proxyGrantingTicket&gt; block. CAS MAY follow any HTTP redirects issued by the pgtUrl. However, the identifying callback URL provided upon validation in the &lt;proxy&gt; block MUST be the same URL that was initially passed to /serviceValidate (or /proxyValidate) as the “pgtUrl” parameter.</p></li>
 <li><p>The service, having received a proxy-granting ticket IOU in the CAS response, and both a proxy-granting ticket and a proxy-granting ticket IOU from the proxy callback, will use the proxy-granting ticket IOU to correlate the proxy-granting ticket with the validation response. The service will then use the proxy-granting ticket for the acquisition of proxy tickets as described in Section <a href="#head2.7">2.7</a>.</p></li>
 </ol>
@@ -570,9 +571,9 @@
 <p><a name="head3.6.1"></a></p>
 <h3 id="ticket-granting-cookie-properties"><a href="#ticket-granting-cookie-properties"><strong>3.6.1. ticket-granting cookie properties</strong></a></h3>
 <ul>
-<li><p>Ticket-granting cookies MUST be set to expire at the end of the client’s browser session.</p></li>
-<li><p>CAS MUST set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path MUST be set to /cas.</p></li>
-<li><p>The value of ticket-granting cookies MUST contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
+<li><p>A ticket-granting cookie SHALL be set to expire at the end of the client’s browser session if Long-Term support is not active (<a href="#head4.1.1">4.1.1</a>) for the corresponding TGT.</p></li>
+<li><p>CAS SHALL set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path SHALL be set to /cas.</p></li>
+<li><p>The value of ticket-granting cookies SHALL contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
 <li><p>The value of ticket-granting cookies SHOULD begin with the characters “TGC-”.</p></li>
 </ul>
 <p><a name="head3.7"></a></p>
@@ -603,6 +604,9 @@
 <p><a name="head4.1.4"></a></p>
 <h3 id="cas-client-requirements"><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></h3>
 <p>If the CAS client needs to handle Remember-Me logins special (e.g. deny access to sensitive areas of the CAS client application on a remembered login), the CAS client MUST NOT use the /validate CAS validation URL, as this URL does not support CAS attributes in the validation response document.</p>
+<h3 id="long-term-ticket-granting-cookie-properties"><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></h3>
+<p>When a Long-Term TGT was created by the CAS Server, the Ticket-granting cookie MUST NOT expire at the end of the client’s browser session as defined in <a href="#head3.6.1">3.6.1</a>. Instead, the Ticket Granting cookie SHALL expire at the defined Long-Term TGT ticket lifetime.</p>
+<p>The lifetime value definition of Long-Term Ticket Granting Tickets is up to the CAS Server implementor. The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.</p>
 <p><a name="head4.2"></a></p>
 <h2 id="samlvalidate-cas-3.0"><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a></h2>
 <p>/samlValidate checks the validity of a Service Ticket by a SAML 1.1 request document provided by a HTTP POST. A SAML (Secure Access Markup Language)<a href="#7">7</a> 1.1 response document MUST be returned. This allows the release of additional information (attributes) of the authenticated NetID. The Security Assertion Markup Language (SAML) describes a document and protocol framework by which security assertions (such as assertions about a prior act of authentication) can be exchanged.</p>
@@ -632,8 +636,8 @@ Content-Type: text/xml </code></pre>
   <span class="kw">&lt;SOAP-ENV:Header/&gt;</span>
   <span class="kw">&lt;SOAP-ENV:Body&gt;</span>
     <span class="kw">&lt;samlp:Request</span><span class="ot"> xmlns:samlphttp:</span><span class="er">//xmlnssamlp</span><span class="ot">=</span><span class="st">&quot;urn:oasis:names:tc:SAML:1.0:protocol&quot;</span><span class="ot"> MajorVersion=</span><span class="st">&quot;1&quot;</span>
-<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> MinorVersion=</span><span class="st">&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
-<span class="er"> </span> <span class="er"> </span> <span class="er"> </span><span class="ot"> IssueInstant=</span><span class="st">&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
+<span class="er">      MinorVersion=&quot;1&quot;</span><span class="ot"> RequestID=</span><span class="st">&quot;_192.168.16.51.1024506224022&quot;</span>
+<span class="er">      IssueInstant=&quot;2002-06-19T17:03:44.022Z&quot;</span><span class="kw">&gt;</span>
       <span class="kw">&lt;samlp:AssertionArtifact&gt;</span>
         ST-1-u4hrm3td92cLxpCvrjylcas.example.com
       <span class="kw">&lt;/samlp:AssertionArtifact&gt;</span>
@@ -829,7 +833,7 @@ Content-Type: text/xml </code></pre>
     <span class="kw">&lt;/xs:complexType&gt;</span>
 <span class="kw">&lt;/xs:schema&gt;</span></code></pre>
 <blockquote>
-<p>Note: As userAttributes can be extended by the CAS Server implementor (see &lt;xs:any&gt; schema definition), it is recommended to form custom attributes as &lt;cas:attributes name=“NAME”&gt;VALUE&lt;/cas:attributes&gt;.</p>
+<p>Note: As userAttributes can be extended by the CAS Server implementor (see &lt;xs:any&gt; schema definition), it is recommended to form custom attributes as &lt;cas:attributes&gt;&lt;cas:attribute name=“NAME”&gt;VALUE&lt;cas:attribute&gt;&lt;/cas:attributes&gt;.</p>
 </blockquote>
 <p><a name="head_appdx_b"></a></p>
 <h1 id="appendix-b-safe-redirection"><a href="#appendix-b-safe-redirection"><strong>Appendix B: Safe redirection</strong></a></h1>

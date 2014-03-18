@@ -31,17 +31,17 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.Message;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.SearchEntryResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +82,16 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     @NotNull
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
+    /** List of additional attributes to be fetched but are not principal attributes. */
+    @NotNull
+    protected List<String> additionalAttributes = Collections.emptyList();
+
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
+
+    /** LDAP password policy configuration. */
+    private LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration;
+
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -137,6 +145,28 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         this.principalAttributeMap = attributeNameMap;
     }
 
+    /**
+     * Sets the list of additional attributes to be fetched from the user entry during authentication.
+     * These attributes are <em>not</em> bound to the principal.
+     * <p>
+     * A common use case for these attributes is to support password policy machinery.
+     *
+     * @param additionalAttributes List of operational attributes to fetch when resolving an entry.
+     */
+    public void setAdditionalAttributes(final List<String> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
+    }
+
+    /**
+     * Sets the LDAP password policy configuration. If none is defined, password expiration policy support will be
+     * disabled.
+     *
+     * @param configuration LDAP password policy configuration. Set to null to disable password policy support.
+     */
+    public void setLdapPasswordPolicyConfiguration(final LdapPasswordPolicyConfiguration configuration) {
+        this.ldapPasswordPolicyConfiguration = configuration;
+    }
+
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException,
                                 PreventedException {
@@ -147,45 +177,32 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
-            // NOTE
-            // revisit when ldaptive provides support for conveying authentication request attributes to
-            // red entry resolver internally
-            if (this.authenticator.getEntryResolver() instanceof SearchEntryResolver) {
-                ((SearchEntryResolver) this.authenticator.getEntryResolver()).setReturnAttributes(
-                        this.authenticatedEntryAttributes);
-            }
             response = this.authenticator.authenticate(request);
         } catch (final LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
         }
         logger.debug("LDAP response: {}", response);
 
-        examineAccountState(response);
-
+        final List<Message> messageList;
+        if (this.ldapPasswordPolicyConfiguration != null) {
+            logger.debug("Applying password policy to {}", response);
+            messageList = this.ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
+                    response, ldapPasswordPolicyConfiguration);
+        } else {
+            messageList = Collections.emptyList();
+        }
         if (response.getResult()) {
-            return doPostAuthentication(upc, response);
+            return new HandlerResult(
+                    this,
+                    new BasicCredentialMetaData(credential),
+                    createPrincipal(upc.getUsername(), response.getLdapEntry()),
+                    messageList);
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials.");
-    }
-
-    protected void examineAccountState(final AuthenticationResponse response) throws LoginException {
-        final AccountState state = response.getAccountState();
-        if (state != null && state.getError() != null) {
-            state.getError().throwSecurityException();
-        }
-    }
-
-    protected HandlerResult doPostAuthentication(
-            final UsernamePasswordCredential credential,
-            final AuthenticationResponse response) throws LoginException {
-        return new HandlerResult(
-                this,
-                new BasicCredentialMetaData(credential),
-                createPrincipal(credential.getUsername(), response.getLdapEntry()));
     }
 
     @Override
@@ -248,15 +265,12 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     @PostConstruct
     public void initialize() {
-        initializeInternal();
         final List<String> attributes = new ArrayList<String>();
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);
         }
         attributes.addAll(this.principalAttributeMap.keySet());
+        attributes.addAll(this.additionalAttributes);
         this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
-    }
-
-    protected void initializeInternal() {
     }
 }
