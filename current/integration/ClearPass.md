@@ -121,14 +121,17 @@ Next, declare the following bean inside the file:
 <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
     <constructor-arg>
         <list>
-            <value>https://proxy.server.edu</value>
+            <value>https://proxy.server.edu/proxyCallback</value>
             <value>...</value>
         </list>
     </constructor-arg>
 </bean>
 {% endhighlight %}
 
-The above bean defines the list of proxying services authorized to obtain ClearPass credentials.  
+The above bean defines the list of proxying services authorized to obtain ClearPass credentials. Also note that
+proxy urls in the above list have to be fully specified and must produce an exact match. Otherwise, the CAS server
+will report back that the proxy chain is invalid for the requesting proxy url. 
+
 
 Alternatively, you may replace:
 
