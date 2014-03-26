@@ -23,13 +23,13 @@ Contributors:
 
 -   Robert Oschwald [CAS 3.0]
 
-Version: 3.0 RC1
+Version: 3.0 RC2
 
 Release Date: T.B.D.
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2013, JA-SIG, Inc.
+Copyright &copy; 2014, JA-SIG, Inc.
 
 <a name="head1"/>
 
@@ -72,13 +72,17 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "\<LF\>" is a bare line feed (ASCII value 0x0a).
 
-<a name="1.2"/>
+<a name="head1.2"/>
 
 **1.2 Reference Implementation**
 --------------------------------
 The JASIG CAS-Server [8](<#8>) is the official reference implementation of the
-CAS protocol specification.
+CAS Protocol Specification.
 
+JASIG CAS Server 4.x supports the CAS Protocol 3.0 Specification.
+
+
+<a name="head2"/>
 
 **2. CAS URIs**
 ===============
@@ -334,19 +338,21 @@ thereby establishes a new single sign-on session).
 The following HTTP request parameter MAY be specified to /logout. It is case
 sensitive and SHOULD be handled by /logout.
 
--   url [OPTIONAL] - if "url" is specified, the URL specified by "url" SHOULD be
-    on the logout page with descriptive text. For example, "The application you
-    just logged out of has provided a link it would like you to follow. Please
-    click here to access `http://www.example.org".`
-    As a HTTP request parameter, the value MUST be URL-encoded as
-    described in Section 2.2 of RFC 1738 [[4](<#4>)].
-
 -   service [OPTIONAL, CAS 3.0] - if a "service" parameter is specified, the
     browser might be automatically redirected to the URL specified by "service"
     after the logout was performed by the CAS server. If redirection by the
     CAS Server is actually performed depends on the server configuration.
     As a HTTP request parameter, the "service" value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
+
+
+
+>   Note: The "url" parameter defined in the former CAS 2.0 specification is
+>   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
+>   'url' parameters.
+>   A CAS client MAY provide the "service" parameter as described above,
+>   as this ensures the parameter is validated against the registered service
+>   URLs when operating in non-open mode. See [2.3.2](#head2.3.2) for details.
 
 
 
@@ -361,15 +367,16 @@ provide a link to the provided URL as described in Section [2.3.1](#head2.3.1).
 [CAS 3.0] /logout MUST display a page stating that the user has been logged out
 if no "service" parameter was provided. If a "service" request parameter with an
 encoded URL value is provided, the CAS server redirects to the given service URL
-after successful logout.  If a "url" request parameter is provided, /logout
-SHOULD display a link to the provided URL as described in Section [2.3.1](#head2.3.1).
+after successful logout.
 
 
 
 >   Note: When CAS Server operates in non-open mode (allowed Service URLs are
 >   registered within the CAS Server), the CAS server MUST ensure that only
->   registered Service URLs are accepted for redirection ([service] parameter)
->   or displaying ([url] parameter)
+>   registered [service] parameter Service URLs are accepted for redirection.
+>   The "url" parameter defined in the former CAS 2.0 specification is
+>   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
+>   'url' parameters.
 
 
 
