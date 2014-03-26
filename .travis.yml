@@ -39,6 +39,8 @@ script: mvn package site site:stage -q -ff -B
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
+- chmod -R 777 ./travis/test-commit-message.sh
+- ./travis/test-commit-message.sh
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
