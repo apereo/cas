@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-03-03T10:07:58.627">
+<pmd version="4.3" timestamp="2014-03-31T09:37:06.880">
 <file name="/home/travis/build/Jasig/cas/cas-server-support-openid/src/main/java/org/jasig/cas/support/openid/authentication/principal/OpenIdService.java">
 <violation beginline="54" endline="54" begincolumn="26" endcolumn="35" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.support.openid.authentication.principal" class="OpenIdService" variable="artifactId" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'artifactId'.
