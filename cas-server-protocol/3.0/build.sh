@@ -1,5 +1,4 @@
 #!/bin/sh
-
 #
 # Licensed to Jasig under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
@@ -18,6 +17,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
 echo "Generating HTML..."
 pandoc -s -S --toc --self-contained --template ../pandoc/html_template.pandoc cas_protocol_3_0.md -t html5 -o cas_protocol_3_0.html
 echo -e "Generated HTML \n"
