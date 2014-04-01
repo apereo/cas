@@ -286,7 +286,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final Authentication current = this.authenticationManager.authenticate(credentials);
             final Authentication original = ticketGrantingTicket.getAuthentication();
             if (!(current.getPrincipal().equals(original.getPrincipal())
-                    && current.getAttributes().equals(current.getAttributes()))) {
+                    && current.getAttributes().equals(original.getAttributes()))) {
                 throw new MixedPrincipalException(current, current.getPrincipal(), original.getPrincipal());
             }
             ticketGrantingTicket.getSupplementalAuthentications().add(current);
