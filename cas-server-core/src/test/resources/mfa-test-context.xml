@@ -105,6 +105,7 @@
         <property name="users">
             <map>
                 <entry key="alice" value="alice"/>
+                <entry key="bob" value="bob"/>
                 <entry key="mallory" value="mallory"/>
             </map>
         </property>
@@ -116,6 +117,7 @@
         <constructor-arg>
             <map>
                 <entry key="alice" value="31415"/>
+                <entry key="bob" value="62831"/>
                 <entry key="mallory" value="14142"/>
             </map>
         </constructor-arg>
