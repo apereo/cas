@@ -167,10 +167,10 @@
 <li><p>Andrew Petro</p></li>
 <li><p>Robert Oschwald [CAS 3.0]</p></li>
 </ul>
-<p>Version: 3.0 RC1</p>
+<p>Version: 3.0 RC2</p>
 <p>Release Date: T.B.D.</p>
 <p>Copyright © 2005, Yale University</p>
-<p>Copyright © 2013, JA-SIG, Inc.</p>
+<p>Copyright © 2014, JA-SIG, Inc.</p>
 <p><a name="head1"></a></p>
 <h1 id="introduction"><a href="#introduction"><strong>1. Introduction</strong></a></h1>
 <p>This is the official specification of the CAS 1.0, 2.0 and 3.0 protocols.</p>
@@ -300,15 +300,17 @@
 <h3 id="parameters-1"><a href="#parameters-1"><strong>2.3.1. parameters</strong></a></h3>
 <p>The following HTTP request parameter MAY be specified to /logout. It is case sensitive and SHOULD be handled by /logout.</p>
 <ul>
-<li><p>url [OPTIONAL] - if “url” is specified, the URL specified by “url” SHOULD be on the logout page with descriptive text. For example, “The application you just logged out of has provided a link it would like you to follow. Please click here to access <code>http://www.example.org&quot;.</code> As a HTTP request parameter, the value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
-<li><p>service [OPTIONAL, CAS 3.0] - if a “service” parameter is specified, the browser might be automatically redirected to the URL specified by “service” after the logout was performed by the CAS server. If redirection by the CAS Server is actually performed depends on the server configuration. As a HTTP request parameter, the “service” value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
+<li>service [OPTIONAL, CAS 3.0] - if a “service” parameter is specified, the browser might be automatically redirected to the URL specified by “service” after the logout was performed by the CAS server. If redirection by the CAS Server is actually performed depends on the server configuration. As a HTTP request parameter, the “service” value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</li>
 </ul>
+<blockquote>
+<p>Note: The “url” parameter defined in the former CAS 2.0 specification is not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given ‘url’ parameters. A CAS client MAY provide the “service” parameter as described above, as this ensures the parameter is validated against the registered service URLs when operating in non-open mode. See <a href="#head2.3.2">2.3.2</a> for details.</p>
+</blockquote>
 <p><a name="head2.3.2"></a></p>
 <h3 id="response-1"><a href="#response-1"><strong>2.3.2. response</strong></a></h3>
 <p>[CAS 1.0, CAS 2.0] /logout MUST display a page stating that the user has been logged out. If the “url” request parameter is implemented, /logout SHOULD also provide a link to the provided URL as described in Section <a href="#head2.3.1">2.3.1</a>.</p>
-<p>[CAS 3.0] /logout MUST display a page stating that the user has been logged out if no “service” parameter was provided. If a “service” request parameter with an encoded URL value is provided, the CAS server redirects to the given service URL after successful logout.  If a “url” request parameter is provided, /logout SHOULD display a link to the provided URL as described in Section <a href="#head2.3.1">2.3.1</a>.</p>
+<p>[CAS 3.0] /logout MUST display a page stating that the user has been logged out if no “service” parameter was provided. If a “service” request parameter with an encoded URL value is provided, the CAS server redirects to the given service URL after successful logout.</p>
 <blockquote>
-<p>Note: When CAS Server operates in non-open mode (allowed Service URLs are registered within the CAS Server), the CAS server MUST ensure that only registered Service URLs are accepted for redirection ([service] parameter) or displaying ([url] parameter)</p>
+<p>Note: When CAS Server operates in non-open mode (allowed Service URLs are registered within the CAS Server), the CAS server MUST ensure that only registered [service] parameter Service URLs are accepted for redirection. The “url” parameter defined in the former CAS 2.0 specification is not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given ‘url’ parameters.</p>
 </blockquote>
 <p><a name="head2.3.3"></a></p>
 <h3 id="single-logout"><a href="#single-logout"><strong>2.3.3 Single Logout</strong></a></h3>
