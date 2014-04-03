@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -108,6 +109,20 @@ public class MultifactorAuthenticationTests {
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
         assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
                 SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+    }
+
+
+    @Test(expected = MixedPrincipalException.class)
+    public void testThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
+        // Note the original credential used to start SSO session does not satisfy security policy
+        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+        assertNotNull(tgt);
+        final Service service = newService("https://example.com/high/");
+        cas.grantServiceTicket(
+                tgt,
+                service,
+                newUserPassCredentials("bob", "bob"),
+                new OneTimePasswordCredential("bob", "62831"));
     }
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
