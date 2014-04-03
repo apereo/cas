@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-04-03T17:20:55.853">
+<pmd version="4.3" timestamp="2014-04-03T17:29:03.942">
 <file name="/home/travis/build/Jasig/cas/cas-server-support-x509/src/main/java/org/jasig/cas/adaptors/x509/authentication/handler/support/RevokedCertificateException.java">
 <violation beginline="44" endline="44" begincolumn="49" endcolumn="59" rule="AvoidUsingHardCodedIP" ruleset="Basic Rules" package="org.jasig.cas.adaptors.x509.authentication.handler.support" class="RevokedCertificateException" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidUsingHardCodedIP" priority="3">
 Do not hard code IPv4 or IPv6 addresses, even 127.0.0.1 !
