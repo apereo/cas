@@ -113,20 +113,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationChecker.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationChecker.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationPolicy.java</a>
                 </td>
                 <td>
@@ -141,7 +127,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/ThresholdExpiredCRLRevocationPolicy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationChecker.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationChecker.java</a>
                 </td>
                 <td>
                   0
@@ -156,6 +142,20 @@
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/AllowRevocationPolicy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/ThresholdExpiredCRLRevocationPolicy.java</a>
                 </td>
                 <td>
                   0
