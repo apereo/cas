@@ -49,7 +49,7 @@ This project includes:
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
   JUnit under Common Public License Version 1.0
-  LDAPTIVE under Apache License, Version 2.0
+  LDAPTIVE under Apache 2 or GNU Lesser General Public License
   Mockito under The MIT License
   Objenesis under MIT License
   Perf4J under Apache 2

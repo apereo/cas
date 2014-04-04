@@ -74,10 +74,10 @@ This project includes:
   jradius-dictionary-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   JUnit under Common Public License Version 1.0
   kryo under BSD style
+  LDAPTIVE under Apache 2 or GNU Lesser General Public License
   minlog under BSD style
   Mockito under The MIT License
   Objenesis under MIT License
-  org.ldaptive:ldaptive under Apache License, Version 2.0
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
