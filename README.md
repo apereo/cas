@@ -1,7 +1,7 @@
-<a name="CASDocumentation">  </a>
+
 # CAS Documentation
 
-<a name="Requirements">  </a>
+
 ## Requirements
 Strictly speaking, the only tools required to craft documentation are the standard development tools. You'll need [jekyll](http://jekyllrb.com/) to generate the site for preview purposes, but it's not strictly required.  
 If you encounter the following error:
@@ -14,7 +14,7 @@ custom_require.rb:36:in 'gem_original_require': no such file to load -- json (Lo
 
 It means that the json gem is missing: `gem install json` should solve the problem...
 
-<a name="GettingStarted">  </a>
+
 ## Getting Started
 
 1. `git clone git@github.com:Jasig/cas.git cas.site`
@@ -24,7 +24,7 @@ It means that the json gem is missing: `gem install json` should solve the probl
 
 The changes should be almost immediately available at http://jasig.github.io/cas/.
 
-<a name="LocalSiteGeneration">  </a>
+
 ## Local Site Generation
 
 ### Markdown Engine
@@ -59,7 +59,7 @@ Jekyll layout, the site will load the appropriate version of the TOC on `jasig.g
 - Page titles are auto-calculated based on the first `h1` element on the page, followed by the version of the
 documentation (i.e. `Service Management (x.y.z)`)
 
-<a name="Troubleshooting">  </a>
+
 ## Troubleshooting
 If you have trouble getting jekyll to build, try the following:
 
