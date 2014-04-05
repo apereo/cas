@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Maven Overlay Installation
 ---
-<a name="MavenOverlayInstallation">  </a>
+
 # Maven Overlay Installation
 CAS installation is a fundamentally source-oriented process, and we recommend a
 [Maven WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) project to organize
@@ -33,7 +33,7 @@ directory, provides a sketch of how to accomplish this on a Unix platform.
     cp target/cas.war $CATALINA_HOME/webapps/
     $CATALINA_HOME/bin/catalina.sh start
 
-<a name="ConfigurationFiles">  </a>
+
 ## Configuration Files
 CAS configuration is controlled primarily by Spring XML context configuration files. At a minimum, every deployer
 must customize `deployerConfigContext.xml` and `cas.properties` by including them in the Maven WAR overlay,
@@ -89,7 +89,7 @@ the most common configuration concern beyond component configuration in the Spri
 Spring Webflow Customization Guide for a thorough description of the various CAS flows and discussion of common
 configuration points.
 
-<a name="CustomandThird-PartySource">  </a>
+
 ## Custom and Third-Party Source
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
 to include third-party source by Maven dependency references. Including third-party source is trivial; simply include

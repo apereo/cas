@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Ehcache Ticket Registry
 ---
-<a name="EhcacheTicketRegistry">  </a>
+
 # Ehcache Ticket Registry
 Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -19,7 +19,7 @@ We present two configurations:
 1. Single instance memory-backed cache with disk overflow for simple cases.
 2. Distributed cache with peer replication over RMI for HA deployments.
 
-<a name="MemoryCachewithDiskOverflow">  </a>
+
 ## Memory Cache with Disk Overflow
 The following Spring configuration provides a template for `ticketRegistry.xml`.
 {% highlight xml %}
@@ -70,18 +70,18 @@ The Ehcache configuration file `ehcache-failsafe.xml` mentioned in the Spring co
 </ehcache>
 {% endhighlight %}
 
-<a name="DistributedCache">  </a>
+
 ## Distributed Cache 
 Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. The registry maintains service tickets and ticket-granting tickets in two separate caches, so that:
 
 * Ticket Granting Tickets remain valid for a long time, replicated asynchronously
 * Service Tickets are short lived and must be replicated right away because the requests to validate them may very likely arrive at different CAS cluster nodes
 
-<a name="RMIReplication">  </a>
+
 ###RMI Replication
 Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html) replication for distributed caches composed of two or more nodes. To learn more about RMI replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
-<a name="SpringconfigurationtemplateforticketRegistry.xml.">  </a>
+
 ####Spring configuration template for `ticketRegistry.xml`.
 {% highlight xml %}
 <bean id="ticketRegistry"
@@ -191,11 +191,11 @@ helpful to place the configuration file on the filesystem at a well-known locati
 {% endhighlight %}
 
 
-<a name="JGroupsReplication">  </a>
+
 ###JGroups Replication
 [JGroups](http://ehcache.org/documentation/2.5/replication/jgroups-replicated-caching) can be used as the underlying mechanism for the replication operations in Ehcache. JGroups offers a very flexible protocol stack, reliable unicast, and multicast message transmission. On the down side JGroups can be complex to configure and some protocol stacks have dependencies on others.
 
-<a name="SpringconfigurationtemplateforticketRegistry.xml.">  </a>
+
 ####Spring configuration template for `ticketRegistry.xml`.
 The configuration is similar to above, except that ticket replicators and cache loaders need to be swapped out for their JGroups counterpart:
 
@@ -256,13 +256,13 @@ Your maven overlay `pom.xml` will also need to declare the following dependencie
 {% endhighlight %}
 
 
-<a name="EvictionPolicy">  </a>
+
 ###Eviction Policy
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings. This results of having *no need* for a Ticket Registry Cleaner.
 
 There have been reports of cache eviction problems when tickets are expired, but haven't been removed from the cache due to ehache configuration. This can be a problem because old ticket references "hang around" in the cache despite being expired. In other words, Ehcache does [inline eviction](http://lists.terracotta.org/pipermail/ehcache-list/2011-November/000423.html) where expired objects in the cache object won't be collected from memory until the cache max size is reached or the expired entry is explicitly accessed. To reclaim memory on expired tickets, cache eviction policies are must be carefully configured to avoid memory creep. Disk offload and/or a more aggressive eviction could provide a suitable workaround.
 
-<a name="TroubleshootingGuidelines">  </a>
+
 ###Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic. 

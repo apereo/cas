@@ -2,12 +2,12 @@
 layout: default
 title: CAS - Troubleshooting Guide
 ---
-<a name="TroubleshootingGuide">  </a>
+
 #Troubleshooting Guide
 
-<a name="Authentication">  </a>
+
 ##Authentication
-<a name="LoginFormClearingCredentialsonSubmission">  </a>
+
 ###Login Form Clearing Credentials on Submission
 You may encounter an issue where upon submission of credentials on the login form, the screen clears the input data and asks the user again to repopulate the form. The CAS Server log may also indicate the received login ticket is invalid and therefore unable to accept the authentication request.
 
@@ -15,10 +15,10 @@ The CAS server itself initiates a web session upon authentication requests that 
 
 To remedy the problem, the  suggestion is to configure the default CAS session timeout to be an appropriate value that matches the time a given user is expected to stay on the login screen. Similarly, the same change may be applied to the load balancer to treat authentication requests within a longer time span.
 
-<a name="SSL">  </a>
+
 ##SSL
 
-<a name="PKIXPathBuildingFailed">  </a>
+
 ###PKIX Path Building Failed
 
 {% highlight bash %}
@@ -48,7 +48,7 @@ keytool -import -keystore $JAVA_HOME/jre/lib/security/cacerts -file tmp/cert.der
 
 If you have multiple java editions installed on your machine, make sure that the app / web server is pointing to the correct JDK/JRE version (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
-<a name="Nosubjectalternativenamespresent">  </a>
+
 ###No subject alternative names present
 
 {% highlight bash %}
@@ -57,7 +57,7 @@ javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No
 
 This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu, will not work in most cases where the client making the connection is Java.
 
-<a name="HTTPShostnamewrong">  </a>
+
 ###HTTPS hostname wrong
 {% highlight bash %}
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
@@ -74,11 +74,11 @@ The above error occurs most commonly when the CAS client ticket validator attemp
 
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
-<a name="WildcardCertificates">  </a>
+
 ###Wildcard Certificates
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
-<a name="unrecognized_nameError">  </a>
+
 ###unrecognized_name Error
 {% highlight bash %}
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
@@ -99,7 +99,7 @@ Alternatively, you can disable the SNI detection in JDK7, by adding this flag to
 {% endhighlight %}
 
 
-<a name="WhenAllElseFails">  </a>
+
 ###When All Else Fails
 If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, please perform an SSL trace and attach it to a posting to the cas-user@lists.jasig.org mailing list. An SSL trace is written to STDOUT when the following system property is set, javax.net.debug=ssl. An example follows of how to do this in the Tomcat servlet container.
 

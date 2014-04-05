@@ -3,7 +3,7 @@ layout: default
 title: CAS - Web Flow Customization
 ---
 
-<a name="WebflowCustomization">  </a>
+
 #Webflow Customization
 CAS uses [Spring Web Flow](projects.spring.io/spring-webflow) to do "script" processing of login and logout protocols. Spring Web Flow builds on Spring MVC and allows implementing the "flows" of a web application. A flow encapsulates a sequence of steps that guide a user through the execution of some business task. It spans multiple HTTP requests, has state, deals with transactional data, is reusable, and may be dynamic and long-running in nature. Each flow may contain among many other settings the following major elements:
 
@@ -14,11 +14,11 @@ CAS uses [Spring Web Flow](projects.spring.io/spring-webflow) to do "script" pro
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the flow to account for additional use cases and processes. Note that to customize the weblow, one must possess a reasonable level of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-<a name="LoginFlow">  </a>
+
 ##Login Flow
 The flow in CAS is given a unique id that is registered inside a `flowRegistry` component. Support is enabled via the following configuration snippets in `cas-servlet.xml`: 
 
-<a name="Components">  </a>
+
 ###Components
 {% highlight xml %}
 
@@ -104,7 +104,7 @@ Certain error conditions are also classified as global transitions, particularly
 </global-transitions>
 {% endhighlight %}
 
-<a name="LogoutFlow">  </a>
+
 ##Logout Flow
 The flow in CAS is given a unique id that is registered inside a `flowRegistry` component. Support is enabled via the following configuration snippets in `cas-servlet.xml`: 
 
@@ -151,15 +151,15 @@ Front-channel method of logout is specifically handled by the following componen
 {% endhighlight %}
 
 
-<a name="TerminationofWebFlowSessions">  </a>
+
 ##Termination of Web Flow Sessions
 Each flow is registered with a `TerminateWebSessionListener` whose job is expire the web session as soon as the webflow is ended. The goal is to decrease memory consumption by deleting as soon as possible the web sessions created mainly for login and logout processes. By default, the webflow session is configured to be destroyed in 2 seconds, once the session has ended.
 
-<a name="ExtendingtheWebflow">  </a>
+
 ##Extending the Webflow
 The CAS webflow provides discrete points to inject new functionality. Thus, the only thing to modify is the flow definition where new beans and views can be added easily with the Maven overlay build method.
 
-<a name="AddingActions">  </a>
+
 ###Adding Actions
 Adding Spring Web Flow actions typically involves the following steps:
 
@@ -178,7 +178,7 @@ Once the action bean is configured, you may define it inside the `login-webflow.
 </action-state>
 {% endhighlight %}
 
-<a name="AddingViews">  </a>
+
 ###Adding Views
 Adding Spring Web Flow views involves the following steps:
 

@@ -3,13 +3,13 @@ layout: default
 title: CAS - User Interface Customization
 ---
 
-<a name="Overview">  </a>
+
 #Overview
 Branding the CAS User Interface (UI) involves simply editing the CSS stylesheet and also a small collection of relatively simple JSP include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
 
 All the files that we'll be discussing in this section that concern the theme are located in and referenced from: `/cas-server-webapp/src/main/webapp`.
 
-<a name="BrowserSupport">  </a>
+
 #Browser Support
 CAS user interface should properly and comfortably lend itself to all major browser vendors:
 * Google Chrome
@@ -19,9 +19,9 @@ CAS user interface should properly and comfortably lend itself to all major brow
 
 Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
 
-<a name="GettingStarted">  </a>
+
 #Getting Started
-<a name="CSS">  </a>
+
 ##CSS
 The default styles are all contained in a single file located in `css/cas.css`. This location is set in `WEB-INF/classes/cas-theme-default.properties`. If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
@@ -30,7 +30,7 @@ standard.custom.css.file=/css/cas.css
 cas.javascript.file=/js/cas.js
 {% endhighlight %}
 
-<a name="CSSperLocale">  </a>
+
 ###CSS per Locale
 Selecting CSS files per enabled locale would involve changing the `top.jsp` file to include the below sample code:
 
@@ -48,7 +48,7 @@ Selecting CSS files per enabled locale would involve changing the `top.jsp` file
 <link href="/path/to/css/<%=cssFileName%>" rel="stylesheet" type="text/css"/>
 {% endhighlight %}
 
-<a name="ResponsiveDesign">  </a>
+
 ###Responsive Design
 CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file. Below follows an example:
 
@@ -69,7 +69,7 @@ CSS media queries bring responsive design features to CAS which would allow adop
 }
 {% endhighlight %}
 
-<a name="Javascript">  </a>
+
 ##Javascript
 If you need to add some JavaScript, feel free to append `js/cas.js`.
 
@@ -85,7 +85,7 @@ The following Javascript libraries are utilized by CAS automatically:
 * JQuery UI
 * [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
 
-<a name="PreservingAnchorFragments">  </a>
+
 ###Preserving Anchor Fragments
 Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
 
@@ -113,7 +113,7 @@ function prepareSubmit(form) {
 }
 {% endhighlight %}
 
-<a name="ChangestoLoginForm">  </a>
+
 ####Changes to Login Form
 
 {% highlight jsp %}
@@ -123,7 +123,7 @@ function prepareSubmit(form) {
 {% endhighlight %}
 
 
-<a name="JSP">  </a>
+
 ## JSP
 The default views are found at `WEB-INF/view/jsp/default/ui/`.
 
@@ -131,7 +131,7 @@ Notice `top.jsp` and `bottom.jsp` include files located in the `../includes` dir
 
 The location of these JSP files are configured in `WEB-INF/classes/default_views.properties`.
 
-<a name="TagLibraries">  </a>
+
 ####Tag Libraries
 The following JSP tag libraries are used by the user interface:
 
@@ -142,7 +142,7 @@ The following JSP tag libraries are used by the user interface:
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 {% endhighlight %}
 
-<a name="GlossaryofViews">  </a>
+
 ####Glossary of Views
 - **`casAccountDisabledView`**  
 Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
@@ -189,7 +189,7 @@ Used in conjunction with the service registry feature, displayed when the servic
 - **`serviceErrorSsoView`**   
 Displayed when a user would otherwise have experienced noninteractive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
-<a name="Localization">  </a>
+
 ##Localization
 The CAS Web application includes a number of localized message files:
 
@@ -217,7 +217,7 @@ In order to "invoke" a specific language for the UI, the `/login` endpoint may b
 
     https://cas.server.edu/login?locale=it
 
-<a name="Configuration">  </a>
+
 ###Configuration
 All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there any custom messages that need to be presented into views, they may also be formatted under `custom_messages_xx.properties` files.
 
@@ -242,11 +242,11 @@ Messages are then read on each JSP view via the following sample configuration:
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
-<a name="Themes">  </a>
+
 ##Themes
 With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
-<a name="Components">  </a>
+
 ###Components
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
 {% highlight xml %}
@@ -258,7 +258,7 @@ Configuration of service-specific themes is backed by the Spring framework and p
 
 Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request. 
 
-<a name="Configuration">  </a>
+
 ###Configuration
 - Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
 - Add the location of related styling files, such as CSS and Javascript in the file above.

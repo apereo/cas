@@ -2,13 +2,13 @@
 layout: default
 title: CAS - CAS REST Protocol
 ---
-<a name="Overview">  </a>
+
 #Overview
 The REST protocol allows one to model applications as users, programmatically acquiring service tickets to authenticate to other applications. This means that other applications would be able to use a CAS client  to accept Service Tickets rather than to rely upon another technology such as client SSL certificates for application-to-application authentication of requests. This is achieved by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support only soberly and with due consideration of security aspects.</p></div>
 
-<a name="Components">  </a>
+
 #Components
 By default the CAS RESTful API is configured in the `restlet-servlet.xml`, which contains the routing for the tickets. It also defines the resources that will resolve the URLs. The `TicketResource` defined by default (which can be extended) accepts username/password.
 
@@ -22,7 +22,7 @@ Support is enabled by including the following in your `pom.xml` file:
 
 REST support is currently provided internally by the [Restlet framework](http://restlet.org/‎).
 
-<a name="Configuration">  </a>
+
 #Configuration
 To turn on the protocol, add the following to the `web.xml`:
 {% highlight xml %}
@@ -38,13 +38,13 @@ To turn on the protocol, add the following to the `web.xml`:
 </servlet-mapping>
 {% endhighlight %}
 
-<a name="Protocol">  </a>
+
 #Protocol
 
-<a name="RequestaTicketGrantingTicket">  </a>
+
 ##Request a Ticket Granting Ticket
 
-<a name="SampleRequest">  </a>
+
 ###Sample Request
 {% highlight bash %}
 POST /cas/v1/tickets HTTP/1.0
@@ -52,21 +52,21 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&additionalParam1=paramvalue
 {% endhighlight %}
 
-<a name="SampleResponse">  </a>
+
 ###Sample Response
 
-<a name="SuccessfulResponse">  </a>
+
 ####Successful Response
 {% highlight bash %}
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 {% endhighlight %}
 
-<a name="UnsuccessfulResponse">  </a>
+
 ####Unsuccessful Response
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error (will also respond for missing parameters, etc.). If you send a media type it does not understand, it will send the 415 Unsupported Media Type.
 
-<a name="RequestaServiceTicket">  </a>
+
 ##Request a Service Ticket
 
 ###Sample Request
@@ -86,7 +86,7 @@ ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ####Unsuccessful Response
 CAS will send a 400 Bad Request. If an incorrect media type is sent, it will send the 415 Unsupported Media Type.
 
-<a name="Logout">  </a>
+
 ##Logout
 {% highlight bash %}
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0

@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Memcached Ticket Registry
 ---
-<a name="MemcachedTicketRegistry">  </a>
+
 # Memcached Ticket Registry
 Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -26,7 +26,7 @@ where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
-<a name="ConfigurationConsiderations">  </a>
+
 ## Configuration Considerations
 There are three core configuration concerns with memcached:
 
@@ -34,7 +34,7 @@ There are three core configuration concerns with memcached:
 2. Node locator strategy
 3. Object serialization mechanism
 
-<a name="HashAlgorithm">  </a>
+
 ### Hash Algorithm
 The hash algorithm is used to transform a key value into a memcached storage key that uniquely identifies the
 corresponding value. The choice of hashing algorithm has implications for failover behavior that is important
@@ -43,7 +43,7 @@ collision rate; see the
 [javadocs](https://github.com/couchbase/spymemcached/blob/2.8.1/src/main/java/net/spy/memcached/DefaultHashAlgorithm.java)
 for alternatives. 
 
-<a name="NodeLocator">  </a>
+
 ### Node Locator
 The node locator serves as the deterministic node selection function for the memcached client provided by the
 underlying spymemcached library. There are two choices:
@@ -63,14 +63,14 @@ The consistent strategy generally provides a target node that does not vary with
 should be used in cases where the memcached pool may grow or shrink dynamically, including due to frequent node
 failure.
 
-<a name="ObjectSerialization">  </a>
+
 ### Object Serialization
 Memcached stores bytes of data, so CAS tickets must be serialized to a byte array prior to storage. CAS ships with
 a custom serialization component `KryoTranscoder` based on the [Kryo](https://code.google.com/p/kryo/) serialization
 framework. This component is recommended over the default Java serialization mechanism since it produces much more
 compact data, which benefits both storage requirements and throughput.
 
-<a name="ComponentConfiguration">  </a>
+
 ## Component Configuration
 The following configuration is a template for `ticketRegistry.xml` Spring configuration:
 {% highlight xml %}
@@ -116,7 +116,7 @@ The following configuration is a template for `ticketRegistry.xml` Spring config
     memcached.locatorType=ARRAY_MOD
     memcached.failureMode=Redistribute
 
-<a name="HighAvailabilityConsiderations">  </a>
+
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with
 `failureMode="Redistribute"`. In this mode a write failure will simply cause the client to flag the node as failed

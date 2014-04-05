@@ -2,7 +2,7 @@
 layout: default
 title: CAS - JBoss Cache Ticket Registry
 ---
-<a name="JBossCacheTicketRegistry">  </a>
+
 # JBoss Cache Ticket Registry
 JBoss integration is enabled by including the following dependency in the Maven WAR overlay:
 

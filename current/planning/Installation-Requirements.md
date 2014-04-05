@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Installation Requirements
 ---
-<a name="InstallationRequirements">  </a>
+
 # Installation Requirements
 
 Requirements at a glance:
@@ -19,7 +19,7 @@ choose components with clear hardware and software dependencies. In any case whe
 not obvious, the discussion of component configuration should mention system, software, hardware, and other
 requirements.
 
-<a name="ServletContainers">  </a>
+
 ## Servlet Containers
 There is no officially supported servlet container for CAS, but [Apache Tomcat](http://tomcat.apache.org/) is the most
 commonly used. Support for a particular servlet container depends on the expertise of community members, but the
@@ -31,7 +31,7 @@ following are known to work well and should receive first-class support on the
 * [GlassFish](http://glassfish.java.net/)
 * [WebSphere](http://www.ibm.com/software/websphere/)
 
-<a name="ApacheMaven">  </a>
+
 ## Apache Maven
 CAS uses Maven for building and creating a deployable package for instllation into a Java servlet container. Maven is
 also strongly recommended for configuration management required for the CAS installation process. CAS is fundamentally
@@ -42,7 +42,7 @@ to change over time. A source-based installation process like
 to complex and dynamic requirements. While it admittedly requires a high up-front cost in learning, it reaps numerous
 benefits in the long run
 
-<a name="SpringFramework">  </a>
+
 ## Spring Framework
 CAS uses the many aspects of the Spring Framework; most notably,
 [Spring MVC](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html) and
@@ -55,7 +55,7 @@ and the
 [Spring IOC Container](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/beans.html)
 in particular are prerequisites to CAS installation.
 
-<a name="InternetConnectivity">  </a>
+
 ## Internet Connectivity
 Internet connectivity is generally required for the build phase of any Maven-based project, including the recommended
 Maven WAR overlays used to install CAS. Maven resolves dependencies by searching online repositories containing

@@ -26,6 +26,11 @@ The changes should be almost immediately available at http://jasig.github.io/cas
 
 <a name="LocalSiteGeneration">  </a>
 ## Local Site Generation
+
+### Markdown Engine
+[kramdown](http://kramdown.gettalong.org/) is the markdown engine used by the site. You'll need to download kramdown before attempting to run the build. See [documentation](http://kramdown.gettalong.org/installation.html) for platform-specific details.
+
+### Build
 Generating the site to preview changes _before_ commit is encouraged. Install [jekyll](http://jekyllrb.com/) and execute the following command from the documentation root directory:
 
 ```bash

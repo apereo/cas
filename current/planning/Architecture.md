@@ -2,18 +2,18 @@
 layout: default
 title: CAS - Architecture
 ---
-<a name="Architecture">  </a>
+
 # Architecture
 
 ![CAS Architecture Diagram](../images/cas_architecture.png "CAS Architecture Diagram")
 
 
-<a name="SystemComponents">  </a>
+
 ## System Components
 The CAS server and clients comprise the two physical components of the CAS system architecture that communicate
 by means of various protocols.
 
-<a name="CASServer">  </a>
+
 ### CAS Server
 The CAS server is Java servlet built on the Spring Framework whose primary responsibility is to authenticate users
 and grant access to CAS-enabled services, commonly called CAS clients, by issuing and validating tickets.
@@ -22,7 +22,7 @@ A service ticket (ST) is issued to a service at the user's request via browser r
 The ST is subsequently validated at the CAS server via back-channel communication.
 These interactions are described in great detail in the CAS Protocol document.
 
-<a name="CASClients">  </a>
+
 ### CAS Clients
 The term "CAS client" has two distinct meanings in its common use. A CAS client is any CAS-enabled application that
 can communicate with the server via a supported protocol. A CAS client is also a software package that can be
@@ -50,7 +50,7 @@ Applications:
 When the term "CAS client" appears in this manual without further qualification, it refers to the integration
 components such as the Jasig Java CAS Client rather than to the application relying upon (a client of) the CAS server.
 
-<a name="Protocols">  </a>
+
 ## Protocols
 Clients communicate with the server by any of several supported protocols.  All the supported protocols are
 conceptually similar, yet some have features or characteristics that make them desirable for particular applications
@@ -63,7 +63,7 @@ Supported protocols:
 * OpenID
 * OAuth (1.0, 2.0)
 
-<a name="SoftwareComponents">  </a>
+
 ## Software Components
 It is helpful to describe the CAS server in terms of three layered subsystems:
 

@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Trusted Authentication
 ---
-<a name="TrustedAuthentication">  </a>
+
 # Trusted Authentication
 The trusted authentication handler provides support for trusting authentication performed by some other component
 in the HTTP request handling chain. Proxies (including Apache in a reverse proxy scenario) are the most common
@@ -16,7 +16,7 @@ Trusted authentication handler support is enabled by including the following dep
       <version>${cas.version}</version>
     </dependency>
 
-<a name="ConfigureTrustedAuthenticationHandler">  </a>
+
 ## Configure Trusted Authentication Handler
 Modify `deployerConfigContext.xml` according to the following template:
 
@@ -42,7 +42,7 @@ Modify `deployerConfigContext.xml` according to the following template:
 </bean>
 {% endhighlight %}
 
-<a name="ConfigureWebflowComponents">  </a>
+
 ## Configure Webflow Components
 Add an additional state to `login-webflow.xml`:
 

@@ -2,28 +2,28 @@
 layout: default
 title: CAS - Shibboleth Integration
 ---
-<a name="Overview">  </a>
+
 #Overview
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple different strategies. It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP. With such a setup, when user is routed to the IdP, the following may take place:
 
 - If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently perform the requested action, e.g. attribute release.
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must authenticate before the IDP proceeds with the requested action.
 
-<a name="SSOProviderforShibbolethIdP(RemoteUser)">  </a>
+
 ##SSO Provider for Shibboleth IdP (RemoteUser)
 
-<a name="Configuration">  </a>
+
 ###Configuration
 
-<a name="IncludeCASClientLibrariesinIfPDeployable">  </a>
-<a name="IncludeCASClientLibrariesinIdPDeployable">  </a>
+
+
 ####Include CAS Client Libraries in IdP Deployable
 
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are included in the `./lib` installer folder, then redeploy the Idp with these files:
 
     cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
 
-<a name="Modify$SHIB_HOME/conf/handler.xml">  </a>
+
 ####Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
@@ -39,7 +39,7 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
 </LoginHandler>
 {% endhighlight %}
 
-<a name="ModifyIdPDeployableweb.xml">  </a>
+
 ####Modify IdP Deployable `web.xml`
 Add the following XML blocks to the `web.xml` file for the IdP war deployable. 
 {% highlight xml %}
@@ -99,7 +99,7 @@ CAS Filters
 </filter-mapping>
 {% endhighlight %}
 
-<a name="EnableRemoteUserHandlerinIdpDeployableweb.xml">  </a>
+
 ####Enable `RemoteUserHandler` in Idp Deployable `web.xml`
 Ensure the following is defined:
 
@@ -116,11 +116,11 @@ Ensure the following is defined:
 </servlet-mapping>
 {% endhighlight %}
 
-<a name="SSOProviderforShibbolethIdP(External)">  </a>
+
 ##SSO Provider for Shibboleth IdP (External)
 This is a [Shibboleth IdP external authentication plugin](https://github.com/Unicon/shib-cas-authenticator) that delegates the authentication to CAS. The advantage of using this component over the plain `RemoteUser`  solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`. 
 
-<a name="ShibbolethServiceProviderProxy">  </a>
+
 ##Shibboleth Service Provider Proxy
 The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS server and enables end applications to get authentication information from CAS rather than the Shibboleth Service Provider. CASShib is designed as an alternative to deploying the Shibboleth service provider for each application in order to:
 

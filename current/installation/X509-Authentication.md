@@ -2,7 +2,7 @@
 layout: default
 title: CAS - X.509 Authentication
 ---
-<a name="X.509Authentication">  </a>
+
 # X.509 Authentication
 CAS X.509 authentication components provide a mechanism to authenticate users who present client certificates during
 the SSL/TLS handshake process. The X.509 components require configuration ouside the CAS application since the
@@ -13,7 +13,7 @@ certificate presented in the SSL handshake be accessible to the servlet containe
 directly at the servlet container and when using Apache/mod_jk; for other architectures it may be necessary to do
 additional work.
 
-<a name="X.509Components">  </a>
+
 ## X.509 Components
 X.509 support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -26,7 +26,7 @@ X.509 support is enabled by including the following dependency in the Maven WAR 
 CAS provides an X.509 authentication handler, a handful of X.509-specific prinicpal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-<a name="X509CredentialsAuthenticationHandler">  </a>
+
 ######`X509CredentialsAuthenticationHandler`
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
@@ -42,10 +42,10 @@ acceptable client certificates.
 * `revocationChecker` - Instance of `RevocationChecker` used for certificate expiration checks.
 (default=`NoOpRevocationChecker`)
 
-<a name="PrincipalResolverComponents">  </a>
+
 ### Principal Resolver Components
 
-<a name="X509SubjectPrincipalResolver">  </a>
+
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 The following configuration snippet produces prinicpals of the form _cn@example.com_. For example, given a
@@ -60,25 +60,25 @@ _jacky@vt.edu_.
 
 See the Javadocs for a thorough discussion of the format string specification.
 
-<a name="X509SubjectDNPrincipalResolver">  </a>
+
 ######`X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
-<a name="X509SerialNumberPrincipalResolver">  </a>
+
 ######`X509SerialNumberPrincipalResolver`
 Creates a principal ID from the certificate serial number.
 
-<a name="X509SerialNumberAndIssuerDNPrincipalResolver">  </a>
+
 ######`X509SerialNumberAndIssuerDNPrincipalResolver`
 Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
 The serial number may be prefixed with an optional string. See the Javadocs for more information.
 
-<a name="CertificateRevocationCheckingComponents">  </a>
+
 ### Certificate Revocation Checking Components
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
 configurability in the revocation machinery built into the JSSE.
 
-<a name="ResourceCRLRevocationChecker">  </a>
+
 ######`ResourceCRLRevocationChecker`
 Performs a certificate revocation check against a CRL hosted at a fixed location. Any resource type supported by the
 Spring [`Resource`]() class may be specified for the CRL resource. The CRL is fetched at periodic intervals and cached.
@@ -117,7 +117,7 @@ The following policies are available by default:
       p:thresholdPolicy-ref="thresholdPolicy" />
 {% endhighlight %}
 
-<a name="CRLDistributionPointRevocationChecker">  </a>
+
 ######`CRLDistributionPointRevocationChecker`
 Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
 extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
@@ -158,12 +158,12 @@ Configuration properties:
       p:thresholdPolicy-ref="thresholdPolicy" />
 {% endhighlight %}
 
-<a name="WebflowComponents">  </a>
+
 ### Webflow Components
 A single Webflow component, `X509CertificateCredentialsNonInteractiveAction`, is required to extract the certificate
 from the HTTP request context and perform non-interactive authentication.
 
-<a name="X.509Configuration">  </a>
+
 ## X.509 Configuration
 X.509 configuration requires substantial configuration outside the CAS Web application. The configuration of Web
 server SSL components varies dramatically with software and is outside the scope of this document. We offer some
@@ -175,7 +175,7 @@ user-friendly server-side error messages.
 * Accept certificates only from trusted issuers, generally those within your PKI.
 * Specify all certificates in the certificate chain(s) of allowed issuers.
 
-<a name="ConfigureAuthenticationComponents">  </a>
+
 ### Configure Authentication Components
 Use the following template to configure authentication in `deployerConfigContext.xml`:
 {% highlight xml %}
@@ -225,7 +225,7 @@ Use the following template to configure authentication in `deployerConfigContext
 </bean>
 {% endhighlight %}
 
-<a name="X.509WebflowConfiguration">  </a>
+
 ### X.509 Webflow Configuration
 Uncomment the `startAuthenticate` state in `login-webflow.xml`:
 

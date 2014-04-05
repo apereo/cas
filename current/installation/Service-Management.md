@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Service Management
 ---
-<a name="ServiceManagement">  </a>
+
 # Service Management
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
@@ -18,11 +18,11 @@ containing metadata that drives a number of CAS behaviors:
 The service management console is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
 
-<a name="Demo">  </a>
+
 ## Demo
 The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com](https://jasigcasmgmt.herokuapp.com)
 
-<a name="Considerations">  </a>
+
 ## Considerations
 It is not required to use the service management facility explicitly. CAS ships with a default configuration that is
 suitable for deployments that do not need or want to leverage the capabilities above. The default configuration allows
@@ -38,7 +38,7 @@ It is perfectly acceptable to avoid the service management console Web applicati
 In fact, configuration-driven methods (e.g. XML, JSON) may be preferable in environments where strict configuration
 management controls are required.
 
-<a name="RegisteredServices">  </a>
+
 ## Registered Services
 
 Registered services present the following metadata:
@@ -70,10 +70,10 @@ on a per-service basis. Only the attributes specified in this field will be rele
 * _Attribute Filter_ (`attributeFilter`) - A filter associated with this service to perform additional processing on the allowed attributes at release time.
 * _Logout Type_ (`logoutType`) - Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL` or `LogoutType.FRONT_CHANNEL`. See [this guide](Logout-Single-Signout.html) for more details on logout.
 
-<a name="PersistingRegisteredServiceData">  </a>
+
 ## Persisting Registered Service Data
 
-<a name="InMemoryServiceRegistryDaoImpl">  </a>
+
 ######`InMemoryServiceRegistryDaoImpl`
 CAS uses in-memory services management by default, with the registry seeded from registration beans wired via Spring.
 
@@ -95,7 +95,7 @@ This component is _NOT_ suitable for use with the service management console sin
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
-<a name="LdapServiceRegistryDao">  </a>
+
 ######`LdapServiceRegistryDao`
 Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `ui` attribute.
 
@@ -111,7 +111,7 @@ Service registry implementation which stores the services in a LDAP Directory. U
 {% endhighlight %}
 
 <p/>
-<a name="DefaultLdapServiceMapper">  </a>
+
 #######`DefaultLdapServiceMapper`
 The default mapper has support for the following items:
 
@@ -131,7 +131,7 @@ The default mapper has support for the following items:
 * `evaluationOrderAttribute`: default -> "casEvaluationOrder"
 * `requiredHandlersAttribute`: default -> "casRequiredHandlers"
 
-<a name="JpaServiceRegistryDaoImpl">  </a>
+
 ######`JpaServiceRegistryDaoImpl`
 Stores registered service data in a database; the preferred choice when using the service management console.
 The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
@@ -171,7 +171,7 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 {% endhighlight %}
 
-<a name="InstallingtheServicesManagementWebapp">  </a>
+
 ## Installing the Services Management Webapp
 
 The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
@@ -193,16 +193,16 @@ Though, you need at first to configure it according to your environment. Towards
 </dependency>
 {% endhighlight %}
 
-<a name="Authenticationmethod">  </a>
+
 ### Authentication method
 
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
 
-<a name="SecuringAccessandAuthorization">  </a>
+
 ###Securing Access and Authorization
 Access to the management webapp is controlled via Spring Security. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
 
-<a name="StaticListofUsers">  </a>
+
 ####Static List of Users
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath. 
 
@@ -232,7 +232,7 @@ The format of the file should be as such:
 # casuser=notused,ROLE_ADMIN
 {% endhighlight %}
 
-<a name="LDAP-managedListofUsers">  </a>
+
 ####LDAP-managed List of Users
 If you wish allow access to the services management application via an LDAP group/server, open up the `deployerConfigContext` file of the management web application and adjust for the following:
 
@@ -279,7 +279,7 @@ You will also need to ensure that the `spring-security-ldap` dependency is avail
 </dependency>
 {% endhighlight %}
 
-<a name="Urlsconfiguration">  </a>
+
 ### Urls configuration
 
 The urls configuration of the CAS server and management applications can be done by overriding the default `WEB-INF/cas-management.properties` file:
@@ -297,12 +297,12 @@ The urls configuration of the CAS server and management applications can be done
 
 When authenticating against a CAS server, the services management webapp will be processed as a regular CAS service and thus, needs to be defined in the services registry (of the CAS server).
 
-<a name="Servicesregistry">  </a>
+
 ### Services registry
 
 You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
 
-<a name="UI">  </a>
+
 ### UI
 
 The services management webapp is pretty simple to use:

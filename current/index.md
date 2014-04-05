@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Home
 ---
-<a name="EnterpriseSingleSign-On">  </a>
+
 # Enterprise Single Sign-On
 
 * Java (Spring Webflow/MVC servlet) server component
@@ -15,7 +15,7 @@ CAS provides a friendly open source community that actively supports and contrib
 While the project is rooted in higher-ed open source, it has grown to an international audience spanning
 Fortune 500 companies and small special-purpose installations.
 
-<a name="GettingStarted">  </a>
+
 ## Getting Started
 We recommend reading the following documentation in order to plan and execute a CAS deployment.
 
@@ -28,6 +28,6 @@ We recommend reading the following documentation in order to plan and execute a 
 * [CAS Clients](integration/CAS-Clients.html)
 * [Attribute Release](integration/Attribute-Release.html)
 
-<a name="Demo">  </a>
+
 ## Demo
 The CAS web application is available for demo at [https://jasigcas.herokuapp.com](https://jasigcas.herokuapp.com)

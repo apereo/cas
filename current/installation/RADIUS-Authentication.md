@@ -2,7 +2,7 @@
 layout: default
 title: CAS - RADIUS Authentication
 ---
-<a name="RADIUSAuthentication">  </a>
+
 # RADIUS Authentication
 RADIUS support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -12,9 +12,9 @@ RADIUS support is enabled by including the following dependency in the Maven WAR
       <version>${cas.version}</version>
     </dependency>
 
-<a name="RADIUSComponents">  </a>
+
 ## RADIUS Components
-<a name="RadiusAuthenticationHandler">  </a>
+
 ######`RadiusAuthenticationHandler`
 The RADIUS handler accepts username/password credentials and delegates authentication to one or more RADIUS
 servers. It supports two types of failovers: failover on an authentication failure, and failover on a server exception.
@@ -26,7 +26,7 @@ failure, false otherwise. This flag is typically set to support highly available
 should proceed in the face of one or more RADIUS server failures.
 * `servers` - Array of RADIUS servers to delegate to for authentication.
 
-<a name="JRadiusServerImpl">  </a>
+
 ######`JRadiusServerImpl`
 Component representing a RADIUS server has the following configuration properties.
 
@@ -38,7 +38,7 @@ Component representing a RADIUS server has the following configuration propertie
 * `socketTimeout` - the amount of time to wait before timing out.
 * `retries` - the number of times to keep retrying a particular server on communication failure/timeout.
 
-<a name="RADIUSConfigurationExample">  </a>
+
 ## RADIUS Configuration Example
 {% highlight xml %}
 <bean id="papAuthenticator" class="net.jradius.client.auth.PAPAuthenticator" />

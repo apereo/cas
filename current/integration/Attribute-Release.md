@@ -2,7 +2,7 @@
 layout: default
 title: CAS - Attribute Release
 ---
-<a name="AttributeRelease">  </a>
+
 # Attribute Release
 Attributes are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎) and returned to scoped services via the [SAML 1.1 protocol](../protocol/SAML-Protocol.html) or the [CAS protocol](../protocol/CAS-Protocol.html). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute release, caching, attribute aggregation from multiple attribute sources, etc.
 
@@ -10,11 +10,11 @@ Attributes pass through a two-step process:
 * Resolution: Done at the time of establishing the principal via `PrincipalResolver` components where attributes are resolved from various sources that are outlined below.
 * Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response. 
 
-<a name="Components">  </a>
+
 ## Components
 A PersonDirectory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
 
-<a name="PersonDirectory">  </a>
+
 ### Person Directory
 * `MergingPersonAttributeDaoImpl`: Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. Merging strategies may be configured via instances of `IAttributeMerger`.
 * `CachingPersonAttributeDaoImpl`: Provides the ability to cache results of executed inner DAOs.
@@ -28,16 +28,16 @@ A PersonDirectory `IPersonAttributeDao` attribute source is defined and configur
 
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
-<a name="CAS">  </a>
+
 ### CAS
 The CAS project provides the following additional implementations:
 
 * `LdapPersonAttributeDao`: Queries an LDAP directory to populate person attributes using the bundled CAS LDAP libraries.
 
-<a name="SampleUsage">  </a>
+
 ### Sample Usage
 
-<a name="LDAP">  </a>
+
 ####LDAP
 The following snippet assumes that connection information beans are already defined.
 
@@ -61,7 +61,7 @@ The following snippet assumes that connection information beans are already defi
 </bean>
 {% endhighlight %}
 
-<a name="JDBC">  </a>
+
 ####JDBC
 The following snippet assumes that connection information beans are already defined.
 
@@ -86,7 +86,7 @@ The following snippet assumes that connection information beans are already defi
 </bean>
 {% endhighlight %}
 
-<a name="Caching,MergingandCascading">  </a>
+
 ####Caching, Merging and Cascading
 {% highlight xml %}
 <bean id="mergedPersonAttributeDao"
@@ -120,7 +120,7 @@ The following snippet assumes that connection information beans are already defi
 </bean>
 {% endhighlight %}
 
-<a name="Configuration">  </a>
+
 ## Configuration
 Once principal attributes are resolved, adopters may choose to allow/release each attribute per each definition in the registry. Example configuration follows:
 
@@ -138,7 +138,7 @@ Once principal attributes are resolved, adopters may choose to allow/release eac
 </bean>
 {% endhighlight %}
 
-<a name="Principal-IdAttribute">  </a>
+
 ### Principal-Id Attribute
 The service registry component of CAS has the ability to allow for configuration of a `usernameAttribute` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
 
@@ -162,15 +162,15 @@ The service registry component of CAS has the ability to allow for configuration
 </bean>
 {% endhighlight %}
 
-<a name="AttributeFilters">  </a>
+
 ### Attribute Filters
 The service registry component has the ability to allow for configuration of an attribute filter. Filters have the ability to do execute additional processes on the set of attributes that are allocated to the final principal for a given user id. For instance, you might want to decide that certain attribute need to be removed from the final resultset based on a user role, etc. 
 
-<a name="RegisteredServiceAttributeFilter">  </a>
+
 ####`RegisteredServiceAttributeFilter`
 If you wish to write your own filter, you need to design a class that implements this interface and as such, plug that custom instance into the specific service registry entry you intend to use. 
 
-<a name="RegisteredServiceRegexAttributeFilter">  </a>
+
 ####`RegisteredServiceRegexAttributeFilter`
 A regex-aware filter responsible to make sure only attributes that match a certain  pattern are released for a given service. 
 

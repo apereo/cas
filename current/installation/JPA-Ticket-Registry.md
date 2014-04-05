@@ -3,14 +3,14 @@ layout: default
 title: CAS - JPA Ticket Registry
 ---
 
-<a name="JPATicketRegistry">  </a>
+
 # JPA Ticket Registry
 The JPA Ticket Registry allows CAS to store client authenticated state data (tickets) in a database back-end such as MySQL. 
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using a RDBMS as the back-end persistence choice for Ticket Registry state management is a fairly unnecessary and complicated process. Ticket registries generally do not need the durability that comes with RDBMS and unless you are already outfitted with clustered RDBMS technology and the resources to manage it, the complexity is likely not worth the trouble. Given the proliferation of hardware virtualization and the redundancy and vertical scaling they often provide, more suitable recommendation would be the default in-memory ticket registry for a single node CAS deployment and distributed cache-based registries for higher availability.</p></div>
 
 
-<a name="Configuration">  </a>
+
 # Configuration
 
 - Adjust the `src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml` with the following:
@@ -73,18 +73,18 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 ...
 ```
 
-<a name="DatabaseConfiguration">  </a>
+
 # Database Configuration
 
-<a name="JDBCDriver">  </a>
+
 ## JDBC Driver
 CAS must have access to the appropriate JDBC driver for the database. Once you have obtained the appropriate driver and configured the data source, place the JAR inside the lib directory of your web server environment (i.e. `$TOMCAT_HOME/lib`)
 
-<a name="Schema">  </a>
+
 ## Schema
 If the user has sufficient privileges on start up, the database tables should be created. The database user MUST have `CREATE/ALTER` privileges to take advantage of automatic schema generation and schema updates.
 
-<a name="Deadlocks">  </a>
+
 ## Deadlocks
 The Hibernate SchemaExport DDL creation tool *may* fail to create two very import indices when generating the ticket tables. The absence of these indices dramatically increases the potential for database deadlocks under load.
 If the indices were not created you should manually create them before placing your CAS configuration into a production environment.
@@ -98,14 +98,14 @@ show index from TICKETGRANTINGTICKET where column_name='ticketGrantingTicket_ID'
 
 To create indices that are missing, you may use the following sample code below:
 
-<a name="MYSQL">  </a>
+
 ### MYSQL
 ```sql
 CREATE INDEX ST_TGT_FK_I ON SERVICETICKET (ticketGrantingTicket_ID);
 CREATE INDEX ST_TGT_FK_I ON TICKETGRANTINGTICKET (ticketGrantingTicket_ID);
 ```
 
-<a name="ORACLE">  </a>
+
 ###ORACLE
 ```sql
 CREATE INDEX "ST_TGT_FK_I"
@@ -118,7 +118,7 @@ CREATE INDEX "TGT_TGT_FK_I"
   COMPUTE STATISTICS;
 ```
 
-<a name="TicketCleanup">  </a>
+
 ## Ticket Cleanup
 
 The use `JpaLockingStrategy` is strongly recommended for HA environments where multiple nodes are attempting ticket cleanup on a shared database. `JpaLockingStrategy` can auto-generate the schema for the target platform.  A representative schema is provided below that applies to PostgreSQL:
@@ -137,7 +137,7 @@ ALTER TABLE locks ADD CONSTRAINT pk_locks
 
 <div class="alert alert-warning"><strong>Platform-Specific Issues</strong><p>The exact DDL to create the LOCKS table may differ from the above. For example, on Oracle platforms the `expiration_date` column must be of type `DAT`E.  Use the `JpaLockingStrategy` which can create and update the schema automatically to avoid platform-specific schema issues.</p></div>
 
-<a name="ConnectionPooling">  </a>
+
 ## Connection Pooling
 
 It is ***strongly*** recommended that database connection pooling be used in a production environment. The following configuration makes use of the c3p0 connection pooling library, which would replace the `dataSource` bean found in the `ticketRegistry.xml` example above:
@@ -221,11 +221,11 @@ The following maven dependency for the library must be included in your Maven ov
 </dependency>
 ```
 
-<a name="PlatformConsiderations">  </a>
+
 # Platform Considerations
 
 ## MySQL
-<a name="UseInnoDBTables">  </a>
+
 ### Use InnoDB Tables
 The use of InnoDB tables is strongly recommended for the MySQL platform for a couple reasons:
 
@@ -241,7 +241,7 @@ InnoDB tables are easily specified via the use of the following Hibernate dialec
 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 ```
 
-<a name="BLOBvsLONGBLOB">  </a>
+
 ###BLOB vs LONGBLOB
 Hibernate on recent versions of MySQL (e.g. 5.1) properly maps the `@Lob` JPA annotation onto type `LONGBLOB`, which is very important since these fields commonly store serialized graphs of Java objects that grow proportionally with CAS SSO session lifetime. Under some circumstances, Hibernate may treat these columns as type `BLOB`, which have storage limits that are easily exceeded. It is recommended that the generated schema be reviewed and any BLOB type columns be converted to `LONGBLOB`.
 
@@ -251,7 +251,7 @@ The following MySQL statement would change this `SERVICES_GRANTED_ACCESS_TO` col
 ALTER TABLE TICKETGRANTINGTICKET MODIFY SERVICES_GRANTED_ACCESS_TO LONGBLOB;
 ```
 
-<a name="CaseSensitiveSchema">  </a>
+
 ###Case Sensitive Schema
 It may necessary to force lowercase schema names in the MySQL configuration:
 
