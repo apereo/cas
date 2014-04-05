@@ -17,7 +17,7 @@ This page documents the steps that a release engineer should take for cutting a 
 	- Load your SSH key on your local computer and ensure this SSH key is also referenced in Github
 	- Ensure your `settings.xml` file has the Sonatype repository defined with the appropriate credentials:
 	
-```
+{% highlight xml %}
 <servers>
 	<server>
 	  <id>sonatype-nexus-snapshots</id>
@@ -30,9 +30,7 @@ This page documents the steps that a release engineer should take for cutting a 
 	  <password>psw</password>
 	</server>
 </servers>
-```
-
-
+{% endhighlight %}
 	
 - Checkout the CAS project :
 {% highlight bash %}
@@ -80,7 +78,7 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 
 Send an announcement message to cas-announce, cas-user and cas-dev. A template follows:
 
-```
+{% highlight bash %}
 CAS Community,
 
 CAS x.y.z is available for testing and evaluation. We encourage adopters to grab 
@@ -89,7 +87,7 @@ this release from Maven Central, integrate into your environment, and provide fe
 Regards,
 John Smith
 
-```
+{% endhighlight %}
 
 Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard.jspa).
 

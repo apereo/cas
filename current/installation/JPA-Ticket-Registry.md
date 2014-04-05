@@ -15,7 +15,7 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 
 - Adjust the `src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml` with the following:
 
-```xml
+{% highlight xml %}
 <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
 
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
@@ -48,14 +48,14 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 		p:uniqueId="${host.name}"
 		p:applicationId="cas-ticket-registry-cleaner" />
  
-```
+{% endhighlight %}
 The above snippet assumes that data source information and connection details are defined.
 
 - Configure other JPA dependencies:
 
 In the `pom.xml` file of the Maven overlay, adjust for the following dependencies:
 
-```xml
+{% highlight xml %}
 ...
 <dependency>
 	<groupId>org.hibernate</groupId>
@@ -71,7 +71,7 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 	<scope>runtime</scope>
 </dependency>
 ...
-```
+{% endhighlight %}
 
 
 # Database Configuration
@@ -91,23 +91,23 @@ If the indices were not created you should manually create them before placing y
 
 To review indices, you may use the following MYSQL-based sample code below:
 
-```sql
+{% highlight sql %}
 show index from SERVICETICKET where column_name='ticketGrantingTicket_ID';
 show index from TICKETGRANTINGTICKET where column_name='ticketGrantingTicket_ID';
-```
+{% endhighlight %}
 
 To create indices that are missing, you may use the following sample code below:
 
 
 ### MYSQL
-```sql
+{% highlight sql %}
 CREATE INDEX ST_TGT_FK_I ON SERVICETICKET (ticketGrantingTicket_ID);
 CREATE INDEX ST_TGT_FK_I ON TICKETGRANTINGTICKET (ticketGrantingTicket_ID);
-```
+{% endhighlight %}
 
 
 ###ORACLE
-```sql
+{% highlight sql %}
 CREATE INDEX "ST_TGT_FK_I"
   ON SERVICETICKET ("TICKETGRANTINGTICKET_ID")
   COMPUTE STATISTICS;
@@ -116,7 +116,7 @@ CREATE INDEX "ST_TGT_FK_I"
 CREATE INDEX "TGT_TGT_FK_I"
   ON TICKETGRANTINGTICKET ("TICKETGRANTINGTICKET_ID")
   COMPUTE STATISTICS;
-```
+{% endhighlight %}
 
 
 ## Ticket Cleanup
@@ -124,7 +124,7 @@ CREATE INDEX "TGT_TGT_FK_I"
 The use `JpaLockingStrategy` is strongly recommended for HA environments where multiple nodes are attempting ticket cleanup on a shared database. `JpaLockingStrategy` can auto-generate the schema for the target platform.  A representative schema is provided below that applies to PostgreSQL:
 
 
-```sql
+{% highlight sql %}
 CREATE TABLE locks (
  application_id VARCHAR(50) NOT NULL,
  unique_id VARCHAR(50) NULL,
@@ -133,7 +133,7 @@ CREATE TABLE locks (
 
 ALTER TABLE locks ADD CONSTRAINT pk_locks
  PRIMARY KEY (application_id);
-```
+{% endhighlight %}
 
 <div class="alert alert-warning"><strong>Platform-Specific Issues</strong><p>The exact DDL to create the LOCKS table may differ from the above. For example, on Oracle platforms the `expiration_date` column must be of type `DAT`E.  Use the `JpaLockingStrategy` which can create and update the schema automatically to avoid platform-specific schema issues.</p></div>
 
@@ -142,7 +142,7 @@ ALTER TABLE locks ADD CONSTRAINT pk_locks
 
 It is ***strongly*** recommended that database connection pooling be used in a production environment. The following configuration makes use of the c3p0 connection pooling library, which would replace the `dataSource` bean found in the `ticketRegistry.xml` example above:
 
-```xml
+{% highlight xml %}
 ...
 <bean
   id="dataSource"
@@ -163,13 +163,13 @@ It is ***strongly*** recommended that database connection pooling be used in a p
   p:preferredTestQuery="${database.pool.connectionHealthQuery}"
   />
 ...
-```
+{% endhighlight %}
 
 The following pool configuration parameters are provided for information only and may serve as a reasonable starting point for configuring a production database connection pool. 
 
 <div class="alert alert-info"><strong>Usage Tip</strong><p>Note the health check query is specific to PostgreSQL.</p></div>
 
-```bash
+{% highlight bash %}
 # == Basic database connection pool configuration ==
 database.dialect=org.hibernate.dialect.PostgreSQLDialect
 database.driverClass=org.postgresql.Driver
@@ -209,17 +209,17 @@ database.pool.acquireRetryAttempts=5
  
 # Amount of time in ms to wait between successive aquire retry attempts.
 database.pool.acquireRetryDelay=2000
-```
+{% endhighlight %}
 
 The following maven dependency for the library must be included in your Maven overlay:
-```xml
+{% highlight xml %}
 <dependency>
 	<groupId>c3p0</groupId>
 	<artifactId>c3p0</artifactId>
 	<version>${c3p0.version}</version>
 	<scope>runtime</scope>
 </dependency>
-```
+{% endhighlight %}
 
 
 # Platform Considerations
@@ -234,12 +234,12 @@ The use of InnoDB tables is strongly recommended for the MySQL platform for a co
 
 InnoDB tables are easily specified via the use of the following Hibernate dialect:
 
-```xml
+{% highlight xml %}
 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
  
 <!-- OR for MySQL 5.x use the following instead -->
 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-```
+{% endhighlight %}
 
 
 ###BLOB vs LONGBLOB
@@ -247,18 +247,18 @@ Hibernate on recent versions of MySQL (e.g. 5.1) properly maps the `@Lob` JPA an
 
 The following MySQL statement would change this `SERVICES_GRANTED_ACCESS_TO` column's type to `LONGBLOB`:
 
-```sql
+{% highlight sql %}
 ALTER TABLE TICKETGRANTINGTICKET MODIFY SERVICES_GRANTED_ACCESS_TO LONGBLOB;
-```
+{% endhighlight %}
 
 
 ###Case Sensitive Schema
 It may necessary to force lowercase schema names in the MySQL configuration:
 
 Adjust the `my.cnf` file to include the following:
-```bash
+{% highlight bash %}
 lower-case-table-names = 1
-```
+{% endhighlight %}
 
 
 
