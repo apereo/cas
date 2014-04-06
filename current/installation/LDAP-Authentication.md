@@ -482,8 +482,10 @@ LPPE is also able to warn the user when the account is about to expire. The expi
 
 <div class="alert alert-danger"><strong>No Password Management!</strong><p>LPPE is not about password management. If you are looking for that sort of capability integrating with CAS, you might be interested in:
 
-- https://github.com/Unicon/cas-password-manager
-- http://code.google.com/p/pwm/‎
+<ul>
+    <li><a href="https://github.com/Unicon/cas-password-manager">https://github.com/Unicon/cas-password-manager</a></li>
+    <li><a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></li>‎
+</ul>
 
 </p></div>
 
