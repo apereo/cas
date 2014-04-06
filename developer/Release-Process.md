@@ -89,8 +89,11 @@ John Smith
 
 {% endhighlight %}
 
-Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard.jspa).
-
+Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard.jspa). You will need to
+have proper permissions in order to mark a given CAS version as "Released". 
+- Mark the version released, moving remaining open issues to the next version.
+- Do a query for all unresolved issues that affect the previous release and release candidates. Add the new release version as an affected version for each issue in the results.
+- Batch transition all resolved issues for the version to closed.
 
 ##Post Release
 <div class="alert alert-warning"><strong>GA Releases</strong><p>The following steps should only be executed for public GA releases.</p></div>
@@ -101,10 +104,24 @@ Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard
 mvn -DskipTests clean package assembly:assembly && mvn -N antrun:run
 {% endhighlight %}
 - [Upload assembly](https://wiki.jasig.org/display/JCH/Publishing+Project+Downloads) to Jasig Download Servers. 
-- Generate release note/message
-- Add entry to download section of the [website](http://jasig.org/cas) with release notes
-- [Update download block](http://www.jasig.org/admin/build/block/configure/block/21) to point to most current download.
-- Update "current" version in site
+- Generate release note/message in JIRA
+    - Log into JIRA at https://issues.jasig.org/secure/Dashboard.jspa
+    - Under the "Projects" menu at the top, select "CAS Server"
+    - From the TOC on the left, select "Versions"
+    - From the list, select the CAS server version under release
+    - Click on "Release Notes" on the top right-hand corner and copy the release notes
+- Add entry to download section of the [website](http://jasig.org/cas) with release notes.
+    - Go to https://www.jasig.org/user and log in
+        - Note: CAS download block is available at http://www.jasig.org/admin/build/block/configure/block/21
+    - Navigate to [Content Management] - [Create Content] - [Product Release] at https://www.jasig.org/node/add/product-release
+    - Give the page a title of `CAS Server x.y.z Release`
+    - Select `CAS Product Release` under Site Sections
+    - Add download links for the CAS Server version under release
+    - Copy over the content of the release notes page from JIRA into the body
+    - Under the URL path settings section set a URL of: `cas/download/CAS-XYZ`
+    - Under Publishing options check Published, Promoted to front page, and Sticky at top of lists
+    - Click Save
+    - Edit the page for the previous release and under Publishing options uncheck Promoted to front page, and Sticky at top of lists.
 
 
 ##Common Issues

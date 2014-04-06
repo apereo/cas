@@ -458,3 +458,76 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     # Search filter used for configurations that require searching for DNs
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
     ldap.authn.format=%s@example.com
+
+## LDAP Password Policy Enforcement
+The purpose of the LPPE is twofold:
+ 
+- Detect a number of scenarios that would otherwise prevent user authentication, specifically using an Ldap instance as the primary source of user accounts.
+- Warn users whose account status is near a configurable expiration date and redirect the flow to an external identity management system.
+
+### Reflecting LDAP Account Status
+The below scenarios are by default considered errors preventing authentication in a generic manner through the normal CAS login flow. LPPE intercepts the authentication flow, detecting the above standard error codes. Error codes are then translated into proper messages in the CAS login flow and would allow the user to take proper action, fully explaining the nature of the problem. 
+
+- `ACCOUNT_LOCKED`         
+- `ACCOUNT_DISABLED`        
+- `INVALID_LOGON_HOURS`    
+- `INVALID_WORKSTATION`    
+- `PASSWORD_MUST_CHANGE`   
+- `PASSWORD_EXPIRED`
+
+The translation of LDAP errors into CAS workflow is all handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate).
+
+### Account Expiration Notification
+LPPE is also able to warn the user when the account is about to expire. The expiration policy is determined through pre-configured Ldap attributes with default values in place.
+
+<div class="alert alert-danger"><strong>No Password Management!</strong><p>LPPE is not about password management. If you are looking for that sort of capability integrating with CAS, you might be interested in:
+
+- https://github.com/Unicon/cas-password-manager
+- http://code.google.com/p/pwm/‎
+
+</p></div>
+
+## Configuration
+LPPE is by default turned off. To enable the functionally, navigate to `src/main/webapp/WEB-INF/unused-spring-configuration` and move the `lppe-configuration.xml` xml file over to the `spring-configuration` directory.
+
+{% highlight xml %}
+<bean id="passwordPolicy" class="org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration"
+        p:alwaysDisplayPasswordExpirationWarning="${password.policy.warnAll}"
+        p:passwordWarningNumberOfDays="${password.polcy.warningDays}"
+        p:passwordPolicyUrl="${password.policy.url}"
+        p:accountStateHandler-ref="accountStateHandler" />
+
+  <!-- This component is suitable for most cases but can be replaced with a custom component for special cases. -->
+<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHander" />
+{% endhighlight %}      
+
+Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
+
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:ldapPasswordPolicyConfiguration-ref="passwordPolicy" />
+
+      ...
+</bean>
+{% endhighlight %}  
+
+### Components
+
+#### `DefaultAccountStateHander`
+The default account state handler, that calculates the password expiration warning period, maps ldap errors to the CAS workflow.
+
+#### `OptionalWarningAccountStateHandler`
+Supports both opt-in and opt-out warnings on a per-user basis.
+
+{% highlight xml %}
+<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler"
+        p:warningAttributeName="${password.warning.attr.name}"
+        p:warningAttributeValue="${password.warning.attr.value}"
+        p:displayWarningOnMatch="${password.warning.display.match}" />
+{% endhighlight %}  
+
+The first two parameters define an attribute on the user entry to match on, and the third parameter determines
+whether password expiration warnings should be displayed on match.
+
+**Note:** Deployers MUST configure LDAP components to provide `warningAttributeName` in the set of attributes returned from the LDAP query for user details.
