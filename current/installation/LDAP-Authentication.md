@@ -493,7 +493,7 @@ LPPE is by default turned off. To enable the functionally, navigate to `src/main
 {% highlight xml %}
 <bean id="passwordPolicy" class="org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration"
         p:alwaysDisplayPasswordExpirationWarning="${password.policy.warnAll}"
-        p:passwordWarningNumberOfDays="${password.polcy.warningDays}"
+        p:passwordWarningNumberOfDays="${password.policy.warningDays}"
         p:passwordPolicyUrl="${password.policy.url}"
         p:accountStateHandler-ref="accountStateHandler" />
 
@@ -506,7 +506,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:ldapPasswordPolicyConfiguration-ref="passwordPolicy" />
+      p:ldapPasswordPolicyConfiguration-ref="passwordPolicy">
 
       ...
 </bean>
