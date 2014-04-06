@@ -485,9 +485,7 @@ LPPE is also able to warn the user when the account is about to expire. The expi
 <ul>
     <li><a href="https://github.com/Unicon/cas-password-manager">https://github.com/Unicon/cas-password-manager</a></li>
     <li><a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></li>‎
-</ul>
-
-</p></div>
+</ul></p></div>
 
 ## Configuration
 LPPE is by default turned off. To enable the functionally, navigate to `src/main/webapp/WEB-INF/unused-spring-configuration` and move the `lppe-configuration.xml` xml file over to the `spring-configuration` directory.
