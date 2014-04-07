@@ -32,7 +32,7 @@
     -->
   <bean id="passwordPolicy" class="org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration"
         p:alwaysDisplayPasswordExpirationWarning="${password.policy.warnAll}"
-        p:passwordWarningNumberOfDays="${password.polcy.warningDays}"
+        p:passwordWarningNumberOfDays="${password.policy.warningDays}"
         p:passwordPolicyUrl="${password.policy.url}"
         p:accountStateHandler-ref="accountStateHandler" />
 
