@@ -22,9 +22,10 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.jasig.cas.adaptors.radius.RadiusServer;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.FailedLoginException;
@@ -57,15 +58,17 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     private boolean failoverOnAuthenticationFailure;
 
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         for (final RadiusServer radiusServer : this.servers) {
-            logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
+            logger.debug("Attempting to authenticate {} at {}", credential.getUsername(), radiusServer);
             try {
-                if (radiusServer.authenticate(username, password)) {
-                    return new SimplePrincipal(username);
-                } else if (!this.failoverOnAuthenticationFailure) {
+                if (radiusServer.authenticate(credential.getUsername(), credential.getPassword())) {
+                    return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+                } 
+                
+                if (!this.failoverOnAuthenticationFailure) {
                     throw new FailedLoginException();
                 }
                 logger.debug("failoverOnAuthenticationFailure enabled -- trying next server");
