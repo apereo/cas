@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -56,21 +55,21 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     /** {@inheritDoc} */
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final String cachedPassword = this.users.get(username);
+        final String cachedPassword = this.users.get(credential.getUsername());
 
         if (cachedPassword == null) {
-           logger.debug("{} was not found in the map.", username);
-           throw new AccountNotFoundException(username + " not found in backing map.");
+           logger.debug("{} was not found in the map.", credential.getUsername());
+           throw new AccountNotFoundException(credential.getUsername() + " not found in backing map.");
         }
 
-        final String encodedPassword = this.getPasswordEncoder().encode(password);
+        final String encodedPassword = this.getPasswordEncoder().encode(credential.getPassword());
         if (!cachedPassword.equals(encodedPassword)) {
             throw new FailedLoginException();
         }
-        return new SimplePrincipal(username);
+        return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
     }
 
     /**
