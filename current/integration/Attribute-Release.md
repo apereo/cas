@@ -23,6 +23,7 @@ A PersonDirectory `IPersonAttributeDao` attribute source is defined and configur
 * `MessageFormatPersonAttributeDao`: Provides the ability to create attributes based on other other attribute values as arguments.
 * `RegexGatewayPersonAttributeDao`: Conditionally execute an inner DAO if the data in the seed matches criteria set out by the configured patterns.
 * `SingleRowJdbcPersonAttributeDao`: The implementation that maps from column names in the result of a SQL query to attribute names.
+* `MultiRowJdbcPersonAttributeDao`: Designed to work against a table where there is a mapping of one row to many users. Should be used if the database is structured such that there is a column for attribute names and column(s) for the corresponding values.
 * `XmlPersonAttributeDao`: XML backed person attribute DAO that supports wildcard searching.
 * `LdapPersonAttributeDao`: Queries an LDAP directory to populate person attributes using Spring Framework.
 
