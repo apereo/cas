@@ -82,7 +82,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     /**
      * Authenticates a username/password credential by an arbitrary strategy.
      *
-     * @param credential the credential object bearing the transformed username and password.
+     * @param transformedCredential the credential object bearing the transformed username and password.
      *
      * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
@@ -90,7 +90,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
 
     /**
