@@ -115,7 +115,7 @@ Content-Type: text/xml
 
 In addition to the `cas-server-support-saml` module dependency, the following 5 steps are required to enabled the SAML 1.1 support.
 
-###`samlValidateController` Definition/Mapping
+###Definition/Mapping of `samlValidateController` 
 
 In `cas-servlet.xml`:
 
@@ -151,7 +151,7 @@ In the `web.xml` file:
 
 ###SAML Argument Extractor 
 
-In the argumentExtractorsConfiguration.xml file:
+In the `argumentExtractorsConfiguration.xml` file:
 
 {% highlight xml %}
 <bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
