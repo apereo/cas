@@ -30,12 +30,39 @@ function generateSidebarLinksForActiveVersion() {
 			href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
 			$(this).attr('href', href);
 		}
-  	});
+  });
+}
+function generateTableOfContentsForPage() {
+  $('#tableOfContents').append("<h2>Table of Contents</h2>");
+  $('#tableOfContents').append("<ul>");
+  
+  $('h1, h2, h3').each(function() {
+    if (this.id != "project_tagline" && this.id != "") {
+      var tagName = $(this).prop("tagName").trim();
+      var currentIndex = parseInt(tagName.substring(1, 2));
+      
+      var alignment = "";
+
+      switch (currentIndex) {
+        case 2:
+          for (var i = 0; i < 3; i++) { alignment += "&nbsp;" }
+          break;
+        case 3:
+          for (var i = 0; i < 6; i++) { alignment += "&nbsp;" }
+          break;
+      }
+      
+      $('#tableOfContents').append("<li><a href='#" + this.id + "'>" + alignment +
+          this.innerText + "</a></li>");
+    }
+  });
+  $('#tableOfContents').append("</ul>");
 }
 
 $(function() {
 	loadSidebarForActiveVersion();
-
+  generateTableOfContentsForPage();
+  
 	var formattedVersion = getActiveDocumentationVersionInView();
 	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
 		formattedVersion = " (" + formattedVersion + ")"
@@ -43,4 +70,5 @@ $(function() {
 		formattedVersion = "";
 	}
 	document.title = $("h1").first().text() + formattedVersion;
+  
 });

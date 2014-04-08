@@ -412,6 +412,14 @@ Full-Width Styles
   color: #fff;
 }
 
+#table_contents{
+  float: left;
+  color: #3d664f;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+  margin: 0 0 0 16px;
+  width: 400px;
+}
 
 /*******************************************************************************
 Small Device Styles
