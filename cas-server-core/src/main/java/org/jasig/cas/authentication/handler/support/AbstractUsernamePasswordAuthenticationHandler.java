@@ -75,8 +75,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         if (transformedUsername == null) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
-        final UsernamePasswordCredential transformedUpc = new UsernamePasswordCredential(transformedUsername, userPass.getPassword());
-        return authenticateUsernamePasswordInternal(transformedUpc);
+        userPass.setUsername(transformedUsername);
+        return authenticateUsernamePasswordInternal(userPass);
     }
 
     /**
@@ -114,7 +114,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * Helper method to construct a handler result
      * on successful authentication events.
      *
-     * @param credential the credential
+     * @param credential the credential on which the authentication was successfully performed.
+     * Note that this credential instance may be different from what was originally provided
+     * as transformation of the username may have occurred, if one is in fact defined.
      * @param principal the resolved principal
      * @param warnings the warnings
      * @return the constructed handler result
