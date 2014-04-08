@@ -72,6 +72,16 @@ commit message provides a good model:
 	4. Delete deprecated and superfluous resolver components.
 	5. Rename some X.509 resolver components for clarity/consistency.
 
+<div class="alert alert-info"><strong>Commit Titles</strong><p>The current build process will fail if the commit message
+does not begin with a particular JIRA issue (i.e. CAS-123). There are however, a number of headers reserved for special changes:
+
+<ul>
+  <li><code>CHECKSTYLE</code>: Minor formatting and convention fixes for checkstyle errors.</li>
+  <li><code>JAVADOCS</code>: Minor updates to Javadocs.</li>
+  <li><code>NOJIRA</code>: Minor changes to build, configuration and formatting</li>
+</ul>
+
+</p></div>
 
 #### 3. Push to Forked Repository
 You must push your local branch to your forked repository to facilitate a pull request.
