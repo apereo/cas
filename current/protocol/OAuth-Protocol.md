@@ -120,7 +120,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 ***
 
 
-#Or delegate the authentication to an OAuth provider
+#Delegate to an OAuth Provider
 
 Using the OAuth protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OAuth provider (like Facebook, Twitter, Google, Yahoo...)
 
