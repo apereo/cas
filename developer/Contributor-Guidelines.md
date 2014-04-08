@@ -72,8 +72,12 @@ commit message provides a good model:
 	4. Delete deprecated and superfluous resolver components.
 	5. Rename some X.509 resolver components for clarity/consistency.
 
-<div class="alert alert-info"><strong>Commit Titles</strong><p>The current build process will fail if the commit message
-does not begin with a particular JIRA issue (i.e. CAS-123). There are however, a number of headers reserved for special changes:
+<p>
+
+<div class="alert alert-warning"><strong>Commit Titles</strong><p>The current build process will 
+fail if the commit message
+does not begin with a particular JIRA issue (i.e. <code>CAS-123</code>).
+There are however, a number of headers reserved for special changes:
 
 <ul>
   <li><code>CHECKSTYLE</code>: Minor formatting and convention fixes for checkstyle errors.</li>
