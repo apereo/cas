@@ -33,7 +33,7 @@ function generateSidebarLinksForActiveVersion() {
   });
 }
 function generateTableOfContentsForPage() {
-  $('#tableOfContents').append("<h2>Table of Contents</h2>");
+  $('#tableOfContents').append("<strong>Table of Contents</strong>");
   $('#tableOfContents').append("<ul>");
   
   $('h1, h2, h3').each(function() {
