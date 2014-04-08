@@ -242,18 +242,6 @@ that provides a simple case transform on the principal ID. The following values 
       p:transformPrincipalId="UPPERCASE" />
 {% endhighlight %}
 
-
-######`CredentialsToLdapAttributePrincipalResolver`
-Provides an LDAP resolver based on the ldaptive library. This components provides a two-phase principal resolution
-strategy:
-
-1. Delegate to a (presumably simple) resolver to obtain a principal ID to use as the basis of an LDAP query.
-2. Execute an LDAP query for attributes, with the option to use a returned attribute as the final principal ID.
-
-TODO: provide configuration example
-@mmoayyed
-
-
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 See the [X.509 principal resolver](#x_509) section for more information.
