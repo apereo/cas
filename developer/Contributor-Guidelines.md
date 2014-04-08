@@ -72,7 +72,7 @@ commit message provides a good model:
 	4. Delete deprecated and superfluous resolver components.
 	5. Rename some X.509 resolver components for clarity/consistency.
 
-<p>
+<p/>
 
 <div class="alert alert-warning"><strong>Commit Titles</strong><p>The current build process will 
 fail if the commit message
