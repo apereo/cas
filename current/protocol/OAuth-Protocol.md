@@ -3,7 +3,7 @@ layout: default
 title: CAS - OAuth Protocol
 ---
 
-#Overview
+#OAuth Protocol
 You can configure the CAS server with OAuth server support, which means that you will be able to communicate with your CAS server through the [OAuth 2.0 protocol](http://oauth.net/2/), using the *Authorization Code* grant type.
 
 Three new urls will be available:

@@ -3,7 +3,7 @@ layout: default
 title: CAS - CAS SAML Protocol
 ---
 
-#Overview
+#SAML Protocol
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
@@ -115,7 +115,10 @@ Content-Type: text/xml
 
 In addition to the `cas-server-support-saml` module dependency, the following 5 steps are required to enabled the SAML 1.1 support.
 
-###`Define the samlValidateController bean and map it to /samlValidate URL via handlerMappingC bean in cas-servlet.xml:`
+###`samlValidateController` Definition/Mapping
+
+In `cas-servlet.xml`:
+
 {% highlight xml %}
 <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
   p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
@@ -135,7 +138,10 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
       ...
 {% endhighlight %}
 
-###`Add the servlet mapping for /samlValidate URL in the web.xml file:`
+###Servlet mapping for `/samlValidate` 
+
+In the `web.xml` file:
+
 {% highlight xml %}
 <servlet-mapping>
   <servlet-name>cas</servlet-name>
@@ -143,7 +149,10 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
 </servlet-mapping>
 {% endhighlight %}
 
-###`Add the appropriate SAML argument extractor in the argumentExtractorsConfiguration.xml file:`
+###SAML Argument Extractor 
+
+In the argumentExtractorsConfiguration.xml file:
+
 {% highlight xml %}
 <bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
 
@@ -153,7 +162,10 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
 </util:list>
 {% endhighlight %}
 
-###`Add the SAML ID generator in the uniqueIdGenerators.xml file:`
+###SAML ID Generator
+
+In the uniqueIdGenerators.xml file:
+
 {% highlight xml %}
 <bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator">
   <constructor-arg index="0" value="https://localhost:8443" />
@@ -169,7 +181,10 @@ In addition to the `cas-server-support-saml` module dependency, the following 5 
 </util:map>
 {% endhighlight %}
 
-###`Add the SAML views in the cas-servlet.xml file:`
+###SAML Views 
+
+In the `cas-servlet.xml` file:
+
 {% highlight xml %}
 <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver" p:order="0">
   <property name="basenames">
