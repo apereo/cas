@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * can be anything.
  *
  * @author Scott Battaglia
-
+ * @author Misagh Moayyed
  * @since 3.0
  */
 @Entity
@@ -108,7 +108,11 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
-    public TicketGrantingTicket grantTicketGrantingTicket(
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
         synchronized (this) {
@@ -119,22 +123,10 @@ public final class ServiceTicketImpl extends AbstractTicket implements
             this.grantedTicketAlready = true;
         }
 
-        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
-            authentication, expirationPolicy);
+        return new ProxyGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(), authentication, expirationPolicy);
     }
 
     public Authentication getAuthentication() {
         return null;
-    }
-
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-
-        return serviceTicket.getId().equals(this.getId());
     }
 }

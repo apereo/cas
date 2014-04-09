@@ -185,7 +185,13 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
-
+        
+        <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <scope>compile</scope>
+        </dependency>
+      
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>

@@ -30,7 +30,6 @@ import org.jasig.cas.authentication.principal.Service;
  * CAS cannot do anything.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public interface TicketGrantingTicket extends Ticket {

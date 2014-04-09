@@ -140,6 +140,8 @@ public class ServiceValidateController extends DelegateController {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
+                    logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+                            proxyGrantingTicketId, serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
                     logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {

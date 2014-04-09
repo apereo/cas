@@ -24,6 +24,7 @@ import java.util.Map;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -150,9 +151,9 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                 final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
+            final ProxyGrantingTicket t = this.getTicket().grantProxyGrantingTicket(id,
                     authentication, expirationPolicy);
             updateTicket();
             return t;

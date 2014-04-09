@@ -21,10 +21,9 @@ package org.jasig.cas.mock;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import java.util.Date;
 
@@ -34,8 +33,6 @@ import java.util.Date;
  * @author Marvin S. Addison
  */
 public class MockServiceTicket implements ServiceTicket {
-    private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
-
     private final String id;
 
     private final Date created;
@@ -63,7 +60,8 @@ public class MockServiceTicket implements ServiceTicket {
         return this.service.equals(service);
     }
 
-    public TicketGrantingTicket grantTicketGrantingTicket(
+    @Override
+    public ProxyGrantingTicket grantProxyGrantingTicket(
             final String id,
             final Authentication authentication,
             final ExpirationPolicy expirationPolicy) {

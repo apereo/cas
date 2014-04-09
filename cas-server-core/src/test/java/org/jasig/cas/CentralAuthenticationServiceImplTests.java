@@ -27,6 +27,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketState;
@@ -38,7 +39,6 @@ import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 import static org.mockito.Mockito.mock;
 
 /**
@@ -137,8 +137,9 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, TestUtils.getService());
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final String pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
             serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
+        assertTrue(pgt.startsWith(ProxyGrantingTicket.PREFIX));
     }
 
     @Test(expected=AuthenticationException.class)

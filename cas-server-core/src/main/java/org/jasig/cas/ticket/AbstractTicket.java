@@ -24,6 +24,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -152,11 +154,32 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         return false;
     }
 
+    @Override
     public final int hashCode() {
-        return this.getId().hashCode();
+        return new HashCodeBuilder().append(this.getId()).toHashCode();
     }
 
+    @Override
     public final String toString() {
         return this.getId();
+    }
+    
+    @Override
+    public final boolean equals(final Object object) {
+        if (object == null) { 
+            return false; 
+        }
+        if (object == this) { 
+            return true; 
+        }
+        if (object.getClass() != getClass()) {
+          return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                    .append(ticket.getId(), this.getId())
+                    .isEquals();
     }
 }

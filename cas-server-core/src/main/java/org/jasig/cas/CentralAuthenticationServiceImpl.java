@@ -21,9 +21,11 @@ package org.jasig.cas;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
+
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -51,6 +53,7 @@ import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -382,15 +385,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(
-                        this.ticketGrantingTicketUniqueTicketIdGenerator
-                                .getNewTicketId(TicketGrantingTicket.PREFIX),
-                        authentication, this.ticketGrantingTicketExpirationPolicy);
+        final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator
+                .getNewTicketId(ProxyGrantingTicket.PREFIX);
+        
+        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket
+                .grantProxyGrantingTicket(pgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
+        this.ticketRegistry.addTicket(proxyGrantingTicket);
 
-        return ticketGrantingTicket.getId();
+        return proxyGrantingTicket.getId();
     }
 
     /**
