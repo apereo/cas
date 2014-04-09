@@ -172,7 +172,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         if (object == this) { 
             return true; 
         }
-        if (object.getClass() != getClass()) {
+        if (object.getClass().isAssignableFrom(getClass())) {
           return false;
         }
 

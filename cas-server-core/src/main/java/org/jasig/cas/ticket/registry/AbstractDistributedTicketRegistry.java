@@ -219,5 +219,15 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         public void removeAllServices() {
             this.getTicket().removeAllServices();
         }
+        
+        @Override
+        public int hashCode() {
+            return getTicket().hashCode();
+        }
+        
+        @Override
+        public boolean equals(final Object obj) {
+            return getTicket().equals(obj);
+        }
     }
 }
