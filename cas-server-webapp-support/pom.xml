@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server</artifactId>
-    <version>4.0.0-RC3-SNAPSHOT</version>
+    <version>4.0.0-RC5-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-server-webapp-support</artifactId>
@@ -88,7 +88,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
       <scope>compile</scope>
     </dependency>
 
