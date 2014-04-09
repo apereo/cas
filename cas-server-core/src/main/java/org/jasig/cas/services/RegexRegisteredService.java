@@ -37,11 +37,23 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     private transient Pattern servicePattern;
 
+    private boolean caseSensitive = true;
+    
     public void setServiceId(final String id) {
-        servicePattern = createPattern(id);
         serviceId = id;
     }
 
+    /**
+     * Determines whether the regex pattern comparison
+     * should be performed in a case-sensitive manner.
+     * Default is true.
+     *
+     * @param caseSensitive the new case sensitive
+     */
+    public void setCaseSensitive(final boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+    
     public boolean matches(final Service service) {
         if (servicePattern == null) {
             servicePattern = createPattern(serviceId);
@@ -56,6 +68,10 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     private Pattern createPattern(final String pattern) {
         if (pattern == null) {
             throw new IllegalArgumentException("Pattern cannot be null.");
+        }
+        
+        if (!this.caseSensitive) {
+            return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
         }
         return Pattern.compile(pattern);
     }
