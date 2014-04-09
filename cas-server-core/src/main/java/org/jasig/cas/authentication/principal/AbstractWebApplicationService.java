@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     private static final long serialVersionUID = 610105280927740076L;
 
     /** Logger instance. **/
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
     /** The id of the service. */
@@ -136,7 +137,16 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     public boolean matches(final Service service) {
-        return this.id.equals(service.getId());
+        try {
+            final String thisUrl = URLDecoder.decode(this.id, "UTF-8");
+            final String serviceUrl = URLDecoder.decode(service.getId(), "UTF-8");
+
+            logger.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+            return thisUrl.equalsIgnoreCase(serviceUrl);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**
