@@ -49,7 +49,7 @@ public final class LdapUtils {
      * @param context the Ldap connection to close
      */
     public static void closeConnection(final Connection context) {
-        if (context != null) {
+        if (context != null && context.isOpen()) {
             try {
                 context.close();
             } catch (final Exception ex) {

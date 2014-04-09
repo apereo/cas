@@ -223,10 +223,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             return Collections.emptyList();
         }
 
-        logger.debug("Ticket found. Deleting and then performing back channel logout.");
+        logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
+        final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
 
-        return logoutManager.performLogout(ticket);
+        return logoutRequests;
     }
 
     /**
@@ -284,8 +285,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if (credentials != null) {
             final Authentication current = this.authenticationManager.authenticate(credentials);
             final Authentication original = ticketGrantingTicket.getAuthentication();
-            if (!(current.getPrincipal().equals(original.getPrincipal())
-                    && current.getAttributes().equals(current.getAttributes()))) {
+            if (!current.getPrincipal().equals(original.getPrincipal())) {
                 throw new MixedPrincipalException(current, current.getPrincipal(), original.getPrincipal());
             }
             ticketGrantingTicket.getSupplementalAuthentications().add(current);
