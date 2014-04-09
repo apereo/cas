@@ -95,6 +95,11 @@ public final class WebUtils {
         context.getRequestScope().put("ticketGrantingTicketId", ticketValue);
     }
 
+    public static void putTicketGrantingTicketInFlowScope(
+        final RequestContext context, final String ticketValue) {
+        context.getFlowScope().put("ticketGrantingTicketId", ticketValue);
+    }
+
     public static String getTicketGrantingTicketId(
         final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
