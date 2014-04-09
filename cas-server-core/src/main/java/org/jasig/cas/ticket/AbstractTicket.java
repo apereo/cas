@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
 /**
  * Abstract implementation of a ticket that handles all ticket state for
  * policies. Also incorporates properties common among all tickets. As this is
- * an abstract class, it cannnot be instanciated. It is recommended that
+ * an abstract class, it cannot be instantiated. It is recommended that
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
  * updating).
@@ -172,7 +172,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         if (object == this) { 
             return true; 
         }
-        if (object.getClass().isAssignableFrom(getClass())) {
+        if (object.getClass().isAssignableFrom(Ticket.class)) {
           return false;
         }
 
