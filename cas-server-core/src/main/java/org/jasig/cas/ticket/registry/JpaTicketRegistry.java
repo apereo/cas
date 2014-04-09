@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.2.1
  *
  */
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements BatchableTicketRegistry {
 
     @NotNull
     @PersistenceContext
@@ -151,6 +151,34 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         tickets.addAll(sts);
 
         return tickets;
+    }
+
+    /* When using JpaTicketRegistry with the BatchedTicketRegistryCleaner it would be a good idea to add an index on the
+     * creation_time column on the ticketgrantingticket table since this query does an order by on it.
+     */
+    @Transactional(readOnly=true)
+    public Collection<Ticket> getTicketGrantingTicketBatch(final int offset, final int batchSize) {
+        final List<TicketGrantingTicketImpl> tgts = entityManager
+                .createQuery("select t from TicketGrantingTicketImpl t order by t.creationTime asc", TicketGrantingTicketImpl.class)
+                .setFirstResult(offset)
+                .setMaxResults(batchSize)
+                .getResultList();
+
+        return new ArrayList<Ticket>(tgts);
+    }
+
+    /* When using JpaTicketRegistry with the BatchedTicketRegistryCleaner it would be a good idea to add an index on the
+     * creation_time column on the serviceticket table since this query does an order by on it.
+     */
+    @Transactional(readOnly=true)
+    public Collection<Ticket> getServiceTicketBatch(final int offset, final int batchSize) {
+        final List<ServiceTicketImpl> sts = entityManager
+                .createQuery("select s from ServiceTicketImpl s order by s.creationTime asc", ServiceTicketImpl.class)
+                .setFirstResult(offset)
+                .setMaxResults(batchSize)
+                .getResultList();
+
+        return new ArrayList<Ticket>(sts);
     }
 
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
