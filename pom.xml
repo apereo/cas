@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jasig.parent</groupId>
     <artifactId>jasig-parent</artifactId>
-    <version>35</version>
+    <version>39</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Jasig Central Authentication Service</name>
   <description>Jasig CAS SSO server libraries and Web application.</description>
-  <version>4.0.0-RC3-SNAPSHOT</version>
+  <version>4.0.0-RC5-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
 
@@ -842,7 +842,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-integration-ehcache</module>
     <module>cas-server-integration-restlet</module>
     <module>cas-server-uber-webapp</module>
-    <module>cas-server-documentation</module>
     <module>cas-server-extension-clearpass</module>
     <module>cas-management-webapp</module>
   </modules>
@@ -961,9 +960,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
-    <spring.version>3.2.2.RELEASE</spring.version>
-    <ldaptive.version>1.0.1</ldaptive.version>
-    <spring.security.version>3.1.2.RELEASE</spring.security.version>
+    <spring.version>3.2.6.RELEASE</spring.version>
+    <ldaptive.version>1.0.3</ldaptive.version>
+    <spring.security.version>3.2.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.7.2</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>

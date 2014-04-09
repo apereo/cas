@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
@@ -56,7 +57,7 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
         try {
             return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
         } finally {
-            conn.close();
+            LdapUtils.closeConnection(conn);
         }
     }
 
