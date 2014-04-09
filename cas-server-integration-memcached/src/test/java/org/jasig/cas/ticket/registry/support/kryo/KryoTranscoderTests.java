@@ -32,6 +32,7 @@ import javax.security.auth.login.FailedLoginException;
 
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -45,6 +46,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
@@ -61,8 +63,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
 
-    private final static String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
-    private final static String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
+    private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
+    private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
     
     private final KryoTranscoder transcoder;
 
@@ -107,7 +109,7 @@ public class KryoTranscoderTests {
         internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
     }
 
-    private void internalProxyTest(String proxyUrl) throws MalformedURLException {
+    private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
         final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, proxyCredential);
@@ -163,6 +165,12 @@ public class KryoTranscoderTests {
 
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+        }
+
+        @Override
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication,
+                final ExpirationPolicy expirationPolicy) {
+            return null;
         }
     }
 
