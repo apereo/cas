@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.radius.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -63,10 +64,13 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         for (final RadiusServer radiusServer : this.servers) {
             logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
-                if (radiusServer.authenticate(username, password)) {
+                final RadiusResponse response = radiusServer.authenticate(username, password);
+                if (response != null) {
                     return new SimplePrincipal(username);
-                } else if (!this.failoverOnAuthenticationFailure) {
-                    throw new FailedLoginException();
+                } 
+                
+                if (!this.failoverOnAuthenticationFailure) {
+                    throw new FailedLoginException("Radius authentication failed for user " + username);
                 }
                 logger.debug("failoverOnAuthenticationFailure enabled -- trying next server");
             } catch (final PreventedException e) {
@@ -76,7 +80,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                 logger.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        throw new FailedLoginException();
+        throw new FailedLoginException("Radius authentication failed for user " + username);
     }
 
     /**
