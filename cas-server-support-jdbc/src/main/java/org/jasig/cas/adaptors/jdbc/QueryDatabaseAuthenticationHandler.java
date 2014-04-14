@@ -53,22 +53,23 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         final String encryptedPassword = this.getPasswordEncoder().encode(credential.getPassword());
         try {
-            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, credential.getUsername());
+            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
             if (!dbPassword.equals(encryptedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
-                throw new AccountNotFoundException(credential.getUsername() + " not found with SQL query");
+                throw new AccountNotFoundException(username + " not found with SQL query");
             } else {
-                throw new FailedLoginException("Multiple records found for " + credential.getUsername());
+                throw new FailedLoginException("Multiple records found for " + username);
             }
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + credential.getUsername(), e);
+            throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+        return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
 
     /**

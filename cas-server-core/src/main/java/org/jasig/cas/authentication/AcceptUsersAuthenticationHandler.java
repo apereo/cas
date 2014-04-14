@@ -58,18 +58,19 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final String cachedPassword = this.users.get(credential.getUsername());
+        final String username = credential.getUsername();
+        final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
-           logger.debug("{} was not found in the map.", credential.getUsername());
-           throw new AccountNotFoundException(credential.getUsername() + " not found in backing map.");
+           logger.debug("{} was not found in the map.", username);
+           throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
         final String encodedPassword = this.getPasswordEncoder().encode(credential.getPassword());
         if (!cachedPassword.equals(encodedPassword)) {
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+        return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
 
     /**

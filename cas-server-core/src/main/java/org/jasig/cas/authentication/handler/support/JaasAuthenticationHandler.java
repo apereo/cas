@@ -94,11 +94,12 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         final LoginContext lc = new LoginContext(
                 this.realm,
-                new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword()));
+                new UsernamePasswordCallbackHandler(username, credential.getPassword()));
         try {
-            logger.debug("Attempting authentication for: {}", credential.getUsername());
+            logger.debug("Attempting authentication for: {}", username);
             lc.login();
         } finally {
             lc.logout();
