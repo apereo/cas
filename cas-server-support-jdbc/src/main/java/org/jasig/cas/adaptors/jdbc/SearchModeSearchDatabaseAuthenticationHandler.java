@@ -64,17 +64,18 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         final String encyptedPassword = getPasswordEncoder().encode(credential.getPassword());
         final int count;
         try {
-            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, credential.getUsername(), encyptedPassword);
+            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, encyptedPassword);
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + credential.getUsername(), e);
+            throw new PreventedException("SQL exception while executing query for " + username, e);
         }
         if (count == 0) {
-            throw new FailedLoginException(credential.getUsername() + " not found with SQL query.");
+            throw new FailedLoginException(username + " not found with SQL query.");
         }
-        return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+        return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
 
     @Override

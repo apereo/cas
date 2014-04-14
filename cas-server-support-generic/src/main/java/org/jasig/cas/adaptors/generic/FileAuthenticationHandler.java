@@ -66,12 +66,15 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
         try {
-            final String passwordOnRecord = getPasswordOnRecord(credential.getUsername());
+            
+            final String username = credential.getUsername();
+            final String passwordOnRecord = getPasswordOnRecord(username);
             if (passwordOnRecord == null) {
-                throw new AccountNotFoundException(credential.getUsername() + " not found in backing file.");
+                throw new AccountNotFoundException(username + " not found in backing file.");
             }
-            if (credential.getPassword() != null && this.getPasswordEncoder().encode(credential.getPassword()).equals(passwordOnRecord)) {
-                return createHandlerResult(credential, new SimplePrincipal(credential.getUsername()), null);
+            if (credential.getPassword() != null
+                    && this.getPasswordEncoder().encode(credential.getPassword()).equals(passwordOnRecord)) {
+                return createHandlerResult(credential, new SimplePrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
