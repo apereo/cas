@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.radius;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -36,15 +37,15 @@ public class RadiusClientFactory {
 
     /** The port to do accounting on. */
     @Min(1)
-    private int accountingPort = RadiusClient.defaultAcctPort;
+    private int accountingPort = RadiusServer.DEFAULT_PORT_ACCOUNTING;
 
     /** The port to do authentication on. */
     @Min(1)
-    private int authenticationPort = RadiusClient.defaultAuthPort;
+    private int authenticationPort = RadiusServer.DEFAULT_PORT_AUTHENTICATION;
 
     /** Socket timeout in seconds. */
     @Min(0)
-    private int socketTimeout = RadiusClient.defaultTimeout;
+    private int socketTimeout = 60;
 
     /** RADIUS server network address. */
     @NotNull
@@ -108,7 +109,7 @@ public class RadiusClientFactory {
      *
      * @return New radius client instance.
      */
-    public RadiusClient newInstance() {
+    public RadiusClient newInstance() throws IOException {
         return new RadiusClient(
                 this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
