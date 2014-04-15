@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -56,23 +57,28 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Map of account state error to CAS authentication exception. */
-    private static final Map<AccountState.Error, LoginException> ERROR_MAP;
+    protected final Map<AccountState.Error, LoginException> errorMap;
 
-    static {
-        ERROR_MAP = new HashMap<AccountState.Error, LoginException>();
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, new InvalidLoginLocationException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
-        ERROR_MAP.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+    /**
+     * Instantiates a new account state handler, that populates
+     * the error map with LDAP error codes and corresponding exceptions.
+     */
+    public DefaultAccountStateHandler() {
+        this.errorMap = new HashMap<AccountState.Error, LoginException>();
+        this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, new InvalidLoginLocationException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
+        this.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
+        this.errorMap.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
+        this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
     }
 
     @Override
@@ -116,7 +122,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             throws LoginException {
 
         logger.debug("Handling {}", error);
-        final LoginException ex = ERROR_MAP.get(error);
+        final LoginException ex = errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
