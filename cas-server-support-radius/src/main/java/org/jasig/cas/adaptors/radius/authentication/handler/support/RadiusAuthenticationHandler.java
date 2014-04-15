@@ -62,13 +62,15 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String password = getPasswordEncoder().encode(credential.getPassword());
         final String username = credential.getUsername();
+        
         for (final RadiusServer radiusServer : this.servers) {
             logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
-                     return new SimplePrincipal(username);
+                     return createHandlerResult(credential, new SimplePrincipal(username), null);
                 } 
                                 
                 if (!this.failoverOnAuthenticationFailure) {
