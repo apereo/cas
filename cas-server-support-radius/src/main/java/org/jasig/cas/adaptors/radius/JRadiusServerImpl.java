@@ -80,7 +80,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     
     private long nasPortId = -1;
     
-    private long nasIdentifier;
+    private long nasIdentifier = -1;
     
     private long nasRealPort = -1;
     
