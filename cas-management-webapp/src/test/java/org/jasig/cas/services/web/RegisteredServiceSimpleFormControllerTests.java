@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.MockRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -106,6 +105,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
         request.addParameter("evaluationOrder", "1");
+        request.addParameter("serviceType", "ant");
 
         request.setMethod("POST");
 
@@ -144,6 +144,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         request.addParameter("anonymousAccess", "false");
         request.addParameter("evaluationOrder", "2");
         request.addParameter("id", "1000");
+        request.addParameter("serviceType", "ant");
 
         request.setMethod("POST");
 
@@ -170,6 +171,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
         request.addParameter("evaluationOrder", "1");
+        request.addParameter("serviceType", "regex");
 
         request.setMethod("POST");
 
@@ -199,12 +201,14 @@ public class RegisteredServiceSimpleFormControllerTests {
         request1.addParameter("ssoEnabled", "true");
         request1.addParameter("anonymousAccess", "false");
         request1.addParameter("evaluationOrder", "1");
+        request1.addParameter("serviceType", "ant");
 
         request1.setMethod("POST");
 
         final MockHttpServletRequest request2 = new MockHttpServletRequest();
         final MockHttpServletResponse response2 = new MockHttpServletResponse();
 
+        request2.addParameter("serviceType", "regex");
         request2.addParameter("description", "description");
         request2.addParameter("serviceId", "^https://.*");
         request2.addParameter("name", "regex");
@@ -247,18 +251,18 @@ public class RegisteredServiceSimpleFormControllerTests {
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
         request.addParameter("evaluationOrder", "1");
+        request.addParameter("serviceType", "ant");
 
         request.setMethod("POST");
 
         assertTrue(this.manager.getAllServices().isEmpty());
 
-        this.controller.setCommandClass(MockRegisteredService.class);
         this.controller.handleRequest(request, response);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for(RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof MockRegisteredService);
+            assertTrue(rs instanceof RegisteredServiceImpl);
         }
     }
 
@@ -267,7 +271,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        final MockRegisteredService r = new MockRegisteredService();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
@@ -275,6 +279,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.manager.save(r);
 
+        request.addParameter("serviceType", "ant");
         request.addParameter("description", "description");
         request.addParameter("serviceId", "serviceId1");
         request.addParameter("name", "name");
@@ -294,6 +299,6 @@ public class RegisteredServiceSimpleFormControllerTests {
         final RegisteredService r2 = this.manager.findServiceBy(1000);
 
         assertEquals("serviceId1", r2.getServiceId());
-        assertTrue(r2 instanceof MockRegisteredService);
+        assertTrue(r2 instanceof RegisteredServiceImpl);
     }
 }
