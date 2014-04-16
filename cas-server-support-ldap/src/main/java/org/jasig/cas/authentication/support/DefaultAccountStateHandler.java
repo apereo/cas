@@ -73,6 +73,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         ERROR_MAP.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         ERROR_MAP.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         ERROR_MAP.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        ERROR_MAP.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
     }
 
     @Override
