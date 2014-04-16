@@ -42,11 +42,18 @@
 		</span>
 		
 		<span class="oneField">
+			<label for="serviceType" class="preField"><spring:message code="management.services.add.property.serviceType" /></label>
+			<select id="serviceType" name="serviceType" class="required" required="true">
+			  <option value="ant" selected>Ant</option>
+			  <option value="regex">Regex</option>
+			</select>
+		</span>
+
+		<span class="oneField">
 			<label for="serviceId" class="preField"><spring:message code="management.services.add.property.serviceUrl" /></label>
 			<form:input path="serviceId" size="51" maxlength="255" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" cssClass="formError" />
 			<br />
-			<div class="hint"><spring:message code="management.services.add.property.serviceUrl.instructions" /></div>
 		</span>
 
 		

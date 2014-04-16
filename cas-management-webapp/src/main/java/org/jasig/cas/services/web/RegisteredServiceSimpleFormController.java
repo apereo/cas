@@ -23,10 +23,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -93,27 +95,18 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected ModelAndView onSubmit(final HttpServletRequest request,
             final HttpServletResponse response, final Object command,
             final BindException errors) throws Exception {
-        RegisteredService service = (RegisteredService) command;
-
-        // only change object class if there isn't an explicit RegisteredService class set
-        if (this.getCommandClass() == null) {
-            // CAS-1071
-            // Treat _new_ patterns starting with ^ character as a regular expression
-            if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
-                    && service.getServiceId().startsWith("^")) {
-                logger.debug("Detected regular expression starting with ^");
-                final RegexRegisteredService regexService = new RegexRegisteredService();
-                regexService.copyFrom(service);
-                service = regexService;
-            }
-        }
-        this.servicesManager.save(service);
-        logger.info("Saved changes to service " + service.getId());
+        final RegisteredService service = (RegisteredService) command;
+        
+        final AbstractRegisteredService serviceToSave = createRegisteredService(request);
+        serviceToSave.copyFrom(service);
+        
+        this.servicesManager.save(serviceToSave);
+        logger.info("Saved changes to service " + serviceToSave.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html#" + service.getId(), true));
+                "manage.html#" + serviceToSave.getId(), true));
         modelAndView.addObject("action", "add");
-        modelAndView.addObject("id", service.getId());
+        modelAndView.addObject("id", serviceToSave.getId());
 
         return modelAndView;
     }
@@ -122,30 +115,26 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected Object formBackingObject(final HttpServletRequest request)
             throws Exception {
         final String id = request.getParameter("id");
-
+  
         if (!StringUtils.hasText(id)) {
-            // create a default RegisteredServiceImpl object if an explicit class isn't set
-            final Object service;
-            if (this.getCommandClass() != null) {
-                service = this.createCommand();
-            } else {
-                service = new RegisteredServiceImpl();
-            }
+            final RegisteredService service = createRegisteredService(request);
+            setCommandClass(service.getClass());
+            
             logger.debug("Created new service of type " + service.getClass().getName());
             return service;
         }
 
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
-
+        
         if (service != null) {
             logger.debug("Loaded service " + service.getServiceId());
+            setCommandClass(service.getClass());
         } else {
             logger.debug("Invalid service id specified.");
         }
 
         return service;
     }
-
     /**
      * {@inheritDoc}
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
@@ -165,9 +154,31 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         possibleUsernameAttributeNames.add(0, "");
         model.put("availableUsernameAttributes", possibleUsernameAttributeNames);
 
-
+        final Class<?> cmd = (Class<?>) this.getCommandClass();
+        if (cmd == null || cmd.isAssignableFrom(RegisteredServiceImpl.class)) {
+            model.put("serviceType", "ant");
+        } else if (cmd.isAssignableFrom(RegexRegisteredService.class)) {
+            model.put("serviceType", "regex");
+        }
+        
         model.put("pageTitle", getFormView());
         model.put("commandName", getCommandName());
         return model;
+    }
+    
+    private AbstractRegisteredService createRegisteredService(final HttpServletRequest request) {
+        final String type = request.getParameter("serviceType");
+        if (StringUtils.isEmpty(type)) {
+            logger.debug("No service type is specified. Falling back to [ant]");
+            return new RegisteredServiceImpl();
+        }
+        logger.debug("Creating service with type " + type);
+        if (type.equalsIgnoreCase("ant")) {
+            return new RegisteredServiceImpl();
+        }
+        if (type.equalsIgnoreCase("regex")) {
+            return new RegexRegisteredService();
+        }
+        throw new IllegalArgumentException("Unknown service type specified: " + type);
     }
 }
