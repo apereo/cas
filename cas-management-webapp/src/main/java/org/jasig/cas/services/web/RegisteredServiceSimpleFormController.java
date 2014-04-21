@@ -95,18 +95,19 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
             final BindException errors) throws Exception {
         RegisteredService service = (RegisteredService) command;
 
-        // only change object class if there isn't an explicit RegisteredService class set
-        if (this.getCommandClass() == null) {
-            // CAS-1071
-            // Treat _new_ patterns starting with ^ character as a regular expression
-            if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
-                    && service.getServiceId().startsWith("^")) {
-                logger.debug("Detected regular expression starting with ^");
-                final RegexRegisteredService regexService = new RegexRegisteredService();
-                regexService.copyFrom(service);
-                service = regexService;
-            }
+
+        if (service.getServiceId().startsWith("^") && service instanceof RegisteredServiceImpl) {
+            logger.debug("Detected regular expression starting with ^");
+            final RegexRegisteredService regexService = new RegexRegisteredService();
+            regexService.copyFrom(service);
+            service = regexService;
+        } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
+            logger.debug("Detected ant expression " + service.getServiceId());
+            final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
+            regexService.copyFrom(service);
+            service = regexService;
         }
+        
         this.servicesManager.save(service);
         logger.info("Saved changes to service " + service.getId());
 
