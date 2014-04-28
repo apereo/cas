@@ -57,10 +57,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20CallbackAuthorizeController.java">org/jasig/cas/support/oauth/web/OAuth20CallbackAuthorizeController.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.OAuthUtils.java">org/jasig/cas/support/oauth/OAuthUtils.java</a>
                 </td>
                 <td>
-                  0
+                  1
                 </td>
                 <td>
                   0
@@ -71,10 +71,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.OAuthUtils.java">org/jasig/cas/support/oauth/OAuthUtils.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20CallbackAuthorizeController.java">org/jasig/cas/support/oauth/web/OAuth20CallbackAuthorizeController.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -113,20 +113,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20ProfileController.java">org/jasig/cas/support/oauth/web/OAuth20ProfileController.java</a>
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService.java">org/jasig/cas/support/oauth/services/OAuthRegisteredCallbackAuthorizeService.java</a>
                 </td>
                 <td>
@@ -141,10 +127,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenController.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenController.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20ProfileController.java">org/jasig/cas/support/oauth/web/OAuth20ProfileController.java</a>
                 </td>
                 <td>
-                  2
+                  1
                 </td>
                 <td>
                   0
@@ -159,6 +145,20 @@
                 </td>
                 <td>
                   0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenController.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenController.java</a>
+                </td>
+                <td>
+                  2
                 </td>
                 <td>
                   0
