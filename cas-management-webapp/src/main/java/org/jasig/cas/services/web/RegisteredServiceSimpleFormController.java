@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -139,7 +140,8 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
 
         if (service != null) {
-            logger.debug("Loaded service " + service.getServiceId());
+            setCommandClass(service.getClass());
+            logger.debug("Loaded service " + service.getServiceId() + " with command class set to " + this.getCommandClass());
         } else {
             logger.debug("Invalid service id specified.");
         }
