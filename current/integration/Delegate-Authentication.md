@@ -7,9 +7,10 @@ title: CAS - Delegate authentication
 The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
 But the CAS server can also act as a client using the [pac4j library](https://github.com/leleuj/pac4j) and delegate the authentication to:
-- another CAS server (using CAS protocol)
-- an OAuth provider (using OAuth protocol): Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
-- an OpenID provider (using OpenID protocol): myopenid.com and Google.
+
+* another CAS server (using CAS protocol)
+* an OAuth provider (using OAuth protocol): Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
+* an OpenID provider (using OpenID protocol): myopenid.com and Google.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -29,13 +30,15 @@ Once you have configured (see information below) your CAS server to act as an OA
 
 In the CAS server, after this kind of delegated authentication, users have specific authentication data.
 
-The `Authentication` object has :
-- the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler*
-- the attribute *clientName* set to the type of the provider used during authentication process.
+The `Authentication` object has:
 
-The `Principal` object of the `Authentication` object has :
-- an identifier which is the profile type + # + the identifier of the user for this provider (example : FacebookProfile#0000000001)
-- attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
+* the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler*
+* the attribute *clientName* set to the type of the provider used during authentication process.
+
+The `Principal` object of the `Authentication` object has:
+
+* an identifier which is the profile type + # + the identifier of the user for this provider (example : FacebookProfile#0000000001)
+* attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
 ###How to send profile attributes to CAS client applications?
 

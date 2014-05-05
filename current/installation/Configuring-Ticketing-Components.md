@@ -21,7 +21,6 @@ This component does not preserve ticket state across restarts. There are a few c
 
 * `initialCapacity` - `ConcurrentHashMap` initial capacity.
 * `loadFactor` - `ConcurrentHashMap` load factor.
-for more information.
 * `concurrencyLevel` - Allows tuning the `ConcurrentHashMap` for concurrent write support.
 
 All three arguments map to those of the [`ConcurrentHashMap` constructor](http://goo.gl/qKKg7).

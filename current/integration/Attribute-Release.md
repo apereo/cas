@@ -11,9 +11,10 @@ Attributes pass through a two-step process:
 * Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response. 
 
 
+<div class="alert alert-info"><strong>Service Management</strong><p>Attribute release may also be configured via the [Service Management tool][../installation/Service-Management.html].</p></div>
+
 ## Components
 A PersonDirectory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
-
 
 ### Person Directory
 * `MergingPersonAttributeDaoImpl`: Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. Merging strategies may be configured via instances of `IAttributeMerger`.

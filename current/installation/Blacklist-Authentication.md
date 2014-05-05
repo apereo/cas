@@ -7,6 +7,7 @@ title: CAS - Blacklist Authentication
 Blacklist authentication components are those that specifically deny access to a set of credentials. Those that fail to match against the predefined set will blindly be accepted.
  
 These are:
+
 * `RejectUsersAuthenticationHandler`
 
 

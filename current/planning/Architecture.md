@@ -7,8 +7,6 @@ title: CAS - Architecture
 
 ![CAS Architecture Diagram](../images/cas_architecture.png "CAS Architecture Diagram")
 
-
-
 ## System Components
 The CAS server and clients comprise the two physical components of the CAS system architecture that communicate
 by means of various protocols.
@@ -31,6 +29,7 @@ authentication protocol (e.g. CAS, SAML, OAuth). CAS clients supporting a number
 have been developed.
 
 Platforms:
+
 * Apache httpd Server ([mod_auth_cas module](https://wiki.jasig.org/display/CASC/mod_auth_cas))
 * Java ([Java CAS Client](https://wiki.jasig.org/display/CASC/CAS+Client+for+Java+3.1))
 * .NET ([.NET CAS Client](https://wiki.jasig.org/display/CASC/.Net+Cas+Client))
@@ -40,6 +39,7 @@ Platforms:
 * Ruby (rubycas-client)
 
 Applications:
+
 * Outlook Web Application (ClearPass + .NET CAS Client)
 * Atlassian Confluence
 * Atlassian JIRA
@@ -53,11 +53,10 @@ components such as the Jasig Java CAS Client rather than to the application rely
 
 ## Protocols
 Clients communicate with the server by any of several supported protocols.  All the supported protocols are
-conceptually similar, yet some have features or characteristics that make them desirable for particular applications
-or use cases. For example, the CAS protocol supports delegated (proxy) authentication, and the SAML protocol supports
-attribute release and single sign-out.
+conceptually similar, yet some have features or characteristics that make them desirable for particular applications or use cases. For example, the CAS protocol supports delegated (proxy) authentication, and the SAML protocol supports attribute release and single sign-out.
 
 Supported protocols:
+
 * CAS (versions 1, 2, and 3)
 * SAML 1.1
 * OpenID
@@ -71,10 +70,7 @@ It is helpful to describe the CAS server in terms of three layered subsystems:
 * Ticketing
 * Authentication
 
-Almost all deployment considerations and component configuration involve those three subsystems. The Web tier is the
-endpoint for communication with all external systems including CAS clients. The Web tier delegates to the ticketing
-subsystem to generate tickets for CAS client access. The SSO session begins with the issuance of a ticket-granting
-ticket on successful authentication, thus the ticketing subsystem frequently delegates to the authentication subsystem.
-The authentication system is typically only processing requests at the start of the SSO session, though there are other
-cases when it can be invoked (e.g. forced authentication).
+Almost all deployment considerations and component configuration involve those three subsystems. The Web tier is the endpoint for communication with all external systems including CAS clients. The Web tier delegates to the ticketing subsystem to generate tickets for CAS client access. The SSO session begins with the issuance of a ticket-granting ticket on successful authentication, thus the ticketing subsystem frequently delegates to the authentication subsystem.
+
+The authentication system is typically only processing requests at the start of the SSO session, though there are other cases when it can be invoked (e.g. forced authentication).
 

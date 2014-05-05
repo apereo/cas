@@ -112,7 +112,7 @@ Service registry implementation which stores the services in a LDAP Directory. U
 
 <p/>
 
-#######`DefaultLdapServiceMapper`
+######`DefaultLdapServiceMapper`
 The default mapper has support for the following items:
 
 * `objectClass`: default -> "casRegisteredService"
@@ -138,6 +138,8 @@ The following configuration template may be applied to `deployerConfigContext.xm
 registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
 
 {% highlight xml %}
+<tx:annotation-driven transaction-manager-ref="transactionManager" />
+
 <bean id="factoryBean"
       class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
       p:dataSource-ref="dataSource"
@@ -157,7 +159,7 @@ registered service storage. The configuration assumes a `dataSource` bean is def
       p:generateDdl="true"
       p:showSql="true" />
 
-<bean id="`"
+<bean id="serviceRegistryDao"
       class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" />
 
 <bean id="transactionManager"
@@ -167,10 +169,97 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 <!--
    | Injects EntityManager/Factory instances into beans with
    | @PersistenceUnit and @PersistenceContext
-   -->
+-->
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+<!--
+   Configuration via JNDI
+-->
+<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+    p:jndiName="java:comp/env/jdbc/cas-source" />   
 {% endhighlight %}
 
+If you prefer a direct connection to the database, here's a sample configuration of the `dataSource`:
+
+{% highlight xml %}
+ <bean
+        id="dataSource"
+        class="com.mchange.v2.c3p0.ComboPooledDataSource"
+        p:driverClassName="org.hsqldb.jdbcDriver"
+        p:jdbcUrl-ref="database"
+        p:password=""
+        p:username="sa" />
+{% endhighlight %}
+
+The data source will need to be modified for your particular database (i.e. Oracle, MySQL, etc.), but the name `dataSource` should be preserved. Here is a MYSQL sample:
+
+{% highlight xml %}
+<bean
+        id="dataSource"
+        class="org.apache.commons.dbcp.BasicDataSource"
+        p:driverClassName="com.mysql.jdbc.Driver"
+        p:url="jdbc:mysql://localhost:3306/test?autoReconnect=true"
+        p:password=""
+        p:username="sa" />
+{% endhighlight %}
+
+You will also need to change the property `hibernate.dialect` in adequacy with your database in `cas.properties` and `deployerConfigContext.xml`. 
+
+For example, for MYSQL the setting would be:
+
+In `cas.properties`:
+
+{% highlight bash %}
+database.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+{% endhighlight %}
+
+In `deployerConfigContext.xml`:
+
+{% highlight xml %}
+<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+{% endhighlight %}
+
+You will also need to ensure that the xml configuration file contains the `tx` namespace:
+
+{% highlight xml %}
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+{% endhighlight %}
+
+Finally, when adding a new source new dependencies may be required on Hibernate, commons-dbcp. Be sure to add those to your `pom.xml`. Below is a sample configuration for MYSQL. Be sure to adjust the version elements for the appropriate version number.
+
+{% highlight xml %}
+<dependency>
+    <groupId>commons-dbcp</groupId>
+    <artifactId>commons-dbcp</artifactId>
+    <version>${commons.dbcp.version}</version>
+    <scope>runtime</scope>
+</dependency>
+ 
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>${hibernate.version}</version>
+    <scope>compile</scope>
+</dependency>
+ 
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-entitymanager</artifactId>
+    <version>${hibernate.entitymgmr.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>${mysql.connector.version}</version>
+</dependency>
+
+{% endhighlight %}
 
 ## Installing the Services Management Webapp
 
