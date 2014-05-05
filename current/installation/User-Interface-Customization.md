@@ -12,6 +12,7 @@ All the files that we'll be discussing in this section that concern the theme ar
 
 #Browser Support
 CAS user interface should properly and comfortably lend itself to all major browser vendors:
+
 * Google Chrome
 * Mozilla Firefox
 * Apple Safari

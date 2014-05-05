@@ -7,11 +7,12 @@ title: CAS - Attribute Release
 Attributes are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎) and returned to scoped services via the [SAML 1.1 protocol](../protocol/SAML-Protocol.html) or the [CAS protocol](../protocol/CAS-Protocol.html). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute release, caching, attribute aggregation from multiple attribute sources, etc.
 
 Attributes pass through a two-step process:
+
 * Resolution: Done at the time of establishing the principal via `PrincipalResolver` components where attributes are resolved from various sources that are outlined below.
 * Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response. 
 
 
-<div class="alert alert-info"><strong>Service Management</strong><p>Attribute release may also be configured via the [Service Management tool][../installation/Service-Management.html].</p></div>
+<div class="alert alert-info"><strong>Service Management</strong><p>Attribute release may also be configured via the [Service Management tool](../installation/Service-Management.html).</p></div>
 
 ## Components
 A PersonDirectory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 

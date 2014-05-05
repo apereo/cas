@@ -266,6 +266,7 @@ Finally, when adding a new source new dependencies may be required on Hibernate,
 The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
 Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
+
 * the management webapp is used to add/edit/delete all the CAS services
 * the CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
@@ -395,6 +396,7 @@ You also need to define the *common* services registry by overriding the `WEB-IN
 ### UI
 
 The services management webapp is pretty simple to use:
+
 * use the "Manage Services" link to see the list of all CAS services
 * click the "Add New Service" link to add a new CAS service
 * click the "edit" link with the pen image (on the right of a CAS service definition) to edit a specific CAS service

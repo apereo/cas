@@ -63,6 +63,7 @@ A highly available CAS deployment is composed of two or more nodes behind a hard
 HA can be achieved by implementing a multi-node CAS deployment running on multiple VMs or physical hosts. This approach is attractive since it allows true zero down-time maintenance of the service at the cost of a marginal increase in deployment complexity.
 
 Multi-node CAS generally involves the following:
+
 * Installing multiple instances of the CAS server (so that one or more of the servers can be destroyed without the CAS service becoming unavailable)
 * Configuring the multiple instances of the CAS server to share ticket state (so that regardless of which CAS server a user or service interacts with, the response from each CAS server is the same.)
 * Configuring a solution for directing traffic among the clustered CAS servers, for detecting component failure and removing failed components from service

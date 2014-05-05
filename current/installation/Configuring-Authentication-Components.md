@@ -27,7 +27,7 @@ Strategy component for setting arbitrary metadata about a successful authenticat
 to set protocol-specific data.
 
 Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
-
+w
 
 ## Authentication Manager
 CAS ships with a single yet flexible authentication manager, `PolicyBasedAuthenticationManager`, that should be
@@ -128,6 +128,7 @@ interest.
 * [X.509](X509-Authentication.html) (client SSL certificate)
 
 There are some additional handlers for small deployments and special cases:
+
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 

@@ -161,6 +161,7 @@ If you're using the JPA ticket registry, your configuration should likely be sim
 {% endhighlight %}
 
 This will configure the cleaner with the following defaults:
+
 * tableName = "LOCKS"
 * uniqueIdColumnName = "UNIQUE_ID"
 * applicationIdColumnName = "APPLICATION_ID"
