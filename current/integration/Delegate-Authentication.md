@@ -32,7 +32,7 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler*
+* the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
 * the attribute *clientName* set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
@@ -77,20 +77,19 @@ Though, you can now completely rebuild the original user profile from data retur
 
 After validating the service ticket, an `Assertion` is available in the CAS client from which you can get the identifier and the attributes of the authenticated user using the pac4j library:
 
-{% highlight bash %}
-AttributePrincipal principal = assertion.getPrincipal();
-String id = principal.getName();
-Map<String, Object> attributes = principal.getAttributes();
+{% highlight java %}
+final AttributePrincipal principal = assertion.getPrincipal();
+final String id = principal.getName();
+final Map<String, Object> attributes = principal.getAttributes();
 {% endhighlight %}
 
-As the identifier stores the kind of profile in its own definition (*clientName#idAtProvider*), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
+As the identifier stores the kind of profile in its own definition (`*clientName#idAtProvider*`), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
 
-{% highlight bash %}
-FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
+{% highlight java %}
+final FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 {% endhighlight %}
 
 and then use it in your application!
-
 
 ##Configuration
 
@@ -101,7 +100,7 @@ To add CAS client support, add the following dependency:
     <dependency>
       <groupId>org.pac4j</groupId>
       <artifactId>pac4j-cas</artifactId>
-      <version>1.4.1</version>
+      <version>${pac4j.version}</version>
     </dependency>
 
 To add OAuth client support, add the following dependency:
@@ -109,7 +108,7 @@ To add OAuth client support, add the following dependency:
     <dependency>
       <groupId>org.pac4j</groupId>
       <artifactId>pac4j-oauth</artifactId>
-      <version>1.4.1</version>
+      <version>${pac4j.version}</version>
     </dependency>
 
 To add OpenID client support, add the following dependency:
@@ -117,7 +116,7 @@ To add OpenID client support, add the following dependency:
     <dependency>
       <groupId>org.pac4j</groupId>
       <artifactId>pac4j-openid</artifactId>
-      <version>1.4.1</version>
+      <version>${pac4j.version}</version>
     </dependency>
 
 

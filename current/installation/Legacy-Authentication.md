@@ -6,12 +6,13 @@ title: CAS - Legacy Authentication
 # Legacy Authentication
 Legacy authentication components are enabled by including the following dependencies in the Maven WAR overlay:
 
+{% highlight xml %}
     <dependency>
          <groupId>org.jasig.cas</groupId>
          <artifactId>cas-server-support-legacy</artifactId>
          <version>${cas.version}</version>
     </dependency>
-
+{% endhighlight %}
 
 ## Legacy Components
 CAS provides the following components to accommodate different legacy authentication needs for backwards compatibility:

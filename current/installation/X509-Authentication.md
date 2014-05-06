@@ -17,15 +17,16 @@ additional work.
 ## X.509 Components
 X.509 support is enabled by including the following dependency in the Maven WAR overlay:
 
+{% highlight xml %}
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-x509</artifactId>
       <version>${cas.version}</version>
     </dependency>
+{% endhighlight %}
 
-CAS provides an X.509 authentication handler, a handful of X.509-specific prinicpal resolvers, some certificate
+CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
-
 
 ######`X509CredentialsAuthenticationHandler`
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
