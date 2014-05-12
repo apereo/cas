@@ -43,7 +43,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnAction.java">org/jasig/cas/support/openid/web/flow/OpenIdSingleSignOnAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler.java">org/jasig/cas/support/openid/authentication/handler/support/OpenIdCredentialsAuthenticationHandler.java</a>
                 </td>
                 <td>
                   0
@@ -57,7 +57,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler.java">org/jasig/cas/support/openid/authentication/handler/support/OpenIdCredentialsAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnAction.java">org/jasig/cas/support/openid/web/flow/OpenIdSingleSignOnAction.java</a>
                 </td>
                 <td>
                   0
@@ -113,7 +113,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping.java">org/jasig/cas/support/openid/web/support/OpenIdPostUrlHandlerMapping.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver.java">org/jasig/cas/support/openid/authentication/principal/OpenIdPrincipalResolver.java</a>
                 </td>
                 <td>
                   0
@@ -127,7 +127,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver.java">org/jasig/cas/support/openid/authentication/principal/OpenIdPrincipalResolver.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-openid//checkstyle.html#org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping.java">org/jasig/cas/support/openid/web/support/OpenIdPostUrlHandlerMapping.java</a>
                 </td>
                 <td>
                   0
