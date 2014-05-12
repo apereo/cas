@@ -32,7 +32,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   esac
 fi 
 
-if [ invokeJavadoc ]; then
+if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
 
