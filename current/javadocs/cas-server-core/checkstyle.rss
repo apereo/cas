@@ -29,10 +29,10 @@
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy.java">org/jasig/cas/ticket/support/RememberMeDelegatingExpirationPolicy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.HealthCheckMonitor.java">org/jasig/cas/monitor/HealthCheckMonitor.java</a>
                 </td>
                 <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -43,10 +43,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.HealthCheckMonitor.java">org/jasig/cas/monitor/HealthCheckMonitor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy.java">org/jasig/cas/ticket/support/RememberMeDelegatingExpirationPolicy.java</a>
                 </td>
                 <td>
-                  3
+                  1
                 </td>
                 <td>
                   0
@@ -169,10 +169,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException.java">org/jasig/cas/authentication/handler/BlockedCredentialsAuthenticationException.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.MemoryMonitor.java">org/jasig/cas/monitor/MemoryMonitor.java</a>
                 </td>
                 <td>
-                  0
+                  3
                 </td>
                 <td>
                   0
@@ -197,24 +197,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.MemoryMonitor.java">org/jasig/cas/monitor/MemoryMonitor.java</a>
-                </td>
-                <td>
-                  3
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException.java">org/jasig/cas/authentication/handler/BlockedCredentialsAuthenticationException.java</a>
                 </td>
                 <td>
                   0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.AopUtils.java">org/jasig/cas/util/AopUtils.java</a>
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -229,6 +215,20 @@
                 </td>
                 <td>
                   2
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.AopUtils.java">org/jasig/cas/util/AopUtils.java</a>
+                </td>
+                <td>
+                  1
                 </td>
                 <td>
                   0
@@ -491,20 +491,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.web.support.CasArgumentExtractor.java">org/jasig/cas/web/support/CasArgumentExtractor.java</a>
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.handler.UnsupportedCredentialsException.java">org/jasig/cas/authentication/handler/UnsupportedCredentialsException.java</a>
                 </td>
                 <td>
@@ -520,6 +506,20 @@
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.registry.support.NoOpLockingStrategy.java">org/jasig/cas/ticket/registry/support/NoOpLockingStrategy.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.web.support.CasArgumentExtractor.java">org/jasig/cas/web/support/CasArgumentExtractor.java</a>
                 </td>
                 <td>
                   1
@@ -757,7 +757,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.LongNumericGenerator.java">org/jasig/cas/util/LongNumericGenerator.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.registry.RegistryCleaner.java">org/jasig/cas/ticket/registry/RegistryCleaner.java</a>
                 </td>
                 <td>
                   0
@@ -771,7 +771,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.registry.RegistryCleaner.java">org/jasig/cas/ticket/registry/RegistryCleaner.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.LongNumericGenerator.java">org/jasig/cas/util/LongNumericGenerator.java</a>
                 </td>
                 <td>
                   0
@@ -1121,10 +1121,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.validation.Cas10ProtocolValidationSpecification.java">org/jasig/cas/validation/Cas10ProtocolValidationSpecification.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.Authentication.java">org/jasig/cas/authentication/Authentication.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
@@ -1135,10 +1135,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.Authentication.java">org/jasig/cas/authentication/Authentication.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.validation.Cas10ProtocolValidationSpecification.java">org/jasig/cas/validation/Cas10ProtocolValidationSpecification.java</a>
                 </td>
                 <td>
-                  0
+                  3
                 </td>
                 <td>
                   0
@@ -1191,10 +1191,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.validation.ValidationSpecification.java">org/jasig/cas/validation/ValidationSpecification.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer.java">org/jasig/cas/authentication/handler/PrefixSuffixPrincipalNameTransformer.java</a>
                 </td>
                 <td>
-                  0
+                  1
                 </td>
                 <td>
                   0
@@ -1205,10 +1205,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer.java">org/jasig/cas/authentication/handler/PrefixSuffixPrincipalNameTransformer.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.validation.ValidationSpecification.java">org/jasig/cas/validation/ValidationSpecification.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -1303,10 +1303,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.RememberMeUsernamePasswordCredential.java">org/jasig/cas/authentication/RememberMeUsernamePasswordCredential.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.AbstractNamedMonitor.java">org/jasig/cas/monitor/AbstractNamedMonitor.java</a>
                 </td>
                 <td>
-                  4
+                  2
                 </td>
                 <td>
                   0
@@ -1317,10 +1317,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.AbstractNamedMonitor.java">org/jasig/cas/monitor/AbstractNamedMonitor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.RememberMeUsernamePasswordCredential.java">org/jasig/cas/authentication/RememberMeUsernamePasswordCredential.java</a>
                 </td>
                 <td>
-                  2
+                  4
                 </td>
                 <td>
                   0
@@ -1457,10 +1457,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.HttpClient.java">org/jasig/cas/util/HttpClient.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.MemoryStatus.java">org/jasig/cas/monitor/MemoryStatus.java</a>
                 </td>
                 <td>
-                  0
+                  2
                 </td>
                 <td>
                   0
@@ -1471,10 +1471,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.MemoryStatus.java">org/jasig/cas/monitor/MemoryStatus.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.HttpClient.java">org/jasig/cas/util/HttpClient.java</a>
                 </td>
                 <td>
-                  2
+                  0
                 </td>
                 <td>
                   0
@@ -1989,7 +1989,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.web.support.ArgumentExtractor.java">org/jasig/cas/web/support/ArgumentExtractor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.TicketState.java">org/jasig/cas/ticket/TicketState.java</a>
                 </td>
                 <td>
                   0
@@ -2003,7 +2003,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.TicketState.java">org/jasig/cas/ticket/TicketState.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.web.support.ArgumentExtractor.java">org/jasig/cas/web/support/ArgumentExtractor.java</a>
                 </td>
                 <td>
                   0
@@ -2143,10 +2143,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImpl.java">org/jasig/cas/services/JpaServiceRegistryDaoImpl.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.StatusCode.java">org/jasig/cas/monitor/StatusCode.java</a>
                 </td>
                 <td>
-                  4
+                  5
                 </td>
                 <td>
                   0
@@ -2171,10 +2171,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.StatusCode.java">org/jasig/cas/monitor/StatusCode.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImpl.java">org/jasig/cas/services/JpaServiceRegistryDaoImpl.java</a>
                 </td>
                 <td>
-                  5
+                  4
                 </td>
                 <td>
                   0
@@ -2465,10 +2465,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.SpringAwareMessageMessageInterpolator.java">org/jasig/cas/util/SpringAwareMessageMessageInterpolator.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.AbstractRegisteredService.java">org/jasig/cas/services/AbstractRegisteredService.java</a>
                 </td>
                 <td>
-                  2
+                  43
                 </td>
                 <td>
                   0
@@ -2479,10 +2479,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.AbstractRegisteredService.java">org/jasig/cas/services/AbstractRegisteredService.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.SpringAwareMessageMessageInterpolator.java">org/jasig/cas/util/SpringAwareMessageMessageInterpolator.java</a>
                 </td>
                 <td>
-                  43
+                  2
                 </td>
                 <td>
                   0
@@ -2507,10 +2507,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.principal.PrincipalResolver.java">org/jasig/cas/authentication/principal/PrincipalResolver.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.java">org/jasig/cas/audit/spi/TicketAsFirstParameterResourceResolver.java</a>
                 </td>
                 <td>
-                  0
+                  2
                 </td>
                 <td>
                   0
@@ -2521,10 +2521,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.java">org/jasig/cas/audit/spi/TicketAsFirstParameterResourceResolver.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.principal.PrincipalResolver.java">org/jasig/cas/authentication/principal/PrincipalResolver.java</a>
                 </td>
                 <td>
-                  2
+                  0
                 </td>
                 <td>
                   0
@@ -2647,20 +2647,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.logout.LogoutManagerImpl.java">org/jasig/cas/logout/LogoutManagerImpl.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.AllAuthenticationPolicy.java">org/jasig/cas/authentication/AllAuthenticationPolicy.java</a>
                 </td>
                 <td>
@@ -2689,6 +2675,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.logout.LogoutManagerImpl.java">org/jasig/cas/logout/LogoutManagerImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.PrivateKeyFactoryBean.java">org/jasig/cas/util/PrivateKeyFactoryBean.java</a>
                 </td>
                 <td>
@@ -2703,10 +2703,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.proxy.ProxyHandler.java">org/jasig/cas/ticket/proxy/ProxyHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.PoolStatus.java">org/jasig/cas/monitor/PoolStatus.java</a>
                 </td>
                 <td>
-                  0
+                  3
                 </td>
                 <td>
                   0
@@ -2717,10 +2717,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.PoolStatus.java">org/jasig/cas/monitor/PoolStatus.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.ticket.proxy.ProxyHandler.java">org/jasig/cas/ticket/proxy/ProxyHandler.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
