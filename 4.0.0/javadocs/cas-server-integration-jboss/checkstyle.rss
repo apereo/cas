@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Jasig CAS JBoss Cache Integration - Checkstyle report</title>
+    <link>http://www.jasig.org/cas/cas-server-integration-jboss/</link>
+    <description>Jasig CAS JBoss Cache Integration - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2004 - 2014 Jasig</copyright>
+    <item>
+      <title>File: 2,
+             Errors: 0,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://www.jasig.org/cas/cas-server-integration-jboss//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://www.jasig.org/cas/cas-server-integration-jboss//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-jboss//checkstyle.html#org.jasig.cas.ticket.registry.JBossCacheTicketRegistry.java">org/jasig/cas/ticket/registry/JBossCacheTicketRegistry.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-jboss//checkstyle.html#org.jasig.cas.util.JBossCacheFactoryBean.java">org/jasig/cas/util/JBossCacheFactoryBean.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

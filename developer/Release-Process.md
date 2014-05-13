@@ -98,6 +98,7 @@ have proper permissions in order to mark a given CAS version as "Released".
 ##Post Release
 <div class="alert alert-warning"><strong>GA Releases</strong><p>The following steps should only be executed for public GA releases.</p></div>
 
+###Publishing Artifacts
 - Check out source from generated branch/tag
 - Build the assembly using the following command:
 {% highlight bash %}
@@ -123,6 +124,14 @@ mvn -DskipTests clean package assembly:assembly && mvn -N antrun:run
     - Click Save
     - Edit the page for the previous release and under Publishing options uncheck Promoted to front page, and Sticky at top of lists.
 
+###Javadocs
+
+- Build the documentation site locally once. Artifacts will appear in the `_site` directory.
+- Copy over the `_site` folder to the same directory
+- Rename the folder to match the CAS release version (i.e `4.0.0`)
+- Run a global search and replace on all generated artifacts to replace all instances of the development version number to the GA release number. For example, replace `4.0.0-RC4-SNAPSHOT` to `4.0.0`.
+- Navigate to `Older-Version.md` page and include a link to the new directory that points to the new release.
+- Push the changes to the repository.
 
 ##Common Issues
 If you're preparing and cutting the release, please be wary of the following possible issues:
