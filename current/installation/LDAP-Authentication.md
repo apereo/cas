@@ -508,7 +508,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:ldapPasswordPolicyConfiguration-ref="passwordPolicy">
+      p:passwordPolicyConfiguration-ref="passwordPolicy">
 
       ...
 </bean>
@@ -517,7 +517,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 ### Components
 
 #### `DefaultAccountStateHander`
-The default account state handler, that calculates the password expiration warning period, maps ldap errors to the CAS workflow.
+The default account state handler, that calculates the password expiration warning period, maps LDAP errors to the CAS workflow.
 
 #### `OptionalWarningAccountStateHandler`
 Supports both opt-in and opt-out warnings on a per-user basis.
