@@ -52,11 +52,12 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
             final Object handler, final Exception ex) {
         final String contentType = request.getHeader(this.ajaxRequestHeaderName);
-        if (contentType.equals(this.ajaxRequestHeaderValue)) {
+        if (contentType != null && contentType.equals(this.ajaxRequestHeaderValue)) {
             logger.debug("Handling exception {} for ajax request indicated by header {}",
                     ex.getClass().getName(), this.ajaxRequestHeaderName);
             return super.resolveException(request, response, handler, ex);
         }
+        logger.debug(ex.getMessage(), ex);
         return null;
     }
 
