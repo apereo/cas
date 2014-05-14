@@ -18,16 +18,21 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -53,6 +58,9 @@ public class AuthenticationViaFormAction {
     /** Authentication success result. */
     public static final String SUCCESS = "success";
 
+    /** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
+    public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
+
     /** Authentication success with "warn" enabled. */
     public static final String WARN = "warn";
 
@@ -72,8 +80,15 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    /** Ticket registry used to retrieve tickets by ID. */
+    @NotNull
+    private TicketRegistry ticketRegistry;
+
     @NotNull
     private CookieGenerator warnCookieGenerator;
+
+    /** Flag indicating whether message context contains warning messages. */
+    private boolean hasWarningMessages;
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -120,9 +135,18 @@ public class AuthenticationViaFormAction {
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInRequestScope(context,
-                    this.centralAuthenticationService.createTicketGrantingTicket(credential));
+            final String tgtId = this.centralAuthenticationService.createTicketGrantingTicket(credential);
+            WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
             putWarnCookieIfRequestParameterPresent(context);
+            final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
+            for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
+                for (final Message message : entry.getValue().getWarnings()) {
+                    addWarningToContext(messageContext, message);
+                }
+            }
+            if (this.hasWarningMessages) {
+                return newEvent(SUCCESS_WITH_WARNINGS);
+            }
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
@@ -157,6 +181,10 @@ public class AuthenticationViaFormAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
     /**
      * Set a CredentialsBinder for additional binding of the HttpServletRequest
      * to the Credential instance, beyond our default binding of the
@@ -178,5 +206,21 @@ public class AuthenticationViaFormAction {
 
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
+    }
+
+    /**
+     * Adds a warning message to the message context.
+     *
+     * @param context Message context.
+     * @param warning Warning message.
+     */
+    private void addWarningToContext(final MessageContext context, final Message warning) {
+        final MessageBuilder builder = new MessageBuilder()
+                .warning()
+                .code(warning.getCode())
+                .defaultText(warning.getDefaultMessage())
+                .args(warning.getParams());
+        context.addMessage(builder.build());
+        this.hasWarningMessages = true;
     }
 }
