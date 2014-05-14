@@ -49,7 +49,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
     public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome,
                              final AttributeMap output) {
 
-        if ( session.isRoot() ) {
+        if (session.isRoot()) {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
             // get session but don't create it if it doesn't already exist
             final HttpSession webSession = request.getSession(false);

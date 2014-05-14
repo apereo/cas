@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -70,7 +71,7 @@ public final class JBossCacheTicketRegistryTests {
 
         this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
         this.treeCache.removeNode("/ticket");
-
+        IOUtils.closeQuietly(context);
         return this.registry;
     }
 
