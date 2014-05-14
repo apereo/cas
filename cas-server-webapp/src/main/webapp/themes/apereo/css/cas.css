@@ -30,7 +30,7 @@ abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
 table { border-collapse: collapse; border-spacing: 0; }
 hr { display: block; height: 1px; border: 0; border-top: 1px solid #cccccc; margin: 1em 0; padding: 0; }
 input, select { vertical-align: middle; }
-body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; background: #eee; }
+body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.4em; background: #eee; }
 
 #container { width: 960px; margin: 0 auto; }
 
@@ -40,7 +40,7 @@ body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; ba
 }
 
 body {
-  background: #153e50; /* Old browsers */
+  background: url(../images/bg-tile.gif); /* Old browsers */
 }
 
 a:link, a:visited {
@@ -62,9 +62,9 @@ header {
 
 #logo {
   display: block;
-  width: 160px;
-  height: 60px;
-  background: url(../images/jasig-logo-small.png) no-repeat;
+  width: 250px;
+  height: 52px;
+  background: url(../images/apereo-logo.png) no-repeat;
   text-indent: -999em;
   float: left;
 
@@ -73,11 +73,7 @@ header {
 }
 
 header h1 {
-  float: left;
-  width: 119px;
-  height: 60px;
-  background: url(../images/cas-logo.png) no-repeat;
-  text-indent: -999em;
+  display: none;
 }
 
 #content {
@@ -87,6 +83,8 @@ header h1 {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
+  -webkit-box-shadow: 0 0 8px 0 rgba(0,0,0,0.15);
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.15);
 }
 
 #msg {
@@ -98,13 +96,13 @@ header h1 {
   border: 1px dotted #BB0000; 
   color: #BB0000; 
   padding-left: 100px; 
-  background: url(../images/error.png) no-repeat 20px center;
+  background: url(../../../images/error.png) no-repeat 20px center;
 }
 
-#msg.success { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/success.png) no-repeat 20px center; }
-#msg.info { border: 1px dotted #008; color: #008; padding-left: 100px; background: url(../images/info.png) no-repeat 20px center; }
-#msg.question { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/question.png) no-repeat 20px center; }
-#msg.warn { border: 1px dotted #960; color: #960; padding-left: 100px; background: #ffbc8f url(../images/info.png) no-repeat 20px center; }
+#msg.success { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../../../images/success.png) no-repeat 20px center; }
+#msg.info { border: 1px dotted #008; color: #008; padding-left: 100px; background: url(../../../images/info.png) no-repeat 20px center; }
+#msg.question { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../../../images/question.png) no-repeat 20px center; }
+#msg.warn { border: 1px dotted #960; color: #960; padding-left: 100px; background: #ffbc8f url(../../../images/info.png) no-repeat 20px center; }
 
 #login {
   width: 320px;
@@ -137,7 +135,7 @@ header h1 {
 }
 
 #login .btn-submit {
-  background: #70ba61;
+  background: #2aa4a5;
   border: 0;
   padding: 10px 20px;
   font-weight: bold;
@@ -161,7 +159,7 @@ header h1 {
 }
 
 #login .btn-submit:hover {
-  background: #7fd36e;
+  background: #30bfbf;
 }
 
 #login .btn-reset:hover {
@@ -189,11 +187,11 @@ header h1 {
 
 footer {
   padding: 20px;
-  color: white;
+  color: black;
 }
 
 footer a:link, footer a:visited {
-  color: white;
+  color: black;
 }
 
 @media only screen and (max-width: 960px) { 
@@ -207,12 +205,12 @@ footer a:link, footer a:visited {
 }
 
 @media only screen and (max-width: 799px) { 
-  #logo { width: 100px; height: 40px; background-size: 80px 40px; margin-right: 20px; }
-  header h1 { font-size: 1em; width: 70px; height: 40px; background-size: 70px 40px; }
+  header { padding: 10px;}
+  #logo { width: 156px; height: 32px; background-size: 156px 32px; margin-right: 20px; }
   #login { float: none; width: 100%; }
   #fm1 .row input[type=text], 
   #fm1 .row input[type=password] { width: 100%; padding: 10px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
-  #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #70ba61; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
+  #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #2aa4a5; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
   #fm1 .row .btn-reset { display: none; }
   #sidebar { margin-top: 20px; }
   #sidebar .sidebar-content { padding: 0; }
