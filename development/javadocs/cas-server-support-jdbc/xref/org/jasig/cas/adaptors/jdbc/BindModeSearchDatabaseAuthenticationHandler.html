@@ -60,9 +60,9 @@
 <a class="jxr_linenumber" name="50" href="#50">50</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
 <a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="53" href="#53">53</a>              
-<a class="jxr_linenumber" name="54" href="#54">54</a>              <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
-<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">final</strong> Connection c = <strong class="jxr_keyword">this</strong>.getDataSource().getConnection(username, credential.getPassword());
+<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
+<a class="jxr_linenumber" name="54" href="#54">54</a>              <strong class="jxr_keyword">final</strong> String password = getPasswordEncoder().encode(credential.getPassword());
+<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">final</strong> Connection c = <strong class="jxr_keyword">this</strong>.getDataSource().getConnection(username, password);
 <a class="jxr_linenumber" name="56" href="#56">56</a>              DataSourceUtils.releaseConnection(c, <strong class="jxr_keyword">this</strong>.getDataSource());
 <a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">return</strong> createHandlerResult(credential, <strong class="jxr_keyword">new</strong> SimplePrincipal(username), <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="58" href="#58">58</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SQLException e) {
