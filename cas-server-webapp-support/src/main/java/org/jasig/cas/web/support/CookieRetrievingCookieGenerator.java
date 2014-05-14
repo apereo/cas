@@ -51,6 +51,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * The default is three months (7889231 in seconds, according to Google) */
     private int rememberMeMaxAge = 7889231;
 
+    /**
+     * Instantiates a new cookie retrieving cookie generator.
+     */
     public CookieRetrievingCookieGenerator() {
         super();
         final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
@@ -61,6 +64,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         }
     }
     
+    /**
+     * Adds the cookie, taking into account {@link RememberMeCredential#REQUEST_PARAMETER_REMEMBER_ME}
+     * in the request.
+     *
+     * @param request the request
+     * @param response the response
+     * @param cookieValue the cookie value
+     */
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
 
         if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
@@ -75,6 +86,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         }
     }
 
+    /**
+     * Retrieve cookie value.
+     *
+     * @param request the request
+     * @return the string
+     */
     public String retrieveCookieValue(final HttpServletRequest request) {
         final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
                 request, getCookieName());

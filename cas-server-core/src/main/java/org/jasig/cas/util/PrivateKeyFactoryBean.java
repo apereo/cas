@@ -43,6 +43,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
     @NotNull
     private String algorithm;
 
+    @Override
     protected Object createInstance() throws Exception {
         final InputStream privKey = this.location.getInputStream();
         try {

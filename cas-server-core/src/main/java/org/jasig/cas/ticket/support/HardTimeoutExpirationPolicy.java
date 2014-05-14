@@ -44,10 +44,16 @@ public final class HardTimeoutExpirationPolicy implements ExpirationPolicy, Seri
         this.timeToKillInMilliSeconds = 0;
     }
 
+    /**
+     * Instantiates a new hard timeout expiration policy.
+     *
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public HardTimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
                 || (System.currentTimeMillis() - ticketState.getCreationTime() >= this.timeToKillInMilliSeconds);

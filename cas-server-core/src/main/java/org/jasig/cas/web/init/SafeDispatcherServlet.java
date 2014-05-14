@@ -71,6 +71,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     /** Boolean to determine if the application deployed successfully. */
     private boolean initSuccess = true;
 
+    @Override
     public void init(final ServletConfig config) {
         try {
             this.delegate.init(config);

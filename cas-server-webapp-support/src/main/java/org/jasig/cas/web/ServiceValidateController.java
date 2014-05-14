@@ -117,6 +117,12 @@ public class ServiceValidateController extends DelegateController {
         return null;
     }
 
+    /**
+     * Inits the binder with the required fields. <code>renew</code> is required.
+     *
+     * @param request the request
+     * @param binder the binder
+     */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         binder.setRequiredFields("renew");
     }
@@ -189,10 +195,25 @@ public class ServiceValidateController extends DelegateController {
         }
     }
 
+    /**
+     * Triggered on successful validation events. Extensions are to
+     * use this as hook to plug in behvior.
+     *
+     * @param serviceTicketId the service ticket id
+     * @param assertion the assertion
+     */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
         // template method with nothing to do.
     }
 
+    /**
+     * Generate error view, set to {@link #setFailureView(String)}.
+     *
+     * @param code the code
+     * @param description the description
+     * @param args the args
+     * @return the model and view
+     */
     private ModelAndView generateErrorView(final String code, final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(this.failureView);
         final String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
@@ -202,6 +223,13 @@ public class ServiceValidateController extends DelegateController {
         return modelAndView;
     }
     
+    /**
+     * Generate the success view. The result will contain the assertion and the proxy iou.
+     *
+     * @param assertion the assertion
+     * @param proxyIou the proxy iou
+     * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
+     */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(MODEL_ASSERTION, assertion);
@@ -209,6 +237,11 @@ public class ServiceValidateController extends DelegateController {
         return success;
     }
 
+    /**
+     * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
+     *
+     * @return the command class
+     */
     private ValidationSpecification getCommandClass() {
         try {
             return (ValidationSpecification) this.validationSpecificationClass.newInstance();

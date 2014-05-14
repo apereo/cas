@@ -254,7 +254,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return builder;
     }
 
-
+      
+    /**
+     * Resolve principal.
+     *
+     * @param handlerName the handler name
+     * @param resolver the resolver
+     * @param credential the credential
+     * @return the principal
+     */
     protected Principal resolvePrincipal(
             final String handlerName, final PrincipalResolver resolver, final Credential credential) {
         if (resolver.supports(credential)) {

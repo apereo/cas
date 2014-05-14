@@ -30,6 +30,9 @@ import com.meterware.httpunit.WebResponse;
  */
 public final class LoginHelper {
 
+    /**
+     * Instantiates a new login helper.
+     */
     private LoginHelper() {}
 
     /**
