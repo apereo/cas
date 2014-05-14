@@ -14,12 +14,13 @@ But the CAS server can also act as a client using the [pac4j library](https://gi
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
+{% highlight xml %}
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-pac4j</artifactId>
       <version>${cas.version}</version>
     </dependency>
-
+{% endhighlight %}
 
 ##How to use CAS/OAuth/OpenID client support in CAS applications?
 
