@@ -33,7 +33,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    /**
+     * Logger instance.
+     */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public final WebApplicationService extractService(final HttpServletRequest request) {

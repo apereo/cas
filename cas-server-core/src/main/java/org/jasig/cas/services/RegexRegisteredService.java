@@ -40,7 +40,6 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     @Override
     public void setServiceId(final String id) {
-        servicePattern = createPattern(id);
         serviceId = id;
     }
 
