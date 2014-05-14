@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -35,7 +35,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class WiringTests {
     @Test
     public void testWiring() {
-        final ApplicationContext context = new ClassPathXmlApplicationContext("deployerConfigContext.xml");
+        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("deployerConfigContext.xml");
         Assert.assertTrue(context.getBeanDefinitionCount() > 0);
+        IOUtils.closeQuietly(context);
     }
 }

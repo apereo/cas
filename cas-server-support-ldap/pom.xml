@@ -72,7 +72,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>

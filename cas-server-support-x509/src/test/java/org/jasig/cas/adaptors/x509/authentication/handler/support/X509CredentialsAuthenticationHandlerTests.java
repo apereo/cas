@@ -134,8 +134,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 new CertificateExpiredException(),
         });
 
-        // Test case #4
-        // Untrusted issuer
+        // Test case #4       // Untrusted issuer
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
         handler.setMaxPathLengthAllowUnspecified(true);
