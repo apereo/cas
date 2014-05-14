@@ -1,4 +1,4 @@
-var CONST_CURRENT_VER = "current";
+var CONST_CURRENT_VER = "dev";
 
 function getActiveDocumentationVersionInView() {
 	var currentVersion = CONST_CURRENT_VER;
