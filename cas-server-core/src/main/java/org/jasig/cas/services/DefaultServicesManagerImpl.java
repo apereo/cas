@@ -52,6 +52,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
 
+    /**
+     * Instantiates a new default services manager impl.
+     *
+     * @param serviceRegistryDao the service registry dao
+     */
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
         this(serviceRegistryDao, new ArrayList<String>());
@@ -74,6 +79,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Transactional(readOnly = false)
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
         if (r == null) {
@@ -105,6 +111,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return null;
     }
 
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -115,6 +122,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
     }
 
+    /**
+     * Stuff services to tree set.
+     *
+     * @return the tree set
+     */
     protected TreeSet<RegisteredService> convertToTreeSet() {
         return new TreeSet<RegisteredService>(this.services.values());
     }
@@ -123,6 +135,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return Collections.unmodifiableCollection(convertToTreeSet());
     }
 
+    @Override
     public boolean matchesExistingService(final Service service) {
         return findServiceBy(service) != null;
     }
@@ -130,17 +143,22 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Transactional(readOnly = false)
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         return r;
     }
 
+    @Override
     public void reload() {
         logger.info("Reloading registered services.");
         load();
     }
 
+    /**
+     * Load services that are provided by the DAO. 
+     */
     private void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
                 new ConcurrentHashMap<Long, RegisteredService>();
@@ -151,6 +169,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         this.services = localServices;
-        logger.info(String.format("Loaded %s services.", this.services.size()));
+        logger.info("Loaded {} services.", this.services.size());
+        
     }
 }

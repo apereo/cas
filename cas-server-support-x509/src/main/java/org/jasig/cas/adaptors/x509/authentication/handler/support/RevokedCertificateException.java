@@ -36,8 +36,10 @@ import org.slf4j.LoggerFactory;
  */
 public class RevokedCertificateException extends GeneralSecurityException {
 
+    /** The logger. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8827788431199129708L;
 
     /** OID for reasonCode CRL extension. */
@@ -45,17 +47,43 @@ public class RevokedCertificateException extends GeneralSecurityException {
 
     /** CRL revocation reason codes per RFC 3280. */
     public enum Reason {
+        
+        /** The Unspecified. */
         Unspecified,
+        
+        /** The Key compromise. */
         KeyCompromise,
+        
+        /** The CA compromise. */
         CACompromise,
+        
+        /** The Affiliation changed. */
         AffiliationChanged,
+        
+        /** The Superseded. */
         Superseded,
+        
+        /** The Cessation of operation. */
         CessationOfOperation,
+        
+        /** The Certificate hold. */
         CertificateHold,
+        
+        /** The Remove from crl. */
         RemoveFromCRL,
+        
+        /** The Privilege withdrawn. */
         PrivilegeWithdrawn,
+        
+        /** The AA compromise. */
         AACompromise;
 
+        /**
+         * Convert code to reason.
+         *
+         * @param code the code
+         * @return the reason
+         */
         public static Reason fromCode(final int code) {
             for (int i = 0; i < Reason.values().length; i++) {
                 if (i == code) {
@@ -66,22 +94,43 @@ public class RevokedCertificateException extends GeneralSecurityException {
         }
     }
 
+    /** The revocation date. */
     private final Date revocationDate;
 
+    /** The serial. */
     private final BigInteger serial;
 
+    /** The reason. */
     private Reason reason;
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param revoked the revoked
+     * @param serial the serial
+     */
     public RevokedCertificateException(final Date revoked, final BigInteger serial) {
         this(revoked, serial, null);
     }
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param revoked the revoked
+     * @param serial the serial
+     * @param reason the reason
+     */
     public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
         this.revocationDate = revoked;
         this.serial = serial;
         this.reason = reason;
     }
 
+    /**
+     * Instantiates a new revoked certificate exception.
+     *
+     * @param entry the entry
+     */
     public RevokedCertificateException(final X509CRLEntry entry) {
         this.revocationDate = entry.getRevocationDate();
         this.serial = entry.getSerialNumber();
@@ -99,6 +148,8 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /**
+     * Gets the revocation date.
+     *
      * @return Returns the revocationDate.
      */
     public Date getRevocationDate() {
@@ -106,6 +157,8 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /**
+     * Gets the serial.
+     *
      * @return Returns the serial.
      */
     public BigInteger getSerial() {
@@ -113,6 +166,8 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /**
+     * Gets the reason.
+     *
      * @return Returns the reason.
      */
     public Reason getReason() {

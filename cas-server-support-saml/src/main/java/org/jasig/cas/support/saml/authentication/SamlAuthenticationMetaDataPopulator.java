@@ -40,18 +40,26 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
  */
 public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
+    /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
+    /** The Constant AUTHN_METHOD_PASSWORD. */
     public static final String AUTHN_METHOD_PASSWORD = "urn:oasis:names:tc:SAML:1.0:am:password";
 
+    /** The Constant AUTHN_METHOD_SSL_TLS_CLIENT. */
     public static final String AUTHN_METHOD_SSL_TLS_CLIENT = "urn:ietf:rfc:2246";
 
+    /** The Constant AUTHN_METHOD_X509_PUBLICKEY. */
     public static final String AUTHN_METHOD_X509_PUBLICKEY = "urn:oasis:names:tc:SAML:1.0:am:X509-PKI";
 
+    /** The Constant AUTHN_METHOD_UNSPECIFIED. */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
     private final Map<String, String> authenticationMethods = new HashMap<String, String>();
 
+    /**
+     * Instantiates a new SAML authentication meta data populator.
+     */
     public SamlAuthenticationMetaDataPopulator() {
         this.authenticationMethods.put(
                 HttpBasedServiceCredential.class.getName(),

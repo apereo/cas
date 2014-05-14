@@ -45,6 +45,7 @@ public final class RememberMeDelegatingExpirationPolicy implements ExpirationPol
     @NotNull
     private ExpirationPolicy sessionExpirationPolicy;
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
                 get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);

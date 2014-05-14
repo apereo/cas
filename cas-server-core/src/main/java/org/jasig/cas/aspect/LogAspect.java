@@ -34,6 +34,13 @@ import java.util.Arrays;
 @Aspect
 public class LogAspect {
 
+    /**
+     * Added TRACE-level log entries for the executing target.
+     *
+     * @param proceedingJoinPoint the proceeding join point
+     * @return the object
+     * @throws Throwable the throwable
+     */
     @Around("(execution (public * org.jasig.cas..*.*(..))) && !(execution( * org.jasig.cas..*.set*(..)))")
     public Object traceMethod(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object returnVal = null;
@@ -59,6 +66,12 @@ public class LogAspect {
         }
     }
 
+    /**
+     * Gets the logger object for the join point target.
+     *
+     * @param joinPoint the join point
+     * @return the log
+     */
     protected Logger getLog(final JoinPoint joinPoint) {
         final Object target = joinPoint.getTarget();
 
