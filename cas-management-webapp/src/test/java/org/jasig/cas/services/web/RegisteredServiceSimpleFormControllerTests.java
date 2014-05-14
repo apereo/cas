@@ -205,7 +205,7 @@ public class RegisteredServiceSimpleFormControllerTests {
        final MockHttpServletRequest request2 = new MockHttpServletRequest();
        this.controller.handleRequest(request1, response1);
        
-       Collection<RegisteredService> c = this.manager.getAllServices();
+       final Collection<RegisteredService> c = this.manager.getAllServices();
        assertEquals("Service collection size must be 1", c.size(), 1);
        
        for(final RegisteredService rs : c) {

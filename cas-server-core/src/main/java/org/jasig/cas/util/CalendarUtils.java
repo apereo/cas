@@ -39,10 +39,22 @@ public final class CalendarUtils {
         return getCurrentDayOfWeekFor(new Date());
     }
 
+    /**
+     * Gets the current day of week for the date.
+     *
+     * @param date the date
+     * @return the current day of week for
+     */
     public static int getCurrentDayOfWeekFor(final Date date) {
         return  getCalendarFor(date).get(Calendar.DAY_OF_WEEK);
     }
 
+    /**
+     * Gets the calendar for the date.
+     *
+     * @param date the date
+     * @return the calendar for
+     */
     public static Calendar getCalendarFor(final Date date) {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
