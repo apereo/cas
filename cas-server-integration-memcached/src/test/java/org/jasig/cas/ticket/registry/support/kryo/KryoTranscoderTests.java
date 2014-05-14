@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -30,8 +32,7 @@ import java.util.Map;
 
 import javax.security.auth.login.FailedLoginException;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -51,7 +52,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static org.junit.Assert.assertEquals;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serialize.FieldSerializer;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -116,6 +118,8 @@ public class KryoTranscoderTests {
     }
 
     static class MockServiceTicket implements ServiceTicket {
+
+        private static final long serialVersionUID = -206395373480723831L;
         private String id;
 
         MockServiceTicket() { /* for serialization */ }
@@ -161,12 +165,23 @@ public class KryoTranscoderTests {
             return 0;
         }
 
+        @Override
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+        }
+        
+        @Override
+        public int hashCode() {
+            final HashCodeBuilder bldr = new HashCodeBuilder(17, 33);
+            return bldr.append(this.id)
+                       .toHashCode();
         }
     }
 
     static class MockTicketGrantingTicket implements TicketGrantingTicket {
+
+        private static final long serialVersionUID = 4829406617873497061L;
+
         private String id;
 
         private int usageCount = 0;
@@ -271,12 +286,22 @@ public class KryoTranscoderTests {
             return this.usageCount;
         }
 
+        @Override
         public boolean equals(final Object other) {
             return other instanceof MockTicketGrantingTicket
                     && ((MockTicketGrantingTicket) other).getId().equals(this.id)
                     && ((MockTicketGrantingTicket) other).getCountOfUses() == this.usageCount
                     && ((MockTicketGrantingTicket) other).getCreationTime() == this.creationDate.getTime()
                     && ((MockTicketGrantingTicket) other).getAuthentication().equals(this.authentication);
+        }
+
+        @Override
+        public int hashCode() {
+            final HashCodeBuilder bldr = new HashCodeBuilder(17, 33);
+            return bldr.append(this.id)
+                        .append(this.usageCount)
+                        .append(this.creationDate.getTime())
+                        .append(this.authentication).toHashCode();
         }
     }
 
