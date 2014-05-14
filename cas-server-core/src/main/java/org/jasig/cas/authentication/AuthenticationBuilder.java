@@ -47,7 +47,7 @@ public class AuthenticationBuilder {
     private Map<String, HandlerResult> successes = new LinkedHashMap<String, HandlerResult>();
 
     /** Map of handler names to authentication failures. */
-    private Map<String, Exception> failures = new LinkedHashMap<String, Exception>();
+    private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<String, Class<? extends Exception>>();
 
 
     /** Authentication date. */
@@ -231,7 +231,7 @@ public class AuthenticationBuilder {
      *
      * @return Non-null authentication failure map.
      */
-    public Map<String, Exception> getFailures() {
+    public Map<String, Class<? extends Exception>> getFailures() {
         return this.failures;
     }
 
@@ -242,7 +242,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
-    public AuthenticationBuilder setFailures(final Map<String, Exception> failures) {
+    public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
         for (final String handler : failures.keySet()) {
@@ -259,7 +259,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
-    public AuthenticationBuilder addFailure(final String key, final Exception value) {
+    public AuthenticationBuilder addFailure(final String key, final Class<? extends Exception> value) {
         this.failures.put(key, value);
         return this;
     }

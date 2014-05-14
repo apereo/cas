@@ -77,6 +77,9 @@ public final class JCIFSConfig implements InitializingBean {
     private String loginConf;
 
 
+    /**
+     * Instantiates a new jCIFS config.
+     */
     public JCIFSConfig() {
         Config.setProperty("jcifs.smb.client.soTimeout", "300000");
         Config.setProperty("jcifs.netbios.cachePolicy", "600");
@@ -106,26 +109,51 @@ public final class JCIFSConfig implements InitializingBean {
                 + System.getProperty(SYS_PROP_LOGIN_CONF));
     }
 
+    /**
+     * Sets the jcifs service password.
+     *
+     * @param jcifsServicePassword the new jcifs service password
+     */
     public void setJcifsServicePassword(final String jcifsServicePassword) {
         logger.debug("jcifsServicePassword is set to *****");
         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
     }
 
+    /**
+     * Sets the jcifs service principal.
+     *
+     * @param jcifsServicePrincipal the new jcifs service principal
+     */
     public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
         logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
     }
 
+    /**
+     * Sets the kerberos conf.
+     *
+     * @param kerberosConf the new kerberos conf
+     */
     public void setKerberosConf(final String kerberosConf) {
         logger.debug("kerberosConf is set to :{}", kerberosConf);
         System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
     }
 
+    /**
+     * Sets the kerberos kdc.
+     *
+     * @param kerberosKdc the new kerberos kdc
+     */
     public void setKerberosKdc(final String kerberosKdc) {
         logger.debug("kerberosKdc is set to : {}", kerberosKdc);
         System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
     }
 
+    /**
+     * Sets the kerberos realm.
+     *
+     * @param kerberosRealm the new kerberos realm
+     */
     public void setKerberosRealm(final String kerberosRealm) {
         logger.debug("kerberosRealm is set to :{}", kerberosRealm);
         System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
@@ -135,11 +163,21 @@ public final class JCIFSConfig implements InitializingBean {
         this.loginConf = loginConf;
     }
 
+    /**
+     * Sets the use subject creds only.
+     *
+     * @param useSubjectCredsOnly the new use subject creds only
+     */
     public void setUseSubjectCredsOnly(final boolean useSubjectCredsOnly) {
         logger.debug("useSubjectCredsOnly is set to {}", useSubjectCredsOnly);
         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
     }
 
+    /**
+     * Sets the kerberos debug.
+     *
+     * @param kerberosDebug the new kerberos debug
+     */
     public void setKerberosDebug(final String kerberosDebug) {
         logger.debug("kerberosDebug is set to : {}", kerberosDebug);
         System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
