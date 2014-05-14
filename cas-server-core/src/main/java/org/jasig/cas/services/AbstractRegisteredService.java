@@ -27,7 +27,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.IndexColumn;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,8 +59,7 @@ import javax.persistence.Transient;
 @DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
                      columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
-public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService>,
-        Serializable {
+public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
     private static final long serialVersionUID = 7645279151115635245L;
 

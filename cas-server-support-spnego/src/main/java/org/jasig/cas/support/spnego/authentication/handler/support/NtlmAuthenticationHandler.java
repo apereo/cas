@@ -98,6 +98,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                             challenge, null);
                     logger.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
+                    break;
                 case 3:
                     logger.debug("Type 3 received");
                     final Type3Message type3 = new Type3Message(src);
@@ -114,6 +115,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     } catch (final SmbAuthException sae) {
                         throw new FailedLoginException(sae.getMessage());
                     }
+                    break;
                 default:
                     logger.debug("Unknown type: {}", src[8]);
             }
