@@ -56,6 +56,7 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationP
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState.getCountOfUses() == 0
             && (System.currentTimeMillis() - ticketState.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {

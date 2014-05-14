@@ -43,6 +43,8 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
+    
+    /** The Constant LOGGER. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
@@ -55,6 +57,16 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     private final ParameterList requestParameters;
 
+    /**
+     * Instantiates a new OpenID service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param openIdIdentity the OpenID identity
+     * @param signature the signature
+     * @param parameterList the parameter list
+     */
     protected OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
             final String signature, final ParameterList parameterList) {
@@ -79,18 +91,18 @@ public final class OpenIdService extends AbstractWebApplicationService {
         final Map<String, String> parameters = new HashMap<String, String>();
         if (ticketId != null) {
 
-            ServerManager manager = (ServerManager) ApplicationContextProvider.getApplicationContext().getBean("serverManager");
-            CentralAuthenticationService cas = (CentralAuthenticationService) ApplicationContextProvider.getApplicationContext()
+            final ServerManager manager = (ServerManager) ApplicationContextProvider.getApplicationContext().getBean("serverManager");
+            final CentralAuthenticationService cas = (CentralAuthenticationService) ApplicationContextProvider.getApplicationContext()
                                                 .getBean("centralAuthenticationService");
             boolean associated = false;
             boolean associationValid = true;
             try {
-                AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
-                Map parameterMap = authReq.getParameterMap();
+                final AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
+                final Map parameterMap = authReq.getParameterMap();
                 if (parameterMap != null && parameterMap.size() > 0) {
-                    String assocHandle = (String) parameterMap.get("openid.assoc_handle");
+                    final String assocHandle = (String) parameterMap.get("openid.assoc_handle");
                     if (assocHandle != null) {
-                        Association association = manager.getSharedAssociations().load(assocHandle);
+                        final Association association = manager.getSharedAssociations().load(assocHandle);
                         if (association != null) {
                             associated = true;
                             if (association.hasExpired()) {
@@ -122,7 +134,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             // We sign directly (final 'true') because we don't add extensions
             // response message can be either a DirectError or an AuthSuccess here.
             // Anyway, handling is the same : send the response message
-            Message response = manager.authResponse(requestParameters,
+            final Message response = manager.authResponse(requestParameters,
                     this.identity,
                     this.identity,
                     successFullAuthentication,
@@ -147,6 +159,12 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return true;
     }
 
+    /**
+     * Creates the service from the request.
+     *
+     * @param request the request
+     * @return the OpenID service
+     */
     public static OpenIdService createServiceFrom(
             final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
@@ -159,7 +177,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
         final String id = cleanupUrl(service);
         final String artifactId = request.getParameter("openid.assoc_handle");
-        ParameterList paramList = new ParameterList(request.getParameterMap());
+        final ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
                 signature, paramList);
