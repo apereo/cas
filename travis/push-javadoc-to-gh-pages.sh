@@ -45,11 +45,12 @@ if [ "$invokeJavadoc" == true ]; then
   git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
 
   cd gh-pages
-  echo -e "Removing current's javadocs...\n"
+  echo -e "Removing javadocs...\n"
   git rm -rf ./current/javadocs
+  git rm -rf ./development/javadocs
 
   echo -e "Copying new javadocs to current...\n"
-  cp -Rf $HOME/javadoc-latest ./current/javadocs
+  cp -Rf $HOME/javadoc-latest ./development/javadocs
   echo -e "Adding changes to the index...\n"
   git add -f .
   echo -e "Committing changes...\n"
