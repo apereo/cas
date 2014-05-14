@@ -144,7 +144,7 @@ public final class ClientAction extends AbstractAction {
             } catch (final RequiresHttpAction e) {
                 logger.info("requires http action : {}", e);
                 response.flushBuffer();
-                ExternalContext externalContext = ExternalContextHolder.getExternalContext();
+                final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
                 return new Event(this, "stop");
             }
