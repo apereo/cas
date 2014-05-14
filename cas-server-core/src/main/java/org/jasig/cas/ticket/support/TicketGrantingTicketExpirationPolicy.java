@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
-public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean, Serializable {
+public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
