@@ -19,7 +19,9 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
+
 import com.github.inspektr.common.spi.PrincipalResolver;
+
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -45,22 +47,36 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     @NotNull
     private final TicketRegistry ticketRegistry;
 
+    /**
+     * Instantiates a new ticket or credential principal resolver.
+     *
+     * @param ticketRegistry the ticket registry
+     */
     public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 
+    @Override
     public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
+    @Override
     public String resolveFrom(final JoinPoint joinPoint, final Exception retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
+    @Override
     public String resolve() {
         return UNKNOWN_USER;
     }
 
+    /**
+     * Resolve the principal from the join point given.
+     *
+     * @param joinPoint the join point
+     * @return the principal id, or {@link PrincipalResolver#UNKNOWN_USER}
+     */
     protected String resolveFromInternal(final JoinPoint joinPoint) {
         final Object arg1 = joinPoint.getArgs()[0];
         if (arg1 instanceof Credential) {
