@@ -43,6 +43,8 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
+    
+    /** The Constant LOGGER. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
@@ -55,6 +57,16 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     private final ParameterList requestParameters;
 
+    /**
+     * Instantiates a new OpenID service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param openIdIdentity the OpenID identity
+     * @param signature the signature
+     * @param parameterList the parameter list
+     */
     protected OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
             final String signature, final ParameterList parameterList) {
@@ -147,6 +159,12 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return true;
     }
 
+    /**
+     * Creates the service from the request.
+     *
+     * @param request the request
+     * @return the OpenID service
+     */
     public static OpenIdService createServiceFrom(
             final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);

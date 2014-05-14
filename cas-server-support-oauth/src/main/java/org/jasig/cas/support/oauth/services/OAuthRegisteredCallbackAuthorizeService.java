@@ -30,6 +30,11 @@ public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredSer
 
     private static final long serialVersionUID = 2993846310010319047L;
 
+    /**
+     * Sets the callback authorize url.
+     *
+     * @param url the new callback authorize url
+     */
     public void setCallbackAuthorizeUrl(final String url) {
         if (!url.endsWith(OAuthConstants.CALLBACK_AUTHORIZE_URL)) {
             throw new IllegalArgumentException("Calllback authorize url must end with "

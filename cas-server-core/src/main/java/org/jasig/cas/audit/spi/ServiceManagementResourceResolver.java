@@ -20,6 +20,7 @@
 package org.jasig.cas.audit.spi;
 
 import com.github.inspektr.audit.spi.AuditResourceResolver;
+
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.util.AopUtils;
 
@@ -34,14 +35,22 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class ServiceManagementResourceResolver implements AuditResourceResolver {
 
+    @Override
     public String[] resolveFrom(final JoinPoint target, final Object returnValue) {
         return findService(target);
     }
 
+    @Override
     public String[] resolveFrom(final JoinPoint target, final Exception exception) {
         return findService(target);
     }
 
+    /**
+     * Find service.
+     *
+     * @param joinPoint the join point
+     * @return the string[]
+     */
     private String[] findService(final JoinPoint joinPoint) {
         final JoinPoint j = AopUtils.unWrapJoinPoint(joinPoint);
 

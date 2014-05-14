@@ -51,5 +51,11 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         return service;
     }
 
+    /**
+     * Extract service from the request.
+     *
+     * @param request the request
+     * @return the web application service
+     */
     protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
 }

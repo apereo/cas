@@ -168,8 +168,9 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @param source Nullable map to wrap.
-     *
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
      */
