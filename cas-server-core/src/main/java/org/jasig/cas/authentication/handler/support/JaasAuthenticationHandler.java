@@ -30,7 +30,9 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.util.Assert;
@@ -92,9 +94,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /** {@inheritDoc} */
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
+        final String password = getPasswordEncoder().encode(credential.getPassword());
         final LoginContext lc = new LoginContext(
                 this.realm,
                 new UsernamePasswordCallbackHandler(username, password));
@@ -110,7 +114,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (principals != null && principals.size() > 0) {
             principal = new SimplePrincipal(principals.iterator().next().getName());
         }
-        return principal;
+        return createHandlerResult(credential, principal, null);
     }
 
     public void setRealm(final String realm) {
