@@ -33,10 +33,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.SamlDateUtils;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,17 +48,8 @@ public final class LogoutManagerImpl implements LogoutManager {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
 
-    /** The logout request template. */
-    private static final String LOGOUT_REQUEST_TEMPLATE =
-            "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\""
-            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@"
-            + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
-
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
-
-    /** A ticket Id generator. */
-    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     /** The services manager. */
     @NotNull
@@ -71,6 +59,9 @@ public final class LogoutManagerImpl implements LogoutManager {
     @NotNull
     private final HttpClient httpClient;
 
+    @NotNull
+    private final LogoutMessageCreator logoutMessageBuilder;
+    
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
 
@@ -78,10 +69,13 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Build the logout manager.
      * @param servicesManager the services manager.
      * @param httpClient an HTTP client.
+     * @param logoutMessageBuilder the builder to construct logout messages.
      */
-    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient) {
+    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
+                             final LogoutMessageCreator logoutMessageBuilder) {
         this.servicesManager = servicesManager;
         this.httpClient = httpClient;
+        this.logoutMessageBuilder = logoutMessageBuilder;
     }
 
     /**
@@ -112,7 +106,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                     final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
                     // the logout has not performed already
                     if (!singleLogoutService.isLoggedOutAlready()) {
-                        final LogoutRequest logoutRequest = new LogoutRequest(ticketId, service);
+                        final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
                         // always add the logout request
                         logoutRequests.add(logoutRequest);
                         final RegisteredService registeredService = servicesManager.findServiceBy(service);
@@ -120,11 +114,11 @@ public final class LogoutManagerImpl implements LogoutManager {
                         if (registeredService == null || registeredService.getLogoutType() == null
                                 || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
                             // perform back channel logout
-                            if (performBackChannelLogout(singleLogoutService, ticketId)) {
+                            if (performBackChannelLogout(logoutRequest)) {
                                 logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
                             } else {
                                 logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                LOGGER.warn("Logout message not sent to [[]]; Continuing processing...",
+                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
                                         singleLogoutService.getId());
                             }
                         }
@@ -139,18 +133,15 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Log out of a service through back channel.
      *
-     * @param service the service to logger out.
-     * @param ticketId the ticket id.
+     * @param request the logout request.
      * @return if the logout has been performed.
      */
-    private boolean performBackChannelLogout(final SingleLogoutService service, final String ticketId) {
-        LOGGER.debug("Sending logout request for: {}", service.getId());
+    private boolean performBackChannelLogout(final LogoutRequest request) {
+        final String logoutRequest = this.logoutMessageBuilder.create(request);
+        request.getService().setLoggedOutAlready(true);
 
-        final String logoutRequest = createBackChannelLogoutMessage(ticketId);
-
-        service.setLoggedOutAlready(true);
-
-        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, true);
+        LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
+        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(), logoutRequest, true);
     }
 
     /**
@@ -160,7 +151,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return a front SAML logout message.
      */
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        final String logoutMessage = createBackChannelLogoutMessage(logoutRequest.getTicketId());
+        final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         final Deflater deflater = new Deflater();
         deflater.setInput(logoutMessage.getBytes(ASCII));
         deflater.finish();
@@ -169,18 +160,6 @@ public final class LogoutManagerImpl implements LogoutManager {
         final byte[] output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
         return Base64.encodeBase64String(output);
-    }
-
-    /**
-     * Create a logout message for back channel logout.
-     *
-     * @param ticketId the ticket id.
-     * @return a back channel logout.
-     */
-    private String createBackChannelLogoutMessage(final String ticketId) {
-        final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-                SamlDateUtils.getCurrentDateAndTime(), ticketId);
-        return logoutRequest;
     }
 
     /**
