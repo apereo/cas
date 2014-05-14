@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -184,14 +185,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             TestUtils.getBadHttpBasedServiceCredentials());
     }
 
-    @Test
+    @Test(expected=MixedPrincipalException.class)
     public void testGrantServiceTicketWithDifferentCredentials() throws Exception {
         final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                TestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
         getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket, TestUtils.getService(),
-            TestUtils.getCredentialsWithSameUsernameAndPassword("test"));
+            TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
     }
 
     @Test
