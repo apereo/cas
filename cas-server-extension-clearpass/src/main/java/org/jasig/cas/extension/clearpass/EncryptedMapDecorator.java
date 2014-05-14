@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import java.nio.ByteBuffer;
 import java.io.UnsupportedEncodingException;
-import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +28,7 @@ import java.security.spec.KeySpec;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.Cipher;
@@ -59,6 +60,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
+    private static final int INTEGER_LEN = 4;
+
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f'};
 
@@ -75,6 +78,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     @NotNull
     private final Key key;
+
+    @NotNull
+    private int ivSize;
 
     @NotNull
     private final String secretKeyAlgorithm;
@@ -151,6 +157,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.salt = salt;
         this.secretKeyAlgorithm = secretKeyAlgorithm;
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
+
+        try {
+            this.ivSize = getIvSize();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String getRandomSalt(final int size) {
@@ -243,7 +255,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(this.salt);
-        messageDigest.update(key.getBytes());
+        messageDigest.update(key.toLowerCase().getBytes());
         final String hash = getFormattedText(messageDigest.digest());
 
         logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
@@ -257,21 +269,39 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-
-            byte[] ivByteArray = algorithmParametersHashMap.get(hashedKey).getIV();
-            IvParameterSpec ivSpec = new IvParameterSpec(ivByteArray);
-
+            final byte[] ivCiphertext = decode(value.getBytes());
+            final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
+            final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
+            final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
+            final IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
+            
             cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] decrypted64ByteValue = new Base64().decode(valueByteArray);
-            byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
+            final byte[] plaintext = cipher.doFinal(ciphertext);
 
-            return new String(decryptedByteArray);
-
+            return new String(plaintext);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static int getIvSize() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return Cipher.getInstance(CIPHER_ALGORITHM).getBlockSize();
+    }
+
+    private static byte[] generateIV(final int size) {
+        final SecureRandom srand = new SecureRandom();
+        final byte[] ivValue = new byte[size];
+        srand.nextBytes(ivValue);
+        return ivValue;
+    }
+
+    private static byte[] encode(final byte[] bytes) {
+        return new Base64().encode(bytes);
+    }
+
+    private static byte[] decode(final byte[] bytes) {
+        return new Base64().decode(bytes);
     }
 
     protected String encrypt(final String value) {
@@ -285,22 +315,30 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            cipher.init(Cipher.ENCRYPT_MODE, this.key);
-            AlgorithmParameters params = cipher.getParameters();
+            final byte[] ivValue = generateIV(this.ivSize);
+            final IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
 
-            if (hashedKey != null) {
-                algorithmParametersHashMap.put(hashedKey, params.getParameterSpec(IvParameterSpec.class));
-            }
+            cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
+            
+            final byte[] ciphertext = cipher.doFinal(value.getBytes());
+            final byte[] ivCiphertext = new byte[INTEGER_LEN + this.ivSize + ciphertext.length];
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] encryptedByteArray = cipher.doFinal(valueByteArray);
-            byte[] encrypted64ByteValue = new Base64().encode(encryptedByteArray);
+            System.arraycopy(int2byte(this.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
+            System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
+            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return new String(encrypted64ByteValue);
-
-        } catch (final Exception e) {
+            return new String(encode(ivCiphertext));
+        } catch(final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected static byte[] int2byte(final int i) throws UnsupportedEncodingException {
+        return ByteBuffer.allocate(4).putInt(i).array();
+    }
+
+    protected static int byte2int(final byte[] bytes) throws UnsupportedEncodingException {
+        return ByteBuffer.wrap(bytes).getInt();
     }
 
     protected static String byte2char(final byte[] bytes) throws UnsupportedEncodingException {

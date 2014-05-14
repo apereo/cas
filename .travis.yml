@@ -16,9 +16,31 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+# Steps to enable the this build are:
+#
+# Generate the OAUTH-TOKEN atd at https://github.com/settings/applications
+# Install travis: gem install travis
+# Login to travis: travis login
+# Encrypt the token: travis encrypt GH_TOKEN=[OAUTH-TOKEN] -r Jasig/cas --add env.global
+#
 
 language: java
-
 branches:
   only:
-    - master
+  - master
+jdk:
+- oraclejdk7
+- openjdk6
+- openjdk7
+env:
+  global:
+  - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
+script: mvn package site site:stage -q -ff -B
+before_install:
+- chmod -R 777 ./travis/init-travis-build.sh
+- ./travis/init-travis-build.sh
+after_success:
+- chmod -R 777 ./travis/test-commit-message.sh
+- ./travis/test-commit-message.sh
+- chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
+- ./travis/push-javadoc-to-gh-pages.sh
