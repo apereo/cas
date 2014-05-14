@@ -50,7 +50,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
             privKey.read(bytes);
             privKey.close();
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
-            KeyFactory factory = KeyFactory.getInstance(this.algorithm);
+            final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePrivate(privSpec);
         } finally {
             privKey.close();
