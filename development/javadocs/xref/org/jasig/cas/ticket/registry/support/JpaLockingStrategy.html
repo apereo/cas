@@ -193,104 +193,110 @@
 <a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">return</strong> uniqueId;
 <a class="jxr_linenumber" name="184" href="#184">184</a>     }
 <a class="jxr_linenumber" name="185" href="#185">185</a> 
-<a class="jxr_linenumber" name="186" href="#186">186</a> 
-<a class="jxr_linenumber" name="187" href="#187">187</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> acquire(<strong class="jxr_keyword">final</strong> EntityManager em, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategy.html">Lock</a> lock) {
-<a class="jxr_linenumber" name="188" href="#188">188</a>         lock.setUniqueId(uniqueId);
-<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">if</strong> (lockTimeout &gt; 0) {
-<a class="jxr_linenumber" name="190" href="#190">190</a>             <strong class="jxr_keyword">final</strong> Calendar cal = Calendar.getInstance();
-<a class="jxr_linenumber" name="191" href="#191">191</a>             cal.add(Calendar.SECOND, lockTimeout);
-<a class="jxr_linenumber" name="192" href="#192">192</a>             lock.setExpirationDate(cal.getTime());
-<a class="jxr_linenumber" name="193" href="#193">193</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="194" href="#194">194</a>             lock.setExpirationDate(<strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="195" href="#195">195</a>         }
-<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">boolean</strong> success = false;
-<a class="jxr_linenumber" name="197" href="#197">197</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="198" href="#198">198</a>             <strong class="jxr_keyword">if</strong> (lock.getApplicationId() != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="199" href="#199">199</a>                 em.merge(lock);
-<a class="jxr_linenumber" name="200" href="#200">200</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="201" href="#201">201</a>                 lock.setApplicationId(applicationId);
-<a class="jxr_linenumber" name="202" href="#202">202</a>                 em.persist(lock);
-<a class="jxr_linenumber" name="203" href="#203">203</a>             }
-<a class="jxr_linenumber" name="204" href="#204">204</a>             success = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="205" href="#205">205</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> PersistenceException e) {
-<a class="jxr_linenumber" name="206" href="#206">206</a>             success = false;
-<a class="jxr_linenumber" name="207" href="#207">207</a>             <strong class="jxr_keyword">if</strong> (logger.isDebugEnabled()) {
-<a class="jxr_linenumber" name="208" href="#208">208</a>                 logger.debug(<span class="jxr_string">"{} could not obtain {} lock."</span>, <strong class="jxr_keyword">new</strong> Object[] {uniqueId, applicationId, e});
-<a class="jxr_linenumber" name="209" href="#209">209</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="210" href="#210">210</a>                 logger.info(<span class="jxr_string">"{} could not obtain {} lock."</span>, uniqueId, applicationId);
-<a class="jxr_linenumber" name="211" href="#211">211</a>             }
-<a class="jxr_linenumber" name="212" href="#212">212</a>         }
-<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">return</strong> success;
-<a class="jxr_linenumber" name="214" href="#214">214</a>     }
-<a class="jxr_linenumber" name="215" href="#215">215</a> 
-<a class="jxr_linenumber" name="216" href="#216">216</a> 
-<a class="jxr_linenumber" name="217" href="#217">217</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     * Describes a database lock.</em>
-<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @author Marvin S. Addison</em>
-<a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="223" href="#223">223</a>     @Entity
-<a class="jxr_linenumber" name="224" href="#224">224</a>     @Table(name = <span class="jxr_string">"locks"</span>)
-<a class="jxr_linenumber" name="225" href="#225">225</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategy.html">Lock</a> {
-<a class="jxr_linenumber" name="226" href="#226">226</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> column name that holds application identifier. */</em>
-<a class="jxr_linenumber" name="227" href="#227">227</a>         @Id
-<a class="jxr_linenumber" name="228" href="#228">228</a>         @Column(name=<span class="jxr_string">"application_id"</span>)
-<a class="jxr_linenumber" name="229" href="#229">229</a>         <strong class="jxr_keyword">private</strong> String applicationId;
-<a class="jxr_linenumber" name="230" href="#230">230</a> 
-<a class="jxr_linenumber" name="231" href="#231">231</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Database column name that holds unique identifier. */</em>
-<a class="jxr_linenumber" name="232" href="#232">232</a>         @Column(name=<span class="jxr_string">"unique_id"</span>)
-<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">private</strong> String uniqueId;
-<a class="jxr_linenumber" name="234" href="#234">234</a> 
-<a class="jxr_linenumber" name="235" href="#235">235</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Database column name that holds expiration date. */</em>
-<a class="jxr_linenumber" name="236" href="#236">236</a>         @Temporal(TemporalType.TIMESTAMP)
-<a class="jxr_linenumber" name="237" href="#237">237</a>         @Column(name=<span class="jxr_string">"expiration_date"</span>)
-<a class="jxr_linenumber" name="238" href="#238">238</a>         <strong class="jxr_keyword">private</strong> Date expirationDate;
-<a class="jxr_linenumber" name="239" href="#239">239</a> 
+<a class="jxr_linenumber" name="186" href="#186">186</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="187" href="#187">187</a> <em class="jxr_javadoccomment">     * Acquire the lock object.</em>
+<a class="jxr_linenumber" name="188" href="#188">188</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="189" href="#189">189</a> <em class="jxr_javadoccomment">     * @param em the em</em>
+<a class="jxr_linenumber" name="190" href="#190">190</a> <em class="jxr_javadoccomment">     * @param lock the lock</em>
+<a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     * @return true, if successful</em>
+<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="193" href="#193">193</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> acquire(<strong class="jxr_keyword">final</strong> EntityManager em, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategy.html">Lock</a> lock) {
+<a class="jxr_linenumber" name="194" href="#194">194</a>         lock.setUniqueId(uniqueId);
+<a class="jxr_linenumber" name="195" href="#195">195</a>         <strong class="jxr_keyword">if</strong> (lockTimeout &gt; 0) {
+<a class="jxr_linenumber" name="196" href="#196">196</a>             <strong class="jxr_keyword">final</strong> Calendar cal = Calendar.getInstance();
+<a class="jxr_linenumber" name="197" href="#197">197</a>             cal.add(Calendar.SECOND, lockTimeout);
+<a class="jxr_linenumber" name="198" href="#198">198</a>             lock.setExpirationDate(cal.getTime());
+<a class="jxr_linenumber" name="199" href="#199">199</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="200" href="#200">200</a>             lock.setExpirationDate(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="201" href="#201">201</a>         }
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">boolean</strong> success = false;
+<a class="jxr_linenumber" name="203" href="#203">203</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="204" href="#204">204</a>             <strong class="jxr_keyword">if</strong> (lock.getApplicationId() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="205" href="#205">205</a>                 em.merge(lock);
+<a class="jxr_linenumber" name="206" href="#206">206</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="207" href="#207">207</a>                 lock.setApplicationId(applicationId);
+<a class="jxr_linenumber" name="208" href="#208">208</a>                 em.persist(lock);
+<a class="jxr_linenumber" name="209" href="#209">209</a>             }
+<a class="jxr_linenumber" name="210" href="#210">210</a>             success = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="211" href="#211">211</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> PersistenceException e) {
+<a class="jxr_linenumber" name="212" href="#212">212</a>             success = false;
+<a class="jxr_linenumber" name="213" href="#213">213</a>             <strong class="jxr_keyword">if</strong> (logger.isDebugEnabled()) {
+<a class="jxr_linenumber" name="214" href="#214">214</a>                 logger.debug(<span class="jxr_string">"{} could not obtain {} lock."</span>, <strong class="jxr_keyword">new</strong> Object[] {uniqueId, applicationId, e});
+<a class="jxr_linenumber" name="215" href="#215">215</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="216" href="#216">216</a>                 logger.info(<span class="jxr_string">"{} could not obtain {} lock."</span>, uniqueId, applicationId);
+<a class="jxr_linenumber" name="217" href="#217">217</a>             }
+<a class="jxr_linenumber" name="218" href="#218">218</a>         }
+<a class="jxr_linenumber" name="219" href="#219">219</a>         <strong class="jxr_keyword">return</strong> success;
+<a class="jxr_linenumber" name="220" href="#220">220</a>     }
+<a class="jxr_linenumber" name="221" href="#221">221</a> 
+<a class="jxr_linenumber" name="222" href="#222">222</a> 
+<a class="jxr_linenumber" name="223" href="#223">223</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="224" href="#224">224</a> <em class="jxr_javadoccomment">     * Describes a database lock.</em>
+<a class="jxr_linenumber" name="225" href="#225">225</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="226" href="#226">226</a> <em class="jxr_javadoccomment">     * @author Marvin S. Addison</em>
+<a class="jxr_linenumber" name="227" href="#227">227</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="228" href="#228">228</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="229" href="#229">229</a>     @Entity
+<a class="jxr_linenumber" name="230" href="#230">230</a>     @Table(name = <span class="jxr_string">"locks"</span>)
+<a class="jxr_linenumber" name="231" href="#231">231</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategy.html">Lock</a> {
+<a class="jxr_linenumber" name="232" href="#232">232</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> column name that holds application identifier. */</em>
+<a class="jxr_linenumber" name="233" href="#233">233</a>         @Id
+<a class="jxr_linenumber" name="234" href="#234">234</a>         @Column(name=<span class="jxr_string">"application_id"</span>)
+<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">private</strong> String applicationId;
+<a class="jxr_linenumber" name="236" href="#236">236</a> 
+<a class="jxr_linenumber" name="237" href="#237">237</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Database column name that holds unique identifier. */</em>
+<a class="jxr_linenumber" name="238" href="#238">238</a>         @Column(name=<span class="jxr_string">"unique_id"</span>)
+<a class="jxr_linenumber" name="239" href="#239">239</a>         <strong class="jxr_keyword">private</strong> String uniqueId;
 <a class="jxr_linenumber" name="240" href="#240">240</a> 
-<a class="jxr_linenumber" name="241" href="#241">241</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">         * @return the applicationId</em>
-<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="244" href="#244">244</a>         <strong class="jxr_keyword">public</strong> String getApplicationId() {
-<a class="jxr_linenumber" name="245" href="#245">245</a>             <strong class="jxr_keyword">return</strong> applicationId;
-<a class="jxr_linenumber" name="246" href="#246">246</a>         }
-<a class="jxr_linenumber" name="247" href="#247">247</a> 
-<a class="jxr_linenumber" name="248" href="#248">248</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">         * @param applicationId the applicationId to set</em>
-<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setApplicationId(<strong class="jxr_keyword">final</strong> String applicationId) {
-<a class="jxr_linenumber" name="252" href="#252">252</a>             <strong class="jxr_keyword">this</strong>.applicationId = applicationId;
-<a class="jxr_linenumber" name="253" href="#253">253</a>         }
-<a class="jxr_linenumber" name="254" href="#254">254</a> 
-<a class="jxr_linenumber" name="255" href="#255">255</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">         * @return the uniqueId</em>
-<a class="jxr_linenumber" name="257" href="#257">257</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">public</strong> String getUniqueId() {
-<a class="jxr_linenumber" name="259" href="#259">259</a>             <strong class="jxr_keyword">return</strong> uniqueId;
-<a class="jxr_linenumber" name="260" href="#260">260</a>         }
-<a class="jxr_linenumber" name="261" href="#261">261</a> 
-<a class="jxr_linenumber" name="262" href="#262">262</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">         * @param uniqueId the uniqueId to set</em>
-<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUniqueId(<strong class="jxr_keyword">final</strong> String uniqueId) {
-<a class="jxr_linenumber" name="266" href="#266">266</a>             <strong class="jxr_keyword">this</strong>.uniqueId = uniqueId;
-<a class="jxr_linenumber" name="267" href="#267">267</a>         }
-<a class="jxr_linenumber" name="268" href="#268">268</a> 
-<a class="jxr_linenumber" name="269" href="#269">269</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">         * @return the expirationDate</em>
-<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="272" href="#272">272</a>         <strong class="jxr_keyword">public</strong> Date getExpirationDate() {
-<a class="jxr_linenumber" name="273" href="#273">273</a>             <strong class="jxr_keyword">return</strong> expirationDate;
-<a class="jxr_linenumber" name="274" href="#274">274</a>         }
-<a class="jxr_linenumber" name="275" href="#275">275</a> 
-<a class="jxr_linenumber" name="276" href="#276">276</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="277" href="#277">277</a> <em class="jxr_javadoccomment">         * @param expirationDate the expirationDate to set</em>
-<a class="jxr_linenumber" name="278" href="#278">278</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="279" href="#279">279</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setExpirationDate(<strong class="jxr_keyword">final</strong> Date expirationDate) {
-<a class="jxr_linenumber" name="280" href="#280">280</a>             <strong class="jxr_keyword">this</strong>.expirationDate = expirationDate;
-<a class="jxr_linenumber" name="281" href="#281">281</a>         }
-<a class="jxr_linenumber" name="282" href="#282">282</a>     }
-<a class="jxr_linenumber" name="283" href="#283">283</a> }
+<a class="jxr_linenumber" name="241" href="#241">241</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Database column name that holds expiration date. */</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a>         @Temporal(TemporalType.TIMESTAMP)
+<a class="jxr_linenumber" name="243" href="#243">243</a>         @Column(name=<span class="jxr_string">"expiration_date"</span>)
+<a class="jxr_linenumber" name="244" href="#244">244</a>         <strong class="jxr_keyword">private</strong> Date expirationDate;
+<a class="jxr_linenumber" name="245" href="#245">245</a> 
+<a class="jxr_linenumber" name="246" href="#246">246</a> 
+<a class="jxr_linenumber" name="247" href="#247">247</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">         * @return the applicationId</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a>         <strong class="jxr_keyword">public</strong> String getApplicationId() {
+<a class="jxr_linenumber" name="251" href="#251">251</a>             <strong class="jxr_keyword">return</strong> applicationId;
+<a class="jxr_linenumber" name="252" href="#252">252</a>         }
+<a class="jxr_linenumber" name="253" href="#253">253</a> 
+<a class="jxr_linenumber" name="254" href="#254">254</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">         * @param applicationId the applicationId to set</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setApplicationId(<strong class="jxr_keyword">final</strong> String applicationId) {
+<a class="jxr_linenumber" name="258" href="#258">258</a>             <strong class="jxr_keyword">this</strong>.applicationId = applicationId;
+<a class="jxr_linenumber" name="259" href="#259">259</a>         }
+<a class="jxr_linenumber" name="260" href="#260">260</a> 
+<a class="jxr_linenumber" name="261" href="#261">261</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">         * @return the uniqueId</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">public</strong> String getUniqueId() {
+<a class="jxr_linenumber" name="265" href="#265">265</a>             <strong class="jxr_keyword">return</strong> uniqueId;
+<a class="jxr_linenumber" name="266" href="#266">266</a>         }
+<a class="jxr_linenumber" name="267" href="#267">267</a> 
+<a class="jxr_linenumber" name="268" href="#268">268</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="269" href="#269">269</a> <em class="jxr_javadoccomment">         * @param uniqueId the uniqueId to set</em>
+<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUniqueId(<strong class="jxr_keyword">final</strong> String uniqueId) {
+<a class="jxr_linenumber" name="272" href="#272">272</a>             <strong class="jxr_keyword">this</strong>.uniqueId = uniqueId;
+<a class="jxr_linenumber" name="273" href="#273">273</a>         }
+<a class="jxr_linenumber" name="274" href="#274">274</a> 
+<a class="jxr_linenumber" name="275" href="#275">275</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">         * @return the expirationDate</em>
+<a class="jxr_linenumber" name="277" href="#277">277</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">public</strong> Date getExpirationDate() {
+<a class="jxr_linenumber" name="279" href="#279">279</a>             <strong class="jxr_keyword">return</strong> expirationDate;
+<a class="jxr_linenumber" name="280" href="#280">280</a>         }
+<a class="jxr_linenumber" name="281" href="#281">281</a> 
+<a class="jxr_linenumber" name="282" href="#282">282</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="283" href="#283">283</a> <em class="jxr_javadoccomment">         * @param expirationDate the expirationDate to set</em>
+<a class="jxr_linenumber" name="284" href="#284">284</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="285" href="#285">285</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setExpirationDate(<strong class="jxr_keyword">final</strong> Date expirationDate) {
+<a class="jxr_linenumber" name="286" href="#286">286</a>             <strong class="jxr_keyword">this</strong>.expirationDate = expirationDate;
+<a class="jxr_linenumber" name="287" href="#287">287</a>         }
+<a class="jxr_linenumber" name="288" href="#288">288</a>     }
+<a class="jxr_linenumber" name="289" href="#289">289</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -11,7 +11,7 @@
       <title>File: 5,
              Errors: 0,
              Warnings: 0,
-             Infos: 19
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-radius//checkstyle.html</link>
       <description>
@@ -32,7 +32,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-radius//checkstyle.html#org.jasig.cas.adaptors.radius.JRadiusServerImpl.java">org/jasig/cas/adaptors/radius/JRadiusServerImpl.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -74,7 +74,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-radius//checkstyle.html#org.jasig.cas.adaptors.radius.RadiusClientFactory.java">org/jasig/cas/adaptors/radius/RadiusClientFactory.java</a>
                 </td>
                 <td>
-                  6
+                  0
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-radius//checkstyle.html#org.jasig.cas.adaptors.radius.RadiusProtocol.java">org/jasig/cas/adaptors/radius/RadiusProtocol.java</a>
                 </td>
                 <td>
-                  12
+                  0
                 </td>
                 <td>
                   0

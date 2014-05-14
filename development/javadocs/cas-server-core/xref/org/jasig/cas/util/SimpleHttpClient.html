@@ -291,62 +291,72 @@
 <a class="jxr_linenumber" name="281" href="#281">281</a> 
 <a class="jxr_linenumber" name="282" href="#282">282</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> followRedirects;
 <a class="jxr_linenumber" name="283" href="#283">283</a> 
-<a class="jxr_linenumber" name="284" href="#284">284</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/util/SimpleHttpClient.html">MessageSender</a>(<strong class="jxr_keyword">final</strong> String url, <strong class="jxr_keyword">final</strong> String message, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> readTimeout,
-<a class="jxr_linenumber" name="285" href="#285">285</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectionTimeout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> followRedirects) {
-<a class="jxr_linenumber" name="286" href="#286">286</a>             <strong class="jxr_keyword">this</strong>.url = url;
-<a class="jxr_linenumber" name="287" href="#287">287</a>             <strong class="jxr_keyword">this</strong>.message = message;
-<a class="jxr_linenumber" name="288" href="#288">288</a>             <strong class="jxr_keyword">this</strong>.readTimeout = readTimeout;
-<a class="jxr_linenumber" name="289" href="#289">289</a>             <strong class="jxr_keyword">this</strong>.connectionTimeout = connectionTimeout;
-<a class="jxr_linenumber" name="290" href="#290">290</a>             <strong class="jxr_keyword">this</strong>.followRedirects = followRedirects;
-<a class="jxr_linenumber" name="291" href="#291">291</a>         }
-<a class="jxr_linenumber" name="292" href="#292">292</a> 
-<a class="jxr_linenumber" name="293" href="#293">293</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="294" href="#294">294</a>             HttpURLConnection connection = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="295" href="#295">295</a>             BufferedReader in = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="296" href="#296">296</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="297" href="#297">297</a>                 LOGGER.debug(<span class="jxr_string">"Attempting to access {}"</span>, url);
-<a class="jxr_linenumber" name="298" href="#298">298</a>                 <strong class="jxr_keyword">final</strong> URL logoutUrl = <strong class="jxr_keyword">new</strong> URL(url);
-<a class="jxr_linenumber" name="299" href="#299">299</a>                 <strong class="jxr_keyword">final</strong> String output = <span class="jxr_string">"logoutRequest="</span> + URLEncoder.encode(message, <span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="300" href="#300">300</a> 
-<a class="jxr_linenumber" name="301" href="#301">301</a>                 connection = (HttpURLConnection) logoutUrl.openConnection();
-<a class="jxr_linenumber" name="302" href="#302">302</a>                 connection.setDoInput(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="303" href="#303">303</a>                 connection.setDoOutput(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="304" href="#304">304</a>                 connection.setRequestMethod(<span class="jxr_string">"POST"</span>);
-<a class="jxr_linenumber" name="305" href="#305">305</a>                 connection.setReadTimeout(<strong class="jxr_keyword">this</strong>.readTimeout);
-<a class="jxr_linenumber" name="306" href="#306">306</a>                 connection.setConnectTimeout(<strong class="jxr_keyword">this</strong>.connectionTimeout);
-<a class="jxr_linenumber" name="307" href="#307">307</a>                 connection.setInstanceFollowRedirects(<strong class="jxr_keyword">this</strong>.followRedirects);
-<a class="jxr_linenumber" name="308" href="#308">308</a>                 connection.setRequestProperty(<span class="jxr_string">"Content-Length"</span>, Integer.toString(output.getBytes().length));
-<a class="jxr_linenumber" name="309" href="#309">309</a>                 connection.setRequestProperty(<span class="jxr_string">"Content-Type"</span>, <span class="jxr_string">"application/x-www-form-urlencoded"</span>);
-<a class="jxr_linenumber" name="310" href="#310">310</a>                 <strong class="jxr_keyword">final</strong> DataOutputStream printout = <strong class="jxr_keyword">new</strong> DataOutputStream(connection.getOutputStream());
-<a class="jxr_linenumber" name="311" href="#311">311</a>                 printout.writeBytes(output);
-<a class="jxr_linenumber" name="312" href="#312">312</a>                 printout.flush();
-<a class="jxr_linenumber" name="313" href="#313">313</a>                 printout.close();
-<a class="jxr_linenumber" name="314" href="#314">314</a> 
-<a class="jxr_linenumber" name="315" href="#315">315</a>                 in = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(connection.getInputStream()));
-<a class="jxr_linenumber" name="316" href="#316">316</a> 
-<a class="jxr_linenumber" name="317" href="#317">317</a>                 <strong class="jxr_keyword">boolean</strong> readInput = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="318" href="#318">318</a>                 <strong class="jxr_keyword">while</strong> (readInput) {
-<a class="jxr_linenumber" name="319" href="#319">319</a>                     readInput =StringUtils.isNotBlank(in.readLine());
-<a class="jxr_linenumber" name="320" href="#320">320</a>                 }
-<a class="jxr_linenumber" name="321" href="#321">321</a> 
-<a class="jxr_linenumber" name="322" href="#322">322</a>                 LOGGER.debug(<span class="jxr_string">"Finished sending message to {}"</span>, url);
-<a class="jxr_linenumber" name="323" href="#323">323</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="324" href="#324">324</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SocketTimeoutException e) {
-<a class="jxr_linenumber" name="325" href="#325">325</a>                 LOGGER.warn(<span class="jxr_string">"Socket Timeout Detected while attempting to send message to [{}]"</span>, url);
-<a class="jxr_linenumber" name="326" href="#326">326</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="327" href="#327">327</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="328" href="#328">328</a>                 LOGGER.warn(<span class="jxr_string">"Error Sending message to url endpoint [{}]. Error is [{}]"</span>, url, e.getMessage());
-<a class="jxr_linenumber" name="329" href="#329">329</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="330" href="#330">330</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="331" href="#331">331</a>                 IOUtils.closeQuietly(in);
-<a class="jxr_linenumber" name="332" href="#332">332</a>                 <strong class="jxr_keyword">if</strong> (connection != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="333" href="#333">333</a>                     connection.disconnect();
-<a class="jxr_linenumber" name="334" href="#334">334</a>                 }
-<a class="jxr_linenumber" name="335" href="#335">335</a>             }
-<a class="jxr_linenumber" name="336" href="#336">336</a>         }
-<a class="jxr_linenumber" name="337" href="#337">337</a> 
-<a class="jxr_linenumber" name="338" href="#338">338</a>     }
-<a class="jxr_linenumber" name="339" href="#339">339</a> }
+<a class="jxr_linenumber" name="284" href="#284">284</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="285" href="#285">285</a> <em class="jxr_javadoccomment">         * Instantiates a new message sender.</em>
+<a class="jxr_linenumber" name="286" href="#286">286</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="287" href="#287">287</a> <em class="jxr_javadoccomment">         * @param url the url</em>
+<a class="jxr_linenumber" name="288" href="#288">288</a> <em class="jxr_javadoccomment">         * @param message the message</em>
+<a class="jxr_linenumber" name="289" href="#289">289</a> <em class="jxr_javadoccomment">         * @param readTimeout the read timeout</em>
+<a class="jxr_linenumber" name="290" href="#290">290</a> <em class="jxr_javadoccomment">         * @param connectionTimeout the connection timeout</em>
+<a class="jxr_linenumber" name="291" href="#291">291</a> <em class="jxr_javadoccomment">         * @param followRedirects the follow redirects</em>
+<a class="jxr_linenumber" name="292" href="#292">292</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="293" href="#293">293</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/util/SimpleHttpClient.html">MessageSender</a>(<strong class="jxr_keyword">final</strong> String url, <strong class="jxr_keyword">final</strong> String message, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> readTimeout,
+<a class="jxr_linenumber" name="294" href="#294">294</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> connectionTimeout, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> followRedirects) {
+<a class="jxr_linenumber" name="295" href="#295">295</a>             <strong class="jxr_keyword">this</strong>.url = url;
+<a class="jxr_linenumber" name="296" href="#296">296</a>             <strong class="jxr_keyword">this</strong>.message = message;
+<a class="jxr_linenumber" name="297" href="#297">297</a>             <strong class="jxr_keyword">this</strong>.readTimeout = readTimeout;
+<a class="jxr_linenumber" name="298" href="#298">298</a>             <strong class="jxr_keyword">this</strong>.connectionTimeout = connectionTimeout;
+<a class="jxr_linenumber" name="299" href="#299">299</a>             <strong class="jxr_keyword">this</strong>.followRedirects = followRedirects;
+<a class="jxr_linenumber" name="300" href="#300">300</a>         }
+<a class="jxr_linenumber" name="301" href="#301">301</a> 
+<a class="jxr_linenumber" name="302" href="#302">302</a>         @Override
+<a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="304" href="#304">304</a>             HttpURLConnection connection = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="305" href="#305">305</a>             BufferedReader in = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="306" href="#306">306</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="307" href="#307">307</a>                 LOGGER.debug(<span class="jxr_string">"Attempting to access {}"</span>, url);
+<a class="jxr_linenumber" name="308" href="#308">308</a>                 <strong class="jxr_keyword">final</strong> URL logoutUrl = <strong class="jxr_keyword">new</strong> URL(url);
+<a class="jxr_linenumber" name="309" href="#309">309</a>                 <strong class="jxr_keyword">final</strong> String output = <span class="jxr_string">"logoutRequest="</span> + URLEncoder.encode(message, <span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="310" href="#310">310</a> 
+<a class="jxr_linenumber" name="311" href="#311">311</a>                 connection = (HttpURLConnection) logoutUrl.openConnection();
+<a class="jxr_linenumber" name="312" href="#312">312</a>                 connection.setDoInput(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="313" href="#313">313</a>                 connection.setDoOutput(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="314" href="#314">314</a>                 connection.setRequestMethod(<span class="jxr_string">"POST"</span>);
+<a class="jxr_linenumber" name="315" href="#315">315</a>                 connection.setReadTimeout(<strong class="jxr_keyword">this</strong>.readTimeout);
+<a class="jxr_linenumber" name="316" href="#316">316</a>                 connection.setConnectTimeout(<strong class="jxr_keyword">this</strong>.connectionTimeout);
+<a class="jxr_linenumber" name="317" href="#317">317</a>                 connection.setInstanceFollowRedirects(<strong class="jxr_keyword">this</strong>.followRedirects);
+<a class="jxr_linenumber" name="318" href="#318">318</a>                 connection.setRequestProperty(<span class="jxr_string">"Content-Length"</span>, Integer.toString(output.getBytes().length));
+<a class="jxr_linenumber" name="319" href="#319">319</a>                 connection.setRequestProperty(<span class="jxr_string">"Content-Type"</span>, <span class="jxr_string">"application/x-www-form-urlencoded"</span>);
+<a class="jxr_linenumber" name="320" href="#320">320</a>                 <strong class="jxr_keyword">final</strong> DataOutputStream printout = <strong class="jxr_keyword">new</strong> DataOutputStream(connection.getOutputStream());
+<a class="jxr_linenumber" name="321" href="#321">321</a>                 printout.writeBytes(output);
+<a class="jxr_linenumber" name="322" href="#322">322</a>                 printout.flush();
+<a class="jxr_linenumber" name="323" href="#323">323</a>                 printout.close();
+<a class="jxr_linenumber" name="324" href="#324">324</a> 
+<a class="jxr_linenumber" name="325" href="#325">325</a>                 in = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(connection.getInputStream()));
+<a class="jxr_linenumber" name="326" href="#326">326</a> 
+<a class="jxr_linenumber" name="327" href="#327">327</a>                 <strong class="jxr_keyword">boolean</strong> readInput = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="328" href="#328">328</a>                 <strong class="jxr_keyword">while</strong> (readInput) {
+<a class="jxr_linenumber" name="329" href="#329">329</a>                     readInput =StringUtils.isNotBlank(in.readLine());
+<a class="jxr_linenumber" name="330" href="#330">330</a>                 }
+<a class="jxr_linenumber" name="331" href="#331">331</a> 
+<a class="jxr_linenumber" name="332" href="#332">332</a>                 LOGGER.debug(<span class="jxr_string">"Finished sending message to {}"</span>, url);
+<a class="jxr_linenumber" name="333" href="#333">333</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="334" href="#334">334</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SocketTimeoutException e) {
+<a class="jxr_linenumber" name="335" href="#335">335</a>                 LOGGER.warn(<span class="jxr_string">"Socket Timeout Detected while attempting to send message to [{}]"</span>, url);
+<a class="jxr_linenumber" name="336" href="#336">336</a>                 <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="337" href="#337">337</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="338" href="#338">338</a>                 LOGGER.warn(<span class="jxr_string">"Error Sending message to url endpoint [{}]. Error is [{}]"</span>, url, e.getMessage());
+<a class="jxr_linenumber" name="339" href="#339">339</a>                 <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="340" href="#340">340</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="341" href="#341">341</a>                 IOUtils.closeQuietly(in);
+<a class="jxr_linenumber" name="342" href="#342">342</a>                 <strong class="jxr_keyword">if</strong> (connection != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="343" href="#343">343</a>                     connection.disconnect();
+<a class="jxr_linenumber" name="344" href="#344">344</a>                 }
+<a class="jxr_linenumber" name="345" href="#345">345</a>             }
+<a class="jxr_linenumber" name="346" href="#346">346</a>         }
+<a class="jxr_linenumber" name="347" href="#347">347</a> 
+<a class="jxr_linenumber" name="348" href="#348">348</a>     }
+<a class="jxr_linenumber" name="349" href="#349">349</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

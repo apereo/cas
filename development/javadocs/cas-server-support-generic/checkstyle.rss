@@ -11,7 +11,7 @@
       <title>File: 2,
              Errors: 0,
              Warnings: 0,
-             Infos: 2
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-generic//checkstyle.html</link>
       <description>
@@ -32,7 +32,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-generic//checkstyle.html#org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler.java">org/jasig/cas/adaptors/generic/RejectUsersAuthenticationHandler.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -46,7 +46,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-generic//checkstyle.html#org.jasig.cas.adaptors.generic.FileAuthenticationHandler.java">org/jasig/cas/adaptors/generic/FileAuthenticationHandler.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0

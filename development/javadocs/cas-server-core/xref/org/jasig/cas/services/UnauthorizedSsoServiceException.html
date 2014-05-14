@@ -47,20 +47,34 @@
 <a class="jxr_linenumber" name="37" href="#37">37</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The code description. */</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CODE = <span class="jxr_string">"service.not.authorized.sso"</span>;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  
-<a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>() {
-<a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">this</strong>(CODE);
-<a class="jxr_linenumber" name="42" href="#42">42</a>      }
-<a class="jxr_linenumber" name="43" href="#43">43</a>  
-<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>(<strong class="jxr_keyword">final</strong> String message,
-<a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">final</strong> Throwable cause) {
-<a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">super</strong>(message, cause);
-<a class="jxr_linenumber" name="47" href="#47">47</a>      }
-<a class="jxr_linenumber" name="48" href="#48">48</a>  
-<a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>(<strong class="jxr_keyword">final</strong> String message) {
-<a class="jxr_linenumber" name="50" href="#50">50</a>          <strong class="jxr_keyword">super</strong>(message);
-<a class="jxr_linenumber" name="51" href="#51">51</a>      }
-<a class="jxr_linenumber" name="52" href="#52">52</a>  
-<a class="jxr_linenumber" name="53" href="#53">53</a>  }
+<a class="jxr_linenumber" name="40" href="#40">40</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * Instantiates a new unauthorized sso service exception.</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>() {
+<a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">this</strong>(CODE);
+<a class="jxr_linenumber" name="45" href="#45">45</a>      }
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     * Instantiates a new unauthorized sso service exception.</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     * @param message the message</em>
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * @param cause the cause</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>(<strong class="jxr_keyword">final</strong> String message,
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">final</strong> Throwable cause) {
+<a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">super</strong>(message, cause);
+<a class="jxr_linenumber" name="56" href="#56">56</a>      }
+<a class="jxr_linenumber" name="57" href="#57">57</a>  
+<a class="jxr_linenumber" name="58" href="#58">58</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">     * Instantiates a new unauthorized sso service exception.</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment">     * @param message the message</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>(<strong class="jxr_keyword">final</strong> String message) {
+<a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">super</strong>(message);
+<a class="jxr_linenumber" name="65" href="#65">65</a>      }
+<a class="jxr_linenumber" name="66" href="#66">66</a>  
+<a class="jxr_linenumber" name="67" href="#67">67</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

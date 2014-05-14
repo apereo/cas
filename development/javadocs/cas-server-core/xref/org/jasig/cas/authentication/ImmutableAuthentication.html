@@ -178,66 +178,67 @@
 <a class="jxr_linenumber" name="168" href="#168">168</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * Wraps a possibly null map in an immutable wrapper.</em>
 <a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * @param source Nullable map to wrap.</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise</em>
-<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     * {@link java.util.Collections#emptyMap()}.</em>
-<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="176" href="#176">176</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;K, V&gt; Map&lt;K, V&gt; wrap(<strong class="jxr_keyword">final</strong> Map&lt;K, V&gt; source) {
-<a class="jxr_linenumber" name="177" href="#177">177</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="178" href="#178">178</a>             <strong class="jxr_keyword">return</strong> Collections.unmodifiableMap(source);
-<a class="jxr_linenumber" name="179" href="#179">179</a>         }
-<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">return</strong> Collections.emptyMap();
-<a class="jxr_linenumber" name="181" href="#181">181</a>     }
-<a class="jxr_linenumber" name="182" href="#182">182</a> 
-<a class="jxr_linenumber" name="183" href="#183">183</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="184" href="#184">184</a> <em class="jxr_javadoccomment">     * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.</em>
-<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="186" href="#186">186</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a> <strong class="jxr_keyword">extends</strong> Date {
-<a class="jxr_linenumber" name="187" href="#187">187</a> 
-<a class="jxr_linenumber" name="188" href="#188">188</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> No-arg constructor for serialization support. */</em>
-<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>() {}
-<a class="jxr_linenumber" name="190" href="#190">190</a> 
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">         * Creates a new instance with the given epoch time in milliseconds.</em>
-<a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">         * @param instant Milliseconds since the Unix epoch.</em>
-<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> instant) {
-<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">super</strong>(instant);
-<a class="jxr_linenumber" name="198" href="#198">198</a>         }
-<a class="jxr_linenumber" name="199" href="#199">199</a> 
-<a class="jxr_linenumber" name="200" href="#200">200</a>         @Override
-<a class="jxr_linenumber" name="201" href="#201">201</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setYear(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> year) {
-<a class="jxr_linenumber" name="202" href="#202">202</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="203" href="#203">203</a>         }
-<a class="jxr_linenumber" name="204" href="#204">204</a> 
-<a class="jxr_linenumber" name="205" href="#205">205</a>         @Override
-<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDate(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> date) {
-<a class="jxr_linenumber" name="207" href="#207">207</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="208" href="#208">208</a>         }
-<a class="jxr_linenumber" name="209" href="#209">209</a> 
-<a class="jxr_linenumber" name="210" href="#210">210</a>         @Override
-<a class="jxr_linenumber" name="211" href="#211">211</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setHours(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> hours) {
-<a class="jxr_linenumber" name="212" href="#212">212</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="213" href="#213">213</a>         }
-<a class="jxr_linenumber" name="214" href="#214">214</a> 
-<a class="jxr_linenumber" name="215" href="#215">215</a>         @Override
-<a class="jxr_linenumber" name="216" href="#216">216</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setMinutes(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> minutes) {
-<a class="jxr_linenumber" name="217" href="#217">217</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="218" href="#218">218</a>         }
-<a class="jxr_linenumber" name="219" href="#219">219</a> 
-<a class="jxr_linenumber" name="220" href="#220">220</a>         @Override
-<a class="jxr_linenumber" name="221" href="#221">221</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSeconds(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> seconds) {
-<a class="jxr_linenumber" name="222" href="#222">222</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="223" href="#223">223</a>         }
-<a class="jxr_linenumber" name="224" href="#224">224</a> 
-<a class="jxr_linenumber" name="225" href="#225">225</a>         @Override
-<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTime(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time) {
-<a class="jxr_linenumber" name="227" href="#227">227</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="228" href="#228">228</a>         }
-<a class="jxr_linenumber" name="229" href="#229">229</a>     }
-<a class="jxr_linenumber" name="230" href="#230">230</a> }
+<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * @param &lt;K&gt; the key type</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * @param &lt;V&gt; the value type</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * @param source Nullable map to wrap.</em>
+<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise</em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * {@link java.util.Collections#emptyMap()}.</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="177" href="#177">177</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;K, V&gt; Map&lt;K, V&gt; wrap(<strong class="jxr_keyword">final</strong> Map&lt;K, V&gt; source) {
+<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="179" href="#179">179</a>             <strong class="jxr_keyword">return</strong> Collections.unmodifiableMap(source);
+<a class="jxr_linenumber" name="180" href="#180">180</a>         }
+<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">return</strong> Collections.emptyMap();
+<a class="jxr_linenumber" name="182" href="#182">182</a>     }
+<a class="jxr_linenumber" name="183" href="#183">183</a> 
+<a class="jxr_linenumber" name="184" href="#184">184</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.</em>
+<a class="jxr_linenumber" name="186" href="#186">186</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="187" href="#187">187</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a> <strong class="jxr_keyword">extends</strong> Date {
+<a class="jxr_linenumber" name="188" href="#188">188</a> 
+<a class="jxr_linenumber" name="189" href="#189">189</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> No-arg constructor for serialization support. */</em>
+<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>() {}
+<a class="jxr_linenumber" name="191" href="#191">191</a> 
+<a class="jxr_linenumber" name="192" href="#192">192</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">         * Creates a new instance with the given epoch time in milliseconds.</em>
+<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">         * @param instant Milliseconds since the Unix epoch.</em>
+<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="197" href="#197">197</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> instant) {
+<a class="jxr_linenumber" name="198" href="#198">198</a>             <strong class="jxr_keyword">super</strong>(instant);
+<a class="jxr_linenumber" name="199" href="#199">199</a>         }
+<a class="jxr_linenumber" name="200" href="#200">200</a> 
+<a class="jxr_linenumber" name="201" href="#201">201</a>         @Override
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setYear(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> year) {
+<a class="jxr_linenumber" name="203" href="#203">203</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="204" href="#204">204</a>         }
+<a class="jxr_linenumber" name="205" href="#205">205</a> 
+<a class="jxr_linenumber" name="206" href="#206">206</a>         @Override
+<a class="jxr_linenumber" name="207" href="#207">207</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDate(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> date) {
+<a class="jxr_linenumber" name="208" href="#208">208</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="209" href="#209">209</a>         }
+<a class="jxr_linenumber" name="210" href="#210">210</a> 
+<a class="jxr_linenumber" name="211" href="#211">211</a>         @Override
+<a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setHours(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> hours) {
+<a class="jxr_linenumber" name="213" href="#213">213</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="214" href="#214">214</a>         }
+<a class="jxr_linenumber" name="215" href="#215">215</a> 
+<a class="jxr_linenumber" name="216" href="#216">216</a>         @Override
+<a class="jxr_linenumber" name="217" href="#217">217</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setMinutes(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> minutes) {
+<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="219" href="#219">219</a>         }
+<a class="jxr_linenumber" name="220" href="#220">220</a> 
+<a class="jxr_linenumber" name="221" href="#221">221</a>         @Override
+<a class="jxr_linenumber" name="222" href="#222">222</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSeconds(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> seconds) {
+<a class="jxr_linenumber" name="223" href="#223">223</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="224" href="#224">224</a>         }
+<a class="jxr_linenumber" name="225" href="#225">225</a> 
+<a class="jxr_linenumber" name="226" href="#226">226</a>         @Override
+<a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTime(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time) {
+<a class="jxr_linenumber" name="228" href="#228">228</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="229" href="#229">229</a>         }
+<a class="jxr_linenumber" name="230" href="#230">230</a>     }
+<a class="jxr_linenumber" name="231" href="#231">231</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

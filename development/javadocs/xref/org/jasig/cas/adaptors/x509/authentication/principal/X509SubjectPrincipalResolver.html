@@ -135,18 +135,31 @@
 <a class="jxr_linenumber" name="125" href="#125">125</a>         <strong class="jxr_keyword">private</strong> String name;
 <a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String[] values;
 <a class="jxr_linenumber" name="127" href="#127">127</a> 
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/adaptors/x509/authentication/principal/X509SubjectPrincipalResolver.html">AttributeContext</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> String[] values) {
-<a class="jxr_linenumber" name="129" href="#129">129</a>             <strong class="jxr_keyword">this</strong>.values = values;
-<a class="jxr_linenumber" name="130" href="#130">130</a>         }
-<a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">public</strong> String nextValue() {
-<a class="jxr_linenumber" name="133" href="#133">133</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.currentIndex == <strong class="jxr_keyword">this</strong>.values.length) {
-<a class="jxr_linenumber" name="134" href="#134">134</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"No values remaining for attribute "</span> + <strong class="jxr_keyword">this</strong>.name);
-<a class="jxr_linenumber" name="135" href="#135">135</a>             }
-<a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.values[<strong class="jxr_keyword">this</strong>.currentIndex++];
-<a class="jxr_linenumber" name="137" href="#137">137</a>         }
-<a class="jxr_linenumber" name="138" href="#138">138</a>     }
-<a class="jxr_linenumber" name="139" href="#139">139</a> }
+<a class="jxr_linenumber" name="128" href="#128">128</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">         * Instantiates a new attribute context.</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="131" href="#131">131</a> <em class="jxr_javadoccomment">         * @param name the name</em>
+<a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">         * @param values the values</em>
+<a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/adaptors/x509/authentication/principal/X509SubjectPrincipalResolver.html">AttributeContext</a>(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> String[] values) {
+<a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">this</strong>.values = values;
+<a class="jxr_linenumber" name="136" href="#136">136</a>         }
+<a class="jxr_linenumber" name="137" href="#137">137</a> 
+<a class="jxr_linenumber" name="138" href="#138">138</a>   
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">         * Retrieve the next value, by incrementing the current index.</em>
+<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">         * @return the string</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">         * @throws IllegalStateException if no values are remaining.</em>
+<a class="jxr_linenumber" name="144" href="#144">144</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">public</strong> String nextValue() {
+<a class="jxr_linenumber" name="146" href="#146">146</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.currentIndex == <strong class="jxr_keyword">this</strong>.values.length) {
+<a class="jxr_linenumber" name="147" href="#147">147</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"No values remaining for attribute "</span> + <strong class="jxr_keyword">this</strong>.name);
+<a class="jxr_linenumber" name="148" href="#148">148</a>             }
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.values[<strong class="jxr_keyword">this</strong>.currentIndex++];
+<a class="jxr_linenumber" name="150" href="#150">150</a>         }
+<a class="jxr_linenumber" name="151" href="#151">151</a>     }
+<a class="jxr_linenumber" name="152" href="#152">152</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

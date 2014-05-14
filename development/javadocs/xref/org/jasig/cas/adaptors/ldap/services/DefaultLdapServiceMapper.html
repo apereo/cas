@@ -245,35 +245,54 @@
 <a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s=%s,%s"</span>, <strong class="jxr_keyword">this</strong>.idAttribute, svc.getId(), parentDn);
 <a class="jxr_linenumber" name="236" href="#236">236</a>     }
 <a class="jxr_linenumber" name="237" href="#237">237</a> 
-<a class="jxr_linenumber" name="238" href="#238">238</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isValidRegexPattern(<strong class="jxr_keyword">final</strong> String pattern) {
-<a class="jxr_linenumber" name="239" href="#239">239</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="240" href="#240">240</a>             Pattern.compile(pattern);
-<a class="jxr_linenumber" name="241" href="#241">241</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> PatternSyntaxException e) {
-<a class="jxr_linenumber" name="242" href="#242">242</a>             LOGGER.debug(<span class="jxr_string">"Failed to identify [{}] as a regular expression"</span>, pattern);
-<a class="jxr_linenumber" name="243" href="#243">243</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="244" href="#244">244</a>         }
-<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="246" href="#246">246</a>     }
-<a class="jxr_linenumber" name="247" href="#247">247</a> 
-<a class="jxr_linenumber" name="248" href="#248">248</a>     <strong class="jxr_keyword">private</strong> Collection&lt;String&gt; getMultiValuedAttributeValues(@NotNull <strong class="jxr_keyword">final</strong> LdapEntry entry, @NotNull <strong class="jxr_keyword">final</strong> String attrName) {
-<a class="jxr_linenumber" name="249" href="#249">249</a>         <strong class="jxr_keyword">final</strong> LdapAttribute attrs = entry.getAttribute(attrName);
-<a class="jxr_linenumber" name="250" href="#250">250</a>         <strong class="jxr_keyword">if</strong> (attrs != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="251" href="#251">251</a>             <strong class="jxr_keyword">return</strong> attrs.getStringValues();
-<a class="jxr_linenumber" name="252" href="#252">252</a>         }
-<a class="jxr_linenumber" name="253" href="#253">253</a>         <strong class="jxr_keyword">return</strong> Collections.emptyList();
-<a class="jxr_linenumber" name="254" href="#254">254</a>     }
-<a class="jxr_linenumber" name="255" href="#255">255</a> 
-<a class="jxr_linenumber" name="256" href="#256">256</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a> getRegisteredService(@NotNull <strong class="jxr_keyword">final</strong> String id) {
-<a class="jxr_linenumber" name="257" href="#257">257</a>         <strong class="jxr_keyword">if</strong> (isValidRegexPattern(id)) {
-<a class="jxr_linenumber" name="258" href="#258">258</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/services/RegexRegisteredService.html">RegexRegisteredService</a>();
-<a class="jxr_linenumber" name="259" href="#259">259</a>         }
-<a class="jxr_linenumber" name="260" href="#260">260</a> 
-<a class="jxr_linenumber" name="261" href="#261">261</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">new</strong> AntPathMatcher().isPattern(id)) {
-<a class="jxr_linenumber" name="262" href="#262">262</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/services/RegisteredServiceImpl.html">RegisteredServiceImpl</a>();
-<a class="jxr_linenumber" name="263" href="#263">263</a>         }
-<a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="265" href="#265">265</a>     }
-<a class="jxr_linenumber" name="266" href="#266">266</a> }
+<a class="jxr_linenumber" name="238" href="#238">238</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">     * Checks if is valid regex pattern.</em>
+<a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">     * @param pattern the pattern</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * @return true, if  valid regex pattern</em>
+<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isValidRegexPattern(<strong class="jxr_keyword">final</strong> String pattern) {
+<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="246" href="#246">246</a>             Pattern.compile(pattern);
+<a class="jxr_linenumber" name="247" href="#247">247</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> PatternSyntaxException e) {
+<a class="jxr_linenumber" name="248" href="#248">248</a>             LOGGER.debug(<span class="jxr_string">"Failed to identify [{}] as a regular expression"</span>, pattern);
+<a class="jxr_linenumber" name="249" href="#249">249</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="250" href="#250">250</a>         }
+<a class="jxr_linenumber" name="251" href="#251">251</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="252" href="#252">252</a>     }
+<a class="jxr_linenumber" name="253" href="#253">253</a> 
+<a class="jxr_linenumber" name="254" href="#254">254</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">     * Gets the attribute values if more than one, otherwise an empty list.</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a> <em class="jxr_javadoccomment">     * @param entry the entry</em>
+<a class="jxr_linenumber" name="258" href="#258">258</a> <em class="jxr_javadoccomment">     * @param attrName the attr name</em>
+<a class="jxr_linenumber" name="259" href="#259">259</a> <em class="jxr_javadoccomment">     * @return the collection of attribute values</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="261" href="#261">261</a>     <strong class="jxr_keyword">private</strong> Collection&lt;String&gt; getMultiValuedAttributeValues(@NotNull <strong class="jxr_keyword">final</strong> LdapEntry entry, @NotNull <strong class="jxr_keyword">final</strong> String attrName) {
+<a class="jxr_linenumber" name="262" href="#262">262</a>         <strong class="jxr_keyword">final</strong> LdapAttribute attrs = entry.getAttribute(attrName);
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">if</strong> (attrs != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="264" href="#264">264</a>             <strong class="jxr_keyword">return</strong> attrs.getStringValues();
+<a class="jxr_linenumber" name="265" href="#265">265</a>         }
+<a class="jxr_linenumber" name="266" href="#266">266</a>         <strong class="jxr_keyword">return</strong> Collections.emptyList();
+<a class="jxr_linenumber" name="267" href="#267">267</a>     }
+<a class="jxr_linenumber" name="268" href="#268">268</a> 
+<a class="jxr_linenumber" name="269" href="#269">269</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">     * Gets the registered service by id that would either match an ant or regex pattern.</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="272" href="#272">272</a> <em class="jxr_javadoccomment">     * @param id the id</em>
+<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">     * @return the registered service</em>
+<a class="jxr_linenumber" name="274" href="#274">274</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="275" href="#275">275</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a> getRegisteredService(@NotNull <strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="276" href="#276">276</a>         <strong class="jxr_keyword">if</strong> (isValidRegexPattern(id)) {
+<a class="jxr_linenumber" name="277" href="#277">277</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/services/RegexRegisteredService.html">RegexRegisteredService</a>();
+<a class="jxr_linenumber" name="278" href="#278">278</a>         }
+<a class="jxr_linenumber" name="279" href="#279">279</a> 
+<a class="jxr_linenumber" name="280" href="#280">280</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">new</strong> AntPathMatcher().isPattern(id)) {
+<a class="jxr_linenumber" name="281" href="#281">281</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/services/RegisteredServiceImpl.html">RegisteredServiceImpl</a>();
+<a class="jxr_linenumber" name="282" href="#282">282</a>         }
+<a class="jxr_linenumber" name="283" href="#283">283</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="284" href="#284">284</a>     }
+<a class="jxr_linenumber" name="285" href="#285">285</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

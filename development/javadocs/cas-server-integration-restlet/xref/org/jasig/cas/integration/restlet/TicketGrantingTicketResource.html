@@ -63,36 +63,45 @@
 <a class="jxr_linenumber" name="53" href="#53">53</a>  
 <a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">private</strong> String ticketGrantingTicketId;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  
-<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> init(<strong class="jxr_keyword">final</strong> Context context, <strong class="jxr_keyword">final</strong> Request request, <strong class="jxr_keyword">final</strong> Response response) {
-<a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">super</strong>.init(context, request, response);
-<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">this</strong>.ticketGrantingTicketId = (String) request.getAttributes().get(<span class="jxr_string">"ticketGrantingTicketId"</span>);
-<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">this</strong>.setNegotiated(false);
-<a class="jxr_linenumber" name="60" href="#60">60</a>          <strong class="jxr_keyword">this</strong>.getVariants().add(<strong class="jxr_keyword">new</strong> Variant(MediaType.APPLICATION_WWW_FORM));
-<a class="jxr_linenumber" name="61" href="#61">61</a>      }
-<a class="jxr_linenumber" name="62" href="#62">62</a>  
-<a class="jxr_linenumber" name="63" href="#63">63</a>      @Delete
-<a class="jxr_linenumber" name="64" href="#64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeRepresentations() {
-<a class="jxr_linenumber" name="65" href="#65">65</a>          <strong class="jxr_keyword">this</strong>.centralAuthenticationService.destroyTicketGrantingTicket(<strong class="jxr_keyword">this</strong>.ticketGrantingTicketId);
-<a class="jxr_linenumber" name="66" href="#66">66</a>          getResponse().setStatus(Status.SUCCESS_OK);
-<a class="jxr_linenumber" name="67" href="#67">67</a>      }
-<a class="jxr_linenumber" name="68" href="#68">68</a>  
-<a class="jxr_linenumber" name="69" href="#69">69</a>      @Post
-<a class="jxr_linenumber" name="70" href="#70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> acceptRepresentation(<strong class="jxr_keyword">final</strong> Representation entity) {
-<a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">final</strong> Form form = <strong class="jxr_keyword">new</strong> Form(entity);
-<a class="jxr_linenumber" name="72" href="#72">72</a>          <strong class="jxr_keyword">final</strong> String serviceUrl = form.getFirstValue(<span class="jxr_string">"service"</span>);
-<a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="74" href="#74">74</a>              <strong class="jxr_keyword">final</strong> String serviceTicketId = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.grantServiceTicket(
-<a class="jxr_linenumber" name="75" href="#75">75</a>                      <strong class="jxr_keyword">this</strong>.ticketGrantingTicketId,
-<a class="jxr_linenumber" name="76" href="#76">76</a>                      <strong class="jxr_keyword">new</strong> SimpleWebApplicationServiceImpl(serviceUrl));
-<a class="jxr_linenumber" name="77" href="#77">77</a>              getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
-<a class="jxr_linenumber" name="78" href="#78">78</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InvalidTicketException e) {
-<a class="jxr_linenumber" name="79" href="#79">79</a>              getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, <span class="jxr_string">"TicketGrantingTicket could not be found."</span>);
-<a class="jxr_linenumber" name="80" href="#80">80</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="81" href="#81">81</a>              LOGGER.error(e.getMessage(), e);
-<a class="jxr_linenumber" name="82" href="#82">82</a>              getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-<a class="jxr_linenumber" name="83" href="#83">83</a>          }
-<a class="jxr_linenumber" name="84" href="#84">84</a>      }
-<a class="jxr_linenumber" name="85" href="#85">85</a>  }
+<a class="jxr_linenumber" name="56" href="#56">56</a>      @Override
+<a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> init(<strong class="jxr_keyword">final</strong> Context context, <strong class="jxr_keyword">final</strong> Request request, <strong class="jxr_keyword">final</strong> Response response) {
+<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">super</strong>.init(context, request, response);
+<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">this</strong>.ticketGrantingTicketId = (String) request.getAttributes().get(<span class="jxr_string">"ticketGrantingTicketId"</span>);
+<a class="jxr_linenumber" name="60" href="#60">60</a>          <strong class="jxr_keyword">this</strong>.setNegotiated(false);
+<a class="jxr_linenumber" name="61" href="#61">61</a>          <strong class="jxr_keyword">this</strong>.getVariants().add(<strong class="jxr_keyword">new</strong> Variant(MediaType.APPLICATION_WWW_FORM));
+<a class="jxr_linenumber" name="62" href="#62">62</a>      }
+<a class="jxr_linenumber" name="63" href="#63">63</a>  
+<a class="jxr_linenumber" name="64" href="#64">64</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * Removes the TGT.</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>      @Delete
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeRepresentations() {
+<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">this</strong>.centralAuthenticationService.destroyTicketGrantingTicket(<strong class="jxr_keyword">this</strong>.ticketGrantingTicketId);
+<a class="jxr_linenumber" name="70" href="#70">70</a>          getResponse().setStatus(Status.SUCCESS_OK);
+<a class="jxr_linenumber" name="71" href="#71">71</a>      }
+<a class="jxr_linenumber" name="72" href="#72">72</a>  
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="74" href="#74">74</a>  <em class="jxr_javadoccomment">     * Accept service and attempt to grant service ticket.</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="76" href="#76">76</a>  <em class="jxr_javadoccomment">     * @param entity the entity</em>
+<a class="jxr_linenumber" name="77" href="#77">77</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="78" href="#78">78</a>      @Post
+<a class="jxr_linenumber" name="79" href="#79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> acceptRepresentation(<strong class="jxr_keyword">final</strong> Representation entity) {
+<a class="jxr_linenumber" name="80" href="#80">80</a>          <strong class="jxr_keyword">final</strong> Form form = <strong class="jxr_keyword">new</strong> Form(entity);
+<a class="jxr_linenumber" name="81" href="#81">81</a>          <strong class="jxr_keyword">final</strong> String serviceUrl = form.getFirstValue(<span class="jxr_string">"service"</span>);
+<a class="jxr_linenumber" name="82" href="#82">82</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="83" href="#83">83</a>              <strong class="jxr_keyword">final</strong> String serviceTicketId = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.grantServiceTicket(
+<a class="jxr_linenumber" name="84" href="#84">84</a>                      <strong class="jxr_keyword">this</strong>.ticketGrantingTicketId,
+<a class="jxr_linenumber" name="85" href="#85">85</a>                      <strong class="jxr_keyword">new</strong> SimpleWebApplicationServiceImpl(serviceUrl));
+<a class="jxr_linenumber" name="86" href="#86">86</a>              getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
+<a class="jxr_linenumber" name="87" href="#87">87</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InvalidTicketException e) {
+<a class="jxr_linenumber" name="88" href="#88">88</a>              getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, <span class="jxr_string">"TicketGrantingTicket could not be found."</span>);
+<a class="jxr_linenumber" name="89" href="#89">89</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="90" href="#90">90</a>              LOGGER.error(e.getMessage(), e);
+<a class="jxr_linenumber" name="91" href="#91">91</a>              getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+<a class="jxr_linenumber" name="92" href="#92">92</a>          }
+<a class="jxr_linenumber" name="93" href="#93">93</a>      }
+<a class="jxr_linenumber" name="94" href="#94">94</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

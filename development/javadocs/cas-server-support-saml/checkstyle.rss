@@ -11,7 +11,7 @@
       <title>File: 11,
              Errors: 0,
              Warnings: 0,
-             Infos: 43
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html</link>
       <description>
@@ -46,7 +46,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator.java">org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulator.java</a>
                 </td>
                 <td>
-                  7
+                  0
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.SamlUtils.java">org/jasig/cas/support/saml/util/SamlUtils.java</a>
                 </td>
                 <td>
-                  7
+                  0
                 </td>
                 <td>
                   0
@@ -74,7 +74,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView.java">org/jasig/cas/support/saml/web/view/Saml10SuccessResponseView.java</a>
                 </td>
                 <td>
-                  5
+                  0
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator.java">org/jasig/cas/support/saml/util/SamlCompliantUniqueTicketIdGenerator.java</a>
                 </td>
                 <td>
-                  2
+                  0
                 </td>
                 <td>
                   0
@@ -102,7 +102,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView.java">org/jasig/cas/support/saml/web/view/AbstractSaml10ResponseView.java</a>
                 </td>
                 <td>
-                  6
+                  0
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService.java">org/jasig/cas/support/saml/authentication/principal/GoogleAccountsService.java</a>
                 </td>
                 <td>
-                  11
+                  0
                 </td>
                 <td>
                   0
@@ -158,7 +158,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.principal.SamlService.java">org/jasig/cas/support/saml/authentication/principal/SamlService.java</a>
                 </td>
                 <td>
-                  5
+                  0
                 </td>
                 <td>
                   0

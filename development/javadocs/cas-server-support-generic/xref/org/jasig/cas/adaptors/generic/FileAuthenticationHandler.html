@@ -106,26 +106,33 @@
 <a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">this</strong>.separator = separator;
 <a class="jxr_linenumber" name="97" href="#97">97</a>      }
 <a class="jxr_linenumber" name="98" href="#98">98</a>  
-<a class="jxr_linenumber" name="99" href="#99">99</a>      <strong class="jxr_keyword">private</strong> String getPasswordOnRecord(<strong class="jxr_keyword">final</strong> String username) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="100" href="#100">100</a>         BufferedReader bufferedReader = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="102" href="#102">102</a>             bufferedReader = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(<strong class="jxr_keyword">this</strong>.fileName.getInputStream()));
-<a class="jxr_linenumber" name="103" href="#103">103</a>             String line = bufferedReader.readLine();
-<a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">while</strong> (line != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="105" href="#105">105</a>                 <strong class="jxr_keyword">final</strong> String[] lineFields = line.split(<strong class="jxr_keyword">this</strong>.separator);
-<a class="jxr_linenumber" name="106" href="#106">106</a>                 <strong class="jxr_keyword">final</strong> String userOnRecord = lineFields[0];
-<a class="jxr_linenumber" name="107" href="#107">107</a>                 <strong class="jxr_keyword">final</strong> String passOnRecord = lineFields[1];
-<a class="jxr_linenumber" name="108" href="#108">108</a>                 <strong class="jxr_keyword">if</strong> (username.equals(userOnRecord)) {
-<a class="jxr_linenumber" name="109" href="#109">109</a>                     <strong class="jxr_keyword">return</strong> passOnRecord;
-<a class="jxr_linenumber" name="110" href="#110">110</a>                 }
-<a class="jxr_linenumber" name="111" href="#111">111</a>                 line = bufferedReader.readLine();
-<a class="jxr_linenumber" name="112" href="#112">112</a>             }
-<a class="jxr_linenumber" name="113" href="#113">113</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="114" href="#114">114</a>             IOUtils.closeQuietly(bufferedReader);
-<a class="jxr_linenumber" name="115" href="#115">115</a>         }
-<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="117" href="#117">117</a>     }
-<a class="jxr_linenumber" name="118" href="#118">118</a> }
+<a class="jxr_linenumber" name="99" href="#99">99</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     * Gets the password on record.</em>
+<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     * @param username the username</em>
+<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     * @return the password on record</em>
+<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     * @throws IOException Signals that an I/O exception has occurred.</em>
+<a class="jxr_linenumber" name="105" href="#105">105</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="106" href="#106">106</a>     <strong class="jxr_keyword">private</strong> String getPasswordOnRecord(<strong class="jxr_keyword">final</strong> String username) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="107" href="#107">107</a>         BufferedReader bufferedReader = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="108" href="#108">108</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="109" href="#109">109</a>             bufferedReader = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(<strong class="jxr_keyword">this</strong>.fileName.getInputStream()));
+<a class="jxr_linenumber" name="110" href="#110">110</a>             String line = bufferedReader.readLine();
+<a class="jxr_linenumber" name="111" href="#111">111</a>             <strong class="jxr_keyword">while</strong> (line != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="112" href="#112">112</a>                 <strong class="jxr_keyword">final</strong> String[] lineFields = line.split(<strong class="jxr_keyword">this</strong>.separator);
+<a class="jxr_linenumber" name="113" href="#113">113</a>                 <strong class="jxr_keyword">final</strong> String userOnRecord = lineFields[0];
+<a class="jxr_linenumber" name="114" href="#114">114</a>                 <strong class="jxr_keyword">final</strong> String passOnRecord = lineFields[1];
+<a class="jxr_linenumber" name="115" href="#115">115</a>                 <strong class="jxr_keyword">if</strong> (username.equals(userOnRecord)) {
+<a class="jxr_linenumber" name="116" href="#116">116</a>                     <strong class="jxr_keyword">return</strong> passOnRecord;
+<a class="jxr_linenumber" name="117" href="#117">117</a>                 }
+<a class="jxr_linenumber" name="118" href="#118">118</a>                 line = bufferedReader.readLine();
+<a class="jxr_linenumber" name="119" href="#119">119</a>             }
+<a class="jxr_linenumber" name="120" href="#120">120</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="121" href="#121">121</a>             IOUtils.closeQuietly(bufferedReader);
+<a class="jxr_linenumber" name="122" href="#122">122</a>         }
+<a class="jxr_linenumber" name="123" href="#123">123</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="124" href="#124">124</a>     }
+<a class="jxr_linenumber" name="125" href="#125">125</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

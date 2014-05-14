@@ -145,39 +145,44 @@
 <a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
 <a class="jxr_linenumber" name="136" href="#136">136</a>     }
 <a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkForErrors(<strong class="jxr_keyword">final</strong> Credential... credentials) {
-<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">if</strong> (credentials == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="141" href="#141">141</a>         }
-<a class="jxr_linenumber" name="142" href="#142">142</a> 
-<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Credential c : credentials) {
-<a class="jxr_linenumber" name="144" href="#144">144</a>             <strong class="jxr_keyword">final</strong> Set&lt;ConstraintViolation&lt;Credential&gt;&gt; errors = <strong class="jxr_keyword">this</strong>.validator.validate(c);
-<a class="jxr_linenumber" name="145" href="#145">145</a>             <strong class="jxr_keyword">if</strong> (!errors.isEmpty()) {
-<a class="jxr_linenumber" name="146" href="#146">146</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Error validating credentials: "</span> + errors.toString());
-<a class="jxr_linenumber" name="147" href="#147">147</a>             }
-<a class="jxr_linenumber" name="148" href="#148">148</a>         }
-<a class="jxr_linenumber" name="149" href="#149">149</a>     }
-<a class="jxr_linenumber" name="150" href="#150">150</a> 
-<a class="jxr_linenumber" name="151" href="#151">151</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="152" href="#152">152</a> <em class="jxr_javadoccomment">     * Set the CentralAuthenticationService.</em>
-<a class="jxr_linenumber" name="153" href="#153">153</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="154" href="#154">154</a> <em class="jxr_javadoccomment">     * @param centralAuthenticationService The CentralAuthenticationService to</em>
-<a class="jxr_linenumber" name="155" href="#155">155</a> <em class="jxr_javadoccomment">     * set.</em>
-<a class="jxr_linenumber" name="156" href="#156">156</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="157" href="#157">157</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setCentralAuthenticationService(
-<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService) {
-<a class="jxr_linenumber" name="159" href="#159">159</a>         <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
-<a class="jxr_linenumber" name="160" href="#160">160</a>     }
-<a class="jxr_linenumber" name="161" href="#161">161</a> 
-<a class="jxr_linenumber" name="162" href="#162">162</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * Set the list of validators.</em>
-<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * @param validator The array of validators to use.</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="167" href="#167">167</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setValidator(<strong class="jxr_keyword">final</strong> Validator validator) {
-<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">this</strong>.validator = validator;
-<a class="jxr_linenumber" name="169" href="#169">169</a>     }
-<a class="jxr_linenumber" name="170" href="#170">170</a> }
+<a class="jxr_linenumber" name="138" href="#138">138</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     * Check for errors by asking the validator to review each credential.</em>
+<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * @param credentials the credentials</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkForErrors(<strong class="jxr_keyword">final</strong> Credential... credentials) {
+<a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">if</strong> (credentials == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="145" href="#145">145</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="146" href="#146">146</a>         }
+<a class="jxr_linenumber" name="147" href="#147">147</a> 
+<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Credential c : credentials) {
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">final</strong> Set&lt;ConstraintViolation&lt;Credential&gt;&gt; errors = <strong class="jxr_keyword">this</strong>.validator.validate(c);
+<a class="jxr_linenumber" name="150" href="#150">150</a>             <strong class="jxr_keyword">if</strong> (!errors.isEmpty()) {
+<a class="jxr_linenumber" name="151" href="#151">151</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Error validating credentials: "</span> + errors.toString());
+<a class="jxr_linenumber" name="152" href="#152">152</a>             }
+<a class="jxr_linenumber" name="153" href="#153">153</a>         }
+<a class="jxr_linenumber" name="154" href="#154">154</a>     }
+<a class="jxr_linenumber" name="155" href="#155">155</a> 
+<a class="jxr_linenumber" name="156" href="#156">156</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="157" href="#157">157</a> <em class="jxr_javadoccomment">     * Set the CentralAuthenticationService.</em>
+<a class="jxr_linenumber" name="158" href="#158">158</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="159" href="#159">159</a> <em class="jxr_javadoccomment">     * @param centralAuthenticationService The CentralAuthenticationService to</em>
+<a class="jxr_linenumber" name="160" href="#160">160</a> <em class="jxr_javadoccomment">     * set.</em>
+<a class="jxr_linenumber" name="161" href="#161">161</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="162" href="#162">162</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setCentralAuthenticationService(
+<a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService) {
+<a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
+<a class="jxr_linenumber" name="165" href="#165">165</a>     }
+<a class="jxr_linenumber" name="166" href="#166">166</a> 
+<a class="jxr_linenumber" name="167" href="#167">167</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * Set the list of validators.</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * @param validator The array of validators to use.</em>
+<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setValidator(<strong class="jxr_keyword">final</strong> Validator validator) {
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">this</strong>.validator = validator;
+<a class="jxr_linenumber" name="174" href="#174">174</a>     }
+<a class="jxr_linenumber" name="175" href="#175">175</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

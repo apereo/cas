@@ -11,7 +11,7 @@
       <title>File: 9,
              Errors: 0,
              Warnings: 0,
-             Infos: 37
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html</link>
       <description>
@@ -29,24 +29,10 @@
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
-                </td>
-                <td>
-                  6
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/SimpleWebApplicationServiceSerializer.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
@@ -60,7 +46,21 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
                 </td>
                 <td>
-                  3
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
+                </td>
+                <td>
+                  0
                 </td>
                 <td>
                   0
@@ -74,7 +74,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder.java">org/jasig/cas/ticket/registry/support/kryo/KryoTranscoder.java</a>
                 </td>
                 <td>
-                  10
+                  0
                 </td>
                 <td>
                   0
@@ -88,7 +88,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/URLSerializer.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -102,7 +102,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.AbstractWebApplicationServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/AbstractWebApplicationServiceSerializer.java</a>
                 </td>
                 <td>
-                  6
+                  0
                 </td>
                 <td>
                   0
@@ -116,7 +116,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.monitor.MemcachedMonitor.java">org/jasig/cas/monitor/MemcachedMonitor.java</a>
                 </td>
                 <td>
-                  2
+                  0
                 </td>
                 <td>
                   0
@@ -130,7 +130,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.SamlServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/SamlServiceSerializer.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.GoogleAccountsServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/GoogleAccountsServiceSerializer.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0

@@ -11,7 +11,7 @@
       <title>File: 3,
              Errors: 0,
              Warnings: 0,
-             Infos: 11
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-integration-ehcache//checkstyle.html</link>
       <description>
@@ -32,7 +32,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-ehcache//checkstyle.html#org.jasig.cas.monitor.EhCacheStatistics.java">org/jasig/cas/monitor/EhCacheStatistics.java</a>
                 </td>
                 <td>
-                  6
+                  0
                 </td>
                 <td>
                   0
@@ -46,7 +46,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-ehcache//checkstyle.html#org.jasig.cas.ticket.registry.EhCacheTicketRegistry.java">org/jasig/cas/ticket/registry/EhCacheTicketRegistry.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-integration-ehcache//checkstyle.html#org.jasig.cas.monitor.EhCacheMonitor.java">org/jasig/cas/monitor/EhCacheMonitor.java</a>
                 </td>
                 <td>
-                  2
+                  0
                 </td>
                 <td>
                   0

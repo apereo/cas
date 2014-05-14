@@ -74,30 +74,38 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">return</strong> generateErrorView(<span class="jxr_string">"INVALID_REQUEST"</span>, <span class="jxr_string">"INVALID_REQUEST"</span>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="65" href="#65">65</a>      }
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>      <strong class="jxr_keyword">private</strong> ModelAndView generateErrorView(<strong class="jxr_keyword">final</strong> String code, <strong class="jxr_keyword">final</strong> String description, <strong class="jxr_keyword">final</strong> Object[] args) {
-<a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">new</strong> ModelAndView(<strong class="jxr_keyword">this</strong>.failureView);
-<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">final</strong> String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
-<a class="jxr_linenumber" name="70" href="#70">70</a>          modelAndView.addObject(<span class="jxr_string">"code"</span>, code);
-<a class="jxr_linenumber" name="71" href="#71">71</a>          modelAndView.addObject(<span class="jxr_string">"description"</span>, convertedDescription);
-<a class="jxr_linenumber" name="72" href="#72">72</a>  
-<a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">return</strong> modelAndView;
-<a class="jxr_linenumber" name="74" href="#74">74</a>      }
-<a class="jxr_linenumber" name="75" href="#75">75</a>  
-<a class="jxr_linenumber" name="76" href="#76">76</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="77" href="#77">77</a>  <em class="jxr_javadoccomment">     * @param delegates the delegate controllers to set</em>
-<a class="jxr_linenumber" name="78" href="#78">78</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="79" href="#79">79</a>      @NotNull
-<a class="jxr_linenumber" name="80" href="#80">80</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDelegates(<strong class="jxr_keyword">final</strong> List&lt;DelegateController&gt; delegates) {
-<a class="jxr_linenumber" name="81" href="#81">81</a>          <strong class="jxr_keyword">this</strong>.delegates = delegates;
+<a class="jxr_linenumber" name="67" href="#67">67</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     * Generate error view based on {@link #setFailureView(String)}.</em>
+<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * @param code the code</em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     * @param description the description</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * @param args the args</em>
+<a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_javadoccomment">     * @return the model and view</em>
+<a class="jxr_linenumber" name="74" href="#74">74</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> ModelAndView generateErrorView(<strong class="jxr_keyword">final</strong> String code, <strong class="jxr_keyword">final</strong> String description, <strong class="jxr_keyword">final</strong> Object[] args) {
+<a class="jxr_linenumber" name="76" href="#76">76</a>          <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">new</strong> ModelAndView(<strong class="jxr_keyword">this</strong>.failureView);
+<a class="jxr_linenumber" name="77" href="#77">77</a>          <strong class="jxr_keyword">final</strong> String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
+<a class="jxr_linenumber" name="78" href="#78">78</a>          modelAndView.addObject(<span class="jxr_string">"code"</span>, code);
+<a class="jxr_linenumber" name="79" href="#79">79</a>          modelAndView.addObject(<span class="jxr_string">"description"</span>, convertedDescription);
+<a class="jxr_linenumber" name="80" href="#80">80</a>  
+<a class="jxr_linenumber" name="81" href="#81">81</a>          <strong class="jxr_keyword">return</strong> modelAndView;
 <a class="jxr_linenumber" name="82" href="#82">82</a>      }
 <a class="jxr_linenumber" name="83" href="#83">83</a>  
 <a class="jxr_linenumber" name="84" href="#84">84</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     * @param failureView The failureView to set.</em>
+<a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     * @param delegates the delegate controllers to set</em>
 <a class="jxr_linenumber" name="86" href="#86">86</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setFailureView(<strong class="jxr_keyword">final</strong> String failureView) {
-<a class="jxr_linenumber" name="88" href="#88">88</a>          <strong class="jxr_keyword">this</strong>.failureView = failureView;
-<a class="jxr_linenumber" name="89" href="#89">89</a>      }
-<a class="jxr_linenumber" name="90" href="#90">90</a>  }
+<a class="jxr_linenumber" name="87" href="#87">87</a>      @NotNull
+<a class="jxr_linenumber" name="88" href="#88">88</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDelegates(<strong class="jxr_keyword">final</strong> List&lt;DelegateController&gt; delegates) {
+<a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">this</strong>.delegates = delegates;
+<a class="jxr_linenumber" name="90" href="#90">90</a>      }
+<a class="jxr_linenumber" name="91" href="#91">91</a>  
+<a class="jxr_linenumber" name="92" href="#92">92</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * @param failureView The failureView to set.</em>
+<a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setFailureView(<strong class="jxr_keyword">final</strong> String failureView) {
+<a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">this</strong>.failureView = failureView;
+<a class="jxr_linenumber" name="97" href="#97">97</a>      }
+<a class="jxr_linenumber" name="98" href="#98">98</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

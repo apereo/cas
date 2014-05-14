@@ -197,77 +197,92 @@
 <a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException(<span class="jxr_string">"Invalid credentials."</span>);
 <a class="jxr_linenumber" name="188" href="#188">188</a>     }
 <a class="jxr_linenumber" name="189" href="#189">189</a> 
-<a class="jxr_linenumber" name="190" href="#190">190</a>     @Override
-<a class="jxr_linenumber" name="191" href="#191">191</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> supports(<strong class="jxr_keyword">final</strong> Credential credential) {
-<a class="jxr_linenumber" name="192" href="#192">192</a>         <strong class="jxr_keyword">return</strong> credential instanceof UsernamePasswordCredential;
-<a class="jxr_linenumber" name="193" href="#193">193</a>     }
-<a class="jxr_linenumber" name="194" href="#194">194</a> 
-<a class="jxr_linenumber" name="195" href="#195">195</a>     @Override
-<a class="jxr_linenumber" name="196" href="#196">196</a>     <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="197" href="#197">197</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.name;
-<a class="jxr_linenumber" name="198" href="#198">198</a>     }
-<a class="jxr_linenumber" name="199" href="#199">199</a> 
-<a class="jxr_linenumber" name="200" href="#200">200</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="201" href="#201">201</a> <em class="jxr_javadoccomment">     * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.</em>
-<a class="jxr_linenumber" name="202" href="#202">202</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a> <em class="jxr_javadoccomment">     * @param username Username that was successfully authenticated which is used for principal ID when</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     *                 {@link #setPrincipalIdAttribute(String)} is not specified.</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * @param ldapEntry LDAP entry that may contain principal attributes.</em>
-<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.</em>
-<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     * @throws LoginException On security policy errors related to principal creation.</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="211" href="#211">211</a>     <strong class="jxr_keyword">protected</strong> Principal createPrincipal(<strong class="jxr_keyword">final</strong> String username, <strong class="jxr_keyword">final</strong> LdapEntry ldapEntry) <strong class="jxr_keyword">throws</strong> LoginException {
-<a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">final</strong> String id;
-<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.principalIdAttribute != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="214" href="#214">214</a>             <strong class="jxr_keyword">final</strong> LdapAttribute principalAttr = ldapEntry.getAttribute(<strong class="jxr_keyword">this</strong>.principalIdAttribute);
-<a class="jxr_linenumber" name="215" href="#215">215</a>             <strong class="jxr_keyword">if</strong> (principalAttr == <strong class="jxr_keyword">null</strong> || principalAttr.size() == 0) {
-<a class="jxr_linenumber" name="216" href="#216">216</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoginException(<strong class="jxr_keyword">this</strong>.principalIdAttribute + <span class="jxr_string">" attribute not found for "</span> + username);
-<a class="jxr_linenumber" name="217" href="#217">217</a>             }
-<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">if</strong> (principalAttr.size() &gt; 1) {
-<a class="jxr_linenumber" name="219" href="#219">219</a>                 <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.allowMultiplePrincipalAttributeValues) {
-<a class="jxr_linenumber" name="220" href="#220">220</a>                     logger.warn(
-<a class="jxr_linenumber" name="221" href="#221">221</a>                             <span class="jxr_string">"Found multiple values for principal ID attribute: {}. Using first value={}."</span>,
-<a class="jxr_linenumber" name="222" href="#222">222</a>                             principalAttr,
-<a class="jxr_linenumber" name="223" href="#223">223</a>                             principalAttr.getStringValue());
-<a class="jxr_linenumber" name="224" href="#224">224</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="225" href="#225">225</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoginException(<span class="jxr_string">"Multiple principal values not allowed: "</span> + principalAttr);
-<a class="jxr_linenumber" name="226" href="#226">226</a>                 }
-<a class="jxr_linenumber" name="227" href="#227">227</a>             }
-<a class="jxr_linenumber" name="228" href="#228">228</a>             id = principalAttr.getStringValue();
-<a class="jxr_linenumber" name="229" href="#229">229</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="230" href="#230">230</a>             id = username;
-<a class="jxr_linenumber" name="231" href="#231">231</a>         }
-<a class="jxr_linenumber" name="232" href="#232">232</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributeMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Object&gt;(<strong class="jxr_keyword">this</strong>.principalAttributeMap.size());
-<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">for</strong> (String ldapAttrName : <strong class="jxr_keyword">this</strong>.principalAttributeMap.keySet()) {
-<a class="jxr_linenumber" name="234" href="#234">234</a>             <strong class="jxr_keyword">final</strong> LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
-<a class="jxr_linenumber" name="235" href="#235">235</a>             <strong class="jxr_keyword">if</strong> (attr != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="236" href="#236">236</a>                 logger.debug(<span class="jxr_string">"Found principal attribute: {}"</span>, attr);
-<a class="jxr_linenumber" name="237" href="#237">237</a>                 <strong class="jxr_keyword">final</strong> String principalAttrName = <strong class="jxr_keyword">this</strong>.principalAttributeMap.get(ldapAttrName);
-<a class="jxr_linenumber" name="238" href="#238">238</a>                 <strong class="jxr_keyword">if</strong> (attr.size() &gt; 1) {
-<a class="jxr_linenumber" name="239" href="#239">239</a>                     attributeMap.put(principalAttrName, attr.getStringValues());
-<a class="jxr_linenumber" name="240" href="#240">240</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="241" href="#241">241</a>                     attributeMap.put(principalAttrName, attr.getStringValue());
-<a class="jxr_linenumber" name="242" href="#242">242</a>                 }
-<a class="jxr_linenumber" name="243" href="#243">243</a>             }
+<a class="jxr_linenumber" name="190" href="#190">190</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     * Examine account state to see if any errors are present.</em>
+<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     * If so, throws the relevant security exception.</em>
+<a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     * @param response the response</em>
+<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">     * @throws LoginException the login exception</em>
+<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="197" href="#197">197</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     * Handle post authentication processing.</em>
+<a class="jxr_linenumber" name="199" href="#199">199</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     * @param credential the credential</em>
+<a class="jxr_linenumber" name="201" href="#201">201</a> <em class="jxr_javadoccomment">     * @return the handler result</em>
+<a class="jxr_linenumber" name="202" href="#202">202</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="203" href="#203">203</a>     @Override
+<a class="jxr_linenumber" name="204" href="#204">204</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> supports(<strong class="jxr_keyword">final</strong> Credential credential) {
+<a class="jxr_linenumber" name="205" href="#205">205</a>         <strong class="jxr_keyword">return</strong> credential instanceof UsernamePasswordCredential;
+<a class="jxr_linenumber" name="206" href="#206">206</a>     }
+<a class="jxr_linenumber" name="207" href="#207">207</a> 
+<a class="jxr_linenumber" name="208" href="#208">208</a>     @Override
+<a class="jxr_linenumber" name="209" href="#209">209</a>     <strong class="jxr_keyword">public</strong> String getName() {
+<a class="jxr_linenumber" name="210" href="#210">210</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.name;
+<a class="jxr_linenumber" name="211" href="#211">211</a>     }
+<a class="jxr_linenumber" name="212" href="#212">212</a> 
+<a class="jxr_linenumber" name="213" href="#213">213</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.</em>
+<a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     * @param username Username that was successfully authenticated which is used for principal ID when</em>
+<a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">     *                 {@link #setPrincipalIdAttribute(String)} is not specified.</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     * @param ldapEntry LDAP entry that may contain principal attributes.</em>
+<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.</em>
+<a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     * @throws LoginException On security policy errors related to principal creation.</em>
+<a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="224" href="#224">224</a>     <strong class="jxr_keyword">protected</strong> Principal createPrincipal(<strong class="jxr_keyword">final</strong> String username, <strong class="jxr_keyword">final</strong> LdapEntry ldapEntry) <strong class="jxr_keyword">throws</strong> LoginException {
+<a class="jxr_linenumber" name="225" href="#225">225</a>         <strong class="jxr_keyword">final</strong> String id;
+<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.principalIdAttribute != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="227" href="#227">227</a>             <strong class="jxr_keyword">final</strong> LdapAttribute principalAttr = ldapEntry.getAttribute(<strong class="jxr_keyword">this</strong>.principalIdAttribute);
+<a class="jxr_linenumber" name="228" href="#228">228</a>             <strong class="jxr_keyword">if</strong> (principalAttr == <strong class="jxr_keyword">null</strong> || principalAttr.size() == 0) {
+<a class="jxr_linenumber" name="229" href="#229">229</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoginException(<strong class="jxr_keyword">this</strong>.principalIdAttribute + <span class="jxr_string">" attribute not found for "</span> + username);
+<a class="jxr_linenumber" name="230" href="#230">230</a>             }
+<a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">if</strong> (principalAttr.size() &gt; 1) {
+<a class="jxr_linenumber" name="232" href="#232">232</a>                 <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.allowMultiplePrincipalAttributeValues) {
+<a class="jxr_linenumber" name="233" href="#233">233</a>                     logger.warn(
+<a class="jxr_linenumber" name="234" href="#234">234</a>                             <span class="jxr_string">"Found multiple values for principal ID attribute: {}. Using first value={}."</span>,
+<a class="jxr_linenumber" name="235" href="#235">235</a>                             principalAttr,
+<a class="jxr_linenumber" name="236" href="#236">236</a>                             principalAttr.getStringValue());
+<a class="jxr_linenumber" name="237" href="#237">237</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="238" href="#238">238</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> LoginException(<span class="jxr_string">"Multiple principal values not allowed: "</span> + principalAttr);
+<a class="jxr_linenumber" name="239" href="#239">239</a>                 }
+<a class="jxr_linenumber" name="240" href="#240">240</a>             }
+<a class="jxr_linenumber" name="241" href="#241">241</a>             id = principalAttr.getStringValue();
+<a class="jxr_linenumber" name="242" href="#242">242</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="243" href="#243">243</a>             id = username;
 <a class="jxr_linenumber" name="244" href="#244">244</a>         }
-<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SimplePrincipal(id, attributeMap);
-<a class="jxr_linenumber" name="246" href="#246">246</a>     }
-<a class="jxr_linenumber" name="247" href="#247">247</a> 
-<a class="jxr_linenumber" name="248" href="#248">248</a>     @PostConstruct
-<a class="jxr_linenumber" name="249" href="#249">249</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize() {
-<a class="jxr_linenumber" name="250" href="#250">250</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; attributes = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
-<a class="jxr_linenumber" name="251" href="#251">251</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.principalIdAttribute != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="252" href="#252">252</a>             attributes.add(<strong class="jxr_keyword">this</strong>.principalIdAttribute);
-<a class="jxr_linenumber" name="253" href="#253">253</a>         }
-<a class="jxr_linenumber" name="254" href="#254">254</a>         attributes.addAll(<strong class="jxr_keyword">this</strong>.principalAttributeMap.keySet());
-<a class="jxr_linenumber" name="255" href="#255">255</a>         attributes.addAll(<strong class="jxr_keyword">this</strong>.additionalAttributes);
-<a class="jxr_linenumber" name="256" href="#256">256</a>         <strong class="jxr_keyword">this</strong>.authenticatedEntryAttributes = attributes.toArray(<strong class="jxr_keyword">new</strong> String[attributes.size()]);
-<a class="jxr_linenumber" name="257" href="#257">257</a>     }
-<a class="jxr_linenumber" name="258" href="#258">258</a> 
-<a class="jxr_linenumber" name="259" href="#259">259</a> 
-<a class="jxr_linenumber" name="260" href="#260">260</a> }
+<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributeMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Object&gt;(<strong class="jxr_keyword">this</strong>.principalAttributeMap.size());
+<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">for</strong> (String ldapAttrName : <strong class="jxr_keyword">this</strong>.principalAttributeMap.keySet()) {
+<a class="jxr_linenumber" name="247" href="#247">247</a>             <strong class="jxr_keyword">final</strong> LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
+<a class="jxr_linenumber" name="248" href="#248">248</a>             <strong class="jxr_keyword">if</strong> (attr != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="249" href="#249">249</a>                 logger.debug(<span class="jxr_string">"Found principal attribute: {}"</span>, attr);
+<a class="jxr_linenumber" name="250" href="#250">250</a>                 <strong class="jxr_keyword">final</strong> String principalAttrName = <strong class="jxr_keyword">this</strong>.principalAttributeMap.get(ldapAttrName);
+<a class="jxr_linenumber" name="251" href="#251">251</a>                 <strong class="jxr_keyword">if</strong> (attr.size() &gt; 1) {
+<a class="jxr_linenumber" name="252" href="#252">252</a>                     attributeMap.put(principalAttrName, attr.getStringValues());
+<a class="jxr_linenumber" name="253" href="#253">253</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="254" href="#254">254</a>                     attributeMap.put(principalAttrName, attr.getStringValue());
+<a class="jxr_linenumber" name="255" href="#255">255</a>                 }
+<a class="jxr_linenumber" name="256" href="#256">256</a>             }
+<a class="jxr_linenumber" name="257" href="#257">257</a>         }
+<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SimplePrincipal(id, attributeMap);
+<a class="jxr_linenumber" name="259" href="#259">259</a>     }
+<a class="jxr_linenumber" name="260" href="#260">260</a> 
+<a class="jxr_linenumber" name="261" href="#261">261</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     * Initialize the handler, setup the authentication entry attributes.</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a>     @PostConstruct
+<a class="jxr_linenumber" name="265" href="#265">265</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initialize() {
+<a class="jxr_linenumber" name="266" href="#266">266</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; attributes = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="267" href="#267">267</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.principalIdAttribute != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="268" href="#268">268</a>             attributes.add(<strong class="jxr_keyword">this</strong>.principalIdAttribute);
+<a class="jxr_linenumber" name="269" href="#269">269</a>         }
+<a class="jxr_linenumber" name="270" href="#270">270</a>         attributes.addAll(<strong class="jxr_keyword">this</strong>.principalAttributeMap.keySet());
+<a class="jxr_linenumber" name="271" href="#271">271</a>         attributes.addAll(<strong class="jxr_keyword">this</strong>.additionalAttributes);
+<a class="jxr_linenumber" name="272" href="#272">272</a>         <strong class="jxr_keyword">this</strong>.authenticatedEntryAttributes = attributes.toArray(<strong class="jxr_keyword">new</strong> String[attributes.size()]);
+<a class="jxr_linenumber" name="273" href="#273">273</a>     }
+<a class="jxr_linenumber" name="274" href="#274">274</a> 
+<a class="jxr_linenumber" name="275" href="#275">275</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

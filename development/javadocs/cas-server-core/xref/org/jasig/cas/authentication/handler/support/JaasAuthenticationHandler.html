@@ -94,83 +94,87 @@
 <a class="jxr_linenumber" name="84" href="#84">84</a>      @NotNull
 <a class="jxr_linenumber" name="85" href="#85">85</a>      <strong class="jxr_keyword">private</strong> String realm = DEFAULT_REALM;
 <a class="jxr_linenumber" name="86" href="#86">86</a>  
-<a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">JaasAuthenticationHandler</a>() {
-<a class="jxr_linenumber" name="88" href="#88">88</a>          Assert.notNull(Configuration.getConfiguration(),
-<a class="jxr_linenumber" name="89" href="#89">89</a>                  <span class="jxr_string">"Static Configuration cannot be null. Did you remember to specify \&quot;java.security.auth.login.config\&quot;?"</span>);
-<a class="jxr_linenumber" name="90" href="#90">90</a>      }
-<a class="jxr_linenumber" name="91" href="#91">91</a>  
-<a class="jxr_linenumber" name="92" href="#92">92</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> {@inheritDoc} */</em>
-<a class="jxr_linenumber" name="93" href="#93">93</a>      @Override
-<a class="jxr_linenumber" name="94" href="#94">94</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/UsernamePasswordCredential.html">UsernamePasswordCredential</a> credential)
-<a class="jxr_linenumber" name="95" href="#95">95</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, <a href="../../../../../../org/jasig/cas/authentication/PreventedException.html">PreventedException</a> {
-<a class="jxr_linenumber" name="96" href="#96">96</a>  
-<a class="jxr_linenumber" name="97" href="#97">97</a>          <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
-<a class="jxr_linenumber" name="98" href="#98">98</a>          <strong class="jxr_keyword">final</strong> String password = getPasswordEncoder().encode(credential.getPassword());
-<a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">final</strong> LoginContext lc = <strong class="jxr_keyword">new</strong> LoginContext(
-<a class="jxr_linenumber" name="100" href="#100">100</a>                 <strong class="jxr_keyword">this</strong>.realm,
-<a class="jxr_linenumber" name="101" href="#101">101</a>                 <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a>(username, password));
-<a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="103" href="#103">103</a>             logger.debug(<span class="jxr_string">"Attempting authentication for: {}"</span>, username);
-<a class="jxr_linenumber" name="104" href="#104">104</a>             lc.login();
-<a class="jxr_linenumber" name="105" href="#105">105</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="106" href="#106">106</a>             lc.logout();
-<a class="jxr_linenumber" name="107" href="#107">107</a>         }
-<a class="jxr_linenumber" name="108" href="#108">108</a> 
-<a class="jxr_linenumber" name="109" href="#109">109</a>         <a href="../../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">final</strong> Set&lt;java.security.Principal&gt; principals = lc.getSubject().getPrincipals();
-<a class="jxr_linenumber" name="111" href="#111">111</a>         <strong class="jxr_keyword">if</strong> (principals != <strong class="jxr_keyword">null</strong> &amp;&amp; principals.size() &gt; 0) {
-<a class="jxr_linenumber" name="112" href="#112">112</a>             principal = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/SimplePrincipal.html">SimplePrincipal</a>(principals.iterator().next().getName());
-<a class="jxr_linenumber" name="113" href="#113">113</a>         }
-<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">return</strong> createHandlerResult(credential, principal, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="115" href="#115">115</a>     }
-<a class="jxr_linenumber" name="116" href="#116">116</a> 
-<a class="jxr_linenumber" name="117" href="#117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRealm(<strong class="jxr_keyword">final</strong> String realm) {
-<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">this</strong>.realm = realm;
-<a class="jxr_linenumber" name="119" href="#119">119</a>     }
-<a class="jxr_linenumber" name="120" href="#120">120</a> 
-<a class="jxr_linenumber" name="121" href="#121">121</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * A simple JAAS CallbackHandler which accepts a Name String and Password</em>
-<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * String in the constructor. Only NameCallbacks and PasswordCallbacks are</em>
-<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * accepted in the callback array. This code based loosely on example given</em>
-<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * in Sun's javadoc for CallbackHandler interface.</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="127" href="#127">127</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a> <strong class="jxr_keyword">implements</strong> CallbackHandler {
-<a class="jxr_linenumber" name="128" href="#128">128</a> 
-<a class="jxr_linenumber" name="129" href="#129">129</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The username of the principal we are trying to authenticate. */</em>
-<a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String userName;
+<a class="jxr_linenumber" name="87" href="#87">87</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="88" href="#88">88</a>  <em class="jxr_javadoccomment">     * Instantiates a new jaas authentication handler.</em>
+<a class="jxr_linenumber" name="89" href="#89">89</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="90" href="#90">90</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">JaasAuthenticationHandler</a>() {
+<a class="jxr_linenumber" name="91" href="#91">91</a>          Assert.notNull(Configuration.getConfiguration(),
+<a class="jxr_linenumber" name="92" href="#92">92</a>                  <span class="jxr_string">"Static Configuration cannot be null. Did you remember to specify \&quot;java.security.auth.login.config\&quot;?"</span>);
+<a class="jxr_linenumber" name="93" href="#93">93</a>      }
+<a class="jxr_linenumber" name="94" href="#94">94</a>  
+<a class="jxr_linenumber" name="95" href="#95">95</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> {@inheritDoc} */</em>
+<a class="jxr_linenumber" name="96" href="#96">96</a>      @Override
+<a class="jxr_linenumber" name="97" href="#97">97</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/UsernamePasswordCredential.html">UsernamePasswordCredential</a> credential)
+<a class="jxr_linenumber" name="98" href="#98">98</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, <a href="../../../../../../org/jasig/cas/authentication/PreventedException.html">PreventedException</a> {
+<a class="jxr_linenumber" name="99" href="#99">99</a>  
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
+<a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">final</strong> String password = getPasswordEncoder().encode(credential.getPassword());
+<a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">final</strong> LoginContext lc = <strong class="jxr_keyword">new</strong> LoginContext(
+<a class="jxr_linenumber" name="103" href="#103">103</a>                 <strong class="jxr_keyword">this</strong>.realm,
+<a class="jxr_linenumber" name="104" href="#104">104</a>                 <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a>(username, password));
+<a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="106" href="#106">106</a>             logger.debug(<span class="jxr_string">"Attempting authentication for: {}"</span>, username);
+<a class="jxr_linenumber" name="107" href="#107">107</a>             lc.login();
+<a class="jxr_linenumber" name="108" href="#108">108</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="109" href="#109">109</a>             lc.logout();
+<a class="jxr_linenumber" name="110" href="#110">110</a>         }
+<a class="jxr_linenumber" name="111" href="#111">111</a> 
+<a class="jxr_linenumber" name="112" href="#112">112</a>         <a href="../../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="113" href="#113">113</a>         <strong class="jxr_keyword">final</strong> Set&lt;java.security.Principal&gt; principals = lc.getSubject().getPrincipals();
+<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">if</strong> (principals != <strong class="jxr_keyword">null</strong> &amp;&amp; principals.size() &gt; 0) {
+<a class="jxr_linenumber" name="115" href="#115">115</a>             principal = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/SimplePrincipal.html">SimplePrincipal</a>(principals.iterator().next().getName());
+<a class="jxr_linenumber" name="116" href="#116">116</a>         }
+<a class="jxr_linenumber" name="117" href="#117">117</a>         <strong class="jxr_keyword">return</strong> createHandlerResult(credential, principal, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="118" href="#118">118</a>     }
+<a class="jxr_linenumber" name="119" href="#119">119</a> 
+<a class="jxr_linenumber" name="120" href="#120">120</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRealm(<strong class="jxr_keyword">final</strong> String realm) {
+<a class="jxr_linenumber" name="121" href="#121">121</a>         <strong class="jxr_keyword">this</strong>.realm = realm;
+<a class="jxr_linenumber" name="122" href="#122">122</a>     }
+<a class="jxr_linenumber" name="123" href="#123">123</a> 
+<a class="jxr_linenumber" name="124" href="#124">124</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * A simple JAAS CallbackHandler which accepts a Name String and Password</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * String in the constructor. Only NameCallbacks and PasswordCallbacks are</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     * accepted in the callback array. This code based loosely on example given</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     * in Sun's javadoc for CallbackHandler interface.</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a> <strong class="jxr_keyword">implements</strong> CallbackHandler {
 <a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The password of the principal we are trying to authenticate. */</em>
-<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String password;
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The username of the principal we are trying to authenticate. */</em>
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String userName;
 <a class="jxr_linenumber" name="134" href="#134">134</a> 
-<a class="jxr_linenumber" name="135" href="#135">135</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="136" href="#136">136</a> <em class="jxr_javadoccomment">         * Constuctor accepts name and password to be used for authentication.</em>
-<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">         * @param userName name to be used for authentication</em>
-<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">         * @param password Password to be used for authentication</em>
-<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a>(<strong class="jxr_keyword">final</strong> String userName,
-<a class="jxr_linenumber" name="142" href="#142">142</a>             <strong class="jxr_keyword">final</strong> String password) {
-<a class="jxr_linenumber" name="143" href="#143">143</a>             <strong class="jxr_keyword">this</strong>.userName = userName;
-<a class="jxr_linenumber" name="144" href="#144">144</a>             <strong class="jxr_keyword">this</strong>.password = password;
-<a class="jxr_linenumber" name="145" href="#145">145</a> 
-<a class="jxr_linenumber" name="146" href="#146">146</a>         }
-<a class="jxr_linenumber" name="147" href="#147">147</a> 
-<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> handle(<strong class="jxr_keyword">final</strong> Callback[] callbacks)
-<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">throws</strong> UnsupportedCallbackException {
-<a class="jxr_linenumber" name="150" href="#150">150</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Callback callback : callbacks) {
-<a class="jxr_linenumber" name="151" href="#151">151</a>                 <strong class="jxr_keyword">if</strong> (callback.getClass().equals(NameCallback.<strong class="jxr_keyword">class</strong>)) {
-<a class="jxr_linenumber" name="152" href="#152">152</a>                     ((NameCallback) callback).setName(<strong class="jxr_keyword">this</strong>.userName);
-<a class="jxr_linenumber" name="153" href="#153">153</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (callback.getClass().equals(PasswordCallback.<strong class="jxr_keyword">class</strong>)) {
-<a class="jxr_linenumber" name="154" href="#154">154</a>                     ((PasswordCallback) callback).setPassword(<strong class="jxr_keyword">this</strong>.password
-<a class="jxr_linenumber" name="155" href="#155">155</a>                         .toCharArray());
-<a class="jxr_linenumber" name="156" href="#156">156</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="157" href="#157">157</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedCallbackException(callback,
-<a class="jxr_linenumber" name="158" href="#158">158</a>                         <span class="jxr_string">"Unrecognized Callback"</span>);
-<a class="jxr_linenumber" name="159" href="#159">159</a>                 }
-<a class="jxr_linenumber" name="160" href="#160">160</a>             }
-<a class="jxr_linenumber" name="161" href="#161">161</a>         }
-<a class="jxr_linenumber" name="162" href="#162">162</a>     }
-<a class="jxr_linenumber" name="163" href="#163">163</a> }
+<a class="jxr_linenumber" name="135" href="#135">135</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The password of the principal we are trying to authenticate. */</em>
+<a class="jxr_linenumber" name="136" href="#136">136</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String password;
+<a class="jxr_linenumber" name="137" href="#137">137</a> 
+<a class="jxr_linenumber" name="138" href="#138">138</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">         * Constuctor accepts name and password to be used for authentication.</em>
+<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">         * @param userName name to be used for authentication</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">         * @param password Password to be used for authentication</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/jasig/cas/authentication/handler/support/JaasAuthenticationHandler.html">UsernamePasswordCallbackHandler</a>(<strong class="jxr_keyword">final</strong> String userName,
+<a class="jxr_linenumber" name="145" href="#145">145</a>             <strong class="jxr_keyword">final</strong> String password) {
+<a class="jxr_linenumber" name="146" href="#146">146</a>             <strong class="jxr_keyword">this</strong>.userName = userName;
+<a class="jxr_linenumber" name="147" href="#147">147</a>             <strong class="jxr_keyword">this</strong>.password = password;
+<a class="jxr_linenumber" name="148" href="#148">148</a> 
+<a class="jxr_linenumber" name="149" href="#149">149</a>         }
+<a class="jxr_linenumber" name="150" href="#150">150</a> 
+<a class="jxr_linenumber" name="151" href="#151">151</a>         @Override
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> handle(<strong class="jxr_keyword">final</strong> Callback[] callbacks)
+<a class="jxr_linenumber" name="153" href="#153">153</a>             <strong class="jxr_keyword">throws</strong> UnsupportedCallbackException {
+<a class="jxr_linenumber" name="154" href="#154">154</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Callback callback : callbacks) {
+<a class="jxr_linenumber" name="155" href="#155">155</a>                 <strong class="jxr_keyword">if</strong> (callback.getClass().equals(NameCallback.<strong class="jxr_keyword">class</strong>)) {
+<a class="jxr_linenumber" name="156" href="#156">156</a>                     ((NameCallback) callback).setName(<strong class="jxr_keyword">this</strong>.userName);
+<a class="jxr_linenumber" name="157" href="#157">157</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (callback.getClass().equals(PasswordCallback.<strong class="jxr_keyword">class</strong>)) {
+<a class="jxr_linenumber" name="158" href="#158">158</a>                     ((PasswordCallback) callback).setPassword(<strong class="jxr_keyword">this</strong>.password
+<a class="jxr_linenumber" name="159" href="#159">159</a>                         .toCharArray());
+<a class="jxr_linenumber" name="160" href="#160">160</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="161" href="#161">161</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedCallbackException(callback,
+<a class="jxr_linenumber" name="162" href="#162">162</a>                         <span class="jxr_string">"Unrecognized Callback"</span>);
+<a class="jxr_linenumber" name="163" href="#163">163</a>                 }
+<a class="jxr_linenumber" name="164" href="#164">164</a>             }
+<a class="jxr_linenumber" name="165" href="#165">165</a>         }
+<a class="jxr_linenumber" name="166" href="#166">166</a>     }
+<a class="jxr_linenumber" name="167" href="#167">167</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -215,7 +215,7 @@
 <a class="jxr_linenumber" name="205" href="#205">205</a>        <strong class="jxr_keyword">final</strong> MockHttpServletRequest request2 = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="206" href="#206">206</a>        <strong class="jxr_keyword">this</strong>.controller.handleRequest(request1, response1);
 <a class="jxr_linenumber" name="207" href="#207">207</a>        
-<a class="jxr_linenumber" name="208" href="#208">208</a>        Collection&lt;RegisteredService&gt; c = <strong class="jxr_keyword">this</strong>.manager.getAllServices();
+<a class="jxr_linenumber" name="208" href="#208">208</a>        <strong class="jxr_keyword">final</strong> Collection&lt;RegisteredService&gt; c = <strong class="jxr_keyword">this</strong>.manager.getAllServices();
 <a class="jxr_linenumber" name="209" href="#209">209</a>        assertEquals(<span class="jxr_string">"Service collection size must be 1"</span>, c.size(), 1);
 <a class="jxr_linenumber" name="210" href="#210">210</a>        
 <a class="jxr_linenumber" name="211" href="#211">211</a>        <strong class="jxr_keyword">for</strong>(<strong class="jxr_keyword">final</strong> RegisteredService rs : c) {

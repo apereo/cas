@@ -11,7 +11,7 @@
       <title>File: 7,
              Errors: 0,
              Warnings: 0,
-             Infos: 10
+             Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html</link>
       <description>
@@ -46,7 +46,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter.java">org/jasig/cas/authentication/LegacyAuthenticationHandlerAdapter.java</a>
                 </td>
                 <td>
-                  3
+                  0
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.CredentialsAdapter.java">org/jasig/cas/authentication/CredentialsAdapter.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -74,7 +74,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.UsernamePasswordCredentialsAdapter.java">org/jasig/cas/authentication/UsernamePasswordCredentialsAdapter.java</a>
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -88,21 +88,7 @@
                   <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.handler.NamedAuthenticationHandler.java">org/jasig/cas/authentication/handler/NamedAuthenticationHandler.java</a>
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
                   0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.principal.UsernamePasswordCredentials.java">org/jasig/cas/authentication/principal/UsernamePasswordCredentials.java</a>
-                </td>
-                <td>
-                  4
                 </td>
                 <td>
                   0
@@ -114,6 +100,20 @@
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.handler.AuthenticationHandler.java">org/jasig/cas/authentication/handler/AuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-legacy//checkstyle.html#org.jasig.cas.authentication.principal.UsernamePasswordCredentials.java">org/jasig/cas/authentication/principal/UsernamePasswordCredentials.java</a>
                 </td>
                 <td>
                   0

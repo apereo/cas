@@ -264,58 +264,66 @@
 <a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">return</strong> builder;
 <a class="jxr_linenumber" name="255" href="#255">255</a>     }
 <a class="jxr_linenumber" name="256" href="#256">256</a> 
-<a class="jxr_linenumber" name="257" href="#257">257</a> 
-<a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> resolvePrincipal(
-<a class="jxr_linenumber" name="259" href="#259">259</a>             <strong class="jxr_keyword">final</strong> String handlerName, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/PrincipalResolver.html">PrincipalResolver</a> resolver, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential) {
-<a class="jxr_linenumber" name="260" href="#260">260</a>         <strong class="jxr_keyword">if</strong> (resolver.supports(credential)) {
-<a class="jxr_linenumber" name="261" href="#261">261</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="262" href="#262">262</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> p = resolver.resolve(credential);
-<a class="jxr_linenumber" name="263" href="#263">263</a>                 logger.debug(<span class="jxr_string">"{} resolved {} from {}"</span>, resolver, p, credential);
-<a class="jxr_linenumber" name="264" href="#264">264</a>                 <strong class="jxr_keyword">return</strong> p;
-<a class="jxr_linenumber" name="265" href="#265">265</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="266" href="#266">266</a>                 logger.error(<span class="jxr_string">"{} failed to resolve principal from {}"</span>, resolver, credential, e);
-<a class="jxr_linenumber" name="267" href="#267">267</a>             }
-<a class="jxr_linenumber" name="268" href="#268">268</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="269" href="#269">269</a>             logger.warn(
-<a class="jxr_linenumber" name="270" href="#270">270</a>                     <span class="jxr_string">"{} is configured to use {} but it does not support {}, which suggests a configuration problem."</span>,
-<a class="jxr_linenumber" name="271" href="#271">271</a>                     handlerName,
-<a class="jxr_linenumber" name="272" href="#272">272</a>                     resolver,
-<a class="jxr_linenumber" name="273" href="#273">273</a>                     credential);
-<a class="jxr_linenumber" name="274" href="#274">274</a>         }
-<a class="jxr_linenumber" name="275" href="#275">275</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="276" href="#276">276</a>     }
-<a class="jxr_linenumber" name="277" href="#277">277</a> 
-<a class="jxr_linenumber" name="278" href="#278">278</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="279" href="#279">279</a> <em class="jxr_javadoccomment">     * Creates a new authentication exception from an authentication event.</em>
-<a class="jxr_linenumber" name="280" href="#280">280</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="281" href="#281">281</a> <em class="jxr_javadoccomment">     * @param authn Authentication event.</em>
-<a class="jxr_linenumber" name="282" href="#282">282</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="283" href="#283">283</a> <em class="jxr_javadoccomment">     * @return Authentication exception containing information about authentication successes and failures.</em>
-<a class="jxr_linenumber" name="284" href="#284">284</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="285" href="#285">285</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/jasig/cas/authentication/AuthenticationException.html">AuthenticationException</a> createAuthenticationException(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authn) {
-<a class="jxr_linenumber" name="286" href="#286">286</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/AuthenticationException.html">AuthenticationException</a>(authn.getFailures(), authn.getSuccesses());
-<a class="jxr_linenumber" name="287" href="#287">287</a>     }
-<a class="jxr_linenumber" name="288" href="#288">288</a> 
-<a class="jxr_linenumber" name="289" href="#289">289</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="290" href="#290">290</a> <em class="jxr_javadoccomment">     * Null prinicpal implementation that allows us to construct {@link Authentication}s in the event that no</em>
-<a class="jxr_linenumber" name="291" href="#291">291</a> <em class="jxr_javadoccomment">     * principal is resolved during the authentication process.</em>
+<a class="jxr_linenumber" name="257" href="#257">257</a>       
+<a class="jxr_linenumber" name="258" href="#258">258</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="259" href="#259">259</a> <em class="jxr_javadoccomment">     * Resolve principal.</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="261" href="#261">261</a> <em class="jxr_javadoccomment">     * @param handlerName the handler name</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     * @param resolver the resolver</em>
+<a class="jxr_linenumber" name="263" href="#263">263</a> <em class="jxr_javadoccomment">     * @param credential the credential</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">     * @return the principal</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="266" href="#266">266</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> resolvePrincipal(
+<a class="jxr_linenumber" name="267" href="#267">267</a>             <strong class="jxr_keyword">final</strong> String handlerName, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/PrincipalResolver.html">PrincipalResolver</a> resolver, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential) {
+<a class="jxr_linenumber" name="268" href="#268">268</a>         <strong class="jxr_keyword">if</strong> (resolver.supports(credential)) {
+<a class="jxr_linenumber" name="269" href="#269">269</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="270" href="#270">270</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> p = resolver.resolve(credential);
+<a class="jxr_linenumber" name="271" href="#271">271</a>                 logger.debug(<span class="jxr_string">"{} resolved {} from {}"</span>, resolver, p, credential);
+<a class="jxr_linenumber" name="272" href="#272">272</a>                 <strong class="jxr_keyword">return</strong> p;
+<a class="jxr_linenumber" name="273" href="#273">273</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="274" href="#274">274</a>                 logger.error(<span class="jxr_string">"{} failed to resolve principal from {}"</span>, resolver, credential, e);
+<a class="jxr_linenumber" name="275" href="#275">275</a>             }
+<a class="jxr_linenumber" name="276" href="#276">276</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="277" href="#277">277</a>             logger.warn(
+<a class="jxr_linenumber" name="278" href="#278">278</a>                     <span class="jxr_string">"{} is configured to use {} but it does not support {}, which suggests a configuration problem."</span>,
+<a class="jxr_linenumber" name="279" href="#279">279</a>                     handlerName,
+<a class="jxr_linenumber" name="280" href="#280">280</a>                     resolver,
+<a class="jxr_linenumber" name="281" href="#281">281</a>                     credential);
+<a class="jxr_linenumber" name="282" href="#282">282</a>         }
+<a class="jxr_linenumber" name="283" href="#283">283</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="284" href="#284">284</a>     }
+<a class="jxr_linenumber" name="285" href="#285">285</a> 
+<a class="jxr_linenumber" name="286" href="#286">286</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="287" href="#287">287</a> <em class="jxr_javadoccomment">     * Creates a new authentication exception from an authentication event.</em>
+<a class="jxr_linenumber" name="288" href="#288">288</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="289" href="#289">289</a> <em class="jxr_javadoccomment">     * @param authn Authentication event.</em>
+<a class="jxr_linenumber" name="290" href="#290">290</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="291" href="#291">291</a> <em class="jxr_javadoccomment">     * @return Authentication exception containing information about authentication successes and failures.</em>
 <a class="jxr_linenumber" name="292" href="#292">292</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="293" href="#293">293</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/PolicyBasedAuthenticationManager.html">NullPrincipal</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> {
-<a class="jxr_linenumber" name="294" href="#294">294</a> 
-<a class="jxr_linenumber" name="295" href="#295">295</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The nobody principal. */</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NOBODY = <span class="jxr_string">"nobody"</span>;
-<a class="jxr_linenumber" name="297" href="#297">297</a> 
-<a class="jxr_linenumber" name="298" href="#298">298</a>         @Override
-<a class="jxr_linenumber" name="299" href="#299">299</a>         <strong class="jxr_keyword">public</strong> String getId() {
-<a class="jxr_linenumber" name="300" href="#300">300</a>             <strong class="jxr_keyword">return</strong> NOBODY;
-<a class="jxr_linenumber" name="301" href="#301">301</a>         }
+<a class="jxr_linenumber" name="293" href="#293">293</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/jasig/cas/authentication/AuthenticationException.html">AuthenticationException</a> createAuthenticationException(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authn) {
+<a class="jxr_linenumber" name="294" href="#294">294</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/AuthenticationException.html">AuthenticationException</a>(authn.getFailures(), authn.getSuccesses());
+<a class="jxr_linenumber" name="295" href="#295">295</a>     }
+<a class="jxr_linenumber" name="296" href="#296">296</a> 
+<a class="jxr_linenumber" name="297" href="#297">297</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="298" href="#298">298</a> <em class="jxr_javadoccomment">     * Null prinicpal implementation that allows us to construct {@link Authentication}s in the event that no</em>
+<a class="jxr_linenumber" name="299" href="#299">299</a> <em class="jxr_javadoccomment">     * principal is resolved during the authentication process.</em>
+<a class="jxr_linenumber" name="300" href="#300">300</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="301" href="#301">301</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/PolicyBasedAuthenticationManager.html">NullPrincipal</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> {
 <a class="jxr_linenumber" name="302" href="#302">302</a> 
-<a class="jxr_linenumber" name="303" href="#303">303</a>         @Override
-<a class="jxr_linenumber" name="304" href="#304">304</a>         <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
-<a class="jxr_linenumber" name="305" href="#305">305</a>             <strong class="jxr_keyword">return</strong> Collections.emptyMap();
-<a class="jxr_linenumber" name="306" href="#306">306</a>         }
-<a class="jxr_linenumber" name="307" href="#307">307</a>     }
-<a class="jxr_linenumber" name="308" href="#308">308</a> }
+<a class="jxr_linenumber" name="303" href="#303">303</a>         <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> The nobody principal. */</em>
+<a class="jxr_linenumber" name="304" href="#304">304</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NOBODY = <span class="jxr_string">"nobody"</span>;
+<a class="jxr_linenumber" name="305" href="#305">305</a> 
+<a class="jxr_linenumber" name="306" href="#306">306</a>         @Override
+<a class="jxr_linenumber" name="307" href="#307">307</a>         <strong class="jxr_keyword">public</strong> String getId() {
+<a class="jxr_linenumber" name="308" href="#308">308</a>             <strong class="jxr_keyword">return</strong> NOBODY;
+<a class="jxr_linenumber" name="309" href="#309">309</a>         }
+<a class="jxr_linenumber" name="310" href="#310">310</a> 
+<a class="jxr_linenumber" name="311" href="#311">311</a>         @Override
+<a class="jxr_linenumber" name="312" href="#312">312</a>         <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
+<a class="jxr_linenumber" name="313" href="#313">313</a>             <strong class="jxr_keyword">return</strong> Collections.emptyMap();
+<a class="jxr_linenumber" name="314" href="#314">314</a>         }
+<a class="jxr_linenumber" name="315" href="#315">315</a>     }
+<a class="jxr_linenumber" name="316" href="#316">316</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

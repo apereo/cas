@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-05-14T16:38:32.623">
+<pmd version="4.3" timestamp="2014-05-14T17:16:03.609">
 <file name="/home/travis/build/Jasig/cas/cas-server-support-x509/src/main/java/org/jasig/cas/adaptors/x509/authentication/handler/support/RevokedCertificateException.java">
-<violation beginline="44" endline="44" begincolumn="49" endcolumn="59" rule="AvoidUsingHardCodedIP" ruleset="Basic Rules" package="org.jasig.cas.adaptors.x509.authentication.handler.support" class="RevokedCertificateException" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidUsingHardCodedIP" priority="3">
+<violation beginline="46" endline="46" begincolumn="49" endcolumn="59" rule="AvoidUsingHardCodedIP" ruleset="Basic Rules" package="org.jasig.cas.adaptors.x509.authentication.handler.support" class="RevokedCertificateException" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidUsingHardCodedIP" priority="3">
 Do not hard code IPv4 or IPv6 addresses, even 127.0.0.1 !
 </violation>
 </file>
@@ -11,7 +11,7 @@ Do not hard code IPv4 or IPv6 addresses, even 127.0.0.1 !
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-support-x509/src/main/java/org/jasig/cas/adaptors/x509/authentication/principal/X509SubjectPrincipalResolver.java">
-<violation beginline="128" endline="130" begincolumn="16" endcolumn="9" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.adaptors.x509.authentication.principal" class="X509SubjectPrincipalResolver$AttributeContext" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+<violation beginline="134" endline="136" begincolumn="16" endcolumn="9" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.adaptors.x509.authentication.principal" class="X509SubjectPrincipalResolver$AttributeContext" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused constructor parameters such as 'name'.
 </violation>
 </file>

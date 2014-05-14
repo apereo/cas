@@ -52,32 +52,33 @@
 <a class="jxr_linenumber" name="42" href="#42">42</a>      @NotNull
 <a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">private</strong> String algorithm;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
-<a class="jxr_linenumber" name="45" href="#45">45</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Object createInstance() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">final</strong> InputStream pubKey = <strong class="jxr_keyword">this</strong>.resource.getInputStream();
-<a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="48" href="#48">48</a>              <strong class="jxr_keyword">final</strong> byte[] bytes = <strong class="jxr_keyword">new</strong> byte[pubKey.available()];
-<a class="jxr_linenumber" name="49" href="#49">49</a>              pubKey.read(bytes);
-<a class="jxr_linenumber" name="50" href="#50">50</a>              <strong class="jxr_keyword">final</strong> X509EncodedKeySpec pubSpec = <strong class="jxr_keyword">new</strong> X509EncodedKeySpec(bytes);
-<a class="jxr_linenumber" name="51" href="#51">51</a>              <strong class="jxr_keyword">final</strong> KeyFactory factory = KeyFactory.getInstance(<strong class="jxr_keyword">this</strong>.algorithm);
-<a class="jxr_linenumber" name="52" href="#52">52</a>              <strong class="jxr_keyword">return</strong> factory.generatePublic(pubSpec);
-<a class="jxr_linenumber" name="53" href="#53">53</a>          } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="54" href="#54">54</a>              pubKey.close();
-<a class="jxr_linenumber" name="55" href="#55">55</a>          }
-<a class="jxr_linenumber" name="56" href="#56">56</a>      }
-<a class="jxr_linenumber" name="57" href="#57">57</a>  
-<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">public</strong> Class getObjectType() {
-<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">return</strong> PublicKey.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="60" href="#60">60</a>      }
-<a class="jxr_linenumber" name="61" href="#61">61</a>  
+<a class="jxr_linenumber" name="45" href="#45">45</a>      @Override
+<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Object createInstance() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">final</strong> InputStream pubKey = <strong class="jxr_keyword">this</strong>.resource.getInputStream();
+<a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="49" href="#49">49</a>              <strong class="jxr_keyword">final</strong> byte[] bytes = <strong class="jxr_keyword">new</strong> byte[pubKey.available()];
+<a class="jxr_linenumber" name="50" href="#50">50</a>              pubKey.read(bytes);
+<a class="jxr_linenumber" name="51" href="#51">51</a>              <strong class="jxr_keyword">final</strong> X509EncodedKeySpec pubSpec = <strong class="jxr_keyword">new</strong> X509EncodedKeySpec(bytes);
+<a class="jxr_linenumber" name="52" href="#52">52</a>              <strong class="jxr_keyword">final</strong> KeyFactory factory = KeyFactory.getInstance(<strong class="jxr_keyword">this</strong>.algorithm);
+<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">return</strong> factory.generatePublic(pubSpec);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="55" href="#55">55</a>              pubKey.close();
+<a class="jxr_linenumber" name="56" href="#56">56</a>          }
+<a class="jxr_linenumber" name="57" href="#57">57</a>      }
+<a class="jxr_linenumber" name="58" href="#58">58</a>  
+<a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">public</strong> Class getObjectType() {
+<a class="jxr_linenumber" name="60" href="#60">60</a>          <strong class="jxr_keyword">return</strong> PublicKey.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="61" href="#61">61</a>      }
 <a class="jxr_linenumber" name="62" href="#62">62</a>  
-<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLocation(<strong class="jxr_keyword">final</strong> Resource resource) {
-<a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">this</strong>.resource = resource;
-<a class="jxr_linenumber" name="65" href="#65">65</a>      }
-<a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAlgorithm(<strong class="jxr_keyword">final</strong> String algorithm) {
-<a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">this</strong>.algorithm = algorithm;
-<a class="jxr_linenumber" name="69" href="#69">69</a>      }
-<a class="jxr_linenumber" name="70" href="#70">70</a>  }
+<a class="jxr_linenumber" name="63" href="#63">63</a>  
+<a class="jxr_linenumber" name="64" href="#64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLocation(<strong class="jxr_keyword">final</strong> Resource resource) {
+<a class="jxr_linenumber" name="65" href="#65">65</a>          <strong class="jxr_keyword">this</strong>.resource = resource;
+<a class="jxr_linenumber" name="66" href="#66">66</a>      }
+<a class="jxr_linenumber" name="67" href="#67">67</a>  
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAlgorithm(<strong class="jxr_keyword">final</strong> String algorithm) {
+<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">this</strong>.algorithm = algorithm;
+<a class="jxr_linenumber" name="70" href="#70">70</a>      }
+<a class="jxr_linenumber" name="71" href="#71">71</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
