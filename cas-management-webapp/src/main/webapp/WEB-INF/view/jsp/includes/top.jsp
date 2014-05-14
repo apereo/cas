@@ -33,8 +33,8 @@
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
   <link rel="icon" href="<c:url value="../favicon.ico" />" type="image/x-icon" />
   <link rel="stylesheet" href="<c:url value="/css/management.css" />" type="text/css" />
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
   
   <script type="text/javascript" src="<c:url value="/js/management.js" />"></script>
 
