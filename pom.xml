@@ -404,7 +404,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
           <aggregate>true</aggregate>
+          <mapping>
+            <schema>SCRIPT_STYLE</schema>]
+            <ldif>SCRIPT_STYLE</ldif>
+            <yml>SCRIPT_STYLE</yml>
+            <conf>JAVADOC_STYLE</conf>
+          </mapping>
           <excludes>
+            <exclude>**/bin/**</exclude>    
             <exclude>LICENSE</exclude>
             <exclude>**/INSTALL*</exclude>
             <exclude>**/NOTICE*</exclude>
@@ -425,10 +432,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/.idea/**</exclude>
             <exclude>**/*.keystore</exclude>
             <exclude>**/*.example</exclude>
-            <exclude>**/*.sample</exclude>
-            <exclude>**/*.conf</exclude>
-            <exclude>**/*.doc</exclude>
             <exclude>**/*.jmx</exclude>
+            <exclude>**/*.pandoc</exclude>
+            <exclude>**/*.sample</exclude>
+            <exclude>**/*.doc</exclude>
+            <exclude>**/*.md</exclude>
+            <exclude>**/*.pdf</exclude>
           </excludes>
         </configuration>
         <executions>
