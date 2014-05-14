@@ -131,7 +131,7 @@ mvn -DskipTests clean package assembly:assembly && mvn -N antrun:run
 - Rename the folder to match the CAS release version (i.e `4.0.0`)
 - Run a global search and replace on all generated artifacts to replace all instances of the development version number to the GA release number. For example, replace `4.0.0-RC4-SNAPSHOT` to `4.0.0`.
 - Navigate to `Older-Version.md` page and include a link to the new directory that points to the new release.
-- Modify the root `index.html` file to point to the latest stable release such that `location.href = "4.0.0/index.html";`
+- Modify the root `index.html` file of the `current` folder to point to the latest stable release such that `location.href = "../4.0.0/index.html";`
 - Push the changes to the repository.
 
 ##Common Issues
