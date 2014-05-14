@@ -59,7 +59,7 @@ public final class ImmutableAuthentication implements Authentication {
     private final Map<String, HandlerResult> successes;
 
     /** Map of handler name to handler authentication failure cause. */
-    private final Map<String, Exception> failures;
+    private final Map<String, Class<? extends Exception>> failures;
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {
@@ -87,7 +87,7 @@ public final class ImmutableAuthentication implements Authentication {
             final Principal principal,
             final Map<String, Object> attributes,
             final Map<String, HandlerResult> successes,
-            final Map<String, Exception> failures) {
+            final Map<String, Class<? extends Exception>> failures) {
 
         Assert.notNull(date, "Date cannot be null");
         Assert.notNull(credentials, "Credential cannot be null");
@@ -129,7 +129,7 @@ public final class ImmutableAuthentication implements Authentication {
     }
 
     @Override
-    public Map<String, Exception> getFailures() {
+    public Map<String, Class<? extends Exception>> getFailures() {
         return wrap(this.failures);
     }
 
@@ -167,8 +167,9 @@ public final class ImmutableAuthentication implements Authentication {
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @param source Nullable map to wrap.
-     *
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
      */
@@ -183,6 +184,8 @@ public final class ImmutableAuthentication implements Authentication {
      * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
+
+        private static final long serialVersionUID = 6275827030191703183L;
 
         /** No-arg constructor for serialization support. */
         private ImmutableDate() {}

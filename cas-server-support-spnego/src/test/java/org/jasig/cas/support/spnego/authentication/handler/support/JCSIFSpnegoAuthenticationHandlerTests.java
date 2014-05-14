@@ -85,9 +85,9 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
 
     @Test
     public void testGetSimpleCredentials() {
-        String myNtlmUser = "DOMAIN\\Username";
-        String myNtlmUserWithNoDomain = "Username";
-        String myKerberosUser = "Username@DOMAIN.COM";
+        final String myNtlmUser = "DOMAIN\\Username";
+        final String myNtlmUserWithNoDomain = "Username";
+        final String myKerberosUser = "Username@DOMAIN.COM";
 
         this.authenticationHandler.setPrincipalWithDomainName(true);
         assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
