@@ -50,6 +50,12 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPo
         this.numberOfUses = 0;
     }
 
+    /**
+     * Instantiates a new multi time use or timeout expiration policy.
+     *
+     * @param numberOfUses the number of uses
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
         final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
@@ -59,11 +65,19 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPo
 
     }
 
+    /**
+     * Instantiates a new multi time use or timeout expiration policy.
+     *
+     * @param numberOfUses the number of uses
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill,
             final TimeUnit timeUnit) {
         this(numberOfUses, timeUnit.toMillis(timeToKill));
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
             || (ticketState.getCountOfUses() >= this.numberOfUses)

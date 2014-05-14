@@ -41,8 +41,8 @@ public class AuthenticationExceptionHandlerTests {
         final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         final MessageContext ctx = mock(MessageContext.class);
         
-        final Map<String, Exception> map = new HashMap<String, Exception>();
-        map.put("notFound", new AccountNotFoundException());
+        final Map<String, Class<? extends Exception>> map = new HashMap<String, Class<? extends Exception>>();
+        map.put("notFound", AccountNotFoundException.class);
         final String id = handler.handle(new AuthenticationException(map), ctx);
         assertEquals(id, AccountNotFoundException.class.getSimpleName());
     }
@@ -52,8 +52,8 @@ public class AuthenticationExceptionHandlerTests {
         final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         final MessageContext ctx = mock(MessageContext.class);
         
-        final Map<String, Exception> map = new HashMap<String, Exception>();
-        map.put("unknown", new GeneralSecurityException());
+        final Map<String, Class<? extends Exception>> map = new HashMap<String, Class<? extends Exception>>();
+        map.put("unknown", GeneralSecurityException.class);
         final String id = handler.handle(new AuthenticationException(map), ctx);
         assertEquals(id, "UNKNOWN");
     }
