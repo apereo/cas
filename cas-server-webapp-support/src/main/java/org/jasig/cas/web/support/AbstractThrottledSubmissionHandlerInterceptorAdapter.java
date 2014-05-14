@@ -91,7 +91,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
 
         if (context == null || context.getCurrentEvent() == null) {
             return;
