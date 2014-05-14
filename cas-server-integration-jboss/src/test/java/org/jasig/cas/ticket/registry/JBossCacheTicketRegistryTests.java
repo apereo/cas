@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -63,14 +64,14 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     public TicketRegistry getNewTicketRegistry() throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
                 APPLICATION_CONTEXT_FILE_NAME);
         this.registry = (JBossCacheTicketRegistry) context
                 .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
 
         this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
         this.treeCache.removeNode("/ticket");
-
+        IOUtils.closeQuietly(context);
         return this.registry;
     }
 
@@ -227,7 +228,7 @@ public final class JBossCacheTicketRegistryTests {
         }
 
         try {
-            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                     "The size of the registry is not the same as the collection.",
                     ticketRegistryTickets.size(), tickets.size());

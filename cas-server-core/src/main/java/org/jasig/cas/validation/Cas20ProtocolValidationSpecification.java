@@ -25,20 +25,27 @@ package org.jasig.cas.validation;
  * occurring from a new login.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
-public class Cas20ProtocolValidationSpecification extends
-    AbstractCasProtocolValidationSpecification {
+public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
+    /**
+     * Instantiates a new cas20 protocol validation specification.
+     */
     public Cas20ProtocolValidationSpecification() {
         super();
     }
 
+    /**
+     * Instantiates a new cas20 protocol validation specification.
+     *
+     * @param renew the renew
+     */
     public Cas20ProtocolValidationSpecification(final boolean renew) {
         super(renew);
     }
 
+    @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
         return true;
     }
