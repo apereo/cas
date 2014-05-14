@@ -37,7 +37,7 @@ public class TicketCreationExceptionTests {
     @Test
     public void testThrowableParamConstructor() {
         final Throwable THROWABLE = new Throwable();
-        TicketCreationException t = new TicketCreationException(THROWABLE);
+        final TicketCreationException t = new TicketCreationException(THROWABLE);
 
         assertEquals(THROWABLE, t.getCause());
     }

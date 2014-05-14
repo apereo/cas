@@ -170,6 +170,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.ssoEnabled;
     }
 
+    @Override
     public boolean equals(final Object o) {
         if (o == null) {
             return false;
@@ -195,6 +196,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(7, 31).append(this.allowedAttributes).append(this.description)
                 .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
@@ -202,6 +204,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
     }
 
+    /**
+     * Sets the allowed attributes.
+     *
+     * @param allowedAttributes the new allowed attributes. May be null.
+     */
     public void setAllowedAttributes(final List<String> allowedAttributes) {
         if (allowedAttributes == null) {
             this.allowedAttributes = new ArrayList<String>();
@@ -222,6 +229,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.enabled = enabled;
     }
 
+    /**
+     * Sets the service identifier. Extensions are to define the format.
+     *
+     * @param id the new service id
+     */
     public abstract void setServiceId(final String id);
 
     public void setId(final long id) {
@@ -298,6 +310,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.logoutType = logoutType;
     }
 
+    @Override
     public RegisteredService clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
@@ -342,6 +355,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                   .toComparison();
     }
 
+    @Override
     public String toString() {
         final ToStringBuilder toStringBuilder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
         toStringBuilder.append("id", this.id);
@@ -354,6 +368,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return toStringBuilder.toString();
     }
 
+    /**
+     * Create a new service instance.
+     *
+     * @return the registered service
+     */
     protected abstract AbstractRegisteredService newInstance();
 
     public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
@@ -364,6 +383,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.attributeFilter;
     }
 
+    @Override
     public Set<String> getRequiredHandlers() {
         if (this.requiredHandlers == null) {
             this.requiredHandlers = new HashSet<String>();
@@ -371,6 +391,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.requiredHandlers;
     }
 
+    /**
+     * Sets the required handlers for this service.
+     *
+     * @param handlers the new required handlers
+     */
     public void setRequiredHandlers(final Set<String> handlers) {
         getRequiredHandlers().clear();
         if (handlers == null) {
