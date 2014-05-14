@@ -21,8 +21,8 @@
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-         version="2.4">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
+         version="2.5">
   <display-name>Central Authentication System (CAS) ${project.version}</display-name>
 
   <context-param>
@@ -131,6 +131,11 @@
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
+    <url-pattern>/p3/serviceValidate</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
     <url-pattern>/proxy</url-pattern>
   </servlet-mapping>
 
@@ -139,6 +144,11 @@
     <url-pattern>/proxyValidate</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/p3/proxyValidate</url-pattern>
+  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/CentralAuthenticationService</url-pattern>
