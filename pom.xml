@@ -432,6 +432,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/.idea/**</exclude>
             <exclude>**/*.keystore</exclude>
             <exclude>**/*.example</exclude>
+            <exclude>**/*.jmx</exclude>
+            <exclude>**/*.pandoc</exclude>
             <exclude>**/*.sample</exclude>
             <exclude>**/*.doc</exclude>
             <exclude>**/*.md</exclude>
