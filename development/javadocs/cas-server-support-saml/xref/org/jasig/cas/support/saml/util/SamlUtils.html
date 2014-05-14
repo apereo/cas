@@ -157,17 +157,17 @@
 <a class="jxr_linenumber" name="147" href="#147">147</a>             <em class="jxr_comment">// Convert the JDOM document to w3c (Java XML signature API requires</em>
 <a class="jxr_linenumber" name="148" href="#148">148</a>             <em class="jxr_comment">// w3c</em>
 <a class="jxr_linenumber" name="149" href="#149">149</a>             <em class="jxr_comment">// representation)</em>
-<a class="jxr_linenumber" name="150" href="#150">150</a>             org.w3c.dom.Element w3cElement = toDom(element);
+<a class="jxr_linenumber" name="150" href="#150">150</a>             <strong class="jxr_keyword">final</strong> org.w3c.dom.Element w3cElement = toDom(element);
 <a class="jxr_linenumber" name="151" href="#151">151</a> 
 <a class="jxr_linenumber" name="152" href="#152">152</a>             <em class="jxr_comment">// Create a DOMSignContext and specify the DSA/RSA PrivateKey and</em>
 <a class="jxr_linenumber" name="153" href="#153">153</a>             <em class="jxr_comment">// location of the resulting XMLSignature's parent element</em>
-<a class="jxr_linenumber" name="154" href="#154">154</a>             DOMSignContext dsc = <strong class="jxr_keyword">new</strong> DOMSignContext(privKey, w3cElement);
+<a class="jxr_linenumber" name="154" href="#154">154</a>             <strong class="jxr_keyword">final</strong> DOMSignContext dsc = <strong class="jxr_keyword">new</strong> DOMSignContext(privKey, w3cElement);
 <a class="jxr_linenumber" name="155" href="#155">155</a> 
-<a class="jxr_linenumber" name="156" href="#156">156</a>             org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+<a class="jxr_linenumber" name="156" href="#156">156</a>             <strong class="jxr_keyword">final</strong> org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
 <a class="jxr_linenumber" name="157" href="#157">157</a>             dsc.setNextSibling(xmlSigInsertionPoint);
 <a class="jxr_linenumber" name="158" href="#158">158</a> 
 <a class="jxr_linenumber" name="159" href="#159">159</a>             <em class="jxr_comment">// Marshal, generate (and sign) the enveloped signature</em>
-<a class="jxr_linenumber" name="160" href="#160">160</a>             XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+<a class="jxr_linenumber" name="160" href="#160">160</a>             <strong class="jxr_keyword">final</strong> XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
 <a class="jxr_linenumber" name="161" href="#161">161</a>                     keyInfo);
 <a class="jxr_linenumber" name="162" href="#162">162</a>             signature.sign(dsc);
 <a class="jxr_linenumber" name="163" href="#163">163</a> 

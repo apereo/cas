@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
 <a class="jxr_linenumber" name="53" href="#53">53</a>      @Before
 <a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> onSetUp() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="55" href="#55">55</a>          StaticApplicationContext context = <strong class="jxr_keyword">new</strong> StaticApplicationContext();
+<a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">final</strong> StaticApplicationContext context = <strong class="jxr_keyword">new</strong> StaticApplicationContext();
 <a class="jxr_linenumber" name="56" href="#56">56</a>          context.refresh();
 <a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController = <strong class="jxr_keyword">new</strong> ServiceValidateController();
 <a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="179" href="#179">179</a>                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
 <a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> String sId = getCentralAuthenticationService().grantServiceTicket(tId, TestUtils.getService());
 <a class="jxr_linenumber" name="181" href="#181">181</a> 
-<a class="jxr_linenumber" name="182" href="#182">182</a>         MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="183" href="#183">183</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService().getId());
 <a class="jxr_linenumber" name="184" href="#184">184</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId);
 <a class="jxr_linenumber" name="185" href="#185">185</a>         request.addParameter(<span class="jxr_string">"pgtUrl"</span>, <span class="jxr_string">"duh"</span>);

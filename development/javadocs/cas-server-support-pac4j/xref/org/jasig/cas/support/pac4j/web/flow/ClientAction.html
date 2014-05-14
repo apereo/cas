@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="144" href="#144">144</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> RequiresHttpAction e) {
 <a class="jxr_linenumber" name="145" href="#145">145</a>                 logger.info(<span class="jxr_string">"requires http action : {}"</span>, e);
 <a class="jxr_linenumber" name="146" href="#146">146</a>                 response.flushBuffer();
-<a class="jxr_linenumber" name="147" href="#147">147</a>                 ExternalContext externalContext = ExternalContextHolder.getExternalContext();
+<a class="jxr_linenumber" name="147" href="#147">147</a>                 <strong class="jxr_keyword">final</strong> ExternalContext externalContext = ExternalContextHolder.getExternalContext();
 <a class="jxr_linenumber" name="148" href="#148">148</a>                 externalContext.recordResponseComplete();
 <a class="jxr_linenumber" name="149" href="#149">149</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Event(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"stop"</span>);
 <a class="jxr_linenumber" name="150" href="#150">150</a>             }

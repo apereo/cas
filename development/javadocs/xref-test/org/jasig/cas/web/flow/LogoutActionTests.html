@@ -149,7 +149,7 @@
 <a class="jxr_linenumber" name="139" href="#139">139</a> 
 <a class="jxr_linenumber" name="140" href="#140">140</a>     @Test
 <a class="jxr_linenumber" name="141" href="#141">141</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutCookie() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="142" href="#142">142</a>         Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {cookie});
 <a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
 <a class="jxr_linenumber" name="145" href="#145">145</a>         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
@@ -159,7 +159,7 @@
 <a class="jxr_linenumber" name="149" href="#149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutRequestBack() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="150" href="#150">150</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {cookie});
-<a class="jxr_linenumber" name="152" href="#152">152</a>         LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="153" href="#153">153</a>         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
 <a class="jxr_linenumber" name="154" href="#154">154</a>         WebUtils.putLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext, Arrays.asList(logoutRequest));
 <a class="jxr_linenumber" name="155" href="#155">155</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
@@ -175,7 +175,7 @@
 <a class="jxr_linenumber" name="165" href="#165">165</a>         WebUtils.putLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext, Arrays.asList(logoutRequest));
 <a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
 <a class="jxr_linenumber" name="167" href="#167">167</a>         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
-<a class="jxr_linenumber" name="168" href="#168">168</a>         List&lt;LogoutRequest&gt; logoutRequests = WebUtils.getLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext);
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">final</strong> List&lt;LogoutRequest&gt; logoutRequests = WebUtils.getLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext);
 <a class="jxr_linenumber" name="169" href="#169">169</a>         assertEquals(1, logoutRequests.size());
 <a class="jxr_linenumber" name="170" href="#170">170</a>         assertEquals(logoutRequest, logoutRequests.get(0));
 <a class="jxr_linenumber" name="171" href="#171">171</a>     }

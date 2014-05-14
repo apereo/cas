@@ -225,8 +225,8 @@
 <a class="jxr_linenumber" name="215" href="#215">215</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] chars = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">char</strong>[40];
 <a class="jxr_linenumber" name="216" href="#216">216</a> 
 <a class="jxr_linenumber" name="217" href="#217">217</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; bytes.length; i++) {
-<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">int</strong> left = bytes[i] &gt;&gt; 4 &amp; 0x0f;
-<a class="jxr_linenumber" name="219" href="#219">219</a>             <strong class="jxr_keyword">int</strong> right = bytes[i] &amp; 0x0f;
+<a class="jxr_linenumber" name="218" href="#218">218</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> left = bytes[i] &gt;&gt; 4 &amp; 0x0f;
+<a class="jxr_linenumber" name="219" href="#219">219</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> right = bytes[i] &amp; 0x0f;
 <a class="jxr_linenumber" name="220" href="#220">220</a>             chars[i * 2] = CHAR_MAPPINGS[left];
 <a class="jxr_linenumber" name="221" href="#221">221</a>             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
 <a class="jxr_linenumber" name="222" href="#222">222</a>         }

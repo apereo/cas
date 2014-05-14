@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> rService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
 <a class="jxr_linenumber" name="65" href="#65">65</a>  
 <a class="jxr_linenumber" name="66" href="#66">66</a>          <em class="jxr_comment">// retrieve the user agent string from the request</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>          String userAgent = request.getHeader(<span class="jxr_string">"User-Agent"</span>);
+<a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">final</strong> String userAgent = request.getHeader(<span class="jxr_string">"User-Agent"</span>);
 <a class="jxr_linenumber" name="68" href="#68">68</a>  
 <a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">if</strong> (userAgent == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="70" href="#70">70</a>              <strong class="jxr_keyword">return</strong> getDefaultThemeName();

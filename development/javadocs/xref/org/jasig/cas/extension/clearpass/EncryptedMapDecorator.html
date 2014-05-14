@@ -415,10 +415,10 @@
 <a class="jxr_linenumber" name="405" href="#405">405</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Key getSecretKey(<strong class="jxr_keyword">final</strong> String secretKeyAlgorithm, <strong class="jxr_keyword">final</strong> String secretKey,
 <a class="jxr_linenumber" name="406" href="#406">406</a>             <strong class="jxr_keyword">final</strong> String salt) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="407" href="#407">407</a> 
-<a class="jxr_linenumber" name="408" href="#408">408</a>         SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-<a class="jxr_linenumber" name="409" href="#409">409</a>         KeySpec spec = <strong class="jxr_keyword">new</strong> PBEKeySpec(secretKey.toCharArray(), <strong class="jxr_keyword">char</strong>2byte(salt), 65536, 128);
-<a class="jxr_linenumber" name="410" href="#410">410</a>         SecretKey tmp = factory.generateSecret(spec);
-<a class="jxr_linenumber" name="411" href="#411">411</a>         SecretKey secret = <strong class="jxr_keyword">new</strong> SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
+<a class="jxr_linenumber" name="408" href="#408">408</a>         <strong class="jxr_keyword">final</strong> SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+<a class="jxr_linenumber" name="409" href="#409">409</a>         <strong class="jxr_keyword">final</strong> KeySpec spec = <strong class="jxr_keyword">new</strong> PBEKeySpec(secretKey.toCharArray(), <strong class="jxr_keyword">char</strong>2byte(salt), 65536, 128);
+<a class="jxr_linenumber" name="410" href="#410">410</a>         <strong class="jxr_keyword">final</strong> SecretKey tmp = factory.generateSecret(spec);
+<a class="jxr_linenumber" name="411" href="#411">411</a>         <strong class="jxr_keyword">final</strong> SecretKey secret = <strong class="jxr_keyword">new</strong> SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
 <a class="jxr_linenumber" name="412" href="#412">412</a> 
 <a class="jxr_linenumber" name="413" href="#413">413</a>         <strong class="jxr_keyword">return</strong> secret;
 <a class="jxr_linenumber" name="414" href="#414">414</a>     }

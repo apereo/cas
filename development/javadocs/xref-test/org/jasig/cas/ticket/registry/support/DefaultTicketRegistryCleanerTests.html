@@ -44,9 +44,9 @@
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleanerTests.html">DefaultTicketRegistryCleanerTests</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/AbstractRegistryCleanerTests.html">AbstractRegistryCleanerTests</a> {
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">public</strong> RegistryCleaner getNewRegistryCleaner(<strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry) {
-<a class="jxr_linenumber" name="37" href="#37">37</a>          DefaultTicketRegistryCleaner cleaner = <strong class="jxr_keyword">new</strong> DefaultTicketRegistryCleaner();
+<a class="jxr_linenumber" name="37" href="#37">37</a>          <strong class="jxr_keyword">final</strong> DefaultTicketRegistryCleaner cleaner = <strong class="jxr_keyword">new</strong> DefaultTicketRegistryCleaner();
 <a class="jxr_linenumber" name="38" href="#38">38</a>          cleaner.setTicketRegistry(ticketRegistry);
-<a class="jxr_linenumber" name="39" href="#39">39</a>          LogoutManager logoutManager = mock(LogoutManager.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="39" href="#39">39</a>          <strong class="jxr_keyword">final</strong> LogoutManager logoutManager = mock(LogoutManager.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="40" href="#40">40</a>          cleaner.setLogoutManager(logoutManager);
 <a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">return</strong> cleaner;
 <a class="jxr_linenumber" name="42" href="#42">42</a>      }

@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="60" href="#60">60</a>          manager.setEnforceRpId(false);
 <a class="jxr_linenumber" name="61" href="#61">61</a>          manager.setSharedAssociations(sharedAssociations);
 <a class="jxr_linenumber" name="62" href="#62">62</a>          context = mock(ApplicationContext.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="63" href="#63">63</a>          ApplicationContextProvider contextProvider = <strong class="jxr_keyword">new</strong> ApplicationContextProvider();
+<a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">final</strong> ApplicationContextProvider contextProvider = <strong class="jxr_keyword">new</strong> ApplicationContextProvider();
 <a class="jxr_linenumber" name="64" href="#64">64</a>          contextProvider.setApplicationContext(context);
 <a class="jxr_linenumber" name="65" href="#65">65</a>          cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>      }

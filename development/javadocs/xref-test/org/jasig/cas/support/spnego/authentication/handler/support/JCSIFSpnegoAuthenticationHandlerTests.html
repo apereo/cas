@@ -95,9 +95,9 @@
 <a class="jxr_linenumber" name="85" href="#85">85</a>  
 <a class="jxr_linenumber" name="86" href="#86">86</a>      @Test
 <a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetSimpleCredentials() {
-<a class="jxr_linenumber" name="88" href="#88">88</a>          String myNtlmUser = <span class="jxr_string">"DOMAIN&#92;&#92;Username"</span>;
-<a class="jxr_linenumber" name="89" href="#89">89</a>          String myNtlmUserWithNoDomain = <span class="jxr_string">"Username"</span>;
-<a class="jxr_linenumber" name="90" href="#90">90</a>          String myKerberosUser = <span class="jxr_string">"Username@DOMAIN.COM"</span>;
+<a class="jxr_linenumber" name="88" href="#88">88</a>          <strong class="jxr_keyword">final</strong> String myNtlmUser = <span class="jxr_string">"DOMAIN&#92;&#92;Username"</span>;
+<a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">final</strong> String myNtlmUserWithNoDomain = <span class="jxr_string">"Username"</span>;
+<a class="jxr_linenumber" name="90" href="#90">90</a>          <strong class="jxr_keyword">final</strong> String myKerberosUser = <span class="jxr_string">"Username@DOMAIN.COM"</span>;
 <a class="jxr_linenumber" name="91" href="#91">91</a>  
 <a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">this</strong>.authenticationHandler.setPrincipalWithDomainName(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="93" href="#93">93</a>          assertEquals(<strong class="jxr_keyword">new</strong> SimplePrincipal(myNtlmUser), <strong class="jxr_keyword">this</strong>.authenticationHandler

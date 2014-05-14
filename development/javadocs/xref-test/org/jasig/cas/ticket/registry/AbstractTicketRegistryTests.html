@@ -210,7 +210,7 @@
 <a class="jxr_linenumber" name="200" href="#200">200</a>         }
 <a class="jxr_linenumber" name="201" href="#201">201</a> 
 <a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="203" href="#203">203</a>             Collection&lt;Ticket&gt; ticketRegistryTickets = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets();
+<a class="jxr_linenumber" name="203" href="#203">203</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; ticketRegistryTickets = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets();
 <a class="jxr_linenumber" name="204" href="#204">204</a>             assertEquals(<span class="jxr_string">"The size of the registry is not the same as the collection."</span>, ticketRegistryTickets.size(),
 <a class="jxr_linenumber" name="205" href="#205">205</a>                     tickets.size());
 <a class="jxr_linenumber" name="206" href="#206">206</a> 

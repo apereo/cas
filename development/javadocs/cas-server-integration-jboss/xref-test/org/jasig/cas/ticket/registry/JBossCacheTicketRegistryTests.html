@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>      }
 <a class="jxr_linenumber" name="64" href="#64">64</a>  
 <a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> TicketRegistry getNewTicketRegistry() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="66" href="#66">66</a>          ClassPathXmlApplicationContext context = <strong class="jxr_keyword">new</strong> ClassPathXmlApplicationContext(
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">final</strong> ClassPathXmlApplicationContext context = <strong class="jxr_keyword">new</strong> ClassPathXmlApplicationContext(
 <a class="jxr_linenumber" name="67" href="#67">67</a>                  APPLICATION_CONTEXT_FILE_NAME);
 <a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">this</strong>.registry = (JBossCacheTicketRegistry) context
 <a class="jxr_linenumber" name="69" href="#69">69</a>                  .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
@@ -237,7 +237,7 @@
 <a class="jxr_linenumber" name="227" href="#227">227</a>         }
 <a class="jxr_linenumber" name="228" href="#228">228</a> 
 <a class="jxr_linenumber" name="229" href="#229">229</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="230" href="#230">230</a>             Collection&lt;Ticket&gt; ticketRegistryTickets = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets();
+<a class="jxr_linenumber" name="230" href="#230">230</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; ticketRegistryTickets = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets();
 <a class="jxr_linenumber" name="231" href="#231">231</a>             assertEquals(
 <a class="jxr_linenumber" name="232" href="#232">232</a>                     <span class="jxr_string">"The size of the registry is not the same as the collection."</span>,
 <a class="jxr_linenumber" name="233" href="#233">233</a>                     ticketRegistryTickets.size(), tickets.size());

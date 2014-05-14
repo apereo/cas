@@ -38,7 +38,7 @@
 <a class="jxr_linenumber" name="28" href="#28">28</a>  
 <a class="jxr_linenumber" name="29" href="#29">29</a>      @Test
 <a class="jxr_linenumber" name="30" href="#30">30</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCodeNoThrowable() {
-<a class="jxr_linenumber" name="31" href="#31">31</a>          TicketException t = <strong class="jxr_keyword">new</strong> InvalidTicketException(<span class="jxr_string">"InvalidTicketId"</span>);
+<a class="jxr_linenumber" name="31" href="#31">31</a>          <strong class="jxr_keyword">final</strong> TicketException t = <strong class="jxr_keyword">new</strong> InvalidTicketException(<span class="jxr_string">"InvalidTicketId"</span>);
 <a class="jxr_linenumber" name="32" href="#32">32</a>          assertEquals(<span class="jxr_string">"INVALID_TICKET"</span>, t.getCode());
 <a class="jxr_linenumber" name="33" href="#33">33</a>      }
 <a class="jxr_linenumber" name="34" href="#34">34</a>  

@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a>         when(principal.getId()).thenReturn(ID);
 <a class="jxr_linenumber" name="124" href="#124">124</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="125" href="#125">125</a>         map.put(NAME, VALUE);
-<a class="jxr_linenumber" name="126" href="#126">126</a>         List&lt;String&gt; list = Arrays.asList(VALUE, VALUE);
+<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(VALUE, VALUE);
 <a class="jxr_linenumber" name="127" href="#127">127</a>         map.put(NAME2, list);
 <a class="jxr_linenumber" name="128" href="#128">128</a>         when(principal.getAttributes()).thenReturn(map);
 <a class="jxr_linenumber" name="129" href="#129">129</a>         when(authentication.getPrincipal()).thenReturn(principal);

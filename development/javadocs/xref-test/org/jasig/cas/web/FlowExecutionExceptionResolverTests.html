@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
 <a class="jxr_linenumber" name="53" href="#53">53</a>      @Test
 <a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoSuchFlowExecutionException() {
-<a class="jxr_linenumber" name="55" href="#55">55</a>          MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="56" href="#56">56</a>          request.setRequestURI(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="57" href="#57">57</a>          ModelAndView model = <strong class="jxr_keyword">this</strong>.resolver.resolveException(request,
 <a class="jxr_linenumber" name="58" href="#58">58</a>                  <strong class="jxr_keyword">new</strong> MockHttpServletResponse(), <strong class="jxr_keyword">null</strong>,
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="89" href="#89">89</a>  
 <a class="jxr_linenumber" name="90" href="#90">90</a>      @Test
 <a class="jxr_linenumber" name="91" href="#91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoSuchFlowExecutionExeptionWithQueryString() {
-<a class="jxr_linenumber" name="92" href="#92">92</a>          MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="93" href="#93">93</a>          request.setRequestURI(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="94" href="#94">94</a>          request.setQueryString(<span class="jxr_string">"test=test"</span>);
 <a class="jxr_linenumber" name="95" href="#95">95</a>          ModelAndView model = <strong class="jxr_keyword">this</strong>.resolver.resolveException(request,

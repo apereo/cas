@@ -98,16 +98,16 @@
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
 <a class="jxr_linenumber" name="89" href="#89">89</a>  
 <a class="jxr_linenumber" name="90" href="#90">90</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String encodeMessage(<strong class="jxr_keyword">final</strong> String xmlString) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="91" href="#91">91</a>          byte[] xmlBytes = xmlString.getBytes(<span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="92" href="#92">92</a>          ByteArrayOutputStream byteOutputStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="93" href="#93">93</a>          DeflaterOutputStream deflaterOutputStream = <strong class="jxr_keyword">new</strong> DeflaterOutputStream(
+<a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">final</strong> byte[] xmlBytes = xmlString.getBytes(<span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">final</strong> ByteArrayOutputStream byteOutputStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="93" href="#93">93</a>          <strong class="jxr_keyword">final</strong> DeflaterOutputStream deflaterOutputStream = <strong class="jxr_keyword">new</strong> DeflaterOutputStream(
 <a class="jxr_linenumber" name="94" href="#94">94</a>                  byteOutputStream);
 <a class="jxr_linenumber" name="95" href="#95">95</a>          deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
 <a class="jxr_linenumber" name="96" href="#96">96</a>          deflaterOutputStream.close();
 <a class="jxr_linenumber" name="97" href="#97">97</a>  
 <a class="jxr_linenumber" name="98" href="#98">98</a>          <em class="jxr_comment">// next, base64 encode it</em>
-<a class="jxr_linenumber" name="99" href="#99">99</a>          Base64 base64Encoder = <strong class="jxr_keyword">new</strong> Base64();
-<a class="jxr_linenumber" name="100" href="#100">100</a>         byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
+<a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">final</strong> Base64 base64Encoder = <strong class="jxr_keyword">new</strong> Base64();
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
 <a class="jxr_linenumber" name="101" href="#101">101</a>                 .toByteArray());
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(base64EncodedByteArray);
 <a class="jxr_linenumber" name="103" href="#103">103</a>     }

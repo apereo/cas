@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">private</strong> String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
 <a class="jxr_linenumber" name="64" href="#64">64</a>  
 <a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, String&gt; getAssociationResponse(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
-<a class="jxr_linenumber" name="66" href="#66">66</a>          ParameterList parameters = <strong class="jxr_keyword">new</strong> ParameterList(request.getParameterMap());
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">final</strong> ParameterList parameters = <strong class="jxr_keyword">new</strong> ParameterList(request.getParameterMap());
 <a class="jxr_linenumber" name="67" href="#67">67</a>  
 <a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">final</strong> String mode = parameters.hasParameter(<span class="jxr_string">"openid.mode"</span>)
 <a class="jxr_linenumber" name="69" href="#69">69</a>                  ? parameters.getParameterValue(<span class="jxr_string">"openid.mode"</span>)
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>  
 <a class="jxr_linenumber" name="93" href="#93">93</a>      @Override
 <a class="jxr_linenumber" name="94" href="#94">94</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> canHandle(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response) {
-<a class="jxr_linenumber" name="95" href="#95">95</a>          String openIdMode = request.getParameter(<span class="jxr_string">"openid.mode"</span>);
+<a class="jxr_linenumber" name="95" href="#95">95</a>          <strong class="jxr_keyword">final</strong> String openIdMode = request.getParameter(<span class="jxr_string">"openid.mode"</span>);
 <a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">if</strong> (openIdMode != <strong class="jxr_keyword">null</strong> &amp;&amp; openIdMode.equals(<span class="jxr_string">"associate"</span>)) {
 <a class="jxr_linenumber" name="97" href="#97">97</a>              logger.info(<span class="jxr_string">"Handling request. openid.mode : {}"</span>, openIdMode);
 <a class="jxr_linenumber" name="98" href="#98">98</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;

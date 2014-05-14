@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="91" href="#91">91</a>              <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="92" href="#92">92</a>          }
 <a class="jxr_linenumber" name="93" href="#93">93</a>  
-<a class="jxr_linenumber" name="94" href="#94">94</a>          RequestContext context = (RequestContext) request.getAttribute(<span class="jxr_string">"flowRequestContext"</span>);
+<a class="jxr_linenumber" name="94" href="#94">94</a>          <strong class="jxr_keyword">final</strong> RequestContext context = (RequestContext) request.getAttribute(<span class="jxr_string">"flowRequestContext"</span>);
 <a class="jxr_linenumber" name="95" href="#95">95</a>  
 <a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">if</strong> (context == <strong class="jxr_keyword">null</strong> || context.getCurrentEvent() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="97" href="#97">97</a>              <strong class="jxr_keyword">return</strong>;

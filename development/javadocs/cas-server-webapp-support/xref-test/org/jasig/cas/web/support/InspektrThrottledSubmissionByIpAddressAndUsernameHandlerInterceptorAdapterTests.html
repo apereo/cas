@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="88" href="#88">88</a>          request.setMethod(<span class="jxr_string">"POST"</span>);
 <a class="jxr_linenumber" name="89" href="#89">89</a>          request.setParameter(<span class="jxr_string">"username"</span>, username);
 <a class="jxr_linenumber" name="90" href="#90">90</a>          request.setRemoteAddr(fromAddress);
-<a class="jxr_linenumber" name="91" href="#91">91</a>          MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
+<a class="jxr_linenumber" name="91" href="#91">91</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="92" href="#92">92</a>          context.setCurrentEvent(<strong class="jxr_keyword">new</strong> Event(<span class="jxr_string">""</span>, <span class="jxr_string">"error"</span>));
 <a class="jxr_linenumber" name="93" href="#93">93</a>          request.setAttribute(<span class="jxr_string">"flowRequestContext"</span>, context);
 <a class="jxr_linenumber" name="94" href="#94">94</a>          ClientInfoHolder.setClientInfo(<strong class="jxr_keyword">new</strong> ClientInfo(request));

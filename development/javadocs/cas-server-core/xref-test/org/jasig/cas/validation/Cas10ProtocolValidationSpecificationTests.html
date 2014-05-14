@@ -41,14 +41,14 @@
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
 <a class="jxr_linenumber" name="32" href="#32">32</a>      @Test
 <a class="jxr_linenumber" name="33" href="#33">33</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRenewGettersAndSettersFalse() {
-<a class="jxr_linenumber" name="34" href="#34">34</a>          Cas10ProtocolValidationSpecification s = <strong class="jxr_keyword">new</strong> Cas10ProtocolValidationSpecification();
+<a class="jxr_linenumber" name="34" href="#34">34</a>          <strong class="jxr_keyword">final</strong> Cas10ProtocolValidationSpecification s = <strong class="jxr_keyword">new</strong> Cas10ProtocolValidationSpecification();
 <a class="jxr_linenumber" name="35" href="#35">35</a>          s.setRenew(false);
 <a class="jxr_linenumber" name="36" href="#36">36</a>          assertFalse(s.isRenew());
 <a class="jxr_linenumber" name="37" href="#37">37</a>      }
 <a class="jxr_linenumber" name="38" href="#38">38</a>  
 <a class="jxr_linenumber" name="39" href="#39">39</a>      @Test
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRenewGettersAndSettersTrue() {
-<a class="jxr_linenumber" name="41" href="#41">41</a>          Cas10ProtocolValidationSpecification s = <strong class="jxr_keyword">new</strong> Cas10ProtocolValidationSpecification();
+<a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">final</strong> Cas10ProtocolValidationSpecification s = <strong class="jxr_keyword">new</strong> Cas10ProtocolValidationSpecification();
 <a class="jxr_linenumber" name="42" href="#42">42</a>          s.setRenew(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="43" href="#43">43</a>          assertTrue(s.isRenew());
 <a class="jxr_linenumber" name="44" href="#44">44</a>      }

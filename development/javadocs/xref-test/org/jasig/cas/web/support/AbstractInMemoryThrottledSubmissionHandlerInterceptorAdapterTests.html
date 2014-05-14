@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>          request.setMethod(<span class="jxr_string">"POST"</span>);
 <a class="jxr_linenumber" name="39" href="#39">39</a>          request.setParameter(<span class="jxr_string">"username"</span>, username);
 <a class="jxr_linenumber" name="40" href="#40">40</a>          request.setRemoteAddr(fromAddress);
-<a class="jxr_linenumber" name="41" href="#41">41</a>          MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
+<a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="42" href="#42">42</a>          context.setCurrentEvent(<strong class="jxr_keyword">new</strong> Event(<span class="jxr_string">""</span>, <span class="jxr_string">"error"</span>));
 <a class="jxr_linenumber" name="43" href="#43">43</a>          request.setAttribute(<span class="jxr_string">"flowRequestContext"</span>, context);
 <a class="jxr_linenumber" name="44" href="#44">44</a>          getThrottle().preHandle(request, response, <strong class="jxr_keyword">null</strong>);

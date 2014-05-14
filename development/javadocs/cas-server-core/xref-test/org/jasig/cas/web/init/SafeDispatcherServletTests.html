@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="83" href="#83">83</a>  <em class="jxr_comment">         * the particular exception that the underlying DispatcherServlet throws</em>
 <a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_comment">         * under these circumstances;</em>
 <a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_comment">         */</em>
-<a class="jxr_linenumber" name="86" href="#86">86</a>          BeanDefinitionStoreException bdse = (BeanDefinitionStoreException) <strong class="jxr_keyword">this</strong>.mockContext
+<a class="jxr_linenumber" name="86" href="#86">86</a>          <strong class="jxr_keyword">final</strong> BeanDefinitionStoreException bdse = (BeanDefinitionStoreException) <strong class="jxr_keyword">this</strong>.mockContext
 <a class="jxr_linenumber" name="87" href="#87">87</a>              .getAttribute(SafeDispatcherServlet.CAUGHT_THROWABLE_KEY);
 <a class="jxr_linenumber" name="88" href="#88">88</a>          assertNotNull(bdse);
 <a class="jxr_linenumber" name="89" href="#89">89</a>  
@@ -107,8 +107,8 @@
 <a class="jxr_linenumber" name="97" href="#97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testService() <strong class="jxr_keyword">throws</strong> ServletException, IOException {
 <a class="jxr_linenumber" name="98" href="#98">98</a>          <strong class="jxr_keyword">this</strong>.safeServlet.init(<strong class="jxr_keyword">this</strong>.mockConfig);
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
-<a class="jxr_linenumber" name="100" href="#100">100</a>         ServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="101" href="#101">101</a>         ServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> ServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">final</strong> ServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="102" href="#102">102</a> 
 <a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">this</strong>.safeServlet.service(mockRequest, mockResponse);
@@ -125,8 +125,8 @@
 <a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">this</strong>.mockConfig = <strong class="jxr_keyword">new</strong> MockServletConfig(<strong class="jxr_keyword">this</strong>.mockContext, <span class="jxr_string">"cas"</span>);
 <a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">this</strong>.safeServlet.init(<strong class="jxr_keyword">this</strong>.mockConfig);
 <a class="jxr_linenumber" name="117" href="#117">117</a> 
-<a class="jxr_linenumber" name="118" href="#118">118</a>         ServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="119" href="#119">119</a>         ServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">final</strong> ServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">final</strong> ServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="120" href="#120">120</a> 
 <a class="jxr_linenumber" name="121" href="#121">121</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="122" href="#122">122</a>             <strong class="jxr_keyword">this</strong>.safeServlet.service(mockRequest, mockResponse);

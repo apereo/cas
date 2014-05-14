@@ -270,7 +270,7 @@
 <a class="jxr_linenumber" name="260" href="#260">260</a> 
 <a class="jxr_linenumber" name="261" href="#261">261</a>     @Test
 <a class="jxr_linenumber" name="262" href="#262">262</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidateServiceTicketWithoutUsernameAttribute() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="263" href="#263">263</a>         UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">final</strong> String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 <a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">final</strong> String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
 <a class="jxr_linenumber" name="266" href="#266">266</a>                 TestUtils.getService());
@@ -283,10 +283,10 @@
 <a class="jxr_linenumber" name="273" href="#273">273</a> 
 <a class="jxr_linenumber" name="274" href="#274">274</a>     @Test
 <a class="jxr_linenumber" name="275" href="#275">275</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidateServiceTicketWithDefaultUsernameAttribute() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="276" href="#276">276</a>         UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="276" href="#276">276</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="277" href="#277">277</a>         <strong class="jxr_keyword">final</strong> String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 <a class="jxr_linenumber" name="278" href="#278">278</a> 
-<a class="jxr_linenumber" name="279" href="#279">279</a>         Service svc = TestUtils.getService(<span class="jxr_string">"testDefault"</span>);
+<a class="jxr_linenumber" name="279" href="#279">279</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"testDefault"</span>);
 <a class="jxr_linenumber" name="280" href="#280">280</a>         <strong class="jxr_keyword">final</strong> String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
 <a class="jxr_linenumber" name="281" href="#281">281</a> 
 <a class="jxr_linenumber" name="282" href="#282">282</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
@@ -296,10 +296,10 @@
 <a class="jxr_linenumber" name="286" href="#286">286</a> 
 <a class="jxr_linenumber" name="287" href="#287">287</a>     @Test
 <a class="jxr_linenumber" name="288" href="#288">288</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidateServiceTicketWithUsernameAttribute() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="289" href="#289">289</a>         UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="289" href="#289">289</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="290" href="#290">290</a>         <strong class="jxr_keyword">final</strong> String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 <a class="jxr_linenumber" name="291" href="#291">291</a> 
-<a class="jxr_linenumber" name="292" href="#292">292</a>         Service svc = TestUtils.getService(<span class="jxr_string">"eduPersonTest"</span>);
+<a class="jxr_linenumber" name="292" href="#292">292</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"eduPersonTest"</span>);
 <a class="jxr_linenumber" name="293" href="#293">293</a>         <strong class="jxr_keyword">final</strong> String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
 <a class="jxr_linenumber" name="294" href="#294">294</a> 
 <a class="jxr_linenumber" name="295" href="#295">295</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
@@ -345,7 +345,7 @@
 <a class="jxr_linenumber" name="335" href="#335">335</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
 <a class="jxr_linenumber" name="336" href="#336">336</a>                 service);
 <a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
-<a class="jxr_linenumber" name="338" href="#338">338</a>         Map&lt;String, Object&gt; attributes = auth.getPrincipal().getAttributes();
+<a class="jxr_linenumber" name="338" href="#338">338</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = auth.getPrincipal().getAttributes();
 <a class="jxr_linenumber" name="339" href="#339">339</a>         assertEquals(1, attributes.size());
 <a class="jxr_linenumber" name="340" href="#340">340</a>         assertEquals(<span class="jxr_string">"adopters"</span>, attributes.get(<span class="jxr_string">"groupMembership"</span>));
 <a class="jxr_linenumber" name="341" href="#341">341</a>     }

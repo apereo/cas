@@ -56,7 +56,7 @@
 <a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">this</strong>.proxyController
 <a class="jxr_linenumber" name="47" href="#47">47</a>          .setCentralAuthenticationService(getCentralAuthenticationService());
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
-<a class="jxr_linenumber" name="49" href="#49">49</a>          StaticApplicationContext context = <strong class="jxr_keyword">new</strong> StaticApplicationContext();
+<a class="jxr_linenumber" name="49" href="#49">49</a>          <strong class="jxr_keyword">final</strong> StaticApplicationContext context = <strong class="jxr_keyword">new</strong> StaticApplicationContext();
 <a class="jxr_linenumber" name="50" href="#50">50</a>          context.refresh();
 <a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">this</strong>.proxyController.setApplicationContext(context);
 <a class="jxr_linenumber" name="52" href="#52">52</a>      }
@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="61" href="#61">61</a>  
 <a class="jxr_linenumber" name="62" href="#62">62</a>      @Test
 <a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNonExistentPGT() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="64" href="#64">64</a>          MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="64" href="#64">64</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="65" href="#65">65</a>          request.addParameter(<span class="jxr_string">"pgt"</span>, <span class="jxr_string">"TestService"</span>);
 <a class="jxr_linenumber" name="66" href="#66">66</a>          request.addParameter(<span class="jxr_string">"targetService"</span>, <span class="jxr_string">"testDefault"</span>);
 <a class="jxr_linenumber" name="67" href="#67">67</a>  
@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="76" href="#76">76</a>                  <span class="jxr_string">"ticketGrantingTicketId"</span>, TestUtils.getAuthentication(),
 <a class="jxr_linenumber" name="77" href="#77">77</a>                  <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
 <a class="jxr_linenumber" name="78" href="#78">78</a>          getTicketRegistry().addTicket(ticket);
-<a class="jxr_linenumber" name="79" href="#79">79</a>          MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="79" href="#79">79</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="80" href="#80">80</a>          request
 <a class="jxr_linenumber" name="81" href="#81">81</a>          .addParameter(<span class="jxr_string">"pgt"</span>, ticket.getId());
 <a class="jxr_linenumber" name="82" href="#82">82</a>          request.addParameter(
