@@ -23,13 +23,13 @@ Contributors:
 
 -   Robert Oschwald [CAS 3.0]
 
-Version: 3.0 RC1
+Version: 3.0
 
-Release Date: T.B.D.
+Release Date: 2014-05-05
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2013, JA-SIG, Inc.
+Copyright &copy; 2014, JA-SIG, Inc.
 
 <a name="head1"/>
 
@@ -72,13 +72,17 @@ interpreted as described in RFC 2119[1](<#1>).
 
 -   "\<LF\>" is a bare line feed (ASCII value 0x0a).
 
-<a name="1.2"/>
+<a name="head1.2"/>
 
 **1.2 Reference Implementation**
 --------------------------------
 The JASIG CAS-Server [8](<#8>) is the official reference implementation of the
-CAS protocol specification.
+CAS Protocol Specification.
 
+JASIG CAS Server 4.x supports the CAS Protocol 3.0 Specification.
+
+
+<a name="head2"/>
 
 **2. CAS URIs**
 ===============
@@ -334,19 +338,21 @@ thereby establishes a new single sign-on session).
 The following HTTP request parameter MAY be specified to /logout. It is case
 sensitive and SHOULD be handled by /logout.
 
--   url [OPTIONAL] - if "url" is specified, the URL specified by "url" SHOULD be
-    on the logout page with descriptive text. For example, "The application you
-    just logged out of has provided a link it would like you to follow. Please
-    click here to access `http://www.example.org".`
-    As a HTTP request parameter, the value MUST be URL-encoded as
-    described in Section 2.2 of RFC 1738 [[4](<#4>)].
-
 -   service [OPTIONAL, CAS 3.0] - if a "service" parameter is specified, the
     browser might be automatically redirected to the URL specified by "service"
     after the logout was performed by the CAS server. If redirection by the
     CAS Server is actually performed depends on the server configuration.
     As a HTTP request parameter, the "service" value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
+
+
+
+>   Note: The "url" parameter defined in the former CAS 2.0 specification is
+>   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
+>   'url' parameters.
+>   A CAS client MAY provide the "service" parameter as described above,
+>   as this ensures the parameter is validated against the registered service
+>   URLs when operating in non-open mode. See [2.3.2](#head2.3.2) for details.
 
 
 
@@ -361,15 +367,16 @@ provide a link to the provided URL as described in Section [2.3.1](#head2.3.1).
 [CAS 3.0] /logout MUST display a page stating that the user has been logged out
 if no "service" parameter was provided. If a "service" request parameter with an
 encoded URL value is provided, the CAS server redirects to the given service URL
-after successful logout.  If a "url" request parameter is provided, /logout
-SHOULD display a link to the provided URL as described in Section [2.3.1](#head2.3.1).
+after successful logout.
 
 
 
 >   Note: When CAS Server operates in non-open mode (allowed Service URLs are
 >   registered within the CAS Server), the CAS server MUST ensure that only
->   registered Service URLs are accepted for redirection ([service] parameter)
->   or displaying ([url] parameter)
+>   registered [service] parameter Service URLs are accepted for redirection.
+>   The "url" parameter defined in the former CAS 2.0 specification is
+>   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
+>   'url' parameters.
 
 
 
@@ -609,8 +616,13 @@ The proxy callback mechanism works as follows:
     fail. Otherwise, the process will proceed normally to step 2.
 
 2.  CAS uses an HTTP GET request to pass the HTTP request parameters "pgtId" and
-    "pgtIou" to the pgtUrl. These entities are discussed in Sections [3.3](#head3.3) and
-    [3.4](#head3.4), respectively.
+    "pgtIou" to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
+    [3.4](#head3.4), respectively. If the proxy callback url specifies any parameters, those
+    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying 
+    the response HTTP status code from the GET request, as detailed in step #3. If the
+    proxy service fails to authenticate or the endpoint responds with an unacceptable status
+    code, proxy authentication MUST fail and CAS MUST respond with the appropriate error code
+    as is described in section [2.5.3](<#head2.5.3>).
 
 3.  If the HTTP GET returns an HTTP status code of 200 (OK), CAS MUST respond to
     the /serviceValidate (or /proxyValidate) request with a service response
@@ -1066,14 +1078,15 @@ and [2.5.1](<#head2.5.1>).
 
 ### **3.6.1. ticket-granting cookie properties**
 
--   Ticket-granting cookies MUST be set to expire at the end of the client's
-    browser session.
+-   A ticket-granting cookie SHALL be set to expire at the end of the client's
+    browser session if Long-Term support is not active ([4.1.1](<#head4.1.1>))
+    for the corresponding TGT.
 
--   CAS MUST set the cookie path to be as restrictive as possible. For example,
-    if the CAS server is set up under the path /cas, the cookie path MUST be set
+-   CAS SHALL set the cookie path to be as restrictive as possible. For example,
+    if the CAS server is set up under the path /cas, the cookie path SHALL be set
     to /cas.
 
--   The value of ticket-granting cookies MUST contain adequate secure random data
+-   The value of ticket-granting cookies SHALL contain adequate secure random data
     so that a ticket-granting cookie is not guessable in a reasonable period of time.
 
 -   The value of ticket-granting cookies SHOULD begin with the characters "TGC-".
@@ -1167,6 +1180,15 @@ sensitive areas of the CAS client application on a remembered login), the CAS
 client MUST NOT use the /validate CAS validation URL, as this URL does not
 support CAS attributes in the validation response document.
 
+
+### **4.1.5 Long-Term ticket-granting cookie properties**
+
+When a Long-Term TGT was created by the CAS Server, the Ticket-granting cookie
+MUST NOT expire at the end of the client's browser session as defined in [3.6.1](<#head3.6.1>).
+Instead, the Ticket Granting cookie SHALL expire at the defined Long-Term TGT ticket lifetime.
+
+The lifetime value definition of Long-Term Ticket Granting Tickets is up to the CAS Server implementor.
+The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.
 
 
 <a name="head4.2"/>
@@ -1462,7 +1484,7 @@ under the License.
 
 >   Note: As userAttributes can be extended by the CAS Server implementor (see
 >   \<xs:any\> schema definition), it is recommended to form custom attributes
->   as \<cas:attributes name="NAME"\>VALUE\</cas:attributes\>.
+>   as \<cas:attributes\>\<cas:attribute name="NAME"\>VALUE\<cas:attribute\>\</cas:attributes\>.
 
 
 \newpage

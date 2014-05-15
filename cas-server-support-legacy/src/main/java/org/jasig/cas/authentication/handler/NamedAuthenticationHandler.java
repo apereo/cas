@@ -31,5 +31,10 @@ package org.jasig.cas.authentication.handler;
 @Deprecated
 public interface NamedAuthenticationHandler extends AuthenticationHandler {
 
+    /**
+     * Gets the name of this handler.
+     *
+     * @return the name
+     */
     String getName();
 }
