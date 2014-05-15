@@ -48,6 +48,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     @NotNull
     private List<String> users;
 
+    @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 

@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.slf4j.Logger;
@@ -34,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
  * @since 3.0.5
  */
-public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationPolicy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
@@ -56,6 +54,7 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationP
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState.getCountOfUses() == 0
             && (System.currentTimeMillis() - ticketState.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
