@@ -21,6 +21,7 @@ package org.jasig.cas.remoting.server;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,7 +101,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, TestUtils.getService(), null);
+            ticketGrantingTicketId, TestUtils.getService(), (Credential[]) null);
     }
 
     @Test
