@@ -138,7 +138,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
             // getBasicConstraints returns pathLenContraint which is generally
             // >=0 when this is a CA cert and -1 when it's not
-            int pathLength = certificate.getBasicConstraints();
+            final int pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
                 logger.debug("Found valid client certificate");
                 clientCert = certificate;
@@ -201,11 +201,17 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this.revocationChecker = checker;
     }
 
+    /**
+     * Validate the X509Certificate received.
+     *
+     * @param cert the cert
+     * @throws GeneralSecurityException the general security exception
+     */
     private void validate(final X509Certificate cert) throws GeneralSecurityException {
         cert.checkValidity();
         this.revocationChecker.check(cert);
 
-        int pathLength = cert.getBasicConstraints();
+        final int pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
                 throw new FailedLoginException(
@@ -217,7 +223,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             }
         } else {
             // Check pathLength for CA cert
-            if (pathLength == Integer.MAX_VALUE && this.maxPathLengthAllowUnspecified != true) {
+            if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
                 throw new FailedLoginException("Unlimited certificate path length not allowed by configuration.");
             } else if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
                 throw new FailedLoginException(String.format(
@@ -226,14 +232,17 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
     }
 
+    /**
+     * Checks if is valid key usage. <p>
+     * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
+     * keyEncipherment (2), dataEncipherment (3), keyAgreement (4),
+     * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
+     *          
+     * @param certificate the certificate
+     * @return true, if  valid key usage
+     */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
         logger.debug("Checking certificate keyUsage extension");
-
-        /*
-         * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
-         * keyEncipherment (2), dataEncipherment (3), keyAgreement (4),
-         * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
-         */
         final boolean[] keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
             logger.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
@@ -252,6 +261,13 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         return valid;
     }
 
+    /**
+     * Checks if critical extension oids contain the extension oid.
+     *
+     * @param certificate the certificate
+     * @param extensionOid the extension oid
+     * @return true, if  critical
+     */
     private boolean isCritical(final X509Certificate certificate, final String extensionOid) {
         final Set<String> criticalOids = certificate.getCriticalExtensionOIDs();
 
@@ -262,14 +278,33 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         return criticalOids.contains(extensionOid);
     }
 
+    /**
+     * Checks if is certificate allowed based no the pattern given.
+     *
+     * @param cert the cert
+     * @return true, if  certificate allowed
+     */
     private boolean isCertificateAllowed(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
     }
 
+    /**
+     * Checks if is certificate from trusted issuer based on the regex pattern.
+     *
+     * @param cert the cert
+     * @return true, if  certificate from trusted issuer
+     */
     private boolean isCertificateFromTrustedIssuer(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getIssuerDN(), this.regExTrustedIssuerDnPattern);
     }
 
+    /**
+     * Does principal name match pattern?
+     *
+     * @param principal the principal
+     * @param pattern the pattern
+     * @return true, if successful
+     */
     private boolean doesNameMatchPattern(final Principal principal,
             final Pattern pattern) {
         final String name = principal.getName();

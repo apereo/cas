@@ -58,6 +58,11 @@ public final class StatisticsController extends AbstractController {
 
     private String casTicketSuffix;
 
+    /**
+     * Instantiates a new statistics controller.
+     *
+     * @param ticketRegistry the ticket registry
+     */
     public StatisticsController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -124,6 +129,14 @@ public final class StatisticsController extends AbstractController {
         return modelAndView;
     }
 
+    /**
+     * Calculates the up time.
+     *
+     * @param difference the difference
+     * @param calculations the calculations
+     * @param labels the labels
+     * @return the uptime as a string.
+     */
     protected String calculateUptime(final double difference, final Queue<Integer> calculations, final Queue<String> labels) {
         if (calculations.isEmpty()) {
             return "";
