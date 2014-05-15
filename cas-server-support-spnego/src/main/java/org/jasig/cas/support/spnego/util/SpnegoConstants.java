@@ -27,20 +27,28 @@ package org.jasig.cas.support.spnego.util;
  */
 public interface SpnegoConstants {
 
+    /** The header authenticate. */
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
+    /** The header authorization. */
     String HEADER_AUTHORIZATION = "Authorization";
 
+    /** The header user agent. */
     String HEADER_USER_AGENT = "User-Agent";
 
+    /** The negotiate. */
     String NEGOTIATE = "Negotiate";
 
+    /** The spnego first time. */
     String SPNEGO_FIRST_TIME = "spnegoFirstTime";
 
+    /** The spnego credentials. */
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
+    /** The ntlmssp signature. */
     byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
             (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
 
+    /** The ntlm. */
     String NTLM = "NTLM";
 }

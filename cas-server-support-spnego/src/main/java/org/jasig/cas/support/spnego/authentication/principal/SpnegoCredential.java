@@ -60,6 +60,11 @@ public final class SpnegoCredential implements Credential, Serializable {
      */
     private final boolean isNtlm;
 
+    /**
+     * Instantiates a new spnego credential.
+     *
+     * @param initToken the init token
+     */
     public SpnegoCredential(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");
         this.initToken = initToken;
@@ -100,6 +105,12 @@ public final class SpnegoCredential implements Credential, Serializable {
         return getId();
     }
 
+    /**
+     * Checks if is token ntlm.
+     *
+     * @param token the token
+     * @return true, if  token ntlm
+     */
     private boolean isTokenNtlm(final byte[] token) {
         if (token == null || token.length < 8) {
             return false;
