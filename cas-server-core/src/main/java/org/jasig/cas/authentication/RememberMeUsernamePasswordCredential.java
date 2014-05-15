@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-
 /**
  * Handles both remember me services and username and password.
  *

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
@@ -191,8 +192,9 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
         try {
-            final BufferedReader reader = request.getReader();
+            reader = request.getReader();
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -201,6 +203,8 @@ public final class SamlService extends AbstractWebApplicationService {
             return builder.toString();
         } catch (final Exception e) {
             return null;
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
     }
 }

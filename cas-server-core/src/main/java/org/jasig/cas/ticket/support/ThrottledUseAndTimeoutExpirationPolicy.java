@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.slf4j.Logger;
