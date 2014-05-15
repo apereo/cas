@@ -62,10 +62,11 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
+        final String password = getPasswordEncoder().encode(credential.getPassword());
         for (final RadiusServer radiusServer : this.servers) {
             logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
-                if (radiusServer.authenticate(username, credential.getPassword())) {
+                if (radiusServer.authenticate(username, password)) {
                     return createHandlerResult(credential, new SimplePrincipal(username), null);
                 } 
                 

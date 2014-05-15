@@ -34,6 +34,7 @@ public final class PrefixSuffixPrincipalNameTransformer implements PrincipalName
 
     private String suffix;
 
+    @Override
     public String transform(final String formUserId) {
         final StringBuilder stringBuilder = new StringBuilder();
 

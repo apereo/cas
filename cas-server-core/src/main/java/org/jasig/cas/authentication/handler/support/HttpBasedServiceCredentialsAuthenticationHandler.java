@@ -60,6 +60,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     @NotNull
     private HttpClient httpClient;
 
+    @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         if (this.requireSecure && !httpCredential.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
@@ -75,9 +76,11 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     }
 
     /**
+     * {@inheritDoc}
      * @return true if the credential provided are not null and the credential
      * are a subclass of (or equal to) HttpBasedServiceCredential.
      */
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof HttpBasedServiceCredential;
     }
