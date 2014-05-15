@@ -84,6 +84,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @NotNull
     private String realm = DEFAULT_REALM;
 
+    /**
+     * Instantiates a new jaas authentication handler.
+     */
     public JaasAuthenticationHandler() {
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
@@ -95,9 +98,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
+        final String password = getPasswordEncoder().encode(credential.getPassword());
         final LoginContext lc = new LoginContext(
                 this.realm,
-                new UsernamePasswordCallbackHandler(username, credential.getPassword()));
+                new UsernamePasswordCallbackHandler(username, password));
         try {
             logger.debug("Attempting authentication for: {}", username);
             lc.login();
@@ -144,6 +148,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         }
 
+        @Override
         public void handle(final Callback[] callbacks)
             throws UnsupportedCallbackException {
             for (final Callback callback : callbacks) {

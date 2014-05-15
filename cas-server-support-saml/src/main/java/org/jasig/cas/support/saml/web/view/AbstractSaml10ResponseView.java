@@ -89,6 +89,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         }
     }
 
+    /**
+     * Instantiates a new abstract saml10 response view.
+     */
     protected AbstractSaml10ResponseView() {
         try {
             this.idGenerator = new SecureRandomIdentifierGenerator();
@@ -141,10 +144,22 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
 
+    /**
+     * Generate id.
+     *
+     * @return the string
+     */
     protected final String generateId() {
         return this.idGenerator.generateIdentifier();
     }
 
+    /**
+     * Create a new SAML object.
+     *
+     * @param <T> the generic type
+     * @param objectType the object type
+     * @return the t
+     */
     protected final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName;
         try {
@@ -162,6 +177,13 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         return objectType.cast(builder.buildObject());
     }
 
+    /**
+     * Create a new SAML status object.
+     *
+     * @param codeValue the code value
+     * @param statusMessage the status message
+     * @return the status
+     */
     protected final Status newStatus(final QName codeValue, final String statusMessage) {
         final Status status = newSamlObject(Status.class);
         final StatusCode code = newSamlObject(StatusCode.class);

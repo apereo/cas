@@ -87,7 +87,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         return this.evictions;
     }
 
-
+    @Override
     public int getPercentFree() {
         if (this.capacity == 0) {
             return 0;
@@ -95,7 +95,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         return (int) ((this.capacity - this.size) * 100 / this.capacity);
     }
 
-
+    @Override
     public void toString(final StringBuilder builder) {
         if (this.name != null) {
             builder.append(this.name).append(':');
