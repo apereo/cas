@@ -340,7 +340,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         try {
-            return this.grantServiceTicket(ticketGrantingTicketId, service, null);
+            return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
         } catch (final AuthenticationException e) {
             throw new IllegalStateException("Unexpected authentication exception", e);
         }
