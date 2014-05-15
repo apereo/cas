@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-05-14T17:02:01.249">
+<pmd version="4.3" timestamp="2014-05-15T08:24:59.991">
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/CentralAuthenticationServiceImpl.java">
 <violation beginline="274" endline="280" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
@@ -8,11 +8,6 @@ These nested if statements could be combined
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/HandlerResult.java">
 <violation beginline="88" endline="91" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.authentication" class="HandlerResult" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused constructor parameters such as 'warnings'.
-</violation>
-</file>
-<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/PolicyBasedAuthenticationManager.java">
-<violation beginline="293" endline="293" begincolumn="44" endcolumn="100" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="org.jasig.cas.authentication" class="PolicyBasedAuthenticationManager" method="createAuthenticationException" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
-Avoid unused private methods such as 'createAuthenticationException(Authentication)'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/services/DefaultServicesManagerImpl.java">

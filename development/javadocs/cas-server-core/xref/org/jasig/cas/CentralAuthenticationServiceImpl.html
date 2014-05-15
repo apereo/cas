@@ -350,7 +350,7 @@
 <a class="jxr_linenumber" name="340" href="#340">340</a>     <strong class="jxr_keyword">public</strong> String grantServiceTicket(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId,
 <a class="jxr_linenumber" name="341" href="#341">341</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) <strong class="jxr_keyword">throws</strong> TicketException {
 <a class="jxr_linenumber" name="342" href="#342">342</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="343" href="#343">343</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.grantServiceTicket(ticketGrantingTicketId, service, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="343" href="#343">343</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="344" href="#344">344</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AuthenticationException e) {
 <a class="jxr_linenumber" name="345" href="#345">345</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Unexpected authentication exception"</span>, e);
 <a class="jxr_linenumber" name="346" href="#346">346</a>         }
