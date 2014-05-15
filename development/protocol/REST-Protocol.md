@@ -28,7 +28,7 @@ To turn on the protocol, add the following to the `web.xml`:
 {% highlight xml %}
 <servlet>
     <servlet-name>restlet</servlet-name>
-    <servlet-class>com.noelios.restlet.ext.spring.RestletFrameworkServlet</servlet-class>
+    <servlet-class>org.restlet.ext.spring.RestletFrameworkServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
 </servlet>
  
