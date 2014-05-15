@@ -74,6 +74,14 @@ public class PoolStatus extends Status {
     }
 
 
+    /**
+     * Builds the description for the pool.
+     *
+     * @param desc the desc
+     * @param active the active
+     * @param idle the idle
+     * @return the string
+     */
     private static String buildDescription(final String desc, final int active, final int idle) {
         final StringBuilder sb = new StringBuilder();
         if (desc != null) {

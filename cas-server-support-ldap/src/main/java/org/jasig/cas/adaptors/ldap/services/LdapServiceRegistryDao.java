@@ -76,6 +76,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private SearchRequest searchRequest;
 
 
+    /**
+     * Inits the dao with the search filter and load filters.
+     */
     @PostConstruct
     public void init() {
         this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() +  "={0})";
@@ -103,30 +106,41 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         return rs;
     }
 
+    /**
+     * Update the ldap entry with the given registered service.
+     *
+     * @param rs the rs
+     * @return the registered service
+     */
     private RegisteredService update(final RegisteredService rs) {
-        Connection connection = null;
+        Connection searchConnection = null;
         try {
-            connection = this.connectionFactory.getConnection();
-            final Response<SearchResult> response = searchForServiceById(connection, rs.getId());
+            searchConnection = this.connectionFactory.getConnection();
+            final Response<SearchResult> response = searchForServiceById(searchConnection, rs.getId());
             if (hasResults(response)) {
                 final String currentDn = response.getResult().getEntry().getDn();
 
-                connection = this.connectionFactory.getConnection();
-                final ModifyOperation operation = new ModifyOperation(connection);
+                Connection modifyConnection = null;
+                try {
+                    modifyConnection = this.connectionFactory.getConnection();
+                    final ModifyOperation operation = new ModifyOperation(searchConnection);
 
-                final List<AttributeModification> mods = new ArrayList<AttributeModification>();
+                    final List<AttributeModification> mods = new ArrayList<AttributeModification>();
 
-                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
-                for (final LdapAttribute attr : entry.getAttributes()) {
-                    mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                    final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
+                    for (final LdapAttribute attr : entry.getAttributes()) {
+                        mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                    }
+                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
+                    operation.execute(request);
+                } finally {
+                    LdapUtils.closeConnection(modifyConnection);
                 }
-                final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
-                operation.execute(request);
             }
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            LdapUtils.closeConnection(connection);
+            LdapUtils.closeConnection(searchConnection);
         }
         return rs;
     }
@@ -195,6 +209,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         return null;
     }
 
+    /**
+     * Search for service by id.
+     *
+     * @param connection the connection
+     * @param id the id
+     * @return the response
+     * @throws LdapException the ldap exception
+     */
     private Response<SearchResult> searchForServiceById(final Connection connection, final long id)
             throws LdapException {
 
@@ -203,6 +225,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         return executeSearchOperation(connection, filter);
     }
 
+    /**
+     * Execute search operation.
+     *
+     * @param connection the connection
+     * @param filter the filter
+     * @return the response
+     * @throws LdapException the ldap exception
+     */
     private Response<SearchResult> executeSearchOperation(final Connection connection, final SearchFilter filter)
             throws LdapException {
 
@@ -224,10 +254,22 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         this.searchRequest = request;
     }
 
+    /**
+     * Checks to see if response has a result.
+     *
+     * @param response the response
+     * @return true, if successful
+     */
     private boolean hasResults(final Response<SearchResult> response) {
         return response.getResult() != null && response.getResult().getEntry() != null;
     }
 
+    /**
+     * Builds a new request.
+     *
+     * @param filter the filter
+     * @return the search request
+     */
     private SearchRequest newRequest(final SearchFilter filter) {
         final SearchRequest sr = new SearchRequest(this.searchRequest.getBaseDn(), filter);
         sr.setBinaryAttributes(this.searchRequest.getBinaryAttributes());

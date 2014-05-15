@@ -29,7 +29,7 @@ public class UnauthorizedSsoServiceExceptionTests {
 
     @Test
     public void testGetCode() {
-        UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
+        final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 

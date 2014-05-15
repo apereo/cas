@@ -22,13 +22,20 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>4.0.0-RC4-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-ldap</artifactId>
 	<packaging>jar</packaging>
 	<name>Jasig CAS LDAP Support</name>
+
+  <repositories>
+    <repository>
+      <id>vt-middleware</id>
+      <url>https://raw.github.com/vt-middleware/maven-repo/master</url>
+    </repository>
+  </repositories>
 
   <developers>
     <developer>
@@ -65,7 +72,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
