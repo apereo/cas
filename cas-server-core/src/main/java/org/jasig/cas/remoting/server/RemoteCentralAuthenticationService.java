@@ -135,6 +135,11 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
     }
 
+    /**
+     * Check for errors by asking the validator to review each credential.
+     *
+     * @param credentials the credentials
+     */
     private void checkForErrors(final Credential... credentials) {
         if (credentials == null) {
             return;

@@ -110,7 +110,7 @@ public class OpenIdSingleSignOnActionTests {
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,
                 new MockHttpServletResponse()));
-        Event event = this.action.execute(context);
+        final Event event = this.action.execute(context);
 
         assertNotNull(event);
 
