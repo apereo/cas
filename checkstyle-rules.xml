@@ -175,7 +175,9 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="lineSeparator" value="lf" />
     <property name="severity" value="error" />
   </module>
-  <module name="Translation"/>
+  <module name="Translation">
+    <property name="severity" value="info"/>
+  </module>
   <module name="FileLength"/>
   <module name="FileTabCharacter">
     <property name="severity" value="error"/>
