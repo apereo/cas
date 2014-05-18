@@ -29,6 +29,8 @@ import org.apache.commons.lang.time.FastDateFormat;
 public final class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;
+     * Instantiates a new SAML date utils.
+     */
 
     public ISOStandardDateFormat() {
         super("yyyy-MM-dd'T'HH:mm:ss'Z'", null, null);
@@ -37,5 +39,9 @@ public final class ISOStandardDateFormat extends FastDateFormat {
     
     public String getCurrentDateAndTime() {
         return format(new Date());
+     *
+     * @param date the date
+     * @return the formatted date and time
+     */
     }
 }

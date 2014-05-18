@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
@@ -37,17 +38,25 @@ public abstract class AbstractWebApplicationServiceSerializer<T extends Abstract
     /** FieldHelper instance. **/
     protected final FieldHelper fieldHelper;
 
+    /**
+     * Instantiates a new abstract web application service serializer.
+     *
+     * @param kryo the kryo
+     * @param helper the helper
+     */
     public AbstractWebApplicationServiceSerializer(final Kryo kryo, final FieldHelper helper) {
         this.kryo = kryo;
         this.fieldHelper = helper;
     }
 
+    @Override
     public void write(final ByteBuffer buffer, final T service) {
         kryo.writeObjectData(buffer, service.getId());
         kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "originalUrl"));
         kryo.writeObject(buffer, service.getArtifactId());
     }
 
+    @Override
     public T read(final ByteBuffer buffer) {
         return createService(
                 buffer,
@@ -56,6 +65,15 @@ public abstract class AbstractWebApplicationServiceSerializer<T extends Abstract
                 kryo.readObject(buffer, String.class));
     }
 
+    /**
+     * Creates the service.
+     *
+     * @param buffer the buffer
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @return the created service instance.
+     */
     protected abstract T createService(
             final ByteBuffer buffer, final String id, final String originalUrl, final String artifactId);
 }
