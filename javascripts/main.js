@@ -1,21 +1,21 @@
-var CONST_CURRENT_VER = "dev";
+var CONST_CURRENT_VER = "development";
 
 function getActiveDocumentationVersionInView() {
 	var currentVersion = CONST_CURRENT_VER;
 	var href = location.href;
-    var index = href.indexOf("/_site/");
+  var index = href.indexOf("/_site/");
 
-    if (index == -1) {
-		var uri = new URI(document.location);
+  if (index == -1) {
+    var uri = new URI(document.location);
 
-		if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
-	  		currentVersion = uri.segment(1);
-		}
-	} else {
-		href = href.substring(index + 7);
-		index = href.indexOf("/");
-		currentVersion = href.substring(0, index);
-	}
+    if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
+        currentVersion = uri.segment(1);
+    }
+  } else {
+    href = href.substring(index + 7);
+    index = href.indexOf("/");
+    currentVersion = href.substring(0, index);
+  }
 	return currentVersion;
 }
 
