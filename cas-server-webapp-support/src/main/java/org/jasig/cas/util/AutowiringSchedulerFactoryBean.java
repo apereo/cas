@@ -21,8 +21,6 @@ package org.jasig.cas.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
 import org.quartz.Trigger;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -39,8 +37,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.3.4
  **/
-public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware,
-        InitializingBean {
+public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

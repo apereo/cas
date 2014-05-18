@@ -43,7 +43,12 @@ public final class Response {
 
     /** An enumeration of different response types. **/
     public static enum ResponseType {
-        POST, REDIRECT
+        
+        /** The post. */
+        POST, 
+        
+        /** The redirect. */
+        REDIRECT
     }
 
     private final ResponseType responseType;
@@ -52,16 +57,37 @@ public final class Response {
 
     private final Map<String, String> attributes;
 
+    /**
+     * Instantiates a new response.
+     *
+     * @param responseType the response type
+     * @param url the url
+     * @param attributes the attributes
+     */
     protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
         this.responseType = responseType;
         this.url = url;
         this.attributes = attributes;
     }
 
+    /**
+     * Gets the post response.
+     *
+     * @param url the url
+     * @param attributes the attributes
+     * @return the post response
+     */
     public static Response getPostResponse(final String url, final Map<String, String> attributes) {
         return new Response(ResponseType.POST, url, attributes);
     }
 
+    /**
+     * Gets the redirect response.
+     *
+     * @param url the url
+     * @param parameters the parameters
+     * @return the redirect response
+     */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
         boolean isFirst = true;

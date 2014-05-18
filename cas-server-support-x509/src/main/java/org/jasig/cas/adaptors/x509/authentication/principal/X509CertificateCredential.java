@@ -42,6 +42,11 @@ public final class X509CertificateCredential extends AbstractCredential {
     /** The certificate that we actually use. */
     private X509Certificate certificate;
 
+    /**
+     * Instantiates a new x509 certificate credential.
+     *
+     * @param certificates the certificates
+     */
     public X509CertificateCredential(final X509Certificate[] certificates) {
         this.certificates = certificates;
     }
