@@ -75,11 +75,11 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 Logout protocol is effectively managed by the `LogoutManagerImpl` component:
 
 {% highlight xml %}
-<bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl">
-    <constructor-arg index="0" ref="servicesManager"/>
-    <constructor-arg index="1" ref="noRedirectHttpClient"/>
-    <property name="disableSingleSignOut" value="${slo.callbacks.disabled:false}" />         
-</bean>
+<bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="noRedirectHttpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"
+          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
 {% endhighlight %}
 
 
@@ -90,8 +90,6 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 # To turn off all back channel SLO requests set slo.disabled to true
 # slo.callbacks.disabled=false
 {% endhighlight %}
-
-
 
 
 ###Ticket Registry Cleaner Behavior
