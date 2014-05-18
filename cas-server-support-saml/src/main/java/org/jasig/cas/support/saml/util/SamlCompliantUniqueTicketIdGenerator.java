@@ -53,6 +53,11 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     /** Random generator to construct the AssertionHandle. */
     private final SecureRandom random;
 
+    /**
+     * Instantiates a new SAML compliant unique ticket id generator.
+     *
+     * @param sourceId the source id
+     */
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance("SHA");
@@ -85,6 +90,11 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
         this.saml2compliant = saml2compliant;
     }
 
+    /**
+     * New assertion handle.
+     *
+     * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
+     */
     private byte[] newAssertionHandle() {
         final byte[] handle = new byte[ASSERTION_HANDLE_SIZE];
         this.random.nextBytes(handle);

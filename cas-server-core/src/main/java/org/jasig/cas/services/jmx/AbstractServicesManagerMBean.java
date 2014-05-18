@@ -28,6 +28,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,11 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
     @NotNull
     private T servicesManager;
 
+    /**
+     * Instantiates a new abstract services manager m bean.
+     *
+     * @param svcMgr the svc mgr
+     */
     protected AbstractServicesManagerMBean(final T svcMgr) {
         this.servicesManager = svcMgr;
     }
@@ -52,6 +58,11 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
         return this.servicesManager;
     }
 
+    /**
+     * Gets the registered services as strings.
+     *
+     * @return the registered services as strings
+     */
     @ManagedAttribute(description = "Retrieves the list of Registered Services in a slightly friendlier output.")
     public final List<String> getRegisteredServicesAsStrings() {
         final List<String> services = new ArrayList<String>();
@@ -68,24 +79,46 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
         return services;
     }
 
+    /**
+     * Removes the service.
+     *
+     * @param id the id
+     * @return the registered service
+     */
     @ManagedOperation(description = "Can remove a service based on its identifier.")
     @ManagedOperationParameter(name="id", description = "the identifier to remove")
     public final RegisteredService removeService(final long id) {
         return this.servicesManager.delete(id);
     }
 
+    /**
+     * Disable service.
+     *
+     * @param id the id
+     */
     @ManagedOperation(description = "Disable a service by id.")
     @ManagedOperationParameter(name="id", description = "the identifier to disable")
     public final void disableService(final long id) {
         changeEnabledState(id, false);
     }
 
+    /**
+     * Enable service.
+     *
+     * @param id the id
+     */
     @ManagedOperation(description = "Enable a service by its id.")
     @ManagedOperationParameter(name="id", description = "the identifier to enable.")
     public final void enableService(final long id) {
         changeEnabledState(id, true);
     }
 
+    /**
+     * Change enabled state.
+     *
+     * @param id the id
+     * @param newState the new state
+     */
     private void changeEnabledState(final long id, final boolean newState) {
         final RegisteredService r = this.servicesManager.findServiceBy(id);
         Assert.notNull(r, "invalid RegisteredService id");

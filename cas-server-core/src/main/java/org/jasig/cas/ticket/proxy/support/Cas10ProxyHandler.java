@@ -30,6 +30,7 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  */
 public final class Cas10ProxyHandler implements ProxyHandler {
 
+    @Override
     public String handle(final Credential credential,
         final String proxyGrantingTicketId) {
         return null;
