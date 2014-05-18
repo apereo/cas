@@ -20,7 +20,7 @@ package org.jasig.cas.logout;
 
 import java.io.Serializable;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SingleLogoutService;
 
 /**
  * Define a logout request for a service accessed by a user.
@@ -37,7 +37,7 @@ public final class LogoutRequest implements Serializable {
     private final String ticketId;
 
     /** The service. */
-    private final Service service;
+    private final SingleLogoutService service;
 
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
@@ -49,7 +49,7 @@ public final class LogoutRequest implements Serializable {
      * @param ticketId the service ticket id.
      * @param service the service.
      */
-    public LogoutRequest(final String ticketId, final Service service) {
+    public LogoutRequest(final String ticketId, final SingleLogoutService service) {
         this.ticketId = ticketId;
         this.service = service;
     }
@@ -66,7 +66,7 @@ public final class LogoutRequest implements Serializable {
         return ticketId;
     }
 
-    public Service getService() {
+    public SingleLogoutService getService() {
         return service;
     }
 }

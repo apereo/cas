@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +38,7 @@ import org.springframework.util.Assert;
  *
  * @since 3.0
  */
-public final class ImmutableAuthentication implements Authentication, Serializable {
+public final class ImmutableAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
@@ -60,7 +59,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     private final Map<String, HandlerResult> successes;
 
     /** Map of handler name to handler authentication failure cause. */
-    private final Map<String, Exception> failures;
+    private final Map<String, Class<? extends Exception>> failures;
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {
@@ -88,7 +87,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
             final Principal principal,
             final Map<String, Object> attributes,
             final Map<String, HandlerResult> successes,
-            final Map<String, Exception> failures) {
+            final Map<String, Class<? extends Exception>> failures) {
 
         Assert.notNull(date, "Date cannot be null");
         Assert.notNull(credentials, "Credential cannot be null");
@@ -130,7 +129,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     }
 
     @Override
-    public Map<String, Exception> getFailures() {
+    public Map<String, Class<? extends Exception>> getFailures() {
         return wrap(this.failures);
     }
 
@@ -168,8 +167,9 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @param source Nullable map to wrap.
-     *
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
      */
@@ -184,6 +184,8 @@ public final class ImmutableAuthentication implements Authentication, Serializab
      * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
+
+        private static final long serialVersionUID = 6275827030191703183L;
 
         /** No-arg constructor for serialization support. */
         private ImmutableDate() {}
