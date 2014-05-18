@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Response;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.support.saml.util.SamlUtils;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.SamlDateUtils;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.ISOStandardDateFormat;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.jdom.Document;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.springframework.util.StringUtils;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
@@ -239,143 +239,142 @@
 <a class="jxr_linenumber" name="229" href="#229">229</a>             }
 <a class="jxr_linenumber" name="230" href="#230">230</a>         }
 <a class="jxr_linenumber" name="231" href="#231">231</a> 
-<a class="jxr_linenumber" name="232" href="#232">232</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;USERNAME_STRING&gt;"</span>, userId);
-<a class="jxr_linenumber" name="233" href="#233">233</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;RESPONSE_ID&gt;"</span>, createID());
-<a class="jxr_linenumber" name="234" href="#234">234</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;ISSUE_INSTANT&gt;"</span>, <a href="../../../../../../../org/jasig/cas/util/SamlDateUtils.html">SamlDateUtils</a>
-<a class="jxr_linenumber" name="235" href="#235">235</a>                 .getCurrentDateAndTime());
-<a class="jxr_linenumber" name="236" href="#236">236</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;AUTHN_INSTANT&gt;"</span>, <a href="../../../../../../../org/jasig/cas/util/SamlDateUtils.html">SamlDateUtils</a>
-<a class="jxr_linenumber" name="237" href="#237">237</a>                 .getCurrentDateAndTime());
-<a class="jxr_linenumber" name="238" href="#238">238</a>         samlResponse = samlResponse.replaceAll(<span class="jxr_string">"&lt;NOT_ON_OR_AFTER&gt;"</span>, <a href="../../../../../../../org/jasig/cas/util/SamlDateUtils.html">SamlDateUtils</a>
-<a class="jxr_linenumber" name="239" href="#239">239</a>                 .getFormattedDateAndTime(c.getTime()));
-<a class="jxr_linenumber" name="240" href="#240">240</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;ASSERTION_ID&gt;"</span>, createID());
-<a class="jxr_linenumber" name="241" href="#241">241</a>         samlResponse = samlResponse.replaceAll(<span class="jxr_string">"&lt;ACS_URL&gt;"</span>, getId());
-<a class="jxr_linenumber" name="242" href="#242">242</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;REQUEST_ID&gt;"</span>, <strong class="jxr_keyword">this</strong>.requestId);
-<a class="jxr_linenumber" name="243" href="#243">243</a> 
-<a class="jxr_linenumber" name="244" href="#244">244</a>         <strong class="jxr_keyword">return</strong> samlResponse;
-<a class="jxr_linenumber" name="245" href="#245">245</a>     }
-<a class="jxr_linenumber" name="246" href="#246">246</a> 
-<a class="jxr_linenumber" name="247" href="#247">247</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">     * Creates the SAML id.</em>
-<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     * @return the id</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="252" href="#252">252</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String createID() {
-<a class="jxr_linenumber" name="253" href="#253">253</a>         <strong class="jxr_keyword">final</strong> byte[] bytes = <strong class="jxr_keyword">new</strong> byte[20]; <em class="jxr_comment">// 160 bits</em>
-<a class="jxr_linenumber" name="254" href="#254">254</a>         RANDOM_GENERATOR.nextBytes(bytes);
+<a class="jxr_linenumber" name="232" href="#232">232</a>         <strong class="jxr_keyword">final</strong> String currentDateTime = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/util/ISOStandardDateFormat.html">ISOStandardDateFormat</a>().getCurrentDateAndTime();
+<a class="jxr_linenumber" name="233" href="#233">233</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;USERNAME_STRING&gt;"</span>, userId);
+<a class="jxr_linenumber" name="234" href="#234">234</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;RESPONSE_ID&gt;"</span>, createID());
+<a class="jxr_linenumber" name="235" href="#235">235</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;ISSUE_INSTANT&gt;"</span>, currentDateTime);
+<a class="jxr_linenumber" name="236" href="#236">236</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;AUTHN_INSTANT&gt;"</span>, currentDateTime);
+<a class="jxr_linenumber" name="237" href="#237">237</a>         samlResponse = samlResponse.replaceAll(<span class="jxr_string">"&lt;NOT_ON_OR_AFTER&gt;"</span>, currentDateTime);
+<a class="jxr_linenumber" name="238" href="#238">238</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;ASSERTION_ID&gt;"</span>, createID());
+<a class="jxr_linenumber" name="239" href="#239">239</a>         samlResponse = samlResponse.replaceAll(<span class="jxr_string">"&lt;ACS_URL&gt;"</span>, getId());
+<a class="jxr_linenumber" name="240" href="#240">240</a>         samlResponse = samlResponse.replace(<span class="jxr_string">"&lt;REQUEST_ID&gt;"</span>, <strong class="jxr_keyword">this</strong>.requestId);
+<a class="jxr_linenumber" name="241" href="#241">241</a> 
+<a class="jxr_linenumber" name="242" href="#242">242</a>         <strong class="jxr_keyword">return</strong> samlResponse;
+<a class="jxr_linenumber" name="243" href="#243">243</a>     }
+<a class="jxr_linenumber" name="244" href="#244">244</a> 
+<a class="jxr_linenumber" name="245" href="#245">245</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="246" href="#246">246</a> <em class="jxr_javadoccomment">     * Creates the SAML id.</em>
+<a class="jxr_linenumber" name="247" href="#247">247</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">     * @return the id</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String createID() {
+<a class="jxr_linenumber" name="251" href="#251">251</a>         <strong class="jxr_keyword">final</strong> byte[] bytes = <strong class="jxr_keyword">new</strong> byte[20]; <em class="jxr_comment">// 160 bits</em>
+<a class="jxr_linenumber" name="252" href="#252">252</a>         RANDOM_GENERATOR.nextBytes(bytes);
+<a class="jxr_linenumber" name="253" href="#253">253</a> 
+<a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] chars = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">char</strong>[40];
 <a class="jxr_linenumber" name="255" href="#255">255</a> 
-<a class="jxr_linenumber" name="256" href="#256">256</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] chars = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">char</strong>[40];
-<a class="jxr_linenumber" name="257" href="#257">257</a> 
-<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; bytes.length; i++) {
-<a class="jxr_linenumber" name="259" href="#259">259</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> left = bytes[i] &gt;&gt; 4 &amp; 0x0f;
-<a class="jxr_linenumber" name="260" href="#260">260</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> right = bytes[i] &amp; 0x0f;
-<a class="jxr_linenumber" name="261" href="#261">261</a>             chars[i * 2] = CHAR_MAPPINGS[left];
-<a class="jxr_linenumber" name="262" href="#262">262</a>             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
-<a class="jxr_linenumber" name="263" href="#263">263</a>         }
-<a class="jxr_linenumber" name="264" href="#264">264</a> 
-<a class="jxr_linenumber" name="265" href="#265">265</a>         <strong class="jxr_keyword">return</strong> String.valueOf(chars);
-<a class="jxr_linenumber" name="266" href="#266">266</a>     }
-<a class="jxr_linenumber" name="267" href="#267">267</a> 
-<a class="jxr_linenumber" name="268" href="#268">268</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="269" href="#269">269</a> <em class="jxr_javadoccomment">     * Decode authn request xml.</em>
-<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">     * @param encodedRequestXmlString the encoded request xml string</em>
-<a class="jxr_linenumber" name="272" href="#272">272</a> <em class="jxr_javadoccomment">     * @return the request</em>
-<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="274" href="#274">274</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String decodeAuthnRequestXML(
-<a class="jxr_linenumber" name="275" href="#275">275</a>             <strong class="jxr_keyword">final</strong> String encodedRequestXmlString) {
-<a class="jxr_linenumber" name="276" href="#276">276</a>         <strong class="jxr_keyword">if</strong> (encodedRequestXmlString == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="277" href="#277">277</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="278" href="#278">278</a>         }
+<a class="jxr_linenumber" name="256" href="#256">256</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; bytes.length; i++) {
+<a class="jxr_linenumber" name="257" href="#257">257</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> left = bytes[i] &gt;&gt; 4 &amp; 0x0f;
+<a class="jxr_linenumber" name="258" href="#258">258</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> right = bytes[i] &amp; 0x0f;
+<a class="jxr_linenumber" name="259" href="#259">259</a>             chars[i * 2] = CHAR_MAPPINGS[left];
+<a class="jxr_linenumber" name="260" href="#260">260</a>             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
+<a class="jxr_linenumber" name="261" href="#261">261</a>         }
+<a class="jxr_linenumber" name="262" href="#262">262</a> 
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">return</strong> String.valueOf(chars);
+<a class="jxr_linenumber" name="264" href="#264">264</a>     }
+<a class="jxr_linenumber" name="265" href="#265">265</a> 
+<a class="jxr_linenumber" name="266" href="#266">266</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="267" href="#267">267</a> <em class="jxr_javadoccomment">     * Decode authn request xml.</em>
+<a class="jxr_linenumber" name="268" href="#268">268</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="269" href="#269">269</a> <em class="jxr_javadoccomment">     * @param encodedRequestXmlString the encoded request xml string</em>
+<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">     * @return the request</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="272" href="#272">272</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String decodeAuthnRequestXML(
+<a class="jxr_linenumber" name="273" href="#273">273</a>             <strong class="jxr_keyword">final</strong> String encodedRequestXmlString) {
+<a class="jxr_linenumber" name="274" href="#274">274</a>         <strong class="jxr_keyword">if</strong> (encodedRequestXmlString == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="275" href="#275">275</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="276" href="#276">276</a>         }
+<a class="jxr_linenumber" name="277" href="#277">277</a> 
+<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">final</strong> byte[] decodedBytes = base64Decode(encodedRequestXmlString);
 <a class="jxr_linenumber" name="279" href="#279">279</a> 
-<a class="jxr_linenumber" name="280" href="#280">280</a>         <strong class="jxr_keyword">final</strong> byte[] decodedBytes = base64Decode(encodedRequestXmlString);
-<a class="jxr_linenumber" name="281" href="#281">281</a> 
-<a class="jxr_linenumber" name="282" href="#282">282</a>         <strong class="jxr_keyword">if</strong> (decodedBytes == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="283" href="#283">283</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="284" href="#284">284</a>         }
+<a class="jxr_linenumber" name="280" href="#280">280</a>         <strong class="jxr_keyword">if</strong> (decodedBytes == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="281" href="#281">281</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="282" href="#282">282</a>         }
+<a class="jxr_linenumber" name="283" href="#283">283</a> 
+<a class="jxr_linenumber" name="284" href="#284">284</a>         <strong class="jxr_keyword">final</strong> String inflated = inflate(decodedBytes);
 <a class="jxr_linenumber" name="285" href="#285">285</a> 
-<a class="jxr_linenumber" name="286" href="#286">286</a>         <strong class="jxr_keyword">final</strong> String inflated = inflate(decodedBytes);
-<a class="jxr_linenumber" name="287" href="#287">287</a> 
-<a class="jxr_linenumber" name="288" href="#288">288</a>         <strong class="jxr_keyword">if</strong> (inflated != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="289" href="#289">289</a>             <strong class="jxr_keyword">return</strong> inflated;
-<a class="jxr_linenumber" name="290" href="#290">290</a>         }
-<a class="jxr_linenumber" name="291" href="#291">291</a> 
-<a class="jxr_linenumber" name="292" href="#292">292</a>         <strong class="jxr_keyword">return</strong> zlibDeflate(decodedBytes);
-<a class="jxr_linenumber" name="293" href="#293">293</a>     }
-<a class="jxr_linenumber" name="294" href="#294">294</a> 
-<a class="jxr_linenumber" name="295" href="#295">295</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a> <em class="jxr_javadoccomment">     * Deflate the given bytes using zlib.</em>
-<a class="jxr_linenumber" name="297" href="#297">297</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="298" href="#298">298</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="299" href="#299">299</a> <em class="jxr_javadoccomment">     * @return the converted string</em>
-<a class="jxr_linenumber" name="300" href="#300">300</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="301" href="#301">301</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String zlibDeflate(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="302" href="#302">302</a>         <strong class="jxr_keyword">final</strong> ByteArrayInputStream bais = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes);
-<a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream baos = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="304" href="#304">304</a>         <strong class="jxr_keyword">final</strong> InflaterInputStream iis = <strong class="jxr_keyword">new</strong> InflaterInputStream(bais);
-<a class="jxr_linenumber" name="305" href="#305">305</a>         <strong class="jxr_keyword">final</strong> byte[] buf = <strong class="jxr_keyword">new</strong> byte[1024];
-<a class="jxr_linenumber" name="306" href="#306">306</a> 
-<a class="jxr_linenumber" name="307" href="#307">307</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="308" href="#308">308</a>             <strong class="jxr_keyword">int</strong> count = iis.read(buf);
-<a class="jxr_linenumber" name="309" href="#309">309</a>             <strong class="jxr_keyword">while</strong> (count != -1) {
-<a class="jxr_linenumber" name="310" href="#310">310</a>                 baos.write(buf, 0, count);
-<a class="jxr_linenumber" name="311" href="#311">311</a>                 count = iis.read(buf);
-<a class="jxr_linenumber" name="312" href="#312">312</a>             }
-<a class="jxr_linenumber" name="313" href="#313">313</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(baos.toByteArray());
-<a class="jxr_linenumber" name="314" href="#314">314</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="315" href="#315">315</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="316" href="#316">316</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="317" href="#317">317</a>             IOUtils.closeQuietly(iis);
-<a class="jxr_linenumber" name="318" href="#318">318</a>         }
-<a class="jxr_linenumber" name="319" href="#319">319</a>     }
-<a class="jxr_linenumber" name="320" href="#320">320</a> 
-<a class="jxr_linenumber" name="321" href="#321">321</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="322" href="#322">322</a> <em class="jxr_javadoccomment">     * Base64 decode.</em>
-<a class="jxr_linenumber" name="323" href="#323">323</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="324" href="#324">324</a> <em class="jxr_javadoccomment">     * @param xml the xml</em>
-<a class="jxr_linenumber" name="325" href="#325">325</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
-<a class="jxr_linenumber" name="326" href="#326">326</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="327" href="#327">327</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] base64Decode(<strong class="jxr_keyword">final</strong> String xml) {
-<a class="jxr_linenumber" name="328" href="#328">328</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="329" href="#329">329</a>             <strong class="jxr_keyword">final</strong> byte[] xmlBytes = xml.getBytes(<span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="330" href="#330">330</a>             <strong class="jxr_keyword">return</strong> Base64.decodeBase64(xmlBytes);
-<a class="jxr_linenumber" name="331" href="#331">331</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="332" href="#332">332</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="333" href="#333">333</a>         }
-<a class="jxr_linenumber" name="334" href="#334">334</a>     }
-<a class="jxr_linenumber" name="335" href="#335">335</a> 
-<a class="jxr_linenumber" name="336" href="#336">336</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="337" href="#337">337</a> <em class="jxr_javadoccomment">     * Inflate the given byte array.</em>
-<a class="jxr_linenumber" name="338" href="#338">338</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">     * @return the string</em>
-<a class="jxr_linenumber" name="341" href="#341">341</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="342" href="#342">342</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String inflate(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="343" href="#343">343</a>         <strong class="jxr_keyword">final</strong> Inflater inflater = <strong class="jxr_keyword">new</strong> Inflater(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="344" href="#344">344</a>         <strong class="jxr_keyword">final</strong> byte[] xmlMessageBytes = <strong class="jxr_keyword">new</strong> byte[10000];
-<a class="jxr_linenumber" name="345" href="#345">345</a> 
-<a class="jxr_linenumber" name="346" href="#346">346</a>         <strong class="jxr_keyword">final</strong> byte[] extendedBytes = <strong class="jxr_keyword">new</strong> byte[bytes.length + 1];
-<a class="jxr_linenumber" name="347" href="#347">347</a>         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-<a class="jxr_linenumber" name="348" href="#348">348</a>         extendedBytes[bytes.length] = 0;
+<a class="jxr_linenumber" name="286" href="#286">286</a>         <strong class="jxr_keyword">if</strong> (inflated != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="287" href="#287">287</a>             <strong class="jxr_keyword">return</strong> inflated;
+<a class="jxr_linenumber" name="288" href="#288">288</a>         }
+<a class="jxr_linenumber" name="289" href="#289">289</a> 
+<a class="jxr_linenumber" name="290" href="#290">290</a>         <strong class="jxr_keyword">return</strong> zlibDeflate(decodedBytes);
+<a class="jxr_linenumber" name="291" href="#291">291</a>     }
+<a class="jxr_linenumber" name="292" href="#292">292</a> 
+<a class="jxr_linenumber" name="293" href="#293">293</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="294" href="#294">294</a> <em class="jxr_javadoccomment">     * Deflate the given bytes using zlib.</em>
+<a class="jxr_linenumber" name="295" href="#295">295</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="296" href="#296">296</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
+<a class="jxr_linenumber" name="297" href="#297">297</a> <em class="jxr_javadoccomment">     * @return the converted string</em>
+<a class="jxr_linenumber" name="298" href="#298">298</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="299" href="#299">299</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String zlibDeflate(<strong class="jxr_keyword">final</strong> byte[] bytes) {
+<a class="jxr_linenumber" name="300" href="#300">300</a>         <strong class="jxr_keyword">final</strong> ByteArrayInputStream bais = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes);
+<a class="jxr_linenumber" name="301" href="#301">301</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream baos = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="302" href="#302">302</a>         <strong class="jxr_keyword">final</strong> InflaterInputStream iis = <strong class="jxr_keyword">new</strong> InflaterInputStream(bais);
+<a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">final</strong> byte[] buf = <strong class="jxr_keyword">new</strong> byte[1024];
+<a class="jxr_linenumber" name="304" href="#304">304</a> 
+<a class="jxr_linenumber" name="305" href="#305">305</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="306" href="#306">306</a>             <strong class="jxr_keyword">int</strong> count = iis.read(buf);
+<a class="jxr_linenumber" name="307" href="#307">307</a>             <strong class="jxr_keyword">while</strong> (count != -1) {
+<a class="jxr_linenumber" name="308" href="#308">308</a>                 baos.write(buf, 0, count);
+<a class="jxr_linenumber" name="309" href="#309">309</a>                 count = iis.read(buf);
+<a class="jxr_linenumber" name="310" href="#310">310</a>             }
+<a class="jxr_linenumber" name="311" href="#311">311</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(baos.toByteArray());
+<a class="jxr_linenumber" name="312" href="#312">312</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="313" href="#313">313</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="314" href="#314">314</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="315" href="#315">315</a>             IOUtils.closeQuietly(iis);
+<a class="jxr_linenumber" name="316" href="#316">316</a>         }
+<a class="jxr_linenumber" name="317" href="#317">317</a>     }
+<a class="jxr_linenumber" name="318" href="#318">318</a> 
+<a class="jxr_linenumber" name="319" href="#319">319</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="320" href="#320">320</a> <em class="jxr_javadoccomment">     * Base64 decode.</em>
+<a class="jxr_linenumber" name="321" href="#321">321</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="322" href="#322">322</a> <em class="jxr_javadoccomment">     * @param xml the xml</em>
+<a class="jxr_linenumber" name="323" href="#323">323</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
+<a class="jxr_linenumber" name="324" href="#324">324</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="325" href="#325">325</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] base64Decode(<strong class="jxr_keyword">final</strong> String xml) {
+<a class="jxr_linenumber" name="326" href="#326">326</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="327" href="#327">327</a>             <strong class="jxr_keyword">final</strong> byte[] xmlBytes = xml.getBytes(<span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="328" href="#328">328</a>             <strong class="jxr_keyword">return</strong> Base64.decodeBase64(xmlBytes);
+<a class="jxr_linenumber" name="329" href="#329">329</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="330" href="#330">330</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="331" href="#331">331</a>         }
+<a class="jxr_linenumber" name="332" href="#332">332</a>     }
+<a class="jxr_linenumber" name="333" href="#333">333</a> 
+<a class="jxr_linenumber" name="334" href="#334">334</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="335" href="#335">335</a> <em class="jxr_javadoccomment">     * Inflate the given byte array.</em>
+<a class="jxr_linenumber" name="336" href="#336">336</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="337" href="#337">337</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
+<a class="jxr_linenumber" name="338" href="#338">338</a> <em class="jxr_javadoccomment">     * @return the string</em>
+<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="340" href="#340">340</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String inflate(<strong class="jxr_keyword">final</strong> byte[] bytes) {
+<a class="jxr_linenumber" name="341" href="#341">341</a>         <strong class="jxr_keyword">final</strong> Inflater inflater = <strong class="jxr_keyword">new</strong> Inflater(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="342" href="#342">342</a>         <strong class="jxr_keyword">final</strong> byte[] xmlMessageBytes = <strong class="jxr_keyword">new</strong> byte[10000];
+<a class="jxr_linenumber" name="343" href="#343">343</a> 
+<a class="jxr_linenumber" name="344" href="#344">344</a>         <strong class="jxr_keyword">final</strong> byte[] extendedBytes = <strong class="jxr_keyword">new</strong> byte[bytes.length + 1];
+<a class="jxr_linenumber" name="345" href="#345">345</a>         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
+<a class="jxr_linenumber" name="346" href="#346">346</a>         extendedBytes[bytes.length] = 0;
+<a class="jxr_linenumber" name="347" href="#347">347</a> 
+<a class="jxr_linenumber" name="348" href="#348">348</a>         inflater.setInput(extendedBytes);
 <a class="jxr_linenumber" name="349" href="#349">349</a> 
-<a class="jxr_linenumber" name="350" href="#350">350</a>         inflater.setInput(extendedBytes);
-<a class="jxr_linenumber" name="351" href="#351">351</a> 
-<a class="jxr_linenumber" name="352" href="#352">352</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="353" href="#353">353</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> resultLength = inflater.inflate(xmlMessageBytes);
-<a class="jxr_linenumber" name="354" href="#354">354</a>             inflater.end();
-<a class="jxr_linenumber" name="355" href="#355">355</a> 
-<a class="jxr_linenumber" name="356" href="#356">356</a>             <strong class="jxr_keyword">if</strong> (!inflater.finished()) {
-<a class="jxr_linenumber" name="357" href="#357">357</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"buffer not large enough."</span>);
-<a class="jxr_linenumber" name="358" href="#358">358</a>             }
-<a class="jxr_linenumber" name="359" href="#359">359</a> 
-<a class="jxr_linenumber" name="360" href="#360">360</a>             inflater.end();
-<a class="jxr_linenumber" name="361" href="#361">361</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(xmlMessageBytes, 0, resultLength, <span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="362" href="#362">362</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> DataFormatException e) {
-<a class="jxr_linenumber" name="363" href="#363">363</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="364" href="#364">364</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> UnsupportedEncodingException e) {
-<a class="jxr_linenumber" name="365" href="#365">365</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Cannot find encoding: UTF-8"</span>, e);
-<a class="jxr_linenumber" name="366" href="#366">366</a>         }
-<a class="jxr_linenumber" name="367" href="#367">367</a>     }
-<a class="jxr_linenumber" name="368" href="#368">368</a> }
+<a class="jxr_linenumber" name="350" href="#350">350</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="351" href="#351">351</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> resultLength = inflater.inflate(xmlMessageBytes);
+<a class="jxr_linenumber" name="352" href="#352">352</a>             inflater.end();
+<a class="jxr_linenumber" name="353" href="#353">353</a> 
+<a class="jxr_linenumber" name="354" href="#354">354</a>             <strong class="jxr_keyword">if</strong> (!inflater.finished()) {
+<a class="jxr_linenumber" name="355" href="#355">355</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"buffer not large enough."</span>);
+<a class="jxr_linenumber" name="356" href="#356">356</a>             }
+<a class="jxr_linenumber" name="357" href="#357">357</a> 
+<a class="jxr_linenumber" name="358" href="#358">358</a>             inflater.end();
+<a class="jxr_linenumber" name="359" href="#359">359</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(xmlMessageBytes, 0, resultLength, <span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="360" href="#360">360</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> DataFormatException e) {
+<a class="jxr_linenumber" name="361" href="#361">361</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="362" href="#362">362</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> UnsupportedEncodingException e) {
+<a class="jxr_linenumber" name="363" href="#363">363</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Cannot find encoding: UTF-8"</span>, e);
+<a class="jxr_linenumber" name="364" href="#364">364</a>         }
+<a class="jxr_linenumber" name="365" href="#365">365</a>     }
+<a class="jxr_linenumber" name="366" href="#366">366</a>    
+<a class="jxr_linenumber" name="367" href="#367">367</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
