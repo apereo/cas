@@ -24,9 +24,10 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
 import org.apache.commons.io.IOUtils;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.core.io.Resource;
 
@@ -62,15 +63,18 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /** {@inheritDoc} */
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
         try {
+            
+            final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (passwordOnRecord == null) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
-            if (password != null && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
-                return new SimplePrincipal(username);
+            if (credential.getPassword() != null
+                    && this.getPasswordEncoder().encode(credential.getPassword()).equals(passwordOnRecord)) {
+                return createHandlerResult(credential, new SimplePrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
@@ -92,6 +96,13 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         this.separator = separator;
     }
 
+    /**
+     * Gets the password on record.
+     *
+     * @param username the username
+     * @return the password on record
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private String getPasswordOnRecord(final String username) throws IOException {
         BufferedReader bufferedReader = null;
         try {

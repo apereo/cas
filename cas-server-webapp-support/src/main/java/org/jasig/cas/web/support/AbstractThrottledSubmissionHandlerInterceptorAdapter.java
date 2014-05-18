@@ -91,7 +91,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
 
         if (context == null || context.getCurrentEvent() == null) {
             return;
@@ -134,12 +134,28 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         return this.usernameParameter;
     }
 
+    /**
+     * Record throttling event.
+     *
+     * @param request the request
+     */
     protected void recordThrottle(final HttpServletRequest request) {
         logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
                 new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
     }
 
+    /**
+     * Record submission failure.
+     *
+     * @param request the request
+     */
     protected abstract void recordSubmissionFailure(HttpServletRequest request);
 
+    /**
+     * Determine whether threshold has been exceeded.
+     *
+     * @param request the request
+     * @return true, if successful
+     */
     protected abstract boolean exceedsThreshold(HttpServletRequest request);
 }

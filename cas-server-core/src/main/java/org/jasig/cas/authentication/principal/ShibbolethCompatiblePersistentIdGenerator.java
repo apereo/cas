@@ -39,6 +39,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
     @NotNull
     private byte[] salt;
 
+    @Override
     public String generate(final Principal principal, final Service service) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");

@@ -281,6 +281,15 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
         private boolean followRedirects;
 
+        /**
+         * Instantiates a new message sender.
+         *
+         * @param url the url
+         * @param message the message
+         * @param readTimeout the read timeout
+         * @param connectionTimeout the connection timeout
+         * @param followRedirects the follow redirects
+         */
         public MessageSender(final String url, final String message, final int readTimeout,
                 final int connectionTimeout, final boolean followRedirects) {
             this.url = url;
@@ -290,6 +299,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             this.followRedirects = followRedirects;
         }
 
+        @Override
         public Boolean call() throws Exception {
             HttpURLConnection connection = null;
             BufferedReader in = null;
