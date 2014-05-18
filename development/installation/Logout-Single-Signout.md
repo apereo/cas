@@ -79,7 +79,8 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
-          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
+          p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
 {% endhighlight %}
 
 
@@ -91,6 +92,13 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 # slo.callbacks.disabled=false
 {% endhighlight %}
 
+###Aynchronous SLO Messages
+By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
+
+{% highlight bash %}
+# To send callbacks to endpoints synchronously, set this to false
+# slo.callbacks.asynchronous=true
+{% endhighlight %}
 
 ###Ticket Registry Cleaner Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
