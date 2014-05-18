@@ -34,7 +34,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,11 +160,9 @@ public final class LogoutManagerImpl implements LogoutManager {
         final byte[] output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
         return Base64.encodeBase64String(output);
-   }
-    
-        
-    /**
+    }
 
+    /**
      * Set if the logout is disabled.
      *
      * @param disableSingleSignOut if the logout is disabled.
