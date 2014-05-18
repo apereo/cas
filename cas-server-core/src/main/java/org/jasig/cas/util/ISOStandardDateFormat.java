@@ -18,40 +18,38 @@
  */
 package org.jasig.cas.util;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.time.FastDateFormat;
+
 /**
- * SAML date utilities.
- *
- * @author Scott Battaglia
- * @since 3.1
+ * A fast date format based on the ISO-8601 standard.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public final class SamlDateUtils {
+public final class ISOStandardDateFormat extends FastDateFormat {
 
+    private static final long serialVersionUID = 9196017562782775535L;
+
+    /** The ISO date format used by this formatter. */
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
     /**
-     * Instantiates a new SAML date utils.
+     * Instantiates a new ISO standard date format
+     * based on the format {@link #DATE_FORMAT}.
      */
-    private SamlDateUtils() {
-        // nothing to do
+    public ISOStandardDateFormat() {
+        super(DATE_FORMAT, null, null);
+        super.init();
     }
-
-    public static String getCurrentDateAndTime() {
-        return getFormattedDateAndTime(new Date());
-    }
-
+    
     /**
-     * Gets the formatted date and time based on the format <code>yyyy-MM-dd'T'HH:mm:ss'Z'</code>.
+     * Gets the current date and time
+     * formatted by the pattern specified.
      *
-     * @param date the date
-     * @return the formatted date and time
+     * @return the current date and time
      */
-    public static String getFormattedDateAndTime(final Date date) {
-        final DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        // Google Does not set this.
-        // dateFormat.setTimeZone(UTC_TIME_ZONE);
-        return dateFormat.format(date);
+    public String getCurrentDateAndTime() {
+        return format(new Date());
     }
 }
