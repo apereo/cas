@@ -32,6 +32,12 @@ public final class OpenIdCredential implements Credential {
 
     private final String username;
 
+    /**
+     * Instantiates a new OpenID credential.
+     *
+     * @param ticketGrantingTicketId the ticket granting ticket id
+     * @param username the username
+     */
     public OpenIdCredential(final String ticketGrantingTicketId, final String username) {
         this.ticketGrantingTicketId = ticketGrantingTicketId;
         this.username = username;
