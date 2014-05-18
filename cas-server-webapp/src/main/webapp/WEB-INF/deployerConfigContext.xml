@@ -148,8 +148,13 @@
             p:registeredServices-ref="registeredServicesList" />
 
     <util:list id="registeredServicesList">
+    	<bean class="org.jasig.cas.services.RegexRegisteredService"
+              p:id="0" p:name="Apereo" p:description="Apereo foundation sample service"
+              p:serviceId="^http://www.apereo.org" p:evaluationOrder="0"
+              p:theme="apereo" />
+
         <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+              p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
               p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
         <!--
         Use the following definition instead of the above to further restrict access

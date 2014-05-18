@@ -20,6 +20,34 @@
 --%>
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
+<style type="text/css">
+    table {
+        border:0px none;
+        border-collapse:collapse;
+        empty-cells:show;
+        background-color:#fff;
+        font-size:1.1em;
+        border-collapse:separate; 
+        border-spacing: 0px;
+    }
+
+    th {
+        background:#eee;
+        color:#666;
+        padding:3px 5px;
+        text-align:left;
+        font-weight:normal;
+        line-height: 24px;
+    }
+        
+
+    td {
+        padding:3px 5px;
+        border-bottom:1px solid #eee;
+        height:38px;
+    }
+</style>
+
 <h2>Runtime Statistics</h2>
 <table width="800">
     <thead>
