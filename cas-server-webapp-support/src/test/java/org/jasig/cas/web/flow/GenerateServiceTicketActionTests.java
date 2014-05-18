@@ -103,9 +103,9 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     @Test
     public void testTicketGrantingTicketExpiredTgt() throws Exception {
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
