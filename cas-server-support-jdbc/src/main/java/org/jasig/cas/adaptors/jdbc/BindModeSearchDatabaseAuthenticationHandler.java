@@ -50,9 +50,9 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             throws GeneralSecurityException, PreventedException {
 
         try {
-            
             final String username = credential.getUsername();
-            final Connection c = this.getDataSource().getConnection(username, credential.getPassword());
+            final String password = getPasswordEncoder().encode(credential.getPassword());
+            final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
             return createHandlerResult(credential, new SimplePrincipal(username), null);
         } catch (final SQLException e) {

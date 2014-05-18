@@ -41,6 +41,11 @@ import org.slf4j.LoggerFactory;
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Instantiates a new registered service regex attribute filter.
+     *
+     * @param regex the regex
+     */
     public RegisteredServiceRegexAttributeFilter(final String regex) {
         this.pattern = Pattern.compile(regex);
     }
@@ -102,6 +107,12 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         return attributesToRelease;
     }
 
+    /**
+     * Filter map attributes based on the values given.
+     *
+     * @param valuesToFilter the values to filter
+     * @return the map
+     */
     private Map<String, String> filterMapAttributes(final Map<String, String> valuesToFilter) {
         final Map<String, String> attributesToFilter = new HashMap<String, String>(valuesToFilter.size());
         for (final String attributeName : valuesToFilter.keySet()) {
@@ -114,10 +125,23 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         return attributesToFilter;
     }
 
+    /**
+     * Determine whether pattern matches attribute value.
+     *
+     * @param value the value
+     * @return true, if successful
+     */
     private boolean patternMatchesAttributeValue(final String value) {
         return this.pattern.matcher(value).matches();
     }
 
+    /**
+     * Filter array attributes.
+     *
+     * @param valuesToFilter the values to filter
+     * @param attributeName the attribute name
+     * @return the string[]
+     */
     private String[] filterArrayAttributes(final String[] valuesToFilter, final String attributeName) {
         final Vector<String> vector = new Vector<String>(valuesToFilter.length);
         for (final String attributeValue : valuesToFilter) {
@@ -129,6 +153,12 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         return vector.toArray(new String[] {});
     }
 
+    /**
+     * Logs the released attribute entry.
+     *
+     * @param attributeName the attribute name
+     * @param attributeValue the attribute value
+     */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
         logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
