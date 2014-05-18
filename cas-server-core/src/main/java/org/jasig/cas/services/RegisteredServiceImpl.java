@@ -46,10 +46,12 @@ public class RegisteredServiceImpl extends AbstractRegisteredService {
         this.serviceId = id;
     }
 
+    @Override
     public boolean matches(final Service service) {
         return service != null && PATH_MATCHER.match(serviceId.toLowerCase(), service.getId().toLowerCase());
     }
 
+    @Override
     protected AbstractRegisteredService newInstance() {
         return new RegisteredServiceImpl();
     }

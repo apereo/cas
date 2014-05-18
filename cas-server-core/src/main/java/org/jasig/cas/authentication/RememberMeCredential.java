@@ -34,7 +34,17 @@ public interface RememberMeCredential extends Credential {
     /** Request parameter name. **/
     String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
 
+    /**
+     * Checks if remember-me is enabled.
+     *
+     * @return true, if  remember me
+     */
     boolean isRememberMe();
 
+    /**
+     * Sets the remember me.
+     *
+     * @param rememberMe the new remember me
+     */
     void setRememberMe(boolean rememberMe);
 }

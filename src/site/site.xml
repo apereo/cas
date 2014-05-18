@@ -57,14 +57,9 @@
         <breadcrumbs>
           <item name="Home" href="${project.url}"/>
         </breadcrumbs>
-
-        <menu name="Documentation">
-          <item name="CAS User Manual" href="casum/html/chunked/index.html" />
-          <item name="CAS User Manual (Single Page)" href="casum/html/single/manual.html" />
-        </menu>
         
-		<menu ref="parent" />
+        <menu ref="parent" />
         <menu ref="reports" name="Reports" />
-		<menu ref="modules" name="Modules" />
+        <menu ref="modules" name="Modules" />
     </body>
 </project>

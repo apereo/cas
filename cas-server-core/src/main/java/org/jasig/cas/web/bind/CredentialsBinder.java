@@ -30,12 +30,7 @@ import org.jasig.cas.authentication.Credential;
  * HttpServletRequest to the Credential.
  *
  * @author Scott Battaglia
-
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
- *
  * @deprecated Future versions of CAS will provide a mechanism to gain access to standard items from the Request object.
  */
 @Deprecated

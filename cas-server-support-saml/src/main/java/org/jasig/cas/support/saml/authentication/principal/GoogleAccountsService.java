@@ -109,11 +109,33 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String alternateUserName;
 
+    /**
+     * Instantiates a new google accounts service.
+     *
+     * @param id the id
+     * @param relayState the relay state
+     * @param requestId the request id
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
         this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
+    /**
+     * Instantiates a new google accounts service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param relayState the relay state
+     * @param requestId the request id
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     */
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
@@ -125,6 +147,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.alternateUserName = alternateUserName;
     }
 
+    /**
+     * Creates the service from request.
+     *
+     * @param request the request
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     * @return the google accounts service
+     */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
             final PublicKey publicKey, final String alternateUserName) {
@@ -173,6 +204,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return true;
     }
 
+    /**
+     * Construct SAML response.
+     *
+     * @return the SAML response
+     */
     private String constructSamlResponse() {
         String samlResponse = TEMPLATE_SAML_RESPONSE;
 
@@ -206,6 +242,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return samlResponse;
     }
 
+    /**
+     * Creates the SAML id.
+     *
+     * @return the id
+     */
     private static String createID() {
         final byte[] bytes = new byte[20]; // 160 bits
         RANDOM_GENERATOR.nextBytes(bytes);
@@ -213,8 +254,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final char[] chars = new char[40];
 
         for (int i = 0; i < bytes.length; i++) {
-            int left = bytes[i] >> 4 & 0x0f;
-            int right = bytes[i] & 0x0f;
+            final int left = bytes[i] >> 4 & 0x0f;
+            final int right = bytes[i] & 0x0f;
             chars[i * 2] = CHAR_MAPPINGS[left];
             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
         }
@@ -222,6 +263,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return String.valueOf(chars);
     }
 
+    /**
+     * Decode authn request xml.
+     *
+     * @param encodedRequestXmlString the encoded request xml string
+     * @return the request
+     */
     private static String decodeAuthnRequestXML(
             final String encodedRequestXmlString) {
         if (encodedRequestXmlString == null) {
@@ -243,6 +290,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return zlibDeflate(decodedBytes);
     }
 
+    /**
+     * Deflate the given bytes using zlib.
+     *
+     * @param bytes the bytes
+     * @return the converted string
+     */
     private static String zlibDeflate(final byte[] bytes) {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -263,6 +316,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         }
     }
 
+    /**
+     * Base64 decode.
+     *
+     * @param xml the xml
+     * @return the byte[]
+     */
     private static byte[] base64Decode(final String xml) {
         try {
             final byte[] xmlBytes = xml.getBytes("UTF-8");
@@ -272,6 +331,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         }
     }
 
+    /**
+     * Inflate the given byte array.
+     *
+     * @param bytes the bytes
+     * @return the string
+     */
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
         final byte[] xmlMessageBytes = new byte[10000];

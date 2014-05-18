@@ -73,6 +73,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
     private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
 
+    /**
+     * Instantiates a new ticket granting ticket impl.
+     */
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
