@@ -101,6 +101,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /** System property value to overwrite the kdc in krb5 config. */
     private String kerberosKdcSystemProperty;
     
+    /**
+     * Instantiates a new Jaas authentication handler,
+     * and attempts to load/verify the configuration.
+     */
     public JaasAuthenticationHandler() {
         Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
@@ -156,7 +160,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
      * @since 4.1
-     * @param kerberosRealmSystemProperty
+     * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
      */
@@ -176,7 +180,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
      * @since 4.1
-     * @param kerberosKdcSystemProperty
+     * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
      */
@@ -208,7 +212,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             final String password) {
             this.userName = userName;
             this.password = password;
-
         }
 
         @Override
