@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -31,6 +32,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jboss.cache.Cache;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -57,20 +59,26 @@ public final class JBossCacheTicketRegistryTests {
 
     private TicketRegistry ticketRegistry;
 
+    private ClassPathXmlApplicationContext context;
+    
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
     }
 
+    @After
+    public void shutdown() {
+        IOUtils.closeQuietly(this.context);
+    }
+    
     public TicketRegistry getNewTicketRegistry() throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+        this.context = new ClassPathXmlApplicationContext(
                 APPLICATION_CONTEXT_FILE_NAME);
         this.registry = (JBossCacheTicketRegistry) context
                 .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
 
         this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
         this.treeCache.removeNode("/ticket");
-
         return this.registry;
     }
 
@@ -227,7 +235,7 @@ public final class JBossCacheTicketRegistryTests {
         }
 
         try {
-            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                     "The size of the registry is not the same as the collection.",
                     ticketRegistryTickets.size(), tickets.size());
