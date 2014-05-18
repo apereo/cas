@@ -98,11 +98,14 @@
           p:salt="casrocks"/>
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
-        c:servicesManager-ref="servicesManager"
-        c:httpClient-ref="noRedirectHttpClient"
-        p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
-        p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
-       
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="noRedirectHttpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
+          p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
+    
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
         <constructor-arg index="0" ref="ticketRegistry"/>

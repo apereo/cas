@@ -44,10 +44,19 @@ public final class DefaultRandomStringGenerator implements
     /** The maximum length the random string can be. */
     private final int maximumRandomLength;
 
+    /**
+     * Instantiates a new default random string generator
+     * with length set to {@link #DEFAULT_MAX_RANDOM_LENGTH}.
+     */
     public DefaultRandomStringGenerator() {
         this.maximumRandomLength = DEFAULT_MAX_RANDOM_LENGTH;
     }
 
+    /**
+     * Instantiates a new default random string generator.
+     *
+     * @param maxRandomLength the max random length
+     */
     public DefaultRandomStringGenerator(final int maxRandomLength) {
         this.maximumRandomLength = maxRandomLength;
     }
@@ -60,13 +69,14 @@ public final class DefaultRandomStringGenerator implements
         return this.maximumRandomLength;
     }
 
+    @Override
     public String getNewString() {
         final byte[] random = getNewStringAsBytes();
 
         return convertBytesToString(random);
     }
 
-
+    @Override
     public byte[] getNewStringAsBytes() {
         final byte[] random = new byte[this.maximumRandomLength];
 
@@ -75,6 +85,12 @@ public final class DefaultRandomStringGenerator implements
         return random;
     }
 
+    /**
+     * Convert bytes to string, taking into account {@link #PRINTABLE_CHARACTERS}.
+     *
+     * @param random the random
+     * @return the string
+     */
     private String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
         for (int i = 0; i < random.length; i++) {
