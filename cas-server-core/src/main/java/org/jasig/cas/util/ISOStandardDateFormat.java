@@ -25,23 +25,31 @@ import org.apache.commons.lang.time.FastDateFormat;
 /**
  * A fast date format based on the ISO-8601 standard.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public final class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;
-     * Instantiates a new SAML date utils.
-     */
 
+    /** The ISO date format used by this formatter. */
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
+    /**
+     * Instantiates a new ISO standard date format
+     * based on the format {@link #DATE_FORMAT}.
+     */
     public ISOStandardDateFormat() {
-        super("yyyy-MM-dd'T'HH:mm:ss'Z'", null, null);
+        super(DATE_FORMAT, null, null);
         super.init();
     }
     
+    /**
+     * Gets the current date and time
+     * formatted by the pattern specified.
+     *
+     * @return the current date and time
+     */
     public String getCurrentDateAndTime() {
         return format(new Date());
-     *
-     * @param date the date
-     * @return the formatted date and time
-     */
     }
 }
