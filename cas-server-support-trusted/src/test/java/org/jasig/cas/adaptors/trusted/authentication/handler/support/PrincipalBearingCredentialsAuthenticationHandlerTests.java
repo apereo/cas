@@ -38,13 +38,13 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
      */
     @Test
     public void testNonNullPrincipal() throws Exception {
-        PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
     public void testSupports() {
-        PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }
