@@ -144,7 +144,8 @@ public final class LogoutManagerImpl implements LogoutManager {
         request.getService().setLoggedOutAlready(true);
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        return this.httpClient.sendMessageToEndPoint(service.getOriginalUrl(), logoutRequest, this.issueAsynchronousCallbacks);
+        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(),
+                logoutRequest, this.issueAsynchronousCallbacks);
         
     }
 
