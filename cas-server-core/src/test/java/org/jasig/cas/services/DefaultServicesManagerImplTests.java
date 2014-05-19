@@ -156,8 +156,7 @@ public class DefaultServicesManagerImplTests  {
         r.setName("regex test");
         r.setServiceId("^http://www.test.edu.+");
         r.setEvaluationOrder(10000);
-        r.setCaseSensitive(false);
-        
+                
         this.defaultServicesManagerImpl.save(r);
 
         final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
