@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import java.nio.ByteBuffer;
 import java.io.UnsupportedEncodingException;
-import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +28,7 @@ import java.security.spec.KeySpec;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -59,6 +59,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
+    private static final int INTEGER_LEN = 4;
+
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f'};
 
@@ -77,12 +79,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private final Key key;
 
     @NotNull
+    private int ivSize;
+
+    @NotNull
     private final String secretKeyAlgorithm;
 
     private boolean cloneNotSupported;
-
-    private ConcurrentHashMap<Object, IvParameterSpec> algorithmParametersHashMap =
-            new ConcurrentHashMap<Object, IvParameterSpec>();
 
     /**
      * Decorates a map using the default algorithm {@link #DEFAULT_HASH_ALGORITHM} and a
@@ -151,8 +153,20 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         this.salt = salt;
         this.secretKeyAlgorithm = secretKeyAlgorithm;
         this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
+
+        try {
+            this.ivSize = getIvSize();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * Gets the random salt.
+     *
+     * @param size the size
+     * @return the random salt
+     */
     private static String getRandomSalt(final int size) {
         final SecureRandom secureRandom = new SecureRandom();
         final byte[] bytes = new byte[size];
@@ -236,6 +250,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Construct hashed key.
+     *
+     * @param key the key
+     * @return the string
+     */
     protected String constructHashedKey(final String key) {
         if (key == null) {
             return null;
@@ -243,13 +263,20 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(this.salt);
-        messageDigest.update(key.getBytes());
+        messageDigest.update(key.toLowerCase().getBytes());
         final String hash = getFormattedText(messageDigest.digest());
 
         logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
         return hash;
     }
 
+    /**
+     * Decrypt the value.
+     *
+     * @param value the value
+     * @param hashedKey the hashed key
+     * @return the string
+     */
     protected String decrypt(final String value, final String hashedKey) {
         if (value == null) {
             return null;
@@ -257,27 +284,83 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-
-            byte[] ivByteArray = algorithmParametersHashMap.get(hashedKey).getIV();
-            IvParameterSpec ivSpec = new IvParameterSpec(ivByteArray);
-
+            final byte[] ivCiphertext = decode(value.getBytes());
+            final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
+            final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
+            final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
+            final IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
+            
             cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] decrypted64ByteValue = new Base64().decode(valueByteArray);
-            byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
+            final byte[] plaintext = cipher.doFinal(ciphertext);
 
-            return new String(decryptedByteArray);
-
+            return new String(plaintext);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Gets the iv size.
+     *
+     * @return the iv size
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     * @throws NoSuchPaddingException the no such padding exception
+     */
+    private int getIvSize() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return getCipherObject().getBlockSize();
+    }
+
+    /**
+     * Generate iv.
+     *
+     * @param size the size
+     * @return the iv value
+     */
+    private static byte[] generateIV(final int size) {
+        final SecureRandom srand = new SecureRandom();
+        final byte[] ivValue = new byte[size];
+        srand.nextBytes(ivValue);
+        return ivValue;
+    }
+
+    /**
+     * Encode.
+     *
+     * @param bytes the bytes
+     * @return the byte[]
+     */
+    private static byte[] encode(final byte[] bytes) {
+        return new Base64().encode(bytes);
+    }
+
+    /**
+     * Decode.
+     *
+     * @param bytes the bytes
+     * @return the byte[]
+     */
+    private static byte[] decode(final byte[] bytes) {
+        return new Base64().decode(bytes);
+    }
+
+    /**
+     * Encrypt.
+     *
+     * @param value the value
+     * @return the string
+     */
     protected String encrypt(final String value) {
         return encrypt(value, null);
     }
 
+    /**
+     * Encrypt.
+     *
+     * @param value the value
+     * @param hashedKey the hashed key
+     * @return the string
+     */
     protected String encrypt(final String value, final String hashedKey) {
         if (value == null) {
             return null;
@@ -285,28 +368,64 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            cipher.init(Cipher.ENCRYPT_MODE, this.key);
-            AlgorithmParameters params = cipher.getParameters();
+            final byte[] ivValue = generateIV(this.ivSize);
+            final IvParameterSpec ivSpec = new IvParameterSpec(ivValue);
 
-            if (hashedKey != null) {
-                algorithmParametersHashMap.put(hashedKey, params.getParameterSpec(IvParameterSpec.class));
-            }
+            cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
+            
+            final byte[] ciphertext = cipher.doFinal(value.getBytes());
+            final byte[] ivCiphertext = new byte[INTEGER_LEN + this.ivSize + ciphertext.length];
 
-            byte[] valueByteArray = value.getBytes();
-            byte[] encryptedByteArray = cipher.doFinal(valueByteArray);
-            byte[] encrypted64ByteValue = new Base64().encode(encryptedByteArray);
+            System.arraycopy(int2byte(this.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
+            System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
+            System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return new String(encrypted64ByteValue);
-
-        } catch (final Exception e) {
+            return new String(encode(ivCiphertext));
+        } catch(final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Int to byte.
+     *
+     * @param i the i
+     * @return the byte[]
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    protected static byte[] int2byte(final int i) throws UnsupportedEncodingException {
+        return ByteBuffer.allocate(4).putInt(i).array();
+    }
+
+    /**
+     * Byte to int.
+     *
+     * @param bytes the bytes
+     * @return the int
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    protected static int byte2int(final byte[] bytes) throws UnsupportedEncodingException {
+        return ByteBuffer.wrap(bytes).getInt();
+    }
+
+    /**
+     * Byte to char.
+     *
+     * @param bytes the bytes
+     * @return the string
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
     protected static String byte2char(final byte[] bytes) throws UnsupportedEncodingException {
         return new String(bytes, "UTF-8");
     }
 
+    /**
+     * Char to byte.
+     *
+     * @param chars the chars
+     * @return the byte[]
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
     protected static byte[] char2byte(final String chars) throws UnsupportedEncodingException {
         return chars.getBytes("UTF-8");
     }
@@ -360,17 +479,35 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return buf.toString();
     }
 
+    /**
+     * Gets the cipher object for the {@link #CIPHER_ALGORITHM}.
+     *
+     * @return the cipher object
+     * @throws NoSuchAlgorithmException - if transformation is null, empty, in an invalid format, or if no Provider
+     * supports a CipherSpi implementation for the specified algorithm. 
+     * @throws NoSuchPaddingException - if transformation contains a padding scheme that is not available.
+     * @see Cipher#getInstance(String)
+     */
     private Cipher getCipherObject() throws NoSuchAlgorithmException, NoSuchPaddingException {
         return Cipher.getInstance(CIPHER_ALGORITHM);
     }
 
+    /**
+     * Gets the secret key.
+     *
+     * @param secretKeyAlgorithm the secret key algorithm
+     * @param secretKey the secret key
+     * @param salt the salt
+     * @return the secret key
+     * @throws Exception the exception
+     */
     private static Key getSecretKey(final String secretKeyAlgorithm, final String secretKey,
             final String salt) throws Exception {
 
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-        KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
-        SecretKey tmp = factory.generateSecret(spec);
-        SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
+        final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+        final KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
+        final SecretKey tmp = factory.generateSecret(spec);
+        final SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
 
         return secret;
     }

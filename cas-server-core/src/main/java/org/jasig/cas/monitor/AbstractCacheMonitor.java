@@ -59,7 +59,7 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
         this.evictionThreshold = count;
     }
 
-
+    @Override
     public CacheStatus observe() {
         CacheStatus status;
         try {
@@ -84,6 +84,11 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
     }
 
 
+    /**
+     * Gets the statistics from this monitor.
+     *
+     * @return the statistics
+     */
     protected abstract CacheStatistics[] getStatistics();
 
 

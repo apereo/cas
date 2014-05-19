@@ -79,9 +79,13 @@
     <property name="mappings">
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
+        <prop key="/proxyValidate">proxyValidateController</prop>
+        
+        <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
+        <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
+        
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
-        <prop key="/proxyValidate">proxyValidateController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
@@ -175,25 +179,34 @@
       </util:list>
     </property>
   </bean>
-
-  <bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+  
+  <!--  CAS 2 Protocol service/proxy validation -->     
+  <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
         p:argumentExtractor-ref="casArgumentExtractor"/>
+  
+  <bean id="proxyValidateController" parent="abstractValidateController"/>
 
-  <bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+  <bean id="serviceValidateController" parent="abstractValidateController"
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"/>
 
-  <bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+  <!--  CAS 3 Protocol service/proxy validation with attributes -->
+  <bean id="v3AbstractValidateController" parent="abstractValidateController" abstract="true"
+        p:successView="cas3ServiceSuccessView"
+        p:failureView="cas3ServiceFailureView" />
+        
+  <bean id="v3ProxyValidateController" parent="v3AbstractValidateController" />
+
+  <bean id="v3ServiceValidateController" parent="v3AbstractValidateController"
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"/>
+ 
+  <!--  CAS 1 legacy validation -->       
+  <bean id="legacyValidateController" parent="abstractValidateController"
         p:proxyHandler-ref="proxy10Handler"
         p:successView="cas1ServiceSuccessView"
         p:failureView="cas1ServiceFailureView"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"/>
 
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
@@ -218,7 +231,8 @@
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"
+        p:ticketRegistry-ref="ticketRegistry"/>
 
   <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
 

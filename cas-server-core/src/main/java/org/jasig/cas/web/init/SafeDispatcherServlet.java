@@ -71,6 +71,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     /** Boolean to determine if the application deployed successfully. */
     private boolean initSuccess = true;
 
+    @Override
     public void init(final ServletConfig config) {
         try {
             this.delegate.init(config);
@@ -95,7 +96,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
             LOGGER.error(message, t);
 
             // logger it to the ServletContext
-            ServletContext context = config.getServletContext();
+            final ServletContext context = config.getServletContext();
             context.log(message, t);
 
             /*
