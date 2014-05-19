@@ -118,6 +118,13 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         this.isNTLMallowed = isNTLMallowed;
     }
 
+    /**
+     * Gets the simple principal from the given name.
+     *
+     * @param name the name
+     * @param isNtlm the is ntlm
+     * @return the simple principal
+     */
     protected SimplePrincipal getSimplePrincipal(final String name, final boolean isNtlm) {
         if (this.principalWithDomainName) {
             return new SimplePrincipal(name);
