@@ -64,7 +64,7 @@ public abstract class AbstractRegistryCleanerTests {
     @Test
     public void testCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
-        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
+        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
 
@@ -75,7 +75,7 @@ public abstract class AbstractRegistryCleanerTests {
 
     private void populateRegistryWithExpiredTickets() {
         for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
+            final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
             ticket.markTicketExpired();
             this.ticketRegistry.addTicket(ticket);

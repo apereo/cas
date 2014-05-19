@@ -18,34 +18,38 @@
  */
 package org.jasig.cas.util;
 
-import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.FastDateFormat;
+
 /**
- * Utility class for calendar functions.
+ * A fast date format based on the ISO-8601 standard.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public final class CalendarUtils {
+public final class ISOStandardDateFormat extends FastDateFormat {
 
-    /** Array that defines week days by name, including one that is "undefined". **/
-    public static final String[] WEEKDAYS = new String[] {"UNDEFINED", "Sunday", "Monday",
-                                    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    private static final long serialVersionUID = 9196017562782775535L;
 
-    /** Constructor. **/
-    private CalendarUtils() {
-        // nothing to do
+    /** The ISO date format used by this formatter. */
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
+    /**
+     * Instantiates a new ISO standard date format
+     * based on the format {@link #DATE_FORMAT}.
+     */
+    public ISOStandardDateFormat() {
+        super(DATE_FORMAT, null, null);
+        super.init();
     }
-
-    public static int getCurrentDayOfWeek() {
-        return getCurrentDayOfWeekFor(new Date());
-    }
-
-    public static int getCurrentDayOfWeekFor(final Date date) {
-        return  getCalendarFor(date).get(Calendar.DAY_OF_WEEK);
-    }
-
-    public static Calendar getCalendarFor(final Date date) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
+    
+    /**
+     * Gets the current date and time
+     * formatted by the pattern specified.
+     *
+     * @return the current date and time
+     */
+    public String getCurrentDateAndTime() {
+        return format(new Date());
     }
 }
