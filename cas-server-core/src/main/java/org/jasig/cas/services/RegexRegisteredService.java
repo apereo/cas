@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.Service;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
 import java.util.regex.Pattern;
 
 /**
@@ -61,10 +62,17 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         return service != null && servicePattern.matcher(service.getId()).matches();
     }
 
+    @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
 
+    /**
+     * Creates the pattern.
+     *
+     * @param pattern the pattern, may not be null.
+     * @return the pattern
+     */
     private Pattern createPattern(final String pattern) {
         if (pattern == null) {
             throw new IllegalArgumentException("Pattern cannot be null.");

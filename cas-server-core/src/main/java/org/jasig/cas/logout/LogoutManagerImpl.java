@@ -63,8 +63,11 @@ public final class LogoutManagerImpl implements LogoutManager {
     private final LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
-    private boolean disableSingleSignOut = false;
+    private boolean singleLogoutCallbacksDisabled = false;
 
+    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
+    private boolean issueAsynchronousCallbacks = true;
+    
     /**
      * Build the logout manager.
      * @param servicesManager the services manager.
@@ -97,7 +100,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
         // if SLO is not disabled
-        if (!disableSingleSignOut) {
+        if (!this.singleLogoutCallbacksDisabled) {
             // through all services
             for (final String ticketId : services.keySet()) {
                 final Service service = services.get(ticketId);
@@ -141,7 +144,9 @@ public final class LogoutManagerImpl implements LogoutManager {
         request.getService().setLoggedOutAlready(true);
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(), logoutRequest, true);
+        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(),
+                logoutRequest, this.issueAsynchronousCallbacks);
+        
     }
 
     /**
@@ -165,9 +170,18 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Set if the logout is disabled.
      *
-     * @param disableSingleSignOut if the logout is disabled.
+     * @param singleLogoutCallbacksDisabled if the logout is disabled.
      */
-    public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
-        this.disableSingleSignOut = disableSingleSignOut;
+    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+    }
+    
+    /**
+     * Set if messages are sent in an asynchronous fashion.
+     *
+     * @param asyncCallbacks if message is synchronously sent
+     */
+    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
+        this.issueAsynchronousCallbacks = asyncCallbacks;
     }
 }

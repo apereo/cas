@@ -28,7 +28,7 @@ public class InvalidTicketExceptionTests {
 
     @Test
     public void testCodeNoThrowable() {
-        TicketException t = new InvalidTicketException("InvalidTicketId");
+        final TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
