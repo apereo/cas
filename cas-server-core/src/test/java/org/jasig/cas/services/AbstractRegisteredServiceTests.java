@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractRegisteredServiceTests {
 
-    private AbstractRegisteredService r = new AbstractRegisteredService() {
+    private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         public void setServiceId(final String id) {
@@ -51,9 +51,9 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void testAllowToProxyIsFalseByDefault() {
-        RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
+        final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.isAllowedToProxy());
-        RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
+        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
         assertFalse(registeredServiceImpl.isAllowedToProxy());
     }
 
