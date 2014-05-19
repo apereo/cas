@@ -52,7 +52,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
     @Before
     public void onSetUp() throws Exception {
-        StaticApplicationContext context = new StaticApplicationContext();
+        final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
@@ -179,7 +179,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService().grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService().getId());
         request.addParameter("ticket", sId);
         request.addParameter("pgtUrl", "duh");

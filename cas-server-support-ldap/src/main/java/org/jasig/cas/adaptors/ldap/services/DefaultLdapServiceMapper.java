@@ -235,6 +235,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);
     }
 
+    /**
+     * Checks if is valid regex pattern.
+     *
+     * @param pattern the pattern
+     * @return true, if  valid regex pattern
+     */
     private boolean isValidRegexPattern(final String pattern) {
         try {
             Pattern.compile(pattern);
@@ -245,6 +251,13 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return true;
     }
 
+    /**
+     * Gets the attribute values if more than one, otherwise an empty list.
+     *
+     * @param entry the entry
+     * @param attrName the attr name
+     * @return the collection of attribute values
+     */
     private Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
         final LdapAttribute attrs = entry.getAttribute(attrName);
         if (attrs != null) {
@@ -253,6 +266,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return Collections.emptyList();
     }
 
+    /**
+     * Gets the registered service by id that would either match an ant or regex pattern.
+     *
+     * @param id the id
+     * @return the registered service
+     */
     private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
         if (isValidRegexPattern(id)) {
             return new RegexRegisteredService();
