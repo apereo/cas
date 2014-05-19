@@ -36,7 +36,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     /**
      * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
-     * {@link org.jasig.cas.authentication.AuthenticationManager}, and particular implementations may require uniqueness. Uniqueness is a best
+     * {@link org.jasig.cas.authentication.AuthenticationManager}, and particular implementations
+     * may require uniqueness. Uniqueness is a best
      * practice generally.
      *
      * @param name Handler name.

@@ -71,6 +71,12 @@ public final class RegisteredServiceSimpleFormController {
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
     
+    /**
+     * Instantiates a new registered service simple form controller.
+     *
+     * @param servicesManager the services manager
+     * @param attributeRepository the attribute repository
+     */
     @NotNull
     @Resource(name="registeredServiceValidator")
     private Validator validator;
@@ -122,6 +128,11 @@ public final class RegisteredServiceSimpleFormController {
             final RegexRegisteredService regexService = new RegexRegisteredService();
             regexService.copyFrom(service);
             svcToUse = regexService;
+        } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
+            logger.debug("Detected ant expression " + service.getServiceId());
+            final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
+            regexService.copyFrom(service);
+            service = regexService;
         } 
 
         this.servicesManager.save(svcToUse);
@@ -140,6 +151,7 @@ public final class RegisteredServiceSimpleFormController {
             @RequestParam(value="id", required=false) final String id,
             final ModelMap model)
             throws Exception {
+            logger.debug("Loaded service " + service.getServiceId() + " with command class set to " + this.getCommandClass());
         
         updateModelMap(model, request);
         return new ModelAndView(VIEW_NAME);
