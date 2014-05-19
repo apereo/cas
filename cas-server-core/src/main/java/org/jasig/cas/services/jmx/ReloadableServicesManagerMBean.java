@@ -38,10 +38,18 @@ import org.springframework.jmx.export.annotation.ManagedResource;
         currencyTimeLimit = 15)
 public final class ReloadableServicesManagerMBean extends AbstractServicesManagerMBean<ReloadableServicesManager> {
 
+    /**
+     * Instantiates a new reloadable services manager m bean.
+     *
+     * @param reloadableServicesManager the reloadable services manager
+     */
     public ReloadableServicesManagerMBean(final ReloadableServicesManager reloadableServicesManager) {
         super(reloadableServicesManager);
     }
 
+    /**
+     * Reload services that are provided by the manager.
+     */
     @ManagedOperation(description = "Reloads the list of the services from the persistence storage.")
     public void reload() {
         getServicesManager().reload();

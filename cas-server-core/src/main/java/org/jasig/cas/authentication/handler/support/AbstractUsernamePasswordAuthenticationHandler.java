@@ -144,6 +144,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     }
 
     /**
+     * {@inheritDoc}
      * @return True if credential is a {@link UsernamePasswordCredential}, false otherwise.
      */
     @Override
