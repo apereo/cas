@@ -20,6 +20,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -49,12 +50,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
         try {
             final String serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket,
-                    service);
-            WebUtils.putServiceTicketInRequestScope(context,
-                serviceTicketId);
+                .grantServiceTicket(ticketGrantingTicket, service);
+            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
         } catch (final TicketException e) {
+            if (e instanceof InvalidTicketException) {
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            }
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
@@ -68,6 +70,12 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    /**
+     * Checks if <code>gateway</code> is present in the request params.
+     *
+     * @param context the context
+     * @return true, if gateway present
+     */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get("gateway"));
