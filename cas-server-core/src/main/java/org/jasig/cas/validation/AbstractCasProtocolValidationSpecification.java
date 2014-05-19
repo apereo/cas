@@ -24,7 +24,6 @@ package org.jasig.cas.validation;
  * validation is occurring from a new login.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
@@ -35,10 +34,18 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
 
+    /**
+     * Instantiates a new abstract cas protocol validation specification.
+     */
     public AbstractCasProtocolValidationSpecification() {
         this.renew = DEFAULT_RENEW;
     }
 
+    /**
+     * Instantiates a new abstract cas protocol validation specification.
+     *
+     * @param renew the renew
+     */
     public AbstractCasProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
@@ -61,6 +68,10 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         return this.renew;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.cas.validation.ValidationSpecification#isSatisfiedBy(org.jasig.cas.validation.Assertion)
+     */
+    @Override
     public final boolean isSatisfiedBy(final Assertion assertion) {
         return isSatisfiedByInternal(assertion)
             && ((!this.renew) || (assertion.isFromNewLogin() && this.renew));

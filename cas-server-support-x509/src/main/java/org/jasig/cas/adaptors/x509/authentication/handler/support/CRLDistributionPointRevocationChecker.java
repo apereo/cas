@@ -106,13 +106,18 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         return crl;
     }
 
+    /**
+     * Gets the distribution points.
+     *
+     * @param cert the cert
+     * @return the url distribution points
+     */
     private URL[] getDistributionPoints(final X509Certificate cert) {
         final DistributionPointList points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
-            logger.error(
-                    "Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
+            logger.error("Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
             return new URL[0];
         }
 
@@ -133,10 +138,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         return urls.toArray(new URL[urls.size()]);
     }
 
+    /**
+     * Adds the url to the list.
+     * Build URI by components to facilitate proper encoding of querystring.
+     * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
+     * 
+     * @param list the list
+     * @param uriString the uri string
+     */
     private void addURL(final List<URL> list, final String uriString) {
         try {
-            // Build URI by components to facilitate proper encoding of querystring
-            // e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
             final URL url = new URL(uriString);
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             list.add(uri.toURL());
