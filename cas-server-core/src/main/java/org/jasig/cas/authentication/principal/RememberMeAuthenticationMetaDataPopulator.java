@@ -34,6 +34,7 @@ import org.jasig.cas.authentication.RememberMeCredential;
 public final class RememberMeAuthenticationMetaDataPopulator implements
     AuthenticationMetaDataPopulator {
 
+    @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         if (credential instanceof RememberMeCredential) {
             final RememberMeCredential r = (RememberMeCredential) credential;

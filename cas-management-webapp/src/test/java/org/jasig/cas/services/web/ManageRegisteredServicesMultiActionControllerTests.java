@@ -96,7 +96,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test
     public void updateEvaluationOrderOK() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
@@ -109,13 +109,13 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertNotNull(modelAndView);
         assertEquals("jsonView", modelAndView.getViewName());
 
-        RegisteredService result = this.servicesManager.findServiceBy(r.getId());
+        final RegisteredService result = this.servicesManager.findServiceBy(r.getId());
         assertEquals(result.getEvaluationOrder(), 100);
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void updateEvaluationOrderInvalidServiceId() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
