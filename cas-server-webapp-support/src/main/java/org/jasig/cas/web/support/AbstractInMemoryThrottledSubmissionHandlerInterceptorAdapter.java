@@ -54,6 +54,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         this.ipMap.put(constructKey(request), new Date());
     }
 
+    /**
+     * Construct key to be used by the throttling agent to track requests.
+     *
+     * @param request the request
+     * @return the string
+     */
     protected abstract String constructKey(HttpServletRequest request);
 
     /**

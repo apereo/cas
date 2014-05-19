@@ -64,7 +64,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final RegisteredService rService = this.servicesManager.findServiceBy(service);
 
         // retrieve the user agent string from the request
-        String userAgent = request.getHeader("User-Agent");
+        final String userAgent = request.getHeader("User-Agent");
 
         if (userAgent == null) {
             return getDefaultThemeName();

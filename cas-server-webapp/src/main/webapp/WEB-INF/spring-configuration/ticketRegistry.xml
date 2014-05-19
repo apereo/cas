@@ -34,7 +34,8 @@
 	<!-- TICKET REGISTRY CLEANER -->
 	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
 		p:ticketRegistry-ref="ticketRegistry"
-		p:logoutManager-ref="logoutManager" />
+		p:logoutManager-ref="logoutManager"
+        p:logUserOutOfServices="#{!${slo.callbacks.disabled:false}}" />
 	
 	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
 		p:targetObject-ref="ticketRegistryCleaner"
