@@ -71,6 +71,14 @@ public final class SamlUtils {
         // nothing to do
     }
 
+    /**
+     * Sign SAML response.
+     *
+     * @param samlResponse the SAML response
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @return the response
+     */
     public static String signSamlResponse(final String samlResponse,
             final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXmlString(samlResponse);
@@ -84,9 +92,17 @@ public final class SamlUtils {
         throw new RuntimeException("Error signing SAML Response: Null document");
     }
 
+    /**
+     * Construct document from xml string.
+     *
+     * @param xmlString the xml string
+     * @return the document
+     */
     public static Document constructDocumentFromXmlString(final String xmlString) {
         try {
             final SAXBuilder builder = new SAXBuilder();
+            builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder
                     .build(new ByteArrayInputStream(xmlString.getBytes()));
         } catch (final Exception e) {
@@ -94,6 +110,14 @@ public final class SamlUtils {
         }
     }
 
+    /**
+     * Sign SAML element.
+     *
+     * @param element the element
+     * @param privKey the priv key
+     * @param pubKey the pub key
+     * @return the element
+     */
     private static Element signSamlElement(final Element element, final PrivateKey privKey,
             final PublicKey pubKey) {
         try {
@@ -103,7 +127,7 @@ public final class SamlUtils {
                     .getInstance("DOM", (Provider) Class.forName(providerName)
                             .newInstance());
 
-            final List envelopedTransform = Collections
+            final List<Transform> envelopedTransform = Collections
                     .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
                             (TransformParameterSpec) null));
 
@@ -145,17 +169,17 @@ public final class SamlUtils {
             // Convert the JDOM document to w3c (Java XML signature API requires
             // w3c
             // representation)
-            org.w3c.dom.Element w3cElement = toDom(element);
+            final org.w3c.dom.Element w3cElement = toDom(element);
 
             // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
             // location of the resulting XMLSignature's parent element
-            DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
+            final DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
 
-            org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+            final org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
-            XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+            final XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
                     keyInfo);
             signature.sign(dsc);
 
@@ -167,6 +191,12 @@ public final class SamlUtils {
         }
     }
 
+    /**
+     * Gets the xml signature insert location.
+     *
+     * @param elem the elem
+     * @return the xml signature insert location
+     */
     private static Node getXmlSignatureInsertLocation(final org.w3c.dom.Element elem) {
         org.w3c.dom.Node insertLocation = null;
         org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
@@ -181,10 +211,22 @@ public final class SamlUtils {
         return insertLocation;
     }
 
+    /**
+     * Convert the received jdom element to an Element.
+     *
+     * @param element the element
+     * @return the org.w3c.dom. element
+     */
     private static org.w3c.dom.Element toDom(final Element element) {
         return toDom(element.getDocument()).getDocumentElement();
     }
 
+    /**
+     * Convert the received jdom doc to a Document element.
+     *
+     * @param doc the doc
+     * @return the org.w3c.dom. document
+     */
     private static org.w3c.dom.Document toDom(final Document doc) {
         try {
             final XMLOutputter xmlOutputter = new XMLOutputter();
@@ -201,6 +243,12 @@ public final class SamlUtils {
         }
     }
 
+    /**
+     * Convert to a jdom element.
+     *
+     * @param e the e
+     * @return the element
+     */
     private static Element toJdom(final org.w3c.dom.Element e) {
         return  new DOMBuilder().build(e);
     }

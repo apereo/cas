@@ -63,7 +63,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (ticket instanceof TicketGrantingTicket) {
             final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) ticket;
             final String ticketId = ticketGrantingTicket.getId();
-            final String userName = ticketGrantingTicket.getAuthentication().getPrincipal().getId();
+            final String userName = ticketGrantingTicket.getAuthentication().getPrincipal().getId().toLowerCase();
 
             logger.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
 

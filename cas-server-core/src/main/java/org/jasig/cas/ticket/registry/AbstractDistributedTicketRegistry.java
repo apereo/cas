@@ -33,15 +33,30 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * distributed ticket registries.
  *
  * @author Scott Battaglia
-
  * @since 3.1
  */
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
 
+    /**
+     * Update the received ticket.
+     *
+     * @param ticket the ticket
+     */
     protected abstract void updateTicket(final Ticket ticket);
 
+    /**
+     * Whether or not a callback to the TGT is required when checking for expiration.
+     *
+     * @return true, if successful
+     */
     protected abstract boolean needsCallback();
 
+    /**
+     * Gets the proxied ticket instance.
+     *
+     * @param ticket the ticket
+     * @return the proxied ticket instance
+     */
     protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
         if (ticket == null) {
             return null;
@@ -64,13 +79,24 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private final boolean callback;
 
+        /**
+         * Instantiates a new ticket delegator.
+         *
+         * @param ticketRegistry the ticket registry
+         * @param ticket the ticket
+         * @param callback the callback
+         */
         protected TicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final T ticket, final boolean callback) {
             this.ticketRegistry = ticketRegistry;
             this.ticket = ticket;
             this.callback = callback;
         }
-
+        
+        
+        /**
+         * Update ticket by the delegated registry.
+         */
         protected void updateTicket() {
             this.ticketRegistry.updateTicket(this.ticket);
         }
@@ -83,6 +109,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return this.ticket.getId();
         }
 
+        @Override
         public final boolean isExpired() {
             if (!callback) {
                 return this.ticket.isExpired();
@@ -93,6 +120,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return this.ticket.isExpired() || (t != null && t.isExpired());
         }
 
+        @Override
         public final TicketGrantingTicket getGrantingTicket() {
             final TicketGrantingTicket old = this.ticket.getGrantingTicket();
 
@@ -127,6 +155,13 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private static final long serialVersionUID = 8160636219307822967L;
 
+        /**
+         * Instantiates a new service ticket delegator.
+         *
+         * @param ticketRegistry the ticket registry
+         * @param serviceTicket the service ticket
+         * @param callback the callback
+         */
         protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final ServiceTicket serviceTicket, final boolean callback) {
             super(ticketRegistry, serviceTicket, callback);
@@ -164,6 +199,13 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private static final long serialVersionUID = 5312560061970601497L;
 
+        /**
+         * Instantiates a new ticket granting ticket delegator.
+         *
+         * @param ticketRegistry the ticket registry
+         * @param ticketGrantingTicket the ticket granting ticket
+         * @param callback the callback
+         */
         protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
             super(ticketRegistry, ticketGrantingTicket, callback);
