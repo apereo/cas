@@ -82,7 +82,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      */
     public void testProperCredentialsAndServiceTicket() throws IOException {
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
         setFormElement("password", getGoodPassword());
@@ -90,7 +90,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
@@ -122,7 +122,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      */
     public void testRenew() throws IOException {
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?renew=true&service=" + encodedService);
         setFormElement("username", getUsername());
         setFormElement("password", getGoodPassword());
@@ -130,7 +130,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
@@ -147,7 +147,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      */
     public void testMultipleRenew() throws IOException {
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
 
         beginAt("/login?renew=true&service=" + encodedService);
         setFormElement("username", getUsername());
@@ -195,7 +195,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      */
     public void testAccidentalRenew() throws IOException {
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
         setFormElement("password", getGoodPassword());
@@ -203,7 +203,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
@@ -230,7 +230,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
         setFormElement("password", getGoodPassword());
         submit();
 
-        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // that established SSO.  Now let's get another ticket via SSO
 
@@ -241,7 +241,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // let's validate the second (non-renew) ticket.
 
@@ -271,7 +271,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     public void testBrokenProxyCallbackUrl() throws IOException {
 
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
         setFormElement("password", getGoodPassword());
@@ -279,13 +279,13 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
         // let's validate it, specifying a bogus pgt callback
 
-        String encodedProxyCallbackUrl = URLEncoder.encode("https://secure.its.yale.edu/cas/noexist", "UTF-8");
+        final String encodedProxyCallbackUrl = URLEncoder.encode("https://secure.its.yale.edu/cas/noexist", "UTF-8");
 
         beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket="
                                     + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
@@ -301,7 +301,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     public void testPgtAcquisition() throws IOException {
 
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
         setFormElement("password", getGoodPassword());
@@ -309,13 +309,13 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
         // let's validate it, specifying a bogus pgt callback
 
-        String encodedProxyCallbackUrl = URLEncoder.encode(getProxyCallbackUrl(), "UTF-8");
+        final String encodedProxyCallbackUrl = URLEncoder.encode(getProxyCallbackUrl(), "UTF-8");
 
         beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket
                                     + "&pgtUrl=" + encodedProxyCallbackUrl);
@@ -342,7 +342,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     public void test224() throws IOException {
 
         final String service = getServiceUrl();
-        String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String encodedService = URLEncoder.encode(service, "UTF-8");
 
         beginAt("/login?service=" + encodedService + "&renew=true");
         setFormElement("username", getUsername());
@@ -351,7 +351,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
         // read the service ticket
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // great, now we have a ticket
 
