@@ -60,7 +60,7 @@ public class OpenIdServiceTests {
         manager.setEnforceRpId(false);
         manager.setSharedAssociations(sharedAssociations);
         context = mock(ApplicationContext.class);
-        ApplicationContextProvider contextProvider = new ApplicationContextProvider();
+        final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
         contextProvider.setApplicationContext(context);
         cas = mock(CentralAuthenticationService.class);
     }

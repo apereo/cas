@@ -53,7 +53,7 @@ public class SmartOpenIdControllerTest {
     @Test
     public void testCanHandle() {
         request.addParameter("openid.mode", "associate");
-        boolean canHandle = smartOpenIdController.canHandle(request, response);
+        final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
         assertEquals(true, canHandle);
     }
@@ -61,7 +61,7 @@ public class SmartOpenIdControllerTest {
     @Test
     public void testCannotHandle() {
         request.addParameter("openid.mode", "anythingElse");
-        boolean canHandle = smartOpenIdController.canHandle(request, response);
+        final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
         assertEquals(false, canHandle);
     }
@@ -74,7 +74,7 @@ public class SmartOpenIdControllerTest {
         request.addParameter("openid.dh_consumer_public",
                 "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
                 + "QRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
-        Map<String, String> assocResponse = smartOpenIdController.getAssociationResponse(request);
+        final Map<String, String> assocResponse = smartOpenIdController.getAssociationResponse(request);
         assertTrue(assocResponse.containsKey("assoc_handle"));
         assertTrue(assocResponse.containsKey("expires_in"));
         assertTrue(assocResponse.containsKey("dh_server_public"));
