@@ -35,11 +35,14 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@RunWith(JUnit4.class)
 public class LogoutManagerImplTests {
 
     private static final String ID = "id";
@@ -71,7 +74,7 @@ public class LogoutManagerImplTests {
 
     @Test
     public void testLogoutDisabled() {
-        this.logoutManager.setDisableSingleSignOut(true);
+        this.logoutManager.setSingleLogoutCallbacksDisabled(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
@@ -114,5 +117,13 @@ public class LogoutManagerImplTests {
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());
+    }
+    
+    @Test
+    public void testAsynchronousLogout() {
+        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+        this.logoutManager.setIssueAsynchronousCallbacks(false);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(1, logoutRequests.size());
     }
 }

@@ -71,6 +71,7 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
             logger.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
                     ex.getClass().getName(), this.ajaxRequestHeaderName);
         }
+        logger.debug(ex.getMessage(), ex);
         return null;
     }
 

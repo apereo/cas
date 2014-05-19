@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -56,8 +57,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Map of account state error to CAS authentication exception. */
-    private static final Map<AccountState.Error, LoginException> ERROR_MAP;
+    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
 
+    /**
+     * Instantiates a new account state handler, that populates
+     * the error map with LDAP error codes and corresponding exceptions.
+     */
     static {
         ERROR_MAP = new HashMap<AccountState.Error, LoginException>();
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
@@ -73,6 +78,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         ERROR_MAP.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         ERROR_MAP.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         ERROR_MAP.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        ERROR_MAP.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
     }
 
     @Override
@@ -129,7 +135,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * <p>
      * Override this method to provide custom warning message handling.
      *
-     * @param error Account state warning.
+     * @param warning the account state warning messages.
      * @param response Ldaptive authentication response.
      * @param configuration Password policy configuration.
      * @param messages Container for messages produced by account state warning handling.
