@@ -126,6 +126,14 @@
                     <property name="evaluationOrder" value="5"/>
                     <property name="anonymousAccess" value="true" />
                 </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="10"/>
+                    <property name="name" value="Test Regex Jasig Service"/>
+                    <property name="serviceId" value="^http://www.jasig.org.+"/>
+                    <property name="evaluationOrder" value="10"/>
+                    <property name="allowedToProxy" value="true" />
+                </bean>
             </list>
         </property>
     </bean>
