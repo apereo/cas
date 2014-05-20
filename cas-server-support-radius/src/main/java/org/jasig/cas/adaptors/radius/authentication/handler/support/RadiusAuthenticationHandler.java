@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.radius.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
@@ -61,17 +62,19 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final String username = credential.getUsername();
         final String password = getPasswordEncoder().encode(credential.getPassword());
+        final String username = credential.getUsername();
+        
         for (final RadiusServer radiusServer : this.servers) {
             logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
-                if (radiusServer.authenticate(username, password)) {
-                    return createHandlerResult(credential, new SimplePrincipal(username), null);
+                final RadiusResponse response = radiusServer.authenticate(username, password);
+                if (response != null) {
+                     return createHandlerResult(credential, new SimplePrincipal(username), null);
                 } 
-                
+                                
                 if (!this.failoverOnAuthenticationFailure) {
-                    throw new FailedLoginException();
+                    throw new FailedLoginException("Radius authentication failed for user " + username);
                 }
                 logger.debug("failoverOnAuthenticationFailure enabled -- trying next server");
             } catch (final PreventedException e) {
@@ -81,7 +84,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                 logger.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        throw new FailedLoginException();
+        throw new FailedLoginException("Radius authentication failed for user " + username);
     }
 
     /**
