@@ -232,4 +232,46 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
+    
+    @Test
+    public void testValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
+        this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        
+        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String sId = getCentralAuthenticationService()
+                .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+
+        final String REQ_SVC = "http://WWW.JASIG.ORG?PARAM=hello%20world";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("ticket", sId);
+        
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
+    }
+    
+    @Test
+    public void testValidServiceTicketWithDifferentEncoding() throws Exception {
+        this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        
+        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String sId = getCentralAuthenticationService()
+                .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+
+        final String REQ_SVC = "http://www.jasig.org?param=hello%20world";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("ticket", sId);
+        
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
+    }
 }
