@@ -48,6 +48,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  */
 @RunWith(JUnit4.class)
@@ -149,23 +150,14 @@ public class RegisteredServiceSimpleFormControllerTests {
 
    @Test
    public void testChangingServicePatternAndType() throws Exception {
-       final MockHttpServletRequest request1 = new MockHttpServletRequest();
-       final MockHttpServletResponse response1 = new MockHttpServletResponse();
-
-       request1.addParameter("description", "description");
-       request1.addParameter("serviceId", "serviceId");
-       request1.addParameter("name", "ant");
-       request1.addParameter("theme", "theme");
-       request1.addParameter("allowedToProxy", "true");
-       request1.addParameter("enabled", "true");
-       request1.addParameter("ssoEnabled", "true");
-       request1.addParameter("anonymousAccess", "false");
-       request1.addParameter("evaluationOrder", "1");
-
-       request1.setMethod("POST");
-
-       final MockHttpServletRequest request2 = new MockHttpServletRequest();
-       this.controller.handleRequest(request1, response1);
+       final AbstractRegisteredService svc = new RegexRegisteredService();
+       svc.setDescription("description");
+       svc.setServiceId("serviceId");
+       svc.setName("name");
+       svc.setId(1000);
+       svc.setEvaluationOrder(1000);
+       
+       this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
        
        final Collection<RegisteredService> c = this.manager.getAllServices();
        assertEquals("Service collection size must be 1", c.size(), 1);
@@ -174,23 +166,10 @@ public class RegisteredServiceSimpleFormControllerTests {
            assertTrue(rs instanceof RegisteredServiceImpl);
        }
        
-       final String id = String.valueOf(c.iterator().next().getId());
-       final MockHttpServletResponse response2 = new MockHttpServletResponse();
-
-       request2.addParameter("description", "description");
-       request2.addParameter("serviceId", "^https://.*");
-       request2.addParameter("name", "regex");
-       request2.addParameter("theme", "theme");
-       request2.addParameter("allowedToProxy", "true");
-       request2.addParameter("enabled", "true");
-       request2.addParameter("ssoEnabled", "true");
-       request2.addParameter("anonymousAccess", "false");
-       request2.addParameter("evaluationOrder", "1");
-       request2.addParameter("id", id);
-       
-       request2.setMethod("POST");
-
-       this.controller.handleRequest(request2, response2);
+       final AbstractRegisteredService svc2 = (AbstractRegisteredService) c.iterator().next();
+       svc2.setServiceId("^serviceId");
+       this.controller.onSubmit(svc2, mock(BindingResult.class),
+               new ModelMap(), new MockHttpServletRequest());
 
        final Collection<RegisteredService> services = this.manager.getAllServices();
        assertEquals(1, services.size());
