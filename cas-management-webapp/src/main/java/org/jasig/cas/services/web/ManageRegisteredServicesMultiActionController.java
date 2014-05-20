@@ -55,6 +55,12 @@ public final class ManageRegisteredServicesMultiActionController {
     @NotNull
     private String defaultServiceUrl;
 
+    /**
+     * Instantiates a new manage registered services multi action controller.
+     *
+     * @param servicesManager the services manager
+     * @param defaultServiceUrl the default service url
+     */
     @Autowired
     public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
@@ -64,6 +70,8 @@ public final class ManageRegisteredServicesMultiActionController {
     
     /**
      * Method to delete the RegisteredService by its ID.
+     *
+     * @param idAsLong the id
      * @return the Model and View to go to after the service is deleted.
      */
     @RequestMapping(value="deleteRegisteredService.html")
@@ -100,13 +108,14 @@ public final class ManageRegisteredServicesMultiActionController {
      * Updates the {@link RegisteredService#getEvaluationOrder()}. Expects an <code>id</code> parameter to indicate
      * the {@link RegisteredService#getId()} and the new <code>evaluationOrder</code> integer parameter from the request.
      * as parameters.
+     *
+     * @param id the id
+     * @param evaluationOrder the evaluation order
+     * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      * @returns {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
-     * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccesful.
+     * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccessful.
      * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
      * was successful.
-     * @throws IllegalArgumentException If either of the <code>id</code> or <code>evaluationOrder</code> are invalid
-     * or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.
-     * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      */
     @RequestMapping("updateRegisteredServiceEvaluationOrder.html")
     public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long id,

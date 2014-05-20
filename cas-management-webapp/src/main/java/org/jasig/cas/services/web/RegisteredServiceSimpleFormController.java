@@ -71,16 +71,16 @@ public final class RegisteredServiceSimpleFormController {
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
     
-    /**
-     * Instantiates a new registered service simple form controller.
-     *
-     * @param servicesManager the services manager
-     * @param attributeRepository the attribute repository
-     */
     @NotNull
     @Resource(name="registeredServiceValidator")
     private Validator validator;
 
+    /**
+     * Instantiates a new registered service simple form controller.
+     *
+     * @param servicesManager the services manager
+     * @param personAttributeDao the attribute repository
+     */
     @Autowired
     public RegisteredServiceSimpleFormController(final ServicesManager servicesManager, 
             final IPersonAttributeDao personAttributeDao) {
@@ -88,6 +88,13 @@ public final class RegisteredServiceSimpleFormController {
         this.servicesManager = servicesManager;
     }
     
+    /**
+     * Instantiates a new registered service simple form controller.
+     *
+     * @param servicesManager the services manager
+     * @param personAttributeDao the person attribute dao
+     * @param validator the validator
+     */
     RegisteredServiceSimpleFormController(final ServicesManager servicesManager, 
             final IPersonAttributeDao personAttributeDao, final Validator validator) {
         this(servicesManager, personAttributeDao);
@@ -97,6 +104,10 @@ public final class RegisteredServiceSimpleFormController {
     /**
      * Sets the require fields and the disallowed fields from the
      * HttpServletRequest.
+     *
+     * @param request the request
+     * @param binder the binder
+     * @throws Exception the exception
      */
     @InitBinder
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) throws Exception {
@@ -109,6 +120,13 @@ public final class RegisteredServiceSimpleFormController {
 
     /**
      * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
+     *
+     * @param service the service
+     * @param result the binding result
+     * @param model the page model
+     * @param request the http request
+     * @return the model and view
+     * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView onSubmit(@ModelAttribute(COMMAND_NAME) final RegisteredService service,
@@ -118,45 +136,63 @@ public final class RegisteredServiceSimpleFormController {
         
         this.validator.validate(service, result);
         if (result.hasErrors()) {
-            return new ModelAndView(VIEW_NAME);
+            model.addAttribute("validationErrors", result.getAllErrors());
+            return render(request, model);
         }
-        
+       
         RegisteredService svcToUse = service;
-        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
-                && service.getServiceId().startsWith("^")) {
+        if (service.getServiceId().startsWith("^") && service instanceof RegisteredServiceImpl) {
             LOGGER.debug("Detected regular expression starting with ^");
             final RegexRegisteredService regexService = new RegexRegisteredService();
             regexService.copyFrom(service);
             svcToUse = regexService;
         } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
-            logger.debug("Detected ant expression " + service.getServiceId());
+            LOGGER.debug("Detected ant expression {}", service.getServiceId());
             final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
             regexService.copyFrom(service);
-            service = regexService;
+            svcToUse = regexService;
         } 
 
         this.servicesManager.save(svcToUse);
-        LOGGER.info("Saved changes to service " + svcToUse.getId());
+        LOGGER.info("Saved changes to service {}", svcToUse.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
                 "manage.html#" + svcToUse.getId(), true));
         modelAndView.addObject("action", "add");
         modelAndView.addObject("id", svcToUse.getId());
 
+        
+        
         return modelAndView;
     }
 
+    /**
+     * Render the page noted by {@link #VIEW_NAME}.
+     * The view is first updated by {@link #updateModelMap(ModelMap, HttpServletRequest)}.
+     * @param request the request
+     * @param model the model
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @RequestMapping(method=RequestMethod.GET, value= {"add.html", "edit.html"})
-    protected Object render(final HttpServletRequest request,
-            @RequestParam(value="id", required=false) final String id,
-            final ModelMap model)
+    protected ModelAndView render(final HttpServletRequest request, final ModelMap model)
             throws Exception {
-            logger.debug("Loaded service " + service.getServiceId() + " with command class set to " + this.getCommandClass());
-        
         updateModelMap(model, request);
         return new ModelAndView(VIEW_NAME);
     }
     
+    /**
+     * Updates model map. The following objects will be available in the model:
+     * 
+     * <ul>
+     *  <li><code>availableAttributes</code></li>
+     *  <li><code>availableUsernameAttributes</code></li>
+     *  <li><code>pageTitle</code></li>
+     * </ul>
+     *
+     * @param model the model
+     * @param request the request
+     */
     private void updateModelMap(final ModelMap model, final HttpServletRequest request) {
         final List<String> possibleAttributeNames = new ArrayList<String>();
         possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
@@ -172,19 +208,27 @@ public final class RegisteredServiceSimpleFormController {
         model.addAttribute("pageTitle", path);    
     }
     
+    /**
+     * Determines the registered service to be used. 
+     * If no <code>id</code> is specified, a service of type
+     * {@link RegisteredServiceImpl} will be created by default.
+     *
+     * @param id the id
+     * @return the service
+     */
     @ModelAttribute(COMMAND_NAME)
     public RegisteredService getCommand(@RequestParam(value="id", required=false) final String id) {
 
         if (!StringUtils.hasText(id)) {
             final RegisteredService service = new RegisteredServiceImpl();
-            LOGGER.debug("Created new service of type " + service.getClass().getName());
+            LOGGER.debug("Created new service of type {}", service.getClass().getName());
             return service;
         }
 
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
 
         if (service != null) {
-            LOGGER.debug("Loaded service " + service.getServiceId());
+            LOGGER.debug("Loaded service {}", service.getServiceId());
         } else {
             LOGGER.debug("Invalid service id specified.");
         }

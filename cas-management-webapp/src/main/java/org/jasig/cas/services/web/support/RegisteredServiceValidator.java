@@ -59,6 +59,12 @@ public final class RegisteredServiceValidator implements Validator {
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 
+    /**
+     * Instantiates a new registered service validator.
+     *
+     * @param servicesManager the services manager
+     * @param personAttributeDao the person attribute dao
+     */
     @Autowired
     public RegisteredServiceValidator(final ServicesManager servicesManager, 
             final IPersonAttributeDao personAttributeDao) {
