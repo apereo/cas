@@ -63,11 +63,8 @@
         p:alwaysUseFullPath="true">
     <property name="mappings">
       <util:properties>
-        <prop key="/add.html">addRegisteredServiceSimpleFormController</prop>
-        <prop key="/edit.html">editRegisteredServiceSimpleFormController</prop>
         <prop key="/loggedOut.html">serviceLogoutViewController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/*">manageRegisteredServicesMultiActionController</prop>
       </util:properties>
     </property>
     <!--
@@ -86,35 +83,6 @@
       id="serviceLogoutViewController"
       class="org.springframework.web.servlet.mvc.ParameterizableViewController"
       p:viewName="serviceLogoutView"/>
-
-  <bean id="addRegisteredServiceSimpleFormController"
-        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
-        p:formView="addServiceView"
-        p:successView="addServiceView"
-        p:commandName="registeredService"
-        p:validator-ref="registeredServiceValidator"
-        p:sessionForm="true"
-        c:servicesManager-ref="servicesManager"
-        c:attributeRepository-ref="attributeRepository" />
-
-  <bean id="editRegisteredServiceSimpleFormController"
-        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
-        p:formView="editServiceView"
-        p:successView="editServiceView"
-        p:commandName="registeredService"
-        p:validator-ref="registeredServiceValidator"
-        p:sessionForm="false"
-        c:servicesManager-ref="servicesManager"
-        c:attributeRepository-ref="attributeRepository" />
-
-  <bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
-        p:servicesManager-ref="servicesManager" 
-        p:personAttributeDao-ref="attributeRepository" />
-
-  <bean id="manageRegisteredServicesMultiActionController"
-        class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController"
-        c:servicesManager-ref="servicesManager" 
-        c:defaultServiceUrl="${cas-management.securityContext.serviceProperties.service}" />
 
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
 
