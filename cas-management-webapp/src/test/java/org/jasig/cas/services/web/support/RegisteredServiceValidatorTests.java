@@ -64,7 +64,7 @@ public class RegisteredServiceValidatorTests {
 
     @Test
     public void testIdDoesNotExist3() {
-        checkId(true, 1, null);
+        checkId(true, 1, "test");
     }
 
     @Test
