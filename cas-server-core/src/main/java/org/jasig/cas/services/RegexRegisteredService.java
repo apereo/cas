@@ -27,8 +27,11 @@ import java.util.regex.Pattern;
 
 /**
  * Mutable registered service that uses Java regular expressions for service matching.
+ * Matching is case insensitive, and is successful, if, and only if, the entire region
+ * sequence matches the pattern.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  */
 @Entity
 @DiscriminatorValue("regex")
@@ -38,11 +41,10 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     private transient Pattern servicePattern;
 
-    @Override
     public void setServiceId(final String id) {
         serviceId = id;
     }
-
+    
     @Override
     public boolean matches(final Service service) {
         if (servicePattern == null) {
@@ -57,7 +59,8 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     }
 
     /**
-     * Creates the pattern.
+     * Creates the pattern. Matching is by default
+     * case insensitive.
      *
      * @param pattern the pattern, may not be null.
      * @return the pattern
@@ -66,6 +69,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         if (pattern == null) {
             throw new IllegalArgumentException("Pattern cannot be null.");
         }
-        return Pattern.compile(pattern);
+        
+        return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
     }
 }
