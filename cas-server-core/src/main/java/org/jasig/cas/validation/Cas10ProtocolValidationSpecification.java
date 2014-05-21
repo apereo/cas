@@ -26,20 +26,27 @@ package org.jasig.cas.validation;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
-
  * @since 3.0
  */
-public final class Cas10ProtocolValidationSpecification extends
-    AbstractCasProtocolValidationSpecification {
+public final class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
+    /**
+     * Instantiates a new cas10 protocol validation specification.
+     */
     public Cas10ProtocolValidationSpecification() {
         super();
     }
 
+    /**
+     * Instantiates a new cas10 protocol validation specification.
+     *
+     * @param renew the renew
+     */
     public Cas10ProtocolValidationSpecification(final boolean renew) {
         super(renew);
     }
 
+    @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
         return (assertion.getChainedAuthentications().size() == 1);
     }
