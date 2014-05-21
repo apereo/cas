@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * Return a collection of allowed attributes for the principal, but additionally,
  * offers the ability to rename attributes on a per-service level.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public class ReturnMappedAttributeFilteringPolicy  extends AbstractAttributeFilteringPolicy {
 
