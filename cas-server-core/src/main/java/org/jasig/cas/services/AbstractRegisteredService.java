@@ -105,7 +105,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private HashSet<String> requiredHandlers = new HashSet<String>();
 
     /** The attribute filtering policy. */
-    private AttributeFilteringPolicy attributeFilteringPolicy = new ReturnAllAttributeFilteringPolicy();
+    private AttributeFilteringPolicy attributeFilteringPolicy = new ReturnAllowedAttributeFilteringPolicy();
     
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -181,11 +181,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
     }
 
-    /**
-     * Sets the allowed attributes.
-     *
-     * @param allowedAttributes the new allowed attributes. May be null.
-     */
     public void setAllowedToProxy(final boolean allowedToProxy) {
         this.allowedToProxy = allowedToProxy;
     }

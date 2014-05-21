@@ -18,12 +18,15 @@
  */
 package org.jasig.cas.services;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 /**
@@ -33,6 +36,16 @@ import static org.junit.Assert.*;
  */
 public class AbstractRegisteredServiceTests {
 
+    private static final long ID = 1000;
+    private static final String DESCRIPTION = "test";
+    private static final String SERVICEID = "serviceId";
+    private static final String THEME = "theme";
+    private static final String NAME = "name";
+    private static final boolean ENABLED = false;
+    private static final boolean ALLOWED_TO_PROXY = false;
+    private static final boolean ANONYMOUS_ACCESS = true;
+    private static final boolean SSO_ENABLED = false;
+    
     private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
@@ -59,26 +72,7 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void testSettersAndGetters() {
-        final long ID = 1000;
-        final String DESCRIPTION = "test";
-        final String SERVICEID = "serviceId";
-        final String THEME = "theme";
-        final String NAME = "name";
-        final boolean ENABLED = false;
-        final boolean ALLOWED_TO_PROXY = false;
-        final boolean ANONYMOUS_ACCESS = true;
-        final boolean SSO_ENABLED = false;
-        final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
-
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
-        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
-        this.r.setDescription(DESCRIPTION);
-        this.r.setEnabled(ENABLED);
-        this.r.setId(ID);
-        this.r.setName(NAME);
-        this.r.setServiceId(SERVICEID);
-        this.r.setSsoEnabled(SSO_ENABLED);
-        this.r.setTheme(THEME);
+        prepareService();
 
         assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
         assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
@@ -100,5 +94,83 @@ public class AbstractRegisteredServiceTests {
         assertTrue(r.equals(r.clone()));
         assertFalse(new RegisteredServiceImpl().equals(null));
         assertFalse(new RegisteredServiceImpl().equals(new Object()));
+    }
+    
+    private void prepareService() {
+        
+        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
+        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
+        this.r.setDescription(DESCRIPTION);
+        this.r.setEnabled(ENABLED);
+        this.r.setId(ID);
+        this.r.setName(NAME);
+        this.r.setServiceId(SERVICEID);
+        this.r.setSsoEnabled(SSO_ENABLED);
+        this.r.setTheme(THEME);
+    }
+    
+    @Test
+    public void testServiceAttributeFilterAllAttributes() {
+        prepareService();
+        this.r.setAttributeFilteringPolicy(new ReturnAllAttributeFilteringPolicy());
+        final Principal p = mock(Principal.class);
+        
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("attr1", "value1");
+        map.put("attr2", "value2");
+        map.put("attr3", Arrays.asList("v3", "v4"));
+        
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+        
+        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        assertEquals(attr.size(), map.size());
+    }
+    
+    @Test
+    public void testServiceAttributeFilterAllowedAttributes() {
+        prepareService();
+        final ReturnAllowedAttributeFilteringPolicy policy = new ReturnAllowedAttributeFilteringPolicy();
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
+        this.r.setAttributeFilteringPolicy(policy);
+        final Principal p = mock(Principal.class);
+        
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("attr1", "value1");
+        map.put("attr2", "value2");
+        map.put("attr3", Arrays.asList("v3", "v4"));
+        
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+        
+        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        assertEquals(attr.size(), 2);
+        assertTrue(attr.containsKey("attr1"));
+        assertTrue(attr.containsKey("attr3"));
+    }
+    
+    @Test
+    public void testServiceAttributeFilterMappedAttributes() {
+        prepareService();
+        final ReturnMappedAttributeFilteringPolicy policy = new ReturnMappedAttributeFilteringPolicy();
+        final Map<String, String> mappedAttr = new HashMap<String, String>();
+        mappedAttr.put("attr1", "newAttr1");
+        
+        policy.setAllowedAttributes(mappedAttr);
+                
+        this.r.setAttributeFilteringPolicy(policy);
+        final Principal p = mock(Principal.class);
+        
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("attr1", "value1");
+        map.put("attr2", "value2");
+        map.put("attr3", Arrays.asList("v3", "v4"));
+        
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+        
+        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        assertEquals(attr.size(), 1);
+        assertTrue(attr.containsKey("newAttr1"));
     }
 }
