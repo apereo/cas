@@ -35,5 +35,5 @@ public interface AttributeFilter {
      * @param givenAttributes the map for the original given attributes
      * @return a map that contains the filtered attributes.
      */
-    Map<String, Object> filter(final Map<String, Object> givenAttributes);
+    Map<String, Object> filter(Map<String, Object> givenAttributes);
 }
