@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import javax.security.auth.login.AccountException;
 
 /**
@@ -28,14 +27,22 @@ import javax.security.auth.login.AccountException;
  * @author Marvin S. Addison
  * @version 4.0
  */
-public class InvalidLoginLocationException extends AccountException implements Serializable {
+public class InvalidLoginLocationException extends AccountException {
 
     private static final long serialVersionUID = 5745711263227480194L;
 
+    /**
+     * Instantiates a new invalid login location exception.
+     */
     public InvalidLoginLocationException() {
         super();
     }
 
+    /**
+     * Instantiates a new invalid login location exception.
+     *
+     * @param message the message
+     */
     public InvalidLoginLocationException(final String message) {
         super(message);
     }

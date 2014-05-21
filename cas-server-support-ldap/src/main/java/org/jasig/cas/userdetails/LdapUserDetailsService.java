@@ -195,8 +195,8 @@ public class LdapUserDetailsService implements UserDetailsService {
      * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
      * the username as a parameter.
      *
-     * @param  username  Username parameter of search query.
-     *
+     * @param executor the executor
+     * @param username the username
      * @return  Search filter with parameters applied.
      */
     private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {
