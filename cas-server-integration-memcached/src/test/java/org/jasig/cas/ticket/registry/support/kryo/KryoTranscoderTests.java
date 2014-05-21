@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import static org.junit.Assert.assertEquals;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,8 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import javax.security.auth.login.FailedLoginException;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -35,6 +40,7 @@ import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -46,8 +52,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serialize.FieldSerializer;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -57,6 +63,9 @@ import static org.mockito.Mockito.mock;
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
 
+    private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
+    private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
+    
     private final KryoTranscoder transcoder;
 
     public KryoTranscoderTests(final int bufferSize) {
@@ -87,16 +96,30 @@ public class KryoTranscoderTests {
     @Test
     public void testEncodeDecode() throws Exception {
         final ServiceTicket expectedST =
-                new MockServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK");
+                new MockServiceTicket(ST_ID);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
 
+        final Credential userPassCredential = new UsernamePasswordCredential("handymanbob", "foo");
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket("TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1");
-        expectedTGT.grantServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK", null, null, false);
+                new MockTicketGrantingTicket(TGT_ID, userPassCredential);
+        expectedTGT.grantServiceTicket(ST_ID, null, null, false);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
+
+        internalProxyTest("http://localhost");
+        internalProxyTest("https://localhost:8080/path/file.html?p1=v1&p2=v2#fragment");
+    }
+
+    private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
+        final TicketGrantingTicket expectedTGT =
+                new MockTicketGrantingTicket(TGT_ID, proxyCredential);
+        expectedTGT.grantServiceTicket(ST_ID, null, null, false);
+        assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));        
     }
 
     static class MockServiceTicket implements ServiceTicket {
+
+        private static final long serialVersionUID = -206395373480723831L;
         private String id;
 
         MockServiceTicket() { /* for serialization */ }
@@ -142,12 +165,23 @@ public class KryoTranscoderTests {
             return 0;
         }
 
+        @Override
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+        }
+        
+        @Override
+        public int hashCode() {
+            final HashCodeBuilder bldr = new HashCodeBuilder(17, 33);
+            return bldr.append(this.id)
+                       .toHashCode();
         }
     }
 
     static class MockTicketGrantingTicket implements TicketGrantingTicket {
+
+        private static final long serialVersionUID = 4829406617873497061L;
+
         private String id;
 
         private int usageCount = 0;
@@ -158,13 +192,13 @@ public class KryoTranscoderTests {
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
-            this(null);
+            this.id = null;
+            this.authentication = null;
         }
 
-        public MockTicketGrantingTicket(final String id) {
+        public MockTicketGrantingTicket(final String id, final Credential credential) {
             this.id = id;
-            final Credential credental = new UsernamePasswordCredential("handymanbob", "foo");
-            final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credental);
+            final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final AuthenticationBuilder builder = new AuthenticationBuilder();
             final Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("nickname", "bob");
@@ -173,10 +207,11 @@ public class KryoTranscoderTests {
             builder.addCredential(credentialMetaData);
             final AuthenticationHandler handler = new MockAuthenticationHandler();
             try {
-                builder.addSuccess(handler.getName(), handler.authenticate(credental));
+                builder.addSuccess(handler.getName(), handler.authenticate(credential));
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
+            builder.addFailure(handler.getName(), FailedLoginException.class);
             this.authentication = builder.build();
         }
 
@@ -251,6 +286,7 @@ public class KryoTranscoderTests {
             return this.usageCount;
         }
 
+        @Override
         public boolean equals(final Object other) {
             return other instanceof MockTicketGrantingTicket
                     && ((MockTicketGrantingTicket) other).getId().equals(this.id)
@@ -258,13 +294,26 @@ public class KryoTranscoderTests {
                     && ((MockTicketGrantingTicket) other).getCreationTime() == this.creationDate.getTime()
                     && ((MockTicketGrantingTicket) other).getAuthentication().equals(this.authentication);
         }
+
+        @Override
+        public int hashCode() {
+            final HashCodeBuilder bldr = new HashCodeBuilder(17, 33);
+            return bldr.append(this.id)
+                        .append(this.usageCount)
+                        .append(this.creationDate.getTime())
+                        .append(this.authentication).toHashCode();
+        }
     }
 
     public static class MockAuthenticationHandler implements AuthenticationHandler {
 
         @Override
         public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
-            return new HandlerResult(this, new BasicCredentialMetaData(credential));
+            if (credential instanceof HttpBasedServiceCredential) {
+                return new HandlerResult(this, (HttpBasedServiceCredential) credential);
+            } else {
+                return new HandlerResult(this, new BasicCredentialMetaData(credential));
+            }
         }
 
         @Override

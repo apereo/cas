@@ -31,7 +31,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) {
         for (final String handler : authentication.getFailures().keySet()) {
-            if (authentication.getFailures().get(handler) instanceof PreventedException) {
+            if (authentication.getFailures().get(handler).isAssignableFrom(PreventedException.class)) {
                 return false;
             }
         }

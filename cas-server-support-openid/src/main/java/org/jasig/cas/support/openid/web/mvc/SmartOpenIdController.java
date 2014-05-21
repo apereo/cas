@@ -62,8 +62,16 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @NotNull
     private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
 
+    /**
+     * Gets the association response. Determines the mode first.
+     * If mode is set to associate, will set the response. Then
+     * builds the response parameters next and returns.
+     *
+     * @param request the request
+     * @return the association response
+     */
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
-        ParameterList parameters = new ParameterList(request.getParameterMap());
+        final ParameterList parameters = new ParameterList(request.getParameterMap());
 
         final String mode = parameters.hasParameter("openid.mode")
                 ? parameters.getParameterValue("openid.mode")
@@ -92,7 +100,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        String openIdMode = request.getParameter("openid.mode");
+        final String openIdMode = request.getParameter("openid.mode");
         if (openIdMode != null && openIdMode.equals("associate")) {
             logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;

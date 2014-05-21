@@ -40,23 +40,38 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
     private String ajaxRequestHeaderName ="x-requested-with";
     private String ajaxRequestHeaderValue = "XMLHttpRequest";
 
-    public void setAjaxRequestHeaderName(final String ajaxRequestHeaderName) {
+    /**
+     * Header name that identifies this request as ajax.
+     * @param ajaxRequestHeaderName header name
+     */
+    public final void setAjaxRequestHeaderName(final String ajaxRequestHeaderName) {
         this.ajaxRequestHeaderName = ajaxRequestHeaderName;
     }
 
-    public void setAjaxRequestHeaderValue(final String ajaxRequestHeaderValue) {
+    /**
+     * Header value that identifies this request as ajax. 
+     * @param ajaxRequestHeaderValue header value
+     */
+    public final void setAjaxRequestHeaderValue(final String ajaxRequestHeaderValue) {
         this.ajaxRequestHeaderValue = ajaxRequestHeaderValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
             final Object handler, final Exception ex) {
         final String contentType = request.getHeader(this.ajaxRequestHeaderName);
-        if (contentType.equals(this.ajaxRequestHeaderValue)) {
+        if (contentType != null && contentType.equals(this.ajaxRequestHeaderValue)) {
             logger.debug("Handling exception {} for ajax request indicated by header {}",
                     ex.getClass().getName(), this.ajaxRequestHeaderName);
             return super.resolveException(request, response, handler, ex);
+        } else {
+            logger.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
+                    ex.getClass().getName(), this.ajaxRequestHeaderName);
         }
+        logger.debug(ex.getMessage(), ex);
         return null;
     }
 

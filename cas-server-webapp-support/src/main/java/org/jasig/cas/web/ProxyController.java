@@ -49,10 +49,10 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class ProxyController extends AbstractController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */
-    private static final String CONST_PROXY_FAILURE = "casProxyFailureView";
+    private static final String CONST_PROXY_FAILURE = "cas2ProxyFailureView";
 
     /** View for if the creation of a "Proxy" Ticket Succeeds. */
-    private static final String CONST_PROXY_SUCCESS = "casProxySuccessView";
+    private static final String CONST_PROXY_SUCCESS = "cas2ProxySuccessView";
 
     /** Key to use in model for service tickets. */
     private static final String MODEL_SERVICE_TICKET = "ticket";
@@ -61,6 +61,9 @@ public final class ProxyController extends AbstractController {
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * Instantiates a new proxy controller, with cache seconds set to 0.
+     */
     public ProxyController() {
         setCacheSeconds(0);
     }
@@ -95,10 +98,25 @@ public final class ProxyController extends AbstractController {
         }
     }
 
+    /**
+     * Gets the target service from the request.
+     *
+     * @param request the request
+     * @return the target service
+     */
     private Service getTargetService(final HttpServletRequest request) {
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 
+    /**
+     * Generate error view stuffing the code and description
+     * of the error into the model. View name is set to {@link #CONST_PROXY_FAILURE}.
+     *
+     * @param code the code
+     * @param description the description
+     * @param args the msg args
+     * @return the model and view
+     */
     private ModelAndView generateErrorView(final String code,
         final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(CONST_PROXY_FAILURE);
