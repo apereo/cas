@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract filtering policy. Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public abstract class AbstractAttributeFilteringPolicy implements AttributeFilteringPolicy {
     
