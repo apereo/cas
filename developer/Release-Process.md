@@ -124,7 +124,7 @@ mvn -DskipTests clean package assembly:assembly && mvn -N antrun:run
     - Click Save
     - Edit the page for the previous release and under Publishing options uncheck Promoted to front page, and Sticky at top of lists.
 
-###Javadocs
+###Documentation
 
 - Build the documentation site locally once. Artifacts will appear in the `_site` directory.
 - Copy over the `_site` folder to the same directory
