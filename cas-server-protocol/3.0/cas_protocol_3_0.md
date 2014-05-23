@@ -23,9 +23,9 @@ Contributors:
 
 -   Robert Oschwald [CAS 3.0]
 
-Version: 3.0 RC2
+Version: 3.0
 
-Release Date: T.B.D.
+Release Date: 2014-05-05
 
 Copyright &copy; 2005, Yale University
 
