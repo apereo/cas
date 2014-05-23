@@ -25,9 +25,11 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.junit.Before;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 import org.springframework.validation.BindException;
+import org.springframework.validation.Validator;
 
 import static org.junit.Assert.*;
 
@@ -39,14 +41,12 @@ import static org.junit.Assert.*;
  */
 public class RegisteredServiceValidatorTests {
 
-    private RegisteredServiceValidator validator;
-
-    @Before
-    public void setUp() throws Exception {
-        this.validator = new RegisteredServiceValidator();
-        this.validator.setMaxDescriptionLength(1);
+    private RegisteredServiceValidator getValidator(final boolean returnValue) {
+        final IPersonAttributeDao dao = new StubPersonAttributeDao();
+        final RegisteredServiceValidator validator = new RegisteredServiceValidator(new TestServicesManager(returnValue), dao);
+        return validator;
     }
-
+    
     @Test
     public void testIdExists() {
         checkId(true, 1, "test");
@@ -64,37 +64,41 @@ public class RegisteredServiceValidatorTests {
 
     @Test
     public void testIdDoesNotExist3() {
-        checkId(true, 0, null);
+        checkId(true, 1, "test");
     }
 
     @Test
     public void testSupports() {
-        assertTrue(this.validator.supports(RegisteredServiceImpl.class));
-        assertFalse(this.validator.supports(Object.class));
+        final Validator validator = getValidator(false);
+        assertTrue(validator.supports(RegisteredServiceImpl.class));
+        assertFalse(validator.supports(Object.class));
     }
 
     @Test
     public void testMaxLength() {
-        this.validator.setServicesManager(new TestServicesManager(false));
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("test");
         impl.setDescription("fasdfdsafsafsafdsa");
 
         final BindException exception = new BindException(impl, "registeredService");
 
-        this.validator.validate(impl, exception);
+        final RegisteredServiceValidator validator = getValidator(false);
+        validator.setMaxDescriptionLength(1);
+        validator.validate(impl, exception);
 
         assertEquals(1, exception.getErrorCount());
     }
 
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
-        this.validator.setServicesManager(new TestServicesManager(exists));
+        final Validator validator = getValidator(exists);
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        impl.setName("name");
+        impl.setDescription("Test service");
         impl.setServiceId(name);
 
         final BindException exception = new BindException(impl, "registeredService");
 
-        this.validator.validate(impl, exception);
+        validator.validate(impl, exception);
 
         assertEquals(expectedErrors, exception.getErrorCount());
 

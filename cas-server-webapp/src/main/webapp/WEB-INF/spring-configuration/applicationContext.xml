@@ -101,7 +101,8 @@
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
-          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
+          p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
     

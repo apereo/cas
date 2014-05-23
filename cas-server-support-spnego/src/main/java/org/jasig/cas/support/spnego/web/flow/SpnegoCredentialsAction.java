@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @see <a href='http://ietfreport.isoc.org/idref/rfc4559/#page-2'>RFC 4559</a>
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
 public final class SpnegoCredentialsAction extends
@@ -85,6 +85,11 @@ AbstractNonInteractiveCredentialsAction {
         return null;
     }
 
+    /**
+     * Construct message prefix.
+     *
+     * @return the string
+     */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                 + " ";
@@ -102,6 +107,12 @@ AbstractNonInteractiveCredentialsAction {
         setResponseHeader(context, credential);
     }
 
+    /**
+     * Sets the response header based on the retrieved tocken.
+     *
+     * @param context the context
+     * @param credential the credential
+     */
     private void setResponseHeader(final RequestContext context,
             final Credential credential) {
         if (credential == null) {
@@ -129,6 +140,11 @@ AbstractNonInteractiveCredentialsAction {
         }
     }
 
+    /**
+     * Sets the ntlm and generate message prefix.
+     *
+     * @param ntlm the new ntlm
+     */
     public void setNtlm(final boolean ntlm) {
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
