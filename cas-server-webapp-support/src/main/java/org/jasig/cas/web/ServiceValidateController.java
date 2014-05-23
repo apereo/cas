@@ -261,6 +261,11 @@ public class ServiceValidateController extends DelegateController {
         return Collections.emptyMap();  
     }
     
+    /**
+     * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
+     *
+     * @return the command class
+     */
     private ValidationSpecification getCommandClass() {
         try {
             return (ValidationSpecification) this.validationSpecificationClass.newInstance();
