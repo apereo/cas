@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,10 +32,9 @@ import java.util.concurrent.TimeUnit;
  * can be used any number of times, have a fixed lifetime, and an idle timeout.
  *
  * @author William G. Thompson, Jr.
-
  * @since 3.4.10
  */
-public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean, Serializable {
+public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
@@ -77,11 +75,13 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
         }
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds),
                 "maxTimeToLiveInMilliSeconds must be greater than or equal to timeToKillInMilliSeconds.");
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         // Ticket has been used, check maxTimeToLive (hard window)
         if ((System.currentTimeMillis() - ticketState.getCreationTime() >= maxTimeToLiveInMilliSeconds)) {
