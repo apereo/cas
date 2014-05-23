@@ -81,10 +81,22 @@ public abstract class AbstractLogoutAction extends AbstractAction {
         response.addHeader("Cache-Control", "no-store");
     }
 
+    /**
+     * Put logout index into flow scope.
+     *
+     * @param context the context
+     * @param index the index
+     */
     protected final void putLogoutIndex(final RequestContext context, final int index) {
         context.getFlowScope().put(LOGOUT_INDEX, index);
     }
 
+    /**
+     * Gets the logout index from the flow scope.
+     *
+     * @param context the context
+     * @return the logout index
+     */
     protected final int getLogoutIndex(final RequestContext context) {
         final Object value = context.getFlowScope().get(LOGOUT_INDEX);
         return value == null ? 0 : (Integer) value;

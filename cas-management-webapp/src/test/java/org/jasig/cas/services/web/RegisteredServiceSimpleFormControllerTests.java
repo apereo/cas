@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.MockRegisteredService;
@@ -37,15 +38,20 @@ import org.jasig.cas.services.web.support.RegisteredServiceValidator;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.ModelAndView;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
@@ -65,55 +71,33 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.manager = new DefaultServicesManagerImpl(
                 new InMemoryServiceRegistryDaoImpl());
 
-        final RegisteredServiceValidator validator = new RegisteredServiceValidator();
-        validator.setServicesManager(this.manager);
-
         this.controller = new RegisteredServiceSimpleFormController(
-                this.manager, this.repository);
-        this.controller.setCommandName("registeredService");
-        this.controller.setValidator(validator);
+                this.manager, this.repository, new RegisteredServiceValidator(this.manager, this.repository));
     }
 
     @Test
     public void testAddRegisteredServiceNoValues() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        request.setMethod("POST");
-
-        final ModelAndView modelAndView = this.controller.handleRequest(
-                request, response);
-
-        final BindingResult result = (BindingResult) modelAndView
-                .getModel()
-                .get(
-                        "org.springframework.validation.BindingResult.registeredService");
-
+        final BindingResult result = mock(BindingResult.class);
+        when(result.getModel()).thenReturn(new HashMap<String, Object>());
+        when(result.hasErrors()).thenReturn(true);
+        
+        final ModelMap model = new ModelMap();
+        this.controller.onSubmit(mock(RegisteredService.class), result, model, new MockHttpServletRequest());
+        
         assertTrue(result.hasErrors());
     }
 
     @Test
     public void testAddRegisteredServiceWithValues() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        request.addParameter("description", "description");
-        request.addParameter("serviceId", "serviceId");
-        request.addParameter("name", "name");
-        request.addParameter("theme", "theme");
-        request.addParameter("allowedToProxy", "true");
-        request.addParameter("enabled", "true");
-        request.addParameter("ssoEnabled", "true");
-        request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "1");
-
-        request.setMethod("POST");
-
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setDescription("description");
+        svc.setServiceId("serviceId");
+        svc.setName("name");
+        svc.setEvaluationOrder(123);
+        
         assertTrue(this.manager.getAllServices().isEmpty());
-
-        this.controller.handleRequest(
-                request, response);
-
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+        
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for(RegisteredService rs : this.manager.getAllServices()) {
@@ -123,9 +107,6 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void testEditRegisteredServiceWithValues() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("Test Service");
@@ -134,21 +115,14 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.manager.save(r);
 
-        request.addParameter("description", "description");
-        request.addParameter("serviceId", "serviceId1");
-        request.addParameter("name", "name");
-        request.addParameter("theme", "theme");
-        request.addParameter("allowedToProxy", "true");
-        request.addParameter("enabled", "true");
-        request.addParameter("ssoEnabled", "true");
-        request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "2");
-        request.addParameter("id", "1000");
-
-        request.setMethod("POST");
-
-        this.controller.handleRequest(
-                request, response);
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setDescription("description");
+        svc.setServiceId("serviceId1");
+        svc.setName("name");
+        svc.setId(1000);
+        svc.setEvaluationOrder(1000);
+        
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -158,26 +132,15 @@ public class RegisteredServiceSimpleFormControllerTests {
 
    @Test
     public void testAddRegexRegisteredService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        request.addParameter("description", "description");
-        request.addParameter("serviceId", "^https://.*");
-        request.addParameter("name", "name");
-        request.addParameter("theme", "theme");
-        request.addParameter("allowedToProxy", "true");
-        request.addParameter("enabled", "true");
-        request.addParameter("ssoEnabled", "true");
-        request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "1");
-
-        request.setMethod("POST");
-
-        assertTrue(this.manager.getAllServices().isEmpty());
-
-        this.controller.handleRequest(
-                request, response);
-
+        final RegexRegisteredService svc = new RegexRegisteredService();
+        svc.setDescription("description");
+        svc.setServiceId("^serviceId");
+        svc.setName("name");
+        svc.setId(1000);
+        svc.setEvaluationOrder(1000);
+        
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+        
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for(RegisteredService rs : this.manager.getAllServices()) {
@@ -185,42 +148,57 @@ public class RegisteredServiceSimpleFormControllerTests {
         }
     }
 
+   @Test
+   public void testChangingServicePatternAndType() throws Exception {
+       final AbstractRegisteredService svc = new RegexRegisteredService();
+       svc.setDescription("description");
+       svc.setServiceId("serviceId");
+       svc.setName("name");
+       svc.setId(1000);
+       svc.setEvaluationOrder(1000);
+       
+       this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+       
+       final Collection<RegisteredService> c = this.manager.getAllServices();
+       assertEquals("Service collection size must be 1", c.size(), 1);
+       
+       for(final RegisteredService rs : c) {
+           assertTrue(rs instanceof RegisteredServiceImpl);
+       }
+       
+       final AbstractRegisteredService svc2 = (AbstractRegisteredService) c.iterator().next();
+       svc2.setServiceId("^serviceId");
+       this.controller.onSubmit(svc2, mock(BindingResult.class),
+               new ModelMap(), new MockHttpServletRequest());
+
+       final Collection<RegisteredService> services = this.manager.getAllServices();
+       assertEquals(1, services.size());
+       
+       for(final RegisteredService rs : services) {
+           assertTrue(rs instanceof RegexRegisteredService);
+       }
+   }
+
+   
     @Test
     public void testAddMultipleRegisteredServiceTypes() throws Exception {
-        final MockHttpServletRequest request1 = new MockHttpServletRequest();
-        final MockHttpServletResponse response1 = new MockHttpServletResponse();
+        AbstractRegisteredService svc = new RegexRegisteredService();
+        svc.setDescription("description");
+        svc.setServiceId("^serviceId");
+        svc.setName("name");
+        svc.setId(1000);
+        svc.setEvaluationOrder(1000);
+        
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
-        request1.addParameter("description", "description");
-        request1.addParameter("serviceId", "serviceId");
-        request1.addParameter("name", "ant");
-        request1.addParameter("theme", "theme");
-        request1.addParameter("allowedToProxy", "true");
-        request1.addParameter("enabled", "true");
-        request1.addParameter("ssoEnabled", "true");
-        request1.addParameter("anonymousAccess", "false");
-        request1.addParameter("evaluationOrder", "1");
-
-        request1.setMethod("POST");
-
-        final MockHttpServletRequest request2 = new MockHttpServletRequest();
-        final MockHttpServletResponse response2 = new MockHttpServletResponse();
-
-        request2.addParameter("description", "description");
-        request2.addParameter("serviceId", "^https://.*");
-        request2.addParameter("name", "regex");
-        request2.addParameter("theme", "theme");
-        request2.addParameter("allowedToProxy", "true");
-        request2.addParameter("enabled", "true");
-        request2.addParameter("ssoEnabled", "true");
-        request2.addParameter("anonymousAccess", "false");
-        request2.addParameter("evaluationOrder", "1");
-
-        request2.setMethod("POST");
-
-        assertTrue(this.manager.getAllServices().isEmpty());
-
-        this.controller.handleRequest(request1, response1);
-        this.controller.handleRequest(request2, response2);
+        svc = new RegisteredServiceImpl();
+        svc.setDescription("description");
+        svc.setServiceId("^serviceId");
+        svc.setName("name");
+        svc.setId(100);
+        svc.setEvaluationOrder(100);
+        
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
@@ -235,25 +213,14 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void testAddMockRegisteredService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        request.addParameter("description", "description");
-        request.addParameter("serviceId", "serviceId");
-        request.addParameter("name", "name");
-        request.addParameter("theme", "theme");
-        request.addParameter("allowedToProxy", "true");
-        request.addParameter("enabled", "true");
-        request.addParameter("ssoEnabled", "true");
-        request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "1");
-
-        request.setMethod("POST");
-
-        assertTrue(this.manager.getAllServices().isEmpty());
-
-        this.controller.setCommandClass(MockRegisteredService.class);
-        this.controller.handleRequest(request, response);
+        final MockRegisteredService svc = new MockRegisteredService();
+        svc.setDescription("description");
+        svc.setServiceId("^serviceId");
+        svc.setName("name");
+        svc.setId(1000);
+        svc.setEvaluationOrder(1000);
+        
+        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -263,10 +230,27 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     @Test
-    public void testEditMockRegisteredService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+    public void testEmptyServiceWithModelAttributesRestored() throws Exception {
+        final BindingResult result = mock(BindingResult.class);
+        when(result.getModel()).thenReturn(new HashMap<String, Object>());
+        when(result.hasErrors()).thenReturn(true);
+        
+        final MockRegisteredService svc = new MockRegisteredService();
+        svc.setDescription(null);
+        svc.setServiceId(null);
+        
+        final ModelMap model = new ModelMap();   
+        this.controller.onSubmit(svc, result, model, new MockHttpServletRequest());
 
+        assertTrue(model.containsAttribute("availableAttributes"));
+        assertTrue(model.containsAttribute("availableUsernameAttributes"));
+        assertTrue(model.containsAttribute("pageTitle"));
+        
+    }
+
+    
+    @Test
+    public void testEditMockRegisteredService() throws Exception {
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
@@ -274,21 +258,9 @@ public class RegisteredServiceSimpleFormControllerTests {
         r.setDescription("description");
 
         this.manager.save(r);
-
-        request.addParameter("description", "description");
-        request.addParameter("serviceId", "serviceId1");
-        request.addParameter("name", "name");
-        request.addParameter("theme", "theme");
-        request.addParameter("allowedToProxy", "true");
-        request.addParameter("enabled", "true");
-        request.addParameter("ssoEnabled", "true");
-        request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "2");
-        request.addParameter("id", "1000");
-
-        request.setMethod("POST");
-
-        this.controller.handleRequest(request, response);
+        
+        r.setServiceId("serviceId1");
+        this.controller.onSubmit(r, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);

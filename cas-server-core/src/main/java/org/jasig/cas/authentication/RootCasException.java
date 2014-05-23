@@ -85,6 +85,11 @@ public abstract class RootCasException extends Exception {
       return this.code;
   }
 
+  /**
+   * Inits the exception with the code.
+   *
+   * @param code the code
+   */
   private void initException(final String code) {
       Assert.hasLength(code, "The exception code cannot be blank");
       this.code = code;

@@ -21,11 +21,11 @@ package org.jasig.cas.adaptors.generic;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
@@ -48,14 +48,16 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     @NotNull
     private List<String> users;
 
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    @Override
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();
         }
 
-        return new SimplePrincipal(username);
+        return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
 
     /**
