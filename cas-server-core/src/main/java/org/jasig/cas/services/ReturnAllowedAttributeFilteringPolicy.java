@@ -33,6 +33,8 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public final class ReturnAllowedAttributeFilteringPolicy extends AbstractAttributeFilteringPolicy {
 
+    private static final long serialVersionUID = -5771481877391140569L;
+    
     private List<String> allowedAttributes = Collections.emptyList();
     
     /**
@@ -42,6 +44,15 @@ public final class ReturnAllowedAttributeFilteringPolicy extends AbstractAttribu
      */
     public void setAllowedAttributes(final List<String> allowed) {
         this.allowedAttributes = allowed;
+    }
+    
+    /**
+     * Gets the allowed attributes.
+     *
+     * @return the allowed attributes
+     */
+    protected List<String> getAllowedAttributes() {
+        return Collections.unmodifiableList(this.allowedAttributes);
     }
     
     @Override

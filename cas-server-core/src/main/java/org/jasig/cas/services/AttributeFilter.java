@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -26,9 +27,9 @@ import java.util.Map;
  * map of attributes that may be released for a registered service.
  *
  * @author Misagh Moayyed
- * @since 4.0.0
+ * @since 4.1
  */
-public interface AttributeFilter {
+public interface AttributeFilter extends Serializable {
     /**
      * Filters the received principal attributes for the given registered service.
      *
