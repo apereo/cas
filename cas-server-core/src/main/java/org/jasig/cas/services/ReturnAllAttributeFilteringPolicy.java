@@ -29,6 +29,8 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public final class ReturnAllAttributeFilteringPolicy extends AbstractAttributeFilteringPolicy {
 
+    private static final long serialVersionUID = 5519257723778012771L;
+
     @Override
     protected Map<String, Object> getAttributesInternal(final Principal p) {
         return p.getAttributes();

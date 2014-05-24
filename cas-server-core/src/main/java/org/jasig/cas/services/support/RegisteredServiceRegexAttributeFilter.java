@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.services.AttributeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +41,13 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
+    private static final long serialVersionUID = 403015306984610128L;
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @NotNull
+    private Pattern pattern;
+    
     /**
      * Instantiates a new registered service regex attribute filter.
      *
@@ -50,9 +57,15 @@ public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
         this.pattern = Pattern.compile(regex);
     }
 
-    @NotNull
-    private Pattern pattern;
-
+    /**
+     * Gets the pattern.
+     *
+     * @return the pattern
+     */
+    protected Pattern getPattern() {
+        return this.pattern;
+    }
+    
     /**
      * {@inheritDoc}
      *
@@ -162,4 +175,22 @@ public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
         logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 83).append(this.pattern).toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) { return false; }
+        if (obj == this) { return true; }
+        if (obj.getClass() != getClass()) {
+          return false;
+        }
+        final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
+        return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
+    }
+    
+    
 }
