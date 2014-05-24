@@ -168,6 +168,9 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     
     /**
+     * Sets the nas ip address.
+     *
+     * @param nasIpAddress the new nas ip address
      * @since 4.1
      */
     public void setNasIpAddress(final String nasIpAddress) {
@@ -175,6 +178,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas ipv6 address.
+     *
+     * @param nasIpv6Address the new nas ipv6 address
      * @since 4.1
      */
     public void setNasIpv6Address(final String nasIpv6Address) {
@@ -182,6 +188,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas port.
+     *
+     * @param nasPort the new nas port
      * @since 4.1
      */
     public void setNasPort(final long nasPort) {
@@ -189,6 +198,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas port id.
+     *
+     * @param nasPortId the new nas port id
      * @since 4.1
      */
     public void setNasPortId(final long nasPortId) {
@@ -196,6 +208,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas identifier.
+     *
+     * @param nasIdentifier the new nas identifier
      * @since 4.1
      */
     public void setNasIdentifier(final long nasIdentifier) {
@@ -203,6 +218,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas real port.
+     *
+     * @param nasRealPort the new nas real port
      * @since 4.1
      */
     public void setNasRealPort(final long nasRealPort) {
@@ -210,6 +228,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the nas port type.
+     *
+     * @param nasPortType the new nas port type
      * @since 4.1
      */
     public void setNasPortType(final long nasPortType) {
@@ -217,6 +238,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * Sets the retries.
+     *
+     * @param retries the new retries
      * @since 4.1
      */
     public void setRetries(final int retries) {

@@ -63,6 +63,9 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
+                <cas:isFromNewLogin>${fn:escapeXml(assertion.isFromNewLogin)}</cas:isFromNewLogin>
+                <cas:longTermAuthenticationRequestTokenUsed>${fn:escapeXml(longTermAuthenticationRequestTokenUsed)}</cas:longTermAuthenticationRequestTokenUsed>
+                <cas:authenticationDate>${fn:escapeXml(assertion.primaryAuthentication.authenticationDate)}</cas:authenticationDate>
             </cas:attributes>
         </c:if>
 
