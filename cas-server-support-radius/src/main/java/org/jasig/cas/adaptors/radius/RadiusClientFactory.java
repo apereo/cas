@@ -108,6 +108,7 @@ public class RadiusClientFactory {
      * Creates a new RADIUS client instance using factory configuration settings.
      *
      * @return New radius client instance.
+     * @throws IOException In case the transport method encounters an error.
      */
     public RadiusClient newInstance() throws IOException {
         return new RadiusClient(
