@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAttributeFilteringPolicy implements AttributeFilteringPolicy {
     
+    private static final long serialVersionUID = 5325460875620586503L;
+
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -41,6 +43,15 @@ public abstract class AbstractAttributeFilteringPolicy implements AttributeFilte
         this.attributeFilter = filter;
     }
 
+    /**
+     * Gets the attribute filter.
+     *
+     * @return the attribute filter
+     */
+    protected final AttributeFilter getAttributeFilter() {
+        return this.attributeFilter;
+    }
+    
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> attributes = getAttributesInternal(p);

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
@@ -26,9 +27,9 @@ import org.jasig.cas.authentication.principal.Principal;
  * The filtering policy that decides how attributes are to be released for a given service.
  * Each policy has the ability to apply an optional filter.
  * @author Misagh Moayyed
- * @since 4
+ * @since 4.1
  */
-public interface AttributeFilteringPolicy {
+public interface AttributeFilteringPolicy extends Serializable {
     
     /**
      * Sets the attribute filter.
