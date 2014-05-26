@@ -168,6 +168,7 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     
     /**
+     * @param nasIpAddress the NAS IP Address
      * @since 4.1
      */
     public void setNasIpAddress(final String nasIpAddress) {
@@ -175,6 +176,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasIpv6Address the NAS IP Address v6
      * @since 4.1
      */
     public void setNasIpv6Address(final String nasIpv6Address) {
@@ -182,6 +184,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasPort the NAS port
      * @since 4.1
      */
     public void setNasPort(final long nasPort) {
@@ -189,6 +192,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasPortId the NAS port identifier
      * @since 4.1
      */
     public void setNasPortId(final long nasPortId) {
@@ -196,6 +200,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasIdentifier the NAS identifier
      * @since 4.1
      */
     public void setNasIdentifier(final long nasIdentifier) {
@@ -203,6 +208,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasRealPort the NAS real port
      * @since 4.1
      */
     public void setNasRealPort(final long nasRealPort) {
@@ -210,6 +216,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param nasPortType the NAS port type
      * @since 4.1
      */
     public void setNasPortType(final long nasPortType) {
@@ -217,6 +224,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
+     * @param retries the number of retries
      * @since 4.1
      */
     public void setRetries(final int retries) {
