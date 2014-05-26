@@ -242,7 +242,49 @@
 <a class="jxr_linenumber" name="232" href="#232">232</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="233" href="#233">233</a>         assertNull(modelAndView.getModel().get(<span class="jxr_string">"pgtIou"</span>));
 <a class="jxr_linenumber" name="234" href="#234">234</a>     }
-<a class="jxr_linenumber" name="235" href="#235">235</a> }
+<a class="jxr_linenumber" name="235" href="#235">235</a>     
+<a class="jxr_linenumber" name="236" href="#236">236</a>     @Test
+<a class="jxr_linenumber" name="237" href="#237">237</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidServiceTicketWithDifferentEncodingAndIgnoringCase() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="238" href="#238">238</a>         <strong class="jxr_keyword">this</strong>.serviceValidateController.setProxyHandler(<strong class="jxr_keyword">new</strong> Cas10ProxyHandler());
+<a class="jxr_linenumber" name="239" href="#239">239</a>         <strong class="jxr_keyword">final</strong> String tId = getCentralAuthenticationService()
+<a class="jxr_linenumber" name="240" href="#240">240</a>                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+<a class="jxr_linenumber" name="241" href="#241">241</a>         
+<a class="jxr_linenumber" name="242" href="#242">242</a>         <strong class="jxr_keyword">final</strong> String ORIG_SVC = <span class="jxr_string">"http://www.jasig.org?param=hello+world"</span>;
+<a class="jxr_linenumber" name="243" href="#243">243</a>         <strong class="jxr_keyword">final</strong> String sId = getCentralAuthenticationService()
+<a class="jxr_linenumber" name="244" href="#244">244</a>                 .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+<a class="jxr_linenumber" name="245" href="#245">245</a> 
+<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">final</strong> String REQ_SVC = <span class="jxr_string">"http://WWW.JASIG.ORG?PARAM=hello%20world"</span>;
+<a class="jxr_linenumber" name="247" href="#247">247</a>         
+<a class="jxr_linenumber" name="248" href="#248">248</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="249" href="#249">249</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService(REQ_SVC).getId());
+<a class="jxr_linenumber" name="250" href="#250">250</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId);
+<a class="jxr_linenumber" name="251" href="#251">251</a>         
+<a class="jxr_linenumber" name="252" href="#252">252</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="253" href="#253">253</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
+<a class="jxr_linenumber" name="254" href="#254">254</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
+<a class="jxr_linenumber" name="255" href="#255">255</a>     }
+<a class="jxr_linenumber" name="256" href="#256">256</a>     
+<a class="jxr_linenumber" name="257" href="#257">257</a>     @Test
+<a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidServiceTicketWithDifferentEncoding() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="259" href="#259">259</a>         <strong class="jxr_keyword">this</strong>.serviceValidateController.setProxyHandler(<strong class="jxr_keyword">new</strong> Cas10ProxyHandler());
+<a class="jxr_linenumber" name="260" href="#260">260</a>         <strong class="jxr_keyword">final</strong> String tId = getCentralAuthenticationService()
+<a class="jxr_linenumber" name="261" href="#261">261</a>                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+<a class="jxr_linenumber" name="262" href="#262">262</a>         
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">final</strong> String ORIG_SVC = <span class="jxr_string">"http://www.jasig.org?param=hello+world"</span>;
+<a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">final</strong> String sId = getCentralAuthenticationService()
+<a class="jxr_linenumber" name="265" href="#265">265</a>                 .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+<a class="jxr_linenumber" name="266" href="#266">266</a> 
+<a class="jxr_linenumber" name="267" href="#267">267</a>         <strong class="jxr_keyword">final</strong> String REQ_SVC = <span class="jxr_string">"http://www.jasig.org?param=hello%20world"</span>;
+<a class="jxr_linenumber" name="268" href="#268">268</a>         
+<a class="jxr_linenumber" name="269" href="#269">269</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="270" href="#270">270</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService(REQ_SVC).getId());
+<a class="jxr_linenumber" name="271" href="#271">271</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId);
+<a class="jxr_linenumber" name="272" href="#272">272</a>         
+<a class="jxr_linenumber" name="273" href="#273">273</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="274" href="#274">274</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
+<a class="jxr_linenumber" name="275" href="#275">275</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
+<a class="jxr_linenumber" name="276" href="#276">276</a>     }
+<a class="jxr_linenumber" name="277" href="#277">277</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

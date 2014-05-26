@@ -50,28 +50,42 @@
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">private</strong> String ajaxRequestHeaderName =<span class="jxr_string">"x-requested-with"</span>;
 <a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">private</strong> String ajaxRequestHeaderValue = <span class="jxr_string">"XMLHttpRequest"</span>;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAjaxRequestHeaderName(<strong class="jxr_keyword">final</strong> String ajaxRequestHeaderName) {
-<a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName = ajaxRequestHeaderName;
-<a class="jxr_linenumber" name="45" href="#45">45</a>      }
-<a class="jxr_linenumber" name="46" href="#46">46</a>  
-<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAjaxRequestHeaderValue(<strong class="jxr_keyword">final</strong> String ajaxRequestHeaderValue) {
-<a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderValue = ajaxRequestHeaderValue;
+<a class="jxr_linenumber" name="43" href="#43">43</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * Header name that identifies this request as ajax.</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     * @param ajaxRequestHeaderName header name</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAjaxRequestHeaderName(<strong class="jxr_keyword">final</strong> String ajaxRequestHeaderName) {
+<a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName = ajaxRequestHeaderName;
 <a class="jxr_linenumber" name="49" href="#49">49</a>      }
 <a class="jxr_linenumber" name="50" href="#50">50</a>  
-<a class="jxr_linenumber" name="51" href="#51">51</a>      @Override
-<a class="jxr_linenumber" name="52" href="#52">52</a>      <strong class="jxr_keyword">public</strong> ModelAndView resolveException(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response,
-<a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">final</strong> Object handler, <strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">final</strong> String contentType = request.getHeader(<strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName);
-<a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">if</strong> (contentType != <strong class="jxr_keyword">null</strong> &amp;&amp; contentType.equals(<strong class="jxr_keyword">this</strong>.ajaxRequestHeaderValue)) {
-<a class="jxr_linenumber" name="56" href="#56">56</a>              logger.debug(<span class="jxr_string">"Handling exception {} for ajax request indicated by header {}"</span>,
-<a class="jxr_linenumber" name="57" href="#57">57</a>                      ex.getClass().getName(), <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName);
-<a class="jxr_linenumber" name="58" href="#58">58</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.resolveException(request, response, handler, ex);
-<a class="jxr_linenumber" name="59" href="#59">59</a>          }
-<a class="jxr_linenumber" name="60" href="#60">60</a>          logger.debug(ex.getMessage(), ex);
-<a class="jxr_linenumber" name="61" href="#61">61</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="62" href="#62">62</a>      }
-<a class="jxr_linenumber" name="63" href="#63">63</a>  
-<a class="jxr_linenumber" name="64" href="#64">64</a>  }
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     * Header value that identifies this request as ajax. </em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * @param ajaxRequestHeaderValue header value</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAjaxRequestHeaderValue(<strong class="jxr_keyword">final</strong> String ajaxRequestHeaderValue) {
+<a class="jxr_linenumber" name="56" href="#56">56</a>          <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderValue = ajaxRequestHeaderValue;
+<a class="jxr_linenumber" name="57" href="#57">57</a>      }
+<a class="jxr_linenumber" name="58" href="#58">58</a>  
+<a class="jxr_linenumber" name="59" href="#59">59</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="62" href="#62">62</a>      @Override
+<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">public</strong> ModelAndView resolveException(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response,
+<a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">final</strong> Object handler, <strong class="jxr_keyword">final</strong> Exception ex) {
+<a class="jxr_linenumber" name="65" href="#65">65</a>          <strong class="jxr_keyword">final</strong> String contentType = request.getHeader(<strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName);
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">if</strong> (contentType != <strong class="jxr_keyword">null</strong> &amp;&amp; contentType.equals(<strong class="jxr_keyword">this</strong>.ajaxRequestHeaderValue)) {
+<a class="jxr_linenumber" name="67" href="#67">67</a>              logger.debug(<span class="jxr_string">"Handling exception {} for ajax request indicated by header {}"</span>,
+<a class="jxr_linenumber" name="68" href="#68">68</a>                      ex.getClass().getName(), <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName);
+<a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.resolveException(request, response, handler, ex);
+<a class="jxr_linenumber" name="70" href="#70">70</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="71" href="#71">71</a>              logger.trace(<span class="jxr_string">"Unable to resolve exception {} for request. Ajax request header {} not found."</span>,
+<a class="jxr_linenumber" name="72" href="#72">72</a>                      ex.getClass().getName(), <strong class="jxr_keyword">this</strong>.ajaxRequestHeaderName);
+<a class="jxr_linenumber" name="73" href="#73">73</a>          }
+<a class="jxr_linenumber" name="74" href="#74">74</a>          logger.debug(ex.getMessage(), ex);
+<a class="jxr_linenumber" name="75" href="#75">75</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="76" href="#76">76</a>      }
+<a class="jxr_linenumber" name="77" href="#77">77</a>  
+<a class="jxr_linenumber" name="78" href="#78">78</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

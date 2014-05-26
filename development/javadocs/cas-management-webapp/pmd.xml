@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-05-19T16:40:29.436">
+<pmd version="4.3" timestamp="2014-05-26T11:04:48.225">
 <file name="/home/travis/build/Jasig/cas/cas-management-webapp/src/main/java/org/jasig/cas/services/web/support/RegisteredServiceValidator.java">
-<violation beginline="96" endline="99" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas.services.web.support" class="RegisteredServiceValidator" method="validate" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="113" endline="116" begincolumn="21" endcolumn="21" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas.services.web.support" class="RegisteredServiceValidator" method="validate" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>

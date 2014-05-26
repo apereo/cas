@@ -158,84 +158,98 @@
 <a class="jxr_linenumber" name="148" href="#148">148</a>         assertEquals(2, <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices().size());
 <a class="jxr_linenumber" name="149" href="#149">149</a>         assertTrue(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices().contains(r));
 <a class="jxr_linenumber" name="150" href="#150">150</a>     }
-<a class="jxr_linenumber" name="151" href="#151">151</a> 
+<a class="jxr_linenumber" name="151" href="#151">151</a>     
 <a class="jxr_linenumber" name="152" href="#152">152</a>     @Test
-<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEmptyServicesRegistry() {
-<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a> s = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a>(<span class="jxr_string">"http://www.google.com"</span>);
-<a class="jxr_linenumber" name="155" href="#155">155</a>         
-<a class="jxr_linenumber" name="156" href="#156">156</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
-<a class="jxr_linenumber" name="157" href="#157">157</a>             defaultServicesManagerImpl.delete(svc.getId());
-<a class="jxr_linenumber" name="158" href="#158">158</a>         }
-<a class="jxr_linenumber" name="159" href="#159">159</a>         assertTrue(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices().size() == 0);
-<a class="jxr_linenumber" name="160" href="#160">160</a>         assertNull(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.findServiceBy(s));
-<a class="jxr_linenumber" name="161" href="#161">161</a>         assertNull(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.findServiceBy(1000));
-<a class="jxr_linenumber" name="162" href="#162">162</a>     }
-<a class="jxr_linenumber" name="163" href="#163">163</a>     
-<a class="jxr_linenumber" name="164" href="#164">164</a>     @Test
-<a class="jxr_linenumber" name="165" href="#165">165</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEvaluationOrderOfServices() {
-<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
-<a class="jxr_linenumber" name="167" href="#167">167</a>         r.setId(100);
-<a class="jxr_linenumber" name="168" href="#168">168</a>         r.setName(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="169" href="#169">169</a>         r.setServiceId(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="170" href="#170">170</a>         r.setEvaluationOrder(200);
-<a class="jxr_linenumber" name="171" href="#171">171</a> 
-<a class="jxr_linenumber" name="172" href="#172">172</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r2 = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
-<a class="jxr_linenumber" name="173" href="#173">173</a>         r2.setId(101);
-<a class="jxr_linenumber" name="174" href="#174">174</a>         r2.setName(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="175" href="#175">175</a>         r2.setServiceId(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="176" href="#176">176</a>         r2.setEvaluationOrder(80);
-<a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r3 = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
-<a class="jxr_linenumber" name="179" href="#179">179</a>         r3.setId(102);
-<a class="jxr_linenumber" name="180" href="#180">180</a>         r3.setName(<span class="jxr_string">"Sample test service"</span>);
-<a class="jxr_linenumber" name="181" href="#181">181</a>         r3.setServiceId(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="182" href="#182">182</a>         r3.setEvaluationOrder(80);
-<a class="jxr_linenumber" name="183" href="#183">183</a> 
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r);
-<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r3);
-<a class="jxr_linenumber" name="186" href="#186">186</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r2);
-<a class="jxr_linenumber" name="187" href="#187">187</a> 
-<a class="jxr_linenumber" name="188" href="#188">188</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; allServices = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;(
-<a class="jxr_linenumber" name="189" href="#189">189</a>                 <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices());
-<a class="jxr_linenumber" name="190" href="#190">190</a> 
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <em class="jxr_comment">//We expect the 3 newly added services, plus the one added in setUp()</em>
-<a class="jxr_linenumber" name="192" href="#192">192</a>         assertEquals(4, allServices.size());
-<a class="jxr_linenumber" name="193" href="#193">193</a> 
-<a class="jxr_linenumber" name="194" href="#194">194</a>         assertEquals(allServices.get(0).getId(), r3.getId());
-<a class="jxr_linenumber" name="195" href="#195">195</a>         assertEquals(allServices.get(1).getId(), r2.getId());
-<a class="jxr_linenumber" name="196" href="#196">196</a>         assertEquals(allServices.get(2).getId(), r.getId());
+<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRegexService() {
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
+<a class="jxr_linenumber" name="155" href="#155">155</a>         r.setId(10000);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         r.setName(<span class="jxr_string">"regex test"</span>);
+<a class="jxr_linenumber" name="157" href="#157">157</a>         r.setServiceId(<span class="jxr_string">"^http://www.test.edu.+"</span>);
+<a class="jxr_linenumber" name="158" href="#158">158</a>         r.setEvaluationOrder(10000);
+<a class="jxr_linenumber" name="159" href="#159">159</a>                 
+<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r);
+<a class="jxr_linenumber" name="161" href="#161">161</a> 
+<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a> service = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a>(<span class="jxr_string">"HTTP://www.TEST.edu/param=hello"</span>);
+<a class="jxr_linenumber" name="163" href="#163">163</a>         assertEquals(r, <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.findServiceBy(service));
+<a class="jxr_linenumber" name="164" href="#164">164</a>     }
+<a class="jxr_linenumber" name="165" href="#165">165</a> 
+<a class="jxr_linenumber" name="166" href="#166">166</a>     @Test
+<a class="jxr_linenumber" name="167" href="#167">167</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEmptyServicesRegistry() {
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a> s = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a>(<span class="jxr_string">"http://www.google.com"</span>);
+<a class="jxr_linenumber" name="169" href="#169">169</a>         
+<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
+<a class="jxr_linenumber" name="171" href="#171">171</a>             defaultServicesManagerImpl.delete(svc.getId());
+<a class="jxr_linenumber" name="172" href="#172">172</a>         }
+<a class="jxr_linenumber" name="173" href="#173">173</a>         assertTrue(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices().size() == 0);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         assertNull(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.findServiceBy(s));
+<a class="jxr_linenumber" name="175" href="#175">175</a>         assertNull(<strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.findServiceBy(1000));
+<a class="jxr_linenumber" name="176" href="#176">176</a>     }
+<a class="jxr_linenumber" name="177" href="#177">177</a>     
+<a class="jxr_linenumber" name="178" href="#178">178</a>     @Test
+<a class="jxr_linenumber" name="179" href="#179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEvaluationOrderOfServices() {
+<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
+<a class="jxr_linenumber" name="181" href="#181">181</a>         r.setId(100);
+<a class="jxr_linenumber" name="182" href="#182">182</a>         r.setName(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="183" href="#183">183</a>         r.setServiceId(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="184" href="#184">184</a>         r.setEvaluationOrder(200);
+<a class="jxr_linenumber" name="185" href="#185">185</a> 
+<a class="jxr_linenumber" name="186" href="#186">186</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r2 = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
+<a class="jxr_linenumber" name="187" href="#187">187</a>         r2.setId(101);
+<a class="jxr_linenumber" name="188" href="#188">188</a>         r2.setName(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="189" href="#189">189</a>         r2.setServiceId(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="190" href="#190">190</a>         r2.setEvaluationOrder(80);
+<a class="jxr_linenumber" name="191" href="#191">191</a> 
+<a class="jxr_linenumber" name="192" href="#192">192</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r3 = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
+<a class="jxr_linenumber" name="193" href="#193">193</a>         r3.setId(102);
+<a class="jxr_linenumber" name="194" href="#194">194</a>         r3.setName(<span class="jxr_string">"Sample test service"</span>);
+<a class="jxr_linenumber" name="195" href="#195">195</a>         r3.setServiceId(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="196" href="#196">196</a>         r3.setEvaluationOrder(80);
 <a class="jxr_linenumber" name="197" href="#197">197</a> 
-<a class="jxr_linenumber" name="198" href="#198">198</a>     }
-<a class="jxr_linenumber" name="199" href="#199">199</a> 
-<a class="jxr_linenumber" name="200" href="#200">200</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a> <strong class="jxr_keyword">implements</strong> Service {
+<a class="jxr_linenumber" name="198" href="#198">198</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r);
+<a class="jxr_linenumber" name="199" href="#199">199</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r3);
+<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.save(r2);
 <a class="jxr_linenumber" name="201" href="#201">201</a> 
-<a class="jxr_linenumber" name="202" href="#202">202</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a> <em class="jxr_javadoccomment">         * Comment for &lt;code&gt;serialVersionUID&lt;/code&gt;.</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 6572142033945243669L;
-<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">private</strong> String id;
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; allServices = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;(
+<a class="jxr_linenumber" name="203" href="#203">203</a>                 <strong class="jxr_keyword">this</strong>.defaultServicesManagerImpl.getAllServices());
+<a class="jxr_linenumber" name="204" href="#204">204</a> 
+<a class="jxr_linenumber" name="205" href="#205">205</a>         <em class="jxr_comment">//We expect the 3 newly added services, plus the one added in setUp()</em>
+<a class="jxr_linenumber" name="206" href="#206">206</a>         assertEquals(4, allServices.size());
 <a class="jxr_linenumber" name="207" href="#207">207</a> 
-<a class="jxr_linenumber" name="208" href="#208">208</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a>(<strong class="jxr_keyword">final</strong> String id) {
-<a class="jxr_linenumber" name="209" href="#209">209</a>             <strong class="jxr_keyword">this</strong>.id = id;
-<a class="jxr_linenumber" name="210" href="#210">210</a>         }
+<a class="jxr_linenumber" name="208" href="#208">208</a>         assertEquals(allServices.get(0).getId(), r3.getId());
+<a class="jxr_linenumber" name="209" href="#209">209</a>         assertEquals(allServices.get(1).getId(), r2.getId());
+<a class="jxr_linenumber" name="210" href="#210">210</a>         assertEquals(allServices.get(2).getId(), r.getId());
 <a class="jxr_linenumber" name="211" href="#211">211</a> 
-<a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
-<a class="jxr_linenumber" name="213" href="#213">213</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="214" href="#214">214</a>         }
+<a class="jxr_linenumber" name="212" href="#212">212</a>     }
+<a class="jxr_linenumber" name="213" href="#213">213</a> 
+<a class="jxr_linenumber" name="214" href="#214">214</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a> <strong class="jxr_keyword">implements</strong> Service {
 <a class="jxr_linenumber" name="215" href="#215">215</a> 
-<a class="jxr_linenumber" name="216" href="#216">216</a>         <strong class="jxr_keyword">public</strong> String getId() {
-<a class="jxr_linenumber" name="217" href="#217">217</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.id;
-<a class="jxr_linenumber" name="218" href="#218">218</a>         }
-<a class="jxr_linenumber" name="219" href="#219">219</a> 
-<a class="jxr_linenumber" name="220" href="#220">220</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> Principal principal) {
-<a class="jxr_linenumber" name="221" href="#221">221</a>             <em class="jxr_comment">// nothing to do</em>
-<a class="jxr_linenumber" name="222" href="#222">222</a>         }
-<a class="jxr_linenumber" name="223" href="#223">223</a> 
-<a class="jxr_linenumber" name="224" href="#224">224</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> Service service) {
-<a class="jxr_linenumber" name="225" href="#225">225</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="226" href="#226">226</a>         }
-<a class="jxr_linenumber" name="227" href="#227">227</a>     }
-<a class="jxr_linenumber" name="228" href="#228">228</a> }
+<a class="jxr_linenumber" name="216" href="#216">216</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">         * Comment for &lt;code&gt;serialVersionUID&lt;/code&gt;.</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="219" href="#219">219</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 6572142033945243669L;
+<a class="jxr_linenumber" name="220" href="#220">220</a>         <strong class="jxr_keyword">private</strong> String id;
+<a class="jxr_linenumber" name="221" href="#221">221</a> 
+<a class="jxr_linenumber" name="222" href="#222">222</a>         <strong class="jxr_keyword">protected</strong> <a href="../../../../org/jasig/cas/services/DefaultServicesManagerImplTests.html">SimpleService</a>(<strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="223" href="#223">223</a>             <strong class="jxr_keyword">this</strong>.id = id;
+<a class="jxr_linenumber" name="224" href="#224">224</a>         }
+<a class="jxr_linenumber" name="225" href="#225">225</a> 
+<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
+<a class="jxr_linenumber" name="227" href="#227">227</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="228" href="#228">228</a>         }
+<a class="jxr_linenumber" name="229" href="#229">229</a> 
+<a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">public</strong> String getId() {
+<a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.id;
+<a class="jxr_linenumber" name="232" href="#232">232</a>         }
+<a class="jxr_linenumber" name="233" href="#233">233</a> 
+<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> Principal principal) {
+<a class="jxr_linenumber" name="235" href="#235">235</a>             <em class="jxr_comment">// nothing to do</em>
+<a class="jxr_linenumber" name="236" href="#236">236</a>         }
+<a class="jxr_linenumber" name="237" href="#237">237</a> 
+<a class="jxr_linenumber" name="238" href="#238">238</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> Service service) {
+<a class="jxr_linenumber" name="239" href="#239">239</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="240" href="#240">240</a>         }
+<a class="jxr_linenumber" name="241" href="#241">241</a>     }
+<a class="jxr_linenumber" name="242" href="#242">242</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
