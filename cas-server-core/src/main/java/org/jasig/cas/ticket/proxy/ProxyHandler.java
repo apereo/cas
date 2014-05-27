@@ -27,11 +27,8 @@ import org.jasig.cas.authentication.Credential;
  * events the same.
  *
  * @author Scott Battaglia
-
+ * @author Misagh Moayyed
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface ProxyHandler {
 
@@ -44,4 +41,12 @@ public interface ProxyHandler {
      * @return the String value that needs to be passed to the CAS client.
      */
     String handle(Credential credential, String proxyGrantingTicketId);
+    
+    /**
+     * Whether this handler can support the proxy request identified by the given credentials.
+     *
+     * @param credential the credential object containing the proxy request details.
+     * @return true, if successful
+     */
+    boolean canHandle(Credential credential);
 }

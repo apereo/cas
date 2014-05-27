@@ -44,6 +44,11 @@ public final class PrincipalBearingCredential extends AbstractCredential {
     /** The trusted principal. */
     private final Principal principal;
 
+    /**
+     * Instantiates a new principal bearing credential.
+     *
+     * @param principal the principal
+     */
     public PrincipalBearingCredential(final Principal principal) {
         Assert.notNull(principal, "principal cannot be null");
         this.principal = principal;

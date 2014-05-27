@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import java.net.URL;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ import com.esotericsoftware.kryo.SerializationException;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.ClassSerializer;
 import com.esotericsoftware.kryo.serialize.DateSerializer;
+
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
@@ -39,6 +42,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -90,6 +94,9 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.serializerMap = map;
     }
 
+    /**
+     * Initialize and register classes with kryo.
+     */
     public void initialize() {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
@@ -109,6 +116,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
+        kryo.register(URL.class, new URLSerializer(kryo));
 
         // Register other types
         if (serializerMap != null) {
@@ -132,13 +140,13 @@ public class KryoTranscoder implements Transcoder<Object> {
         return false;
     }
 
-
+    @Override
     public CachedData encode(final Object o) {
         final byte[] bytes = encodeToBytes(o);
         return new CachedData(0, bytes, bytes.length);
     }
 
-
+    @Override
     public Object decode(final CachedData d) {
         return kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
     }

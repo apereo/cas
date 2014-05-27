@@ -18,19 +18,27 @@
  */
 package org.jasig.cas.adaptors.radius;
 
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import net.jradius.client.RadiusClient;
+import net.jradius.dictionary.Attr_NASIPAddress;
+import net.jradius.dictionary.Attr_NASIPv6Address;
+import net.jradius.dictionary.Attr_NASIdentifier;
+import net.jradius.dictionary.Attr_NASPort;
+import net.jradius.dictionary.Attr_NASPortId;
+import net.jradius.dictionary.Attr_NASPortType;
 import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
-import net.jradius.exception.RadiusException;
-import net.jradius.exception.UnknownAttributeException;
+import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
 import net.jradius.packet.AccessAccept;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
+
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.1
  */
 public final class JRadiusServerImpl implements RadiusServer {
@@ -63,26 +72,73 @@ public final class JRadiusServerImpl implements RadiusServer {
     @Min(0)
     private int retries = DEFAULT_RETRY_COUNT;
 
+    private String nasIpAddress = null;
+    
+    private String nasIpv6Address = null;
+    
+    private long nasPort = -1;
+    
+    private long nasPortId = -1;
+    
+    private long nasIdentifier = -1;
+    
+    private long nasRealPort = -1;
+    
+    private long nasPortType = -1;
+    
+    
     /** Load the dictionary implementation. */
     static {
         AttributeFactory
         .loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
     }
 
+    /**
+     * Instantiates a new server implementation
+     * with the radius protocol and client factory specified. 
+     *
+     * @param protocol the protocol
+     * @param clientFactory the client factory
+     */
     public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
     }
 
     @Override
-    public boolean authenticate(final String username, final String password) throws PreventedException {
+    public RadiusResponse authenticate(final String username, final String password) throws PreventedException {
 
         final AttributeList attributeList = new AttributeList();
+        
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
 
-        final RadiusClient client = this.radiusClientFactory.newInstance();
+        if (StringUtils.isNotBlank(this.nasIpAddress)) {
+            attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
+        }
+        if (StringUtils.isNotBlank(this.nasIpv6Address)) {
+            attributeList.add(new Attr_NASIPv6Address(this.nasIpv6Address));
+        }
+
+        if (this.nasPort != -1) {
+            attributeList.add(new Attr_NASPort(this.nasPort));
+        }
+        if (this.nasPortId != -1) {
+            attributeList.add(new Attr_NASPortId(this.nasPortId));
+        }
+        if (this.nasIdentifier != -1) {
+            attributeList.add(new Attr_NASIdentifier(this.nasIdentifier));
+        }
+        if (this.nasRealPort != -1) {
+            attributeList.add(new Attr_NASRealPort(this.nasRealPort));
+        }
+        if (this.nasPortType != -1) {
+            attributeList.add(new Attr_NASPortType(this.nasPortType));
+        }
+        
+        RadiusClient client = null;
         try {
+            client = this.radiusClientFactory.newInstance();
             final AccessRequest request = new AccessRequest(client, attributeList);
             final RadiusPacket response = client.authenticate(
                     request,
@@ -94,15 +150,85 @@ public final class JRadiusServerImpl implements RadiusServer {
                     response.getClass().getName());
 
             if (response instanceof AccessAccept) {
-                return true;
+                final AccessAccept acceptedResponse = (AccessAccept) response;
+               
+                return new RadiusResponse(acceptedResponse.getCode(),
+                        acceptedResponse.getIdentifier(),
+                        acceptedResponse.getAttributes().getAttributeList());
             }
-        } catch (final UnknownAttributeException e) {
-            throw new PreventedException(e);
-        } catch (final RadiusException e) {
-            throw new PreventedException(e);
+        } catch (final Exception e) {
+            throw new PreventedException(e);            
         } finally {
-            client.close();
+            if (client != null) {
+                client.close();
+            }
         }
-        return false;
+        return null;
     }
+
+    
+    /**
+     * @param nasIpAddress the NAS IP Address
+     * @since 4.1
+     */
+    public void setNasIpAddress(final String nasIpAddress) {
+        this.nasIpAddress = nasIpAddress;
+    }
+
+    /**
+     * @param nasIpv6Address the NAS IP Address v6
+     * @since 4.1
+     */
+    public void setNasIpv6Address(final String nasIpv6Address) {
+        this.nasIpv6Address = nasIpv6Address;
+    }
+
+    /**
+     * @param nasPort the NAS port
+     * @since 4.1
+     */
+    public void setNasPort(final long nasPort) {
+        this.nasPort = nasPort;
+    }
+
+    /**
+     * @param nasPortId the NAS port identifier
+     * @since 4.1
+     */
+    public void setNasPortId(final long nasPortId) {
+        this.nasPortId = nasPortId;
+    }
+
+    /**
+     * @param nasIdentifier the NAS identifier
+     * @since 4.1
+     */
+    public void setNasIdentifier(final long nasIdentifier) {
+        this.nasIdentifier = nasIdentifier;
+    }
+
+    /**
+     * @param nasRealPort the NAS real port
+     * @since 4.1
+     */
+    public void setNasRealPort(final long nasRealPort) {
+        this.nasRealPort = nasRealPort;
+    }
+
+    /**
+     * @param nasPortType the NAS port type
+     * @since 4.1
+     */
+    public void setNasPortType(final long nasPortType) {
+        this.nasPortType = nasPortType;
+    }
+
+    /**
+     * @param retries the number of retries
+     * @since 4.1
+     */
+    public void setRetries(final int retries) {
+        this.retries = retries;
+    }
+   
 }
