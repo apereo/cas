@@ -259,4 +259,14 @@ public final class SimpleHttpClient implements HttpClient<Boolean>, Serializable
         EXECUTOR_SERVICE.shutdown();
     }
 
+        /**
+         * Instantiates a new message sender.
+         *
+         * @param url the url
+         * @param message the message
+         * @param readTimeout the read timeout
+         * @param connectionTimeout the connection timeout
+         * @param followRedirects the follow redirects
+         */
+        @Override
 }

@@ -21,8 +21,8 @@
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-         version="2.4">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
+         version="2.5">
   <display-name>CAS Management ${project.version}</display-name>
 
   <context-param>
@@ -75,9 +75,7 @@
     - use org.jasig.cas.web.init.SafeContextLoaderListener
   -->
   <listener>
-    <listener-class>
-      org.jasig.cas.web.init.SafeContextLoaderListener
-    </listener-class>
+    <listener-class>org.jasig.cas.web.init.SafeContextLoaderListener</listener-class>
   </listener>
 
   <!--
@@ -95,9 +93,7 @@
   -->
   <servlet>
     <servlet-name>cas-management</servlet-name>
-    <servlet-class>
-      org.jasig.cas.web.init.SafeDispatcherServlet
-    </servlet-class>
+    <servlet-class>org.jasig.cas.web.init.SafeDispatcherServlet</servlet-class>
     <init-param>
       <param-name>publishContext</param-name>
       <param-value>false</param-value>
@@ -107,42 +103,7 @@
 	
   <servlet-mapping>
     <servlet-name>cas-management</servlet-name>
-    <url-pattern>/add.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/logout.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/loggedOut.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/manage.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/edit.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/deleteRegisteredService.html</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-	<servlet-name>cas-management</servlet-name>
-	<url-pattern>/updateRegisteredServiceEvaluationOrder.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas-management</servlet-name>
-    <url-pattern>/authorizationFailure.html</url-pattern>
+    <url-pattern>*.html</url-pattern>
   </servlet-mapping>
 
   <session-config>
