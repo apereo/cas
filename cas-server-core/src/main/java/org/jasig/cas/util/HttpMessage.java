@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class CallableMessageSender implements Callable<Boolean> {
+public class HttpMessage implements Callable<Boolean> {
 
     private String url;
 
@@ -51,33 +51,50 @@ public class CallableMessageSender implements Callable<Boolean> {
 
     private boolean followRedirects;
     
+    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
+    private boolean issueAsynchronousCallbacks = true;
+    
     private String contentType = "application/x-www-form-urlencoded";
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CallableMessageSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
    
     /**
      * Prepare the sender with a given url and the message to send.
      * @param url the url to which the message will be sent.
      * @param message the message itself.
      */
-    public CallableMessageSender(final String url, final String message) {
+    public HttpMessage(final String url, final String message) {
         this.url = url;
         this.message = message;
     }
 
-    public final void setContentType(final String type) {
+    /**
+     * Set if messages are sent in an asynchronous fashion.
+     *
+     * @param asyncCallbacks if message is synchronously sent
+     * @since 4.1
+     */
+    protected final void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
+        this.issueAsynchronousCallbacks = asyncCallbacks;
+    }
+    
+    protected boolean isIssueAsynchronousCallbacks() {
+        return this.issueAsynchronousCallbacks;
+    }
+
+    protected final void setContentType(final String type) {
         this.contentType = type;
     }
    
-    public final void setReadTimeout(final int readTimeout) {
+    protected final void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
-    public final void setConnectionTimeout(final int connectionTimeout) {
+    protected final void setConnectionTimeout(final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public final void setFollowRedirects(final boolean followRedirects) {
+    protected final void setFollowRedirects(final boolean followRedirects) {
         this.followRedirects = followRedirects;
     }
     

@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.util;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -44,9 +43,10 @@ import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  */
-public final class SimpleHttpClient implements HttpClient<Boolean>, Serializable, DisposableBean {
+public final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5306738686476129516L;
@@ -100,14 +100,14 @@ public final class SimpleHttpClient implements HttpClient<Boolean>, Serializable
     }
 
     @Override
-    public boolean sendMessageToEndPoint(final boolean async, final CallableMessageSender task) {
+    public boolean sendMessageToEndPoint(final HttpMessage task) {
         task.setConnectionTimeout(this.connectionTimeout);
         task.setFollowRedirects(this.followRedirects);
         task.setReadTimeout(this.readTimeout);
         
         final Future<Boolean> result = EXECUTOR_SERVICE.submit(task);
 
-        if (async) {
+        if (task.isIssueAsynchronousCallbacks()) {
             return true;
         }
 
@@ -119,16 +119,15 @@ public final class SimpleHttpClient implements HttpClient<Boolean>, Serializable
     }
     
     /**
-     * Uses an instance of {@link CallableMessageSender} by default as the executed task
+     * Uses an instance of {@link HttpMessage} by default as the executed task
      * to send the message to the endpoint.
      * @param url url to send the message to
-     * @param async whether to send the message in async fashion
      * @param message message to send
-     * @see #sendMessageToEndPoint(String, String, boolean)
+     * @see #sendMessageToEndPoint(String, String)
      * @return boolean if the message was sent, or async was used. false if the message failed
      */
-    public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        return sendMessageToEndPoint(async, new CallableMessageSender(url, message));
+    public boolean sendMessageToEndPoint(final String url, final String message) {
+        return sendMessageToEndPoint(new HttpMessage(url, message));
     }
     
     @Override
@@ -259,14 +258,4 @@ public final class SimpleHttpClient implements HttpClient<Boolean>, Serializable
         EXECUTOR_SERVICE.shutdown();
     }
 
-        /**
-         * Instantiates a new message sender.
-         *
-         * @param url the url
-         * @param message the message
-         * @param readTimeout the read timeout
-         * @param connectionTimeout the connection timeout
-         * @param followRedirects the follow redirects
-         */
-        @Override
 }
