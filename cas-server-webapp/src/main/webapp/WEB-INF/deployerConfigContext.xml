@@ -165,8 +165,8 @@
               p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
               p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
             <!-- 
-            <property name="attributeFilteringPolicy">
-                <bean class="org.jasig.cas.services.ReturnAllowedAttributeFilteringPolicy">
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
                     <property name="allowedAttributes">
                         <list>
                             <value>uid</value>

@@ -52,6 +52,24 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
+    
+    @Test
+    public void testSaveAttributeReleasePolicy() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("test");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
 
     @Test
     public void testSaveMethodWithExistingServiceNoAttribute() {

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
+public final class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -183,14 +183,17 @@ public class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) { return false; }
-        if (obj == this) { return true; }
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
         if (obj.getClass() != getClass()) {
-          return false;
+            return false;
         }
         final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
         return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
     }
-    
     
 }
