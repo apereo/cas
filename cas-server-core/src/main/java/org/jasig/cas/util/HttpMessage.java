@@ -18,134 +18,81 @@
  */
 package org.jasig.cas.util;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.concurrent.Callable;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 
 /**
- * A {@link Callable} instance that encapsulates the task of sending a message to a given
- * endpoint. 
+ * Abstraction for a message that is sent to an http endpoint.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class HttpMessage implements Callable<Boolean> {
-
-    private String url;
-
-    private String message;
-
-    private int readTimeout;
-
-    private int connectionTimeout;
-
-    private boolean followRedirects;
-    
-    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
-    private boolean issueAsynchronousCallbacks = true;
-    
-    private String contentType = "application/x-www-form-urlencoded";
-    
+public class HttpMessage {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
-   
+    
+    /** The default asynchronous callbacks enabled. */
+    private static boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
+    
+    private String url;
+    private String message;
+    
+    /**
+     * Whether this message should be sent in an asynchronous fashion.
+     * Default is true.
+     **/
+    private boolean issueAsynchronousCallbacks = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
+    
+    /**
+     * The content type for this message once submitted.
+     * Default is {@link MediaType#APPLICATION_FORM_URLENCODED}.
+     **/
+    private String contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+    
     /**
      * Prepare the sender with a given url and the message to send.
+     *
      * @param url the url to which the message will be sent.
      * @param message the message itself.
      */
     public HttpMessage(final String url, final String message) {
+        this(url, message, DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED);
+    }
+    
+    /**
+     * Prepare the sender with a given url and the message to send.
+     *
+     * @param url the url to which the message will be sent.
+     * @param message the message itself.
+     * @param async whether the message should be sent asynchronously.
+     */
+    public HttpMessage(final String url, final String message, final boolean async) {
         this.url = url;
         this.message = message;
-    }
-
-    /**
-     * Set if messages are sent in an asynchronous fashion.
-     *
-     * @param asyncCallbacks if message is synchronously sent
-     * @since 4.1
-     */
-    protected final void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
-        this.issueAsynchronousCallbacks = asyncCallbacks;
     }
     
     protected boolean isIssueAsynchronousCallbacks() {
         return this.issueAsynchronousCallbacks;
     }
 
+    protected final String getUrl() {
+        return this.url;
+    }
+    
+    protected final String getMessage() {
+        return this.message;
+    }
+    
+    protected final String getContentType() {
+        return this.contentType;
+    }
+    
     protected final void setContentType(final String type) {
         this.contentType = type;
     }
-   
-    protected final void setReadTimeout(final int readTimeout) {
-        this.readTimeout = readTimeout;
-    }
-
-    protected final void setConnectionTimeout(final int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    protected final void setFollowRedirects(final boolean followRedirects) {
-        this.followRedirects = followRedirects;
-    }
     
-    @Override
-    public final Boolean call() throws Exception {
-        HttpURLConnection connection = null;
-        BufferedReader in = null;
-        DataOutputStream printout = null;
-                
-        try {
-            LOGGER.debug("Attempting to access {}", url);
-            final URL logoutUrl = new URL(url);
-            final String output = formatOutputMessageInternal(this.message);
-
-            connection = (HttpURLConnection) logoutUrl.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setReadTimeout(this.readTimeout);
-            connection.setConnectTimeout(this.connectionTimeout);
-            connection.setInstanceFollowRedirects(this.followRedirects);
-            connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
-            connection.setRequestProperty("Content-Type", this.contentType);
-            printout = new DataOutputStream(connection.getOutputStream());
-            printout.writeBytes(output);
-            printout.flush();
-            
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            boolean readInput = true;
-            while (readInput) {
-                readInput = StringUtils.isNotBlank(in.readLine());
-            }
-
-            LOGGER.debug("Finished sending message to {}", url);
-            return true;
-        } catch (final SocketTimeoutException e) {
-            LOGGER.warn("Socket Timeout Detected while attempting to send message to [{}]", url);
-            return false;
-        } catch (final Exception e) {
-            LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
-            return false;
-        } finally {
-            IOUtils.closeQuietly(printout);
-            IOUtils.closeQuietly(in);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-    }
-
     /**
      * Encodes the message in UTF-8 format in preparation to send.
      * @param message Message to format and encode
@@ -159,6 +106,5 @@ public class HttpMessage implements Callable<Boolean> {
         }
         return message;
     }
-
 }
 
