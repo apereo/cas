@@ -52,7 +52,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
     @Before
     public void onSetUp() throws Exception {
-        StaticApplicationContext context = new StaticApplicationContext();
+        final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
@@ -179,7 +179,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService().grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService().getId());
         request.addParameter("ticket", sId);
         request.addParameter("pgtUrl", "duh");
@@ -231,5 +231,47 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
+    }
+    
+    @Test
+    public void testValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
+        this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        
+        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String sId = getCentralAuthenticationService()
+                .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+
+        final String REQ_SVC = "http://WWW.JASIG.ORG?PARAM=hello%20world";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("ticket", sId);
+        
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
+    }
+    
+    @Test
+    public void testValidServiceTicketWithDifferentEncoding() throws Exception {
+        this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        
+        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String sId = getCentralAuthenticationService()
+                .grantServiceTicket(tId, TestUtils.getService(ORIG_SVC));
+
+        final String REQ_SVC = "http://www.jasig.org?param=hello%20world";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("ticket", sId);
+        
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
     }
 }

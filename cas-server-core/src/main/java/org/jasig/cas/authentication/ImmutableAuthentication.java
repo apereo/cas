@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +38,7 @@ import org.springframework.util.Assert;
  *
  * @since 3.0
  */
-public final class ImmutableAuthentication implements Authentication, Serializable {
+public final class ImmutableAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
@@ -168,8 +167,9 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @param source Nullable map to wrap.
-     *
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
      */
@@ -184,6 +184,8 @@ public final class ImmutableAuthentication implements Authentication, Serializab
      * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
+
+        private static final long serialVersionUID = 6275827030191703183L;
 
         /** No-arg constructor for serialization support. */
         private ImmutableDate() {}

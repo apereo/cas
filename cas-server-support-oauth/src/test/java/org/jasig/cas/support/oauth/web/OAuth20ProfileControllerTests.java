@@ -123,7 +123,7 @@ public final class OAuth20ProfileControllerTests {
         when(principal.getId()).thenReturn(ID);
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
-        List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);

@@ -135,6 +135,7 @@
     <li><a href="#security-implications"><strong>4.1.2 Security implications</strong></a></li>
     <li><a href="#cas-validation-response-attributes"><strong>4.1.3 CAS Validation Response Attributes</strong></a></li>
     <li><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></li>
+    <li><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></li>
     </ul></li>
     <li><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a><ul>
     <li><a href="#parameters-6"><strong>4.2.1 parameters</strong></a></li>
@@ -166,10 +167,10 @@
 <li><p>Andrew Petro</p></li>
 <li><p>Robert Oschwald [CAS 3.0]</p></li>
 </ul>
-<p>Version: 3.0 RC1</p>
-<p>Release Date: T.B.D.</p>
+<p>Version: 3.0</p>
+<p>Release Date: 2014-05-05</p>
 <p>Copyright © 2005, Yale University</p>
-<p>Copyright © 2013, JA-SIG, Inc.</p>
+<p>Copyright © 2014, JA-SIG, Inc.</p>
 <p><a name="head1"></a></p>
 <h1 id="introduction"><a href="#introduction"><strong>1. Introduction</strong></a></h1>
 <p>This is the official specification of the CAS 1.0, 2.0 and 3.0 protocols.</p>
@@ -187,9 +188,11 @@
 <li><p>“SLO” refers to Single Logout.</p></li>
 <li><p>“&lt;LF&gt;” is a bare line feed (ASCII value 0x0a).</p></li>
 </ul>
-<p><a name="1.2"></a></p>
+<p><a name="head1.2"></a></p>
 <h2 id="reference-implementation"><a href="#reference-implementation"><strong>1.2 Reference Implementation</strong></a></h2>
-<p>The JASIG CAS-Server <a href="#8">8</a> is the official reference implementation of the CAS protocol specification.</p>
+<p>The JASIG CAS-Server <a href="#8">8</a> is the official reference implementation of the CAS Protocol Specification.</p>
+<p>JASIG CAS Server 4.x supports the CAS Protocol 3.0 Specification.</p>
+<p><a name="head2"></a></p>
 <h1 id="cas-uris"><a href="#cas-uris"><strong>2. CAS URIs</strong></a></h1>
 <p>CAS is an HTTP<a href="#2">2</a>,<a href="#3">3</a>-based protocol that requires each of its components to be accessible through specific URIs. This section will discuss each of the URIs:</p>
 <table>
@@ -299,15 +302,17 @@
 <h3 id="parameters-1"><a href="#parameters-1"><strong>2.3.1. parameters</strong></a></h3>
 <p>The following HTTP request parameter MAY be specified to /logout. It is case sensitive and SHOULD be handled by /logout.</p>
 <ul>
-<li><p>url [OPTIONAL] - if “url” is specified, the URL specified by “url” SHOULD be on the logout page with descriptive text. For example, “The application you just logged out of has provided a link it would like you to follow. Please click here to access <code>http://www.example.org&quot;.</code> As a HTTP request parameter, the value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
-<li><p>service [OPTIONAL, CAS 3.0] - if a “service” parameter is specified, the browser might be automatically redirected to the URL specified by “service” after the logout was performed by the CAS server. If redirection by the CAS Server is actually performed depends on the server configuration. As a HTTP request parameter, the “service” value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
+<li>service [OPTIONAL, CAS 3.0] - if a “service” parameter is specified, the browser might be automatically redirected to the URL specified by “service” after the logout was performed by the CAS server. If redirection by the CAS Server is actually performed depends on the server configuration. As a HTTP request parameter, the “service” value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</li>
 </ul>
+<blockquote>
+<p>Note: The “url” parameter defined in the former CAS 2.0 specification is not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given ‘url’ parameters. A CAS client MAY provide the “service” parameter as described above, as this ensures the parameter is validated against the registered service URLs when operating in non-open mode. See <a href="#head2.3.2">2.3.2</a> for details.</p>
+</blockquote>
 <p><a name="head2.3.2"></a></p>
 <h3 id="response-1"><a href="#response-1"><strong>2.3.2. response</strong></a></h3>
 <p>[CAS 1.0, CAS 2.0] /logout MUST display a page stating that the user has been logged out. If the “url” request parameter is implemented, /logout SHOULD also provide a link to the provided URL as described in Section <a href="#head2.3.1">2.3.1</a>.</p>
-<p>[CAS 3.0] /logout MUST display a page stating that the user has been logged out if no “service” parameter was provided. If a “service” request parameter with an encoded URL value is provided, the CAS server redirects to the given service URL after successful logout.  If a “url” request parameter is provided, /logout SHOULD display a link to the provided URL as described in Section <a href="#head2.3.1">2.3.1</a>.</p>
+<p>[CAS 3.0] /logout MUST display a page stating that the user has been logged out if no “service” parameter was provided. If a “service” request parameter with an encoded URL value is provided, the CAS server redirects to the given service URL after successful logout.</p>
 <blockquote>
-<p>Note: When CAS Server operates in non-open mode (allowed Service URLs are registered within the CAS Server), the CAS server MUST ensure that only registered Service URLs are accepted for redirection ([service] parameter) or displaying ([url] parameter)</p>
+<p>Note: When CAS Server operates in non-open mode (allowed Service URLs are registered within the CAS Server), the CAS server MUST ensure that only registered [service] parameter Service URLs are accepted for redirection. The “url” parameter defined in the former CAS 2.0 specification is not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given ‘url’ parameters.</p>
 </blockquote>
 <p><a name="head2.3.3"></a></p>
 <h3 id="single-logout"><a href="#single-logout"><strong>2.3.3 Single Logout</strong></a></h3>
@@ -570,9 +575,9 @@
 <p><a name="head3.6.1"></a></p>
 <h3 id="ticket-granting-cookie-properties"><a href="#ticket-granting-cookie-properties"><strong>3.6.1. ticket-granting cookie properties</strong></a></h3>
 <ul>
-<li><p>Ticket-granting cookies MUST be set to expire at the end of the client’s browser session.</p></li>
-<li><p>CAS MUST set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path MUST be set to /cas.</p></li>
-<li><p>The value of ticket-granting cookies MUST contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
+<li><p>A ticket-granting cookie SHALL be set to expire at the end of the client’s browser session if Long-Term support is not active (<a href="#head4.1.1">4.1.1</a>) for the corresponding TGT.</p></li>
+<li><p>CAS SHALL set the cookie path to be as restrictive as possible. For example, if the CAS server is set up under the path /cas, the cookie path SHALL be set to /cas.</p></li>
+<li><p>The value of ticket-granting cookies SHALL contain adequate secure random data so that a ticket-granting cookie is not guessable in a reasonable period of time.</p></li>
 <li><p>The value of ticket-granting cookies SHOULD begin with the characters “TGC-”.</p></li>
 </ul>
 <p><a name="head3.7"></a></p>
@@ -603,6 +608,9 @@
 <p><a name="head4.1.4"></a></p>
 <h3 id="cas-client-requirements"><a href="#cas-client-requirements"><strong>4.1.4 CAS Client requirements</strong></a></h3>
 <p>If the CAS client needs to handle Remember-Me logins special (e.g. deny access to sensitive areas of the CAS client application on a remembered login), the CAS client MUST NOT use the /validate CAS validation URL, as this URL does not support CAS attributes in the validation response document.</p>
+<h3 id="long-term-ticket-granting-cookie-properties"><a href="#long-term-ticket-granting-cookie-properties"><strong>4.1.5 Long-Term ticket-granting cookie properties</strong></a></h3>
+<p>When a Long-Term TGT was created by the CAS Server, the Ticket-granting cookie MUST NOT expire at the end of the client’s browser session as defined in <a href="#head3.6.1">3.6.1</a>. Instead, the Ticket Granting cookie SHALL expire at the defined Long-Term TGT ticket lifetime.</p>
+<p>The lifetime value definition of Long-Term Ticket Granting Tickets is up to the CAS Server implementor. The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.</p>
 <p><a name="head4.2"></a></p>
 <h2 id="samlvalidate-cas-3.0"><a href="#samlvalidate-cas-3.0"><strong>4.2 /samlValidate [CAS 3.0]</strong></a></h2>
 <p>/samlValidate checks the validity of a Service Ticket by a SAML 1.1 request document provided by a HTTP POST. A SAML (Secure Access Markup Language)<a href="#7">7</a> 1.1 response document MUST be returned. This allows the release of additional information (attributes) of the authenticated NetID. The Security Assertion Markup Language (SAML) describes a document and protocol framework by which security assertions (such as assertions about a prior act of authentication) can be exchanged.</p>
@@ -793,14 +801,14 @@ Content-Type: text/xml </code></pre>
     <span class="kw">&lt;/xs:complexType&gt;</span>
     <span class="kw">&lt;xs:complexType</span><span class="ot"> name=</span><span class="st">&quot;AttributesType&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;xs:sequence&gt;</span>
-            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;authenticationDate&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:dateTime&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">/&gt;</span>
+            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;authenticationDate&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:dateTime&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span> <span class="kw">/&gt;</span>
             <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;longTermAuthenticationRequestTokenUsed&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span>
-<span class="ot">                minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+<span class="ot">                minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
                 <span class="kw">&lt;xs:annotation&gt;&lt;xs:documentation&gt;</span>
                     true if a long-term (Remember-Me) token was used
                 <span class="kw">&lt;/xs:documentation&gt;&lt;/xs:annotation&gt;</span>
             <span class="kw">&lt;/xs:element&gt;</span>
-            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;isFromNewLogin&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+            <span class="kw">&lt;xs:element</span><span class="ot"> name=</span><span class="st">&quot;isFromNewLogin&quot;</span><span class="ot"> type=</span><span class="st">&quot;xs:boolean&quot;</span><span class="ot"> minOccurs=</span><span class="st">&quot;1&quot;</span><span class="ot"> maxOccurs=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
                 <span class="kw">&lt;xs:annotation&gt;&lt;xs:documentation&gt;</span>
                     true if this was from a new, interactive login.
                     If login was from a non-interactive login (e.g. Remember-Me), this value is false or might be omitted.

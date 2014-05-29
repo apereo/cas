@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jasig.parent</groupId>
     <artifactId>jasig-parent</artifactId>
-    <version>38</version>
+    <version>39</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Jasig Central Authentication Service</name>
   <description>Jasig CAS SSO server libraries and Web application.</description>
-  <version>4.0.0-RC4-SNAPSHOT</version>
+  <version>4.1.0-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
 
@@ -359,7 +359,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
         <executions>
           <execution>
             <goals>
@@ -370,6 +370,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <configuration>
           <source>${project.build.sourceVersion}</source>
           <target>${project.build.targetVersion}</target>
+          <complianceLevel>${project.build.sourceVersion}</complianceLevel>
         </configuration>
       </plugin>
       <plugin>
@@ -404,7 +405,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
           <aggregate>true</aggregate>
+          <mapping>
+            <schema>SCRIPT_STYLE</schema>]
+            <ldif>SCRIPT_STYLE</ldif>
+            <yml>SCRIPT_STYLE</yml>
+            <conf>JAVADOC_STYLE</conf>
+          </mapping>
           <excludes>
+            <exclude>**/bin/**</exclude>    
             <exclude>LICENSE</exclude>
             <exclude>**/INSTALL*</exclude>
             <exclude>**/NOTICE*</exclude>
@@ -425,11 +433,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/.idea/**</exclude>
             <exclude>**/*.keystore</exclude>
             <exclude>**/*.example</exclude>
-            <exclude>**/*.sample</exclude>
-            <exclude>**/*.conf</exclude>
-            <exclude>**/*.doc</exclude>
             <exclude>**/*.jmx</exclude>
-            <exclude>**/tmp/**</exclude>
+            <exclude>**/*.pandoc</exclude>
+            <exclude>**/*.sample</exclude>
+            <exclude>**/*.doc</exclude>
+            <exclude>**/*.md</exclude>
+            <exclude>**/*.pdf</exclude>
             <exclude>**/tmp/*.h</exclude>
             <exclude>**/tmp/*.sh</exclude>
           </excludes>
@@ -550,8 +559,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
       
@@ -977,10 +986,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
     <spring.version>3.2.6.RELEASE</spring.version>
-    <ldaptive.version>1.0.1</ldaptive.version>
+    <ldaptive.version>1.0.3</ldaptive.version>
     <spring.security.version>3.2.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.7.2</aspectj.version>
+    <aspectj.version>1.7.3</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
     <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
@@ -993,8 +1002,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.codec.version>1.7</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
-    <checkstyle.version>5.6</checkstyle.version>
-    <commons.lang.version>3.1</commons.lang.version>
+    <checkstyle.version>5.7</checkstyle.version>
+    <commons.lang.version>2.5</commons.lang.version>
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
