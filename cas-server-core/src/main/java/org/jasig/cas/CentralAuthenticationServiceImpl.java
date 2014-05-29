@@ -43,7 +43,7 @@ import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGe
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.cas.services.AttributeFilteringPolicy;
+import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
@@ -428,7 +428,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            final AttributeFilteringPolicy attributePolicy = registeredService.getAttributeFilteringPolicy();
+            final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
             logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
             
             @SuppressWarnings("unchecked")

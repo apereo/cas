@@ -24,19 +24,19 @@ import java.util.Map;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * The filtering policy that decides how attributes are to be released for a given service.
+ * The release policy that decides how attributes are to be released for a given service.
  * Each policy has the ability to apply an optional filter.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface AttributeFilteringPolicy extends Serializable {
+public interface AttributeReleasePolicy extends Serializable {
     
     /**
      * Sets the attribute filter.
      *
      * @param filter the new attribute filter
      */
-    void setAttributeFilter(final AttributeFilter filter);
+    void setAttributeFilter(AttributeFilter filter);
     
     /**
      * Gets the attributes, having applied the filter.
@@ -44,5 +44,5 @@ public interface AttributeFilteringPolicy extends Serializable {
      * @param p the principal that contains the resolved attributes
      * @return the attributes
      */
-    Map<String, Object> getAttributes(final Principal p);
+    Map<String, Object> getAttributes(Principal p);
 }

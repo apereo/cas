@@ -35,10 +35,10 @@ import org.junit.Test;
  * Attribute filtering policy tests.
  * @author Misagh Moayyed
  */
-public class AttributeFilteringPolicyTests {
+public class AttributeReleasePolicyTests {
     @Test
     public void testAttributeFilterMappedAttributes() {
-        final ReturnMappedAttributeFilteringPolicy policy = new ReturnMappedAttributeFilteringPolicy();
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<String, String>();
         mappedAttr.put("attr1", "newAttr1");
         
@@ -59,14 +59,14 @@ public class AttributeFilteringPolicyTests {
         assertTrue(attr.containsKey("newAttr1"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeFilteringPolicy p2 = (ReturnMappedAttributeFilteringPolicy) SerializationUtils.deserialize(data);
+        final ReturnMappedAttributeReleasePolicy p2 = (ReturnMappedAttributeReleasePolicy) SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
     
     @Test
     public void testServiceAttributeFilterAllowedAttributes() {
-        final ReturnAllowedAttributeFilteringPolicy policy = new ReturnAllowedAttributeFilteringPolicy();
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
         
@@ -84,14 +84,14 @@ public class AttributeFilteringPolicyTests {
         assertTrue(attr.containsKey("attr3"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeFilteringPolicy p2 = (ReturnAllowedAttributeFilteringPolicy) SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 = (ReturnAllowedAttributeReleasePolicy) SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
     
     @Test
     public void testServiceAttributeFilterAllowedAttributesWithARegexFilter() {
-        final ReturnAllowedAttributeFilteringPolicy policy = new ReturnAllowedAttributeFilteringPolicy();
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
         final Principal p = mock(Principal.class);
@@ -109,7 +109,7 @@ public class AttributeFilteringPolicyTests {
         assertTrue(attr.containsKey("attr3"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeFilteringPolicy p2 = (ReturnAllowedAttributeFilteringPolicy) SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 = (ReturnAllowedAttributeReleasePolicy) SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -117,7 +117,7 @@ public class AttributeFilteringPolicyTests {
     
     @Test
     public void testServiceAttributeFilterAllAttributes() {
-        final ReturnAllAttributeFilteringPolicy policy = new ReturnAllAttributeFilteringPolicy();
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -132,7 +132,7 @@ public class AttributeFilteringPolicyTests {
         assertEquals(attr.size(), map.size());
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeFilteringPolicy p2 = (ReturnAllAttributeFilteringPolicy) SerializationUtils.deserialize(data);
+        final ReturnAllAttributeReleasePolicy p2 = (ReturnAllAttributeReleasePolicy) SerializationUtils.deserialize(data);
         assertNotNull(p2);
     }
 }

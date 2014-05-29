@@ -20,22 +20,26 @@ package org.jasig.cas.services;
 
 import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract filtering policy. Subclasses are to provide the behavior for attribute retrieval.
+ * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
+ * Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class AbstractAttributeFilteringPolicy implements AttributeFilteringPolicy {
+public abstract class AbstractAttributeReleasePolicy implements AttributeReleasePolicy {
     
     private static final long serialVersionUID = 5325460875620586503L;
 
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /** The attribute filter. */
     private AttributeFilter attributeFilter = null;
     
     @Override
@@ -69,4 +73,27 @@ public abstract class AbstractAttributeFilteringPolicy implements AttributeFilte
      * @return the attributes allowed for release
      */
     protected abstract Map<String, Object> getAttributesInternal(final Principal p);
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 133).append(this.attributeFilter).toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof AbstractAttributeReleasePolicy)) {
+            return false;
+        }
+
+        final AbstractAttributeReleasePolicy that = (AbstractAttributeReleasePolicy) o;
+        return new EqualsBuilder().append(this.attributeFilter, that.attributeFilter).isEquals();
+    }
 }

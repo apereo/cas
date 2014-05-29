@@ -103,8 +103,8 @@
                     <property name="serviceId" value="eduPersonTest"/>
                     <property name="evaluationOrder" value="3"/>
                     <property name="usernameAttribute" value="eduPersonAffiliation"/>
-                    <property name="attributeFilteringPolicy">
-                        <bean class="org.jasig.cas.services.ReturnAllAttributeFilteringPolicy" />
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
                     </property>
                     
                 </bean>
@@ -115,8 +115,8 @@
                     <property name="serviceId" value="eduPersonTestInvalid"/>
                     <property name="evaluationOrder" value="4"/>
                     <property name="usernameAttribute" value="nonExistentAttributeName"/>
-                    <property name="attributeFilteringPolicy">
-                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeFilteringPolicy">
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
                             <property name="allowedAttributes">
                                 <list>
                                     <value>groupMembership</value>

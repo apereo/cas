@@ -166,7 +166,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * how attributes are to be filtered and released for
      * this service.
      *
-     * @return the attribute filtering policy
+     * @return the attribute release policy
      */
-    AttributeFilteringPolicy getAttributeFilteringPolicy();
+    AttributeReleasePolicy getAttributeReleasePolicy();
 }
