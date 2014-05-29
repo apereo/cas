@@ -20,29 +20,28 @@ package org.jasig.cas.services;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * Return only the collection of allowed attributes out of what's resolved
- * for the principal.
+ * Return a collection of allowed attributes for the principal, but additionally,
+ * offers the ability to rename attributes on a per-service level.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class ReturnAllowedAttributeFilteringPolicy extends AbstractAttributeFilteringPolicy {
+public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 
-    private static final long serialVersionUID = -5771481877391140569L;
+    private static final long serialVersionUID = -6249488544306639050L;
     
-    private List<String> allowedAttributes = Collections.emptyList();
+    private Map<String, String> allowedAttributes = Collections.emptyMap();
     
     /**
      * Sets the allowed attributes.
      *
      * @param allowed the allowed attributes.
      */
-    public void setAllowedAttributes(final List<String> allowed) {
+    public void setAllowedAttributes(final Map<String, String> allowed) {
         this.allowedAttributes = allowed;
     }
     
@@ -51,8 +50,8 @@ public final class ReturnAllowedAttributeFilteringPolicy extends AbstractAttribu
      *
      * @return the allowed attributes
      */
-    protected List<String> getAllowedAttributes() {
-        return Collections.unmodifiableList(this.allowedAttributes);
+    protected Map<String, String> getAllowedAttributes() {
+        return Collections.unmodifiableMap(this.allowedAttributes);
     }
     
     @Override
@@ -60,12 +59,14 @@ public final class ReturnAllowedAttributeFilteringPolicy extends AbstractAttribu
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>(p.getAttributes().size());
         final Map<String, Object> resolvedAttributes = p.getAttributes();
         
-        for (final String attribute : this.allowedAttributes) {
+        for (final String attribute : this.allowedAttributes.keySet()) {
             final Object value = resolvedAttributes.get(attribute);
 
             if (value != null) {
-                logger.debug("Found attribute [{}] in the list of allowed attributes", attribute);
-                attributesToRelease.put(attribute, value);
+                final String mappedAttributeName = this.allowedAttributes.get(attribute);
+                logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                        attribute, mappedAttributeName);
+                attributesToRelease.put(mappedAttributeName, value);
             }
         }
         return attributesToRelease;

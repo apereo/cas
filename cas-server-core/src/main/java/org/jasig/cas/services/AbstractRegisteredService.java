@@ -105,7 +105,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private HashSet<String> requiredHandlers = new HashSet<String>();
 
     /** The attribute filtering policy. */
-    private AttributeFilteringPolicy attributeFilteringPolicy = new ReturnAllowedAttributeFilteringPolicy();
+    @Lob
+    @Column(name = "attribute_release")
+    private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
     
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -170,6 +172,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.description, that.description)
                 .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
                 .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
+                .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .isEquals();
     }
 
@@ -178,7 +181,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return new HashCodeBuilder(7, 31).append(this.description)
                 .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
                 .append(this.ssoEnabled).append(this.anonymousAccess)
-                .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType).toHashCode();
+                .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType)
+                .append(this.attributeReleasePolicy).toHashCode();
     }
 
     public void setAllowedToProxy(final boolean allowedToProxy) {
@@ -356,12 +360,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param policy the new attribute filtering policy
      */
-    public final void setAttributeFilteringPolicy(final AttributeFilteringPolicy policy) {
-        this.attributeFilteringPolicy = policy;
+    public final void setAttributeReleasePolicy(final AttributeReleasePolicy policy) {
+        this.attributeReleasePolicy = policy;
     }
 
     @Override
-    public final AttributeFilteringPolicy getAttributeFilteringPolicy() {
-        return this.attributeFilteringPolicy;
+    public final AttributeReleasePolicy getAttributeReleasePolicy() {
+        return this.attributeReleasePolicy;
     }
 }

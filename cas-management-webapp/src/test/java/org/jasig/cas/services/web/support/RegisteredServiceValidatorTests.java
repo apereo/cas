@@ -31,7 +31,7 @@ import java.util.Map;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ReturnAllAttributeFilteringPolicy;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -109,7 +109,7 @@ public class RegisteredServiceValidatorTests {
         impl.setServiceId("test");
         impl.setDescription("fasdfdsafsafsafdsa");
         impl.setUsernameAttribute("k3");
-        impl.setAttributeFilteringPolicy(new ReturnAllAttributeFilteringPolicy());
+        impl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         
         final BindException exception = new BindException(impl, "registeredService");
 

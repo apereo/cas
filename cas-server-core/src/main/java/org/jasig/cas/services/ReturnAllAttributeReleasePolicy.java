@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class ReturnAllAttributeFilteringPolicy extends AbstractAttributeFilteringPolicy {
+public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5519257723778012771L;
 
