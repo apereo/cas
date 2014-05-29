@@ -31,34 +31,28 @@ should proceed in the face of one or more RADIUS server failures.
 ######`JRadiusServerImpl`
 Component representing a RADIUS server has the following configuration properties.
 
-* `hostName` - the hostname of the RADIUS server.
-* `sharedSecret` - the secret key used to communicate with the server.
-* `radiusAuthenticator` - the RADIUS authenticator to use. Defaults to PAP.
-* `authenticationPort` - the authentication port this server uses.
-* `accountingPort` - the accounting port that this server uses.
-* `socketTimeout` - the amount of time to wait before timing out.
-* `retries` - the number of times to keep retrying a particular server on communication failure/timeout.
+* `protocol` - radius protocol to use.
+* `clientFactory` - factory establish and create radius client instances.
 
 
 ## RADIUS Configuration Example
 {% highlight xml %}
-<bean id="papAuthenticator" class="net.jradius.client.auth.PAPAuthenticator" />
+<bean id="radiusServer"
+      class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"
+      c:protocol="EAP_MSCHAPv2"
+      c:clientFactory-ref="radiusClientFactory" />
 
-<bean id="abstractServer" class="org.jasig.cas.adaptors.radius.JRadiusServerImpl" abstract="true"
-      c:sharedSecret="32_or_more_random_characters"
-      c:radiusAuthenticator-ref="papAuthenticator"
-      c:authenticationPort="1812"
-      c:accountingPort="1813"
-      c:socketTimeout="5"
-      c:retries="3" />
+<bean id="radiusClientFactory"
+      class="org.jasig.cas.adaptors.radius.RadiusClientFactory"
+      p:inetAddress="localhost"
+      p:sharedSecret="fqhwhgads" />
 
-<bean class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler"
-      p:failoverOnAuthenticationFailure="false"
-      p:failoverOnException="true">
+<bean id="radiusAuthenticationHandler"
+      class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler">
   <property name="servers">
-    <list>
-      <bean parent="abstractServer" c:hostName="radius1.example.org" />
-      <bean parent="abstractServer" c:hostName="radius2.example.org" />
+      <list>
+          <ref local="radiusServer" />
+      </list>
   </property>
 </bean>
 {% endhighlight %}
