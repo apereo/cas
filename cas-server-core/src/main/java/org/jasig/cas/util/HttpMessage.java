@@ -43,7 +43,7 @@ public class HttpMessage {
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private boolean issueAsynchronousCallbacks = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
+    private boolean asynchronous = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
     
     /**
      * The content type for this message once submitted.
@@ -73,8 +73,8 @@ public class HttpMessage {
         this.message = message;
     }
     
-    protected boolean isIssueAsynchronousCallbacks() {
-        return this.issueAsynchronousCallbacks;
+    protected boolean isAsynchronous() {
+        return this.asynchronous;
     }
 
     protected final String getUrl() {
