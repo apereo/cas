@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -102,34 +103,28 @@ should proceed in the face of one or more RADIUS server failures.</li>
 <p>Component representing a RADIUS server has the following configuration properties.</p>
 
 <ul>
-  <li><code>hostName</code> - the hostname of the RADIUS server.</li>
-  <li><code>sharedSecret</code> - the secret key used to communicate with the server.</li>
-  <li><code>radiusAuthenticator</code> - the RADIUS authenticator to use. Defaults to PAP.</li>
-  <li><code>authenticationPort</code> - the authentication port this server uses.</li>
-  <li><code>accountingPort</code> - the accounting port that this server uses.</li>
-  <li><code>socketTimeout</code> - the amount of time to wait before timing out.</li>
-  <li><code>retries</code> - the number of times to keep retrying a particular server on communication failure/timeout.</li>
+  <li><code>protocol</code> - radius protocol to use.</li>
+  <li><code>clientFactory</code> - factory establish and create radius client instances.</li>
 </ul>
 
 <h2 id="radius-configuration-example">RADIUS Configuration Example</h2>
 
-<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;papAuthenticator&quot;</span> <span class="na">class=</span><span class="s">&quot;net.jradius.client.auth.PAPAuthenticator&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;radiusServer&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.adaptors.radius.JRadiusServerImpl&quot;</span>
+      <span class="na">c:protocol=</span><span class="s">&quot;EAP_MSCHAPv2&quot;</span>
+      <span class="na">c:clientFactory-ref=</span><span class="s">&quot;radiusClientFactory&quot;</span> <span class="nt">/&gt;</span>
 
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;abstractServer&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.adaptors.radius.JRadiusServerImpl&quot;</span> <span class="na">abstract=</span><span class="s">&quot;true&quot;</span>
-      <span class="na">c:sharedSecret=</span><span class="s">&quot;32_or_more_random_characters&quot;</span>
-      <span class="na">c:radiusAuthenticator-ref=</span><span class="s">&quot;papAuthenticator&quot;</span>
-      <span class="na">c:authenticationPort=</span><span class="s">&quot;1812&quot;</span>
-      <span class="na">c:accountingPort=</span><span class="s">&quot;1813&quot;</span>
-      <span class="na">c:socketTimeout=</span><span class="s">&quot;5&quot;</span>
-      <span class="na">c:retries=</span><span class="s">&quot;3&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;radiusClientFactory&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.adaptors.radius.RadiusClientFactory&quot;</span>
+      <span class="na">p:inetAddress=</span><span class="s">&quot;localhost&quot;</span>
+      <span class="na">p:sharedSecret=</span><span class="s">&quot;fqhwhgads&quot;</span> <span class="nt">/&gt;</span>
 
-<span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler&quot;</span>
-      <span class="na">p:failoverOnAuthenticationFailure=</span><span class="s">&quot;false&quot;</span>
-      <span class="na">p:failoverOnException=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;radiusAuthenticationHandler&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;servers&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;list&gt;</span>
-      <span class="nt">&lt;bean</span> <span class="na">parent=</span><span class="s">&quot;abstractServer&quot;</span> <span class="na">c:hostName=</span><span class="s">&quot;radius1.example.org&quot;</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;bean</span> <span class="na">parent=</span><span class="s">&quot;abstractServer&quot;</span> <span class="na">c:hostName=</span><span class="s">&quot;radius2.example.org&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;list&gt;</span>
+          <span class="nt">&lt;ref</span> <span class="na">local=</span><span class="s">&quot;radiusServer&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/list&gt;</span>
   <span class="nt">&lt;/property&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 </code></pre></div>
