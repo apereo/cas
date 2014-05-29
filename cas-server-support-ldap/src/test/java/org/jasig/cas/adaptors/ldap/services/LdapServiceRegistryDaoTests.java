@@ -28,7 +28,7 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ReturnAllAttributeFilteringPolicy;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +74,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setTheme("the theme name");
         rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
-        rs.setAttributeFilteringPolicy(new ReturnAllAttributeFilteringPolicy());
+        rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
         this.dao.save(rs);
 

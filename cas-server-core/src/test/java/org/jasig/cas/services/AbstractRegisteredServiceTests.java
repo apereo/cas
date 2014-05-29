@@ -112,7 +112,7 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void testServiceAttributeFilterAllAttributes() {
         prepareService();
-        this.r.setAttributeFilteringPolicy(new ReturnAllAttributeFilteringPolicy());
+        this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -123,16 +123,16 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
         assertEquals(attr.size(), map.size());
     }
     
     @Test
     public void testServiceAttributeFilterAllowedAttributes() {
         prepareService();
-        final ReturnAllowedAttributeFilteringPolicy policy = new ReturnAllowedAttributeFilteringPolicy();
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
-        this.r.setAttributeFilteringPolicy(policy);
+        this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -143,7 +143,7 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey("attr1"));
         assertTrue(attr.containsKey("attr3"));
@@ -152,13 +152,13 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void testServiceAttributeFilterMappedAttributes() {
         prepareService();
-        final ReturnMappedAttributeFilteringPolicy policy = new ReturnMappedAttributeFilteringPolicy();
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<String, String>();
         mappedAttr.put("attr1", "newAttr1");
         
         policy.setAllowedAttributes(mappedAttr);
                 
-        this.r.setAttributeFilteringPolicy(policy);
+        this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -169,7 +169,7 @@ public class AbstractRegisteredServiceTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
         
-        final Map<String, Object> attr = this.r.getAttributeFilteringPolicy().getAttributes(p);
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));
     }
