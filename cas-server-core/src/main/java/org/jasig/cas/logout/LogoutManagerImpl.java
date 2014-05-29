@@ -66,8 +66,11 @@ public final class LogoutManagerImpl implements LogoutManager {
     /** Whether single sign out is disabled or not. */
     private boolean singleLogoutCallbacksDisabled = false;
     
-    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
-    private boolean issueAsynchronousCallbacks = true;
+    /** 
+     * Whether messages to endpoints would be sent in an asynchronous fashion.
+     * True by default.
+     **/
+    private boolean asynchronous = true;
     
     /**
      * Build the logout manager.
@@ -88,8 +91,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param asyncCallbacks if message is synchronously sent
      * @since 4.1
      */
-    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
-        this.issueAsynchronousCallbacks = asyncCallbacks;
+    public void setAsynchronous(final boolean asyncCallbacks) {
+        this.asynchronous = asyncCallbacks;
     }
     
     /**
@@ -187,25 +190,32 @@ public final class LogoutManagerImpl implements LogoutManager {
         this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
     }
            
-    private class LogoutHttpMessage extends HttpMessage {
+    /**
+     * A logout http message that is accompanied by a special content type
+     * and formatting.
+     * @since 4.1
+     */
+    private final class LogoutHttpMessage extends HttpMessage {
+        
         /**
+         * Constructs a logout message, whose method of submission
+         * is controlled by the {@link LogoutManagerImpl#asynchronous}.
+         * 
          * @param url The url to send the message to
          * @param message Message to send to the url
          */
         public LogoutHttpMessage(final String url, final String message) {
-            super(url, message);
+            super(url, message, LogoutManagerImpl.this.asynchronous);
             setContentType("application/xml");
         }
 
+        /**
+         * {@inheritDoc}.
+         * Prepends the string "<code>logoutRequest=</code>" to the message body.
+         */
         @Override
-        protected final String formatOutputMessageInternal(final String message) {
+        protected String formatOutputMessageInternal(final String message) {
             return "logoutRequest=" + super.formatOutputMessageInternal(message);
-        }
-
-        @Override
-        protected boolean isIssueAsynchronousCallbacks() {
-           return LogoutManagerImpl.this.issueAsynchronousCallbacks;
-        }
-        
+        }        
     }
 }
