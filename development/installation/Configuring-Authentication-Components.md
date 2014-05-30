@@ -367,12 +367,12 @@ Modify the `PolicyBasedAuthenticationManager` bean in `deployerConfigContext.xml
 
 ### Webflow Configuration
 Two sections of `login-webflow.xml` require changes:
-1. `credentials` variable declaration
+1. `credential` variable declaration
 2. `viewLoginForm` action state
 
-Change the `credentials` variable declaration as follows:
+Change the `credential` variable declaration as follows:
 {% highlight xml %}
-<var name="credentials" class="org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential" />
+<var name="credential" class="org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential" />
 {% endhighlight %}
 
 Change the `viewLoginForm` action state as follows:
