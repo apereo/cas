@@ -24,7 +24,7 @@ import org.jasig.cas.ticket.TicketState;
 
 /**
  * Defines the set of operations that determine whether the incoming request satisfies a set of
- * implemented rules via {@link #doesSatisfyTicketExpirationPolicy(HttpServletRequest, TicketState)},
+ * implemented rules via {@link #satisfiesTicketExpirationPolicy(HttpServletRequest, TicketState)},
  * such that if it does, the expiration policy of the {@link TicketState} may be handled
  * differently by the caller.
  * 
@@ -41,5 +41,5 @@ public interface TicketExpirationPolicyEvaluator {
      * @param state the state
      * @return true, if the requested policy can be used.
      */
-    boolean doesSatisfyTicketExpirationPolicy(final HttpServletRequest request, final TicketState state);
+    boolean satisfiesTicketExpirationPolicy(final HttpServletRequest request, final TicketState state);
 }
