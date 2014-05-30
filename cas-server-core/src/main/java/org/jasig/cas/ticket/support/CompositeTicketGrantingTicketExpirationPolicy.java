@@ -44,6 +44,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
  * @author Misagh Moayyed
  * @since 4.1
+ * @see TicketExpirationPolicyEvaluator
+ * @see ExpirationPolicy
  */
 public final class CompositeTicketGrantingTicketExpirationPolicy implements ExpirationPolicy {
 
@@ -53,6 +55,10 @@ public final class CompositeTicketGrantingTicketExpirationPolicy implements Expi
 
     private final Map<TicketExpirationPolicyEvaluator, ExpirationPolicy> evaluators;
 
+    /**
+     * The default expiration policy if no evaluator succeeds.
+     * By default, {@link AlwaysExpiresExpirationPolicy} is used.
+     **/
     private ExpirationPolicy defaultExpirationPolicy = new AlwaysExpiresExpirationPolicy();
 
     /**
@@ -73,7 +79,7 @@ public final class CompositeTicketGrantingTicketExpirationPolicy implements Expi
 
         for (final TicketExpirationPolicyEvaluator eval : keys) {
 
-            if (eval.doesSatisfyTicketExpirationPolicy(getRequest(), state)) {
+            if (eval.satisfiesTicketExpirationPolicy(getRequest(), state)) {
                 logger.debug("Expiration policy evaluator [{}] satisfies this request", eval);
 
                 final ExpirationPolicy policy = this.evaluators.get(eval);
