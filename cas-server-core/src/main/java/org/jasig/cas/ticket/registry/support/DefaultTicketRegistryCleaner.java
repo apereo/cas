@@ -78,9 +78,17 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LogoutManager logoutManager;
 
-    /** If the user must be logged out of the services. */
-    private boolean logUserOutOfServices = true;
-
+    /**
+     * Instantiates a new default ticket registry cleaner.
+     *
+     * @param logoutManager the logout manager
+     * @param ticketRegistry the ticket registry
+     */
+    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry) {
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+    }
+    
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
@@ -102,11 +110,10 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
+            logger.info("{} expired tickets found to be removed.", ticketsToRemove.size());
             for (final Ticket ticket : ticketsToRemove) {
-                // CAS-686: Expire TGT to trigger single sign-out
-                if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout((TicketGrantingTicket) ticket);
+                if (ticket instanceof TicketGrantingTicket) {
+                    this.logoutManager.performLogout((TicketGrantingTicket) ticket);
                 }
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
@@ -118,15 +125,6 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
         logger.info("Finished ticket cleanup.");
     }
 
-
-    /**
-     * @param ticketRegistry The ticketRegistry to set.
-     */
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-
     /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
@@ -136,24 +134,5 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
-    }
-
-    /**
-     * Whether to logger users out of services when we remove an expired ticket.  The default is true. Set this to
-     * false to disable.
-     *
-     * @param logUserOutOfServices whether to logger the user out of services or not.
-     */
-    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        this.logUserOutOfServices = logUserOutOfServices;
-    }
-
-    /**
-     * Set the logout manager.
-     *
-     * @param logoutManager the logout manager.
-     */
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
     }
 }
