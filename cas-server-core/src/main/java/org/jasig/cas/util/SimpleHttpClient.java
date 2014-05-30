@@ -111,7 +111,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         final Callable<Boolean> callable = new CallableHttpMessageSender(message);
         final Future<Boolean> result = EXECUTOR_SERVICE.submit(callable);
 
-        if (message.isIssueAsynchronousCallbacks()) {
+        if (message.isAsynchronous()) {
             return true;
         }
 
