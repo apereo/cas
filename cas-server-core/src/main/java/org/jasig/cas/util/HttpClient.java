@@ -21,7 +21,7 @@ package org.jasig.cas.util;
 import java.net.URL;
 
 /**
- * Define the behavior of a HTTP client.
+ * Define the behaviour of a HTTP client.
  *
  * @author Jerome Leleu
  * @author Misagh Moayyed
