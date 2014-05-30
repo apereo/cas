@@ -22,6 +22,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Architecture](planning/Architecture.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Security Guide](planning/Security-Guide.html)
+* [Authentication](installation/Configuring-Authentication-Components.html)
 * [Maven Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [UI Customization](installation/User-Interface-Customization.html)
 * [CAS Protocol](protocol/CAS-Protocol.html)
