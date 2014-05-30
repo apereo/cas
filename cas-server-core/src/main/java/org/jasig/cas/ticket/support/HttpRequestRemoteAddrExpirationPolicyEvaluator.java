@@ -55,7 +55,7 @@ public final class HttpRequestRemoteAddrExpirationPolicyEvaluator implements Tic
     }
 
     @Override
-    public boolean doesSatisfyTicketExpirationPolicy(final HttpServletRequest request, final TicketState state) {
+    public boolean satisfiesTicketExpirationPolicy(final HttpServletRequest request, final TicketState state) {
         final String currentIp = request.getRemoteAddr();
         logger.debug("Remote address [{}] received to compare against [{}]", this.ipAddressPattern.pattern());
         return this.ipAddressPattern.matcher(currentIp).find();
