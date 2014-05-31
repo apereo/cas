@@ -88,7 +88,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
-    private boolean allowedToProxy = false;
+    /**
+     * Proxy policy for the service.
+     * By default, the policy is {@link RefuseRegisteredServiceProxyPolicy}.
+     */
+    @Lob
+    @Column(name = "proxy_policy", nullable = false)
+    private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     private boolean enabled = true;
 
@@ -158,8 +164,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.theme;
     }
 
-    public boolean isAllowedToProxy() {
-        return this.allowedToProxy;
+    public RegisteredServiceProxyPolicy getProxyPolicy() {
+        return this.proxyPolicy;
     }
 
     public boolean isEnabled() {
@@ -186,7 +192,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        return new EqualsBuilder().append(this.allowedToProxy, that.allowedToProxy)
+        return new EqualsBuilder().append(this.proxyPolicy, that.proxyPolicy)
                 .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
                 .append(this.evaluationOrder, that.evaluationOrder)
                 .append(this.ignoreAttributes, that.ignoreAttributes).append(this.ssoEnabled, that.ssoEnabled)
@@ -217,8 +223,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         }
     }
 
-    public void setAllowedToProxy(final boolean allowedToProxy) {
-        this.allowedToProxy = allowedToProxy;
+    public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
+        this.proxyPolicy = policy;
     }
 
     public void setDescription(final String description) {
@@ -325,7 +331,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     public void copyFrom(final RegisteredService source) {
         this.setId(source.getId());
         this.setAllowedAttributes(new ArrayList<String>(source.getAllowedAttributes()));
-        this.setAllowedToProxy(source.isAllowedToProxy());
+        this.setProxyPolicy(source.getProxyPolicy());
         this.setDescription(source.getDescription());
         this.setEnabled(source.isEnabled());
         this.setName(source.getName());

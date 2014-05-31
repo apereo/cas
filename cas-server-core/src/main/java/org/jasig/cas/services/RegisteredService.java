@@ -67,12 +67,11 @@ public interface RegisteredService extends Cloneable, Serializable {
     List<String> getAllowedAttributes();
 
     /**
-     * Is this application allowed to take part in the proxying capabilities of
-     * CAS?
+     * Get the proxy policy rules for this service.
      *
-     * @return true if it can, false otherwise.
+     * @return the proxy policy
      */
-    boolean isAllowedToProxy();
+    RegisteredServiceProxyPolicy getProxyPolicy();
 
     /**
      * The unique identifier for this service.

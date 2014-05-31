@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -66,7 +67,7 @@ public class LdapServiceRegistryDaoTests {
 
         AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
-        rs.setAllowedToProxy(false);
+        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setAnonymousAccess(true);
         rs.setDescription("Service description");
         rs.setServiceId("https://?.edu/**");
@@ -79,7 +80,7 @@ public class LdapServiceRegistryDaoTests {
 
         rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
-        rs.setAllowedToProxy(false);
+        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setAnonymousAccess(true);
         rs.setDescription("Service description");
         rs.setServiceId("^http?://.+");
