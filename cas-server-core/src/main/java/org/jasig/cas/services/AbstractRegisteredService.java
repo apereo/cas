@@ -295,6 +295,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setEvaluationOrder(source.getEvaluationOrder());
         this.setUsernameAttribute(source.getUsernameAttribute());
         this.setLogoutType(source.getLogoutType());
+        this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
     }
 
     /**
@@ -321,6 +322,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("description", this.description);
         toStringBuilder.append("serviceId", this.serviceId);
         toStringBuilder.append("usernameAttribute", this.usernameAttribute);
+        toStringBuilder.append("enabled", this.enabled);
+        toStringBuilder.append("ssoEnabled", this.ssoEnabled);
 
         return toStringBuilder.toString();
     }
