@@ -204,40 +204,41 @@
 <a class="jxr_linenumber" name="194" href="#194">194</a>         <em class="jxr_comment">// for all clients, generate redirection urls</em>
 <a class="jxr_linenumber" name="195" href="#195">195</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Client client : <strong class="jxr_keyword">this</strong>.clients.findAllClients()) {
 <a class="jxr_linenumber" name="196" href="#196">196</a>             <strong class="jxr_keyword">final</strong> String key = client.getName() + <span class="jxr_string">"Url"</span>;
-<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">final</strong> String redirectionUrl = client.getRedirectionUrl(webContext);
-<a class="jxr_linenumber" name="198" href="#198">198</a>             logger.debug(<span class="jxr_string">"{} -&gt; {}"</span>, key, redirectionUrl);
-<a class="jxr_linenumber" name="199" href="#199">199</a>             context.getFlowScope().put(key, redirectionUrl);
-<a class="jxr_linenumber" name="200" href="#200">200</a>         }
-<a class="jxr_linenumber" name="201" href="#201">201</a>     }
-<a class="jxr_linenumber" name="202" href="#202">202</a> 
-<a class="jxr_linenumber" name="203" href="#203">203</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     * Restore an attribute in web session as an attribute in request.</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * @param request The HTTP request</em>
-<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @param session The HTTP session</em>
-<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     * @param name The name of the parameter</em>
-<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> restoreRequestAttribute(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpSession session,
-<a class="jxr_linenumber" name="211" href="#211">211</a>             <strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">final</strong> String value = (String) session.getAttribute(name);
-<a class="jxr_linenumber" name="213" href="#213">213</a>         request.setAttribute(name, value);
-<a class="jxr_linenumber" name="214" href="#214">214</a>     }
-<a class="jxr_linenumber" name="215" href="#215">215</a> 
-<a class="jxr_linenumber" name="216" href="#216">216</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="217" href="#217">217</a> <em class="jxr_javadoccomment">     * Save a request parameter in the web session.</em>
-<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     * @param request The HTTP request</em>
-<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @param session The HTTP session</em>
-<a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     * @param name The name of the parameter</em>
-<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="223" href="#223">223</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> saveRequestParameter(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpSession session,
-<a class="jxr_linenumber" name="224" href="#224">224</a>             <strong class="jxr_keyword">final</strong> String name) {
-<a class="jxr_linenumber" name="225" href="#225">225</a>         <strong class="jxr_keyword">final</strong> String value = request.getParameter(name);
-<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">if</strong> (value != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="227" href="#227">227</a>             session.setAttribute(name, value);
-<a class="jxr_linenumber" name="228" href="#228">228</a>         }
-<a class="jxr_linenumber" name="229" href="#229">229</a>     }
-<a class="jxr_linenumber" name="230" href="#230">230</a> }
+<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">final</strong> BaseClient baseClient = (BaseClient) client;
+<a class="jxr_linenumber" name="198" href="#198">198</a>             <strong class="jxr_keyword">final</strong> String redirectionUrl = baseClient.getRedirectionUrl(webContext);
+<a class="jxr_linenumber" name="199" href="#199">199</a>             logger.debug(<span class="jxr_string">"{} -&gt; {}"</span>, key, redirectionUrl);
+<a class="jxr_linenumber" name="200" href="#200">200</a>             context.getFlowScope().put(key, redirectionUrl);
+<a class="jxr_linenumber" name="201" href="#201">201</a>         }
+<a class="jxr_linenumber" name="202" href="#202">202</a>     }
+<a class="jxr_linenumber" name="203" href="#203">203</a> 
+<a class="jxr_linenumber" name="204" href="#204">204</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * Restore an attribute in web session as an attribute in request.</em>
+<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @param request The HTTP request</em>
+<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     * @param session The HTTP session</em>
+<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     * @param name The name of the parameter</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="211" href="#211">211</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> restoreRequestAttribute(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpSession session,
+<a class="jxr_linenumber" name="212" href="#212">212</a>             <strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> String value = (String) session.getAttribute(name);
+<a class="jxr_linenumber" name="214" href="#214">214</a>         request.setAttribute(name, value);
+<a class="jxr_linenumber" name="215" href="#215">215</a>     }
+<a class="jxr_linenumber" name="216" href="#216">216</a> 
+<a class="jxr_linenumber" name="217" href="#217">217</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a> <em class="jxr_javadoccomment">     * Save a request parameter in the web session.</em>
+<a class="jxr_linenumber" name="219" href="#219">219</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @param request The HTTP request</em>
+<a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     * @param session The HTTP session</em>
+<a class="jxr_linenumber" name="222" href="#222">222</a> <em class="jxr_javadoccomment">     * @param name The name of the parameter</em>
+<a class="jxr_linenumber" name="223" href="#223">223</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="224" href="#224">224</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> saveRequestParameter(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpSession session,
+<a class="jxr_linenumber" name="225" href="#225">225</a>             <strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="226" href="#226">226</a>         <strong class="jxr_keyword">final</strong> String value = request.getParameter(name);
+<a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">if</strong> (value != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="228" href="#228">228</a>             session.setAttribute(name, value);
+<a class="jxr_linenumber" name="229" href="#229">229</a>         }
+<a class="jxr_linenumber" name="230" href="#230">230</a>     }
+<a class="jxr_linenumber" name="231" href="#231">231</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
