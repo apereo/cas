@@ -52,8 +52,8 @@ public class SwitchCasePrincipalNameTransformer implements PrincipalNameTransfor
     
     @Override
     public String transform(final String formUserId) {
-        final String result = this.delegateTransformer.transform(formUserId).trim();
-        return this.toUpperCase ? result.toUpperCase(): formUserId.toLowerCase();
+        final String result = this.delegateTransformer.transform(formUserId.trim()).trim();
+        return this.toUpperCase ? result.toUpperCase(): result.toLowerCase();
     }
 
     public final void setToUpperCase(final boolean toUpperCase) {
