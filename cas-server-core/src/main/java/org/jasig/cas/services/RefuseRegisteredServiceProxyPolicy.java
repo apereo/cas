@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import java.net.URL;
+
 /**
  * A proxy policy that disallows proxying.
  * @author Misagh Moayyed
@@ -33,7 +35,8 @@ public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServi
     }
 
     @Override
-    public boolean isAllowedProxyCallbackUrl(final String pgtUrl) {
+    public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
         return false;
     }
+
 }
