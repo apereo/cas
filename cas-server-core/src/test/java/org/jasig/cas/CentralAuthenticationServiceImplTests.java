@@ -38,7 +38,6 @@ import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
 import static org.mockito.Mockito.mock;
 
 /**
@@ -46,7 +45,7 @@ import static org.mockito.Mockito.mock;
  * @since 3.0
  */
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
-
+    
     @Test(expected=AuthenticationException.class)
     public void testBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
         getCentralAuthenticationService().createTicketGrantingTicket(
