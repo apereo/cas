@@ -43,7 +43,7 @@ function generateToolbarIcons() {
 	for (var i = 1; i < segments.length; i++) {
 		page += segments[i] + "/";    
 	}
-
+	page = page.replace(".html", ".md");
 
 	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
