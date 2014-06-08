@@ -41,15 +41,15 @@ function generateToolbarIcons() {
 
 	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
-		"'><img src='/images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
+		"'><img src='/cas/images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
 	var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
-		"'><img src='/images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
+		"'><img src='/cas/images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
 	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-		"'><img src='/images/delete.png' alt='Delete with Github' title='Delete with Github'>");
+		"'><img src='/cas/images/delete.png' alt='Delete with Github' title='Delete with Github'>");
 }
 
 function generateTableOfContentsForPage() {
