@@ -1,8 +1,8 @@
 var CONST_CURRENT_VER = "development";
 
 function getActiveDocumentationVersionInView() {
-	var currentVersion = CONST_CURRENT_VER;
-	var href = location.href;
+  var currentVersion = CONST_CURRENT_VER;
+  var href = location.href;
   var index = href.indexOf("/_site/");
 
   if (index == -1) {
@@ -36,17 +36,20 @@ function generateSidebarLinksForActiveVersion() {
 function generateToolbarIcons() {
 	var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
 
-	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + getActiveDocumentationVersionInView();
+	var uri = new URI(document.location);
+	var page = getActiveDocumentationVersionInView() + "/" + uri.filename();
+
+	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
-		"'><img src='../images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
+		"'><img src='/images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
-	var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + getActiveDocumentationVersionInView();
+	var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
-		"'><img src='../images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
+		"'><img src='/images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
-	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + getActiveDocumentationVersionInView();
+	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-		"'><img src='../images/delete.png' alt='Delete with Github' title='Delete with Github'>");
+		"'><img src='/images/delete.png' alt='Delete with Github' title='Delete with Github'>");
 }
 
 function generateTableOfContentsForPage() {
