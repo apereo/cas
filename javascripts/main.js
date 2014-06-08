@@ -46,7 +46,7 @@ function generateToolbarIcons() {
 
 	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + getActiveDocumentationVersionInView();
 	$('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-		"'><img src='../images/Delete.png' alt='Delete with Github' title='Delete with Github'>");
+		"'><img src='../images/delete.png' alt='Delete with Github' title='Delete with Github'>");
 }
 
 function generateTableOfContentsForPage() {
