@@ -6,28 +6,28 @@ title: CAS - Configuring Authentication Components
 # Configuring Authentication Components
 The CAS authentication process is performed by several related components:
 
+######`PrincipalNameTransformer`
+Transforms the user id string that is typed into the login form into a tentative Principal Name to be
+validated by a specific type of Authentication Handler.
 
 ######`AuthenticationManager`
 Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
 configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
 security policy.
 
-
 ######`AuthenticationHandler`
 Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
-
 
 ######`PrincipalResolver`
 Converts information in the authentication credential into a security principal that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
-
 
 ######`AuthenticationMetaDataPopulator`
 Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
 to set protocol-specific data.
 
 Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
-w
+
 
 ## Authentication Manager
 CAS ships with a single yet flexible authentication manager, `PolicyBasedAuthenticationManager`, that should be
@@ -148,7 +148,6 @@ Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-c
 
 ###Components
 
-
 ####`ArgumentExtractor`
 Strategy parent interface that defines operations needed to extract arguments from the http request.
 
@@ -185,6 +184,17 @@ arises with X.509 authentication. It is common to store certificates in an LDAP 
 resolve the principal ID and attributes from directory attributes. The `X509CertificateAuthenticationHandler` may
 be be combined with an LDAP-based principal resolver to accommodate this case.
 
+### PrincipalNameTransformer Components
+
+######`NoOpPrincipalNameTransformer`
+Default transformer, that actually does no transformation on the user id.
+
+######`PrefixSuffixPrincipalNameTransformer`
+Transforms the user id by adding a postfix or suffix.
+
+######`SwitchCasePrincipalNameTransformer`
+A transformer that switches the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
+to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
 
 ### PrincipalResolver Components
 
