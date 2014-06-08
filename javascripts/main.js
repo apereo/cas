@@ -37,7 +37,13 @@ function generateToolbarIcons() {
 	var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
 
 	var uri = new URI(document.location);
-	var page = getActiveDocumentationVersionInView() + "/" + uri.filename();
+	var segments = uri.segment();
+	var page = "";
+
+	for (var i = 1; i < segments.length; i++) {
+		page += segments[i] + "/";    
+	}
+
 
 	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
