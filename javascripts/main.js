@@ -32,6 +32,23 @@ function generateSidebarLinksForActiveVersion() {
 		}
   });
 }
+
+function generateToolbarIcons() {
+	var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
+
+	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + getActiveDocumentationVersionInView();
+	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
+		"'><img src='../images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
+
+	var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + getActiveDocumentationVersionInView();
+	$('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
+		"'><img src='../images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
+
+	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + getActiveDocumentationVersionInView();
+	$('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
+		"'><img src='../images/Delete.png' alt='Delete with Github' title='Delete with Github'>");
+}
+
 function generateTableOfContentsForPage() {
   $('#tableOfContents').append("<strong>Table of Contents</strong>");
   $('#tableOfContents').append("<ul>");
@@ -61,8 +78,9 @@ function generateTableOfContentsForPage() {
 
 $(function() {
 	loadSidebarForActiveVersion();
-  generateTableOfContentsForPage();
-  
+    generateTableOfContentsForPage();
+  	generateToolbarIcons();
+
 	var formattedVersion = getActiveDocumentationVersionInView();
 	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
 		formattedVersion = " (" + formattedVersion + ")"
@@ -72,3 +90,4 @@ $(function() {
 	document.title = $("h1").first().text() + formattedVersion;
   
 });
+
