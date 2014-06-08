@@ -203,10 +203,10 @@ interest.</p>
 
 <p>Argument extractor configuration is defined at <code>src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml</code>. Here’s a brief sample:</p>
 
-<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;casArgumentExtractor&quot;</span>	<span class="na">class=</span><span class="s">&quot;org.jasig.cas.web.support.CasArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;casArgumentExtractor&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.web.support.CasArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
 
 <span class="nt">&lt;util:list</span> <span class="na">id=</span><span class="s">&quot;argumentExtractors&quot;</span><span class="nt">&gt;</span>
-	<span class="nt">&lt;ref</span> <span class="na">bean=</span><span class="s">&quot;casArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;ref</span> <span class="na">bean=</span><span class="s">&quot;casArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/util:list&gt;</span>
 </code></pre></div>
 
@@ -420,12 +420,12 @@ duration:</p>
 
 <h3 id="webflow-configuration">Webflow Configuration</h3>
 <p>Two sections of <code>login-webflow.xml</code> require changes:
-1. <code>credentials</code> variable declaration
+1. <code>credential</code> variable declaration
 2. <code>viewLoginForm</code> action state</p>
 
-<p>Change the <code>credentials</code> variable declaration as follows:</p>
+<p>Change the <code>credential</code> variable declaration as follows:</p>
 
-<div class="highlight"><pre><code class="xml"><span class="nt">&lt;var</span> <span class="na">name=</span><span class="s">&quot;credentials&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;var</span> <span class="na">name=</span><span class="s">&quot;credential&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
 
 <p>Change the <code>viewLoginForm</code> action state as follows:</p>
