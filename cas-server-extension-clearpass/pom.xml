@@ -32,8 +32,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<cas.client.version>3.2.1</cas.client.version>
-    <cs.dir>${project.parent.basedir}</cs.dir>
+        <cs.dir>${project.parent.basedir}</cs.dir>
 	</properties>
 
 	<build>
@@ -96,8 +95,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-core</artifactId>
-			<version>${cas.client.version}</version>
-			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
