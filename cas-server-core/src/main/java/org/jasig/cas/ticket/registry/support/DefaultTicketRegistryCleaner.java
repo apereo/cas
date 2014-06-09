@@ -57,6 +57,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.0
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
@@ -85,6 +86,20 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      * @param ticketRegistry the ticket registry
      */
     public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry) {
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+    }
+    
+    /**
+     * Instantiates a new default ticket registry cleaner.
+     *
+     * @param logoutManager the logout manager
+     * @param ticketRegistry the ticket registry
+     * @param lockingStrategy the locking strategy
+     * @since 4.1
+     */
+    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry, 
+            final LockingStrategy lockingStrategy) {
         this.logoutManager = logoutManager;
         this.ticketRegistry = ticketRegistry;
     }
@@ -126,13 +141,45 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     }
 
     /**
+     * @param ticketRegistry The ticketRegistry to set.
+     * @deprecated As of 4.1. Consider using constructors instead.
+     */
+    @Deprecated
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+
+    /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
      * such as JPA, in a clustered CAS environment.  Use {@link JpaLockingStrategy}
      * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
      * CAS environment.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
+    }
+
+    /**
+     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.
+     * @param logUserOutOfServices whether to logger the user out of services or not.
+     */
+    @Deprecated
+    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
+        logger.warn("Invoking setLogUserOutOfServices() is deprecated and has no impact.");
+    }
+
+    /**
+     * Set the logout manager.
+     *
+     * @param logoutManager the logout manager.
+     * @deprecated As of 4.1. Consider using constructors instead.
+     */
+    @Deprecated
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
     }
 }
