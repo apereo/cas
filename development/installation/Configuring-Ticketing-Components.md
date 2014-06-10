@@ -90,7 +90,7 @@ Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifac
  
 
 ### Ticket Registry Cleaner
-The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementation such as Memcached of Ehcache do not require a registry cleaner.
+The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementations such as Memcached or Ehcache do not require a registry cleaner. The ticket registry cleaner configuration is specified in the `spring-configuration/ticketRegistry.xml` file.
 
 
 ####Components

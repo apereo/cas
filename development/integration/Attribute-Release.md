@@ -29,6 +29,9 @@ A PersonDirectory `IPersonAttributeDao` attribute source is defined and configur
 * `MultiRowJdbcPersonAttributeDao`: Designed to work against a table where there is a mapping of one row to many users. Should be used if the database is structured such that there is a column for attribute names and column(s) for the corresponding values.
 * `XmlPersonAttributeDao`: XML backed person attribute DAO that supports wildcard searching.
 * `LdapPersonAttributeDao`: Queries an LDAP directory to populate person attributes using Spring Framework.
+* `GroovyPersonAttributeDao`: Resolve attributes based on an external groovy script.
+* `TomlLdapPersonAttributeDao`: Resolve person attributes and insert the ldap/context settings from an external Toml file. 
+* `JsonBackedComplexStubPersonAttributeDao`: Resolve person attributes that are specified in an external JSON file.
 
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
