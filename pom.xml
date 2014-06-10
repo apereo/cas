@@ -475,8 +475,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
 
     <dependency>
@@ -660,6 +659,13 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       </dependency>
 
       <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${servlet.api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    
+      <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
         <version>${spring.security.version}</version>
@@ -791,12 +797,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <artifactId>spring-web</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${servlet.api.version}</version>
       </dependency>
 
       <dependency>
@@ -969,10 +969,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <properties>
     <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
-    <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
-    <spring.version>3.2.6.RELEASE</spring.version>
+    <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
+    <spring.version>4.0.5.RELEASE</spring.version>
     <ldaptive.version>1.0.3</ldaptive.version>
-    <spring.security.version>3.2.0.RELEASE</spring.security.version>
+    <spring.security.version>3.2.4.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.7.3</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
@@ -982,7 +982,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
     <slf4j.version>1.7.5</slf4j.version>
     <person.directory.version>1.5.2</person.directory.version>
-    <servlet.api.version>2.5</servlet.api.version>
+    <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
     <commons.codec.version>1.7</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
