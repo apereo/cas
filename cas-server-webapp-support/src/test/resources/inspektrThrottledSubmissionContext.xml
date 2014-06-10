@@ -54,28 +54,28 @@
     <constructor-arg index="3">
       <map>
         <entry key="AUTHENTICATION_RESOLVER">
-          <ref local="authenticationActionResolver" />
+          <ref bean="authenticationActionResolver" />
         </entry>
         <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
-          <ref local="ticketCreationActionResolver" />
+          <ref bean="ticketCreationActionResolver" />
         </entry>
         <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
           <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
         </entry>
         <entry key="GRANT_SERVICE_TICKET_RESOLVER">
-          <ref local="ticketCreationActionResolver" />
+          <ref bean="ticketCreationActionResolver" />
         </entry>
         <entry key="GRANT_PROXY_GRANTING_TICKET_RESOLVER">
-          <ref local="ticketCreationActionResolver" />
+          <ref bean="ticketCreationActionResolver" />
         </entry>
         <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
-          <ref local="ticketValidationActionResolver" />
+          <ref bean="ticketValidationActionResolver" />
         </entry>
         <entry key="DELETE_SERVICE_ACTION_RESOLVER">
-          <ref local="deleteServiceActionResolver" />
+          <ref bean="deleteServiceActionResolver" />
         </entry>
         <entry key="SAVE_SERVICE_ACTION_RESOLVER">
-          <ref local="saveServiceActionResolver" />
+          <ref bean="saveServiceActionResolver" />
         </entry>
       </map>
     </constructor-arg>
@@ -87,25 +87,25 @@
           <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver" />
         </entry>
         <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-          <ref local="returnValueResourceResolver" />
+          <ref bean="returnValueResourceResolver" />
         </entry>
         <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-          <ref local="ticketResourceResolver" />
+          <ref bean="ticketResourceResolver" />
         </entry>
         <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
           <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver" />
         </entry>
         <entry key="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
-          <ref local="returnValueResourceResolver" />
+          <ref bean="returnValueResourceResolver" />
         </entry>
         <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
-          <ref local="ticketResourceResolver" />
+          <ref bean="ticketResourceResolver" />
         </entry>
         <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
-          <ref local="deleteServiceResourceResolver" />
+          <ref bean="deleteServiceResourceResolver" />
         </entry>
         <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
-          <ref local="saveServiceResourceResolver" />
+          <ref bean="saveServiceResourceResolver" />
         </entry>
       </map>
     </constructor-arg>
