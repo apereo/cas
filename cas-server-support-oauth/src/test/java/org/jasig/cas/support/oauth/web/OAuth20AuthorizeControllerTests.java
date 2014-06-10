@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,9 +152,15 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(
-                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
-                redirectView.getUrl());
+        
+        final MockHttpServletRequest reqSvc = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        reqSvc.setServerName(CAS_SERVER);
+        reqSvc.setServerPort(CAS_PORT);
+        reqSvc.setScheme(CAS_SCHEME);
+        final URL url = new URL(OAuthUtils.addParameter(CAS_URL, "service", reqSvc.getRequestURL().toString()));
+        final URL url2 = new URL(redirectView.getUrl());
+
+        assertEquals(url, url2);
     }
 
     @Test
@@ -183,9 +190,15 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(
-                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
-                redirectView.getUrl());
+        
+        final MockHttpServletRequest reqSvc = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        reqSvc.setServerName(CAS_SERVER);
+        reqSvc.setServerPort(CAS_PORT);
+        reqSvc.setScheme(CAS_SCHEME);
+        final URL url = new URL(OAuthUtils.addParameter(CAS_URL, "service", reqSvc.getRequestURL().toString()));
+        final URL url2 = new URL(redirectView.getUrl());
+
+        assertEquals(url, url2);
     }
 
     private RegisteredService getRegisteredService(final String serviceId, final String name) {
