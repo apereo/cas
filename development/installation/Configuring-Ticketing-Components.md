@@ -123,7 +123,8 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 {% highlight xml %}
 <!-- TICKET REGISTRY CLEANER -->
 <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-    p:ticketRegistry-ref="ticketRegistry" />
+      c:ticketRegistry-ref="ticketRegistry"
+      c:logoutManager-ref="logoutManager" />
 
 <bean id="jobDetailTicketRegistryCleaner"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
     p:targetObject-ref="ticketRegistryCleaner"
@@ -138,14 +139,15 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 If you're using the JPA ticket registry, your configuration should likely be similar to the following:
 
 {% highlight xml %}
+
 <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-    p:ticketRegistry-ref="ticketRegistry">
-   <property name="lock">
-      <bean class="org.jasig.cas.ticket.registry.support.JdbcLockingStrategy"
-         p:uniqueId="my_unique_machine"
-         p:applicationId="cas"
-         p:dataSource-ref="dataSource" />
-   </property>
+      c:ticketRegistry-ref="ticketRegistry"
+      c:lockingStrategy-ref="cleanerLock"
+      c:logoutManager-ref="logoutManager" />
+
+<bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
+		p:uniqueId="${host.name}"
+		p:applicationId="cas-ticket-registry-cleaner" />
 </bean>
  
 <bean id="jobDetailTicketRegistryCleaner"
