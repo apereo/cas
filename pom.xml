@@ -573,6 +573,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <version>${cas.client.version}</version>
           <type>jar</type>
           <scope>compile</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>javax.servlet</groupId>
+              <artifactId>servlet-api</artifactId>
+            </exclusion>
+          </exclusions>
       </dependency>
         
       <!-- Inspektr Dependencies -->
