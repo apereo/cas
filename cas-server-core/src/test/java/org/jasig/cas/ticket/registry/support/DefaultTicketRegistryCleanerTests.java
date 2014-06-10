@@ -28,16 +28,13 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTests {
 
     public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
-        final DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
-        cleaner.setTicketRegistry(ticketRegistry);
         final LogoutManager logoutManager = mock(LogoutManager.class);
-        cleaner.setLogoutManager(logoutManager);
+        final DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner(logoutManager, ticketRegistry);
         return cleaner;
     }
 
