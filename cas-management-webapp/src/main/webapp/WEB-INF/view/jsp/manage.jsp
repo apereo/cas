@@ -23,7 +23,7 @@
 <h1><spring:message code="${pageTitle}" /></h1>
 <c:if test="${fn:length(services) eq 0}">
        <div id="msg" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
-   </c:if>
+</c:if>
 
 <c:if test="${not empty param.status}">
 	<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
