@@ -47,6 +47,7 @@ Whenever a ticket-granting ticket is explicitly expired, the logout protocol wil
 When a CAS session ends, it notifies each of the services that requested authentication to CAS during the SSO session.
 
 This can happen in two ways:
+
 1. the CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service.
 2. the CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter ( _front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
 
