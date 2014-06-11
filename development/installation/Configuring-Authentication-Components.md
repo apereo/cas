@@ -192,8 +192,8 @@ Default transformer, that actually does no transformation on the user id.
 ######`PrefixSuffixPrincipalNameTransformer`
 Transforms the user id by adding a postfix or suffix.
 
-######`SwitchCasePrincipalNameTransformer`
-A transformer that switches the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
+######`ConvertCasePrincipalNameTransformer`
+A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
 to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
 
 ### PrincipalResolver Components
