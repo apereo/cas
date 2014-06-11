@@ -32,3 +32,10 @@ We recommend reading the following documentation in order to plan and execute a 
 
 ## Demo
 The CAS web application is available for demo at [https://jasigcas.herokuapp.com](https://jasigcas.herokuapp.com)
+
+## Development
+CAS development is powered by: <br/>
+
+<a href="http://www.eclipse.org/" target="_blank"><img src="../images/eclipse.png" valign="middle" style="vertical-align:middle"></a>
+<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" valign="middle" style="vertical-align:middle"></p></a>
+
