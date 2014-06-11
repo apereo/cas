@@ -35,11 +35,11 @@ public interface HttpClient {
      * <p>
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
      *
-     * @param task The task to execute in order to actually send the message to the endpoint
+     * @param message The message that should be sent to the http endpoint
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      * @since 4.1
      */
-    boolean sendMessageToEndPoint(final HttpMessage task);
+    boolean sendMessageToEndPoint(final HttpMessage message);
 
     /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.
