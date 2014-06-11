@@ -18,25 +18,28 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import javax.validation.constraints.NotNull;
+
 
 /**
- * A transformer that switches the form uid to either lowercase or
+ * A transformer that converts the form uid to either lowercase or
  * uppercase. The result is also trimmed. The transformer is also able
  * to accept and work on the result of a previous transformer that might
  * have modified the uid, such that the two can be chained.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class SwitchCasePrincipalNameTransformer implements PrincipalNameTransformer {
+public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
     private boolean toUpperCase = false;
     
+    @NotNull
     private final PrincipalNameTransformer delegateTransformer;
     
     /**
      * Instantiates a new transformer, while initializing the
      * inner delegate to {@link NoOpPrincipalNameTransformer}.
      */
-    public SwitchCasePrincipalNameTransformer() {
+    public ConvertCasePrincipalNameTransformer() {
         this.delegateTransformer = new NoOpPrincipalNameTransformer();
     }
     
@@ -45,7 +48,7 @@ public class SwitchCasePrincipalNameTransformer implements PrincipalNameTransfor
      *
      * @param delegate the delegate
      */
-    public SwitchCasePrincipalNameTransformer(final PrincipalNameTransformer delegate) {
+    public ConvertCasePrincipalNameTransformer(final PrincipalNameTransformer delegate) {
         this.delegateTransformer = delegate;
     }
     

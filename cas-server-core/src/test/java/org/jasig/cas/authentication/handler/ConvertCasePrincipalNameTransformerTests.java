@@ -28,14 +28,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class SwitchCasePrincipalNameTransformerTests {
+public class ConvertCasePrincipalNameTransformerTests {
 
     @Test
     public void testUpperCaseTranformerWithTrimAndDelegate() {
         final PrefixSuffixPrincipalNameTransformer suffixTrans = new PrefixSuffixPrincipalNameTransformer();
         suffixTrans.setPrefix("a");
         suffixTrans.setSuffix("z");
-        final SwitchCasePrincipalNameTransformer transformer = new SwitchCasePrincipalNameTransformer(suffixTrans);
+        final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer(suffixTrans);
         transformer.setToUpperCase(true);
         final String result = transformer.transform("   uid  ");
         assertEquals(result, "AUIDZ");
@@ -43,7 +43,7 @@ public class SwitchCasePrincipalNameTransformerTests {
     
     @Test
     public void testUpperCaseTranformerWithTrim() {
-        final SwitchCasePrincipalNameTransformer transformer = new SwitchCasePrincipalNameTransformer();
+        final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
         final String result = transformer.transform("   uid  ");
         assertEquals(result, "UID");
@@ -51,7 +51,7 @@ public class SwitchCasePrincipalNameTransformerTests {
     
     @Test
     public void testLowerCaseTranformerWithTrim() {
-        final String result = new SwitchCasePrincipalNameTransformer().transform("   UID  ");
+        final String result = new ConvertCasePrincipalNameTransformer().transform("   UID  ");
         assertEquals(result, "uid");
     }
 }
