@@ -44,15 +44,15 @@ Whenever a ticket-granting ticket is explicitly expired, the logout protocol wil
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
-When a CAS session ends, it notifies each of the services that requested authentiation to CAS during the SSO session.
+When a CAS session ends, it notifies each of the services that requested authentication to CAS during the SSO session.
 
 This can happen in two ways:
-1. the CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service
-2. the CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter ( _front channel_ communication): this is a new **experimental** implementation (inspired by SAML SLO), needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
+1. the CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service.
+2. the CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter ( _front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
 
-The way the notification is done ( _back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default and cannot be changed through the services management webapp UI at the moment.
+<div class="alert alert-warning"><strong>Experimental!</strong><p>Front-channel SLO at this point is still experimental.</p></div>
 
-The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
+The way the notification is done ( _back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
 
 A sample SLO message:
 
@@ -80,7 +80,7 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
           p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
-          p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
+          p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 {% endhighlight %}
 
 
