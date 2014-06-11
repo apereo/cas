@@ -73,10 +73,6 @@ ssClass="v" cssStyle="width:75%;" modelAttribute="registeredService">
 					<label for="enabled1" id="enabled-l" class="postField"><spring:message code="management.services.add.property.status.enabled" /></label>
 				</span>
 				<span class="oneChoice">
-					<form:checkbox path="allowedToProxy" value="true" cssClass="check" />
-					<label for="allowedToProxy1" id="proxy-l" class="postField"><spring:message code="management.services.add.property.status.allowedToProxy" /></label>
-				</span>
-				<span class="oneChoice">
 					<form:checkbox path="ssoEnabled" value="true" cssClass="check" />
 					<label for="ssoEnabled1" id="ssl-l" class="postField"><spring:message code="management.services.add.property.status.ssoParticipant" /></label>
 				</span>
