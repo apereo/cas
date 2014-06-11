@@ -122,7 +122,7 @@ public class LogoutManagerImplTests {
     @Test
     public void testAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        this.logoutManager.setIssueAsynchronousCallbacks(false);
+        this.logoutManager.setAsynchronous(false);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }
