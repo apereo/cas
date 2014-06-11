@@ -565,7 +565,21 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
       </dependency>  
-
+      
+      <dependency>
+          <groupId>org.jasig.cas.client</groupId>
+          <artifactId>cas-client-core</artifactId>
+          <version>${cas.client.version}</version>
+          <type>jar</type>
+          <scope>compile</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>javax.servlet</groupId>
+              <artifactId>servlet-api</artifactId>
+            </exclusion>
+          </exclusions>
+      </dependency>
+        
       <!-- Inspektr Dependencies -->
       <dependency>
         <groupId>com.github.inspektr</groupId>
@@ -995,7 +1009,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.2</joda-time.version>
-	
+	<cas.client.version>3.3.1</cas.client.version>
+  
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
