@@ -44,16 +44,17 @@ Whenever a ticket-granting ticket is explicitly expired, the logout protocol wil
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
-When a CAS session ends, it notifies each of the services that requested authentication to CAS during the SSO session.
+When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties need to invalidate their own session.
 
 This can happen in two ways:
 
-1. the CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service.
-2. the CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter ( _front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
+1. CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service.
+2. CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter (_front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
 
-<div class="alert alert-warning"><strong>Experimental!</strong><p>Front-channel SLO at this point is still experimental.</p></div>
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Front-channel SLO at this point is still experimental.</p></div>
 
-The way the notification is done ( _back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
+##SLO Requests
+The way the notification is done (_back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
 
 A sample SLO message:
 
@@ -69,7 +70,7 @@ A sample SLO message:
 </samlp:LogoutRequest>
 {% endhighlight %}
 
-The session identifier is the CAS service ticket ID that was provided to the serivce when it originally authenticated
+The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
 
@@ -105,7 +106,8 @@ By default, backchannel logout messages are sent to endpoint in an asynchronous 
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
 
 {% highlight xml %}
-<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+<bean id="ticketRegistryCleaner"
+      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
       c:ticketRegistry-ref="ticketRegistry"
       c:lockingStrategy-ref="cleanerLock"
       c:logoutManager-ref="logoutManager" />
