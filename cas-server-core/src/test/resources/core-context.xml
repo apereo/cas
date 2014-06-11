@@ -151,7 +151,7 @@
         </constructor-arg>
         <property name="authenticationMetaDataPopulators">
             <list>
-                <ref local="authenticationMetaDataPopulator" />
+                <ref bean="authenticationMetaDataPopulator" />
             </list>
         </property>
 

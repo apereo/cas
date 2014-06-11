@@ -33,6 +33,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.HttpMessage;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +65,12 @@ public final class LogoutManagerImpl implements LogoutManager {
     
     /** Whether single sign out is disabled or not. */
     private boolean singleLogoutCallbacksDisabled = false;
-
-    /** Whether messages to endpoints would be sent in an asynchronous fashion. */
-    private boolean issueAsynchronousCallbacks = true;
+    
+    /** 
+     * Whether messages to endpoints would be sent in an asynchronous fashion.
+     * True by default.
+     **/
+    private boolean asynchronous = true;
     
     /**
      * Build the logout manager.
@@ -81,6 +85,28 @@ public final class LogoutManagerImpl implements LogoutManager {
         this.logoutMessageBuilder = logoutMessageBuilder;
     }
 
+    /**
+     * Set if messages are sent in an asynchronous fashion.
+     *
+     * @param asyncCallbacks if message is synchronously sent
+     * @since 4.1
+     */
+    public void setAsynchronous(final boolean asyncCallbacks) {
+        this.asynchronous = asyncCallbacks;
+    }
+    
+    /**
+     * Set if messages are sent in an asynchronous fashion.
+     *
+     * @param asyncCallbacks if message is synchronously sent
+     * @deprecated As of 4.1. Use {@link #setAsynchronous(boolean)} instead
+     */
+    @Deprecated
+    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
+        this.asynchronous = asyncCallbacks;
+        LOGGER.warn("setIssueAsynchronousCallbacks() is deprecated. Use setAsynchronous() instead.");
+    }
+    
     /**
      * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
      *
@@ -144,9 +170,9 @@ public final class LogoutManagerImpl implements LogoutManager {
         request.getService().setLoggedOutAlready(true);
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(),
-                logoutRequest, this.issueAsynchronousCallbacks);
-        
+        final String originalUrl = request.getService().getOriginalUrl();        
+        final LogoutHttpMessage sender = new LogoutHttpMessage(originalUrl, logoutRequest);
+        return this.httpClient.sendMessageToEndPoint(sender);
     }
 
     /**
@@ -175,13 +201,33 @@ public final class LogoutManagerImpl implements LogoutManager {
     public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
         this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
     }
-    
+           
     /**
-     * Set if messages are sent in an asynchronous fashion.
-     *
-     * @param asyncCallbacks if message is synchronously sent
+     * A logout http message that is accompanied by a special content type
+     * and formatting.
+     * @since 4.1
      */
-    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
-        this.issueAsynchronousCallbacks = asyncCallbacks;
+    private final class LogoutHttpMessage extends HttpMessage {
+        
+        /**
+         * Constructs a logout message, whose method of submission
+         * is controlled by the {@link LogoutManagerImpl#asynchronous}.
+         * 
+         * @param url The url to send the message to
+         * @param message Message to send to the url
+         */
+        public LogoutHttpMessage(final String url, final String message) {
+            super(url, message, LogoutManagerImpl.this.asynchronous);
+            setContentType("application/xml");
+        }
+
+        /**
+         * {@inheritDoc}.
+         * Prepends the string "<code>logoutRequest=</code>" to the message body.
+         */
+        @Override
+        protected String formatOutputMessageInternal(final String message) {
+            return "logoutRequest=" + super.formatOutputMessageInternal(message);
+        }        
     }
 }

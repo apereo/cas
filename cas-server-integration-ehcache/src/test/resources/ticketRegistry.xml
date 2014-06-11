@@ -48,7 +48,7 @@
     <property name="memoryStoreEvictionPolicy" value="LRU" />
     <property name="overflowToDisk" value="false" />
     <property name="bootstrapCacheLoader">
-      <ref local="ticketCacheBootstrapCacheLoader" />
+      <ref bean="ticketCacheBootstrapCacheLoader" />
     </property>
   </bean>
 
@@ -68,7 +68,7 @@
     <property name="cacheName" value="org.jasig.cas.ticket.ServiceTicket" />
 
     <property name="cacheEventListeners">
-      <ref local="ticketRMISynchronousCacheReplicator" />
+      <ref bean="ticketRMISynchronousCacheReplicator" />
     </property>
 
     <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
@@ -95,7 +95,7 @@
     <property name="cacheName" value="org.jasig.cas.ticket.TicketGrantingTicket" />
 
     <property name="cacheEventListeners">
-      <ref local="ticketRMIAsynchronousCacheReplicator" />
+      <ref bean="ticketRMIAsynchronousCacheReplicator" />
     </property>
 
     <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element

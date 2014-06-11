@@ -87,8 +87,8 @@
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
     <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          p:readTimeout="5000"
-          p:connectionTimeout="5000"/>
+          p:readTimeout="${http.client.read.timeout:5000}"
+          p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
     <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
           p:followRedirects="false" />
@@ -102,7 +102,7 @@
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
           p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
-          p:issueAsynchronousCallbacks="${slo.callbacks.asynchronous:true}"/>
+          p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
     
