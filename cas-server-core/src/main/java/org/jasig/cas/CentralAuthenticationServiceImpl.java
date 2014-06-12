@@ -21,9 +21,11 @@ package org.jasig.cas;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
+
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -41,14 +43,13 @@ import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGe
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
-import org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -146,9 +147,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** Encoder to generate PseudoIds. */
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
-
-    /** The default attribute filter to match principal attributes against that of a registered service. **/
-    private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
@@ -430,13 +428,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(),
-                    principal.getAttributes(), registeredService);
-            if (registeredService.getAttributeFilter() != null) {
-                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(),
-                        attributesToRelease, registeredService);
-            }
-
+            final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
+            logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
+            
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> attributesToRelease = attributePolicy != null
+                    ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
+                    
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
@@ -506,7 +504,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 new Object[]{registeredService.getName(), principal.getId(), principalId});
         return principalId;
     }
-
+    
     @Audit(
         action="TICKET_GRANTING_TICKET",
         actionResolverName="CREATE_TICKET_GRANTING_TICKET_RESOLVER",

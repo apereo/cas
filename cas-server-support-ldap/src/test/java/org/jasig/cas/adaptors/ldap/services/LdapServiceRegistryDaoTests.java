@@ -28,6 +28,7 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,7 +74,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setTheme("the theme name");
         rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
-        rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
+        rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
         this.dao.save(rs);
 
@@ -86,7 +87,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setTheme("the theme name");
         rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
-        rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
+
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
         this.dao.save(rs);
 
@@ -96,7 +97,7 @@ public class LdapServiceRegistryDaoTests {
         AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
         assertNotNull(rs2);
         rs2.setEvaluationOrder(9999);
-        rs2.setAllowedAttributes(Arrays.asList("test3"));
+
         rs2.setName("Another Test Service");
 
         rs2 = (AbstractRegisteredService) this.dao.save(rs2);

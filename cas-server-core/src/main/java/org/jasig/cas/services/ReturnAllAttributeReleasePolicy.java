@@ -20,23 +20,19 @@ package org.jasig.cas.services;
 
 import java.util.Map;
 
+import org.jasig.cas.authentication.principal.Principal;
+
 /**
- * Defines the general contract of the attribute release policy for a registered service.
- * An instance of this attribute filter may determine how principal/global attributes are translated to a
- * map of attributes that may be released for a registered service.
- *
+ * Return all attributes for the service, regardless of service settings.
  * @author Misagh Moayyed
- * @since 4.0.0
+ * @since 4.1
  */
-public interface RegisteredServiceAttributeFilter {
-    /**
-     * Filters the received principal attributes for the given registered service.
-     *
-     * @param principalId the principal id for whom attributes are to be released
-     * @param givenAttributes the map for the original given attributes
-     * @param svc the registered service for which attributes are to be released
-     * @return a map that contains the filtered attributes.
-     */
-    Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
-            final RegisteredService svc);
+public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
+
+    private static final long serialVersionUID = 5519257723778012771L;
+
+    @Override
+    protected Map<String, Object> getAttributesInternal(final Principal p) {
+        return p.getAttributes();
+    }
 }

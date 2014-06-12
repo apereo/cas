@@ -88,21 +88,12 @@ ssClass="v" cssStyle="width:75%;" modelAttribute="registeredService">
 			</span>
 			<br/>
 		</span>
-			
-		<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
-			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
-		</span>
 	     
     	<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
     		<form:select path="usernameAttribute" items="${availableUsernameAttributes}" />
     		<form:errors path="usernameAttribute" cssClass="formError" />
     	</span>
-      		            
-	    <span class="oneChoice">
-	      <form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
-	      <label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
-	    </span>
-	    
+      		            	    
 	    <span class="oneField">
 	      <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
 	      <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
