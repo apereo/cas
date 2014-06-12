@@ -181,12 +181,14 @@ Return all resolved attributes to the service.
 #####`ReturnAllAttributeReleasePolicy`
 Return all resolved attributes to the service. 
 
+{% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
   ...
   <property name="attributeReleasePolicy">
     <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
   </property>
 </bean>
+{% endhighlight %}
 
 #####`ReturnAllowedAttributeReleasePolicy`
 Only return the attributes that are explicitly allowed by the configuration. 
@@ -242,11 +244,11 @@ The regex filter that is responsible to make sure only attributes whose value ma
 
 Suppose that the following attributes are resolved:
 
-| Name         					| Value 
-| :--------------------------------	|:-------------
-| `uid`        						| jsmith
-| `groupMembership`        			| std  
-| `cn`        						| JohnSmith   
+| Name       							| Value
+|---------------------------------------+----------+
+| `uid`        							| jsmith
+| `groupMembership`        				| std  
+| `cn`        							| JohnSmith   
 
 The following configuration for instance considers the initial list of `uid`, `groupMembership` and then only allows and releases attributes whose value's length is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
 
