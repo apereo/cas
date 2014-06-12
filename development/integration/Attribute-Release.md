@@ -178,9 +178,6 @@ The release policy decides how attributes are to be released for a given service
 #####`ReturnAllAttributeReleasePolicy`
 Return all resolved attributes to the service. 
 
-#####`ReturnAllAttributeReleasePolicy`
-Return all resolved attributes to the service. 
-
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
   ...
@@ -237,15 +234,13 @@ For example, the following configuration will recognize the resolved attributes 
 #### Attribute Filters
 While each policy defines what attributes may be allowed for a given service, there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**. 
 
-##### Components
-
 ######`RegisteredServiceRegexAttributeFilter`
 The regex filter that is responsible to make sure only attributes whose value matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
 
 | Name       							| Value
-|---------------------------------------+----------+
+|---------------------------------------+---------------------------------------------------------------+
 | `uid`        							| jsmith
 | `groupMembership`        				| std  
 | `cn`        							| JohnSmith   

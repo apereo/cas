@@ -44,7 +44,7 @@ management controls are required.
 Registered services present the following metadata:
 
 | Field         					| Description 
-| :--------------------------------	|:-------------
+|-----------------------------------+--------------------------------------------------------------------------------+
 | `id`     							| Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
 | `name`        					| Required name (255 characters or less).      
 | `description`						| Optional free-text description of the service. (255 characters or less)   
