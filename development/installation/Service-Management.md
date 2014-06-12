@@ -103,20 +103,22 @@ Service registry implementation which stores the services in a LDAP Directory. U
 ######`DefaultLdapServiceMapper`
 The default mapper has support for the following items:
 
-* `objectClass`: default -> "casRegisteredService"
-* `serviceIdAttribute`: default -> "casServiceUrlPattern"
-* `idAttribute`: default -> "uid"
-* `serviceDescriptionAttribute`: default -> "description"
-* `serviceNameAttribute`: default -> "cn"
-* `serviceEnabledAttribute`: default -> "casServiceEnabled"
-* `serviceSsoEnabledAttribute`: default -> "casServiceSsoEnabled"
-* `serviceAnonymousAccessAttribute`: default -> "casServiceAnonymousAccess"
-* `serviceAllowedToProxyAttribute`: default -> "casServiceAllowedToProxy"
-* `serviceThemeAttribute`: default -> "casServiceTheme"
-* `usernameAttribute`: default -> "casUsernameAttribute"
-* `attributeReleasePolicyAttribute `: default -> "casAttributeReleasePolicy"
-* `evaluationOrderAttribute`: default -> "casEvaluationOrder"
-* `requiredHandlersAttribute`: default -> "casRequiredHandlers"
+| Field         					| Default Value 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `objectClass`     				| casRegisteredService
+| `serviceIdAttribute`     			| casServiceUrlPattern
+| `idAttribute`     				| uid
+| `serviceDescriptionAttribute`     | description
+| `serviceNameAttribute`     		| cn
+| `serviceEnabledAttribute`     	| casServiceEnabled
+| `serviceSsoEnabledAttribute`     	| casServiceSsoEnabled
+| `serviceAnonymousAccessAttribute` | casServiceAnonymousAccess
+| `serviceAllowedToProxyAttribute`  | casServiceAllowedToProxy
+| `serviceThemeAttribute`     		| casServiceTheme
+| `usernameAttribute`     			| casUsernameAttribute
+| `attributeReleasePolicyAttribute` | casAttributeReleasePolicy
+| `evaluationOrderAttribute`     	| casEvaluationOrder
+| `requiredHandlersAttribute`     	| casRequiredHandlers
 
 
 ######`JpaServiceRegistryDaoImpl`
