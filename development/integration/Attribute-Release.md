@@ -137,10 +137,16 @@ Once principal attributes are resolved, adopters may choose to allow/release eac
   <property name="name" value="HTTPS Services" />
   <property name="description" value="YOUR HTTP Service" />
   <property name="serviceId" value="https://**" />
-  <property name="allowedAttributes">
-    <list>
-      <value>yourAttributeName</value>
-    </list>              
+  <property name="attributeReleasePolicy">
+    <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+        <property name="allowedAttributes">
+            <list>
+                <value>uid</value>
+                <value>groupMembership</value>
+                <value>memberOf</value>
+            </list>
+        </property>
+    </bean>
   </property>
 </bean>
 {% endhighlight %}
@@ -150,7 +156,6 @@ Once principal attributes are resolved, adopters may choose to allow/release eac
 The service registry component of CAS has the ability to allow for configuration of a `usernameAttribute` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
 
 * Ensure the attribute is available and resolved for the principal
-* Specify the attribute in its list of allowed attributes
 * Set the `usernameAttribute` property of the given service to the attribute you defined
 
 {% highlight xml %}
@@ -161,41 +166,106 @@ The service registry component of CAS has the ability to allow for configuration
   <property name="serviceId" value="https://**" />
   <property name="evaluationOrder" value="0" />
   <property name="usernameAttribute" value="mail" />
-  <property name="allowedAttributes">
-    <list>
-      <value>someAttributeName</value>
-    </list>              
+</bean>
+{% endhighlight %}
+
+
+### Attribute Release Policy
+The release policy decides how attributes are to be released for a given service. Each policy has the ability to apply an optional filter.
+
+#### Components
+
+#####`ReturnAllAttributeReleasePolicy`
+Return all resolved attributes to the service. 
+
+#####`ReturnAllAttributeReleasePolicy`
+Return all resolved attributes to the service. 
+
+<bean class="org.jasig.cas.services.RegisteredServiceImpl">
+  ...
+  <property name="attributeReleasePolicy">
+    <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+  </property>
+</bean>
+
+#####`ReturnAllowedAttributeReleasePolicy`
+Only return the attributes that are explicitly allowed by the configuration. 
+
+{% highlight xml %}
+<bean class="org.jasig.cas.services.RegisteredServiceImpl">
+  ...
+  <property name="attributeReleasePolicy">
+    <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+        <property name="allowedAttributes">
+            <list>
+                <value>uid</value>
+                <value>groupMembership</value>
+                <value>memberOf</value>
+            </list>
+        </property>
+    </bean>
   </property>
 </bean>
 {% endhighlight %}
 
 
-### Attribute Filters
-The service registry component has the ability to allow for configuration of an attribute filter. Filters have the ability to do execute additional processes on the set of attributes that are allocated to the final principal for a given user id. For instance, you might want to decide that certain attribute need to be removed from the final resultset based on a user role, etc. 
+#####`ReturnMappedAttributeReleasePolicy`
+Similar to above, this policy will return a collection of allowed attributes for the service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
 
+For example, the following configuration will recognize the resolved attributes `uid`, `eduPersonAffiliation` and `groupMembership` and will then release `uid`, `affiliation` and `group` to the web application configured.
 
-####`RegisteredServiceAttributeFilter`
-If you wish to write your own filter, you need to design a class that implements this interface and as such, plug that custom instance into the specific service registry entry you intend to use. 
-
-
-####`RegisteredServiceRegexAttributeFilter`
-A regex-aware filter responsible to make sure only attributes that match a certain  pattern are released for a given service. 
-
-This example also demonstrates the configuration of an attribute filter that only allows for attributes whose length is 3.
- 
 {% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService">
-   <property name="id" value="1" />
-   <property name="name" value="HTTP and IMAP on example.com" />
-   <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
-   <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
-   <property name="evaluationOrder" value="0" />
-   <property name="attributeFilter">
-      <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" 
-            c:regex="^\w{3}$" /> 
-   </property>
+<bean class="org.jasig.cas.services.RegisteredServiceImpl">
+  ...
+  <property name="attributeReleasePolicy">
+    <bean class="org.jasig.cas.services.ReturnMappedAttributeReleasePolicy">
+        <property name="allowedAttributes" ref="allowedAttributesMap" />
+    </bean>
+  </property>
 </bean>
+
+<util:map id="allowedAttributesMap">
+    <entry key="uid" value="uid" />
+    <entry key="eduPersonAffiliation" value="affiliation" /> 
+    <entry key="groupMembership" value="group" />
+</util:map>
 {% endhighlight %}
 
 
+#### Attribute Filters
+While each policy defines what attributes may be allowed for a given service, there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**. 
 
+##### Components
+
+######`RegisteredServiceRegexAttributeFilter`
+The regex filter that is responsible to make sure only attributes whose value matches a certain regex pattern are released.
+
+Suppose that the following attributes are resolved:
+
+| Name         					| Value 
+| :--------------------------------	|:-------------
+| `uid`        						| jsmith
+| `groupMembership`        			| std  
+| `cn`        						| JohnSmith   
+
+The following configuration for instance considers the initial list of `uid`, `groupMembership` and then only allows and releases attributes whose value's length is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
+
+{% highlight xml %}
+<bean class="org.jasig.cas.services.RegexRegisteredService"
+      p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+      p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+    <property name="attributeReleasePolicy">
+        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+            <property name="allowedAttributes">
+                <list>
+                    <value>uid</value>
+                    <value>groupMembership</value>
+                </list>
+            </property>
+            <property name="attributeFilter">
+                <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
+            </property>
+        </bean>
+    </property>
+</bean>
+{% endhighlight %}
