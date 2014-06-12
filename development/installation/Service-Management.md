@@ -114,8 +114,7 @@ The default mapper has support for the following items:
 * `serviceAllowedToProxyAttribute`: default -> "casServiceAllowedToProxy"
 * `serviceThemeAttribute`: default -> "casServiceTheme"
 * `usernameAttribute`: default -> "casUsernameAttribute"
-* `serviceAllowedAttributesAttribute`: default -> "casAllowedAttributes"
-* `ignoreAttributesAttribute`: default -> "casIgnoreAttributes"
+* `attributeReleasePolicyAttribute `: default -> "casAttributeReleasePolicy"
 * `evaluationOrderAttribute`: default -> "casEvaluationOrder"
 * `requiredHandlersAttribute`: default -> "casRequiredHandlers"
 
