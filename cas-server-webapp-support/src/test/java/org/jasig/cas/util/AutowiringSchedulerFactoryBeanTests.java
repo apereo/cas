@@ -52,6 +52,6 @@ public class AutowiringSchedulerFactoryBeanTests {
 
     @Test
     public void testAfterPropertiesSet() throws Exception {
-        assertEquals(1, this.scheduler.getTriggerNames(Scheduler.DEFAULT_GROUP).length);
+        assertEquals(1, this.scheduler.getTriggerGroupNames().size());
     }
 }
