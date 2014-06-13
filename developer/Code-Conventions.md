@@ -94,8 +94,8 @@ If we were writing a JUnit testcase for code defined in `Foo.java`, we would nam
 ##Injection
 For required dependencies, the constructor injection must be used whereas setters can be used for optional dependencies.
 
-##equals() and hash() methods
-The recommend way to build the `hash()` and `equals()` methods is to use the `EqualsBuilder` and `HashCodeBuilder `classes form the `commons-lang(3)` library.
+##equals() and hashCode() methods
+The recommend way to build the `hashCode()` and `equals()` methods is to use the `EqualsBuilder` and `HashCodeBuilder `classes form the `commons-lang(3)` library.
 
 
 ##Template for commit messages
