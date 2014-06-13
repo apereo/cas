@@ -80,11 +80,10 @@ This is the preferred method over checking for a particular logging level and co
 
 
 ##Qualifying instance variables with this
-We qualify all instance variables with `this` with the exception of the Logging instances. We don't qualify that variable with "this" because it is well-known to be threadsafe. `logger.warn("Message")` becomes more idiom than invocation of instance variable.
-
+We qualify all instance variables with `this` with the exception of the Logging instances. We don't qualify that variable with "this" because it is well-known to be threadsafe. `logger.warn("Message")` becomes more of an idiom than invocation of instance variable.
 
 ##Use of the final keyword
-We use the keyword `final` keyword on local variables, parameters. Classes and methods are preferred to also be marked as `final` unless there are specific design decisions.
+We use the keyword `final` keyword on local variables and parameters. Classes and methods are preferred to also be marked as `final` unless there are specific design decisions.
 
 
 ##Naming testcases
