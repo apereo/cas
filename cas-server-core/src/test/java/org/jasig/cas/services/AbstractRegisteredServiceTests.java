@@ -98,7 +98,7 @@ public class AbstractRegisteredServiceTests {
     
     private void prepareService() {
         
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
+
         this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
         this.r.setDescription(DESCRIPTION);
         this.r.setEnabled(ENABLED);
