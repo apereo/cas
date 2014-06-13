@@ -117,6 +117,6 @@ Placing _both_ the issue number and brief description would improve commit histo
 
 
 ##Checkstyle
-The current codebase takes advantage of the [Checkstyle engine](checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Jasig/cas/blob/master/checkstyle-rules.xml) as much as possible.
+The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Jasig/cas/blob/master/checkstyle-rules.xml) as much as possible.
  
 
