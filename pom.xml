@@ -842,6 +842,15 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>joda-time</artifactId>
         <version>${joda-time.version}</version>
       </dependency>
+      
+      <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>${quartz.version}</version>
+        <type>jar</type>
+        <scope>runtime</scope>
+      </dependency>   
+    
     </dependencies>
   </dependencyManagement>
 
@@ -1010,6 +1019,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.2</joda-time.version>
 	<cas.client.version>3.3.1</cas.client.version>
+    <quartz.version>2.2.1</quartz.version>
   
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>
