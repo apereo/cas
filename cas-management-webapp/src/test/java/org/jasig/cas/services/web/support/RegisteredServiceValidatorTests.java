@@ -18,12 +18,20 @@
  */
 package org.jasig.cas.services.web.support;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -31,18 +39,24 @@ import org.junit.Test;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
 
-import static org.junit.Assert.*;
-
 /**
  *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public class RegisteredServiceValidatorTests {
 
     private RegisteredServiceValidator getValidator(final boolean returnValue) {
-        final IPersonAttributeDao dao = new StubPersonAttributeDao();
+        final Map<String, List<Object>> attrs = new HashMap<String, List<Object>>();
+        final List<Object> values = new ArrayList<Object>();
+        values.add("value");
+        
+        attrs.put("k1", values);
+        attrs.put("k2", values);
+        attrs.put("k3", values);
+        
+        final IPersonAttributeDao dao = new StubPersonAttributeDao(attrs);
+       
         final RegisteredServiceValidator validator = new RegisteredServiceValidator(new TestServicesManager(returnValue), dao);
         return validator;
     }
@@ -88,7 +102,24 @@ public class RegisteredServiceValidatorTests {
 
         assertEquals(1, exception.getErrorCount());
     }
+    
+    @Test
+    public void testUsernameAttributeWithAllFilteringPolicy() {
+        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        impl.setServiceId("test");
+        impl.setDescription("fasdfdsafsafsafdsa");
+        impl.setUsernameAttribute("k3");
+        impl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        
+        final BindException exception = new BindException(impl, "registeredService");
 
+        final RegisteredServiceValidator validator = getValidator(false);
+        validator.setMaxDescriptionLength(100);
+        validator.validate(impl, exception);
+
+        assertEquals(0, exception.getErrorCount());
+    }
+    
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
         final Validator validator = getValidator(exists);
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
