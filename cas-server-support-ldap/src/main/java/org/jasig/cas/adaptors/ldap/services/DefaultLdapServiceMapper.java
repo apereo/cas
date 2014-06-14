@@ -117,13 +117,15 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
         attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
         
+        if (svc.getProxyPolicy() != null) {
+            final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
+            final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
+            attrs.add(attr);
+        }
         if (svc.getAttributeReleasePolicy() != null) {
             final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
             final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
             attrs.add(attr);
-            attrs.add(attr);
-        }
-        
         }
 
         if (svc.getRequiredHandlers().size() > 0) {
@@ -162,6 +164,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 if (data != null && data.length > 0) {
                     final AttributeReleasePolicy policy = (AttributeReleasePolicy) SerializationUtils.deserialize(data);
                     s.setAttributeReleasePolicy(policy);
+                }
+                
+                final byte[] proxyData = LdapUtils.getBinary(entry, this.serviceProxyPolicyAttribute);
+                if (proxyData != null && proxyData.length > 0) {
+                    final RegisteredServiceProxyPolicy policy = (RegisteredServiceProxyPolicy) SerializationUtils.deserialize(proxyData);
+                    s.setProxyPolicy(policy);
                 }
             }
             return s;
