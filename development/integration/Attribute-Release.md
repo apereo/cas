@@ -19,19 +19,22 @@ Attributes pass through a two-step process:
 A PersonDirectory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
 
 ### Person Directory
-* `MergingPersonAttributeDaoImpl`: Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. Merging strategies may be configured via instances of `IAttributeMerger`.
-* `CachingPersonAttributeDaoImpl`: Provides the ability to cache results of executed inner DAOs.
-* `CascadingPersonAttributeDao`: Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. As each `IPersonAttributesAttributeDao` is queried the attributes from the first `IPersonAttributes` in the result set are used as the query for the next `IPersonAttributesAttributeDao`. 
-* `StubPersonAttributeDao`: Backed by a single Map which this implementation will always return, useful for returning static values.
-* `MessageFormatPersonAttributeDao`: Provides the ability to create attributes based on other other attribute values as arguments.
-* `RegexGatewayPersonAttributeDao`: Conditionally execute an inner DAO if the data in the seed matches criteria set out by the configured patterns.
-* `SingleRowJdbcPersonAttributeDao`: The implementation that maps from column names in the result of a SQL query to attribute names.
-* `MultiRowJdbcPersonAttributeDao`: Designed to work against a table where there is a mapping of one row to many users. Should be used if the database is structured such that there is a column for attribute names and column(s) for the corresponding values.
-* `XmlPersonAttributeDao`: XML backed person attribute DAO that supports wildcard searching.
-* `LdapPersonAttributeDao`: Queries an LDAP directory to populate person attributes using Spring Framework.
-* `GroovyPersonAttributeDao`: Resolve attributes based on an external groovy script.
-* `TomlLdapPersonAttributeDao`: Resolve person attributes and insert the ldap/context settings from an external Toml file. 
-* `JsonBackedComplexStubPersonAttributeDao`: Resolve person attributes that are specified in an external JSON file.
+
+| Component         					| Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `MergingPersonAttributeDaoImpl`| Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. Merging strategies may be configured via instances of `IAttributeMerger`.
+| `CachingPersonAttributeDaoImpl`| Provides the ability to cache results of executed inner DAOs.
+| `CascadingPersonAttributeDao`| Designed to query multiple `IPersonAttributeDaos` in order and merge the results into a single result set. As each `IPersonAttributesAttributeDao` is queried the attributes from the first `IPersonAttributes` in the result set are used as the query for the next `IPersonAttributesAttributeDao`. 
+| `StubPersonAttributeDao`| Backed by a single Map which this implementation will always return, useful for returning static values.
+| `MessageFormatPersonAttributeDao`| Provides the ability to create attributes based on other other attribute values as arguments.
+| `RegexGatewayPersonAttributeDao`| Conditionally execute an inner DAO if the data in the seed matches criteria set out by the configured patterns.
+| `SingleRowJdbcPersonAttributeDao`| The implementation that maps from column names in the result of a SQL query to attribute names.
+| `MultiRowJdbcPersonAttributeDao`| Designed to work against a table where there is a mapping of one row to many users. Should be used if the database is structured such that there is a column for attribute names and column(s) for the corresponding values.
+| `XmlPersonAttributeDao`| XML backed person attribute DAO that supports wildcard searching.
+| `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using Spring Framework.
+| `GroovyPersonAttributeDao`| Resolve attributes based on an external groovy script.
+| `TomlLdapPersonAttributeDao`| Resolve person attributes and insert the ldap/context settings from an external Toml file. 
+| `JsonBackedComplexStubPersonAttributeDao`| Resolve person attributes that are specified in an external JSON file.
 
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
@@ -39,8 +42,9 @@ More about the Person Directory and its configurable sources [can be found here]
 ### CAS
 The CAS project provides the following additional implementations:
 
-* `LdapPersonAttributeDao`: Queries an LDAP directory to populate person attributes using the bundled CAS LDAP libraries.
-
+| Component         					| Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using the bundled CAS LDAP libraries.
 
 ### Sample Usage
 
