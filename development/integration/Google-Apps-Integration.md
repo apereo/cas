@@ -60,3 +60,6 @@ Use the following URLs when you are configuring for Google Apps:
 * Sign-in page URL: `https://sso.school.edu/cas/login`
 * Sign-out page URL: `https://sso.school.edu/cas/logout`
 * Change password URL: `https://mgmt.password.edu/`
+
+##Test
+Attempt to access a Google-hosted application, such as Google Calendar with the url: `http://calendar.google.com/a/YourGoogleDomain`
