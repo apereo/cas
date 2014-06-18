@@ -65,16 +65,16 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void testAllowToProxyIsFalseByDefault() {
         final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
-        assertFalse(regexRegisteredService.isAllowedToProxy());
+        assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        assertFalse(registeredServiceImpl.isAllowedToProxy());
+        assertFalse(registeredServiceImpl.getProxyPolicy().isAllowedToProxy());
     }
 
     @Test
     public void testSettersAndGetters() {
         prepareService();
 
-        assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
+        assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
         assertEquals(DESCRIPTION, this.r.getDescription());
         assertEquals(ENABLED, this.r.isEnabled());
@@ -98,7 +98,7 @@ public class AbstractRegisteredServiceTests {
     
     private void prepareService() {
         
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
+
         this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
         this.r.setDescription(DESCRIPTION);
         this.r.setEnabled(ENABLED);

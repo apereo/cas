@@ -32,7 +32,10 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
@@ -69,6 +72,10 @@ public class ServiceValidateController extends DelegateController {
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
     
+    /** Implementation of Service Manager. */
+    @NotNull
+    private ServicesManager servicesManager;
+    
     /** The CORE which we will delegate all requests to. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
@@ -97,15 +104,24 @@ public class ServiceValidateController extends DelegateController {
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
      *
+     * @param service the webapp service requesting proxy
      * @param request the HttpServletRequest object.
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credential getServiceCredentialsFromRequest(final HttpServletRequest request) {
+    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
         final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
-                return new HttpBasedServiceCredential(new URL(pgtUrl));
+                final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+                verifyRegisteredServiceProperties(registeredService, service);
+                
+                final HttpBasedServiceCredential credential = new HttpBasedServiceCredential(new URL(pgtUrl));
+                if (registeredService.getProxyPolicy().isAllowedProxyCallbackUrl(credential.getCallbackUrl())) {
+                    return credential;                            
+                }
+                
+                logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]", registeredService, pgtUrl);
             } catch (final Exception e) {
                 logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
@@ -137,7 +153,7 @@ public class ServiceValidateController extends DelegateController {
         }
 
         try {
-            final Credential serviceCredential = getServiceCredentialsFromRequest(request);
+            final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
             String proxyGrantingTicketId = null;
             
             if (serviceCredential != null) {
@@ -290,6 +306,7 @@ public class ServiceValidateController extends DelegateController {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    
     public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
     }
@@ -323,4 +340,34 @@ public class ServiceValidateController extends DelegateController {
         this.proxyHandler = proxyHandler;
     }
 
+    /**
+     * Sets the services manager.
+     *
+     * @param servicesManager the new services manager
+     */
+    public final void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Ensure that the service is found and enabled in the service registry.
+     * @param registeredService the located entry in the registry
+     * @param service authenticating service
+     * @throws UnauthorizedServiceException
+     */
+    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+        if (registeredService == null) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service [%s] is not found in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!registeredService.isEnabled()) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service %s] is not enabled in service registry.", service.getId());
+            
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+    }
 }
