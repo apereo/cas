@@ -79,8 +79,8 @@ A proxy policy that only allows proxying to pgt urls that match the specified re
          p:description="Allows HTTP(S) and IMAP(S) protocols"
          p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
 	<property name="proxyPolicy">
-       <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-	                    c:pgtUrlPattern="^https?://.*" />
+		<bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+			c:pgtUrlPattern="^https?://.*" />
 	</property>
 </bean>
 {% endhighlight %}
