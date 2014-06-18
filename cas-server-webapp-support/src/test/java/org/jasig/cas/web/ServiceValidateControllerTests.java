@@ -23,7 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockValidationSpecification;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
@@ -61,6 +63,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
+        this.serviceValidateController.setServicesManager(this.applicationContext.getBean("servicesManager", ServicesManager.class));
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
@@ -273,5 +276,23 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
+    }
+    
+    @Test
+    public void testValidServiceTicketAndPgtUrlMismatch() throws Exception {
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        
+        final Service svc = TestUtils.getService("proxyService");
+        final String sId = getCentralAuthenticationService().grantServiceTicket(tId, svc);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", svc.getId());
+        request.addParameter("ticket", sId);
+        request.addParameter("pgtUrl", "https://www.github.com");
+        
+        final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }
