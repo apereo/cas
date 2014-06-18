@@ -417,6 +417,13 @@ The only functional consideration is that the name of the form element is _remem
 Proxy authentication support for CASv2 and CASv3 protocols is enabled by default, thus it is entirely a matter of CAS
 client configuration to leverage proxy authentication features.
 
+
+<div class="alert alert-info"><strong>Service Configuration</strong><p>
+Note that each registered application in the registry must explicitly be configured
+to allow for proxy authentication. See <a href="Service-Management.html">this guide</a>
+to learn about registering services in the registry.
+</p></div>
+
 Disabling proxy authentication components is recommended for deployments that wish to strategically avoid proxy
 authentication as a matter of security policy. The simplest means of removing support is to remove support for the
 `/proxy` and `/proxyValidate` endpoints on the CAS server. The relevant sections of `cas-servlet.xml` are listed

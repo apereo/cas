@@ -48,17 +48,42 @@ Registered services present the following metadata:
 | `id`     							| Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
 | `name`        					| Required name (255 characters or less).      
 | `description`						| Optional free-text description of the service. (255 characters or less)   
-| `serviceId`        				|  Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
-| `theme`        					|  Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details on attribute release and filters.
+| `serviceId`        				| Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
+| `theme`        					| Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details on attribute release and filters.
 | `enabled`        					| Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`       				|  Set to false to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
+| `ssoEnabled`       				| Set to false to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
 | `anonymousAccess`        			| Set to true to provide an opaque identifier for the username instead of the principal ID. The default behavior (false) is to release the principal ID. The identifier conforms to the requirements of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
-| `allowedToProxy`        			| True to allow proxy authentication, false otherwise. Note that this determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication.  
+| `proxyPolicy`        				| Determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication. 
 | `evaluationOrder`        			| Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first.      
 | `usernameAttribute`        		| Name of the attribute that would identify the principal for this service definition only. The attribute need not be configured in the release policy, but must only be resolvable by the attribute repository.
 | `requiredHandlers`        		| Set of authentication handler names that must successfully authenticate credentials in order to access the service.
 | `attributeReleasePolicy`        	| The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL` or `LogoutType.FRONT_CHANNEL`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
+
+###Configure Proxy Authentication Policy
+Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT. 
+
+Note that by default, the proxy authentication is disallowed for all applications.
+
+####Components 
+
+#####`RefuseRegisteredServiceProxyPolicy`
+Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
+
+#####`RegexMatchingRegisteredServiceProxyPolicy`
+A proxy policy that only allows proxying to pgt urls that match the specified regex pattern.
+
+{% highlight xml %}
+<bean class="org.jasig.cas.services.RegexRegisteredService"
+         p:id="10000001" p:name="HTTP and IMAP"
+         p:description="Allows HTTP(S) and IMAP(S) protocols"
+         p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+	<property name="proxyPolicy">
+       <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+	                    c:pgtUrlPattern="^https?://.*" />
+	</property>
+</bean>
+{% endhighlight %}
 
 ## Persisting Registered Service Data
 
@@ -77,6 +102,7 @@ CAS uses in-memory services management by default, with the registry seeded from
           p:serviceId="^(https|imaps)://([A-Za-z0-9_-]+\.)*example\.com/.*"
           p:evaluationOrder="0" />
 </util:list>
+
 {% endhighlight %}
 
 This component is _NOT_ suitable for use with the service management console since it does not persist data.
@@ -113,7 +139,7 @@ The default mapper has support for the following items:
 | `serviceEnabledAttribute`     	| casServiceEnabled
 | `serviceSsoEnabledAttribute`     	| casServiceSsoEnabled
 | `serviceAnonymousAccessAttribute` | casServiceAnonymousAccess
-| `serviceAllowedToProxyAttribute`  | casServiceAllowedToProxy
+| `serviceProxyPolicyAttribute`     | casServiceProxyPolicy
 | `serviceThemeAttribute`     		| casServiceTheme
 | `usernameAttribute`     			| casUsernameAttribute
 | `attributeReleasePolicyAttribute` | casAttributeReleasePolicy
