@@ -41,8 +41,6 @@ if an EhCache tickets registry runs without any security issue on a single CAS s
 
 Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase protection whereas advanced encryption data mechanism should be used for the database disk storage.
 
-
-
 ## Deployment-Driven Security Features
 CAS supports a number of features that can be leveraged to implement various security policies.
 The following features are provided through CAS configuration and CAS client integration. Note that many features
@@ -55,9 +53,9 @@ reauthenticate to access a particular service. The CAS protocols support forced 
 parameter. Forced authentication provides additional assurance in the identity of
 the principal of an SSO session since the user must verify his or her credentials prior to access.
 Forced authentication is suitable for services where higher security is desired or mandated. Typically forced
-authentication is configured on a per-service basis, but the [service management](#service_management) facility
+authentication is configured on a per-service basis, but the [service management](#service-management) facility
 provides some support for implementing forced authentication as a matter of centralized security policy.
-Forced authentication may be combined with [multi-factor authentication](#multifactor_authentication) features to
+Forced authentication may be combined with [multi-factor authentication](#multifactor-authentication) features to
 implement arbitrary service-specific access control policy.
 
 
@@ -101,24 +99,24 @@ The per-service case is both more interesting and more complicated:
 
 * Levels of identity assurance (LOA) for credentials and groups of credentials must be established.
 * Security policy versus credential LOA must be established per service.
-* Service access policy must be configured via the [service management](#service_management) facility.
+* Service access policy must be configured via the [service management](#service-management) facility.
 
 The first two tasks are vital but outside the scope of this document. Application of service access policy via the
 service management facility is implemented by declaring the
-[authentication handlers](../installation/Configuring-Authentication-Components.html#authentication_handlers)
+[authentication handlers](../installation/Configuring-Authentication-Components.html#authentication-handlers)
 that must successfully authenticate credentials in order to permit access; for example, an LDAP authentication
 handler and an RSA SecureID authentication handler.
 
 Since multi-factor authentication requires development of institutional security policy, advanced component
 configuration (and possibly custom component development), and UI design, it should be regarded more as a framework
 than a feature. See the
-[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor_authentication_mfa)
+[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor-authentication-mfa)
 section for detailed discussion of configuration concerns and implementation recommendations.
 
 
 ### Credential Caching and Replay
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
-and replay on demand as needed to access legacy services. While [proxy authentication](#proxy_authentication)
+and replay on demand as needed to access legacy services. While [proxy authentication](#proxy-authentication)
 is recommended in lieu of password replay, it may be required to integrate legacy services with CAS. See the
 [ClearPass](../integration/ClearPass.html) documentation for detailed information.
 
@@ -140,6 +138,11 @@ of which specifies the management controls above. The service registry can be co
 a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
 information.
 
+<div class="alert alert-warning"><strong>Authorized Services</strong><p>
+As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
+to only include the list of known applications that are authorized to use CAS. Leaving the management interface
+open for all applications may create an opportunity for security attacks.
+</p></div>
 
 ### Ticket Expiration Policies
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
@@ -168,9 +171,9 @@ single sign-out shortcomings:
 CAS supports a policy-driven feature to limit successive failed authentication attempts to help prevent brute force
 and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
-of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependant
+of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
 systems including CAS. See the
-[login throttling configuration](../installation/Configuring-Authentication-Components.html#login_throttling)
+[login throttling configuration](../installation/Configuring-Authentication-Components.html#login-throttling)
 section for further information.
 
 
@@ -193,7 +196,7 @@ configured for forced authentication, authentication would be required for servi
 long-term session.
 
 Long term authentication support must be explicitly enabled through
-[configuration and UI customization](../installation/Configuring-Authentication-Components.html#long_term_authentication)
+[configuration and UI customization](../installation/Configuring-Authentication-Components.html#long-term-authentication)
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 
