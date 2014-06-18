@@ -19,7 +19,7 @@
 package org.jasig.cas.logout;
 
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.SamlDateUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCre
     @Override
     public String create(final LogoutRequest request) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-                SamlDateUtils.getCurrentDateAndTime(), request.getTicketId());
+                new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         
         LOGGER.debug("Generated logout message: [{}]", logoutRequest);
         return logoutRequest;

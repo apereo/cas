@@ -23,9 +23,9 @@ Contributors:
 
 -   Robert Oschwald [CAS 3.0]
 
-Version: 3.0 RC2
+Version: 3.0
 
-Release Date: T.B.D.
+Release Date: 2014-05-05
 
 Copyright &copy; 2005, Yale University
 
@@ -1444,14 +1444,14 @@ under the License.
     </xs:complexType>
     <xs:complexType name="AttributesType">
         <xs:sequence>
-            <xs:element name="authenticationDate" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="authenticationDate" type="xs:dateTime" minOccurs="1" maxOccurs="1" />
             <xs:element name="longTermAuthenticationRequestTokenUsed" type="xs:boolean"
-                minOccurs="0">
+                minOccurs="1" maxOccurs="1">
                 <xs:annotation><xs:documentation>
                     true if a long-term (Remember-Me) token was used
                 </xs:documentation></xs:annotation>
             </xs:element>
-            <xs:element name="isFromNewLogin" type="xs:boolean" minOccurs="0">
+            <xs:element name="isFromNewLogin" type="xs:boolean" minOccurs="1" maxOccurs="1">
                 <xs:annotation><xs:documentation>
                     true if this was from a new, interactive login.
                     If login was from a non-interactive login (e.g. Remember-Me), this value is false or might be omitted.

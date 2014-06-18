@@ -33,6 +33,9 @@ import java.util.Date;
  * @author Marvin S. Addison
  */
 public class MockServiceTicket implements ServiceTicket {
+
+    private static final long serialVersionUID = 8203377063087967768L;
+
     private final String id;
 
     private final Date created;

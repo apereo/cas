@@ -19,7 +19,6 @@
 package org.jasig.cas.services;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -53,26 +52,11 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean isAnonymousAccess();
 
     /**
-     * Sets whether we should bother to read the attribute list or not.
+     * Get the proxy policy rules for this service.
      *
-     * @return true if we should read it, false otherwise.
+     * @return the proxy policy
      */
-    boolean isIgnoreAttributes();
-
-    /**
-     * Returns the list of allowed attributes.
-     *
-     * @return the list of attributes
-     */
-    List<String> getAllowedAttributes();
-
-    /**
-     * Is this application allowed to take part in the proxying capabilities of
-     * CAS?
-     *
-     * @return true if it can, false otherwise.
-     */
-    boolean isAllowedToProxy();
+    RegisteredServiceProxyPolicy getProxyPolicy();
 
     /**
      * The unique identifier for this service.
@@ -160,14 +144,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     boolean matches(final Service service);
 
-    RegisteredService clone() throws CloneNotSupportedException;
-
+    
     /**
-     * An instance of the attribute filter that imposes validation rules over
-     * the attribute release policy.
-     * @return An instance of an attribute filter for this service
+     * Clone this service.
+     *
+     * @return the registered service
+     * @throws CloneNotSupportedException the clone not supported exception
      */
-    RegisteredServiceAttributeFilter getAttributeFilter();
+    RegisteredService clone() throws CloneNotSupportedException;
 
     /**
      * Returns the logout type of the service.
@@ -175,4 +159,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the logout type of the service.
      */
     LogoutType getLogoutType();
+    
+    /**
+     * Gets the attribute filtering policy to determine
+     * how attributes are to be filtered and released for
+     * this service.
+     *
+     * @return the attribute release policy
+     */
+    AttributeReleasePolicy getAttributeReleasePolicy();
 }

@@ -24,8 +24,9 @@ import java.sql.SQLException;
 
 import javax.security.auth.login.FailedLoginException;
 
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -45,13 +46,15 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
 
     /** {@inheritDoc} */
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         try {
+            final String username = credential.getUsername();
+            final String password = getPasswordEncoder().encode(credential.getPassword());
             final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
-            return new SimplePrincipal(username);
+            return createHandlerResult(credential, new SimplePrincipal(username), null);
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {

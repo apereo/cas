@@ -38,7 +38,7 @@
         JavaScript Debug: A simple wrapper for console.log 
         See this link for more info: http://benalman.com/projects/javascript-debug-console-log/
     --%>
-    <script type="text/javascript" src="https://github.com/cowboy/javascript-debug/raw/master/ba-debug.min.js"></script>
+    <script type="text/javascript" src="https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"></script>
     
     <spring:theme code="cas.javascript.file" var="casJavascriptFile" text="" />
     <script type="text/javascript" src="<c:url value="${casJavascriptFile}" />"></script>

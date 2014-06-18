@@ -20,7 +20,8 @@
 --%>
 <%@include file="includes/top.jsp"%>
 <h1><spring:message code="${pageTitle}" /></h1>
-<form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
+<form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}"
+ssClass="v" cssStyle="width:75%;" modelAttribute="registeredService">
 
 		<c:if test="${not empty successMessage}">
 			<div id="msg" class="info">${successMessage}</div>
@@ -72,10 +73,6 @@
 					<label for="enabled1" id="enabled-l" class="postField"><spring:message code="management.services.add.property.status.enabled" /></label>
 				</span>
 				<span class="oneChoice">
-					<form:checkbox path="allowedToProxy" value="true" cssClass="check" />
-					<label for="allowedToProxy1" id="proxy-l" class="postField"><spring:message code="management.services.add.property.status.allowedToProxy" /></label>
-				</span>
-				<span class="oneChoice">
 					<form:checkbox path="ssoEnabled" value="true" cssClass="check" />
 					<label for="ssoEnabled1" id="ssl-l" class="postField"><spring:message code="management.services.add.property.status.ssoParticipant" /></label>
 				</span>
@@ -87,21 +84,12 @@
 			</span>
 			<br/>
 		</span>
-			
-		<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
-			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
-		</span>
 	     
     	<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
     		<form:select path="usernameAttribute" items="${availableUsernameAttributes}" />
     		<form:errors path="usernameAttribute" cssClass="formError" />
     	</span>
-      		            
-	    <span class="oneChoice">
-	      <form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
-	      <label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
-	    </span>
-	    
+      		            	    
 	    <span class="oneField">
 	      <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
 	      <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />

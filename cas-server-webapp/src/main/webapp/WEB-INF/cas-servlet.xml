@@ -108,7 +108,7 @@
   <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="loginFlowRegistry" p:order="2">
     <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
+      <ref bean="localeChangeInterceptor" />
     </property>
   </bean>
 
@@ -127,15 +127,15 @@
     </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
     <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
+      <ref bean="localeChangeInterceptor" />
     </property>
   </bean>
 
@@ -155,8 +155,8 @@
     </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/logout-webflow.xml" id="logout" />
+  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
@@ -175,7 +175,7 @@
   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
     <property name="viewResolvers">
       <util:list>
-        <ref local="viewResolver"/>
+        <ref bean="viewResolver"/>
       </util:list>
     </property>
   </bean>
@@ -184,7 +184,8 @@
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+        p:argumentExtractor-ref="casArgumentExtractor"
+        p:servicesManager-ref="servicesManager" />
   
   <bean id="proxyValidateController" parent="abstractValidateController"/>
 

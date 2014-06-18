@@ -79,6 +79,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Column(name="NUMBER_OF_TIMES_USED")
     private int countOfUses;
 
+    /**
+     * Instantiates a new abstract ticket.
+     */
     protected AbstractTicket() {
         // nothing to do
     }
