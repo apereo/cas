@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.RandomStringUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -31,19 +32,27 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class ShibbolethCompatiblePersistentIdGenerator implements
-    PersistentIdGenerator {
+public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final byte CONST_SEPARATOR = (byte) '!';
 
     @NotNull
     private byte[] salt;
 
+    /**
+     * Instantiates a new shibboleth compatible persistent id generator.
+     *
+     * @param theSalt the the salt
+     */
+    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String theSalt) {
+        this.salt = theSalt.getBytes();
+    }
+    
     @Override
-    public String generate(final Principal principal, final Service service) {
+    public String generate(final Principal principal) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(service.getId().getBytes());
+            md.update(RandomStringUtils.randomAlphabetic(16).getBytes());
             md.update(CONST_SEPARATOR);
             md.update(principal.getId().getBytes());
             md.update(CONST_SEPARATOR);
@@ -53,9 +62,5 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setSalt(final String salt) {
-        this.salt = salt.getBytes();
     }
 }

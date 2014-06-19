@@ -18,22 +18,27 @@
  */
 package org.jasig.cas.services;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.jasig.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Test;
 
 /**
- * Resolves the username for the service to be the default principal id.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Override
-    public String resolveUsername(final Principal principal) {
-        logger.debug("Returning the default principal id [{}] for username.", principal.getId());
-        return principal.getId();
+public class DefaultRegisteredServiceUsernameProviderTests {
+    
+    @Test
+    public void testRegServiceUsername() {
+        final DefaultRegisteredServiceUsernameProvider provider = 
+                new DefaultRegisteredServiceUsernameProvider();
+        
+        final Principal principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("id");
+        final String id = provider.resolveUsername(principal);
+        assertEquals(id, principal.getId());
     }
-
 }

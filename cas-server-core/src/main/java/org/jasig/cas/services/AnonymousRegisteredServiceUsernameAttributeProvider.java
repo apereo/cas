@@ -22,8 +22,6 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +37,6 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     /** Encoder to generate PseudoIds. */
     @NotNull
     private final PersistentIdGenerator persistentIdGenerator;
-
-    /**
-     * Instantiates a new anonymous registered service username attribute provider.
-     * By default, the id generator uses the {@link ShibbolethCompatiblePersistentIdGenerator}.
-     */
-    public AnonymousRegisteredServiceUsernameAttributeProvider() {
-        this.persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
-    }
     
     /**
      * Instantiates a new default registered service username provider.
@@ -58,9 +48,9 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     }
     
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
-        final String id = this.persistentIdGenerator.generate(principal, service);
-        logger.debug("Resolved username [{}] for anonymous access to service [{}]", service);
+    public String resolveUsername(final Principal principal) {
+        final String id = this.persistentIdGenerator.generate(principal);
+        logger.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }
 }
