@@ -118,14 +118,9 @@ public interface RegisteredService extends Cloneable, Serializable {
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
-     *
-     * @return Either of the following values:
-     * <ul>
-     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
-     *  <li><code>null</code> indicating the default username</li>
-     * </ul>
+     * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
      */
-    String getUsernameAttribute();
+    RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
