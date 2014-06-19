@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Generates a persistent id as username for anonymous service access.
- * By default, the id generator uses the {@link ShibbolethCompatiblePersistentIdGenerator}.
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -39,8 +38,16 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
 
     /** Encoder to generate PseudoIds. */
     @NotNull
-    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
+    private final PersistentIdGenerator persistentIdGenerator;
 
+    /**
+     * Instantiates a new anonymous registered service username attribute provider.
+     * By default, the id generator uses the {@link ShibbolethCompatiblePersistentIdGenerator}.
+     */
+    public AnonymousRegisteredServiceUsernameAttributeProvider() {
+        this.persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
+    }
+    
     /**
      * Instantiates a new default registered service username provider.
      *
