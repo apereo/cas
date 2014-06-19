@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,14 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     /** Encoder to generate PseudoIds. */
     @NotNull
     private final PersistentIdGenerator persistentIdGenerator;
+    
+    /**
+     * Instantiates a new anonymous registered service username attribute provider.
+     * The default id generator used here is {@link ShibbolethCompatiblePersistentIdGenerator}.
+     */
+    public AnonymousRegisteredServiceUsernameAttributeProvider() {
+        this(new ShibbolethCompatiblePersistentIdGenerator());
+    }
     
     /**
      * Instantiates a new default registered service username provider.
