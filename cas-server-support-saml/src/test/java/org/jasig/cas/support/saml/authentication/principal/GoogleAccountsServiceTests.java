@@ -67,7 +67,7 @@ public class GoogleAccountsServiceTests {
               + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
 
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, "username");
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
     }
 
     @Before
