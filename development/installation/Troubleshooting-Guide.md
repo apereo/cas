@@ -101,9 +101,9 @@ Alternatively, you can disable the SNI detection in JDK7, by adding this flag to
 
 
 ###When All Else Fails
-If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, please perform an SSL trace and attach it to a posting to the cas-user@lists.jasig.org mailing list. An SSL trace is written to STDOUT when the following system property is set, javax.net.debug=ssl. An example follows of how to do this in the Tomcat servlet container.
+If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, please perform an SSL trace and attach it to a posting to the `cas-user@lists.jasig.org` mailing list. An SSL trace is written to STDOUT when the following system property is set, `javax.net.debug=ssl`. An example follows of how to do this in the Tomcat servlet container.
 
-Sample setenv.sh Tomcat Script follows:
+Sample `setenv.sh` Tomcat Script follows:
 
 {% highlight bash %}
 # Uncomment the next 4 lines for custom SSL keystore
