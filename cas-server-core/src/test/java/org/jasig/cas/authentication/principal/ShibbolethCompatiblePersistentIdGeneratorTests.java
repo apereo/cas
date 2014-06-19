@@ -31,13 +31,11 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     public void testGenerator() {
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator();
-        generator.setSalt("scottssalt");
+        final ShibbolethCompatiblePersistentIdGenerator generator =
+                new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
         final Principal p = TestUtils.getPrincipal();
-        final Service s = TestUtils.getService();
-
-        final String value = generator.generate(p, s);
+        final String value = generator.generate(p);
 
         assertNotNull(value);
     }

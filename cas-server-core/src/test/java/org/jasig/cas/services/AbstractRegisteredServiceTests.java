@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
@@ -43,7 +44,6 @@ public class AbstractRegisteredServiceTests {
     private static final String NAME = "name";
     private static final boolean ENABLED = false;
     private static final boolean ALLOWED_TO_PROXY = false;
-    private static final boolean ANONYMOUS_ACCESS = true;
     private static final boolean SSO_ENABLED = false;
     
     private final AbstractRegisteredService r = new AbstractRegisteredService() {
@@ -96,7 +96,9 @@ public class AbstractRegisteredServiceTests {
     }
     
     private void prepareService() {
-        this.r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        this.r.setUsernameAttributeProvider(
+                new AnonymousRegisteredServiceUsernameAttributeProvider(
+                new ShibbolethCompatiblePersistentIdGenerator("casrox")));
         this.r.setDescription(DESCRIPTION);
         this.r.setEnabled(ENABLED);
         this.r.setId(ID);
