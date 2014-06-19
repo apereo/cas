@@ -132,5 +132,4 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     public Authentication getAuthentication() {
         return null;
     }
-    @Override
 }

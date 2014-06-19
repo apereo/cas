@@ -37,10 +37,25 @@ import org.jasig.cas.authentication.Authentication;
 public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
     private static final long serialVersionUID = -8126909926138945649L;
 
+    /**
+     * Instantiates a new proxy granting ticket impl.
+     *
+     * @param id the id
+     * @param authentication the authentication
+     * @param policy the policy
+     */
     public ProxyGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         super(id, authentication, policy);
     }
 
+    /**
+     * Instantiates a new proxy granting ticket impl.
+     *
+     * @param id the id
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param authentication the authentication
+     * @param policy the policy
+     */
     public ProxyGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket,
             final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, authentication, policy);

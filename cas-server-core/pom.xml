@@ -193,9 +193,8 @@
         </dependency>
         
         <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-          <scope>compile</scope>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
         </dependency>
       
         <dependency>
