@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import java.io.Serializable;
+
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -26,8 +28,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface RegisteredServiceUsernameAttributeProvider {
-    
+public interface RegisteredServiceUsernameAttributeProvider extends Serializable {
     /**
      * Resolve the username that is to be returned to CAS clients.
      *

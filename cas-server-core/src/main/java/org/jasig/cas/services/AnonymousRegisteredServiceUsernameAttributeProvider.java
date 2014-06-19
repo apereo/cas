@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class AnonymousRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 
+    private static final long serialVersionUID = 7050462900237284803L;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Encoder to generate PseudoIds. */

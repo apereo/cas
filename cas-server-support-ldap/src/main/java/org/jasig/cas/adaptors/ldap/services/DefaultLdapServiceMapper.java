@@ -19,13 +19,13 @@
 package org.jasig.cas.adaptors.ldap.services;
 
 import org.apache.commons.lang.SerializationUtils;
-
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -75,16 +75,13 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private String serviceSsoEnabledAttribute = "casServiceSsoEnabled";
 
     @NotNull
-    private String serviceAnonymousAccessAttribute = "casServiceAnonymousAccess";
-
-    @NotNull
     private String serviceProxyPolicyAttribute = "casServiceProxyPolicy";
 
     @NotNull
     private String serviceThemeAttribute = "casServiceTheme";
 
     @NotNull
-    private String usernameAttribute = "casUsernameAttribute";
+    private String usernameAttributeProvider = "casUsernameAttributeProvider";
 
     @NotNull
     private String attributeReleasePolicyAttribute = "casAttributeReleasePolicy";
@@ -111,12 +108,15 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
         attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
         attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceAnonymousAccessAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
         attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
         attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
         attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
-        attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
         
+        if (svc.getUsernameAttributeProvider() != null) {
+            final byte[] data = SerializationUtils.serialize(svc.getUsernameAttributeProvider());
+            final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, data);
+            attrs.add(attr);
+        }        
         if (svc.getProxyPolicy() != null) {
             final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
             final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
@@ -154,11 +154,15 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
                 s.setTheme(LdapUtils.getString(entry, this.serviceThemeAttribute));
                 s.setEvaluationOrder(LdapUtils.getLong(entry, this.evaluationOrderAttribute).intValue());
-                s.setUsernameAttribute(LdapUtils.getString(entry, this.usernameAttribute));
-                s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
-
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
+                
+                final byte[] usenameAttrData = LdapUtils.getBinary(entry, this.usernameAttributeProvider);
+                if (usenameAttrData != null && usenameAttrData.length > 0) {
+                    final RegisteredServiceUsernameAttributeProvider provider =
+                            (RegisteredServiceUsernameAttributeProvider) SerializationUtils.deserialize(usenameAttrData);
+                    s.setUsernameAttributeProvider(provider);
+                }
                 
                 final byte[] data = LdapUtils.getBinary(entry, this.attributeReleasePolicyAttribute);
                 if (data != null && data.length > 0) {
@@ -213,10 +217,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.serviceSsoEnabledAttribute = serviceSsoEnabledAttribute;
     }
 
-    public void setServiceAnonymousAccessAttribute(final String serviceAnonymousAccessAttribute) {
-        this.serviceAnonymousAccessAttribute = serviceAnonymousAccessAttribute;
-    }
-
     public void setServiceProxyPolicyAttribute(final String proxyPolicyAttribute) {
         this.serviceProxyPolicyAttribute = proxyPolicyAttribute;
     }
@@ -229,8 +229,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.requiredHandlersAttribute = handlers;
     }
 
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
+    public void setUsernameAttributeProvider(final String usernameAttributeProvider) {
+        this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
     public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
