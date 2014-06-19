@@ -245,7 +245,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * when providing usernames to this registered service.
      *
      * @param usernameProvider the new username attribute
-     * @see #isAnonymousAccess()
      */
     public void setUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider usernameProvider) {
         this.usernameAttributeProvider = usernameProvider;
