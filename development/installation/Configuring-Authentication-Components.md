@@ -60,7 +60,7 @@ handler even if one prior succeeded. This policy is the default and provides bac
 
 ######`AllAuthenticationPolicy`
 Satisfied if and only if all given credentials are successfully authenticated. Support for multiple credentials is
-new in CAS 4.0 and this handler would only be acceptable in a multi-factor authentication situation.
+new in CAS and this handler would only be acceptable in a multi-factor authentication situation.
 
 
 ######`RequiredHandlerAuthenticationPolicy`
@@ -174,7 +174,7 @@ services. A principal also contains optional [attributes that may be released](.
 to services to support authorization and personalization. Principal resolution is a requisite part of the
 authentication process that happens after credential authentication.
 
-CAS 4 `AuthenticationHandler` components provide simple principal resolution machinery by default. For example,
+CAS `AuthenticationHandler` components provide simple principal resolution machinery by default. For example,
 the `LdapAuthenticationHandler` component supports fetching attributes and setting the principal ID attribute from
 an LDAP query. In all cases principals are resolved from the same store as that which provides authentication.
 
@@ -481,7 +481,7 @@ Protocol handler compliant with CAS v2 protocol that is responsible to callback 
 
 
 ## Multi-factor Authentication (MFA)
-CAS 4 provides a framework for multi-factor authentication (MFA). The design philosophy for MFA support follows from
+CAS provides a framework for multi-factor authentication (MFA). The design philosophy for MFA support follows from
 the observation that institutional security policies with respect to MFA vary dramatically. We provide first class
 API support for authenticating multiple credentials and a policy framework around authentication. The components
 could be extended in a straightforward fashion to provide higher-level behaviors such as Webflow logic to assist,
