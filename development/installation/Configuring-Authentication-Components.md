@@ -110,6 +110,21 @@ OTP credential is optional; in both cases principals are resolved from LDAP.
 </bean>
 {% endhighlight %}
 
+A `PrincipalResolver` bean definition can be optional in cases where the authentication and
+principal source are the same. If the principal that is resolved by the authentication handler
+suffices, then a `null` value may be passed in place of the resolver bean id:
+
+{% highlight xml %}
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
+      p:authenticationPolicy-ref="authenticationPolicy">
+  <constructor-arg>
+      <map>
+          <entry key-ref="passwordHandler" value="#{null}"
+      </map>
+  </constructor-arg>
+</bean>
+{% endhighlight %}
 
 ## Authentication Handlers
 CAS ships with support for authenticating against many common kinds of authentication systems.
