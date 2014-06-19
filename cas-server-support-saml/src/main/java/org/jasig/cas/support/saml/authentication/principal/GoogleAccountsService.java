@@ -38,6 +38,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
@@ -107,6 +109,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
+    private final ServicesManager servicesManager;
+    
     /**
      * Instantiates a new google accounts service.
      *
@@ -115,14 +119,14 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
+     * @param servicesManager the services manager
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey);
+            final PrivateKey privateKey, final PublicKey publicKey, final ServicesManager servicesManager) {
+        this(id, id, null, relayState, requestId, privateKey, publicKey, servicesManager);
     }
 
     /**
-     * @deprecated
      * Instantiates a new google accounts service.
      *
      * @param id the id
@@ -132,16 +136,18 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
+     * @param servicesManager the services manager
      */
-    @Deprecated
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey) {
+            final PrivateKey privateKey, final PublicKey publicKey,
+            final ServicesManager servicesManager) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.requestId = requestId;
+        this.servicesManager = servicesManager;
     }
 
     /**
@@ -150,11 +156,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param request the request
      * @param privateKey the private key
      * @param publicKey the public key
+     * @param servicesManager the services manager
      * @return the google accounts service
      */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey) {
+            final PublicKey publicKey, final ServicesManager servicesManager) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
         final String xmlRequest = decodeAuthnRequestXML(request.getParameter(CONST_PARAM_SERVICE));
@@ -173,7 +180,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey);
+                relayState, requestId, privateKey, publicKey, servicesManager);
     }
 
     @Override
@@ -209,8 +216,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         c.add(Calendar.YEAR, 1);
+        
+        final RegisteredService svc = this.servicesManager.findServiceBy(this);
+        final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal());
 
-        final String userId = getPrincipal().getId();
         final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());

@@ -19,7 +19,6 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Strategy interface to define what username attribute should
@@ -33,8 +32,7 @@ public interface RegisteredServiceUsernameAttributeProvider {
      * Resolve the username that is to be returned to CAS clients.
      *
      * @param principal the principal
-     * @param service the service requesting validation
      * @return the username
      */
-    String resolveUsername(final Principal principal, final Service service);
+    String resolveUsername(final Principal principal);
 }

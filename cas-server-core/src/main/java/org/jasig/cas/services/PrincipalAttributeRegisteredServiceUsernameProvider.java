@@ -23,7 +23,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     }
 
     @Override
-    public String resolveUsername(final Principal principal, final Service service) {
+    public String resolveUsername(final Principal principal) {
         String principalId = principal.getId();
         
         if (principal.getAttributes().containsKey(this.usernameAttribute)) {
@@ -63,16 +62,15 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                     principalId,
                     this.usernameAttribute,
                     principal.getAttributes(),
-                    service.getId(),
                     principalId };
             logger.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "
-                    + "provide the user attribute the service [{}] expects. "
+                    + "provide the user attribute the service expects. "
                     + "CAS will instead return the default principal id [{}]",
                     errorLogParameters);
         }
         
-        logger.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].",
-                new Object[] {service.getId(), principal.getId(), principalId});
+        logger.debug("Principal id to return is [{}]. The default principal id is [{}].",
+                new Object[] {principal.getId(), principalId});
         return principalId;
     }
     
