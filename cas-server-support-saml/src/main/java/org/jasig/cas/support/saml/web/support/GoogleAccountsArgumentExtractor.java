@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
 
@@ -43,17 +44,26 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     @NotNull
     private PrivateKey privateKey;
 
+    @NotNull
+    private ServicesManager servicesManager;
+    
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
         return GoogleAccountsService.createServiceFrom(request,
-                this.privateKey, this.publicKey);
+                this.privateKey, this.publicKey, this.servicesManager);
     }
 
-    public void setPrivateKey(final PrivateKey privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public void setPublicKey(final PublicKey publicKey) {
+    /**
+     * Instantiates a new google accounts argument extractor.
+     *
+     * @param publicKey the public key
+     * @param privateKey the private key
+     * @param servicesManager the services manager
+     */
+    public GoogleAccountsArgumentExtractor(final PublicKey publicKey,
+            final PrivateKey privateKey, final ServicesManager servicesManager) {
         this.publicKey = publicKey;
+        this.privateKey = privateKey;
+        this.servicesManager = servicesManager;
     }
 }
