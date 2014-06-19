@@ -110,22 +110,6 @@ OTP credential is optional; in both cases principals are resolved from LDAP.
 </bean>
 {% endhighlight %}
 
-A `PrincipalResolver` bean definition can be optional in cases where the authentication and
-principal source are the same. If the principal that is resolved by the authentication handler
-suffices, then a `null` value may be passed in place of the resolver bean id:
-
-{% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
-      p:authenticationPolicy-ref="authenticationPolicy">
-  <constructor-arg>
-      <map>
-          <entry key-ref="passwordHandler" value="#{null}"
-      </map>
-  </constructor-arg>
-</bean>
-{% endhighlight %}
-
 ## Authentication Handlers
 CAS ships with support for authenticating against many common kinds of authentication systems.
 The following list provides a complete list of supported authentication technologies; jump to the section(s) of
@@ -213,7 +197,6 @@ to accept and work on the result of a previous transformer that might have modif
 
 ### PrincipalResolver Components
 
-
 ######`PersonDirectoryPrincipalResolver`
 Uses the Jasig Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
@@ -279,7 +262,20 @@ Creates a principal ID from the certificate subject distinguished name.
 ### PrincipalResolver Versus AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.
+If the principal that is resolved by the authentication handler
+suffices, then a `null` value may be passed in place of the resolver bean id:
 
+{% highlight xml %}
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
+      p:authenticationPolicy-ref="authenticationPolicy">
+  <constructor-arg>
+      <map>
+          <entry key-ref="passwordHandler" value="#{null}"/>
+      </map>
+  </constructor-arg>
+</bean>
+{% endhighlight %}
 
 ## Authentication Metadata
 `AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the
