@@ -107,8 +107,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
-    private final String alternateUserName;
-
     /**
      * Instantiates a new google accounts service.
      *
@@ -117,14 +115,14 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
+            final PrivateKey privateKey, final PublicKey publicKey) {
+        this(id, id, null, relayState, requestId, privateKey, publicKey);
     }
 
     /**
+     * @deprecated
      * Instantiates a new google accounts service.
      *
      * @param id the id
@@ -134,17 +132,16 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
      */
+    @Deprecated
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
+            final PrivateKey privateKey, final PublicKey publicKey) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.requestId = requestId;
-        this.alternateUserName = alternateUserName;
     }
 
     /**
@@ -153,23 +150,20 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param request the request
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
      * @return the google accounts service
      */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey, final String alternateUserName) {
+            final PublicKey publicKey) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
-        final String xmlRequest = decodeAuthnRequestXML(request
-                .getParameter(CONST_PARAM_SERVICE));
+        final String xmlRequest = decodeAuthnRequestXML(request.getParameter(CONST_PARAM_SERVICE));
 
         if (!StringUtils.hasText(xmlRequest)) {
             return null;
         }
 
-        final Document document = SamlUtils
-                .constructDocumentFromXmlString(xmlRequest);
+        final Document document = SamlUtils.constructDocumentFromXmlString(xmlRequest);
 
         if (document == null) {
             return null;
@@ -179,7 +173,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, alternateUserName);
+                relayState, requestId, privateKey, publicKey);
     }
 
     @Override
@@ -216,19 +210,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         c.setTime(new Date());
         c.add(Calendar.YEAR, 1);
 
-        final String userId;
-
-        if (this.alternateUserName == null) {
-            userId = getPrincipal().getId();
-        } else {
-            final String attributeValue = (String) getPrincipal().getAttributes().get(this.alternateUserName);
-            if (attributeValue == null) {
-                userId = getPrincipal().getId();
-            } else {
-                userId = attributeValue;
-            }
-        }
-
+        final String userId = getPrincipal().getId();
         final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
