@@ -41,11 +41,19 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
-     *
-     * @param theSalt the the salt
+     * The salt is initialized to a random 16-digit alphanumeric string.
      */
-    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String theSalt) {
-        this.salt = theSalt.getBytes();
+    public ShibbolethCompatiblePersistentIdGenerator() {
+        this.salt = RandomStringUtils.randomAlphanumeric(16).getBytes();
+    }
+    
+    /**
+     * Instantiates a new shibboleth compatible persistent id generator.
+     *
+     * @param salt the the salt
+     */
+    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {
+        this.salt = salt.getBytes();
     }
     
     @Override
