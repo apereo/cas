@@ -75,7 +75,6 @@ public class AbstractRegisteredServiceTests {
         prepareService();
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
-        assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
         assertEquals(DESCRIPTION, this.r.getDescription());
         assertEquals(ENABLED, this.r.isEnabled());
         assertEquals(ID, this.r.getId());
@@ -97,9 +96,7 @@ public class AbstractRegisteredServiceTests {
     }
     
     private void prepareService() {
-        
-
-        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
+        this.r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         this.r.setDescription(DESCRIPTION);
         this.r.setEnabled(ENABLED);
         this.r.setId(ID);
