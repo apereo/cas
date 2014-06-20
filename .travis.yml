@@ -41,7 +41,8 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 after_success:
-- chmod -R 777 ./travis/test-commit-message.sh
-- ./travis/test-commit-message.sh
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
+- mvn clean test cobertura:cobertura coveralls:cobertura
+- chmod -R 777 ./travis/test-commit-message.sh
+- ./travis/test-commit-message.sh
