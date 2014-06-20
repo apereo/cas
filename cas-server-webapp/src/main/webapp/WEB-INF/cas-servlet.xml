@@ -67,6 +67,12 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="1"/>
+        
+  <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="/WEB-INF/view/jsp/default/ui/"
+        p:suffix=".jsp"
+        p:order="2"/>
   
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
@@ -176,6 +182,7 @@
     <property name="viewResolvers">
       <util:list>
         <ref bean="viewResolver"/>
+        <ref bean="internalViewResolver"/>
       </util:list>
     </property>
   </bean>
