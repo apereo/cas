@@ -60,8 +60,6 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     public String generate(final Principal principal) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(RandomStringUtils.randomAlphabetic(16).getBytes());
-            md.update(CONST_SEPARATOR);
             md.update(principal.getId().getBytes());
             md.update(CONST_SEPARATOR);
 
