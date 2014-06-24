@@ -559,8 +559,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
-      
+
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${apache.httpclient.version}</version>
+      </dependency>
+
+        <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
@@ -1008,6 +1014,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <mockito.version>1.9.5</mockito.version>
     <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
+    <apache.httpclient.version>4.3.4</apache.httpclient.version>
     <joda-time.version>2.2</joda-time.version>
 	<cas.client.version>3.3.1</cas.client.version>
   
