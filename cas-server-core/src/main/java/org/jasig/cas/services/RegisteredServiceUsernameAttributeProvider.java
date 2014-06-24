@@ -33,7 +33,7 @@ public interface RegisteredServiceUsernameAttributeProvider extends Serializable
      * Resolve the username that is to be returned to CAS clients.
      *
      * @param principal the principal
-     * @return the username
+     * @return the username value configured for this service
      */
     String resolveUsername(final Principal principal);
 }
