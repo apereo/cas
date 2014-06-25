@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Test;
 
 /**
@@ -64,21 +63,13 @@ public class SimpleHttpClientTests  {
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
         final SimpleHttpClient client = this.getHttpClient();
-        client.setSSLSocketFactory(this.getFriendlyToAllSSLSocketFactory());
-        client.setHostnameVerifier(this.getFriendlyToAllHostnameVerifier());
+        client.setSSLSocketFactory(getFriendlyToAllSSLSocketFactory());
+        client.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         client.setAcceptableCodes(new int[] {200, 403});
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
-    private HostnameVerifier getFriendlyToAllHostnameVerifier() {
-        final HostnameVerifier hv = new HostnameVerifier() {
-            @Override
-            public boolean verify(final String hostname, final SSLSession session) { return true; }
-        };
-        return hv;
-    }
-
-    private SSLSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
+    private SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         final TrustManager trm = new X509TrustManager() {
             public X509Certificate[] getAcceptedIssuers() { return null; }
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
@@ -86,6 +77,6 @@ public class SimpleHttpClientTests  {
         };
         final SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[] {trm}, null);
-        return sc.getSocketFactory();
+        return new SSLConnectionSocketFactory(sc);
     }
 }
