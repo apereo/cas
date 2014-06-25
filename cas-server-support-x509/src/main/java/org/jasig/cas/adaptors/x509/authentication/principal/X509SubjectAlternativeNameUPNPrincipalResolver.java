@@ -55,6 +55,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
      *
      * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">X509Certificate#getSubjectAlternativeNames</a>
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
@@ -62,7 +63,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         try {
             final Collection<List<?>> subjectAltNames = certificate.getSubjectAlternativeNames();
             if (subjectAltNames != null) {
-                for (final List<?> sanItem: subjectAltNames) {
+                for (final List<?> sanItem : subjectAltNames) {
                     final ASN1Sequence seq = getAltnameSequence(sanItem);
                     final String upnString = getUPNStringFromSequence(seq);
                     if (upnString != null) {
@@ -73,20 +74,21 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
 
         }
         catch (final CertificateParsingException e) {
-            return onError(e);
+            logger.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
+            logger.debug("Returning null principal id...");
+            return null;
         }
-        catch (final IOException e) {
-            return onError(e);
-        }
-
+        logger.debug("Returning null principal id...");
         return null;
     }
 
     /**
      * Get UPN String.
      *
-     * @param seq seq
-     * @return UPN
+     * @param seq ASN1Sequence abstraction representing subject alternative name.
+     * First element is the object identifier, second is the object itself.
+     *
+     * @return UPN string or null
      */
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
@@ -104,12 +106,19 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     /**
      * Get alt name seq.
      *
-     * @param sanItem sanItem
-     * @return ASN1Sequence
-     * @throws IOException IOException
+     * @param sanItem subject alternative name value encoded as a two elements List with elem(0) representing object id and elem(1)
+     * representing object (subject alternative name) itself.
+     *
+     * @return ASN1Sequence abstraction representing subject alternative name or null if the passed in List doesn't contain at least to elements
+     * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
+     *
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">X509Certificate#getSubjectAlternativeNames</a>
      */
-    private ASN1Sequence getAltnameSequence(final List sanItem)
-            throws IOException {
+    private ASN1Sequence getAltnameSequence(final List sanItem) {
+        //Should not be the case, but still, a extra "safety" check
+        if (sanItem.size() < 2) {
+            logger.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+        }
         final Integer itemType = (Integer) sanItem.get(0);
         if (itemType == 0) {
             final byte[] altName = (byte[]) sanItem.get(1);
@@ -121,12 +130,13 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     /**
      * Get alt name seq.
      *
-     * @param sanValue sanValue
-     * @return  ASN1Sequence
-     * @throws IOException IOException
+     * @param sanValue subject alternative name value encoded as byte[]
+     *
+     * @return ASN1Sequence abstraction representing subject alternative name
+     *
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">X509Certificate#getSubjectAlternativeNames</a>
      */
-    private ASN1Sequence getAltnameSequence(final byte[] sanValue)
-            throws IOException {
+    private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         DERObject oct = null;
         try {
             oct = (new ASN1InputStream(new ByteArrayInputStream(sanValue)).readObject());
@@ -134,18 +144,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         catch (final IOException e) {
             logger.error("Error on getting Alt Name as a DERSEquence : " + e.getLocalizedMessage(), e);
         }
+        //It is OK to pass null DERObject to this method (in case of handled IOException). null will be returned
         return ASN1Sequence.getInstance(oct);
-    }
-
-    /**
-     * On error.
-     *
-     * @param e Throwable
-     * @return null
-     */
-    private String onError(final Throwable e) {
-        logger.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-        logger.debug("Returning null principal id...");
-        return null;
     }
 }
