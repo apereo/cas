@@ -18,30 +18,44 @@
  */
 package org.jasig.cas.util;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.FutureRequestExecutionService;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpRequestFutureTask;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -63,9 +77,13 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
         HttpURLConnection.HTTP_ACCEPTED};
 
+    private static final int MAX_POOLED_CONNECTIONS = 100;
+    
+    private static final int MAX_CONNECTIONS_PER_ROUTE = 50;
+        
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
+    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(MAX_POOLED_CONNECTIONS);
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -78,22 +96,30 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     @Min(0)
     private int readTimeout = 5000;
 
-    private boolean followRedirects = true;
+    private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
     /**
      * The socket factory to be used when verifying the validity of the endpoint.
      *
      * @see #setSSLSocketFactory(SSLSocketFactory)
      */
-    private SSLSocketFactory sslSocketFactory = null;
+    private SSLConnectionSocketFactory sslSocketFactory = null;
 
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
      *
      * @see #setHostnameVerifier(HostnameVerifier)
      */
-    private HostnameVerifier hostnameVerifier = null;
+    private X509HostnameVerifier hostnameVerifier = null;
 
+    private CloseableHttpClient httpClient = null;
+
+    /** The credentials provider for endpoints that require authentication. */
+    private CredentialsProvider credentialsProvider;
+
+    /** The cookie store for authentication. */
+    private CookieStore cookieStore;
+    
     /**
      * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
@@ -105,20 +131,39 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         EXECUTOR_SERVICE = executorService;
     }
 
+    public void setCookieStore(final CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
+    }
+    
+    public void setCredentialsProvider(@NotNull final CredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
+    }
+    
     @Override
-    public boolean sendMessageToEndPoint(final HttpMessage message) {
-        
-        final Callable<Boolean> callable = new CallableHttpMessageSender(message);
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(callable);
-
-        if (message.isAsynchronous()) {
-            return true;
-        }
-
+    public boolean sendMessageToEndPoint(@NotNull final HttpMessage message) {
+        FutureRequestExecutionService service = null;
         try {
-            return result.get();
+            final HttpPost request = new HttpPost(message.getUrl().toURI());
+            request.addHeader("Content-Length", Integer.toString(message.getMessage().getBytes().length));
+            request.addHeader("Content-Type", message.getContentType());
+            
+            final StringEntity entity = new StringEntity(message.getMessage(), message.getContentType());
+            request.setEntity(entity);
+            
+            service = new FutureRequestExecutionService(this.httpClient, EXECUTOR_SERVICE);
+ 
+            final HttpRequestFutureTask<String> task = service.execute(request,
+                    HttpClientContext.create(), new BasicResponseHandler()); 
+                    
+            if (message.isAsynchronous()) {
+                return true;
+            }
+            
+            return StringUtils.isNotBlank(task.get());
         } catch (final Exception e) {
             return false;
+        } finally {
+            IOUtils.closeQuietly(service);
         }
     }
         
@@ -135,29 +180,13 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        HttpURLConnection connection = null;
-        InputStream is = null;
+        CloseableHttpResponse response = null;
+               
         try {
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(this.connectionTimeout);
-            connection.setReadTimeout(this.readTimeout);
-            connection.setInstanceFollowRedirects(this.followRedirects);
+            final HttpGet request = new HttpGet(url.toURI());
 
-            if (connection instanceof HttpsURLConnection) {
-                final HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
-
-                if (this.sslSocketFactory != null) {
-                    httpsConnection.setSSLSocketFactory(this.sslSocketFactory);
-                }
-
-                if (this.hostnameVerifier != null) {
-                    httpsConnection.setHostnameVerifier(this.hostnameVerifier);
-                }
-            }
-
-            connection.connect();
-
-            final int responseCode = connection.getResponseCode();
+            response = this.httpClient.execute(request);
+            final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
@@ -166,23 +195,21 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                 }
             }
 
-            LOGGER.debug("Response Code did not match any of the acceptable response codes. Code returned was {}",
+            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}",
                     responseCode);
 
-            // if the response code is an error and we don't find that error acceptable above:
-            if (responseCode == 500) {
-                is = connection.getInputStream();
-                final String value = IOUtils.toString(is);
+            if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                final String value = response.getStatusLine().getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
                         value);
             }
-        } catch (final IOException e) {
+           
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
-            IOUtils.closeQuietly(is);
-            if (connection != null) {
-                connection.disconnect();
-            }
+            EntityUtils.consumeQuietly(response.getEntity());
+            IOUtils.closeQuietly(response);
+           
         }
         return false;
     }
@@ -218,8 +245,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      *
      * @param follow True to follow 3xx redirects (default), false otherwise.
      */
-    public void setFollowRedirects(final boolean follow) {
-        this.followRedirects = follow;
+    public void setRedirectionStrategy(final RedirectStrategy follow) {
+        this.redirectionStrategy = follow;
     }
 
     /**
@@ -228,7 +255,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @param factory ssl socket factory instance to use
      * @see #isValidEndPoint(URL)
      */
-    public void setSSLSocketFactory(final SSLSocketFactory factory) {
+    public void setSSLSocketFactory(final SSLConnectionSocketFactory factory) {
         this.sslSocketFactory = factory;
     }
 
@@ -238,77 +265,63 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @param verifier hostname verifier instance to use
      * @see #isValidEndPoint(URL)
      */
-    public void setHostnameVerifier(final HostnameVerifier verifier) {
+    public void setHostnameVerifier(final X509HostnameVerifier verifier) {
         this.hostnameVerifier = verifier;
     }
 
     /**
-     * Shutdown the executor service.
+     * Shutdown the executor service and close the http client.
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
+        IOUtils.closeQuietly(this.httpClient);
     }
 
-    private class CallableHttpMessageSender implements Callable<Boolean> {
-        
-        private final HttpMessage message;
-        
-        /**
-         * Instantiates a new callable http message sender.
-         *
-         * @param message the message to send to the endpoint.
-         */
-        public CallableHttpMessageSender(final HttpMessage message) {
-            this.message = message;
-        }
-        
-        @Override
-        public final Boolean call() throws Exception {
-            HttpURLConnection connection = null;
-            BufferedReader in = null;
-            DataOutputStream printout = null;
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        destroy();
+    }
+
+    /**
+     * Prepare the http client with configured settings.
+     *
+     * @return the http client
+     */
+    @PostConstruct
+    protected CloseableHttpClient initializeHttpClient() {
+        try {
+            final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager();
+            connMgmr.setMaxTotal(MAX_POOLED_CONNECTIONS);
+            connMgmr.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+            
+            final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
+            final HttpRoute httpRoute = new HttpRoute(httpHost);
+            connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+    
+            final RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(this.readTimeout)
+                    .setConnectTimeout(this.connectionTimeout)
+                    .setConnectionRequestTimeout(this.connectionTimeout)
+                    .setStaleConnectionCheckEnabled(true)
+                    .setCircularRedirectsAllowed(true)
+                    .build();
+            
+            final HttpClientBuilder builder = HttpClients.custom()
+                    .setSSLSocketFactory(this.sslSocketFactory)
+                    .setHostnameVerifier(this.hostnameVerifier)
+                    .setRedirectStrategy(this.redirectionStrategy)
+                    .setDefaultRequestConfig(requestConfig)
+                    .setConnectionManager(connMgmr)
+                    .setDefaultCredentialsProvider(this.credentialsProvider)
+                    .setDefaultCookieStore(this.cookieStore)
+                    .useSystemProperties();
                     
-            try {
-                LOGGER.debug("Attempting to access {}", message.getUrl());
-                final URL logoutUrl = new URL(message.getUrl());
-                final String output = message.getMessage();
-
-                connection = (HttpURLConnection) logoutUrl.openConnection();
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setRequestMethod("POST");
-                connection.setReadTimeout(SimpleHttpClient.this.readTimeout);
-                connection.setConnectTimeout(SimpleHttpClient.this.connectionTimeout);
-                connection.setInstanceFollowRedirects(SimpleHttpClient.this.followRedirects);
-                connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
-                connection.setRequestProperty("Content-Type", message.getContentType());
-                printout = new DataOutputStream(connection.getOutputStream());
-                printout.writeBytes(output);
-                printout.flush();
-                
-                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-                boolean readInput = true;
-                while (readInput) {
-                    readInput = StringUtils.isNotBlank(in.readLine());
-                }
-
-                LOGGER.debug("Finished sending message to {}", message.getUrl());
-                return true;
-            } catch (final SocketTimeoutException e) {
-                LOGGER.warn("Socket Timeout Detected while attempting to send message to [{}]", message.getUrl());
-                return false;
-            } catch (final Exception e) {
-                LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", message.getUrl(), e.getMessage());
-                return false;
-            } finally {
-                IOUtils.closeQuietly(printout);
-                IOUtils.closeQuietly(in);
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
+            this.httpClient  = builder.build();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
+        return null;
     }
 }
