@@ -32,7 +32,7 @@
         p:targetObject-ref="memoryAddressThrottle"
         p:targetMethod="decrementCounts"/>
 
-  <bean id="memoryAddressThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+  <bean id="memoryAddressThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
         p:jobDetail-ref="memoryAddressThrottleJobDetail"
         p:startDelay="1000"
         p:repeatInterval="1000"/>
@@ -45,7 +45,7 @@
         p:targetObject-ref="memoryAddressUserThrottle"
         p:targetMethod="decrementCounts"/>
 
-  <bean id="memoryAddressUserThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+  <bean id="memoryAddressUserThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
         p:jobDetail-ref="memoryAddressUserThrottleJobDetail"
         p:startDelay="1000"
         p:repeatInterval="1000"/>
