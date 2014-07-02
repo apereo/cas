@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.ticketRegistry instanceof TicketRegistryState) {
 <a class="jxr_linenumber" name="101" href="#101">101</a>             <strong class="jxr_keyword">return</strong> ((TicketRegistryState) <strong class="jxr_keyword">this</strong>.ticketRegistry).sessionCount();
 <a class="jxr_linenumber" name="102" href="#102">102</a>         }
-<a class="jxr_linenumber" name="103" href="#103">103</a>         logger.debug(<span class="jxr_string">"Ticket registry {} does not support report the sessionCount() operation of the registry state."</span>,
+<a class="jxr_linenumber" name="103" href="#103">103</a>         logger.debug(<span class="jxr_string">"Ticket registry {} does not report the sessionCount() operation of the registry state."</span>,
 <a class="jxr_linenumber" name="104" href="#104">104</a>                 <strong class="jxr_keyword">this</strong>.ticketRegistry.getClass().getName());
 <a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.sessionCount();
 <a class="jxr_linenumber" name="106" href="#106">106</a>     }
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.ticketRegistry instanceof TicketRegistryState) {
 <a class="jxr_linenumber" name="111" href="#111">111</a>             <strong class="jxr_keyword">return</strong> ((TicketRegistryState) <strong class="jxr_keyword">this</strong>.ticketRegistry).serviceTicketCount();
 <a class="jxr_linenumber" name="112" href="#112">112</a>         }
-<a class="jxr_linenumber" name="113" href="#113">113</a>         logger.debug(<span class="jxr_string">"Ticket registry {} does not support report the serviceTicketCount() operation of the registry state."</span>,
+<a class="jxr_linenumber" name="113" href="#113">113</a>         logger.debug(<span class="jxr_string">"Ticket registry {} does not report the serviceTicketCount() operation of the registry state."</span>,
 <a class="jxr_linenumber" name="114" href="#114">114</a>                 <strong class="jxr_keyword">this</strong>.ticketRegistry.getClass().getName());
 <a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.serviceTicketCount();
 <a class="jxr_linenumber" name="116" href="#116">116</a>     }

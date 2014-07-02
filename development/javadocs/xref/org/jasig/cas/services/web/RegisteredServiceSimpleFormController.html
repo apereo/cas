@@ -122,7 +122,7 @@
 <a class="jxr_linenumber" name="112" href="#112">112</a>     @InitBinder
 <a class="jxr_linenumber" name="113" href="#113">113</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> initBinder(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> ServletRequestDataBinder binder) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="114" href="#114">114</a>         binder.setRequiredFields(<strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"description"</span>, <span class="jxr_string">"serviceId"</span>,
-<a class="jxr_linenumber" name="115" href="#115">115</a>                 <span class="jxr_string">"name"</span>, <span class="jxr_string">"allowedToProxy"</span>, <span class="jxr_string">"enabled"</span>, <span class="jxr_string">"ssoEnabled"</span>,
+<a class="jxr_linenumber" name="115" href="#115">115</a>                 <span class="jxr_string">"name"</span>, <span class="jxr_string">"enabled"</span>, <span class="jxr_string">"ssoEnabled"</span>,
 <a class="jxr_linenumber" name="116" href="#116">116</a>                 <span class="jxr_string">"anonymousAccess"</span>, <span class="jxr_string">"evaluationOrder"</span>});
 <a class="jxr_linenumber" name="117" href="#117">117</a>         binder.setDisallowedFields(<strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"id"</span>});
 <a class="jxr_linenumber" name="118" href="#118">118</a>         binder.registerCustomEditor(String.<strong class="jxr_keyword">class</strong>, <strong class="jxr_keyword">new</strong> StringTrimmerEditor(<strong class="jxr_keyword">true</strong>));
