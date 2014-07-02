@@ -51,7 +51,7 @@
         p:order="0">
     <property name="basenames">
       <util:list>
-        <value>${cas.viewResolver.basename}</value>
+        <value>monitoring_views</value>
         <value>protocol_views</value>
       </util:list>
     </property>
@@ -70,7 +70,7 @@
         
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
-        p:prefix="/WEB-INF/view/jsp/default/ui/"
+        p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
         p:order="2"/>
   
