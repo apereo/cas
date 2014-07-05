@@ -79,10 +79,6 @@ Adds support the embedding of a `UserPrincipalName` object as a `SubjectAlternat
 allowing properly-empowered certificates to be used for network logon (via SmartCards, or alternately by 'soft certs' in certain environments).
 This resolver extracts the Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
 
-### Certificate Revocation Checking Components
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
-configurability in the revocation machinery built into the JSSE.
-
 {% highlight xml %}
 <bean id="authenticationManager"
 	  class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
@@ -102,6 +98,10 @@ configurability in the revocation machinery built into the JSSE.
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver">
 {% endhighlight %}
 
+
+### Certificate Revocation Checking Components
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
+configurability in the revocation machinery built into the JSSE.
 
 ######`ResourceCRLRevocationChecker`
 Performs a certificate revocation check against a CRL hosted at a fixed location. Any resource type supported by the
