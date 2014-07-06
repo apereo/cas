@@ -347,23 +347,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>aspectj-maven-plugin</artifactId>
-        <version>${maven-aspectj-plugin.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <source>${project.build.sourceVersion}</source>
-          <target>${project.build.targetVersion}</target>
-          <complianceLevel>${project.build.sourceVersion}</complianceLevel>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
@@ -971,6 +954,69 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <!-- The aspectj-maven-plugin does not support aspectj 1.8.
+            So this run the aspectj compiler directly via ant. -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspectj.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>weave-classes</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties"
+                             classpathref="maven.plugin.classpath"/>
+                    <iajc destDir="${project.build.directory}/classes"
+                          inpath="${project.build.directory}/classes"
+                          source="${project.build.targetVersion}"
+                          target="${project.build.targetVersion}"
+                          aspectPath="${org.springframework:spring-aspects:jar}"
+                          classpathRef="maven.compile.classpath"
+                          Xlint="ignore"
+                          showWeaveInfo="true"/>
+                    </target>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>weave-test-classes</id>
+                  <phase>test-compile</phase>
+                  <goals>
+                    <goal>run</goal>
+                  </goals>
+                  <configuration>
+                    <target>
+                      <taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties"
+                               classpathref="maven.plugin.classpath"/>
+                      <iajc destDir="${project.build.directory}/test-classes"
+                            inpath="${project.build.directory}/test-classes"
+                            source="${project.build.targetVersion}"
+                            target="${project.build.targetVersion}"
+                            aspectPath="${org.springframework:spring-aspects:jar}"
+                            classpathRef="maven.compile.classpath"
+                            Xlint="ignore"
+                            showWeaveInfo="true"/>
+                      </target>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
         </plugins>
       </build>
     </profile>
@@ -1024,11 +1070,10 @@
 	<maven-checkstyle-plugin.version>2.10</maven-checkstyle-plugin.version>
 	<maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
 	<maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
-	<maven-aspectj-plugin.version>1.5</maven-aspectj-plugin.version>
 	<maven-antrun-plugin.version>1.5</maven-antrun-plugin.version>
 
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
-    <project.build.targetVersion>1.6</project.build.targetVersion>
+    <project.build.targetVersion>1.8</project.build.targetVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
