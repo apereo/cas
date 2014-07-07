@@ -36,12 +36,13 @@ jdk:
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-script: mvn package site site:stage -q -ff -B
+script: mvn clean package
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 after_success:
-- chmod -R 777 ./travis/test-commit-message.sh
-- ./travis/test-commit-message.sh
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
+- mvn clean test cobertura:cobertura coveralls:cobertura
+- chmod -R 777 ./travis/test-commit-message.sh
+- ./travis/test-commit-message.sh

@@ -147,4 +147,24 @@ public final class LdapUtils {
         }
         return nullValue;
     }
+    
+    
+    /**
+     * Gets the value for a binary attribute.
+     *
+     * @param ctx the ctx
+     * @param attribute the attribute
+     * @return the binary value, or null.
+     */
+    public static byte[] getBinary(final LdapEntry ctx, final String attribute) {
+        final LdapAttribute attr = ctx.getAttribute(attribute);
+        if (attr == null) {
+            return null;
+        }
+        final byte[] v = attr.getBinaryValue();
+        if (v != null) {
+            return v;
+        }
+        return null;
+    }
 }

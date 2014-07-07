@@ -20,6 +20,9 @@ package org.jasig.cas.services.web.support;
 
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -29,9 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * RegisteredServiceValidator ensures that a new RegisteredService does not have
@@ -104,16 +104,11 @@ public final class RegisteredServiceValidator implements Validator {
         }
 
         if (!StringUtils.isBlank(r.getUsernameAttribute()) && !r.isAnonymousAccess()) {
-            if (!r.isIgnoreAttributes() && !r.getAllowedAttributes().contains(r.getUsernameAttribute())) {
-                errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
-                        "This attribute is not available for this service.");
-            } else {
-                final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
-                if (availableAttributes != null) {
-                    if (!availableAttributes.contains(r.getUsernameAttribute())) {
-                        errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
-                                "This attribute is not available from configured user attribute sources.");
-                    }
+            final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
+            if (availableAttributes != null) {
+                if (!availableAttributes.contains(r.getUsernameAttribute())) {
+                    errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
+                            "This attribute is not available from configured user attribute sources.");
                 }
             }
         }
