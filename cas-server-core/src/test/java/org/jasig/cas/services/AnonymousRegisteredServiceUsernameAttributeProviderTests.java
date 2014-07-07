@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
@@ -43,7 +43,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         final Service service = mock(Service.class);
         when(service.getId()).thenReturn("id");
         final Principal principal = new SimplePrincipal("uid");
-        final String id = provider.resolveUsername(principal);
+        final String id = provider.resolveUsername(principal, service);
         assertNotNull(id);
     }
 }

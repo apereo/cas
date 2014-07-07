@@ -18,15 +18,16 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
@@ -46,7 +47,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p);
+        final String id = provider.resolveUsername(p, TestUtils.getService());
         assertEquals(id, "TheName");
         
     }
@@ -63,7 +64,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p);
+        final String id = provider.resolveUsername(p, TestUtils.getService());
         assertEquals(id, p.getId());
         
     }
