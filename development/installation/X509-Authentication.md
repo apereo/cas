@@ -84,7 +84,8 @@ This resolver extracts the Subject Alternative Name UPN extension from the provi
 	  class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
 	<constructor-arg>
 		<map>                
-		    <entry key-ref="x509AuthenticationHandler" value-ref="x509UPNPrincipalResolver" />
+		    <entry key-ref="x509AuthenticationHandler" 
+				   value-ref="x509UPNPrincipalResolver" />
 			...
 		</map>
 	</constructor-arg>
