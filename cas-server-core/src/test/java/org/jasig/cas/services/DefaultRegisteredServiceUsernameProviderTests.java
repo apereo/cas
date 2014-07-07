@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.services;
 
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.jasig.cas.authentication.principal.Principal;
-import org.junit.Test;
 
 /**
  * @author Misagh Moayyed
@@ -38,7 +39,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final String id = provider.resolveUsername(principal);
+        final String id = provider.resolveUsername(principal, TestUtils.getService());
         assertEquals(id, principal.getId());
     }
 }

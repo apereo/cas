@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.services;
 
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Generates a persistent id as username for anonymous service access.
@@ -59,8 +60,8 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     }
     
     @Override
-    public String resolveUsername(final Principal principal) {
-        final String id = this.persistentIdGenerator.generate(principal);
+    public String resolveUsername(final Principal principal, final Service service) {
+        final String id = this.persistentIdGenerator.generate(principal, service);
         logger.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }
