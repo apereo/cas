@@ -18,14 +18,7 @@
  */
 package org.jasig.cas;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import com.github.inspektr.audit.annotation.Audit;
-
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -33,8 +26,8 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -64,6 +57,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -428,7 +426,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
             
-            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal);
+            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
