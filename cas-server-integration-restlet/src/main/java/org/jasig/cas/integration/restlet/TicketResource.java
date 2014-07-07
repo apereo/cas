@@ -54,6 +54,7 @@ import org.springframework.web.context.request.WebRequest;
  * @since 3.3
  *
  */
+@Deprecated
 public class TicketResource extends ServerResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketResource.class);
@@ -65,6 +66,9 @@ public class TicketResource extends ServerResource {
      * Instantiates a new ticket resource.
      */
     public TicketResource() {
+        LOGGER.warn("The 'cas-server-integration-restlet' module is deprecated and will be removed in the " +
+                "future versions of CAS. " +
+                "Please use the new 'cas-server-extension-rest' module instead.");
         setNegotiated(false);
     }
 
