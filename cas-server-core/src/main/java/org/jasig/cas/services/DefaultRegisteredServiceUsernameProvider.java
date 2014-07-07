@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public final class DefaultRegisteredServiceUsernameProvider implements Registere
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public String resolveUsername(final Principal principal) {
+    public String resolveUsername(final Principal principal, final Service service) {
         logger.debug("Returning the default principal id [{}] for username.", principal.getId());
         return principal.getId();
     }

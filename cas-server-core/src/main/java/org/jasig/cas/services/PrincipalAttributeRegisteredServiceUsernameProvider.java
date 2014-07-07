@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.services;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Determines the username for this registered service based on a principal attribute.
@@ -55,7 +56,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     }
 
     @Override
-    public String resolveUsername(final Principal principal) {
+    public String resolveUsername(final Principal principal, final Service service) {
         String principalId = principal.getId();
         
         if (principal.getAttributes().containsKey(this.usernameAttribute)) {

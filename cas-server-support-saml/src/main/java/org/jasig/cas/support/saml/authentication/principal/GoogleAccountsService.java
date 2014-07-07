@@ -218,7 +218,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         c.add(Calendar.YEAR, 1);
         
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
-        final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal());
+        final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
         final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);

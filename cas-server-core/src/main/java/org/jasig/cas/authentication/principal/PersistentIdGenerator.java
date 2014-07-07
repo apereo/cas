@@ -30,7 +30,8 @@ public interface PersistentIdGenerator {
      * Generates a PersistentId based on some algorithm plus the principal.
      *
      * @param principal the principal to generate the id for.
+     * @param service the service for which the id may be generated.
      * @return the generated persistent id.
      */
-    String generate(Principal principal);
+    String generate(Principal principal, Service service);
 }

@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -42,6 +41,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
      * The salt is initialized to a random 16-digit alphanumeric string.
+     * The generated id is pseudo-anonymous which allows it to be continually uniquely
+     * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
         this.salt = RandomStringUtils.randomAlphanumeric(16).getBytes();
@@ -57,9 +58,11 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     }
     
     @Override
-    public String generate(final Principal principal) {
+    public String generate(final Principal principal, final Service service) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
+            md.update(service.getId().getBytes());
+            md.update(CONST_SEPARATOR);
             md.update(principal.getId().getBytes());
             md.update(CONST_SEPARATOR);
 
