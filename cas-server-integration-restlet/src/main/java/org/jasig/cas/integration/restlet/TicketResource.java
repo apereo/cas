@@ -52,7 +52,7 @@ import org.springframework.web.context.request.WebRequest;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-extension-rest module
  */
 @Deprecated
 public class TicketResource extends ServerResource {
@@ -66,9 +66,9 @@ public class TicketResource extends ServerResource {
      * Instantiates a new ticket resource.
      */
     public TicketResource() {
-        LOGGER.warn("The 'cas-server-integration-restlet' module is deprecated and will be removed in the " +
-                "future versions of CAS. " +
-                "Please use the new 'cas-server-extension-rest' module instead.");
+        LOGGER.warn("The 'cas-server-integration-restlet' module is deprecated and will be removed in the "
+                + "future versions of CAS. "
+                + "Please use the new 'cas-server-extension-rest' module instead.");
         setNegotiated(false);
     }
 
