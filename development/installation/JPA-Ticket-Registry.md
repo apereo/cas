@@ -10,7 +10,6 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using a RDBMS as the back-end persistence choice for Ticket Registry state management is a fairly unnecessary and complicated process. Ticket registries generally do not need the durability that comes with RDBMS and unless you are already outfitted with clustered RDBMS technology and the resources to manage it, the complexity is likely not worth the trouble. Given the proliferation of hardware virtualization and the redundancy and vertical scaling they often provide, more suitable recommendation would be the default in-memory ticket registry for a single node CAS deployment and distributed cache-based registries for higher availability.</p></div>
 
 
-
 # Configuration
 
 - Adjust the `src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml` with the following:
@@ -97,9 +96,9 @@ This will configure the cleaner with the following defaults:
 * expirationDataColumnName = "EXPIRATION_DATE"
 * platform = SQL92
 * lockTimeout = 3600 (1 hour)
-* 
-# Database Configuration
 
+
+# Database Configuration
 
 ## JDBC Driver
 CAS must have access to the appropriate JDBC driver for the database. Once you have obtained the appropriate driver and configured the data source, place the JAR inside the lib directory of your web server environment (i.e. `$TOMCAT_HOME/lib`)
