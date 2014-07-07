@@ -48,8 +48,20 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 <bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
 		p:uniqueId="${host.name}"
 		p:applicationId="cas-ticket-registry-cleaner" />
+
+<bean id="jobDetailTicketRegistryCleaner"
+       class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="ticketRegistryCleaner"
+        p:targetMethod="clean" />
+ 
+<bean id="triggerJobDetailTicketRegistryCleaner" 
+    class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+        p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+        p:startDelay="20000"
+        p:repeatInterval="5000000" />
  
 {% endhighlight %}
+
 The above snippet assumes that data source information and connection details are defined.
 
 - Configure other JPA dependencies:
@@ -74,7 +86,18 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 ...
 {% endhighlight %}
 
+##Cleaner Locking Strategy 
+The above shows a JPA 2.0 implementation of an exclusive, non-reentrant lock, `JpaLockingStrategy`, to be used with the JPA-backed ticket registry.
 
+This will configure the cleaner with the following defaults:
+
+* tableName = "LOCKS"
+* uniqueIdColumnName = "UNIQUE_ID"
+* applicationIdColumnName = "APPLICATION_ID"
+* expirationDataColumnName = "EXPIRATION_DATE"
+* platform = SQL92
+* lockTimeout = 3600 (1 hour)
+* 
 # Database Configuration
 
 
