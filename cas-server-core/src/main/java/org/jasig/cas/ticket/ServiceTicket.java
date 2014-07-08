@@ -57,14 +57,15 @@ public interface ServiceTicket extends Ticket {
     boolean isValidFor(Service service);
 
     /**
-     * Method to grant a TicketGrantingTicket from this service to the
-     * authentication. Analogous to the ProxyGrantingTicket.
+     * Method to grant a ProxyGrantingTicket from this service to the
+     * authentication. 
      *
+     * @since 4.1
      * @param id The unique identifier for this ticket.
      * @param authentication The Authentication we wish to grant a ticket for.
      * @param expirationPolicy expiration policy associated with this ticket
      * @return The ticket granting ticket.
      */
-    TicketGrantingTicket grantTicketGrantingTicket(String id,
+    ProxyGrantingTicket grantProxyGrantingTicket(String id,
         Authentication authentication, ExpirationPolicy expirationPolicy);
 }

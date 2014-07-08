@@ -99,7 +99,7 @@ public class DistributedTicketRegistryTests {
 
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantTicketGrantingTicket("ff", TestUtils.getAuthentication(),
+        assertNotNull(s2.grantProxyGrantingTicket("ff", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
 
         assertTrue(s2.isValidFor(TestUtils.getService()));

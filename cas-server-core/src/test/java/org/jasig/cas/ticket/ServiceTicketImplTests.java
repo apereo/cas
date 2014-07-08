@@ -107,7 +107,7 @@ public class ServiceTicketImplTests {
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false);
-        final TicketGrantingTicket t1 = s.grantTicketGrantingTicket(
+                final TicketGrantingTicket t1 = s.grantProxyGrantingTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                 new NeverExpiresExpirationPolicy());
 
@@ -121,11 +121,11 @@ public class ServiceTicketImplTests {
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false);
-        s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
+        s.grantProxyGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                 new NeverExpiresExpirationPolicy());
 
         try {
-            s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
+            s.grantProxyGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                     new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
         } catch (final Exception e) {

@@ -24,12 +24,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.util.Assert;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
  * policies. Also incorporates properties common among all tickets. As this is
- * an abstract class, it cannnot be instanciated. It is recommended that
+ * an abstract class, it cannot be instantiated. It is recommended that
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
  * updating).
@@ -157,11 +159,30 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public final int hashCode() {
-        return this.getId().hashCode();
+        return new HashCodeBuilder().append(this.getId()).toHashCode();
     }
 
     @Override
     public final String toString() {
         return this.getId();
+    }
+    
+    @Override
+    public final boolean equals(final Object object) {
+        if (object == null) { 
+            return false; 
+        }
+        if (object == this) { 
+            return true; 
+        }
+        if (object.getClass().isAssignableFrom(Ticket.class)) {
+          return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                    .append(ticket.getId(), this.getId())
+                    .isEquals();
     }
 }

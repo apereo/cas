@@ -52,6 +52,7 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -376,15 +377,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(
-                        this.ticketGrantingTicketUniqueTicketIdGenerator
-                                .getNewTicketId(TicketGrantingTicket.PREFIX),
-                        authentication, this.ticketGrantingTicketExpirationPolicy);
+        final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator
+                .getNewTicketId(ProxyGrantingTicket.PREFIX);
+        
+        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket
+                .grantProxyGrantingTicket(pgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
+        this.ticketRegistry.addTicket(proxyGrantingTicket);
 
-        return ticketGrantingTicket.getId();
+        return proxyGrantingTicket.getId();
     }
 
     @Audit(

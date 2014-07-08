@@ -216,9 +216,9 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TGT" + i,
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, getService(),
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("ST" + i, getService(),
                     new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);

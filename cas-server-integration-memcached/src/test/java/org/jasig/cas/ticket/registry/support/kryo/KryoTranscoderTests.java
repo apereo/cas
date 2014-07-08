@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.security.auth.login.FailedLoginException;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -46,6 +47,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
@@ -168,6 +170,12 @@ public class KryoTranscoderTests {
         @Override
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+        }
+
+        @Override
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication,
+                final ExpirationPolicy expirationPolicy) {
+            return null;
         }
         
         @Override

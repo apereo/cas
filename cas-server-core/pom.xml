@@ -191,7 +191,12 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
-
+        
+        <dependency>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </dependency>
+      
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
