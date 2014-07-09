@@ -58,7 +58,13 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
       c:resolver-ref="dnResolver"
       c:handler-ref="authHandler"
-      p:entryResolver-ref="entryResolver" />
+      p:entryResolver-ref="entryResolver">
+      <property name="authenticationResponseHandlers">
+          <list>
+              <bean class="org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler" />
+          </list>
+      </property>
+</bean>
 
 <!-- Active Directory UPN format. -->
 <bean id="dnResolver"
