@@ -51,6 +51,7 @@ public class ThemeBasedViewResolver extends InternalResourceViewResolver {
      * The ThemeBasedViewResolver constructor.
      * @param defaultThemeId the theme to apply if the service doesn't specific one or a service is not provided
      * @param servicesManager the serviceManager implementation
+     * @see #setCache(boolean)
      */
     public ThemeBasedViewResolver(final String defaultThemeId, final ServicesManager servicesManager) {
         super();
