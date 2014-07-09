@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -131,15 +131,4 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return null;
     }
 
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-
-        return serviceTicket.getId().equals(this.getId());
-    }
 }

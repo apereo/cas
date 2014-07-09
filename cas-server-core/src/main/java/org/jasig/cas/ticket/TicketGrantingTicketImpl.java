@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
  * the global identifier of a principal into the system. It grants the Principal
@@ -224,18 +225,5 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof TicketGrantingTicket)) {
-            return false;
-        }
-
-        final Ticket ticket = (Ticket) object;
-
-        return ticket.getId().equals(this.getId());
     }
 }
