@@ -43,8 +43,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-support-rest module
  */
+@Deprecated
 public final class TicketGrantingTicketResource extends ServerResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
