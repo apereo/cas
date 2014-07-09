@@ -95,7 +95,7 @@ DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 #Using cas-server-support-rest module
 Version 4.1.0 includes a new maven module namely cas-server-support-rest which implements REST API with a modern
 style programming model and eliminates an extra dependency on the restlet library. The public REST API is not
-chenged in this module and switching to it is just a matter of a few minor local war overlay changes.
+changed in this module and switching to it is just a matter of a few minor local war overlay changes.
 
 For deployments that do not use restlet module, the enablement of the REST support is as easy as including this dependency in the overlay's pom:
 
