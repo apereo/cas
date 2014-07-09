@@ -91,3 +91,60 @@ CAS will send a 400 Bad Request. If an incorrect media type is sent, it will sen
 {% highlight bash %}
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 {% endhighlight %}
+
+#Using cas-server-support-rest module
+Version 4.1.0 includes a new maven module namely cas-server-support-rest which implements REST API with a modern
+style programming model and eliminates an extra dependency on the restlet library. The public REST API is not
+chenged in this module and switching to it is just a matter of a few minor local war overlay changes.
+
+For deployments that do not use restlet module, the enablement of the REST support is as easy as including this dependency in the overlay's pom:
+
+{% highlight xml %}
+<dependency>
+   <groupId>org.jasig.cas</groupId>
+   <artifactId>cas-server-extension-rest</artifactId>
+   <version>${cas.version}</version>
+   <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
+For users of restlet module, just replace the pom dependency and change this snippet in web.xml:
+
+from this:
+
+{% highlight xml %}
+<servlet>
+    <servlet-name>restlet</servlet-name>
+    <servlet-class>org.restlet.ext.spring.RestletFrameworkServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+ 
+<servlet-mapping>
+    <servlet-name>restlet</servlet-name>
+    <url-pattern>/v1/*</url-pattern>
+</servlet-mapping>
+{% endhighlight %}
+
+to this:
+
+{% highlight xml %}
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/v1/*</url-pattern>
+    </servlet-mapping>
+{% endhighlight %}
+
+or delete the web.xml in the overlay altogether if there are no other customizations there as this mapping is provided by CAS' webapp module's web.xml out of the box.
+
+Please note, if there are local customization in overlay's web.xml, the following `contextConfigLocation` contex param must also be added in order to enable new rest module: `classpath*:/META-INF/spring/*.xml` So the entire context-param block would look like this:
+
+{% highlight xml %}
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      /WEB-INF/spring-configuration/*.xml
+      /WEB-INF/deployerConfigContext.xml
+      classpath*:/META-INF/spring/*.xml
+    </param-value>
+</context-param>
+{% endhighlight %}
