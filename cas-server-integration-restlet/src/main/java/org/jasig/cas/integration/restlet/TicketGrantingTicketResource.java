@@ -43,8 +43,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-extension-rest module
  */
+@Deprecated
 public final class TicketGrantingTicketResource extends ServerResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
@@ -55,6 +56,9 @@ public final class TicketGrantingTicketResource extends ServerResource {
 
     @Override
     public void init(final Context context, final Request request, final Response response) {
+        LOGGER.warn("The 'cas-server-integration-restlet' module is deprecated and will be removed in the "
+                + "future versions of CAS. "
+                + "Please use the new 'cas-server-extension-rest' module instead.");
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
         this.setNegotiated(false);
