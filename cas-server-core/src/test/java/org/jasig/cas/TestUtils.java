@@ -57,8 +57,6 @@ public final class TestUtils {
 
     private static final String CONST_PASSWORD = "test1";
 
-    private static final String CONST_BAD_URL = "http://www.acs.rutgers.edu";
-
     private static final String CONST_CREDENTIALS = "credentials";
 
     private static final String CONST_WEBFLOW_BIND_EXCEPTION =
@@ -103,10 +101,6 @@ public final class TestUtils {
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_GOOD_URL);
-    }
-
-    public static HttpBasedServiceCredential getBadHttpBasedServiceCredentials() {
-        return getHttpBasedServiceCredentials(CONST_BAD_URL);
     }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
