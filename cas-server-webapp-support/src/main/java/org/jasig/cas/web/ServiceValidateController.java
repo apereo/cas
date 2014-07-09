@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.web;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -48,6 +40,13 @@ import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -160,6 +159,8 @@ public class ServiceValidateController extends DelegateController {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
+                    logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+                            proxyGrantingTicketId, serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
                     logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
