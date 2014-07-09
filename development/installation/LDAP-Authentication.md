@@ -17,10 +17,10 @@ LDAP integration is enabled by including the following dependency in the Maven W
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
 or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
 
-1. [Active Directory](#active_directory_authentication) - Users authenticate with _sAMAAccountName_.
-2. [Authenticated Search](#ldap_requiring_authenticated_search) - Manager bind/search followed by user simple bind.
-3. [Anonymous Search](#ldap_supporting_anonymous_search) - Anonymous search followed by user simple bind.
-4. [Direct Bind](#ldap_supporting_direct_bind) - Compute user DN from format string and perform simple bind.
+1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAAccountName_.
+2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
+3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
+4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
