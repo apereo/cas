@@ -181,7 +181,6 @@
             <groupId>edu.vt.middleware</groupId>
             <artifactId>vt-crypt</artifactId>
             <scope>compile</scope>
-            <type>jar</type>
         </dependency>
 
         <dependency>

@@ -19,31 +19,26 @@
 
 package org.jasig.cas.ticket.enc;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
-import javax.crypto.SecretKey;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.io.IOUtils;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.io.DirectByteArrayOutputStream;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
+import org.apache.commons.io.IOUtils;
 
+import javax.crypto.SecretKey;
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 /**
  * A reversible encoder that used symmetric encryption to encode and decode
  * serializable objects.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
- * @since 3.4.4
- *
+ * @since 4.1
  */
 public class SymmetricCipherEncoder implements ReversibleEncoder {
 
@@ -133,10 +128,9 @@ public class SymmetricCipherEncoder implements ReversibleEncoder {
             alg.initEncrypt();
             return alg.encrypt(bytes, new Base64Converter());
         } catch (final CryptException e) {
-            throw new RuntimeExceptione(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
-
 
     /**
      * @param cipher Name of symmetric cipher to use for encryption/decryption.
