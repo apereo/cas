@@ -132,7 +132,7 @@ public class TicketsResource {
      *
      * @param tgtId ticket granting ticket id URI path param
      */
-    @RequestMapping(value = "/tickets}/{tgtId:.+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final void deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
     }

@@ -38,6 +38,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
@@ -93,7 +94,8 @@ public class TicketsResourceTests {
         this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("1 errors, 0 successes"));
     }
 
     @Test
@@ -130,7 +132,7 @@ public class TicketsResourceTests {
     @Test
     public void deletionOfTGT() throws Throwable {
         this.mockMvc.perform(delete("/cas/v1/tickets/TGT-1"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk());
     }
 
     private void configureCasMockToCreateValidTGT() throws Throwable {
