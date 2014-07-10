@@ -107,6 +107,7 @@ public final class EncodedTicket implements Ticket {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "EncodedTicket: " + this.id;
     }

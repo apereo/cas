@@ -36,19 +36,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
  * representation internally such that the original ticket can be produced by
- * calling the {@link #decode()} method.
+ * calling the {@link org.jasig.cas.ticket.enc.ReversibleEncoder#decode(String)} ()} method.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
- * @since 3.4.4
- *
+ * @since 4.1
  */
 @Aspect
 public final class TicketEncodingAspect {
-    /** Logger instance */
+    /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Performs the encoding/decoding work */
+    /** Performs the encoding/decoding work. */
     @NotNull
     private ReversibleEncoder encoder;
 
@@ -74,6 +72,7 @@ public final class TicketEncodingAspect {
      * @param pjp Proceeding join point.
      *
      * @throws Throwable On errors.
+     * @return the result of the joinpoint
      */
     @Around("execution(boolean org.jasig.cas.ticket.registry.*TicketRegistry.deleteTicket(String))")
     public Object encodeTicketId(final ProceedingJoinPoint pjp) throws Throwable {
@@ -86,22 +85,23 @@ public final class TicketEncodingAspect {
      * @param pjp Proceeding join point.
      *
      * @throws Throwable On errors.
+     * @return ticket or null
      */
     @Around("execution(Ticket org.jasig.cas.ticket.registry.*TicketRegistry.getTicket(String))")
     public Object decodeTicket(final ProceedingJoinPoint pjp) throws Throwable {
-        Object result = pjp.proceed(encodeTicketIdArgs(pjp.getArgs()));
-        final Ticket ticket;
+        final Object result = pjp.proceed(encodeTicketIdArgs(pjp.getArgs()));
+        Ticket ticket = null;
         if (result != null) {
-            this.logger.debug("Attempting to decode [{}]",  result);
+            logger.debug("Attempting to decode [{}]",  result);
             if (result instanceof EncodedTicket) {
                 ticket = ((EncodedTicket) result).decode();
-                this.logger.debug("Decoded [{}]",  ticket);
+                logger.debug("Decoded [{}]",  ticket);
             } else {
-                throw new IllegalArgumentException("Expected EncodedTicket");
+                throw new IllegalArgumentException("Expected EncodedTicket but was " + result);
             }
             return ticket;
         }
-        this.logger.debug("Refusing to decode null ticket");
+        logger.debug("Refusing to decode null ticket");
         return null;
     }
 
@@ -111,16 +111,17 @@ public final class TicketEncodingAspect {
      * @param pjp Proceeding join point.
      *
      * @throws Throwable On errors.
+     * @return set of tickets decoded
      */
     @Around("execution(Collection org.jasig.cas.ticket.registry.*TicketRegistry.getTickets())")
     public Object decodeTickets(final ProceedingJoinPoint pjp) throws Throwable {
         final Collection<?> items = (Collection) pjp.proceed();
         final Set<Ticket> tickets = new HashSet<Ticket>(items.size());
-        Ticket ticket;
-        for (Object item : items) {
+
+        for (final Object item : items) {
             if (item instanceof EncodedTicket) {
-                ticket = ((EncodedTicket) item).decode();
-                this.logger.debug("Decoded [{}]",  ticket);
+                final Ticket ticket = ((EncodedTicket) item).decode();
+                logger.debug("Decoded [{}]",  ticket);
                 tickets.add(ticket);
             } else {
                 throw new IllegalArgumentException("Expected EncodedTicket");
@@ -130,6 +131,7 @@ public final class TicketEncodingAspect {
     }
 
     /**
+     * Set the encoder instance.
      * @param encoder Encoder/decoder to use for securing sensitive ticket data.
      */
     public void setEncoder(final ReversibleEncoder encoder) {
@@ -137,16 +139,16 @@ public final class TicketEncodingAspect {
     }
 
     /**
-     * Encode ticket id as argument
+     * Encode ticket id as argument.
      *
      * @param originalArgs the original args
-     * @return the object [ ]
+     * @return the object aray containing the encoded id
      */
     private Object[] encodeTicketIdArgs(final Object[] originalArgs) {
         final String ticketId = (String) originalArgs[0];
-        this.logger.debug("Encoding ticket [{}]",  ticketId);
+        logger.debug("Encoding ticket [{}]",  ticketId);
         final String encodedId = EncodedTicket.encodeId(this.encoder, ticketId);
-        this.logger.debug("Encoded ticket id [{}]", encodedId);
-        return new Object[] { encodedId };
+        logger.debug("Encoded ticket id [{}]", encodedId);
+        return new Object[] {encodedId};
     }
 }

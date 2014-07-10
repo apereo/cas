@@ -30,7 +30,7 @@ public interface ReversibleEncoder extends Encoder {
 
     /**
      * Decodes the given encoded string representation of an object, presumably
-     * created via the {@link #encode(Serializable)} operation, into the
+     * created via the {@link Encoder#encode(java.io.Serializable)} operation, into the
      * original object.
      *
      * @param encodedObject Encoded string representation of an object.

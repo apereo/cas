@@ -19,13 +19,12 @@
 
 package org.jasig.cas.ticket.enc;
 
-import javax.crypto.SecretKey;
-import javax.validation.constraints.NotNull;
-
+import edu.vt.middleware.crypt.util.CryptReader;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import edu.vt.middleware.crypt.util.CryptReader;
+import javax.crypto.SecretKey;
+import javax.validation.constraints.NotNull;
 
 /**
  * Factory bean that creates {@link SecretKey} objects from a file containing
@@ -36,23 +35,25 @@ import edu.vt.middleware.crypt.util.CryptReader;
  *
  */
 public final class SecretKeyFactoryBean extends AbstractFactoryBean<SecretKey> {
-    /** Default cipher is AES */
+    /** Default cipher is AES. */
     public static final String DEFAULT_CIPHER = "AES";
 
-    /** File containing key material */
+    /** File containing key material. */
     @NotNull
     private Resource keyFile;
 
-    /** Cipher name for which key was created */
+    /** Cipher name for which key was created. */
     @NotNull
     private String cipher = DEFAULT_CIPHER;
 
     /** {@inheritDoc} */
+    @Override
     protected SecretKey createInstance() throws Exception {
         return CryptReader.readSecretKey(this.keyFile.getInputStream(), this.cipher);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Class<?> getObjectType() {
         return SecretKey.class;
     }

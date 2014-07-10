@@ -40,20 +40,20 @@ import java.io.Serializable;
  * @author Marvin S. Addison
  * @since 4.1
  */
-public class SymmetricCipherEncoder implements ReversibleEncoder {
+public final class SymmetricCipherEncoder implements ReversibleEncoder {
 
-    /** Default cipher is AES */
+    /** Default cipher is AES. */
     public static final String DEFAULT_CIPHER = "AES";
 
-    /** Symmetric cipher name */
+    /** Symmetric cipher name. */
     @NotNull
     private String cipher = DEFAULT_CIPHER;
 
-    /** Symmetric encryption/decryption key */
+    /** Symmetric encryption/decryption key. */
     @NotNull
     private SecretKey key;
 
-    /** Cipher initialization vector as hexadecimal string of bytes */
+    /** Cipher initialization vector as hexadecimal string of bytes. */
     @NotNull
     private String hexIV;
 
