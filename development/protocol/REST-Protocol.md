@@ -94,21 +94,21 @@ DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 
 #Using cas-server-support-rest module
 Version 4.1.0 includes a new maven module namely cas-server-support-rest which implements REST API with a modern
-style programming model and eliminates an extra dependency on the restlet library. The public REST API is not
+style programming model and eliminates an extra dependency on the Restlet library. The public REST API is not
 changed in this module and switching to it is just a matter of a few minor local war overlay changes.
 
-For deployments that do not use restlet module, the enablement of the REST support is as easy as including this dependency in the overlay's pom:
+For deployments that do not use Restlet module, the enablement of the REST support is as easy as including this dependency in the overlay's pom:
 
 {% highlight xml %}
 <dependency>
    <groupId>org.jasig.cas</groupId>
-   <artifactId>cas-server-extension-rest</artifactId>
+   <artifactId>cas-server-support-rest</artifactId>
    <version>${cas.version}</version>
    <scope>runtime</scope>
 </dependency>
 {% endhighlight %}
 
-For users of restlet module, just replace the pom dependency and change this snippet in web.xml:
+For users of Restlet module, just replace the pom dependency and change this snippet in web.xml:
 
 from this:
 
@@ -136,7 +136,7 @@ to this:
 
 or delete the web.xml in the overlay altogether if there are no other customizations there as this mapping is provided by CAS' webapp module's web.xml out of the box.
 
-Please note, if there are local customization in overlay's web.xml, the following `contextConfigLocation` contex param must also be added in order to enable new rest module: `classpath*:/META-INF/spring/*.xml` So the entire context-param block would look like this:
+Please note, if there are local customizations in overlay's web.xml, the following `contextConfigLocation` context param must also be added in order to enable the new REST module: `classpath*:/META-INF/spring/*.xml`. So the entire context-param block would look like this:
 
 {% highlight xml %}
 <context-param>
