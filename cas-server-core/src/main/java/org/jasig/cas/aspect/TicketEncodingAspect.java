@@ -71,7 +71,7 @@ public final class TicketEncodingAspect {
      *
      * @throws Throwable On errors.
      */
-    @Around("execution(void org.jasig.cas.ticket.registry.*TicketRegistry.addTicket(Ticket))")
+    @Around("execution(void org.jasig.cas.ticket.registry.*TicketRegistry.addTicket(org.jasig.cas.ticket.Ticket))")
     public void encodeTicket(final ProceedingJoinPoint pjp) throws Throwable {
         Ticket ticket = (Ticket) pjp.getArgs()[0];
         if (!this.enableTicketEncoding) {
@@ -111,7 +111,7 @@ public final class TicketEncodingAspect {
      * @throws Throwable On errors.
      * @return ticket or null
      */
-    @Around("execution(Ticket org.jasig.cas.ticket.registry.*TicketRegistry.getTicket(String))")
+    @Around("execution(org.jasig.cas.ticket.Ticket org.jasig.cas.ticket.registry.*TicketRegistry.getTicket(String))")
     public Object decodeTicket(final ProceedingJoinPoint pjp) throws Throwable {
         if (!this.enableTicketEncoding) {
             logger.trace("Ticket encoding is disabled. Proceeding as usual...");
@@ -144,7 +144,7 @@ public final class TicketEncodingAspect {
      * @throws Throwable On errors.
      * @return set of tickets decoded
      */
-    @Around("execution(Collection org.jasig.cas.ticket.registry.*TicketRegistry.getTickets())")
+    @Around("execution(java.util.Collection org.jasig.cas.ticket.registry.*TicketRegistry.getTickets())")
     public Object decodeTickets(final ProceedingJoinPoint pjp) throws Throwable {
         final Collection<?> items = (Collection) pjp.proceed();
 
