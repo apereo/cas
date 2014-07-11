@@ -19,21 +19,19 @@
 
 package org.jasig.cas.aspect;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.enc.EncodedTicket;
 import org.jasig.cas.ticket.enc.ReversibleEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -41,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * calling the {@link org.jasig.cas.ticket.enc.ReversibleEncoder#decode(String)} ()} method.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @Aspect
@@ -53,6 +52,19 @@ public final class TicketEncodingAspect {
     private ReversibleEncoder encoder;
 
     /**
+     * Flag to enable ticket encoding.
+     */
+    private boolean enableTicketEncoding;
+
+    /**
+     * Instantiates a new Ticket encoding aspect.
+     * By default, ticket encoding is enabled.
+     */
+    public TicketEncodingAspect() {
+        this.enableTicketEncoding = true;
+    }
+
+    /**
      * Encodes sensitive ticket data prior to adding to the registry.
      *
      * @param pjp Proceeding join point.
@@ -62,10 +74,15 @@ public final class TicketEncodingAspect {
     @Around("execution(void org.jasig.cas.ticket.registry.*TicketRegistry.addTicket(Ticket))")
     public void encodeTicket(final ProceedingJoinPoint pjp) throws Throwable {
         Ticket ticket = (Ticket) pjp.getArgs()[0];
-        logger.debug("Encoding [{}]",  ticket);
-        ticket = new EncodedTicket(this.encoder, ticket);
-        logger.debug("Created [{}]",  ticket);
-        pjp.proceed(new Object[] {ticket});
+        if (!this.enableTicketEncoding) {
+            logger.trace("Ticket encoding is disabled. Proceeding as usual...");
+            pjp.proceed(pjp.getArgs());
+        } else {
+            logger.trace("Encoding [{}]", ticket);
+            ticket = new EncodedTicket(this.encoder, ticket);
+            logger.trace("Created [{}]", ticket);
+            pjp.proceed(new Object[]{ticket});
+        }
     }
 
     /**
@@ -78,6 +95,11 @@ public final class TicketEncodingAspect {
      */
     @Around("execution(boolean org.jasig.cas.ticket.registry.*TicketRegistry.deleteTicket(String))")
     public Object encodeTicketId(final ProceedingJoinPoint pjp) throws Throwable {
+        if (!this.enableTicketEncoding) {
+            logger.trace("Ticket encoding is disabled. Proceeding as usual...");
+            return pjp.proceed(pjp.getArgs());
+        }
+
         return pjp.proceed(encodeTicketIdArgs(pjp.getArgs()));
     }
 
@@ -91,19 +113,26 @@ public final class TicketEncodingAspect {
      */
     @Around("execution(Ticket org.jasig.cas.ticket.registry.*TicketRegistry.getTicket(String))")
     public Object decodeTicket(final ProceedingJoinPoint pjp) throws Throwable {
-        final Object result = pjp.proceed(encodeTicketIdArgs(pjp.getArgs()));
+        if (!this.enableTicketEncoding) {
+            logger.trace("Ticket encoding is disabled. Proceeding as usual...");
+            return pjp.proceed(pjp.getArgs());
+        }
+
+        final Object[] ticketId = encodeTicketIdArgs(pjp.getArgs());
+        final Object result = pjp.proceed(ticketId);
         Ticket ticket = null;
         if (result != null) {
-            logger.debug("Attempting to decode [{}]",  result);
+            logger.trace("Attempting to decode [{}]",  result);
             if (result instanceof EncodedTicket) {
                 ticket = ((EncodedTicket) result).decode();
-                logger.debug("Decoded [{}]",  ticket);
+                logger.trace("Decoded [{}]",  ticket);
             } else {
                 throw new IllegalArgumentException("Expected EncodedTicket but was " + result);
             }
             return ticket;
         }
-        logger.debug("Refusing to decode null ticket");
+        logger.trace("Cannot decode ticket id [{}] because it cannot be found in the registry. "
+                + "The ticket may have expired/removed from the registry.", pjp.getArgs());
         return null;
     }
 
@@ -118,12 +147,18 @@ public final class TicketEncodingAspect {
     @Around("execution(Collection org.jasig.cas.ticket.registry.*TicketRegistry.getTickets())")
     public Object decodeTickets(final ProceedingJoinPoint pjp) throws Throwable {
         final Collection<?> items = (Collection) pjp.proceed();
+
+        if (!this.enableTicketEncoding) {
+            logger.trace("Ticket encoding is disabled. Proceeding as usual...");
+            return items;
+        }
+
         final Set<Ticket> tickets = new HashSet<Ticket>(items.size());
 
         for (final Object item : items) {
             if (item instanceof EncodedTicket) {
                 final Ticket ticket = ((EncodedTicket) item).decode();
-                logger.debug("Decoded [{}]",  ticket);
+                logger.trace("Decoded [{}]",  ticket);
                 tickets.add(ticket);
             } else {
                 throw new IllegalArgumentException("Expected EncodedTicket");
@@ -132,11 +167,16 @@ public final class TicketEncodingAspect {
         return tickets;
     }
 
+    public void setEnableTicketEncoding(final boolean enableTicketEncoding) {
+        this.enableTicketEncoding = enableTicketEncoding;
+    }
+
     /**
-     * Set the encoder instance.
-     * @param encoder Encoder/decoder to use for securing sensitive ticket data.
+     * Sets encoder.
+     *
+     * @param encoder the encoder
      */
-    public void setEncoder(final ReversibleEncoder encoder) {
+    public void setEncoder(@NotNull final ReversibleEncoder encoder) {
         this.encoder = encoder;
     }
 
@@ -148,9 +188,8 @@ public final class TicketEncodingAspect {
      */
     private Object[] encodeTicketIdArgs(final Object[] originalArgs) {
         final String ticketId = (String) originalArgs[0];
-        logger.debug("Encoding ticket [{}]",  ticketId);
         final String encodedId = EncodedTicket.encodeId(this.encoder, ticketId);
-        logger.debug("Encoded ticket id [{}]", encodedId);
+        logger.trace("Encoded ticket id [{}] to [{}]", ticketId, encodedId);
         return new Object[] {encodedId};
     }
 }
