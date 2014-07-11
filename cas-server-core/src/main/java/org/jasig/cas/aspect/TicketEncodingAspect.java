@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.ticket.enc;
+package org.jasig.cas.aspect;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,6 +30,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.enc.EncodedTicket;
+import org.jasig.cas.ticket.enc.ReversibleEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,6 +25,9 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import javax.validation.constraints.NotNull;
@@ -38,6 +41,7 @@ import java.io.Serializable;
  * serializable objects.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public final class SymmetricCipherEncoder implements ReversibleEncoder {
@@ -45,9 +49,13 @@ public final class SymmetricCipherEncoder implements ReversibleEncoder {
     /** Default cipher is AES. */
     public static final String DEFAULT_CIPHER = "AES";
 
+    private static final int IV_LENGTH = 32;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     /** Symmetric cipher name. */
     @NotNull
-    private String cipher = DEFAULT_CIPHER;
+    private final String cipher;
 
     /** Symmetric encryption/decryption key. */
     @NotNull
@@ -55,104 +63,111 @@ public final class SymmetricCipherEncoder implements ReversibleEncoder {
 
     /** Cipher initialization vector as hexadecimal string of bytes. */
     @NotNull
-    private String hexIV;
-
+    private final String hexIV;
 
     /**
-     * Decrypts a base64-encoded ciphertext string of the serialized bytes
-     * of an object and produces the original object through deserialization.
+     * Instantiates a new Symmetric cipher encoder
+     * with the cipher {@link #DEFAULT_CIPHER},
+     * a random 16-character hex iv and the given key.
      *
-     * @param encodedObject Base64-encoded ciphertext of serialized object.
-     *
-     * @return Deserialized object.
+     * @param key the secret key
      */
-    public Object decode(final String encodedObject) {
-        final byte[] serialBytes;
-        final SymmetricAlgorithm alg = createAlgorithm();
-        try {
-            alg.initDecrypt();
-            serialBytes = alg.decrypt(encodedObject, new Base64Converter());
-        } catch (final CryptException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public SymmetricCipherEncoder(final SecretKey key) {
+        this(DEFAULT_CIPHER, key, RandomStringUtils.randomAlphabetic(IV_LENGTH));
+    }
 
+    /**
+     * Instantiates a new Symmetric cipher encoder.
+     *
+     * @param cipher the cipher
+     * @param key the key
+     * @param hexIV the hex iV
+     */
+    public SymmetricCipherEncoder(final String cipher, final SecretKey key, final String hexIV) {
+        this.cipher = cipher;
+        this.key = key;
+        this.hexIV = hexIV;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object decode(final String encodedObject) {
         ObjectInputStream in = null;
+        ByteArrayInputStream inStream = null;
         try {
-            in = new ObjectInputStream(new ByteArrayInputStream(serialBytes));
+            final SymmetricAlgorithm alg = createAlgorithm();
+
+            alg.initDecrypt();
+            final byte[] serialBytes = alg.decrypt(encodedObject, new Base64Converter());
+
+            inStream = new ByteArrayInputStream(serialBytes);
+            in = new ObjectInputStream(inStream);
+
             return in.readObject();
         } catch (final Exception e) {
-            throw new RuntimeException("Deserialization error", e);
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(inStream);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T extends Serializable> T decode(final String encodedObject, final Class<? extends Serializable> clazz) {
+        final Serializable obj = (T) decode(encodedObject);
+
+        if (obj == null) {
+            throw new RuntimeException("Can not decode encoded object " + encodedObject);
+        }
+
+        if (!clazz.isAssignableFrom(obj.getClass())) {
+            throw new ClassCastException("Decoded object is of type " + obj.getClass()
+                    + " when we were expecting " + clazz);
+        }
+
+        return (T) obj;
+    }
 
     /**
-     * Produces the base64-encoded ciphertext of the serialized bytes of the
-     * given object.
-     *
-     * @param object Object to encrypt.
-     *
-     * @return Base64-encoded ciphertext string.
-     *
+     * {@inheritDoc}
      */
+    @Override
     public String encode(final Serializable object) {
-        final DirectByteArrayOutputStream outBytes = new DirectByteArrayOutputStream();
+        DirectByteArrayOutputStream outBytes = null;
         ObjectOutputStream out = null;
         try {
+            outBytes = new DirectByteArrayOutputStream();
             out = new ObjectOutputStream(outBytes);
+
             out.writeObject(object);
         } catch (final IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(outBytes);
         }
 
         return encode(outBytes.toByteArray());
-
     }
 
 
     /**
-     * Produces the base64-encoded ciphertext of the given bytes.
-     *
-     * @param bytes Bytes to encrypt.
-     *
-     * @return Base64-encoded ciphertext string.
-     *
+     * {@inheritDoc}
      */
+    @Override
     public String encode(final byte[] bytes) {
-        final SymmetricAlgorithm alg = createAlgorithm();
         try {
+            final SymmetricAlgorithm alg = createAlgorithm();
             alg.initEncrypt();
             return alg.encrypt(bytes, new Base64Converter());
         } catch (final CryptException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    /**
-     * @param cipher Name of symmetric cipher to use for encryption/decryption.
-     * Default is AES.
-     */
-    public void setCipher(final String cipher) {
-        this.cipher = cipher;
-    }
-
-
-    /**
-     * @param key Symmetric encryption/decryption key.
-     */
-    public void setKey(final SecretKey key) {
-        this.key = key;
-    }
-
-    /**
-     * @param hexIV Cipher initialization vector bytes as a hexadecimal string.
-     */
-    public void setHexIV(final String hexIV) {
-        this.hexIV = hexIV;
     }
 
     /**

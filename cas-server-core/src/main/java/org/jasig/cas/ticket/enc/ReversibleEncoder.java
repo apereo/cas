@@ -19,11 +19,14 @@
 
 package org.jasig.cas.ticket.enc;
 
+import java.io.Serializable;
+
 /**
  * Provides support for reversible encoding via a decode method that can produce
  * the original encoded object from its string representation.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 4.1
 */
 public interface ReversibleEncoder extends Encoder {
@@ -37,5 +40,17 @@ public interface ReversibleEncoder extends Encoder {
      * @return Original object.
      */
     Object decode(String encodedObject);
+
+    /**
+     * Decodes the given encoded string representation of an object, presumably
+     * created via the {@link Encoder#encode(java.io.Serializable)} operation, into the
+     * original object.
+     *
+     * @param <T>  the type parameter
+     * @param encodedObject Encoded string representation of an object.
+     * @param type the type of the decoded object
+     * @return Original object.
+     */
+    <T extends Serializable> T decode(String encodedObject, Class<? extends Serializable> type);
 
 }
