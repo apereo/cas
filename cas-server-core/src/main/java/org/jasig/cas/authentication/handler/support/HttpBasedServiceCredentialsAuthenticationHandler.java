@@ -46,12 +46,6 @@ import java.security.GeneralSecurityException;
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    /** The string representing the HTTPS protocol. */
-    private static final String PROTOCOL_HTTPS = "https";
-
-    /** Boolean variable denoting whether secure connection is required or not. */
-    private boolean requireSecure = true;
-
     /** Log instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -62,10 +56,6 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
-        if (this.requireSecure && !httpCredential.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
-            logger.debug("Authentication failed because url was not secure.");
-            throw new FailedLoginException(httpCredential.getCallbackUrl() + " is not an HTTPS endpoint as required.");
-        }
         if (httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
             logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]",
                     httpCredential.getService(), httpCredential.getCallbackUrl());
@@ -99,11 +89,14 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     }
 
     /**
-     * Set whether a secure url is required or not.
+     * @deprecated As of 4.1. Endpoint security is handled by service proxy policies
+     *
+     * <p>Set whether a secure url is required or not.</p>
      *
      * @param requireSecure true if its required, false if not. Default is true.
      */
+    @Deprecated
     public void setRequireSecure(final boolean requireSecure) {
-        this.requireSecure = requireSecure;
+         logger.warn("setRequireSecure() is deprecated and will be removed. Callback url validation is controlled by the proxy policy");
     }
 }
