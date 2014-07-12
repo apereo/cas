@@ -45,7 +45,7 @@ public final class TicketAsFirstParameterResourceResolver implements AuditResour
      * Get ticket id.
      *
      * @param joinPoint the join point
-     * @return the string [ ]
+     * @return ticket id as String[]
      */
     private String[] getTicketId(final JoinPoint joinPoint) {
         final String value = AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString();
