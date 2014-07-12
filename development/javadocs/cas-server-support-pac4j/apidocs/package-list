@@ -1,0 +1,4 @@
+org.jasig.cas.support.pac4j.authentication
+org.jasig.cas.support.pac4j.authentication.handler.support
+org.jasig.cas.support.pac4j.authentication.principal
+org.jasig.cas.support.pac4j.web.flow
