@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
-import java.net.URL;
-
+import org.jasig.cas.services.RegisteredService;
 import org.springframework.util.Assert;
+
+import java.net.URL;
 
 /**
  * A credential representing an HTTP endpoint given by a URL. Authenticating the credential usually involves
@@ -42,6 +43,9 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /** String form of callbackUrl. */
     private final String callbackUrlAsString;
 
+    /** The registered service associated with this callback. **/
+    private RegisteredService service;
+
     /**
      * Empty constructor used by Kryo for de-serialization.
      */
@@ -54,13 +58,14 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      * Creates a new instance for an HTTP endpoint located at the given URL.
      *
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
-     *
+     * @param service The registered service associated with this callback.
      * @throws IllegalArgumentException if the callbackUrl is null.
      */
-    public HttpBasedServiceCredential(final URL callbackUrl) {
+    public HttpBasedServiceCredential(final URL callbackUrl, final RegisteredService service) {
         Assert.notNull(callbackUrl, "callbackUrl cannot be null");
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
+        this.service = service;
     }
 
     /** {@inheritDoc} */
@@ -74,6 +79,15 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      */
     public final URL getCallbackUrl() {
         return this.callbackUrl;
+    }
+
+    /**
+     * Gets service associated with credentials.
+     *
+     * @return the service
+     */
+    public final RegisteredService getService() {
+        return this.service;
     }
 
     @Override
