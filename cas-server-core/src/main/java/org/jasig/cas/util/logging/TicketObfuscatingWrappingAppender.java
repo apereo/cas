@@ -19,6 +19,7 @@
 
 package org.jasig.cas.util.logging;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.AppenderAttachable;
@@ -30,6 +31,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Wraps other appends inside itself, and modifies the log
@@ -41,13 +44,16 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class TicketEncodingWrappingAppender extends AppenderSkeleton implements AppenderAttachable {
+public class TicketObfuscatingWrappingAppender extends AppenderSkeleton implements AppenderAttachable {
+
+    private static final Pattern TICKET_ID_PATTERN = Pattern.compile(TicketGrantingTicket.PREFIX + "(-)*(\\w)*(-)*(\\w)*");
 
     private final List<Appender> appenders = new ArrayList<Appender>();
+
     @Override
     public final void close() {
         synchronized (appenders) {
-            for (Appender appender : appenders) {
+            for (final Appender appender : appenders) {
                 appender.close();
             }
         }
@@ -141,13 +147,13 @@ public class TicketEncodingWrappingAppender extends AppenderSkeleton implements 
      * @return the new logging event
      */
     protected LoggingEvent modifyLoggingEventIfNeeded(final LoggingEvent event) {
-       final String modifiedMessage = removeTicketGrantingTicketFromMessage(event.getMessage().toString());
+       final String modifiedMessage = removeTicketIdFromMessage(event.getMessage().toString());
 
         final LoggingEvent modifiedEvent = new LoggingEvent(event.getFQNOfLoggerClass(),
                 event.getLogger(),
                 event.getTimeStamp(),
                 event.getLevel(),
-                event.getMessage().toString(),
+                modifiedMessage,
                 event.getThreadName(),
                 event.getThrowableInformation(),
                 event.getNDC(),
@@ -157,28 +163,18 @@ public class TicketEncodingWrappingAppender extends AppenderSkeleton implements 
     }
 
     /**
-     * Remove ticket granting ticket from the log message.
+     * Remove ticket id from the log message.
      *
      * @param modifiedMessage the modified message
      * @return the modified message with tgt id removed
      */
-    private String removeTicketGrantingTicketFromMessage(final String modifiedMessage) {
-        if (modifiedMessage.contains(TicketGrantingTicket.PREFIX)) {
-            final int ticketPrefixIndex = modifiedMessage.indexOf(TicketGrantingTicket.PREFIX);
-            int endingIndex = ticketPrefixIndex;
-            boolean found = false;
-
-            while (!found && endingIndex < modifiedMessage.length()) {
-                final char c = modifiedMessage.charAt(endingIndex);
-                if (c == ' ') {
-                    found = true;
-                } else {
-                    endingIndex++;
-                }
-            }
-            final String ticketId = modifiedMessage.substring(ticketPrefixIndex, endingIndex);
-            return modifiedMessage.replace(ticketId,
-                    TicketGrantingTicket.PREFIX.concat("-*************"));
+    private String removeTicketIdFromMessage(final String modifiedMessage) {
+        final Matcher matcher = TICKET_ID_PATTERN.matcher(modifiedMessage);
+        if (matcher.find()) {
+            final String match = matcher.group();
+            final String newMessage = modifiedMessage.replaceAll(match,
+                    TicketGrantingTicket.PREFIX + "-" + StringUtils.repeat("*", match.length()));
+            return newMessage;
         }
         return modifiedMessage;
     }

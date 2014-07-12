@@ -43,10 +43,10 @@
     </appender>
 
     <!-- Appenders with the ability to encode log output -->
-    <appender name="encodingConsoleAppender" class="org.jasig.cas.util.logging.TicketEncodingWrappingAppender">
+    <appender name="encodingConsoleAppender" class="org.jasig.cas.util.logging.TicketObfuscatingWrappingAppender">
         <appender-ref ref="console" />
     </appender>
-    <appender name="encodingCasFileAppender" class="org.jasig.cas.util.logging.TicketEncodingWrappingAppender">
+    <appender name="encodingCasFileAppender" class="org.jasig.cas.util.logging.TicketObfuscatingWrappingAppender">
         <appender-ref ref="cas" />
     </appender>
 
