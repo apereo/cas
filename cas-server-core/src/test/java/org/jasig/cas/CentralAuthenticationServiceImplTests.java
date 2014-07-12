@@ -18,8 +18,6 @@
  */
 package org.jasig.cas;
 
-import java.util.Map;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.MixedPrincipalException;
@@ -36,6 +34,8 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -140,18 +140,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
     }
 
-    @Test(expected=AuthenticationException.class)
-    public void testDelegateTicketGrantingTicketWithBadCredentials() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, TestUtils.getService());
-
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
-            serviceTicketId, TestUtils.getBadHttpBasedServiceCredentials());
-    }
-
     @Test(expected=TicketException.class)
     public void testDelegateTicketGrantingTicketWithBadServiceTicket() throws Exception {
         final String ticketId = getCentralAuthenticationService()
@@ -172,16 +160,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket, TestUtils.getService(),
             TestUtils.getCredentialsWithSameUsernameAndPassword());
-    }
-
-    @Test(expected=AuthenticationException.class)
-    public void testGrantServiceTicketWithInvalidCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getCentralAuthenticationService().grantServiceTicket(
-            ticketGrantingTicket, TestUtils.getService(),
-            TestUtils.getBadHttpBasedServiceCredentials());
     }
 
     @Test(expected=MixedPrincipalException.class)
