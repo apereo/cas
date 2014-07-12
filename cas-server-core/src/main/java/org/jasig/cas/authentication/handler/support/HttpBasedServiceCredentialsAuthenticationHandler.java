@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -31,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -67,6 +66,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
             logger.debug("Authentication failed because url was not secure.");
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " is not an HTTPS endpoint as required.");
         }
+        if (httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
+            logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]",
+                    httpCredential.getService(), httpCredential.getCallbackUrl());
+            throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
+        }
+
         logger.debug("Attempting to authenticate {}", httpCredential);
         if (!this.httpClient.isValidEndPoint(httpCredential.getCallbackUrl())) {
             throw new FailedLoginException(
