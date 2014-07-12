@@ -20,6 +20,7 @@ package org.jasig.cas.audit.spi;
 
 import com.github.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.AopUtils;
 
 /**
@@ -33,11 +34,25 @@ public final class TicketAsFirstParameterResourceResolver implements AuditResour
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
-        return new String[] {AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString()};
+        return getTicketId(joinPoint);
     }
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        return new String[] {AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString()};
+        return getTicketId(joinPoint);
+    }
+
+    /**
+     * Get ticket id.
+     *
+     * @param joinPoint the join point
+     * @return the string [ ]
+     */
+    private String[] getTicketId(final JoinPoint joinPoint) {
+        final String value = AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString();
+        if (value.startsWith(TicketGrantingTicket.PREFIX)) {
+            return new String[] {"TGT-**************************"};
+        }
+        return new String[] {value};
     }
 }
