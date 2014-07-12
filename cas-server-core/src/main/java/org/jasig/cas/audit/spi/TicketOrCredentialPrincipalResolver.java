@@ -18,10 +18,8 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.aspectj.lang.JoinPoint;
-
 import com.github.inspektr.common.spi.PrincipalResolver;
-
+import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -119,7 +117,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
                 return tgt.getAuthentication().getPrincipal().getId();
             }
-            LOGGER.debug("Could not locate ticket [{}] in the registry", ticket.getId());
+            LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         } else {
             final SecurityContext securityContext = SecurityContextHolder.getContext();
             if (securityContext != null) {
