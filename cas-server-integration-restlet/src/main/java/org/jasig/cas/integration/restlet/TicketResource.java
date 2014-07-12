@@ -52,8 +52,9 @@ import org.springframework.web.context.request.WebRequest;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-support-rest module
  */
+@Deprecated
 public class TicketResource extends ServerResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketResource.class);
