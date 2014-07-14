@@ -11,7 +11,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
      <version>${cas.version}</version>
-</dependency>
+</dependency>D
 {% endhighlight %}
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
@@ -506,7 +506,7 @@ LPPE is by default turned off. To enable the functionally, navigate to `src/main
         p:accountStateHandler-ref="accountStateHandler" />
 
   <!-- This component is suitable for most cases but can be replaced with a custom component for special cases. -->
-<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHander" />
+<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHandler" />
 {% endhighlight %}      
 
 Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
