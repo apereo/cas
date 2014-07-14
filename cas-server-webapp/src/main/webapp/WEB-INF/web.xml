@@ -30,6 +30,9 @@
     <param-value>
       /WEB-INF/spring-configuration/*.xml
       /WEB-INF/deployerConfigContext.xml
+      <!-- this enables extensions and addons to contribute to overall CAS' application context
+           by loading spring context files from classpath i.e. found in classpath jars, etc. -->
+      classpath*:/META-INF/spring/*.xml
     </param-value>
   </context-param>
 
@@ -108,7 +111,7 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-	
+
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/login</url-pattern>
@@ -133,7 +136,7 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/p3/serviceValidate</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/proxy</url-pattern>
@@ -148,7 +151,7 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/p3/proxyValidate</url-pattern>
   </servlet-mapping>
-  
+
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/CentralAuthenticationService</url-pattern>
@@ -167,6 +170,12 @@
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/authorizationFailure.html</url-pattern>
+  </servlet-mapping>
+
+  <!-- REST support if cas-server-extension-rest is included -->
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/v1/*</url-pattern>
   </servlet-mapping>
 
   <session-config>

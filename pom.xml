@@ -162,7 +162,7 @@
     <system>Jira</system>
     <url>https://issues.jasig.org/browse/CAS</url>
   </issueManagement>
-  
+
   <mailingLists>
     <mailingList>
       <name>cas-user</name>
@@ -193,7 +193,7 @@
     <url>https://github.com/Jasig/cas</url>
     <tag>HEAD</tag>
   </scm>
-	
+
   <distributionManagement>
     <site>
       <id>cas-site</id>
@@ -201,14 +201,14 @@
       <url>file:${project.site.deployDirectory}</url>
     </site>
   </distributionManagement>
-	
+
   <build>
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -254,7 +254,7 @@
 
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -401,7 +401,7 @@
             <conf>JAVADOC_STYLE</conf>
           </mapping>
           <excludes>
-            <exclude>**/bin/**</exclude>    
+            <exclude>**/bin/**</exclude>
             <exclude>LICENSE</exclude>
             <exclude>**/INSTALL*</exclude>
             <exclude>**/NOTICE*</exclude>
@@ -549,19 +549,19 @@
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.databind.version}</version>
       </dependency>
-    
+
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
-      </dependency>  
-      
+      </dependency>
+
       <dependency>
           <groupId>org.jasig.cas.client</groupId>
           <artifactId>cas-client-core</artifactId>
@@ -575,7 +575,7 @@
             </exclusion>
           </exclusions>
       </dependency>
-        
+
       <!-- Inspektr Dependencies -->
       <dependency>
         <groupId>com.github.inspektr</groupId>
@@ -674,7 +674,7 @@
         <version>${servlet.api.version}</version>
         <scope>provided</scope>
       </dependency>
-    
+
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
@@ -838,15 +838,15 @@
         <artifactId>joda-time</artifactId>
         <version>${joda-time.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
         <version>${quartz.version}</version>
         <type>jar</type>
         <scope>runtime</scope>
-      </dependency>   
-    
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -873,6 +873,7 @@
     <module>cas-server-uber-webapp</module>
     <module>cas-server-extension-clearpass</module>
     <module>cas-management-webapp</module>
+    <module>cas-server-support-rest</module>
   </modules>
 
   <reporting>
@@ -998,7 +999,7 @@
       </build>
     </profile>
   </profiles>
-  
+
   <properties>
     <cs.dir>${project.basedir}</cs.dir>
 
@@ -1024,7 +1025,7 @@
     <junit.version>4.11</junit.version>
     <checkstyle.version>5.7</checkstyle.version>
     <commons.lang.version>2.5</commons.lang.version>
-    <inspektr.version>1.0.7.GA</inspektr.version>
+    <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
     <ehcache.version>2.7.2</ehcache.version>
@@ -1033,7 +1034,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
-  
+
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
     <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
