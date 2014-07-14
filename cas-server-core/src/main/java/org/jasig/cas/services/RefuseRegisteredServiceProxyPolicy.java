@@ -61,6 +61,6 @@ public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServi
     @Override
     public int hashCode() {
         final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
-        return bldr.appendSuper(this.hashCode()).toHashCode();
+        return bldr.appendSuper(super.hashCode()).toHashCode();
     }
 }
