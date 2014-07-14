@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
+import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -482,6 +483,18 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      */
     public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
+    }
+
+    /**
+     * @deprecated
+     * Sets persistent id generator.
+     *
+     * @param persistentIdGenerator the persistent id generator
+     */
+    @Deprecated
+    public void setPersistentIdGenerator(final PersistentIdGenerator persistentIdGenerator) {
+        logger.warn("setPersistentIdGenerator() is deprecated and no longer available. Consider "
+                + "configuring the an attribute provider for service definitions.");
     }
 
     /**
