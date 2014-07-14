@@ -24,13 +24,16 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -106,7 +109,7 @@ public final class TestUtils {
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url));
+            return new HttpBasedServiceCredential(new URL(url), TestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -118,6 +121,27 @@ public final class TestUtils {
 
     public static Principal getPrincipal(final String name) {
         return new SimplePrincipal(name);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        final RegisteredServiceImpl s = new RegisteredServiceImpl();
+        s.setServiceId(id);
+        s.setEvaluationOrder(1);
+        s.setName("Test registered service");
+        s.setDescription("Registered service description");
+        s.setEnabled(true);
+        s.setProxyPolicy(new RegisteredServiceProxyPolicy() {
+            @Override
+            public boolean isAllowedToProxy() {
+                return true;
+            }
+
+            @Override
+            public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
+                return true;
+            }
+        });
+        return s;
     }
 
     public static Service getService() {
