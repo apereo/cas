@@ -20,6 +20,8 @@ package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.security.MessageDigest;
@@ -33,9 +35,11 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
+    /** Log instance. */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
+
     private static final byte CONST_SEPARATOR = (byte) '!';
 
-    @NotNull
     private byte[] salt;
 
     /**
@@ -56,7 +60,19 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {
         this.salt = salt.getBytes();
     }
-    
+
+    /**
+     * @deprecated As of 4.1.
+     * Sets salt.
+     *
+     * @param salt the salt
+     */
+    @Deprecated
+    public void setSalt(final String salt) {
+        this.salt = salt.getBytes();
+        LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
+    }
+
     @Override
     public String generate(final Principal principal, final Service service) {
         try {
