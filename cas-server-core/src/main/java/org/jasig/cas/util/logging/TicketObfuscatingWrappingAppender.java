@@ -48,6 +48,12 @@ public class TicketObfuscatingWrappingAppender extends AppenderSkeleton implemen
 
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile(TicketGrantingTicket.PREFIX + "(-)*(\\w)*(-)*(\\w)*");
 
+    /**
+     * Specifies the ending tail length of the ticket id that would still be visible in the output
+     * for troubleshooting purposes.
+     */
+    private static final int VISIBLE_ID_TAIL_LENGTH = 10;
+
     private final List<Appender> appenders = new ArrayList<Appender>();
 
     @Override
@@ -172,8 +178,11 @@ public class TicketObfuscatingWrappingAppender extends AppenderSkeleton implemen
         final Matcher matcher = TICKET_ID_PATTERN.matcher(modifiedMessage);
         if (matcher.find()) {
             final String match = matcher.group();
-            final String newMessage = modifiedMessage.replaceAll(match,
-                    TicketGrantingTicket.PREFIX + "-" + StringUtils.repeat("*", match.length()));
+            final String newId = TicketGrantingTicket.PREFIX + "-"
+                    + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
+                    + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
+
+            final String newMessage = modifiedMessage.replaceAll(match, newId);
             return newMessage;
         }
         return modifiedMessage;
