@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegisteredService;
-import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -44,7 +45,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     private final String callbackUrlAsString;
 
     /** The registered service associated with this callback. **/
-    private RegisteredService service;
+    private final RegisteredService service;
 
     /**
      * Empty constructor used by Kryo for de-serialization.
@@ -52,6 +53,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     protected HttpBasedServiceCredential() {
         this.callbackUrl =  null;
         this.callbackUrlAsString = null;
+        this.service = null;
     }
 
     /**
@@ -59,10 +61,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      *
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
      * @param service The registered service associated with this callback.
-     * @throws IllegalArgumentException if the callbackUrl is null.
      */
-    public HttpBasedServiceCredential(final URL callbackUrl, final RegisteredService service) {
-        Assert.notNull(callbackUrl, "callbackUrl cannot be null");
+    public HttpBasedServiceCredential(@NotNull final URL callbackUrl, @NotNull final RegisteredService service) {
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
         this.service = service;
@@ -92,13 +92,10 @@ public class HttpBasedServiceCredential extends AbstractCredential {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime
-            * result
-            + ((this.callbackUrlAsString == null) ? 0 : this.callbackUrlAsString
-                .hashCode());
-        return result;
+        final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
+        return bldr.append(this.callbackUrlAsString)
+                   .append(this.service)
+                   .toHashCode();
     }
 
     @Override
@@ -120,7 +117,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         } else if (!this.callbackUrlAsString.equals(other.callbackUrlAsString)) {
             return false;
         }
-        return true;
+
+        return (this.service.equals(other.getService()));
     }
 
 
