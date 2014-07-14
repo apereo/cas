@@ -32,8 +32,8 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Scott Battaglia
@@ -130,17 +131,8 @@ public final class TestUtils {
         s.setName("Test registered service");
         s.setDescription("Registered service description");
         s.setEnabled(true);
-        s.setProxyPolicy(new RegisteredServiceProxyPolicy() {
-            @Override
-            public boolean isAllowedToProxy() {
-                return true;
-            }
-
-            @Override
-            public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
-                return true;
-            }
-        });
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(new Random().nextInt(32));
         return s;
     }
 
