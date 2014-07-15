@@ -15,14 +15,11 @@ It involves one or many clients and one server. Clients are embedded in *CASifie
 The key concepts are:
 
 - The TGT (Ticket Granting Ticket), stored in the CASTGC cookie, represents a SSO session for a user
-- The ST (Service Ticket), transmitted as a GET parameter in urls, stands for the access granted by the CAS server to the *cassified* application for a specific user.
+- The ST (Service Ticket), transmitted as a GET parameter in urls, stands for the access granted by the CAS server to the *CASified* application for a specific user.
 
 
 ## Versions
-The current CAS protocol is the [version 3.0](https://github.com/Jasig/cas/blob/master/cas-server-protocol/3.0/cas_protocol_3_0.md), implemented by the CAS server 4.0.  
-It's mainly a capture of the most common enhancements built on top of the CAS protocol revision 2.0.  
-Among all features, the most noticable update between versions 2.0 and 3.0 is the ability to return the authentication/user attributes in the `/serviceValidate` response.
-
+The current CAS protocol is the [version 3.0](https://github.com/Jasig/cas/blob/master/cas-server-protocol/3.0/cas_protocol_3_0.md), which is hereby implemented. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision 2.0. Among all features, the most noticeable update between versions 2.0 and 3.0 is the ability to return the authentication/user attributes in the `/serviceValidate` response.
 
 
 
