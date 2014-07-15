@@ -41,7 +41,7 @@
 
     <!-- TicketGrantingTicketExpirationPolicy: Default as of 3.5 -->
     <!-- Provides both idle and hard timeouts, for instance 2 hour sliding window with an 8 hour max lifetime -->
+    <util:constant id="HOURS" static-field="java.util.concurrent.TimeUnit.HOURS"/>
     <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
-          p:maxTimeToLiveInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
-          p:timeToKillInSeconds="${tgt.timeToKillInSeconds:7200}"/>
+          c:maxTimeToLive="8" c:timeToKill="2" c:timeUnit-ref="HOURS" />
 </beans>
