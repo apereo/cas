@@ -27,7 +27,7 @@ import java.io.Serializable;
  * implementations.
  *
  * @author Marvin S. Addison
- * @since 3.4.4
+ * @since 4.1
  *
  */
 public interface Encoder {
