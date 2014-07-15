@@ -9,10 +9,12 @@ The CAS protocol is a simple and powerful ticket-based protocol developed exclus
 
 It involves one or many clients and one server.  
 Clients are embedded in *cassified* applications (called "CAS services") whereas the CAS server is a standalone component:
+
 - the [CAS server](../installation/Configuring-Authentication-Components.html) is responsible for authenticating users and granting accesses to applications
 - the [CAS clients](../integration/CAS-Clients.html) protect the CAS applications and retrieve the identity of the granted users from the CAS server.
 
 The key concepts are:
+
 - the TGT (Ticket Granting Ticket), stored in the CASTGC cookie, represents a SSO session for a user
 - the ST (Service Ticket), transmitted as a GET parameter in urls, stands for the access granted by the CAS server to the *cassified* application for a specific user.
 
