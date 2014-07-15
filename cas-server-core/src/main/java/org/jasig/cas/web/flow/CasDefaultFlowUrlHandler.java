@@ -9,6 +9,8 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides special handling for parameters in requests made to the CAS login
@@ -25,7 +27,14 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         final StringBuffer builder = new StringBuffer();
         builder.append(request.getRequestURI());
         builder.append("?");
-        appendQueryParameters(builder, request.getParameterMap(), getEncodingScheme(request));
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        Map<String, String> parameters = new HashMap<String, String>();
+        for(Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            if(entry.getValue() != null && entry.getValue().length > 0) {
+                parameters.put(entry.getKey(), entry.getValue()[0]);
+            }
+        }
+        appendQueryParameters(builder, parameters, getEncodingScheme(request));
         return builder.toString();
     }
 
