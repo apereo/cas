@@ -90,8 +90,13 @@
           c:readTimeout="${http.client.read.timeout:5000}"
           c:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
-          c:redirectsEnabled="false" c:circularRedirectsAllowed="false" />
+    <bean id="proxyTrustStoreSocketFactory"
+          class="org.jasig.cas.util.TrustedProxyAuthenticationTrustStoreSSLSocketFactory"
+          c:trustStoreFile="${proxy.authn.truststore.file:classpath:truststore.jks}"
+          c:trustStorePassword="${proxy.authn.truststore.psw:changeit}" />
+
+    <bean id="trustStoreProxyHttpClient" parent="httpClient"
+          c:sslSocketFactory-ref="proxyTrustStoreSocketFactory" />
 
     <bean id="persistentIdGenerator"
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
