@@ -106,14 +106,15 @@ More detailed explanatory text, if necessary.  Wrap it to about 72 characters or
 - Bullet points are okay, too 
 - Typically a hyphen or asterisk is used for the bullet, preceded by a  single space, with blank lines in between.
 - The summary should contain both a Jira issue number where possible and a brief description, e.g.
-{% highlight bash %}
-CAS-31415: Upgrade JDK source version to Java 9. 
- 
-Upgrading to JDK version 9 in order to solve a number of problems with the code.
-{% endhighlight %}
 
-Placing _both_ the issue number and brief description would improve commit history in SCM. The old practice where the Jira number exclusively is on the first line makes it hard to follow commit history in a pull request and other situations.
+Placing _both_ the issue number and brief description would improve commit history in SCM. 
 
+##Creating Pull Requests
+When creating a pull request, make sure that the pull references the Github issue number:
+
+![](https://camo.githubusercontent.com/0d91dc7e679d86bd4814faae37f0316279074571/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3539372f3439383937372f64383262643761382d626332362d313165322d383663652d3835613435336334643638332e706e67)
+
+This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
 
 ##Checkstyle
 The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Jasig/cas/blob/master/checkstyle-rules.xml) as much as possible.
