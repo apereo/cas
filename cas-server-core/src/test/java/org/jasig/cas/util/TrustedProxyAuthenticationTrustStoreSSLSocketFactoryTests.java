@@ -18,16 +18,16 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.assertTrue;
-
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Misagh Moayyed
- * @since
+ * @since 4.1
  */
 public class TrustedProxyAuthenticationTrustStoreSSLSocketFactoryTests {
     private SimpleHttpClient client;
@@ -37,31 +37,21 @@ public class TrustedProxyAuthenticationTrustStoreSSLSocketFactoryTests {
 
     @Before
     public void prepareHttpClient() throws Exception {
-        this.client = new SimpleHttpClient();
-        client.initializeHttpClient();
-
         final TrustedProxyAuthenticationTrustStoreSSLSocketFactory f = new TrustedProxyAuthenticationTrustStoreSSLSocketFactory(
                 TRUST_STORE.getFile(), TRUST_STORE_PSW);
-        final SSLConnectionSocketFactory fact = f.createInstance();
 
-        this.client.setSSLSocketFactory(fact);
+        this.client = new SimpleHttpClient(f);
     }
 
-    @Test
+    @Ignore
     public void testSuccessfulConnection() {
         final boolean valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
-    public void testSuccessfulConnectionWithCustomSSLCertMismatch() {
-        final boolean valid = client.isValidEndPoint("https://tv.eurosport.com/");
-        assertTrue(valid);
-    }
-    
-    @Test
     public void testSuccessfulConnectionWithCustomSSLCert() {
-        final boolean valid = client.isValidEndPoint("https://testssl-expire.disig.sk/index.en.html");
+        final boolean valid = client.isValidEndPoint("https://www.cacert.org");
         assertTrue(valid);
     }
 
