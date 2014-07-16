@@ -25,24 +25,35 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <description>
-    	Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified intervals.
+        Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified intervals.
     </description>
        
   <!-- Ticket Registry -->
   <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
-	
-	<!--Quartz -->
-	<!-- TICKET REGISTRY CLEANER -->
-	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-		c:ticketRegistry-ref="ticketRegistry"
-		c:logoutManager-ref="logoutManager" />
-	
-	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-		p:targetObject-ref="ticketRegistryCleaner"
-		p:targetMethod="clean" />
-	
-	<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
-		p:startDelay="20000"
-		p:repeatInterval="5000000" />
+
+    <!--Quartz -->
+    <!-- TICKET REGISTRY CLEANER -->
+    <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+        c:ticketRegistry-ref="ticketRegistry"
+        c:logoutManager-ref="logoutManager" />
+
+    <bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="ticketRegistryCleaner"
+        p:targetMethod="clean" />
+
+    <bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
+        p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+        p:startDelay="20000"
+        p:repeatInterval="5000000" />
+
+    <bean id="ticketEncodingAspect"
+          class="org.jasig.cas.aspect.TicketEncodingAspect"
+          factory-method="aspectOf"
+          p:encoder-ref="ticketEncoder"
+          p:enableTicketEncoding="${enable.ticket.encoding:false}"/>
+
+    <bean id="ticketEncoder" class="org.jasig.cas.ticket.enc.SymmetricCipherEncoder"
+          c:key-ref="ticketEncoderSecretKey" />
+
+    <bean id="ticketEncoderSecretKey" class="org.jasig.cas.ticket.enc.SecretKeyFactoryBean" />
 </beans>

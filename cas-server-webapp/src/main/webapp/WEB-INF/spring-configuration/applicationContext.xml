@@ -39,7 +39,10 @@
       create proxies around any beans defined in this file that match the pointcuts
       of any aspects defined in this file.
     -->
-    <aop:aspectj-autoproxy/>
+
+    <aop:aspectj-autoproxy />
+
+    <bean id="logAspect" class="org.jasig.cas.aspect.LogAspect" />
 
     <!--
       Declare the TimingAspect that we want to weave into the other beans

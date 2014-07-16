@@ -57,7 +57,6 @@
     <dependency>
       <artifactId>vt-crypt</artifactId>
       <groupId>edu.vt.middleware</groupId>
-      <version>2.1.4</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.webflow</groupId>
