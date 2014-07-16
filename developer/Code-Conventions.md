@@ -3,12 +3,10 @@ layout: default
 title: CAS - Code Conventions
 ---
 
-
 # Code Conventions
 Following the lead of well established projects such as Apache and Eclipse, all code in CAS will comply with the [Code Conventions for the Java](http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html) and additionally with the CAS specific conventions listed below. Javadoc should exist on all publicly exported class members and follow the [standard guidelines](http://java.sun.com/j2se/javadoc/writingdoccomments/index.html).
 
 The following document describes the set of coding conventions that are specific to the CAS project:
-
 
 ##Brackets
 All brackets should appear in compact form and are mandatory even for single line statements.

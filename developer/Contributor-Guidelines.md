@@ -5,7 +5,6 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
-
 ## Licensing
 All developers that contribute source to CAS must complete and file a Jasig
 [Individual Contributor License Agreement](https://wiki.jasig.org/x/u4WcAQ) (ICLA). This agreement provides legal
