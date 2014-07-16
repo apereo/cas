@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.security.cert.X509Certificate;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -39,14 +38,12 @@ public class SimpleHttpClientTests  {
 
     private SimpleHttpClient getHttpClient() {
         final SimpleHttpClient httpClient = new SimpleHttpClient();
-        httpClient.setConnectionTimeout(1000);
-        httpClient.setReadTimeout(1000);
         return httpClient;
     }
 
     @Test
     public void testOkayUrl() {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.jasig.org"));
+        assertTrue(this.getHttpClient().isValidEndPoint("http://www.apereo.org"));
     }
 
     @Test
@@ -62,10 +59,8 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClient client = this.getHttpClient();
-        client.setSSLSocketFactory(getFriendlyToAllSSLSocketFactory());
-        client.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        client.setAcceptableCodes(new int[] {200, 403});
+        final SimpleHttpClient client = new SimpleHttpClient(getFriendlyToAllSSLSocketFactory(),
+                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER, new int[] {200, 403});
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 

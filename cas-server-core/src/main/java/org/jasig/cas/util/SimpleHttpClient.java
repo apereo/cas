@@ -18,42 +18,45 @@
  */
 package org.jasig.cas.util;
 
-import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.AuthenticationStrategy;
+import org.apache.http.client.ConnectionBackoffStrategy;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultBackoffStrategy;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.HttpRequestFutureTask;
+import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -61,7 +64,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
+ * The type Simple http client.
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
@@ -83,7 +100,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(MAX_POOLED_CONNECTIONS);
+    private ExecutorService executorService = Executors.newFixedThreadPool(MAX_POOLED_CONNECTIONS);
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -100,60 +117,214 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     /**
      * The socket factory to be used when verifying the validity of the endpoint.
-     *
-     * @see #setSSLSocketFactory(SSLSocketFactory)
      */
-    private SSLConnectionSocketFactory sslSocketFactory = null;
+    private SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
 
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
-     *
-     * @see #setHostnameVerifier(HostnameVerifier)
      */
-    private X509HostnameVerifier hostnameVerifier = null;
-
-    private CloseableHttpClient httpClient = null;
+    private X509HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER;
 
     /** The credentials provider for endpoints that require authentication. */
     private CredentialsProvider credentialsProvider;
 
     /** The cookie store for authentication. */
     private CookieStore cookieStore;
-    
+
+    /** Interface for deciding whether a connection can be re-used for subsequent requests and should be kept alive. **/
+    private ConnectionReuseStrategy connectionReuseStrategy = new DefaultConnectionReuseStrategy();
+
     /**
-     * Note that changing this executor will affect all httpClients.  While not ideal, this change
-     * was made because certain ticket registries
-     * were persisting the HttpClient and thus getting serializable exceptions.
-     * @param executorService The executor service to send messages to end points.
+     * When managing a dynamic number of connections for a given route, this strategy assesses whether a
+     * given request execution outcome should result in a backoff
+     * signal or not, based on either examining the Throwable that resulted or by examining
+     * the resulting response (e.g. for its status code).
      */
-    public void setExecutorService(@NotNull final ExecutorService executorService) {
-        Assert.notNull(executorService);
-        EXECUTOR_SERVICE = executorService;
+    private ConnectionBackoffStrategy connectionBackoffStrategy = new DefaultBackoffStrategy();
+
+    /** Strategy interface that allows API users to plug in their own logic to control whether or not a retry
+     * should automatically be done, how many times it should be retried and so on.
+     */
+    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = new DefaultServiceUnavailableRetryStrategy();
+
+    /** Default headers to be sent. **/
+    private Collection<? extends Header> defaultHeaders = Collections.emptyList();
+
+    /** Default strategy implementation for proxy host authentication.**/
+    private AuthenticationStrategy proxyAuthenticationStrategy = new ProxyAuthenticationStrategy();
+
+    /** Determines whether circular redirects (redirects to the same location) should be allowed. **/
+    private boolean circularRedirectsAllowed = true;
+
+    /** Determines whether authentication should be handled automatically. **/
+    private boolean authenticationEnabled = false;
+
+    /** Determines whether redirects should be handled automatically. **/
+    private boolean redirectsEnabled = true;
+
+    private CloseableHttpClient httpClient = null;
+
+    /**
+     * Instantiates a new Simple http client.
+     */
+    public SimpleHttpClient() {
+        init();
     }
 
-    public void setCookieStore(final CookieStore cookieStore) {
-        this.cookieStore = cookieStore;
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param acceptableCodes the acceptable codes
+     */
+    public SimpleHttpClient(final int[] acceptableCodes) {
+        this.acceptableCodes = acceptableCodes;
+        init();
     }
-    
-    public void setCredentialsProvider(@NotNull final CredentialsProvider credentialsProvider) {
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param sslSocketFactory the ssl socket factory
+     */
+    public SimpleHttpClient(final SSLConnectionSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param readTimeout the read timeout
+     * @param connectionTimeout the connection timeout
+     */
+    public SimpleHttpClient(final int readTimeout, final int connectionTimeout) {
+        this.readTimeout = readTimeout;
+        this.connectionTimeout = connectionTimeout;
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param redirectsEnabled the redirects enabled
+     * @param circularRedirectsAllowed the circular redirects allowed
+     */
+    public SimpleHttpClient(final boolean redirectsEnabled, final boolean circularRedirectsAllowed) {
+        this.redirectsEnabled = redirectsEnabled;
+        this.circularRedirectsAllowed = circularRedirectsAllowed;
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param redirectsEnabled the redirects enabled
+     * @param readTimeout the read timeout
+     * @param connectionTimeout the connection timeout
+     * @param circularRedirectsAllowed the circular redirects allowed
+     */
+    public SimpleHttpClient(final boolean redirectsEnabled, final int readTimeout,
+                            final int connectionTimeout, final boolean circularRedirectsAllowed) {
+        this.redirectsEnabled = redirectsEnabled;
+        this.readTimeout = readTimeout;
+        this.connectionTimeout = connectionTimeout;
+        this.circularRedirectsAllowed = circularRedirectsAllowed;
+
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param sslSocketFactory the ssl socket factory
+     * @param hostnameVerifier the hostname verifier
+     * @param acceptableCodes the acceptable codes
+     */
+    public SimpleHttpClient(final SSLConnectionSocketFactory sslSocketFactory,
+                            final X509HostnameVerifier hostnameVerifier, final int[] acceptableCodes) {
+        this.sslSocketFactory = sslSocketFactory;
+        this.hostnameVerifier = hostnameVerifier;
+        this.acceptableCodes = acceptableCodes;
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
+     * @param executorService the executor service
+     * @param acceptableCodes the acceptable codes
+     * @param connectionTimeout the connection timeout
+     * @param readTimeout the read timeout
+     * @param redirectionStrategy the redirection strategy
+     * @param sslSocketFactory the ssl socket factory
+     * @param hostnameVerifier the hostname verifier
+     * @param credentialsProvider the credentials provider
+     * @param cookieStore the cookie store
+     * @param connectionReuseStrategy the connection reuse strategy
+     * @param connectionBackoffStrategy the connection backoff strategy
+     * @param serviceUnavailableRetryStrategy the service unavailable retry strategy
+     * @param defaultHeaders the default headers
+     * @param proxyAuthenticationStrategy the proxy authentication strategy
+     * @param circularRedirectsAllowed the circular redirects allowed
+     * @param authenticationEnabled the authentication enabled
+     * @param redirectsEnabled the redirects enabled
+     */
+    public SimpleHttpClient(final ExecutorService executorService, final int[] acceptableCodes,
+                            final int connectionTimeout, final int readTimeout,
+                            final RedirectStrategy redirectionStrategy,
+                            final SSLConnectionSocketFactory sslSocketFactory,
+                            final X509HostnameVerifier hostnameVerifier,
+                            final CredentialsProvider credentialsProvider,
+                            final CookieStore cookieStore, final ConnectionReuseStrategy connectionReuseStrategy,
+                            final ConnectionBackoffStrategy connectionBackoffStrategy,
+                            final ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy,
+                            final Collection<? extends Header> defaultHeaders,
+                            final AuthenticationStrategy proxyAuthenticationStrategy,
+                            final boolean circularRedirectsAllowed,
+                            final boolean authenticationEnabled,
+                            final boolean redirectsEnabled) {
+        this.executorService = executorService;
+        this.acceptableCodes = acceptableCodes;
+        this.connectionTimeout = connectionTimeout;
+        this.readTimeout = readTimeout;
+        this.redirectionStrategy = redirectionStrategy;
+        this.sslSocketFactory = sslSocketFactory;
+        this.hostnameVerifier = hostnameVerifier;
         this.credentialsProvider = credentialsProvider;
+        this.cookieStore = cookieStore;
+        this.connectionReuseStrategy = connectionReuseStrategy;
+        this.connectionBackoffStrategy = connectionBackoffStrategy;
+        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
+        this.defaultHeaders = defaultHeaders;
+        this.proxyAuthenticationStrategy = proxyAuthenticationStrategy;
+        this.circularRedirectsAllowed = circularRedirectsAllowed;
+        this.authenticationEnabled = authenticationEnabled;
+        this.redirectsEnabled = redirectsEnabled;
+
+        init();
     }
-    
+
     @Override
     public boolean sendMessageToEndPoint(@NotNull final HttpMessage message) {
+        Assert.notNull(this.httpClient);
+
         FutureRequestExecutionService service = null;
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Length", Integer.toString(message.getMessage().getBytes().length));
             request.addHeader("Content-Type", message.getContentType());
             
-            final StringEntity entity = new StringEntity(message.getMessage(), message.getContentType());
+            final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
-            
-            service = new FutureRequestExecutionService(this.httpClient, EXECUTOR_SERVICE);
- 
+
+            if (executorService.isTerminated()) {
+                LOGGER.error("Cannot execute http request. Executor service has terminated");
+                return false;
+            }
+            service = new FutureRequestExecutionService(this.httpClient, executorService);
+
             final HttpRequestFutureTask<String> task = service.execute(request,
-                    HttpClientContext.create(), new BasicResponseHandler()); 
+                    HttpClientContext.create(), new BasicResponseHandler());
                     
             if (message.isAsynchronous()) {
                 return true;
@@ -161,6 +332,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             
             return StringUtils.isNotBlank(task.get());
         } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
             return false;
         } finally {
             IOUtils.closeQuietly(service);
@@ -180,8 +352,11 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     @Override
     public boolean isValidEndPoint(final URL url) {
+        Assert.notNull(this.httpClient);
+
         CloseableHttpResponse response = null;
-               
+        HttpEntity entity = null;
+
         try {
             final HttpGet request = new HttpGet(url.toURI());
 
@@ -203,11 +378,12 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                 LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
                         value);
             }
-           
+
+            entity = response.getEntity();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
-            EntityUtils.consumeQuietly(response.getEntity());
+            EntityUtils.consumeQuietly(entity);
             IOUtils.closeQuietly(response);
            
         }
@@ -215,73 +391,12 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     }
 
     /**
-     * Set the acceptable HTTP status codes that we will use to determine if the
-     * response from the URL was correct.
-     *
-     * @param acceptableCodes an array of status code integers.
-     */
-    public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = acceptableCodes;
-    }
-
-    /**
-     * Sets a specified timeout value, in milliseconds, to be used when opening the endpoint url.
-     * @param connectionTimeout specified timeout value in milliseconds
-     */
-    public void setConnectionTimeout(final int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    /**
-     * Sets a specified timeout value, in milliseconds, to be used when reading from the endpoint url.
-     * @param readTimeout specified timeout value in milliseconds
-     */
-    public void setReadTimeout(final int readTimeout) {
-        this.readTimeout = readTimeout;
-    }
-
-    /**
-     * Determines the behavior on receiving 3xx responses from HTTP endpoints.
-     *
-     * @param follow True to follow 3xx redirects (default), false otherwise.
-     */
-    public void setRedirectionStrategy(final RedirectStrategy follow) {
-        this.redirectionStrategy = follow;
-    }
-
-    /**
-     * Set the SSL socket factory be used by the URL when submitting
-     * request to check for URL endpoint validity.
-     * @param factory ssl socket factory instance to use
-     * @see #isValidEndPoint(URL)
-     */
-    public void setSSLSocketFactory(final SSLConnectionSocketFactory factory) {
-        this.sslSocketFactory = factory;
-    }
-
-    /**
-     * Set the hostname verifier be used by the URL when submitting
-     * request to check for URL endpoint validity.
-     * @param verifier hostname verifier instance to use
-     * @see #isValidEndPoint(URL)
-     */
-    public void setHostnameVerifier(final X509HostnameVerifier verifier) {
-        this.hostnameVerifier = verifier;
-    }
-
-    /**
      * Shutdown the executor service and close the http client.
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
-        EXECUTOR_SERVICE.shutdown();
+        executorService.shutdown();
         IOUtils.closeQuietly(this.httpClient);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        destroy();
     }
 
     /**
@@ -289,13 +404,21 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      *
      * @return the http client
      */
-    @PostConstruct
-    protected CloseableHttpClient initializeHttpClient() {
+    private CloseableHttpClient init() {
         try {
-            final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager();
+
+            final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+            final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
+
+            final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", plainsf)
+                    .register("https", sslsf)
+                    .build();
+
+            final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
             connMgmr.setMaxTotal(MAX_POOLED_CONNECTIONS);
             connMgmr.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
-            
+
             final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
             final HttpRoute httpRoute = new HttpRoute(httpHost);
             connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
@@ -305,20 +428,28 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                     .setConnectTimeout(this.connectionTimeout)
                     .setConnectionRequestTimeout(this.connectionTimeout)
                     .setStaleConnectionCheckEnabled(true)
-                    .setCircularRedirectsAllowed(true)
+                    .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
+                    .setRedirectsEnabled(this.redirectsEnabled)
+                    .setAuthenticationEnabled(this.authenticationEnabled)
                     .build();
             
             final HttpClientBuilder builder = HttpClients.custom()
+                    .setConnectionManager(connMgmr)
+                    .setDefaultRequestConfig(requestConfig)
                     .setSSLSocketFactory(this.sslSocketFactory)
                     .setHostnameVerifier(this.hostnameVerifier)
                     .setRedirectStrategy(this.redirectionStrategy)
-                    .setDefaultRequestConfig(requestConfig)
-                    .setConnectionManager(connMgmr)
                     .setDefaultCredentialsProvider(this.credentialsProvider)
                     .setDefaultCookieStore(this.cookieStore)
+                    .setConnectionReuseStrategy(this.connectionReuseStrategy)
+                    .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
+                    .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
+                    .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
+                    .setDefaultHeaders(this.defaultHeaders)
                     .useSystemProperties();
-                    
-            this.httpClient  = builder.build();
+
+
+            this.httpClient = builder.build();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
