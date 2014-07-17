@@ -24,13 +24,16 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Scott Battaglia
@@ -106,7 +110,7 @@ public final class TestUtils {
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url));
+            return new HttpBasedServiceCredential(new URL(url), TestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -118,6 +122,18 @@ public final class TestUtils {
 
     public static Principal getPrincipal(final String name) {
         return new SimplePrincipal(name);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        final RegisteredServiceImpl s = new RegisteredServiceImpl();
+        s.setServiceId(id);
+        s.setEvaluationOrder(1);
+        s.setName("Test registered service");
+        s.setDescription("Registered service description");
+        s.setEnabled(true);
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(new Random().nextInt(32));
+        return s;
     }
 
     public static Service getService() {
