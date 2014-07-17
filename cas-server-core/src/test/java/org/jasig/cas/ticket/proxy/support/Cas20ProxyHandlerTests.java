@@ -18,15 +18,17 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
-
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.URL;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Scott Battaglia
@@ -47,13 +49,13 @@ public class Cas20ProxyHandlerTests {
     @Test
     public void testValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
-            new URL("http://www.rutgers.edu/")), "proxyGrantingTicketId"));
+            new URL("http://www.rutgers.edu/"), TestUtils.getRegisteredService("https://some.app.edu")), "proxyGrantingTicketId"));
     }
 
     @Test
     public void testValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
-            new URL("http://www.rutgers.edu/?test=test")),
+            new URL("http://www.rutgers.edu/?test=test"), TestUtils.getRegisteredService("https://some.app.edu")),
             "proxyGrantingTicketId"));
     }
 
@@ -63,6 +65,6 @@ public class Cas20ProxyHandlerTests {
         httpClient.setAcceptableCodes(new int[] {900});
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
-            "http://www.rutgers.edu")), "proxyGrantingTicketId"));
+            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu")), "proxyGrantingTicketId"));
     }
 }
