@@ -18,29 +18,22 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import java.net.URL;
-import java.nio.BufferOverflowException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.SerializationException;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.ClassSerializer;
 import com.esotericsoftware.kryo.serialize.DateSerializer;
-
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
-
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
@@ -52,6 +45,14 @@ import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.nio.BufferOverflowException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -117,6 +118,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
         kryo.register(URL.class, new URLSerializer(kryo));
+        kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer(kryo));
+        kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer(kryo));
 
         // Register other types
         if (serializerMap != null) {
