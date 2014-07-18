@@ -64,6 +64,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -251,6 +253,20 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     /**
      * Instantiates a new Simple http client.
      *
+     * @param sslSocketFactory the ssl socket factory
+     * @param readTimeout the read timeout
+     * @param connectionTimeout the connection timeout
+     */
+    public SimpleHttpClient(final SSLConnectionSocketFactory sslSocketFactory, final int readTimeout, final int connectionTimeout) {
+        this.sslSocketFactory = sslSocketFactory;
+        this.readTimeout = readTimeout;
+        this.connectionTimeout = connectionTimeout;
+        init();
+    }
+
+    /**
+     * Instantiates a new Simple http client.
+     *
      * @param executorService the executor service
      * @param acceptableCodes the acceptable codes
      * @param connectionTimeout the connection timeout
@@ -397,6 +413,85 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     public void destroy() throws Exception {
         executorService.shutdown();
         IOUtils.closeQuietly(this.httpClient);
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Note that changing this executor will affect all httpClients.  While not ideal, this change
+     * was made because certain ticket registries
+     * were persisting the HttpClient and thus getting serializable exceptions.
+     * @param executorService The executor service to send messages to end points.
+     */
+    @Deprecated
+    public void setExecutorService(@NotNull final ExecutorService executorService) {
+        LOGGER.warn("setExecutorService() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Set the acceptable HTTP status codes that we will use to determine if the
+     * response from the URL was correct.
+     *
+     * @param acceptableCodes an array of status code integers.
+     */
+    @Deprecated
+    public void setAcceptableCodes(final int[] acceptableCodes) {
+        LOGGER.warn("setAcceptableCodes() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Sets a specified timeout value, in milliseconds, to be used when opening the endpoint url.
+     * @param connectionTimeout specified timeout value in milliseconds
+     */
+    @Deprecated
+    public void setConnectionTimeout(final int connectionTimeout) {
+        LOGGER.warn("setConnectionTimeout() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Sets a specified timeout value, in milliseconds, to be used when reading from the endpoint url.
+     * @param readTimeout specified timeout value in milliseconds
+     */
+    @Deprecated
+    public void setReadTimeout(final int readTimeout) {
+        LOGGER.warn("setReadTimeout() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Determines the behavior on receiving 3xx responses from HTTP endpoints.
+     *
+     * @param follow True to follow 3xx redirects (default), false otherwise.
+     */
+    @Deprecated
+    public void setFollowRedirects(final boolean follow) {
+        LOGGER.warn("setFollowRedirects() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Set the SSL socket factory be used by the URL when submitting
+     * request to check for URL endpoint validity.
+     * @param factory ssl socket factory instance to use
+     * @see #isValidEndPoint(URL)
+     */
+    @Deprecated
+    public void setSSLSocketFactory(final SSLSocketFactory factory) {
+        LOGGER.warn("setSSLSocketFactory() is deprecated and has no effect. Consider using constructors instead.");
+    }
+
+    /**
+     * @deprecated As of 4.1
+     * Set the hostname verifier be used by the URL when submitting
+     * request to check for URL endpoint validity.
+     * @param verifier hostname verifier instance to use
+     * @see #isValidEndPoint(URL)
+     */
+    @Deprecated
+    public void setHostnameVerifier(final HostnameVerifier verifier) {
+        LOGGER.warn("setHostnameVerifier() is deprecated and has no effect. Consider using constructors instead.");
     }
 
     /**
