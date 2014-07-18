@@ -132,7 +132,7 @@
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
     <bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
-          p:httpClient-ref="httpClient"
+          p:httpClient-ref="trustStoreProxyHttpClient"
           p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
 
     <!-- ADVISORS -->
