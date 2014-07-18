@@ -34,7 +34,7 @@ import org.springframework.webflow.test.MockRequestContext;
 /**
  *
  * @author John Gasper
- * @since 3.1
+ * @since 4.1
  *
  */
 public class ThemeBasedViewResolverTests {
