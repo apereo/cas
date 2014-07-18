@@ -519,10 +519,39 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
       ...
 </bean>
 {% endhighlight %}  
+ 
+Next, you have to explicitly define an LDAP-specific response handler in your `Authenticator`. For instance, for an OpenLDAP directory:
+
+{% highlight xml %}
+<bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+	c:resolver-ref="dnResolver"
+	c:handler-ref="authHandler">
+	<property name="authenticationResponseHandlers">
+        <util:list>
+            <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+        </util:list>
+</property>
+</bean>
+{% endhighlight %}  
+
+Use `ActiveDirectoryAuthenticationResponseHandler` instead for Microsoft Active Directory.
+
+Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `BindAuthenticationHandler`:
+
+{% highlight xml %}
+<bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+	p:connectionFactory-ref="bindPooledLdapConnectionFactory">
+	<property name="authenticationControls">
+        <util:list>
+                <bean class="org.ldaptive.control.PasswordPolicyControl" />
+        </util:list>
+	</property>
+</bean>
+{% endhighlight %}  
 
 ### Components
 
-#### `DefaultAccountStateHander`
+#### `DefaultAccountStateHandler`
 The default account state handler, that calculates the password expiration warning period, maps LDAP errors to the CAS workflow.
 
 #### `OptionalWarningAccountStateHandler`

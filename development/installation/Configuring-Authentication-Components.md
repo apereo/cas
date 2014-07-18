@@ -70,8 +70,7 @@ used to support a multi-factor authentication situation, for example, where user
 required but an additional OTP is optional.
 
 The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
-straightforward multi-factor authentication case where username/password authentication is required and an additional
-OTP credential is optional; in both cases principals are resolved from LDAP.
+straightforward multi-factor authentication case where username/password authentication is required and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
 
 {% highlight xml %}
 <bean id="passwordHandler"
@@ -259,7 +258,7 @@ See the [X.509 principal resolver](#x_509) section for more information.
 Creates a principal ID from the certificate subject distinguished name.
 
 
-### PrincipalResolver Versus AuthenticationHandler
+### PrincipalResolver vs. AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.
 If the principal that is resolved by the authentication handler
@@ -531,10 +530,8 @@ default in some cases to provide backward compatibility with CAS 3.x.
 
 
 ######`RequiredHandlerAuthenticationPolicyFactory`
-Factory that produces policy objects based on the security context of the service requesting a ticket. In particular
-the security context is based on the required authentication handlers that must have successfully validated credentials
-in order to access the service. A clarifying example is helpful; assume the following authentication components
-are defined in `deployerConfigContext.xml`:
+Factory that produces policy objects based on the security context of the service requesting a ticket. In particular the security context is based on the required authentication handlers that must have successfully validated credentials in order to access the service. A clarifying example is helpful; assume the following authentication components are defined in `deployerConfigContext.xml`:
+
 {% highlight xml %}
 <bean id="ldapHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
@@ -550,8 +547,8 @@ are defined in `deployerConfigContext.xml`:
       class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
   <constructor-arg>
     <map>
-      <entry key-ref="passwordHandler" />
-      <entry key-ref="oneTimePasswordHandler" />
+      <entry key-ref="passwordHandler" value="#{ null }" />
+      <entry key-ref="oneTimePasswordHandler" value="#{ null }" />
     </map>
   </constructor-arg>
 </bean>
