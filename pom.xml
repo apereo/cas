@@ -922,7 +922,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>${maven-versions.plugin.version}</version>
+        <version>${maven-versions-plugin.version}</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -972,7 +972,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-		    <version>${maven-javadoc-plugin.version></version>
+		    <version>${maven-javadoc-plugin.version}</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>

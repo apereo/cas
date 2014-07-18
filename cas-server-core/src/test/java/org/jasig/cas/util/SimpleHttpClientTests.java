@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.util;
 
+import static org.junit.Assert.*;
+
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Test;
 
