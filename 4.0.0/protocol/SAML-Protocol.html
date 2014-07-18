@@ -289,11 +289,6 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
       <span class="na">p:alternateUsername</span><span class="s">&quot;mail&quot;</span>
       <span class="na">p:httpClient-ref=</span><span class="s">&quot;httpClient&quot;</span> <span class="nt">/&gt;</span>
 
-<p>
-As an optional step, you can configure an <code>alternateUsername</code> to be send to Google in the SAML reply.
-This <code>alternameUsername</code> can be mapped in XML to a CAS principal attribute.	
-</p>
-
 <span class="nt">&lt;util:list</span> <span class="na">id=</span><span class="s">&quot;argumentExtractors&quot;</span><span class="nt">&gt;</span>
 	<span class="nt">&lt;ref</span> <span class="na">bean=</span><span class="s">&quot;casArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
 	<span class="nt">&lt;ref</span> <span class="na">bean=</span><span class="s">&quot;samlArgumentExtractor&quot;</span> <span class="nt">/&gt;</span>
@@ -308,6 +303,11 @@ This <code>alternameUsername</code> can be mapped in XML to a CAS principal attr
       <span class="na">p:location=</span><span class="s">&quot;classpath:public.key&quot;</span>
       <span class="na">p:algorithm=</span><span class="s">&quot;RSA&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
+
+<p>
+As an optional step, you can configure an <code>alternateUsername</code> to be send to Google in the SAML reply.
+This <code>alternameUsername</code> can be mapped in XML to a CAS principal attribute.	
+</p>
 
 <p>Replace the <code>public.key</code> and <code>private.key</code> with the names of your key files. If you are using DSA instead of RSA, change the algorithm as appropriate.</p>
 
