@@ -24,8 +24,10 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -74,15 +76,27 @@ public class ThemeBasedViewResolver extends InternalResourceViewResolver {
         final WebApplicationService service = (WebApplicationService) WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final String themeId = service != null && registeredService != null && StringUtils.hasText(registeredService.getTheme())
-                ? registeredService.getTheme() : defaultThemeId;
+        final String themeId = service != null && registeredService != null && registeredService.isEnabled()
+                && StringUtils.hasText(registeredService.getTheme()) ? registeredService.getTheme() : defaultThemeId;
 
-        final String prefix = String.format("%s/%s/ui/", pathPrefix, themeId);
-        LOGGER.debug("Prefix {} set for service {} with theme {}", prefix, service, themeId);
+        final String themePrefix = String.format("%s/%s/ui/", pathPrefix, themeId);
+        LOGGER.debug("Prefix {} set for service {} with theme {}", themePrefix, service, themeId);
 
-        //Set the prefix based on the retrieved themeId & resolve the view.
-        super.setPrefix(prefix);
-        final AbstractUrlBasedView view = super.buildView(viewName);
+        //Build up the view like the base classes do, but we need to forcefully set the prefix for each request.
+        //From UrlBasedViewResolver.buildView
+        final InternalResourceView view = (InternalResourceView) BeanUtils.instantiateClass(getViewClass());
+        view.setUrl(themePrefix + viewName + getSuffix());
+        final String contentType = getContentType();
+        if (contentType != null) {
+            view.setContentType(contentType);
+        }
+        view.setRequestContextAttribute(getRequestContextAttribute());
+        view.setAttributesMap(getAttributesMap());
+
+        //From InternalResourceViewResolver.buildView
+        view.setAlwaysInclude(false);
+        view.setExposeContextBeansAsAttributes(false);
+        view.setPreventDispatchLoop(true);
 
         LOGGER.debug("View resolved: {}", view.getUrl());
 
