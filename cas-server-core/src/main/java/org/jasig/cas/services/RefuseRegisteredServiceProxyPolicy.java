@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.net.URL;
 
 /**
@@ -39,4 +41,26 @@ public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServi
         return false;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof RegisteredServiceProxyPolicy)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
+        return bldr.appendSuper(super.hashCode()).toHashCode();
+    }
 }
