@@ -155,7 +155,7 @@
                     <property name="evaluationOrder" value="100"/>
                     <property name="proxyPolicy">
                         <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                            c:pgtUrlPattern="^https://proxy.service.edu" />
+                            c:pgtUrlPattern="^https://.+" />
                     </property>
                 </bean>
             </list>
