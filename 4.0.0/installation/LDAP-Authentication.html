@@ -572,7 +572,7 @@ ldap.authn.format=%s@example.com
         <span class="na">p:accountStateHandler-ref=</span><span class="s">&quot;accountStateHandler&quot;</span> <span class="nt">/&gt;</span>
 
   <span class="c">&lt;!-- This component is suitable for most cases but can be replaced with a custom component for special cases. --&gt;</span>
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;accountStateHandler&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.support.DefaultAccountStateHander&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;accountStateHandler&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.support.DefaultAccountStateHandler&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
 
 <p>Next, in your <code>ldapAuthenticationHandler</code> bean, configure the password policy configuration above:</p>
@@ -587,7 +587,7 @@ ldap.authn.format=%s@example.com
 
 <h3 id="components">Components</h3>
 
-<h4 id="defaultaccountstatehander"><code>DefaultAccountStateHander</code></h4>
+<h4 id="defaultaccountstatehandler"><code>DefaultAccountStateHandler</code></h4>
 <p>The default account state handler, that calculates the password expiration warning period, maps LDAP errors to the CAS workflow.</p>
 
 <h4 id="optionalwarningaccountstatehandler"><code>OptionalWarningAccountStateHandler</code></h4>
