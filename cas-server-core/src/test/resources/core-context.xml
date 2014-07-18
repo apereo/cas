@@ -86,7 +86,10 @@
                     <property name="name" value="Test Service"/>
                     <property name="serviceId" value="test$"/>
                     <property name="evaluationOrder" value="1"/>
-                    <property name="allowedToProxy" value="true" />
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -139,7 +142,21 @@
                     <property name="name" value="Test Regex Jasig Service"/>
                     <property name="serviceId" value="^http://www.jasig.org.+"/>
                     <property name="evaluationOrder" value="10"/>
-                    <property name="allowedToProxy" value="true" />
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestProxyService"/>
+                    <property name="serviceId" value="proxyService"/>
+                    <property name="evaluationOrder" value="100"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern="^https://proxy.service.edu" />
+                    </property>
                 </bean>
             </list>
         </property>
