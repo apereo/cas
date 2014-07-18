@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+package org.jasig.cas.authentication;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -38,9 +38,9 @@ import java.security.KeyStore;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class TrustedProxyAuthenticationTrustStoreSSLSocketFactory extends SSLConnectionSocketFactory {
+public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrustedProxyAuthenticationTrustStoreSSLSocketFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrustedProxyAuthenticationTrustStoreSslSocketFactory.class);
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
@@ -49,7 +49,7 @@ public final class TrustedProxyAuthenticationTrustStoreSSLSocketFactory extends 
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      */
-    public TrustedProxyAuthenticationTrustStoreSSLSocketFactory(final File trustStoreFile, final String trustStorePassword) {
+    public TrustedProxyAuthenticationTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword,
                 SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER,
                 KeyStore.getDefaultType());
@@ -62,7 +62,7 @@ public final class TrustedProxyAuthenticationTrustStoreSSLSocketFactory extends 
      * @param hostnameVerifier the hostname verifier
      * @param trustStoreType the trust store type
      */
-    public TrustedProxyAuthenticationTrustStoreSSLSocketFactory(final File trustStoreFile, final String trustStorePassword,
+    public TrustedProxyAuthenticationTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
                                                                 final X509HostnameVerifier hostnameVerifier, final String trustStoreType) {
         super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType), hostnameVerifier);
     }
@@ -95,7 +95,7 @@ public final class TrustedProxyAuthenticationTrustStoreSSLSocketFactory extends 
                     .build();
 
             LOGGER.debug("Loaded [{}] entries in truststore [{}] for proxy authentication", trustStore.size(),
-                    trustStoreFile);
+                    trustStoreFile.getCanonicalFile());
 
             return sslcontext;
 
