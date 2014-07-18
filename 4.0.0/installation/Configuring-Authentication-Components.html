@@ -562,8 +562,8 @@ are defined in <code>deployerConfigContext.xml</code>:</p>
       <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.PolicyBasedAuthenticationManager&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;constructor-arg&gt;</span>
     <span class="nt">&lt;map&gt;</span>
-      <span class="nt">&lt;entry</span> <span class="na">key-ref=</span><span class="s">&quot;passwordHandler&quot;</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;entry</span> <span class="na">key-ref=</span><span class="s">&quot;oneTimePasswordHandler&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;entry</span> <span class="na">key-ref=</span><span class="s">&quot;passwordHandler&quot;</span> <span class="na">value=</span><span class="s">&quot;#{ null }&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;entry</span> <span class="na">key-ref=</span><span class="s">&quot;oneTimePasswordHandler&quot;</span> <span class="na">value=</span><span class="s">&quot;#{ null }&quot;</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;/map&gt;</span>
   <span class="nt">&lt;/constructor-arg&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>

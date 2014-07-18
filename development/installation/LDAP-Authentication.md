@@ -11,7 +11,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
      <version>${cas.version}</version>
-</dependency>D
+</dependency>
 {% endhighlight %}
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
