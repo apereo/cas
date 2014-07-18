@@ -269,7 +269,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         //CAS-1019
         final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
         if(authns.size() > 1) {
-            if (!registeredService.isAllowedToProxy()) {
+            if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
                 final String message = String.
                         format("ServiceManagement: Proxy attempt by service [%s] (registered service [%s]) is not allowed.",
                         service.getId(), registeredService.toString());
@@ -369,7 +369,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
         
-        if (!registeredService.isAllowedToProxy()) {
+        if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
