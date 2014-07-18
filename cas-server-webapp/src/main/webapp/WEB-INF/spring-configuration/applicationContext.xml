@@ -81,7 +81,7 @@
           p:targetObject-ref="servicesManager"
           p:targetMethod="reload"/>
 
-    <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
           p:jobDetail-ref="serviceRegistryReloaderJobDetail"
           p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>

@@ -39,7 +39,10 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -104,7 +107,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new SimplePrincipal(PRINCIPAL));
-        
+         
         final Service service1 = TestUtils.getService(SVC1_ID);
         final ServiceTicket stMock = createMockServiceTicket(ST_ID, service1); 
         
@@ -133,9 +136,9 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
         
         //Mock ServicesManager
-        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, false);
-        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, true); 
-        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, true); 
+        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
+        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true)); 
+        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, getServiceProxyPolicy(true)); 
         
         final ServicesManager smMock = mock(ServicesManager.class);
         when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service1.getId())))).thenReturn(mockRegSvc1);
@@ -218,12 +221,19 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         return stMock;
     }
     
+    private RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
+        if (!canProxy) {
+            return new RefuseRegisteredServiceProxyPolicy();
+        }
+        
+        return new RegexMatchingRegisteredServiceProxyPolicy(".*");
+    }
     private RegisteredService createMockRegisteredService(final String svcId,
-            final boolean enabled, final boolean canProxy) {
+            final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.isEnabled()).thenReturn(enabled);
-        when(mockRegSvc.isAllowedToProxy()).thenReturn(canProxy);
+        when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
         return mockRegSvc;
