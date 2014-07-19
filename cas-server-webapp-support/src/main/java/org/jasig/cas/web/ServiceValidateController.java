@@ -114,15 +114,9 @@ public class ServiceValidateController extends DelegateController {
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
-                
-                final HttpBasedServiceCredential credential = new HttpBasedServiceCredential(new URL(pgtUrl));
-                if (registeredService.getProxyPolicy().isAllowedProxyCallbackUrl(credential.getCallbackUrl())) {
-                    return credential;                            
-                }
-                
-                logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]", registeredService, pgtUrl);
+                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
+                logger.error("Error constructing pgtUrl", e);
             }
         }
 
