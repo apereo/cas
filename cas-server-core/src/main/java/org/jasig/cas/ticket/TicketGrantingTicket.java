@@ -35,10 +35,10 @@ import java.util.Map;
  */
 public interface TicketGrantingTicket extends Ticket {
 
-    /** The prefix to use when generating an id for a TicketGrantingTicket. */
+    /** The prefix to use when generating an id for a Ticket Granting Ticket. */
     String PREFIX = "TGT";
 
-    /** The prefix to use when generating an id for a proxy granting ticket. */
+    /** The prefix to use when generating an id for a Proxy Granting Ticket. */
     String PROXY_GRANTING_TICKET_PREFIX = "PGT";
 
     /**
