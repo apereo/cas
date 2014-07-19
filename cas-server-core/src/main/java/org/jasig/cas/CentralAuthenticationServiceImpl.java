@@ -300,7 +300,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
-        final String type = authentications.size() == 1 ? "service" : "proxy";
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
         final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
         final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(ticketId, service,
@@ -309,8 +308,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
         final String principalId = authentications.get(authentications.size() - 1).getPrincipal().getId();
-        logger.info("Granted {} ticket [{}] for service [{}] for user [{}]",
-                type, serviceTicket.getId(), service.getId(), principalId);
+        logger.info("Granted ticket [{}] for service [{}] for user [{}]",
+                serviceTicket.getId(), service.getId(), principalId);
 
         return serviceTicket.getId();
     }
