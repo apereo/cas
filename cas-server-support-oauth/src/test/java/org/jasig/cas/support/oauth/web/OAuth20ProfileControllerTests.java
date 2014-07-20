@@ -18,7 +18,10 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -131,9 +134,22 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
+
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
+
+        // array items order may be different in java 1.8
+        assertThat(mockResponse.getContentAsString(), anyOf(is(
+                "{\"id\":\"" + ID + "\",\"attributes\":[" +
+                        "{\"" + NAME + "\":\"" + VALUE + "\"}," +
+                        "{\"" + NAME2 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}" +
+                        "]}"
+        ), is(
+                "{\"id\":\"" + ID + "\",\"attributes\":[" +
+                        "{\"" + NAME2 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}," +
+                        "{\"" + NAME + "\":\"" + VALUE + "\"}" +
+                        "]}"
+        )));
+
     }
 }
