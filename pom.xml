@@ -554,6 +554,21 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 
   <dependencyManagement>
     <dependencies>
+      <!-- Add LDAP (sgregory BEGIN) -->
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-support-ldap</artifactId>
+        <version>${cas.version}</version>
+      </dependency>
+      <!-- Add LDAP (sgregory END) -->
+      <!-- Oauth Dependencies (sgregory BEGIN) -->
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-support-oauth</artifactId>
+        <version>${cas.version}</version>
+      </dependency>
+      <!-- Oauth Dependencies (sgregory END) -->
+
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
