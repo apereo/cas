@@ -95,10 +95,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
+        final String approvalPrompt = service.getApprovalPrompt();
         // keep info in session
         final HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
         session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getName());
+        session.setAttribute(OAuthConstants.APPROVAL_PROMPT, approvalPrompt);
         session.setAttribute(OAuthConstants.OAUTH20_STATE, state);
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
