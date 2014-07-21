@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import javax.security.auth.login.FailedLoginException;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.SimpleHttpClient;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
 
@@ -61,11 +60,6 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     public void testRejectsInProperCertificateCredentials() throws Exception {
         this.authenticationHandler.authenticate(
                 TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
-    }
-
-    @Test(expected = FailedLoginException.class)
-    public void testRejectsNonHttpsCredentials() throws Exception {
-        this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
     }
 
     @Test
