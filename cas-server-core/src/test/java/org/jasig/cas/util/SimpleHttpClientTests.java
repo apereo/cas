@@ -18,9 +18,7 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
-import java.security.cert.X509Certificate;
+import org.junit.Test;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -28,8 +26,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -47,7 +47,7 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testOkayUrl() {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.jasig.org"));
+        assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test

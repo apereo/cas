@@ -468,8 +468,7 @@ button {font-size:1em;}
     th.th10, td.td10 {width:102px; text-align:right !important;}
     
 	.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
-	.actions {margin:1.5em 0;}
-	#allowedAttributes {height:150px;}			
+	.actions {margin:1.5em 0;}		
 }
 
 /* Container that holds the error messages on the services manage page
