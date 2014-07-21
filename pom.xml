@@ -1019,7 +1019,7 @@
     <joda-time.version>2.2</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
-    <jackson.databind.version>2.2.0</jackson.databind.version>
+    <jackson.databind.version>2.2.2</jackson.databind.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
