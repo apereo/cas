@@ -77,10 +77,19 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
 
+        final String approvalPrompt = (String) session.getAttribute(OAuthConstants.APPROVAL_PROMPT);
+        logger.debug("approvalPrompt : {}", approvalPrompt);
+        session.removeAttribute(OAuthConstants.APPROVAL_PROMPT);
+
+        if (approvalPrompt != null && StringUtils.equals(approvalPrompt, "auto")) {
+            return OAuthUtils.redirectTo(callbackUrl);
+        }
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
         logger.debug("serviceName : {}", serviceName);
         model.put("serviceName", serviceName);
+
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
+
     }
 }
