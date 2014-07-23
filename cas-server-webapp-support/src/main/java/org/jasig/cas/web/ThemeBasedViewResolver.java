@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 /**
  * ThemeBasedViewResolver is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
- * the standard views (casLoginView.jsp, casLogoutView.jsp etc.
+ * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
  *
  * @author John Gasper
  * @since 4.1
