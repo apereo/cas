@@ -18,14 +18,16 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.aspectj.lang.JoinPoint;
 import com.github.inspektr.common.spi.PrincipalResolver;
+import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.AopUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,29 +44,70 @@ import javax.validation.constraints.NotNull;
  */
 public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
+    /** Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
+
     @NotNull
     private final TicketRegistry ticketRegistry;
 
+    /**
+     * Instantiates a new ticket or credential principal resolver.
+     *
+     * @param ticketRegistry the ticket registry
+     */
     public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 
+    @Override
     public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
+    @Override
     public String resolveFrom(final JoinPoint joinPoint, final Exception retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
+    @Override
     public String resolve() {
         return UNKNOWN_USER;
     }
 
+    /**
+     * Resolve the principal from the join point given.
+     *
+     * @param joinPoint the join point
+     * @return the principal id, or {@link PrincipalResolver#UNKNOWN_USER}
+     */
     protected String resolveFromInternal(final JoinPoint joinPoint) {
+        final StringBuilder builder = new StringBuilder();
+
         final Object arg1 = joinPoint.getArgs()[0];
+        if (arg1.getClass().isArray()) {
+            final Object[] args1AsArray = (Object[]) arg1;
+            for (final Object arg: args1AsArray) {
+                builder.append(resolveArgument(arg));
+            }
+        } else {
+            builder.append(resolveArgument(arg1));
+        }
+
+        return builder.toString();
+
+    }
+
+    /**
+     * Resolve the join point argument.
+     *
+     * @param arg1 the arg
+     * @return the resolved string
+     */
+    private String resolveArgument(final Object arg1) {
+        LOGGER.debug("Resolving argument [{}] for audit", arg1.getClass().getSimpleName());
+
         if (arg1 instanceof Credential) {
-           return arg1.toString();
+            return arg1.toString();
         } else if (arg1 instanceof String) {
             final Ticket ticket = this.ticketRegistry.getTicket((String) arg1);
             if (ticket instanceof ServiceTicket) {
@@ -74,6 +117,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
                 return tgt.getAuthentication().getPrincipal().getId();
             }
+            LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         } else {
             final SecurityContext securityContext = SecurityContextHolder.getContext();
             if (securityContext != null) {
@@ -84,6 +128,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 }
             }
         }
+        LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);
         return UNKNOWN_USER;
     }
 }

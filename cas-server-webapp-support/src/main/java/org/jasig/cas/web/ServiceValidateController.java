@@ -18,16 +18,17 @@
  */
 package org.jasig.cas.web;
 
-import java.net.URL;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketValidationException;
@@ -40,6 +41,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
  * <p>
@@ -50,22 +58,23 @@ import org.springframework.web.servlet.ModelAndView;
  * SAML, ...).
  *
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.0
  */
 public class ServiceValidateController extends DelegateController {
-
+    /** Constant representing the Assertion in the cas validation model. */
+    private static final String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
+    
     /** View if Service Ticket Validation Fails. */
-    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
+    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
     /** View if Service Ticket Validation Succeeds. */
-    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "casServiceSuccessView";
-
-    /** Constant representing the PGTIOU in the model. */
-    private static final String MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
-
-    /** Constant representing the Assertion in the model. */
-    private static final String MODEL_ASSERTION = "assertion";
-
+    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
+    
+    /** Implementation of Service Manager. */
+    @NotNull
+    private ServicesManager servicesManager;
+    
     /** The CORE which we will delegate all requests to. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
@@ -94,15 +103,18 @@ public class ServiceValidateController extends DelegateController {
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
      *
+     * @param service the webapp service requesting proxy
      * @param request the HttpServletRequest object.
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credential getServiceCredentialsFromRequest(final HttpServletRequest request) {
-        final String pgtUrl = request.getParameter("pgtUrl");
+    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
+        final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
-                return new HttpBasedServiceCredential(new URL(pgtUrl));
+                final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+                verifyRegisteredServiceProperties(registeredService, service);
+                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
                 logger.error("Error constructing pgtUrl", e);
             }
@@ -111,6 +123,12 @@ public class ServiceValidateController extends DelegateController {
         return null;
     }
 
+    /**
+     * Inits the binder with the required fields. <code>renew</code> is required.
+     *
+     * @param request the request
+     * @param binder the binder
+     */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         binder.setRequiredFields("renew");
     }
@@ -122,24 +140,29 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            logger.debug(String.format("Could not process request; Service: %s, Service Ticket Id: %s", service, serviceTicketId));
-            return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
+            logger.debug("Could not identify service and/or service ticket. Service: {}, Service ticket id: {}", service, serviceTicketId);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
+                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null);
         }
 
         try {
-            final Credential serviceCredential = getServiceCredentialsFromRequest(request);
+            final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
             String proxyGrantingTicketId = null;
-
-            // XXX should be able to validate AND THEN use
+            
             if (serviceCredential != null) {
                 try {
-                    proxyGrantingTicketId = this.centralAuthenticationService
-                        .delegateTicketGrantingTicket(serviceTicketId,
+                    proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
                 } catch (final AuthenticationException e) {
-                    logger.info("Failed to authenticate " + serviceCredential);
+                    logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
-                    logger.error("TicketException generating ticket for: " + serviceCredential, e);
+                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                }
+                
+                if (StringUtils.isEmpty(proxyGrantingTicketId)) {
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            new Object[] {serviceCredential.getId()});
                 }
             }
 
@@ -151,43 +174,56 @@ public class ServiceValidateController extends DelegateController {
             binder.bind(request);
 
             if (!validationSpecification.isSatisfiedBy(assertion)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy validation specification.");
+                logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null);
+            }
+
+            String proxyIou = null;
+            if (serviceCredential != null && proxyGrantingTicketId != null && this.proxyHandler.canHandle(serviceCredential)) {
+                proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
+                if (StringUtils.isEmpty(proxyIou)) {
+                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            new Object[] {serviceCredential.getId()});
                 }
-                return generateErrorView("INVALID_TICKET", "INVALID_TICKET_SPEC", null);
             }
 
             onSuccessfulValidation(serviceTicketId, assertion);
-
-            final ModelAndView success = new ModelAndView(this.successView);
-            success.addObject(MODEL_ASSERTION, assertion);
-
-            if (serviceCredential != null && proxyGrantingTicketId != null) {
-                final String proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
-                success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
-            }
-
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Successfully validated service ticket [%s] for service [%s]",
-                        serviceTicketId, service.getId()));
-            }
-
-            return success;
+            logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+            return generateSuccessView(assertion, proxyIou);
         } catch (final TicketValidationException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
+        } catch (final UnauthorizedProxyingException e) {
+            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()});
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(e.getMessage(), e.getMessage(), null);
         }
     }
 
+    /**
+     * Triggered on successful validation events. Extensions are to
+     * use this as hook to plug in behvior.
+     *
+     * @param serviceTicketId the service ticket id
+     * @param assertion the assertion
+     */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
         // template method with nothing to do.
     }
 
+    /**
+     * Generate error view, set to {@link #setFailureView(String)}.
+     *
+     * @param code the code
+     * @param description the description
+     * @param args the args
+     * @return the model and view
+     */
     private ModelAndView generateErrorView(final String code, final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(this.failureView);
         final String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
@@ -196,7 +232,49 @@ public class ServiceValidateController extends DelegateController {
 
         return modelAndView;
     }
+    
+    /**
+     * Generate the success view. The result will contain the assertion and the proxy iou.
+     *
+     * @param assertion the assertion
+     * @param proxyIou the proxy iou
+     * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
+     */
+    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
+        final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
+        final Object o = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        final boolean isRemembered = (o == Boolean.TRUE && !assertion.isFromNewLogin());
+        
+        final ModelAndView success = new ModelAndView(this.successView);
+        success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);
+        success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        success.addObject(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, isRemembered);
+        
+        final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
+        if (augmentedModelObjects != null) {
+            success.addAllObjects(augmentedModelObjects);
+        }
+        return success;
+    }
 
+    /**
+     * Augment success view model objects. Provides
+     * a way for extension of this controller to dynamically
+     * populate the model object with attributes
+     * that describe a custom nature of the validation protocol.
+     *
+     * @param assertion the assertion
+     * @return map of objects each keyed to a name
+     */
+    protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
+        return Collections.emptyMap();  
+    }
+    
+    /**
+     * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
+     *
+     * @return the command class
+     */
     private ValidationSpecification getCommandClass() {
         try {
             return (ValidationSpecification) this.validationSpecificationClass.newInstance();
@@ -221,6 +299,7 @@ public class ServiceValidateController extends DelegateController {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    
     public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
     }
@@ -254,4 +333,34 @@ public class ServiceValidateController extends DelegateController {
         this.proxyHandler = proxyHandler;
     }
 
+    /**
+     * Sets the services manager.
+     *
+     * @param servicesManager the new services manager
+     */
+    public final void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Ensure that the service is found and enabled in the service registry.
+     * @param registeredService the located entry in the registry
+     * @param service authenticating service
+     * @throws UnauthorizedServiceException
+     */
+    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+        if (registeredService == null) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service [%s] is not found in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!registeredService.isEnabled()) {
+            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+                    + "Service %s] is not enabled in service registry.", service.getId());
+            
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+    }
 }

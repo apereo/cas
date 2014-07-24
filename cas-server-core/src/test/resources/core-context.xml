@@ -28,6 +28,9 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean id="persistentIdGenerator"
+          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          p:salt="casrocks"/>
 
     <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
           c:authenticationManager-ref="authenticationManager"
@@ -38,7 +41,8 @@
           c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
           c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
           c:ticketRegistry-ref="ticketRegistry"
-          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"/>
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
+          p:persistentIdGenerator-ref="persistentIdGenerator" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
@@ -52,10 +56,13 @@
     <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
           p:readTimeout="5000"
           p:connectionTimeout="5000" />
-
+          
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
-          c:httpClient-ref="httpClient" />
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"/>
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
 
     <bean id="attributeRepository"
           class="org.jasig.services.persondir.support.StubPersonAttributeDao">
@@ -79,6 +86,10 @@
                     <property name="name" value="Test Service"/>
                     <property name="serviceId" value="test$"/>
                     <property name="evaluationOrder" value="1"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -95,7 +106,10 @@
                     <property name="serviceId" value="eduPersonTest"/>
                     <property name="evaluationOrder" value="3"/>
                     <property name="usernameAttribute" value="eduPersonAffiliation"/>
-                    <property name="ignoreAttributes" value="true"/>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+                    </property>
+                    
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -104,10 +118,44 @@
                     <property name="serviceId" value="eduPersonTestInvalid"/>
                     <property name="evaluationOrder" value="4"/>
                     <property name="usernameAttribute" value="nonExistentAttributeName"/>
-                    <property name="allowedAttributes">
-                        <list>
-                            <value>groupMembership</value>
-                        </list>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+                            <property name="allowedAttributes">
+                                <list>
+                                    <value>groupMembership</value>
+                                </list>
+                            </property>    
+                        </bean>
+                    </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="4"/>
+                    <property name="name" value="Test Service anonymous"/>
+                    <property name="serviceId" value="testAnonymous"/>
+                    <property name="evaluationOrder" value="5"/>
+                    <property name="anonymousAccess" value="true" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="10"/>
+                    <property name="name" value="Test Regex Jasig Service"/>
+                    <property name="serviceId" value="^http://www.jasig.org.+"/>
+                    <property name="evaluationOrder" value="10"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestProxyService"/>
+                    <property name="serviceId" value="proxyService"/>
+                    <property name="evaluationOrder" value="100"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern="^https://.+" />
                     </property>
                 </bean>
             </list>
@@ -127,7 +175,7 @@
         </constructor-arg>
         <property name="authenticationMetaDataPopulators">
             <list>
-                <ref local="authenticationMetaDataPopulator" />
+                <ref bean="authenticationMetaDataPopulator" />
             </list>
         </property>
 

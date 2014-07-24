@@ -54,8 +54,8 @@ public class ImmutableAuthenticationTests {
         attributes.put("authenticationMethod", "password");
         final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
         successes.put("handler1", new HandlerResult(authenticationHandler, credential1));
-        final Map<String, Exception> failures = new HashMap<String, Exception>();
-        failures.put("handler2", new FailedLoginException());
+        final Map<String, Class<? extends Exception>> failures = new HashMap<String, Class<? extends Exception>>();
+        failures.put("handler2", FailedLoginException.class);
         final ImmutableAuthentication auth = new ImmutableAuthentication(
                 new Date(),
                 credentials,
@@ -82,7 +82,7 @@ public class ImmutableAuthenticationTests {
             logger.debug("Adding authentication success event failed correctly");
         }
         try {
-            auth.getFailures().put("test", new FailedLoginException());
+            auth.getFailures().put("test", FailedLoginException.class);
             fail("Should have failed");
         } catch (final RuntimeException e) {
             logger.debug("Adding authentication failure event failed correctly");

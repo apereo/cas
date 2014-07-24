@@ -23,11 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -39,10 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.util.SamlUtils;
-import org.jasig.cas.util.SamlDateUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -56,9 +54,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsService.class);
-
-    private static Random RANDOM_GENERATOR = new Random();
+    private static SecureRandom RANDOM_GENERATOR = new SecureRandom();
 
     private static final char[] CHAR_MAPPINGS = {
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
@@ -113,11 +109,33 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String alternateUserName;
 
+    /**
+     * Instantiates a new google accounts service.
+     *
+     * @param id the id
+     * @param relayState the relay state
+     * @param requestId the request id
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
         this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
+    /**
+     * Instantiates a new google accounts service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @param relayState the relay state
+     * @param requestId the request id
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     */
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
@@ -129,6 +147,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.alternateUserName = alternateUserName;
     }
 
+    /**
+     * Creates the service from request.
+     *
+     * @param request the request
+     * @param privateKey the private key
+     * @param publicKey the public key
+     * @param alternateUserName the alternate user name
+     * @return the google accounts service
+     */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
             final PublicKey publicKey, final String alternateUserName) {
@@ -177,6 +204,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return true;
     }
 
+    /**
+     * Construct SAML response.
+     *
+     * @return the SAML response
+     */
     private String constructSamlResponse() {
         String samlResponse = TEMPLATE_SAML_RESPONSE;
 
@@ -197,14 +229,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             }
         }
 
+        final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
-        samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlDateUtils
-                .getCurrentDateAndTime());
-        samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlDateUtils
-                .getCurrentDateAndTime());
-        samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", SamlDateUtils
-                .getFormattedDateAndTime(c.getTime()));
+        samlResponse = samlResponse.replace("<ISSUE_INSTANT>", currentDateTime);
+        samlResponse = samlResponse.replace("<AUTHN_INSTANT>", currentDateTime);
+        samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", currentDateTime);
         samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
         samlResponse = samlResponse.replaceAll("<ACS_URL>", getId());
         samlResponse = samlResponse.replace("<REQUEST_ID>", this.requestId);
@@ -212,6 +242,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return samlResponse;
     }
 
+    /**
+     * Creates the SAML id.
+     *
+     * @return the id
+     */
     private static String createID() {
         final byte[] bytes = new byte[20]; // 160 bits
         RANDOM_GENERATOR.nextBytes(bytes);
@@ -219,8 +254,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final char[] chars = new char[40];
 
         for (int i = 0; i < bytes.length; i++) {
-            int left = bytes[i] >> 4 & 0x0f;
-            int right = bytes[i] & 0x0f;
+            final int left = bytes[i] >> 4 & 0x0f;
+            final int right = bytes[i] & 0x0f;
             chars[i * 2] = CHAR_MAPPINGS[left];
             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
         }
@@ -228,6 +263,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return String.valueOf(chars);
     }
 
+    /**
+     * Decode authn request xml.
+     *
+     * @param encodedRequestXmlString the encoded request xml string
+     * @return the request
+     */
     private static String decodeAuthnRequestXML(
             final String encodedRequestXmlString) {
         if (encodedRequestXmlString == null) {
@@ -249,6 +290,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return zlibDeflate(decodedBytes);
     }
 
+    /**
+     * Deflate the given bytes using zlib.
+     *
+     * @param bytes the bytes
+     * @return the converted string
+     */
     private static String zlibDeflate(final byte[] bytes) {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -269,6 +316,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         }
     }
 
+    /**
+     * Base64 decode.
+     *
+     * @param xml the xml
+     * @return the byte[]
+     */
     private static byte[] base64Decode(final String xml) {
         try {
             final byte[] xmlBytes = xml.getBytes("UTF-8");
@@ -278,6 +331,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         }
     }
 
+    /**
+     * Inflate the given byte array.
+     *
+     * @param bytes the bytes
+     * @return the string
+     */
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
         final byte[] xmlMessageBytes = new byte[10000];
@@ -304,4 +363,5 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             throw new RuntimeException("Cannot find encoding: UTF-8", e);
         }
     }
+   
 }

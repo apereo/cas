@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class TimeoutExpirationPolicyTests {
 
-    private static final long TIMEOUT = 5000;
+    private static final long TIMEOUT = 50;
 
     private ExpirationPolicy expirationPolicy;
 
@@ -60,13 +60,9 @@ public class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketIsExpired() {
-        try {
-            Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
-            // accurate??
-            assertTrue(this.ticket.isExpired());
-        } catch (final InterruptedException e) {
-            fail(e.getMessage());
-        }
+    public void testTicketIsExpired() throws InterruptedException {
+        Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
+        // accurate??
+        assertTrue(this.ticket.isExpired());
     }
 }

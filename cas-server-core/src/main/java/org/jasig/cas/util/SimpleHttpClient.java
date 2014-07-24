@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,6 +49,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  */
 public final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
@@ -105,22 +105,13 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         EXECUTOR_SERVICE = executorService;
     }
 
-    /**
-     * Sends a message to a particular endpoint.  Option of sending it without
-     * waiting to ensure a response was returned.
-     * <p>
-     * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
-     *
-     * @param url the url to send the message to
-     * @param message the message itself
-     * @param async true if you don't want to wait for the response, false otherwise.
-     * @return boolean if the message was sent, or async was used.  false if the message failed.
-     */
-    public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message,
-                this.readTimeout, this.connectionTimeout, this.followRedirects));
+    @Override
+    public boolean sendMessageToEndPoint(final HttpMessage message) {
+        
+        final Callable<Boolean> callable = new CallableHttpMessageSender(message);
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(callable);
 
-        if (async) {
+        if (message.isAsynchronous()) {
             return true;
         }
 
@@ -130,13 +121,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             return false;
         }
     }
-
-    /**
-     * Make a synchronous HTTP(S) call to ensure that the url is reachable.
-     *
-     * @param url the url to call
-     * @return whether the url is valid
-     */
+        
+    @Override
     public boolean isValidEndPoint(final String url) {
         try {
             final URL u = new URL(url);
@@ -147,12 +133,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         }
     }
 
-    /**
-     * Make a synchronous HTTP(S) call to ensure that the url is reachable.
-     *
-     * @param url the url to call
-     * @return whether the url is valid
-     */
+    @Override
     public boolean isValidEndPoint(final URL url) {
         HttpURLConnection connection = null;
         InputStream is = null;
@@ -269,71 +250,65 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         EXECUTOR_SERVICE.shutdown();
     }
 
-    private static final class MessageSender implements Callable<Boolean> {
-
-        private String url;
-
-        private String message;
-
-        private int readTimeout;
-
-        private int connectionTimeout;
-
-        private boolean followRedirects;
-
-        public MessageSender(final String url, final String message, final int readTimeout,
-                final int connectionTimeout, final boolean followRedirects) {
-            this.url = url;
+    private class CallableHttpMessageSender implements Callable<Boolean> {
+        
+        private final HttpMessage message;
+        
+        /**
+         * Instantiates a new callable http message sender.
+         *
+         * @param message the message to send to the endpoint.
+         */
+        public CallableHttpMessageSender(final HttpMessage message) {
             this.message = message;
-            this.readTimeout = readTimeout;
-            this.connectionTimeout = connectionTimeout;
-            this.followRedirects = followRedirects;
         }
-
-        public Boolean call() throws Exception {
+        
+        @Override
+        public final Boolean call() throws Exception {
             HttpURLConnection connection = null;
             BufferedReader in = null;
+            DataOutputStream printout = null;
+                    
             try {
-                LOGGER.debug("Attempting to access {}", url);
-                final URL logoutUrl = new URL(url);
-                final String output = "logoutRequest=" + URLEncoder.encode(message, "UTF-8");
+                LOGGER.debug("Attempting to access {}", message.getUrl());
+                final URL logoutUrl = new URL(message.getUrl());
+                final String output = message.getMessage();
 
                 connection = (HttpURLConnection) logoutUrl.openConnection();
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
-                connection.setReadTimeout(this.readTimeout);
-                connection.setConnectTimeout(this.connectionTimeout);
-                connection.setInstanceFollowRedirects(this.followRedirects);
+                connection.setReadTimeout(SimpleHttpClient.this.readTimeout);
+                connection.setConnectTimeout(SimpleHttpClient.this.connectionTimeout);
+                connection.setInstanceFollowRedirects(SimpleHttpClient.this.followRedirects);
                 connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                final DataOutputStream printout = new DataOutputStream(connection.getOutputStream());
+                connection.setRequestProperty("Content-Type", message.getContentType());
+                printout = new DataOutputStream(connection.getOutputStream());
                 printout.writeBytes(output);
                 printout.flush();
-                printout.close();
-
+                
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
                 boolean readInput = true;
                 while (readInput) {
-                    readInput =StringUtils.isNotBlank(in.readLine());
+                    readInput = StringUtils.isNotBlank(in.readLine());
                 }
 
-                LOGGER.debug("Finished sending message to {}", url);
+                LOGGER.debug("Finished sending message to {}", message.getUrl());
                 return true;
             } catch (final SocketTimeoutException e) {
-                LOGGER.warn("Socket Timeout Detected while attempting to send message to [{}]", url);
+                LOGGER.warn("Socket Timeout Detected while attempting to send message to [{}]", message.getUrl());
                 return false;
             } catch (final Exception e) {
-                LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
+                LOGGER.warn("Error Sending message to url endpoint [{}]. Error is [{}]", message.getUrl(), e.getMessage());
                 return false;
             } finally {
+                IOUtils.closeQuietly(printout);
                 IOUtils.closeQuietly(in);
                 if (connection != null) {
                     connection.disconnect();
                 }
             }
         }
-
     }
 }

@@ -46,11 +46,8 @@
 	
 	The name of this should remain "userDetailsService" in order for Spring Security to find it.
 	 -->
-    <!-- <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />-->
-
-    <sec:user-service id="userDetailsService">
-        <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
-    </sec:user-service>
+    <sec:user-service id="userDetailsService" 
+                      properties="${user.details.file.location:classpath:user-details.properties}" />
 	
     <!-- 
     Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation

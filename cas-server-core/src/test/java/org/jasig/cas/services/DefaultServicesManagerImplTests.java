@@ -148,7 +148,33 @@ public class DefaultServicesManagerImplTests  {
         assertEquals(2, this.defaultServicesManagerImpl.getAllServices().size());
         assertTrue(this.defaultServicesManagerImpl.getAllServices().contains(r));
     }
+    
+    @Test
+    public void testRegexService() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setId(10000);
+        r.setName("regex test");
+        r.setServiceId("^http://www.test.edu.+");
+        r.setEvaluationOrder(10000);
+                
+        this.defaultServicesManagerImpl.save(r);
 
+        final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
+        assertEquals(r, this.defaultServicesManagerImpl.findServiceBy(service));
+    }
+
+    @Test
+    public void testEmptyServicesRegistry() {
+        final SimpleService s = new SimpleService("http://www.google.com");
+        
+        for (final RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
+            defaultServicesManagerImpl.delete(svc.getId());
+        }
+        assertTrue(this.defaultServicesManagerImpl.getAllServices().size() == 0);
+        assertNull(this.defaultServicesManagerImpl.findServiceBy(s));
+        assertNull(this.defaultServicesManagerImpl.findServiceBy(1000));
+    }
+    
     @Test
     public void testEvaluationOrderOfServices() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();

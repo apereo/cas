@@ -103,22 +103,26 @@ function updateRegisteredServiceOrder(movedService, pos) {
 
 $(document).ready(function () {
 	$("#errorsDiv").hide();
-	var opts = {
-		selectors: {
-			movables: "tr"
-		},
-		listeners: {
-			onMove: updateRegisteredServiceOrder,
-			onBeginMove: function() {
-				$("#errorsDiv").hide();
-			},
-			afterMove: function() {
-				$("#fluid-ariaLabeller-liveRegion").remove();
-			},
-			onHover: function(item, state) {
-				$(item).css('cursor', state ? 'move' : 'auto');
-			}
-		}
-	};
-	return fluid.reorderList("#tableWrapper #scrollTable tbody", opts);
+	if (typeof fluid != 'undefined') {
+    	var opts = {
+    		selectors: {
+    			movables: "tr"
+    		},
+    		listeners: {
+    			onMove: updateRegisteredServiceOrder,
+    			onBeginMove: function() {
+    				$("#errorsDiv").hide();
+    			},
+    			afterMove: function() {
+    				$("#fluid-ariaLabeller-liveRegion").remove();
+    			},
+    			onHover: function(item, state) {
+    				$(item).css('cursor', state ? 'move' : 'auto');
+    			}
+    		}
+    	};
+	
+        return fluid.reorderList("#tableWrapper #scrollTable tbody", opts);
+    }
+    return;
 });
