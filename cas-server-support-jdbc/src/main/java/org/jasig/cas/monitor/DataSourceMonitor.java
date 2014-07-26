@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.monitor;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+
+import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
