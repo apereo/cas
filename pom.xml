@@ -411,6 +411,8 @@
             <exclude>**/*.license</exclude>
             <exclude>**/*.txt</exclude>
             <exclude>**/*.crt</exclude>
+            <exclude>**/*.cer</exclude>
+            <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
             <exclude>**/*.checkstyle</exclude>
@@ -450,12 +452,12 @@
       <scope>test</scope>
     </dependency>
 
-	<dependency>
-		<groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>${mockito.version}</version>
-	    <scope>test</scope>
-	</dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -972,7 +974,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-		    <version>${maven-javadoc-plugin.version}</version>
+            <version>${maven-javadoc-plugin.version}</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>
