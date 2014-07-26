@@ -24,6 +24,8 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -45,6 +47,8 @@ import javax.validation.constraints.NotNull;
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @NotNull
     private String sql;
 
@@ -58,16 +62,24 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
             if (!dbPassword.equals(encryptedPassword)) {
-                throw new FailedLoginException("Password does not match value on record.");
+                final String msg = "Password does not match value on record.";
+                logger.debug(msg);
+                throw new FailedLoginException(msg);
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
-                throw new AccountNotFoundException(username + " not found with SQL query");
+                final String msg = String.format("%s not found with SQL query", username);
+                logger.debug(msg);
+                throw new AccountNotFoundException(msg);
             } else {
-                throw new FailedLoginException("Multiple records found for " + username);
+                final String msg = String.format("Multiple records found for %s", username);
+                logger.debug(msg);
+                throw new FailedLoginException(msg);
             }
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + username, e);
+            final String msg = String.format("SQL exception while executing query for %s", username);
+            logger.error(msg + ".  (Exception Message: " + e.getMessage() + ")");
+            throw new PreventedException(msg, e);
         }
         return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
