@@ -102,7 +102,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private static ExecutorService EXECUTOR_SERVICE = null;
+    private ExecutorService executorService = Executors.newFixedThreadPool(200);
 
     /** The Max pooled connections.  */
     private int maxPooledConnections = MAX_POOLED_CONNECTIONS;
@@ -309,7 +309,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                             final boolean redirectsEnabled,
                             final int maxConnections,
                             final int maxConnectionsPerRoute) {
-        EXECUTOR_SERVICE = executorService;
+        this.executorService = executorService;
         this.acceptableCodes = acceptableCodes;
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
@@ -344,19 +344,10 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            if (EXECUTOR_SERVICE.isTerminated()) {
-                LOGGER.error("Cannot execute http request. Executor service has terminated");
-                return false;
-            }
-            service = new FutureRequestExecutionService(this.httpClient, EXECUTOR_SERVICE);
+            service = new FutureRequestExecutionService(this.httpClient, executorService);
 
             final HttpRequestFutureTask<String> task = service.execute(request,
                     HttpClientContext.create(), new BasicResponseHandler());
-
-            if (EXECUTOR_SERVICE.isTerminated()) {
-                LOGGER.error("Cannot execute http request. Executor service has terminated");
-                return false;
-            }
 
             if (message.isAsynchronous()) {
                 return true;
@@ -427,7 +418,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
-        EXECUTOR_SERVICE.shutdown();
+        executorService.shutdown();
         IOUtils.closeQuietly(this.httpClient);
     }
 
@@ -515,9 +506,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      *
      * @return the http client
      */
-    private CloseableHttpClient init() {
+    private void init() {
         try {
-            EXECUTOR_SERVICE = Executors.newFixedThreadPool(this.maxConnectionsPerRoute);
 
             final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
             final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
@@ -565,6 +555,5 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return null;
     }
 }
