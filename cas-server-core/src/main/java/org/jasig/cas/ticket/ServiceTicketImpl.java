@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -109,6 +110,26 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     public boolean isValidFor(final Service serviceToValidate) {
         updateState();
         return serviceToValidate.matches(this.service);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ServiceTicket)) {
+            return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
     }
 
     @Override
