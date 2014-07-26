@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
-import java.util.concurrent.Executors;
-import javax.sql.DataSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
  * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/jpaTestApplicationContext.xml")
+@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 public class DataSourceMonitorTests {
 
     @Autowired
