@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
@@ -160,25 +159,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder().append(this.getId()).toHashCode();
-    }
-
-    @Override
-    public final boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object == this) {
-            return true;
-        }
-        if (!object.getClass().isAssignableFrom(Ticket.class)) {
-            return false;
-        }
-
-        final Ticket ticket = (Ticket) object;
-
-        return new EqualsBuilder()
-                .append(ticket.getId(), this.getId())
-                .isEquals();
     }
 
     @Override
