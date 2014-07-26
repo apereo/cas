@@ -92,13 +92,13 @@
     <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
           c:redirectsEnabled="false" c:circularRedirectsAllowed="false"  />
 
-    <bean id="proxyTrustStoreSocketFactory"
-          class="org.jasig.cas.authentication.TrustedProxyAuthenticationTrustStoreSslSocketFactory"
+    <bean id="trustStoreSslSocketFactory"
+          class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
           c:trustStoreFile="${proxy.authn.truststore.file:classpath:truststore.jks}"
           c:trustStorePassword="${proxy.authn.truststore.psw:changeit}" />
 
-    <bean id="trustStoreProxyHttpClient" parent="httpClient"
-          c:sslSocketFactory-ref="proxyTrustStoreSocketFactory" />
+    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" parent="httpClient"
+          c:sslSocketFactory-ref="trustStoreSslSocketFactory" />
 
     <bean id="persistentIdGenerator"
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
@@ -132,7 +132,7 @@
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
     <bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
-          p:httpClient-ref="trustStoreProxyHttpClient"
+          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient"
           p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
 
     <!-- ADVISORS -->
