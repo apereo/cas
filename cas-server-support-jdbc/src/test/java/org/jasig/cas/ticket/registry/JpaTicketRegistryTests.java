@@ -18,18 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.sql.DataSource;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -43,14 +31,11 @@ import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.IfProfileValue;
@@ -64,6 +49,17 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.*;
+
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -72,7 +68,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/jpaTestApplicationContext.xml")
+@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
     /** Logger instance. */
