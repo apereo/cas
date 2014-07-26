@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.util;
 
-import org.jasig.cas.authentication.TrustedProxyAuthenticationTrustStoreSslSocketFactory;
+import org.jasig.cas.authentication.FileTrustStoreSslSocketFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Before
     public void prepareHttpClient() throws Exception {
-        final TrustedProxyAuthenticationTrustStoreSslSocketFactory f = new TrustedProxyAuthenticationTrustStoreSslSocketFactory(
+        final FileTrustStoreSslSocketFactory f = new FileTrustStoreSslSocketFactory(
                 TRUST_STORE.getFile(), TRUST_STORE_PSW);
 
         this.client = new SimpleHttpClient(f);
