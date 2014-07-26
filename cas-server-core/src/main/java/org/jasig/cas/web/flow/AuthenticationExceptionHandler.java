@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -62,6 +61,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountLockedException.class);
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.CredentialExpiredException.class);
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.CredentialNotFoundException.class);
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountDisabledException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
