@@ -21,7 +21,7 @@ package org.jasig.cas.authentication;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 /**
  * The SSL socket factory that loads the SSL context from a custom
@@ -38,9 +40,9 @@ import java.security.KeyStore;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
+public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrustedProxyAuthenticationTrustStoreSslSocketFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
@@ -49,7 +51,7 @@ public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends 
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      */
-    public TrustedProxyAuthenticationTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword) {
+    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword,
                 SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER,
                 KeyStore.getDefaultType());
@@ -57,27 +59,46 @@ public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends 
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
+     * Uses the {@link DoesNotTrustStrategy} trust strategy.
+     *
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      * @param hostnameVerifier the hostname verifier
      * @param trustStoreType the trust store type
      */
-    public TrustedProxyAuthenticationTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
-                                                                final X509HostnameVerifier hostnameVerifier, final String trustStoreType) {
-        super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType), hostnameVerifier);
+    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
+                                          final X509HostnameVerifier hostnameVerifier, final String trustStoreType) {
+        this(trustStoreFile, trustStorePassword, hostnameVerifier, trustStoreType, new DoesNotTrustStrategy());
     }
 
 
     /**
-     * Gets trusted ssl context.
+     * Instantiates a new trusted proxy authentication trust store ssl socket factory.
+     * @param trustStoreFile the trust store file
+     * @param trustStorePassword the trust store password
+     * @param hostnameVerifier the hostname verifier
+     * @param trustStoreType the trust store type
+     * @param trustStrategy the trust strategy
+     */
+    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
+                                          final X509HostnameVerifier hostnameVerifier,
+                                          final String trustStoreType,
+                                          final TrustStrategy trustStrategy) {
+        super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType,
+               trustStrategy), hostnameVerifier);
+    }
+
+    /**
+     * Gets the trusted ssl context.
      *
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      * @param trustStoreType the trust store type
+     * @param trustStrategy the trust strategy. Could use {@link org.apache.http.conn.ssl.TrustSelfSignedStrategy}
      * @return the trusted ssl context
      */
     private static SSLContext getTrustedSslContext(final File trustStoreFile, final String trustStorePassword,
-                                            final String trustStoreType) {
+                                            final String trustStoreType, final TrustStrategy trustStrategy) {
         KeyStore trustStore = null;
         FileInputStream instream = null;
         try {
@@ -89,10 +110,10 @@ public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends 
             instream = new FileInputStream(trustStoreFile);
             trustStore.load(instream, trustStorePassword.toCharArray());
 
-            final SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
+            final SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, trustStrategy)
                     .useTLS()
-                    .useSSL()
                     .build();
+
 
             LOGGER.debug("Loaded [{}] entries in truststore [{}] for proxy authentication", trustStore.size(),
                     trustStoreFile.getCanonicalFile());
@@ -107,5 +128,11 @@ public final class TrustedProxyAuthenticationTrustStoreSslSocketFactory extends 
         }
     }
 
+    private static class DoesNotTrustStrategy implements TrustStrategy {
+        @Override
+        public boolean isTrusted(final X509Certificate[] x509Certificates, final String s) throws CertificateException {
+            return false;
+        }
+    }
 
 }

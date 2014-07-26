@@ -102,9 +102,15 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(MAX_POOLED_CONNECTIONS);
+    private static ExecutorService EXECUTOR_SERVICE = null;
 
-    /** List of HTTP status codes considered valid by this AuthenticationHandler. */
+    /** The Max pooled connections.  */
+    private int maxPooledConnections = MAX_POOLED_CONNECTIONS;
+
+    /** The Max connections per each route connections.  */
+    private int maxConnectionsPerRoute = MAX_CONNECTIONS_PER_ROUTE;
+
+    /** List of HTTP status codes considered valid by the caller. */
     @NotNull
     @Size(min = 1)
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
@@ -284,6 +290,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @param circularRedirectsAllowed the circular redirects allowed
      * @param authenticationEnabled the authentication enabled
      * @param redirectsEnabled the redirects enabled
+     * @param maxConnections the max connections
+     * @param maxConnectionsPerRoute the max connections per route
      */
     public SimpleHttpClient(final ExecutorService executorService, final int[] acceptableCodes,
                             final int connectionTimeout, final int readTimeout,
@@ -298,8 +306,10 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                             final AuthenticationStrategy proxyAuthenticationStrategy,
                             final boolean circularRedirectsAllowed,
                             final boolean authenticationEnabled,
-                            final boolean redirectsEnabled) {
-        this.executorService = executorService;
+                            final boolean redirectsEnabled,
+                            final int maxConnections,
+                            final int maxConnectionsPerRoute) {
+        EXECUTOR_SERVICE = executorService;
         this.acceptableCodes = acceptableCodes;
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
@@ -316,6 +326,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         this.circularRedirectsAllowed = circularRedirectsAllowed;
         this.authenticationEnabled = authenticationEnabled;
         this.redirectsEnabled = redirectsEnabled;
+        this.maxPooledConnections = maxConnections;
+        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
 
         init();
     }
@@ -327,21 +339,25 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         FutureRequestExecutionService service = null;
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
-            request.addHeader("Content-Length", Integer.toString(message.getMessage().getBytes().length));
             request.addHeader("Content-Type", message.getContentType());
             
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            if (executorService.isTerminated()) {
+            if (EXECUTOR_SERVICE.isTerminated()) {
                 LOGGER.error("Cannot execute http request. Executor service has terminated");
                 return false;
             }
-            service = new FutureRequestExecutionService(this.httpClient, executorService);
+            service = new FutureRequestExecutionService(this.httpClient, EXECUTOR_SERVICE);
 
             final HttpRequestFutureTask<String> task = service.execute(request,
                     HttpClientContext.create(), new BasicResponseHandler());
-                    
+
+            if (EXECUTOR_SERVICE.isTerminated()) {
+                LOGGER.error("Cannot execute http request. Executor service has terminated");
+                return false;
+            }
+
             if (message.isAsynchronous()) {
                 return true;
             }
@@ -411,7 +427,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
-        executorService.shutdown();
+        EXECUTOR_SERVICE.shutdown();
         IOUtils.closeQuietly(this.httpClient);
     }
 
@@ -501,6 +517,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     private CloseableHttpClient init() {
         try {
+            EXECUTOR_SERVICE = Executors.newFixedThreadPool(this.maxConnectionsPerRoute);
 
             final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
             final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
@@ -511,8 +528,8 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                     .build();
 
             final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
-            connMgmr.setMaxTotal(MAX_POOLED_CONNECTIONS);
-            connMgmr.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+            connMgmr.setMaxTotal(this.maxPooledConnections);
+            connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
 
             final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
             final HttpRoute httpRoute = new HttpRoute(httpHost);
