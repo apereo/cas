@@ -19,12 +19,10 @@
 
 package org.jasig.cas.services;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
