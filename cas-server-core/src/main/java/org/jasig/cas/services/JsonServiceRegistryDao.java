@@ -20,16 +20,15 @@
 package org.jasig.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.jasig.cas.util.LockedOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +38,13 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Implementation of <code>ServiceRegistryDao</code> that reads services definition from JSON
@@ -57,25 +55,28 @@ import java.util.regex.PatternSyntaxException;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class JsonServiceRegistryDao implements ServiceRegistryDao {
+public class JsonServiceRegistryDao implements ServiceRegistryDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
 
     /** File extension of registered service JSON files. */
-    private static final String FILE_EXTENSION = ".json";
-
-    /** Service id field for a given registered service. */
-    private static final String SERVICE_ID_KEY = "serviceId";
+    private static final String FILE_EXTENSION = "json";
 
     /** Map of service ID to registered service. */
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<Long, RegisteredService>();
 
-    /** Regex pattern identifier for the service id. */
-    private static final String REGEX_PREFIX = "^";
-
+    /**
+     * The Object mapper.
+     */
     private final ObjectMapper objectMapper;
 
+    /**
+     * The Service registry directory.
+     */
     private final File serviceRegistryDirectory;
 
+    /**
+     * The Pretty printer.
+     */
     private final PrettyPrinter prettyPrinter;
 
     /**
@@ -87,33 +88,39 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
      * @param prettyPrinter the pretty printer
      */
     public JsonServiceRegistryDao(final File configDirectory, final PrettyPrinter prettyPrinter) {
+        this(configDirectory, initializeObjectMapper(), prettyPrinter);
+    }
+
+    /**
+     * Instantiates a new Json service registry dao.
+     *
+     * @param configDirectory the config directory
+     * @param objectMapper the object mapper
+     * @param prettyPrinter the pretty printer
+     */
+    public JsonServiceRegistryDao(final File configDirectory, final ObjectMapper objectMapper, final PrettyPrinter prettyPrinter) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.exists(), serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.isDirectory(), serviceRegistryDirectory + " is not a directory");
 
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        this.objectMapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        this.objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-
-        this.objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-
+        this.objectMapper = objectMapper;
         this.prettyPrinter = prettyPrinter;
     }
+
 
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
      * stored.
      *
-     * @param configDirectory the config directory
+     * @param configDirectory the config directory where service registry files can be found.
      */
     public JsonServiceRegistryDao(final File configDirectory) {
         this(configDirectory, new DefaultPrettyPrinter());
     }
 
     @Override
-    public RegisteredService save(final RegisteredService service) {
+    public final RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
@@ -133,7 +140,7 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public synchronized boolean delete(final RegisteredService service) {
+    public final synchronized boolean delete(final RegisteredService service) {
         serviceMap.remove(service.getId());
         final boolean result = makeFile(service).delete();
         load();
@@ -141,26 +148,18 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public synchronized List<RegisteredService> load() {
+    public final synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<Long, RegisteredService>();
-        final FilenameFilter filter = new SuffixFileFilter(FILE_EXTENSION);
 
         int errorCount = 0;
 
-        for (final File file : this.serviceRegistryDirectory.listFiles(filter)) {
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[]{FILE_EXTENSION}, true);
+        for (final File file : c) {
             BufferedInputStream in = null;
             try {
                 if (file.length() > 0) {
                     in = new BufferedInputStream(new FileInputStream(file));
-                    Object oo = this.objectMapper.readValue(in, Object.class);
-                    System.out.print(oo);
-
-                    final Map<?, ?> record = null;
-
-                    final String serviceId = record.get(SERVICE_ID_KEY).toString();
-
-                    final Class<? extends RegisteredService> clazz = getRegisteredServiceInstance(serviceId);
-                    final RegisteredService service = this.objectMapper.convertValue(record, clazz);
+                    final RegisteredService service = this.objectMapper.readValue(in, RegisteredService.class);
 
                     temp.put(service.getId(), service);
                 }
@@ -179,7 +178,7 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public RegisteredService findServiceById(final long id) {
+    public final RegisteredService findServiceById(final long id) {
         return serviceMap.get(id);
     }
 
@@ -190,43 +189,40 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
      * @return  JSON file in service registry directory.
      */
     protected File makeFile(final RegisteredService service) {
-        return new File(serviceRegistryDirectory, service.getName() + FILE_EXTENSION);
+        return new File(serviceRegistryDirectory, service.getName() + "-" + service.getId() + "." + FILE_EXTENSION);
     }
 
     /**
-     * Determine the validity of a regexx pattern.
-     * Patterns must begin with {@link #REGEX_PREFIX}
-     * and must also be able to compile correctly.
+     * Initialize object mapper.
      *
-     * @param pattern the pattern
-     * @return true, if regex
+     * @return the object mapper
      */
-    private boolean isValidRegexPattern(final String pattern) {
-        boolean valid = false;
-        try {
-            if (pattern.startsWith(REGEX_PREFIX)) {
-                Pattern.compile(pattern);
-                valid = true;
-            }
-        } catch (final PatternSyntaxException e) {
-            LOGGER.debug("Failed to identify [{}] as a regular expression", pattern);
-        }
-        return valid;
+    private static ObjectMapper initializeObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+        mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+        mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+        mapper.addMixInAnnotations(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
+        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        return mapper;
     }
 
-    /**
-     * Constructs an instance of {@link RegisteredService} based on the
-     * syntax of the pattern defined.
-     *
-     * @param pattern the pattern of the service definition
-     * @return an instance of {@link #isValidRegexPattern(String)}
-     * @see #isValidRegexPattern(String)
-     */
-    private Class<? extends RegisteredService> getRegisteredServiceInstance(final String pattern) {
-        if (isValidRegexPattern(pattern)) {
-            return RegexRegisteredService.class;
-        }
+    private interface RegisteredServiceProxyPolicyMixin {
+        /**
+         * Ignore method call.
+         * @return allowed or not
+         **/
+        @JsonIgnore
+        boolean isAllowedToProxy();
 
-        return RegisteredServiceImpl.class;
+        /**
+         * Ignore method call.
+         * @param pgtUrl proxying url
+         * @return allowed or not
+         **/
+        @JsonIgnore
+        boolean isAllowedProxyCallbackUrl(URL pgtUrl);
     }
+
 }

@@ -26,20 +26,19 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -172,12 +171,16 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
         return new EqualsBuilder().append(this.proxyPolicy, that.proxyPolicy)
-                .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
+                .append(this.anonymousAccess, that.anonymousAccess)
+                .append(this.enabled, that.enabled)
                 .append(this.evaluationOrder, that.evaluationOrder)
                 .append(this.ssoEnabled, that.ssoEnabled)
                 .append(this.description, that.description)
-                .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
-                .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
+                .append(this.name, that.name)
+                .append(this.serviceId, that.serviceId)
+                .append(this.theme, that.theme)
+                .append(this.usernameAttribute, that.usernameAttribute)
+                .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .isEquals();
     }
@@ -330,6 +333,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("usernameAttribute", this.usernameAttribute);
         toStringBuilder.append("enabled", this.enabled);
         toStringBuilder.append("ssoEnabled", this.ssoEnabled);
+        toStringBuilder.append("theme", this.theme);
+        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
+        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("logoutType", this.logoutType);
 
         return toStringBuilder.toString();
     }
