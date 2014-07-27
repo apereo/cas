@@ -19,9 +19,15 @@
 
 package org.jasig.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.jasig.cas.util.LockedOutputStream;
@@ -86,6 +92,12 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
         Assert.isTrue(this.serviceRegistryDirectory.isDirectory(), serviceRegistryDirectory + " is not a directory");
 
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        this.objectMapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+        this.objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+
+        this.objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+
         this.prettyPrinter = prettyPrinter;
     }
 
@@ -138,14 +150,20 @@ public final class JsonServiceRegistryDao implements ServiceRegistryDao {
         for (final File file : this.serviceRegistryDirectory.listFiles(filter)) {
             BufferedInputStream in = null;
             try {
-                in = new BufferedInputStream(new FileInputStream(file));
-                final Map<?, ?> map = this.objectMapper.readValue(in, Map.class);
-                final Object record = map.get(SERVICE_ID_KEY);
+                if (file.length() > 0) {
+                    in = new BufferedInputStream(new FileInputStream(file));
+                    Object oo = this.objectMapper.readValue(in, Object.class);
+                    System.out.print(oo);
 
-                final Class<? extends RegisteredService> clazz = getRegisteredServiceInstance(record.toString());
-                final RegisteredService service = this.objectMapper.convertValue(record, clazz);
+                    final Map<?, ?> record = null;
 
-                temp.put(service.getId(), service);
+                    final String serviceId = record.get(SERVICE_ID_KEY).toString();
+
+                    final Class<? extends RegisteredService> clazz = getRegisteredServiceInstance(serviceId);
+                    final RegisteredService service = this.objectMapper.convertValue(record, clazz);
+
+                    temp.put(service.getId(), service);
+                }
             } catch (final Exception e) {
                 errorCount++;
                 LOGGER.error("Error reading {}", file, e);
