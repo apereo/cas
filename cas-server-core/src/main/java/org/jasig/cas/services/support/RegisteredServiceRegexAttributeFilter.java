@@ -18,20 +18,20 @@
  */
 package org.jasig.cas.services.support;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.services.AttributeFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.cas.services.AttributeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -47,7 +47,13 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
 
     @NotNull
     private Pattern pattern;
-    
+
+    /**
+     * Instantiates a new Registered service regex attribute filter.
+     * Required for serialization.
+     */
+    protected RegisteredServiceRegexAttributeFilter() {}
+
     /**
      * Instantiates a new registered service regex attribute filter.
      *
@@ -195,5 +201,12 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
         final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
         return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
     }
-    
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("pattern", this.pattern.pattern())
+                .toString();
+    }
 }
