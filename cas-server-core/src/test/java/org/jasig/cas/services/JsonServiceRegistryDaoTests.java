@@ -19,14 +19,18 @@
 
 package org.jasig.cas.services;
 
-import org.junit.Before;
+import org.apache.commons.io.FileUtils;
+import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
@@ -34,17 +38,21 @@ import static org.junit.Assert.assertNotNull;
  */
 public class JsonServiceRegistryDaoTests {
     private ServiceRegistryDao dao;
+    private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    @Before
-    public void setup() throws Exception {
-        ClassPathResource r = new ClassPathResource("services");
-        this.dao = new JsonServiceRegistryDao(r.getFile());
+    public JsonServiceRegistryDaoTests() throws Exception {
+        this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+    }
+
+    @BeforeClass
+    public static void prepTests() throws Exception {
+        FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
     @Test
     public void testSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setName("test");
+        r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -59,7 +67,7 @@ public class JsonServiceRegistryDaoTests {
     @Test
     public void testSaveAttributeReleasePolicy() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setName("test");
+        r.setName("testSaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -77,28 +85,101 @@ public class JsonServiceRegistryDaoTests {
     @Test
     public void testSaveMethodWithExistingServiceNoAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setName("test");
+        r.setName("testSaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
-
         this.dao.save(r);
-
-        final List<RegisteredService> services = this.dao.load();
-
-        final RegisteredService r2 = services.get(0);
-
-        r.setId(r2.getId());
         r.setTheme("mytheme");
 
         this.dao.save(r);
 
         final RegisteredService r3 = this.dao.findServiceById(r.getId());
-
-        assertEquals(r, r2);
-        assertEquals(r.getTheme(), r3.getTheme());
+        assertEquals(r, r3);
     }
 
+    @Test
+    public void testSaveAttributeReleasePolicyMappingRules() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveAttributeReleasePolicyMappingRules");
+        r.setServiceId("testId");
+
+        final Map<String, String> map = new HashMap<String, String>();
+        map.put("attr1", "newattr1");
+        map.put("attr2", "newattr2");
+        map.put("attr2", "newattr3");
+
+
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
+        policy.setAllowedAttributes(map);
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void testSaveAttributeReleasePolicyAllowedAttrRules() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
+        r.setServiceId("testId");
+
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
+        r.setServiceId("testId");
+        r.setEnabled(true);
+        r.setTheme("testtheme");
+        r.setEvaluationOrder(1000);
+        r.setSsoEnabled(false);
+        r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
+        r.setRequiredHandlers(new HashSet<String>(Arrays.asList("h1", "h2")));
+
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+        r.setAttributeReleasePolicy(policy);
+        r.getAttributeReleasePolicy().setAttributeFilter(new RegisteredServiceRegexAttributeFilter("\\w+"));
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void testServiceType() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("testServiceType");
+        r.setEnabled(true);
+        r.setTheme("testtheme");
+        r.setEvaluationOrder(1000);
+
+        final RegisteredService r2 = this.dao.save(r);
+        assertTrue(r2 instanceof  RegexRegisteredService);
+    }
 
 
 }
