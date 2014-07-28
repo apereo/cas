@@ -38,6 +38,9 @@ public interface OAuthConstants {
     /** The approval prompt. */
     String APPROVAL_PROMPT = "approval_prompt";
 
+    /** Auto approve the client. */
+    String AUTO_APPROVE = "auto";
+
     /** The code. */
     String CODE = "code";
 
