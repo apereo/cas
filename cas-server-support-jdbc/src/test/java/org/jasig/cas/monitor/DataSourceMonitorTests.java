@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
  * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class DataSourceMonitorTests {
 
     @Autowired
