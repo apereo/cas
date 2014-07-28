@@ -18,25 +18,8 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import static org.junit.Assert.*;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -54,6 +37,21 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.*;
+
 /**
  * Unit test for {@link JpaLockingStrategy}.
  *
@@ -61,7 +59,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/jpaTestApplicationContext.xml")
+@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
     /** Logger instance. */
