@@ -28,7 +28,7 @@
   <packaging>war</packaging>
   <name>Jasig CAS Web Application</name>
   <dependencies>
-    <!-- OAuth support required in Web App -->
+    <!-- iPlant Deps. -->
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-ldap</artifactId>
@@ -40,7 +40,7 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <!-- END OAuth dep. -->
+    <!-- END iPlant Deps. -->
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-webapp-support</artifactId>
