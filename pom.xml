@@ -556,6 +556,7 @@
         <groupId>org.jasig.cas</groupId>
         <artifactId>cas-server-support-oauth</artifactId>
         <version>${cas.version}</version>
+        <scope>runtime</scope>
       </dependency>
       <!-- Oauth Dependencies (sgregory END) -->
 
