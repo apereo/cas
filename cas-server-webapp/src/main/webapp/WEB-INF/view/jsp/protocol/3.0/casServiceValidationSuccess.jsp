@@ -19,7 +19,7 @@
 
 --%>
 <%@ page session="false" contentType="application/xml; charset=UTF-8" %>
-<%@ page import="java.util.Map.Entry" %>
+<%@ page import="java.util.*, java.util.Map.Entry" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
@@ -48,11 +48,12 @@
                    	<%
                    	    Entry entry = (Entry) pageContext.getAttribute("attr");
                    	    Object value = entry.getValue();
-                   	    pageContext.setAttribute("isAString", value instanceof String);
+                   	    pageContext.setAttribute("isMultiple", value instanceof Collection || value instanceof Map || value instanceof Object[]
+                                                               || value instanceof Iterator || value instanceof Enumeration);
                    	%>
                     <c:choose>
-                        <%-- it's a String, output it once --%>
-                        <c:when test="${isAString}">
+                        <%-- it's a single element, output its toString() --%>
+                        <c:when test="${!isMultiple}">
                             <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attr.value)}</cas:${fn:escapeXml(attr.key)}>
                         </c:when>
                         <%-- if attribute is multi-valued, list each value under the same attribute name --%>
@@ -63,9 +64,9 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <cas:isFromNewLogin>${fn:escapeXml(assertion.isFromNewLogin)}</cas:isFromNewLogin>
+                <cas:isFromNewLogin>${fn:escapeXml(assertion.fromNewLogin)}</cas:isFromNewLogin>
                 <cas:longTermAuthenticationRequestTokenUsed>${fn:escapeXml(longTermAuthenticationRequestTokenUsed)}</cas:longTermAuthenticationRequestTokenUsed>
-                <cas:authenticationDate>${fn:escapeXml(assertion.primaryAuthentication.authenticationDate)}</cas:authenticationDate>
+                <cas:authenticationDate>${fn:escapeXml(assertion.primaryAuthentication.authenticatedDate)}</cas:authenticationDate>
             </cas:attributes>
         </c:if>
 
