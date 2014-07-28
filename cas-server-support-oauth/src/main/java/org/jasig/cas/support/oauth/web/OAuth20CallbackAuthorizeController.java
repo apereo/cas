@@ -81,9 +81,11 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         logger.debug("approvalPrompt : {}", approvalPrompt);
         session.removeAttribute(OAuthConstants.APPROVAL_PROMPT);
 
-        if (approvalPrompt != null && StringUtils.equals(approvalPrompt, "auto")) {
+        // Clients that auto-approve do not need authorization.
+        if (StringUtils.equals(approvalPrompt, OAuthConstants.AUTO_APPROVE)) {
             return OAuthUtils.redirectTo(callbackUrl);
         }
+
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
         logger.debug("serviceName : {}", serviceName);
