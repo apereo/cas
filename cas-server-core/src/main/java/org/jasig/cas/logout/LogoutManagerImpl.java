@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
@@ -33,10 +25,17 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpMessage;
 import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -48,6 +47,9 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
+
+    /** The parameter name that contains the logout request. */
+    public static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
 
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -227,7 +229,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          */
         @Override
         protected String formatOutputMessageInternal(final String message) {
-            return "logoutRequest=" + super.formatOutputMessageInternal(message);
+            return LOGOUT_PARAMETER_NAME + "=" + super.formatOutputMessageInternal(message);
         }        
     }
 }

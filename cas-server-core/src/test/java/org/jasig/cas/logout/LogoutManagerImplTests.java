@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.LogoutType;
@@ -38,6 +30,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Jerome Leleu
  * @since 4.0.0
@@ -47,7 +47,7 @@ public class LogoutManagerImplTests {
 
     private static final String ID = "id";
 
-    private static final String URL = "http://url";
+    private static final String URL = "http://www.github.com";
 
     private LogoutManagerImpl logoutManager;
 
