@@ -18,11 +18,10 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Implementation of the ServiceRegistryDao based on JPA.
