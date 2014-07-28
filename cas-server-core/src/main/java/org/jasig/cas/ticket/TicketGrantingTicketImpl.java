@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
@@ -225,4 +226,25 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TicketGrantingTicket)) {
+            return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
+    }
+
 }
