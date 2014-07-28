@@ -23,7 +23,6 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.JpaTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
@@ -39,7 +38,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link org.jasig.cas.monitor.SessionMonitor} class that involves {@link JpaTicketRegistry}.
@@ -48,7 +46,7 @@ import static org.junit.Assert.assertTrue;
  * @since 3.5.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:jpaTestApplicationContext.xml"})
+@ContextConfiguration(locations={"classpath:/jpaTestApplicationContext.xml"})
 @Transactional
 public class SessionMonitorJpaTests {
 
@@ -57,42 +55,11 @@ public class SessionMonitorJpaTests {
 
     @Autowired
     private JpaTicketRegistry jpaRegistry;
-
-    private DefaultTicketRegistry defaultRegistry;
     private SessionMonitor monitor;
 
     @Before
     public void setUp() {
-        this.defaultRegistry = new DefaultTicketRegistry();
         this.monitor = new SessionMonitor();
-        this.monitor.setTicketRegistry(this.defaultRegistry);
-    }
-
-    @Test
-    public void testObserveOk() throws Exception {
-        addTicketsToRegistry(this.defaultRegistry, 5, 10);
-        final SessionStatus status = this.monitor.observe();
-        assertEquals(5, status.getSessionCount());
-        assertEquals(10, status.getServiceTicketCount());
-        assertEquals(StatusCode.OK, status.getCode());
-    }
-
-    @Test
-    public void testObserveWarnSessionsExceeded() throws Exception {
-        addTicketsToRegistry(this.defaultRegistry, 10, 1);
-        this.monitor.setSessionCountWarnThreshold(5);
-        final SessionStatus status = this.monitor.observe();
-        assertEquals(StatusCode.WARN, status.getCode());
-        assertTrue(status.getDescription().contains("Session count"));
-    }
-
-    @Test
-    public void testObserveWarnServiceTicketsExceeded() throws Exception {
-        addTicketsToRegistry(this.defaultRegistry, 1, 10);
-        this.monitor.setServiceTicketCountWarnThreshold(5);
-        final SessionStatus status = this.monitor.observe();
-        assertEquals(StatusCode.WARN, status.getCode());
-        assertTrue(status.getDescription().contains("Service ticket count"));
     }
 
     @Test
