@@ -18,6 +18,8 @@
 # under the License.
 #
 
+docsDirectoryForTheRelease="4.0.0"
+
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
@@ -31,12 +33,12 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
 
   cd gh-pages
-  echo -e "Removing current's javadocs...\n"
-  git rm -rf ./current/javadocs
+  echo -e "Removing $docsDirectoryForTheRelease javadocs...\n"
+  git rm -rf ./$docsDirectoryForTheRelease/javadocs
 
-  echo -e "Copying new javadocs to current...\n"
-  cp -Rf $HOME/javadoc-latest ./current/javadocs
-  echo -e "Adding changes to the index...\n"
+  echo -e "Copying new javadocs to $docsDirectoryForTheRelease/javadocs...\n"
+  cp -Rf $HOME/javadoc-latest ./$docsDirectoryForTheRelease/javadocs
+  echo -e "Adding changes to the git index...\n"
   git add -f .
   echo -e "Committing changes...\n"
   git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
