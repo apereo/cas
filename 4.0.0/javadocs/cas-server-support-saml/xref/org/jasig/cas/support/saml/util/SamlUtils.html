@@ -97,124 +97,126 @@
 <a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Document constructDocumentFromXmlString(<strong class="jxr_keyword">final</strong> String xmlString) {
 <a class="jxr_linenumber" name="88" href="#88">88</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="89" href="#89">89</a>              <strong class="jxr_keyword">final</strong> SAXBuilder builder = <strong class="jxr_keyword">new</strong> SAXBuilder();
-<a class="jxr_linenumber" name="90" href="#90">90</a>              <strong class="jxr_keyword">return</strong> builder
-<a class="jxr_linenumber" name="91" href="#91">91</a>                      .build(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(xmlString.getBytes()));
-<a class="jxr_linenumber" name="92" href="#92">92</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="93" href="#93">93</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="94" href="#94">94</a>          }
-<a class="jxr_linenumber" name="95" href="#95">95</a>      }
-<a class="jxr_linenumber" name="96" href="#96">96</a>  
-<a class="jxr_linenumber" name="97" href="#97">97</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Element signSamlElement(<strong class="jxr_keyword">final</strong> Element element, <strong class="jxr_keyword">final</strong> PrivateKey privKey,
-<a class="jxr_linenumber" name="98" href="#98">98</a>              <strong class="jxr_keyword">final</strong> PublicKey pubKey) {
-<a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="100" href="#100">100</a>             <strong class="jxr_keyword">final</strong> String providerName = System.getProperty(<span class="jxr_string">"jsr105Provider"</span>,
-<a class="jxr_linenumber" name="101" href="#101">101</a>                     JSR_105_PROVIDER);
-<a class="jxr_linenumber" name="102" href="#102">102</a>             <strong class="jxr_keyword">final</strong> XMLSignatureFactory sigFactory = XMLSignatureFactory
-<a class="jxr_linenumber" name="103" href="#103">103</a>                     .getInstance(<span class="jxr_string">"DOM"</span>, (Provider) Class.forName(providerName)
-<a class="jxr_linenumber" name="104" href="#104">104</a>                             .newInstance());
-<a class="jxr_linenumber" name="105" href="#105">105</a> 
-<a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">final</strong> List envelopedTransform = Collections
-<a class="jxr_linenumber" name="107" href="#107">107</a>                     .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
-<a class="jxr_linenumber" name="108" href="#108">108</a>                             (TransformParameterSpec) <strong class="jxr_keyword">null</strong>));
-<a class="jxr_linenumber" name="109" href="#109">109</a> 
-<a class="jxr_linenumber" name="110" href="#110">110</a>             <strong class="jxr_keyword">final</strong> Reference ref = sigFactory.newReference(<span class="jxr_string">""</span>, sigFactory
-<a class="jxr_linenumber" name="111" href="#111">111</a>                     .newDigestMethod(DigestMethod.SHA1, <strong class="jxr_keyword">null</strong>), envelopedTransform,
-<a class="jxr_linenumber" name="112" href="#112">112</a>                     <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="113" href="#113">113</a> 
-<a class="jxr_linenumber" name="114" href="#114">114</a>             <em class="jxr_comment">// Create the SignatureMethod based on the type of key</em>
-<a class="jxr_linenumber" name="115" href="#115">115</a>             SignatureMethod signatureMethod;
-<a class="jxr_linenumber" name="116" href="#116">116</a>             <strong class="jxr_keyword">if</strong> (pubKey instanceof DSAPublicKey) {
-<a class="jxr_linenumber" name="117" href="#117">117</a>                 signatureMethod = sigFactory.newSignatureMethod(
-<a class="jxr_linenumber" name="118" href="#118">118</a>                         SignatureMethod.DSA_SHA1, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="119" href="#119">119</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pubKey instanceof RSAPublicKey) {
-<a class="jxr_linenumber" name="120" href="#120">120</a>                 signatureMethod = sigFactory.newSignatureMethod(
-<a class="jxr_linenumber" name="121" href="#121">121</a>                         SignatureMethod.RSA_SHA1, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="122" href="#122">122</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="123" href="#123">123</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(
-<a class="jxr_linenumber" name="124" href="#124">124</a>                         <span class="jxr_string">"Error signing SAML element: Unsupported type of key"</span>);
-<a class="jxr_linenumber" name="125" href="#125">125</a>             }
-<a class="jxr_linenumber" name="126" href="#126">126</a> 
-<a class="jxr_linenumber" name="127" href="#127">127</a>             <strong class="jxr_keyword">final</strong> CanonicalizationMethod canonicalizationMethod = sigFactory
-<a class="jxr_linenumber" name="128" href="#128">128</a>                     .newCanonicalizationMethod(
-<a class="jxr_linenumber" name="129" href="#129">129</a>                             CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-<a class="jxr_linenumber" name="130" href="#130">130</a>                             (C14NMethodParameterSpec) <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>             <em class="jxr_comment">// Create the SignedInfo</em>
-<a class="jxr_linenumber" name="133" href="#133">133</a>             <strong class="jxr_keyword">final</strong> SignedInfo signedInfo = sigFactory.newSignedInfo(
-<a class="jxr_linenumber" name="134" href="#134">134</a>                     canonicalizationMethod, signatureMethod, Collections
-<a class="jxr_linenumber" name="135" href="#135">135</a>                     .singletonList(ref));
-<a class="jxr_linenumber" name="136" href="#136">136</a> 
-<a class="jxr_linenumber" name="137" href="#137">137</a>             <em class="jxr_comment">// Create a KeyValue containing the DSA or RSA PublicKey</em>
-<a class="jxr_linenumber" name="138" href="#138">138</a>             <strong class="jxr_keyword">final</strong> KeyInfoFactory keyInfoFactory = sigFactory
-<a class="jxr_linenumber" name="139" href="#139">139</a>                     .getKeyInfoFactory();
-<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">final</strong> KeyValue keyValuePair = keyInfoFactory.newKeyValue(pubKey);
-<a class="jxr_linenumber" name="141" href="#141">141</a> 
-<a class="jxr_linenumber" name="142" href="#142">142</a>             <em class="jxr_comment">// Create a KeyInfo and add the KeyValue to it</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a>             <strong class="jxr_keyword">final</strong> KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
-<a class="jxr_linenumber" name="144" href="#144">144</a>                     .singletonList(keyValuePair));
-<a class="jxr_linenumber" name="145" href="#145">145</a>             <em class="jxr_comment">// Convert the JDOM document to w3c (Java XML signature API requires</em>
-<a class="jxr_linenumber" name="146" href="#146">146</a>             <em class="jxr_comment">// w3c</em>
-<a class="jxr_linenumber" name="147" href="#147">147</a>             <em class="jxr_comment">// representation)</em>
-<a class="jxr_linenumber" name="148" href="#148">148</a>             org.w3c.dom.Element w3cElement = toDom(element);
-<a class="jxr_linenumber" name="149" href="#149">149</a> 
-<a class="jxr_linenumber" name="150" href="#150">150</a>             <em class="jxr_comment">// Create a DOMSignContext and specify the DSA/RSA PrivateKey and</em>
-<a class="jxr_linenumber" name="151" href="#151">151</a>             <em class="jxr_comment">// location of the resulting XMLSignature's parent element</em>
-<a class="jxr_linenumber" name="152" href="#152">152</a>             DOMSignContext dsc = <strong class="jxr_keyword">new</strong> DOMSignContext(privKey, w3cElement);
-<a class="jxr_linenumber" name="153" href="#153">153</a> 
-<a class="jxr_linenumber" name="154" href="#154">154</a>             org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
-<a class="jxr_linenumber" name="155" href="#155">155</a>             dsc.setNextSibling(xmlSigInsertionPoint);
-<a class="jxr_linenumber" name="156" href="#156">156</a> 
-<a class="jxr_linenumber" name="157" href="#157">157</a>             <em class="jxr_comment">// Marshal, generate (and sign) the enveloped signature</em>
-<a class="jxr_linenumber" name="158" href="#158">158</a>             XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
-<a class="jxr_linenumber" name="159" href="#159">159</a>                     keyInfo);
-<a class="jxr_linenumber" name="160" href="#160">160</a>             signature.sign(dsc);
-<a class="jxr_linenumber" name="161" href="#161">161</a> 
-<a class="jxr_linenumber" name="162" href="#162">162</a>             <strong class="jxr_keyword">return</strong> toJdom(w3cElement);
+<a class="jxr_linenumber" name="90" href="#90">90</a>              builder.setFeature(<span class="jxr_string">"http://xml.org/sax/features/external-general-entities"</span>, false);
+<a class="jxr_linenumber" name="91" href="#91">91</a>              builder.setFeature(<span class="jxr_string">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="92" href="#92">92</a>              <strong class="jxr_keyword">return</strong> builder
+<a class="jxr_linenumber" name="93" href="#93">93</a>                      .build(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(xmlString.getBytes()));
+<a class="jxr_linenumber" name="94" href="#94">94</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="95" href="#95">95</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="96" href="#96">96</a>          }
+<a class="jxr_linenumber" name="97" href="#97">97</a>      }
+<a class="jxr_linenumber" name="98" href="#98">98</a>  
+<a class="jxr_linenumber" name="99" href="#99">99</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Element signSamlElement(<strong class="jxr_keyword">final</strong> Element element, <strong class="jxr_keyword">final</strong> PrivateKey privKey,
+<a class="jxr_linenumber" name="100" href="#100">100</a>             <strong class="jxr_keyword">final</strong> PublicKey pubKey) {
+<a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="102" href="#102">102</a>             <strong class="jxr_keyword">final</strong> String providerName = System.getProperty(<span class="jxr_string">"jsr105Provider"</span>,
+<a class="jxr_linenumber" name="103" href="#103">103</a>                     JSR_105_PROVIDER);
+<a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">final</strong> XMLSignatureFactory sigFactory = XMLSignatureFactory
+<a class="jxr_linenumber" name="105" href="#105">105</a>                     .getInstance(<span class="jxr_string">"DOM"</span>, (Provider) Class.forName(providerName)
+<a class="jxr_linenumber" name="106" href="#106">106</a>                             .newInstance());
+<a class="jxr_linenumber" name="107" href="#107">107</a> 
+<a class="jxr_linenumber" name="108" href="#108">108</a>             <strong class="jxr_keyword">final</strong> List envelopedTransform = Collections
+<a class="jxr_linenumber" name="109" href="#109">109</a>                     .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
+<a class="jxr_linenumber" name="110" href="#110">110</a>                             (TransformParameterSpec) <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="111" href="#111">111</a> 
+<a class="jxr_linenumber" name="112" href="#112">112</a>             <strong class="jxr_keyword">final</strong> Reference ref = sigFactory.newReference(<span class="jxr_string">""</span>, sigFactory
+<a class="jxr_linenumber" name="113" href="#113">113</a>                     .newDigestMethod(DigestMethod.SHA1, <strong class="jxr_keyword">null</strong>), envelopedTransform,
+<a class="jxr_linenumber" name="114" href="#114">114</a>                     <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="115" href="#115">115</a> 
+<a class="jxr_linenumber" name="116" href="#116">116</a>             <em class="jxr_comment">// Create the SignatureMethod based on the type of key</em>
+<a class="jxr_linenumber" name="117" href="#117">117</a>             SignatureMethod signatureMethod;
+<a class="jxr_linenumber" name="118" href="#118">118</a>             <strong class="jxr_keyword">if</strong> (pubKey instanceof DSAPublicKey) {
+<a class="jxr_linenumber" name="119" href="#119">119</a>                 signatureMethod = sigFactory.newSignatureMethod(
+<a class="jxr_linenumber" name="120" href="#120">120</a>                         SignatureMethod.DSA_SHA1, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="121" href="#121">121</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pubKey instanceof RSAPublicKey) {
+<a class="jxr_linenumber" name="122" href="#122">122</a>                 signatureMethod = sigFactory.newSignatureMethod(
+<a class="jxr_linenumber" name="123" href="#123">123</a>                         SignatureMethod.RSA_SHA1, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="124" href="#124">124</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="125" href="#125">125</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(
+<a class="jxr_linenumber" name="126" href="#126">126</a>                         <span class="jxr_string">"Error signing SAML element: Unsupported type of key"</span>);
+<a class="jxr_linenumber" name="127" href="#127">127</a>             }
+<a class="jxr_linenumber" name="128" href="#128">128</a> 
+<a class="jxr_linenumber" name="129" href="#129">129</a>             <strong class="jxr_keyword">final</strong> CanonicalizationMethod canonicalizationMethod = sigFactory
+<a class="jxr_linenumber" name="130" href="#130">130</a>                     .newCanonicalizationMethod(
+<a class="jxr_linenumber" name="131" href="#131">131</a>                             CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+<a class="jxr_linenumber" name="132" href="#132">132</a>                             (C14NMethodParameterSpec) <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="133" href="#133">133</a> 
+<a class="jxr_linenumber" name="134" href="#134">134</a>             <em class="jxr_comment">// Create the SignedInfo</em>
+<a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">final</strong> SignedInfo signedInfo = sigFactory.newSignedInfo(
+<a class="jxr_linenumber" name="136" href="#136">136</a>                     canonicalizationMethod, signatureMethod, Collections
+<a class="jxr_linenumber" name="137" href="#137">137</a>                     .singletonList(ref));
+<a class="jxr_linenumber" name="138" href="#138">138</a> 
+<a class="jxr_linenumber" name="139" href="#139">139</a>             <em class="jxr_comment">// Create a KeyValue containing the DSA or RSA PublicKey</em>
+<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">final</strong> KeyInfoFactory keyInfoFactory = sigFactory
+<a class="jxr_linenumber" name="141" href="#141">141</a>                     .getKeyInfoFactory();
+<a class="jxr_linenumber" name="142" href="#142">142</a>             <strong class="jxr_keyword">final</strong> KeyValue keyValuePair = keyInfoFactory.newKeyValue(pubKey);
+<a class="jxr_linenumber" name="143" href="#143">143</a> 
+<a class="jxr_linenumber" name="144" href="#144">144</a>             <em class="jxr_comment">// Create a KeyInfo and add the KeyValue to it</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a>             <strong class="jxr_keyword">final</strong> KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
+<a class="jxr_linenumber" name="146" href="#146">146</a>                     .singletonList(keyValuePair));
+<a class="jxr_linenumber" name="147" href="#147">147</a>             <em class="jxr_comment">// Convert the JDOM document to w3c (Java XML signature API requires</em>
+<a class="jxr_linenumber" name="148" href="#148">148</a>             <em class="jxr_comment">// w3c</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <em class="jxr_comment">// representation)</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a>             org.w3c.dom.Element w3cElement = toDom(element);
+<a class="jxr_linenumber" name="151" href="#151">151</a> 
+<a class="jxr_linenumber" name="152" href="#152">152</a>             <em class="jxr_comment">// Create a DOMSignContext and specify the DSA/RSA PrivateKey and</em>
+<a class="jxr_linenumber" name="153" href="#153">153</a>             <em class="jxr_comment">// location of the resulting XMLSignature's parent element</em>
+<a class="jxr_linenumber" name="154" href="#154">154</a>             DOMSignContext dsc = <strong class="jxr_keyword">new</strong> DOMSignContext(privKey, w3cElement);
+<a class="jxr_linenumber" name="155" href="#155">155</a> 
+<a class="jxr_linenumber" name="156" href="#156">156</a>             org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+<a class="jxr_linenumber" name="157" href="#157">157</a>             dsc.setNextSibling(xmlSigInsertionPoint);
+<a class="jxr_linenumber" name="158" href="#158">158</a> 
+<a class="jxr_linenumber" name="159" href="#159">159</a>             <em class="jxr_comment">// Marshal, generate (and sign) the enveloped signature</em>
+<a class="jxr_linenumber" name="160" href="#160">160</a>             XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+<a class="jxr_linenumber" name="161" href="#161">161</a>                     keyInfo);
+<a class="jxr_linenumber" name="162" href="#162">162</a>             signature.sign(dsc);
 <a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="165" href="#165">165</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Error signing SAML element: "</span>
-<a class="jxr_linenumber" name="166" href="#166">166</a>                     + e.getMessage(), e);
-<a class="jxr_linenumber" name="167" href="#167">167</a>         }
-<a class="jxr_linenumber" name="168" href="#168">168</a>     }
-<a class="jxr_linenumber" name="169" href="#169">169</a> 
-<a class="jxr_linenumber" name="170" href="#170">170</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Node getXmlSignatureInsertLocation(<strong class="jxr_keyword">final</strong> org.w3c.dom.Element elem) {
-<a class="jxr_linenumber" name="171" href="#171">171</a>         org.w3c.dom.Node insertLocation = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="172" href="#172">172</a>         org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
-<a class="jxr_linenumber" name="173" href="#173">173</a>                 SAML_PROTOCOL_NS_URI_V20, <span class="jxr_string">"Extensions"</span>);
-<a class="jxr_linenumber" name="174" href="#174">174</a>         <strong class="jxr_keyword">if</strong> (nodeList.getLength() != 0) {
-<a class="jxr_linenumber" name="175" href="#175">175</a>             insertLocation = nodeList.item(nodeList.getLength() - 1);
-<a class="jxr_linenumber" name="176" href="#176">176</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="177" href="#177">177</a>             nodeList = elem.getElementsByTagNameNS(SAML_PROTOCOL_NS_URI_V20,
-<a class="jxr_linenumber" name="178" href="#178">178</a>                     <span class="jxr_string">"Status"</span>);
-<a class="jxr_linenumber" name="179" href="#179">179</a>             insertLocation = nodeList.item(nodeList.getLength() - 1);
-<a class="jxr_linenumber" name="180" href="#180">180</a>         }
-<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">return</strong> insertLocation;
-<a class="jxr_linenumber" name="182" href="#182">182</a>     }
-<a class="jxr_linenumber" name="183" href="#183">183</a> 
-<a class="jxr_linenumber" name="184" href="#184">184</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.w3c.dom.Element toDom(<strong class="jxr_keyword">final</strong> Element element) {
-<a class="jxr_linenumber" name="185" href="#185">185</a>         <strong class="jxr_keyword">return</strong> toDom(element.getDocument()).getDocumentElement();
-<a class="jxr_linenumber" name="186" href="#186">186</a>     }
-<a class="jxr_linenumber" name="187" href="#187">187</a> 
-<a class="jxr_linenumber" name="188" href="#188">188</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.w3c.dom.Document toDom(<strong class="jxr_keyword">final</strong> Document doc) {
-<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="190" href="#190">190</a>             <strong class="jxr_keyword">final</strong> XMLOutputter xmlOutputter = <strong class="jxr_keyword">new</strong> XMLOutputter();
-<a class="jxr_linenumber" name="191" href="#191">191</a>             <strong class="jxr_keyword">final</strong> StringWriter elemStrWriter = <strong class="jxr_keyword">new</strong> StringWriter();
-<a class="jxr_linenumber" name="192" href="#192">192</a>             xmlOutputter.output(doc, elemStrWriter);
-<a class="jxr_linenumber" name="193" href="#193">193</a>             <strong class="jxr_keyword">final</strong> byte[] xmlBytes = elemStrWriter.toString().getBytes();
-<a class="jxr_linenumber" name="194" href="#194">194</a>             <strong class="jxr_keyword">final</strong> DocumentBuilderFactory dbf = DocumentBuilderFactory
-<a class="jxr_linenumber" name="195" href="#195">195</a>                     .newInstance();
-<a class="jxr_linenumber" name="196" href="#196">196</a>             dbf.setNamespaceAware(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="197" href="#197">197</a>             <strong class="jxr_keyword">return</strong> dbf.newDocumentBuilder().parse(
-<a class="jxr_linenumber" name="198" href="#198">198</a>                     <strong class="jxr_keyword">new</strong> ByteArrayInputStream(xmlBytes));
-<a class="jxr_linenumber" name="199" href="#199">199</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="200" href="#200">200</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="201" href="#201">201</a>         }
-<a class="jxr_linenumber" name="202" href="#202">202</a>     }
-<a class="jxr_linenumber" name="203" href="#203">203</a> 
-<a class="jxr_linenumber" name="204" href="#204">204</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Element toJdom(<strong class="jxr_keyword">final</strong> org.w3c.dom.Element e) {
-<a class="jxr_linenumber" name="205" href="#205">205</a>         <strong class="jxr_keyword">return</strong>  <strong class="jxr_keyword">new</strong> DOMBuilder().build(e);
-<a class="jxr_linenumber" name="206" href="#206">206</a>     }
-<a class="jxr_linenumber" name="207" href="#207">207</a> }
+<a class="jxr_linenumber" name="164" href="#164">164</a>             <strong class="jxr_keyword">return</strong> toJdom(w3cElement);
+<a class="jxr_linenumber" name="165" href="#165">165</a> 
+<a class="jxr_linenumber" name="166" href="#166">166</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="167" href="#167">167</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Error signing SAML element: "</span>
+<a class="jxr_linenumber" name="168" href="#168">168</a>                     + e.getMessage(), e);
+<a class="jxr_linenumber" name="169" href="#169">169</a>         }
+<a class="jxr_linenumber" name="170" href="#170">170</a>     }
+<a class="jxr_linenumber" name="171" href="#171">171</a> 
+<a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Node getXmlSignatureInsertLocation(<strong class="jxr_keyword">final</strong> org.w3c.dom.Element elem) {
+<a class="jxr_linenumber" name="173" href="#173">173</a>         org.w3c.dom.Node insertLocation = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="174" href="#174">174</a>         org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
+<a class="jxr_linenumber" name="175" href="#175">175</a>                 SAML_PROTOCOL_NS_URI_V20, <span class="jxr_string">"Extensions"</span>);
+<a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">if</strong> (nodeList.getLength() != 0) {
+<a class="jxr_linenumber" name="177" href="#177">177</a>             insertLocation = nodeList.item(nodeList.getLength() - 1);
+<a class="jxr_linenumber" name="178" href="#178">178</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="179" href="#179">179</a>             nodeList = elem.getElementsByTagNameNS(SAML_PROTOCOL_NS_URI_V20,
+<a class="jxr_linenumber" name="180" href="#180">180</a>                     <span class="jxr_string">"Status"</span>);
+<a class="jxr_linenumber" name="181" href="#181">181</a>             insertLocation = nodeList.item(nodeList.getLength() - 1);
+<a class="jxr_linenumber" name="182" href="#182">182</a>         }
+<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">return</strong> insertLocation;
+<a class="jxr_linenumber" name="184" href="#184">184</a>     }
+<a class="jxr_linenumber" name="185" href="#185">185</a> 
+<a class="jxr_linenumber" name="186" href="#186">186</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.w3c.dom.Element toDom(<strong class="jxr_keyword">final</strong> Element element) {
+<a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">return</strong> toDom(element.getDocument()).getDocumentElement();
+<a class="jxr_linenumber" name="188" href="#188">188</a>     }
+<a class="jxr_linenumber" name="189" href="#189">189</a> 
+<a class="jxr_linenumber" name="190" href="#190">190</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> org.w3c.dom.Document toDom(<strong class="jxr_keyword">final</strong> Document doc) {
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="192" href="#192">192</a>             <strong class="jxr_keyword">final</strong> XMLOutputter xmlOutputter = <strong class="jxr_keyword">new</strong> XMLOutputter();
+<a class="jxr_linenumber" name="193" href="#193">193</a>             <strong class="jxr_keyword">final</strong> StringWriter elemStrWriter = <strong class="jxr_keyword">new</strong> StringWriter();
+<a class="jxr_linenumber" name="194" href="#194">194</a>             xmlOutputter.output(doc, elemStrWriter);
+<a class="jxr_linenumber" name="195" href="#195">195</a>             <strong class="jxr_keyword">final</strong> byte[] xmlBytes = elemStrWriter.toString().getBytes();
+<a class="jxr_linenumber" name="196" href="#196">196</a>             <strong class="jxr_keyword">final</strong> DocumentBuilderFactory dbf = DocumentBuilderFactory
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     .newInstance();
+<a class="jxr_linenumber" name="198" href="#198">198</a>             dbf.setNamespaceAware(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="199" href="#199">199</a>             <strong class="jxr_keyword">return</strong> dbf.newDocumentBuilder().parse(
+<a class="jxr_linenumber" name="200" href="#200">200</a>                     <strong class="jxr_keyword">new</strong> ByteArrayInputStream(xmlBytes));
+<a class="jxr_linenumber" name="201" href="#201">201</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="202" href="#202">202</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="203" href="#203">203</a>         }
+<a class="jxr_linenumber" name="204" href="#204">204</a>     }
+<a class="jxr_linenumber" name="205" href="#205">205</a> 
+<a class="jxr_linenumber" name="206" href="#206">206</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Element toJdom(<strong class="jxr_keyword">final</strong> org.w3c.dom.Element e) {
+<a class="jxr_linenumber" name="207" href="#207">207</a>         <strong class="jxr_keyword">return</strong>  <strong class="jxr_keyword">new</strong> DOMBuilder().build(e);
+<a class="jxr_linenumber" name="208" href="#208">208</a>     }
+<a class="jxr_linenumber" name="209" href="#209">209</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
