@@ -19,8 +19,9 @@
 #
 
 docsDirectoryForTheRelease="4.0.0"
+echo -e "Preparing Javadoc for 4.0.x branch release...\n"
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "4.0.x" ]; then
 
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
 
