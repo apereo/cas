@@ -29,7 +29,6 @@ branches:
   only:
   - 4.0.x
 cache:
-  - bundler
   directories:
   - $HOME/.m2
 jdk:
