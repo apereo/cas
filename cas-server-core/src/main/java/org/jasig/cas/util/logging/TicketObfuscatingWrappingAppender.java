@@ -46,15 +46,25 @@ import java.util.regex.Pattern;
  */
 public class TicketObfuscatingWrappingAppender extends AppenderSkeleton implements AppenderAttachable {
 
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile(TicketGrantingTicket.PREFIX + "(-)*(\\w)*(-)*(\\w)*");
+    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(" + TicketGrantingTicket.PREFIX + "|"
+                            + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+                            + ")(-)*(\\w)*(-)*(\\w)*");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
      * for troubleshooting purposes.
      */
-    private static final int VISIBLE_ID_TAIL_LENGTH = 10;
+    private int visibleIdTailLength = 10;
 
     private final List<Appender> appenders = new ArrayList<Appender>();
+
+    public int getVisibleIdTailLength() {
+        return this.visibleIdTailLength;
+    }
+
+    public void setVisibleIdTailLength(final int visibleIdTailLength) {
+        this.visibleIdTailLength = visibleIdTailLength;
+    }
 
     @Override
     public final void close() {
@@ -178,9 +188,9 @@ public class TicketObfuscatingWrappingAppender extends AppenderSkeleton implemen
         final Matcher matcher = TICKET_ID_PATTERN.matcher(modifiedMessage);
         if (matcher.find()) {
             final String match = matcher.group();
-            final String newId = TicketGrantingTicket.PREFIX + "-"
-                    + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
-                    + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
+            final String newId = matcher.group(1) + "-"
+                    + StringUtils.repeat("*", match.length() - this.visibleIdTailLength)
+                    + StringUtils.right(match, this.visibleIdTailLength);
 
             final String newMessage = modifiedMessage.replaceAll(match, newId);
             return newMessage;
