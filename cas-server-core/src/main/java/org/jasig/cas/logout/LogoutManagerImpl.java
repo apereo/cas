@@ -49,7 +49,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
 
     /** The parameter name that contains the logout request. */
-    public static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
+    private static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
 
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -174,6 +174,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
         final String originalUrl = request.getService().getOriginalUrl();        
         final LogoutHttpMessage sender = new LogoutHttpMessage(originalUrl, logoutRequest);
+
         return this.httpClient.sendMessageToEndPoint(sender);
     }
 
