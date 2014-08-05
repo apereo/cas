@@ -30,6 +30,7 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %p [%c] - &lt;%m&gt;%n"/>
         </layout>
+
     </appender>
 
     <appender name="cas" class="org.apache.log4j.RollingFileAppender">
@@ -39,6 +40,14 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
         </layout>
+    </appender>
+
+    <!-- Appenders with the ability to encode log output -->
+    <appender name="encodingConsoleAppender" class="org.jasig.cas.util.logging.TicketObfuscatingWrappingAppender">
+        <appender-ref ref="console" />
+    </appender>
+    <appender name="encodingCasFileAppender" class="org.jasig.cas.util.logging.TicketObfuscatingWrappingAppender">
+        <appender-ref ref="cas" />
     </appender>
 
     <!-- Perf4J appenders -->
@@ -102,13 +111,13 @@
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="INFO" />
-        <appender-ref ref="cas" />
+        <level value="DEBUG" />
+        <appender-ref ref="encodingCasFileAppender" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
         <level value="INFO" />
-        <appender-ref ref="cas" />
+        <appender-ref ref="encodingCasFileAppender" />
     </logger>
 
     <!--
@@ -118,7 +127,7 @@
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
         <level value="INFO" />
-        <appender-ref ref="cas" />
+        <appender-ref ref="encodingCasFileAppender" />
     </logger>
 
     <!--
@@ -127,6 +136,6 @@
     -->
     <root>
         <level value="ERROR" />
-        <appender-ref ref="console" />
+        <appender-ref ref="encodingConsoleAppender" />
     </root>
 </log4j:configuration>
