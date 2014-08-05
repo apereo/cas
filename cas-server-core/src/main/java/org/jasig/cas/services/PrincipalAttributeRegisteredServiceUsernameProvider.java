@@ -62,19 +62,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         if (principal.getAttributes().containsKey(this.usernameAttribute)) {
             principalId = principal.getAttributes().get(this.usernameAttribute).toString();
         } else {
-            final Object[] errorLogParameters = new Object[] {
-                    principalId,
-                    this.usernameAttribute,
-                    principal.getAttributes(),
-                    principalId };
             logger.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "
                     + "provide the user attribute the service expects. "
                     + "CAS will instead return the default principal id [{}]",
-                    errorLogParameters);
+                    principalId,
+                    this.usernameAttribute,
+                    principal.getAttributes(),
+                    principalId);
         }
         
         logger.debug("Principal id to return is [{}]. The default principal id is [{}].",
-                new Object[] {principal.getId(), principalId});
+                principal.getId(), principalId);
         return principalId;
     }
     
