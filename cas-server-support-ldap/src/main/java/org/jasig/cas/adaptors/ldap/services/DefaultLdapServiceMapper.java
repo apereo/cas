@@ -95,7 +95,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
-
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) svc).setId(System.nanoTime());
         }
@@ -240,7 +239,16 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     public void setAttributeReleasePolicyAttribute(final String attributeReleasePolicyAttribute) {
         this.attributeReleasePolicyAttribute = attributeReleasePolicyAttribute;
     }
-    
+
+    /**
+     * @deprecated As of 4.1. Consider using {@link #setUsernameAttributeProvider}
+     * @param usernameAttribute the uername attribute to return
+     */
+    @Deprecated
+    public void setUsernameAttribute(final String usernameAttribute) {
+        LOGGER.warn("setUsernameAttribute() is deprecated and has no effect. Consider setUsernameAttributeProvider() instead.");
+    }
+
     @Override
     public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
         return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);
