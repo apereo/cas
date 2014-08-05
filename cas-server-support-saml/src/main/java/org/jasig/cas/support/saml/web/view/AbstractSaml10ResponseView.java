@@ -83,7 +83,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     /**
     * Sets the allowance for time skew between CAS and the client server.  Default 0s.
     * This value will be subtracted from the current time when setting the SAML
-    * NotBeforeDate attribute, thereby allowing for the CAS server to be ahead of the
+    * <code>NotBeforeDate</code> attribute, thereby allowing for the CAS server to be ahead of the
     * client by as much as the value defined here.
     *
     * @param skewAllowance Number of seconds to allow for variance.
