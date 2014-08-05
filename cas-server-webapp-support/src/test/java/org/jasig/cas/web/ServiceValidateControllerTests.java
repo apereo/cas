@@ -286,10 +286,10 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", svc.getId());
         request.addParameter("ticket", sId);
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter("pgtUrl", "http://www.github.com");
         
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }
