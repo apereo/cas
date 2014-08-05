@@ -29,6 +29,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Generates a persistent id as username for anonymous service access.
+ * By default, the generation is handled by
+ * {@link org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator}.
+ * Generated ids are unique per service.
  * @author Misagh Moayyed
  * @since 4.1
  */
