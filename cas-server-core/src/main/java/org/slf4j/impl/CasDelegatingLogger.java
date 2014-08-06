@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.util.log;
+package org.slf4j.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
