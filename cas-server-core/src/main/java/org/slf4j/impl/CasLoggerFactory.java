@@ -82,7 +82,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
 
     /**
      * {@inheritDoc}
-     * <p>Attempts to find the <strong>real</strong> <code>Logger</code> istance that
+     * <p>Attempts to find the <strong>real</strong> <code>Logger</code> instance that
      * is doing the heavy lifting and routes the request to an instance of
      * {@link CasDelegatingLogger}. The instance is cached by the logger name.</p>
      */
