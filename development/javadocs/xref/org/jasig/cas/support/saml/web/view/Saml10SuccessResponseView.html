@@ -133,145 +133,146 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * @return the final map</em>
 <a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @since 4.1</em>
 <a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; prepareSamlAttributes(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication, <strong class="jxr_keyword">final</strong> org.jasig.cas.validation.Assertion assertion) {
-<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = authentication.getPrincipal().getAttributes();
-<a class="jxr_linenumber" name="128" href="#128">128</a> 
-<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; authnAttributes = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, Object&gt;(authentication.getAttributes());
-<a class="jxr_linenumber" name="130" href="#130">130</a> 
-<a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> Object o = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isRemembered = (o == Boolean.TRUE) &amp;&amp; assertion.isFromNewLogin();
-<a class="jxr_linenumber" name="133" href="#133">133</a> 
-<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (isRemembered) {
-<a class="jxr_linenumber" name="135" href="#135">135</a>             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-<a class="jxr_linenumber" name="136" href="#136">136</a>             authnAttributes.put(<strong class="jxr_keyword">this</strong>.rememberMeAttributeName, Boolean.TRUE.toString());
-<a class="jxr_linenumber" name="137" href="#137">137</a>         }
-<a class="jxr_linenumber" name="138" href="#138">138</a> 
-<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToReturn = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
-<a class="jxr_linenumber" name="140" href="#140">140</a>         attributesToReturn.putAll(attributes);
-<a class="jxr_linenumber" name="141" href="#141">141</a>         attributesToReturn.putAll(authnAttributes);
-<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">return</strong> attributesToReturn;
-<a class="jxr_linenumber" name="143" href="#143">143</a>     }
-<a class="jxr_linenumber" name="144" href="#144">144</a> 
-<a class="jxr_linenumber" name="145" href="#145">145</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     * New conditions element.</em>
-<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     * @param issuedAt the issued at</em>
-<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * @param serviceId the service id</em>
-<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * @return the conditions</em>
-<a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="152" href="#152">152</a>     <strong class="jxr_keyword">private</strong> Conditions newConditions(<strong class="jxr_keyword">final</strong> DateTime issuedAt, <strong class="jxr_keyword">final</strong> String serviceId) {
-<a class="jxr_linenumber" name="153" href="#153">153</a>         <strong class="jxr_keyword">final</strong> Conditions conditions = newSamlObject(Conditions.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="154" href="#154">154</a>         conditions.setNotBefore(issuedAt);
-<a class="jxr_linenumber" name="155" href="#155">155</a>         conditions.setNotOnOrAfter(issuedAt.plus(<strong class="jxr_keyword">this</strong>.issueLength));
-<a class="jxr_linenumber" name="156" href="#156">156</a>         <strong class="jxr_keyword">final</strong> AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">final</strong> Audience audience = newSamlObject(Audience.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="158" href="#158">158</a>         audience.setUri(serviceId);
-<a class="jxr_linenumber" name="159" href="#159">159</a>         audienceRestriction.getAudiences().add(audience);
-<a class="jxr_linenumber" name="160" href="#160">160</a>         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
-<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">return</strong> conditions;
-<a class="jxr_linenumber" name="162" href="#162">162</a>     }
-<a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * New subject element.</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * @param identifier the identifier</em>
-<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * @return the subject</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a>     <strong class="jxr_keyword">private</strong> Subject newSubject(<strong class="jxr_keyword">final</strong> String identifier) {
-<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">final</strong> SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="172" href="#172">172</a>         <strong class="jxr_keyword">final</strong> ConfirmationMethod method = newSamlObject(ConfirmationMethod.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="173" href="#173">173</a>         method.setConfirmationMethod(CONFIRMATION_METHOD);
-<a class="jxr_linenumber" name="174" href="#174">174</a>         confirmation.getConfirmationMethods().add(method);
-<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">final</strong> NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="176" href="#176">176</a>         nameIdentifier.setNameIdentifier(identifier);
-<a class="jxr_linenumber" name="177" href="#177">177</a>         <strong class="jxr_keyword">final</strong> Subject subject = newSamlObject(Subject.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="178" href="#178">178</a>         subject.setNameIdentifier(nameIdentifier);
-<a class="jxr_linenumber" name="179" href="#179">179</a>         subject.setSubjectConfirmation(confirmation);
-<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">return</strong> subject;
-<a class="jxr_linenumber" name="181" href="#181">181</a>     }
-<a class="jxr_linenumber" name="182" href="#182">182</a> 
-<a class="jxr_linenumber" name="183" href="#183">183</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="184" href="#184">184</a> <em class="jxr_javadoccomment">     * New authentication statement.</em>
-<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="186" href="#186">186</a> <em class="jxr_javadoccomment">     * @param authentication the authentication</em>
-<a class="jxr_linenumber" name="187" href="#187">187</a> <em class="jxr_javadoccomment">     * @return the authentication statement</em>
-<a class="jxr_linenumber" name="188" href="#188">188</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="189" href="#189">189</a>     <strong class="jxr_keyword">private</strong> AuthenticationStatement newAuthenticationStatement(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication) {
-<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">final</strong> String authenticationMethod = (String) authentication.getAttributes().get(
-<a class="jxr_linenumber" name="191" href="#191">191</a>                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
-<a class="jxr_linenumber" name="192" href="#192">192</a>         <strong class="jxr_keyword">final</strong> AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="193" href="#193">193</a>         authnStatement.setAuthenticationInstant(<strong class="jxr_keyword">new</strong> DateTime(authentication.getAuthenticationDate()));
-<a class="jxr_linenumber" name="194" href="#194">194</a>         authnStatement.setAuthenticationMethod(
-<a class="jxr_linenumber" name="195" href="#195">195</a>                 authenticationMethod != <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="196" href="#196">196</a>                 ? authenticationMethod
-<a class="jxr_linenumber" name="197" href="#197">197</a>                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
-<a class="jxr_linenumber" name="198" href="#198">198</a>         authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
-<a class="jxr_linenumber" name="199" href="#199">199</a>         <strong class="jxr_keyword">return</strong> authnStatement;
-<a class="jxr_linenumber" name="200" href="#200">200</a>     }
-<a class="jxr_linenumber" name="201" href="#201">201</a> 
-<a class="jxr_linenumber" name="202" href="#202">202</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a> <em class="jxr_javadoccomment">     * New attribute statement.</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * @param subject the subject</em>
-<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * @param attributes the attributes</em>
-<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @return the attribute statement</em>
-<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="209" href="#209">209</a>     <strong class="jxr_keyword">private</strong> AttributeStatement newAttributeStatement(
-<a class="jxr_linenumber" name="210" href="#210">210</a>             <strong class="jxr_keyword">final</strong> Subject subject, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes) {
-<a class="jxr_linenumber" name="211" href="#211">211</a> 
-<a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">final</strong> AttributeStatement attrStatement = newSamlObject(AttributeStatement.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="213" href="#213">213</a>         attrStatement.setSubject(subject);
-<a class="jxr_linenumber" name="214" href="#214">214</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Entry&lt;String, Object&gt; e : attributes.entrySet()) {
-<a class="jxr_linenumber" name="215" href="#215">215</a>             <strong class="jxr_keyword">if</strong> (e.getValue() instanceof Collection&lt;?&gt; &amp;&amp; ((Collection&lt;?&gt;) e.getValue()).isEmpty()) {
-<a class="jxr_linenumber" name="216" href="#216">216</a>                 <em class="jxr_comment">// bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException</em>
-<a class="jxr_linenumber" name="217" href="#217">217</a>                 logger.info(<span class="jxr_string">"Skipping attribute {} because it does not have any values."</span>, e.getKey());
-<a class="jxr_linenumber" name="218" href="#218">218</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="219" href="#219">219</a>             }
-<a class="jxr_linenumber" name="220" href="#220">220</a>             <strong class="jxr_keyword">final</strong> Attribute attribute = newSamlObject(Attribute.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="221" href="#221">221</a>             attribute.setAttributeName(e.getKey());
-<a class="jxr_linenumber" name="222" href="#222">222</a>             attribute.setAttributeNamespace(VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
-<a class="jxr_linenumber" name="223" href="#223">223</a>             <strong class="jxr_keyword">if</strong> (e.getValue() instanceof Collection&lt;?&gt;) {
-<a class="jxr_linenumber" name="224" href="#224">224</a>                 <strong class="jxr_keyword">final</strong> Collection&lt;?&gt; c = (Collection&lt;?&gt;) e.getValue();
-<a class="jxr_linenumber" name="225" href="#225">225</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Object value : c) {
-<a class="jxr_linenumber" name="226" href="#226">226</a>                     attribute.getAttributeValues().add(newAttributeValue(value));
-<a class="jxr_linenumber" name="227" href="#227">227</a>                 }
-<a class="jxr_linenumber" name="228" href="#228">228</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="229" href="#229">229</a>                 attribute.getAttributeValues().add(newAttributeValue(e.getValue()));
-<a class="jxr_linenumber" name="230" href="#230">230</a>             }
-<a class="jxr_linenumber" name="231" href="#231">231</a>             attrStatement.getAttributes().add(attribute);
-<a class="jxr_linenumber" name="232" href="#232">232</a>         }
-<a class="jxr_linenumber" name="233" href="#233">233</a> 
-<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">return</strong> attrStatement;
-<a class="jxr_linenumber" name="235" href="#235">235</a>     }
-<a class="jxr_linenumber" name="236" href="#236">236</a> 
-<a class="jxr_linenumber" name="237" href="#237">237</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="238" href="#238">238</a> <em class="jxr_javadoccomment">     * New attribute value.</em>
-<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">     * @return the xS string</em>
-<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="243" href="#243">243</a>     <strong class="jxr_keyword">private</strong> XSString newAttributeValue(<strong class="jxr_keyword">final</strong> Object value) {
-<a class="jxr_linenumber" name="244" href="#244">244</a>         <strong class="jxr_keyword">final</strong> XSString stringValue = <strong class="jxr_keyword">this</strong>.attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">if</strong> (value instanceof String) {
-<a class="jxr_linenumber" name="246" href="#246">246</a>             stringValue.setValue((String) value);
-<a class="jxr_linenumber" name="247" href="#247">247</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="248" href="#248">248</a>             stringValue.setValue(value.toString());
-<a class="jxr_linenumber" name="249" href="#249">249</a>         }
-<a class="jxr_linenumber" name="250" href="#250">250</a>         <strong class="jxr_keyword">return</strong> stringValue;
-<a class="jxr_linenumber" name="251" href="#251">251</a>     }
-<a class="jxr_linenumber" name="252" href="#252">252</a> 
-<a class="jxr_linenumber" name="253" href="#253">253</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIssueLength(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> issueLength) {
-<a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">this</strong>.issueLength = issueLength;
-<a class="jxr_linenumber" name="255" href="#255">255</a>     }
-<a class="jxr_linenumber" name="256" href="#256">256</a> 
-<a class="jxr_linenumber" name="257" href="#257">257</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIssuer(<strong class="jxr_keyword">final</strong> String issuer) {
-<a class="jxr_linenumber" name="258" href="#258">258</a>         <strong class="jxr_keyword">this</strong>.issuer = issuer;
-<a class="jxr_linenumber" name="259" href="#259">259</a>     }
-<a class="jxr_linenumber" name="260" href="#260">260</a> 
-<a class="jxr_linenumber" name="261" href="#261">261</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRememberMeAttributeName(<strong class="jxr_keyword">final</strong> String rememberMeAttributeName) {
-<a class="jxr_linenumber" name="262" href="#262">262</a>         <strong class="jxr_keyword">this</strong>.rememberMeAttributeName = rememberMeAttributeName;
-<a class="jxr_linenumber" name="263" href="#263">263</a>     }
-<a class="jxr_linenumber" name="264" href="#264">264</a> }
+<a class="jxr_linenumber" name="126" href="#126">126</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; prepareSamlAttributes(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication,
+<a class="jxr_linenumber" name="127" href="#127">127</a>                                                       <strong class="jxr_keyword">final</strong> org.jasig.cas.validation.Assertion assertion) {
+<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = authentication.getPrincipal().getAttributes();
+<a class="jxr_linenumber" name="129" href="#129">129</a> 
+<a class="jxr_linenumber" name="130" href="#130">130</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; authnAttributes = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, Object&gt;(authentication.getAttributes());
+<a class="jxr_linenumber" name="131" href="#131">131</a> 
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> Object o = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isRemembered = (o == Boolean.TRUE) &amp;&amp; assertion.isFromNewLogin();
+<a class="jxr_linenumber" name="134" href="#134">134</a> 
+<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">if</strong> (isRemembered) {
+<a class="jxr_linenumber" name="136" href="#136">136</a>             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+<a class="jxr_linenumber" name="137" href="#137">137</a>             authnAttributes.put(<strong class="jxr_keyword">this</strong>.rememberMeAttributeName, Boolean.TRUE.toString());
+<a class="jxr_linenumber" name="138" href="#138">138</a>         }
+<a class="jxr_linenumber" name="139" href="#139">139</a> 
+<a class="jxr_linenumber" name="140" href="#140">140</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToReturn = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="141" href="#141">141</a>         attributesToReturn.putAll(attributes);
+<a class="jxr_linenumber" name="142" href="#142">142</a>         attributesToReturn.putAll(authnAttributes);
+<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">return</strong> attributesToReturn;
+<a class="jxr_linenumber" name="144" href="#144">144</a>     }
+<a class="jxr_linenumber" name="145" href="#145">145</a> 
+<a class="jxr_linenumber" name="146" href="#146">146</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     * New conditions element.</em>
+<a class="jxr_linenumber" name="148" href="#148">148</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a> <em class="jxr_javadoccomment">     * @param issuedAt the issued at</em>
+<a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * @param serviceId the service id</em>
+<a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     * @return the conditions</em>
+<a class="jxr_linenumber" name="152" href="#152">152</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">private</strong> Conditions newConditions(<strong class="jxr_keyword">final</strong> DateTime issuedAt, <strong class="jxr_keyword">final</strong> String serviceId) {
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> Conditions conditions = newSamlObject(Conditions.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="155" href="#155">155</a>         conditions.setNotBefore(issuedAt);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         conditions.setNotOnOrAfter(issuedAt.plus(<strong class="jxr_keyword">this</strong>.issueLength));
+<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">final</strong> AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">final</strong> Audience audience = newSamlObject(Audience.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="159" href="#159">159</a>         audience.setUri(serviceId);
+<a class="jxr_linenumber" name="160" href="#160">160</a>         audienceRestriction.getAudiences().add(audience);
+<a class="jxr_linenumber" name="161" href="#161">161</a>         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
+<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">return</strong> conditions;
+<a class="jxr_linenumber" name="163" href="#163">163</a>     }
+<a class="jxr_linenumber" name="164" href="#164">164</a> 
+<a class="jxr_linenumber" name="165" href="#165">165</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * New subject element.</em>
+<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     * @param identifier the identifier</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * @return the subject</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="171" href="#171">171</a>     <strong class="jxr_keyword">private</strong> Subject newSubject(<strong class="jxr_keyword">final</strong> String identifier) {
+<a class="jxr_linenumber" name="172" href="#172">172</a>         <strong class="jxr_keyword">final</strong> SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <strong class="jxr_keyword">final</strong> ConfirmationMethod method = newSamlObject(ConfirmationMethod.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         method.setConfirmationMethod(CONFIRMATION_METHOD);
+<a class="jxr_linenumber" name="175" href="#175">175</a>         confirmation.getConfirmationMethods().add(method);
+<a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">final</strong> NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="177" href="#177">177</a>         nameIdentifier.setNameIdentifier(identifier);
+<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">final</strong> Subject subject = newSamlObject(Subject.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="179" href="#179">179</a>         subject.setNameIdentifier(nameIdentifier);
+<a class="jxr_linenumber" name="180" href="#180">180</a>         subject.setSubjectConfirmation(confirmation);
+<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">return</strong> subject;
+<a class="jxr_linenumber" name="182" href="#182">182</a>     }
+<a class="jxr_linenumber" name="183" href="#183">183</a> 
+<a class="jxr_linenumber" name="184" href="#184">184</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="185" href="#185">185</a> <em class="jxr_javadoccomment">     * New authentication statement.</em>
+<a class="jxr_linenumber" name="186" href="#186">186</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="187" href="#187">187</a> <em class="jxr_javadoccomment">     * @param authentication the authentication</em>
+<a class="jxr_linenumber" name="188" href="#188">188</a> <em class="jxr_javadoccomment">     * @return the authentication statement</em>
+<a class="jxr_linenumber" name="189" href="#189">189</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="190" href="#190">190</a>     <strong class="jxr_keyword">private</strong> AuthenticationStatement newAuthenticationStatement(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication) {
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">final</strong> String authenticationMethod = (String) authentication.getAttributes().get(
+<a class="jxr_linenumber" name="192" href="#192">192</a>                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
+<a class="jxr_linenumber" name="193" href="#193">193</a>         <strong class="jxr_keyword">final</strong> AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="194" href="#194">194</a>         authnStatement.setAuthenticationInstant(<strong class="jxr_keyword">new</strong> DateTime(authentication.getAuthenticationDate()));
+<a class="jxr_linenumber" name="195" href="#195">195</a>         authnStatement.setAuthenticationMethod(
+<a class="jxr_linenumber" name="196" href="#196">196</a>                 authenticationMethod != <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="197" href="#197">197</a>                 ? authenticationMethod
+<a class="jxr_linenumber" name="198" href="#198">198</a>                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
+<a class="jxr_linenumber" name="199" href="#199">199</a>         authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
+<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">return</strong> authnStatement;
+<a class="jxr_linenumber" name="201" href="#201">201</a>     }
+<a class="jxr_linenumber" name="202" href="#202">202</a> 
+<a class="jxr_linenumber" name="203" href="#203">203</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="204" href="#204">204</a> <em class="jxr_javadoccomment">     * New attribute statement.</em>
+<a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     * @param subject the subject</em>
+<a class="jxr_linenumber" name="207" href="#207">207</a> <em class="jxr_javadoccomment">     * @param attributes the attributes</em>
+<a class="jxr_linenumber" name="208" href="#208">208</a> <em class="jxr_javadoccomment">     * @return the attribute statement</em>
+<a class="jxr_linenumber" name="209" href="#209">209</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a>     <strong class="jxr_keyword">private</strong> AttributeStatement newAttributeStatement(
+<a class="jxr_linenumber" name="211" href="#211">211</a>             <strong class="jxr_keyword">final</strong> Subject subject, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes) {
+<a class="jxr_linenumber" name="212" href="#212">212</a> 
+<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> AttributeStatement attrStatement = newSamlObject(AttributeStatement.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="214" href="#214">214</a>         attrStatement.setSubject(subject);
+<a class="jxr_linenumber" name="215" href="#215">215</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Entry&lt;String, Object&gt; e : attributes.entrySet()) {
+<a class="jxr_linenumber" name="216" href="#216">216</a>             <strong class="jxr_keyword">if</strong> (e.getValue() instanceof Collection&lt;?&gt; &amp;&amp; ((Collection&lt;?&gt;) e.getValue()).isEmpty()) {
+<a class="jxr_linenumber" name="217" href="#217">217</a>                 <em class="jxr_comment">// bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException</em>
+<a class="jxr_linenumber" name="218" href="#218">218</a>                 logger.info(<span class="jxr_string">"Skipping attribute {} because it does not have any values."</span>, e.getKey());
+<a class="jxr_linenumber" name="219" href="#219">219</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="220" href="#220">220</a>             }
+<a class="jxr_linenumber" name="221" href="#221">221</a>             <strong class="jxr_keyword">final</strong> Attribute attribute = newSamlObject(Attribute.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="222" href="#222">222</a>             attribute.setAttributeName(e.getKey());
+<a class="jxr_linenumber" name="223" href="#223">223</a>             attribute.setAttributeNamespace(VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
+<a class="jxr_linenumber" name="224" href="#224">224</a>             <strong class="jxr_keyword">if</strong> (e.getValue() instanceof Collection&lt;?&gt;) {
+<a class="jxr_linenumber" name="225" href="#225">225</a>                 <strong class="jxr_keyword">final</strong> Collection&lt;?&gt; c = (Collection&lt;?&gt;) e.getValue();
+<a class="jxr_linenumber" name="226" href="#226">226</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Object value : c) {
+<a class="jxr_linenumber" name="227" href="#227">227</a>                     attribute.getAttributeValues().add(newAttributeValue(value));
+<a class="jxr_linenumber" name="228" href="#228">228</a>                 }
+<a class="jxr_linenumber" name="229" href="#229">229</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="230" href="#230">230</a>                 attribute.getAttributeValues().add(newAttributeValue(e.getValue()));
+<a class="jxr_linenumber" name="231" href="#231">231</a>             }
+<a class="jxr_linenumber" name="232" href="#232">232</a>             attrStatement.getAttributes().add(attribute);
+<a class="jxr_linenumber" name="233" href="#233">233</a>         }
+<a class="jxr_linenumber" name="234" href="#234">234</a> 
+<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">return</strong> attrStatement;
+<a class="jxr_linenumber" name="236" href="#236">236</a>     }
+<a class="jxr_linenumber" name="237" href="#237">237</a> 
+<a class="jxr_linenumber" name="238" href="#238">238</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">     * New attribute value.</em>
+<a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * @return the xS string</em>
+<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a>     <strong class="jxr_keyword">private</strong> XSString newAttributeValue(<strong class="jxr_keyword">final</strong> Object value) {
+<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">final</strong> XSString stringValue = <strong class="jxr_keyword">this</strong>.attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+<a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">if</strong> (value instanceof String) {
+<a class="jxr_linenumber" name="247" href="#247">247</a>             stringValue.setValue((String) value);
+<a class="jxr_linenumber" name="248" href="#248">248</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="249" href="#249">249</a>             stringValue.setValue(value.toString());
+<a class="jxr_linenumber" name="250" href="#250">250</a>         }
+<a class="jxr_linenumber" name="251" href="#251">251</a>         <strong class="jxr_keyword">return</strong> stringValue;
+<a class="jxr_linenumber" name="252" href="#252">252</a>     }
+<a class="jxr_linenumber" name="253" href="#253">253</a> 
+<a class="jxr_linenumber" name="254" href="#254">254</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIssueLength(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> issueLength) {
+<a class="jxr_linenumber" name="255" href="#255">255</a>         <strong class="jxr_keyword">this</strong>.issueLength = issueLength;
+<a class="jxr_linenumber" name="256" href="#256">256</a>     }
+<a class="jxr_linenumber" name="257" href="#257">257</a> 
+<a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setIssuer(<strong class="jxr_keyword">final</strong> String issuer) {
+<a class="jxr_linenumber" name="259" href="#259">259</a>         <strong class="jxr_keyword">this</strong>.issuer = issuer;
+<a class="jxr_linenumber" name="260" href="#260">260</a>     }
+<a class="jxr_linenumber" name="261" href="#261">261</a> 
+<a class="jxr_linenumber" name="262" href="#262">262</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRememberMeAttributeName(<strong class="jxr_keyword">final</strong> String rememberMeAttributeName) {
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">this</strong>.rememberMeAttributeName = rememberMeAttributeName;
+<a class="jxr_linenumber" name="264" href="#264">264</a>     }
+<a class="jxr_linenumber" name="265" href="#265">265</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

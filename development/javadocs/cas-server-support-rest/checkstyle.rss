@@ -10,7 +10,7 @@
     <item>
       <title>File: 1,
              Errors: 0,
-             Warnings: 6,
+             Warnings: 0,
              Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-rest//checkstyle.html</link>
@@ -35,7 +35,7 @@
                   0
                 </td>
                 <td>
-                  6
+                  0
                 </td>
                 <td>
                   0

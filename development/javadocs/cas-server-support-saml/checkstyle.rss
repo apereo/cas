@@ -10,7 +10,7 @@
     <item>
       <title>File: 11,
              Errors: 0,
-             Warnings: 1,
+             Warnings: 0,
              Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html</link>
@@ -77,7 +77,7 @@
                   0
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
@@ -113,7 +113,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.SamlArgumentExtractor.java">org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor.java">org/jasig/cas/support/saml/web/support/GoogleAccountsArgumentExtractor.java</a>
                 </td>
                 <td>
                   0
@@ -127,7 +127,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor.java">org/jasig/cas/support/saml/web/support/GoogleAccountsArgumentExtractor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.SamlArgumentExtractor.java">org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.java</a>
                 </td>
                 <td>
                   0
