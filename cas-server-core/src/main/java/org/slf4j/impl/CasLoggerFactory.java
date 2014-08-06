@@ -44,8 +44,8 @@ public final class CasLoggerFactory implements ILoggerFactory {
     private static final String PACKAGE_TO_SCAN = "org.slf4j.impl";
 
     private final Map<String, CasDelegatingLogger> loggerMap;
-    private final Reflections reflections;
 
+    private final Class<? extends ILoggerFactory> realLoggerFactoryClass;
     /**
      * Instantiates a new Cas logger factory.
      * Configures the reflection scanning engine to be prepared to scan <code>org.slf4j.impl</code>
@@ -54,14 +54,35 @@ public final class CasLoggerFactory implements ILoggerFactory {
     public CasLoggerFactory() {
         this.loggerMap = new ConcurrentHashMap<String, CasDelegatingLogger>();
         final Set<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
-        this.reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
+        final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
+
+        final Set<Class<? extends ILoggerFactory>> subTypesOf = reflections.getSubTypesOf(ILoggerFactory.class);
+        subTypesOf.remove(this.getClass());
+
+        if (subTypesOf.size() > 1) {
+            Util.report("Multiple ILoggerFactory bindings are found on the classpath:");
+            for (final Class<? extends ILoggerFactory> c : subTypesOf) {
+                Util.report("* " + c.getCanonicalName());
+            }
+        }
+
+        if (subTypesOf.isEmpty()) {
+            final RuntimeException e = new RuntimeException("No ILoggerFactory could be found on the classpath."
+                    + " CAS cannot determine the logging framework."
+                    + " Examine the project dependencies and ensure there is one and only one logging framework is available.");
+
+            Util.report(e.getMessage(), e);
+            throw e;
+        }
+        this.realLoggerFactoryClass = subTypesOf.iterator().next();
+        Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
     }
 
     /**
      * {@inheritDoc}
      * <p>Attempts to find the <strong>real</strong> <code>Logger</code> istance that
      * is doing the heavy lifting and routes the request to an instance of
-     * {@link CasDelegatingLogger}. The instance is cached.</p>
+     * {@link CasDelegatingLogger}. The instance is cached by the logger name.</p>
      */
     @Override
     public Logger getLogger(final String name) {
@@ -86,27 +107,11 @@ public final class CasLoggerFactory implements ILoggerFactory {
      */
     private Logger getRealLoggerInstance(final String name) {
         try {
-            final Set<Class<? extends ILoggerFactory>> subTypesOf = this.reflections.getSubTypesOf(ILoggerFactory.class);
-            subTypesOf.remove(this.getClass());
-
-            if (subTypesOf.size() > 1) {
-                Util.report("Multiple ILoggerFactory bindings are found on the classpath:");
-                for (final Class<? extends ILoggerFactory> c : subTypesOf) {
-                    Util.report("* " + c.getCanonicalName());
-                }
-            }
-
-            if (subTypesOf.size() > 0) {
-                final Class<? extends ILoggerFactory> factoryClass = subTypesOf.iterator().next();
-
-                final ILoggerFactory factInstance = factoryClass.newInstance();
-                return factInstance.getLogger(name);
-            }
-
+            final ILoggerFactory factInstance = this.realLoggerFactoryClass.newInstance();
+            return factInstance.getLogger(name);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        return null;
     }
 
 }
