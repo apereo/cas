@@ -136,7 +136,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         if (registeredService == null || !registeredService.isEnabled()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Saml service " + service.getId()
-                    + " is not authorized to use CAS. Configuration is missing in the service registry.");
+                    + " is not authorized to use CAS. Servoce is disabled or missing in the service registry.");
         }
 
         final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
