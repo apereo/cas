@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.util.log;
+package org.slf4j.impl;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -25,6 +25,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.helpers.Util;
 
 import java.net.URL;
 import java.util.Map;
@@ -60,7 +61,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
      * {@inheritDoc}
      * <p>Attempts to find the <strong>real</strong> <code>Logger</code> istance that
      * is doing the heavy lifting and routes the request to an instance of
-     * {@link org.jasig.cas.util.log.CasDelegatingLogger}. The instance is cached.</p>
+     * {@link CasDelegatingLogger}. The instance is cached.</p>
      */
     @Override
     public Logger getLogger(final String name) {
@@ -89,15 +90,15 @@ public final class CasLoggerFactory implements ILoggerFactory {
             subTypesOf.remove(this.getClass());
 
             if (subTypesOf.size() > 1) {
-                System.err.println("Multiple ILoggerFactory bindings are found on the classpath:");
+                Util.report("Multiple ILoggerFactory bindings are found on the classpath:");
                 for (final Class<? extends ILoggerFactory> c : subTypesOf) {
-                    System.err.println("- " + c.getCanonicalName());
+                    Util.report("* " + c.getCanonicalName());
                 }
-                System.err.println("CAS will select the ILoggerFactory: " + subTypesOf.iterator().next());
             }
 
             if (subTypesOf.size() > 0) {
                 final Class<? extends ILoggerFactory> factoryClass = subTypesOf.iterator().next();
+
                 final ILoggerFactory factInstance = factoryClass.newInstance();
                 return factInstance.getLogger(name);
             }
