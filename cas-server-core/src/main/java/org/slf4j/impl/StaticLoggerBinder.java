@@ -19,7 +19,6 @@
 
 package org.slf4j.impl;
 
-import org.jasig.cas.util.log.CasLoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
