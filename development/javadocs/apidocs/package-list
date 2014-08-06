@@ -67,6 +67,5 @@ org.jasig.cas.validation
 org.jasig.cas.web
 org.jasig.cas.web.bind
 org.jasig.cas.web.flow
-org.jasig.cas.web.init
 org.jasig.cas.web.support
 org.jasig.cas.web.view
