@@ -10,7 +10,7 @@
     <item>
       <title>File: 11,
              Errors: 0,
-             Warnings: 0,
+             Warnings: 1,
              Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html</link>
@@ -91,7 +91,7 @@
                   0
                 </td>
                 <td>
-                  0
+                  1
                 </td>
                 <td>
                   0

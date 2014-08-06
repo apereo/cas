@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="100" href="#100">100</a>     @Before
 <a class="jxr_linenumber" name="101" href="#101">101</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> prepareNewCAS() {
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">this</strong>.authentication = mock(Authentication.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="103" href="#103">103</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getAuthenticatedDate()).thenReturn(<strong class="jxr_keyword">new</strong> Date());
+<a class="jxr_linenumber" name="103" href="#103">103</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getAuthenticationDate()).thenReturn(<strong class="jxr_keyword">new</strong> Date());
 <a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> CredentialMetaData metadata = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword(<span class="jxr_string">"principal"</span>));
 <a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, HandlerResult&gt; successes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, HandlerResult&gt;();
 <a class="jxr_linenumber" name="106" href="#106">106</a>         successes.put(<span class="jxr_string">"handler1"</span>, <strong class="jxr_keyword">new</strong> HandlerResult(mock(AuthenticationHandler.<strong class="jxr_keyword">class</strong>), metadata));

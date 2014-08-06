@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 3206127526058061391L;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
 <a class="jxr_linenumber" name="46" href="#46">46</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> date stamp. */</em>
-<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> authenticatedDate;
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> authenticationDate;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
 <a class="jxr_linenumber" name="49" href="#49">49</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> List of metadata about credentials presented at authentication. */</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;CredentialMetaData&gt; credentials;
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>  
 <a class="jxr_linenumber" name="64" href="#64">64</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> No-arg constructor for serialization support. */</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableAuthentication</a>() {
-<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">this</strong>.authenticatedDate = 0;
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">this</strong>.authenticationDate = 0;
 <a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">this</strong>.credentials = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">this</strong>.principal = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">this</strong>.attributes = <strong class="jxr_keyword">null</strong>;
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="96" href="#96">96</a>          Assert.notEmpty(credentials, <span class="jxr_string">"Credential cannot be empty"</span>);
 <a class="jxr_linenumber" name="97" href="#97">97</a>          Assert.notEmpty(successes, <span class="jxr_string">"Successes cannot be empty"</span>);
 <a class="jxr_linenumber" name="98" href="#98">98</a>  
-<a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">this</strong>.authenticatedDate = date.getTime();
+<a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">this</strong>.authenticationDate = date.getTime();
 <a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">this</strong>.credentials = credentials;
 <a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">this</strong>.principal = principal;
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">this</strong>.attributes = attributes.isEmpty() ? <strong class="jxr_keyword">null</strong> : attributes;
@@ -119,8 +119,8 @@
 <a class="jxr_linenumber" name="109" href="#109">109</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.principal;
 <a class="jxr_linenumber" name="110" href="#110">110</a>     }
 <a class="jxr_linenumber" name="111" href="#111">111</a> 
-<a class="jxr_linenumber" name="112" href="#112">112</a>     <strong class="jxr_keyword">public</strong> Date getAuthenticatedDate() {
-<a class="jxr_linenumber" name="113" href="#113">113</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>(<strong class="jxr_keyword">this</strong>.authenticatedDate);
+<a class="jxr_linenumber" name="112" href="#112">112</a>     <strong class="jxr_keyword">public</strong> Date getAuthenticationDate() {
+<a class="jxr_linenumber" name="113" href="#113">113</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableDate</a>(<strong class="jxr_keyword">this</strong>.authenticationDate);
 <a class="jxr_linenumber" name="114" href="#114">114</a>     }
 <a class="jxr_linenumber" name="115" href="#115">115</a> 
 <a class="jxr_linenumber" name="116" href="#116">116</a>     @Override
@@ -147,7 +147,7 @@
 <a class="jxr_linenumber" name="137" href="#137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
 <a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">final</strong> HashCodeBuilder builder = <strong class="jxr_keyword">new</strong> HashCodeBuilder(97, 31);
 <a class="jxr_linenumber" name="139" href="#139">139</a>         builder.append(<strong class="jxr_keyword">this</strong>.principal);
-<a class="jxr_linenumber" name="140" href="#140">140</a>         builder.append(<strong class="jxr_keyword">this</strong>.authenticatedDate);
+<a class="jxr_linenumber" name="140" href="#140">140</a>         builder.append(<strong class="jxr_keyword">this</strong>.authenticationDate);
 <a class="jxr_linenumber" name="141" href="#141">141</a>         builder.append(<strong class="jxr_keyword">this</strong>.attributes);
 <a class="jxr_linenumber" name="142" href="#142">142</a>         builder.append(<strong class="jxr_keyword">this</strong>.credentials);
 <a class="jxr_linenumber" name="143" href="#143">143</a>         builder.append(<strong class="jxr_keyword">this</strong>.successes);
@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="158" href="#158">158</a>         builder.append(<strong class="jxr_keyword">this</strong>.principal, other.getPrincipal());
 <a class="jxr_linenumber" name="159" href="#159">159</a>         builder.append(<strong class="jxr_keyword">this</strong>.credentials, other.getCredentials());
 <a class="jxr_linenumber" name="160" href="#160">160</a>         builder.append(<strong class="jxr_keyword">this</strong>.successes, other.getSuccesses());
-<a class="jxr_linenumber" name="161" href="#161">161</a>         builder.append(<strong class="jxr_keyword">this</strong>.authenticatedDate, other.getAuthenticatedDate().getTime());
+<a class="jxr_linenumber" name="161" href="#161">161</a>         builder.append(<strong class="jxr_keyword">this</strong>.authenticationDate, other.getAuthenticationDate().getTime());
 <a class="jxr_linenumber" name="162" href="#162">162</a>         builder.append(wrap(<strong class="jxr_keyword">this</strong>.attributes), other.getAttributes());
 <a class="jxr_linenumber" name="163" href="#163">163</a>         builder.append(wrap(<strong class="jxr_keyword">this</strong>.failures), other.getFailures());
 <a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">return</strong> builder.isEquals();
