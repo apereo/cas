@@ -23,8 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
-import org.slf4j.helpers.SubstituteLogger;
+import org.slf4j.helpers.MarkerIgnoringBase;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +38,9 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class CasDelegatingLogger extends SubstituteLogger {
+public final class CasDelegatingLogger extends MarkerIgnoringBase implements Serializable {
+
+    private static final long serialVersionUID = 6182834493563598289L;
 
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(" + TicketGrantingTicket.PREFIX + "|"
             + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
@@ -49,15 +52,15 @@ public final class CasDelegatingLogger extends SubstituteLogger {
      */
     private static final int VISIBLE_ID_TAIL_LENGTH = 10;
 
+    private final Logger delegate;
+
     /**
      * Instantiates a new Cas delegating logger.
      *
-     * @param name the name
      * @param delegate the delegate
      */
-    public CasDelegatingLogger(final String name, final Logger delegate) {
-        super(name);
-        setDelegate(delegate);
+    public CasDelegatingLogger(final Logger delegate) {
+        this.delegate = delegate;
     }
 
     /**
@@ -81,251 +84,276 @@ public final class CasDelegatingLogger extends SubstituteLogger {
 
     @Override
     public void trace(final String format, final Object arg) {
-        super.trace(removeTicketIdFromMessage(format), arg);
+        delegate.trace(removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void trace(final String format, final Object arg1, final Object arg2) {
-        super.trace(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.trace(removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void trace(final String format, final Object... arguments) {
-        super.trace(removeTicketIdFromMessage(format), arguments);
+        delegate.trace(removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void trace(final String msg, final Throwable t) {
-        super.trace(removeTicketIdFromMessage(msg), t);
+        delegate.trace(removeTicketIdFromMessage(msg), t);
     }
 
     @Override
     public void trace(final Marker marker, final String msg) {
-        super.trace(marker, removeTicketIdFromMessage(msg));
+        delegate.trace(marker, removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg) {
-        super.trace(marker, removeTicketIdFromMessage(format), arg);
+        delegate.trace(marker, removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        super.trace(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.trace(marker, removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object... arguments) {
-        super.trace(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.trace(marker, removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void trace(final Marker marker, final String msg, final Throwable t) {
-        super.trace(marker, removeTicketIdFromMessage(msg), t);
+        delegate.trace(marker, removeTicketIdFromMessage(msg), t);
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return delegate.isDebugEnabled();
     }
 
     @Override
     public void debug(final String msg) {
-        super.debug(removeTicketIdFromMessage(msg));
+        delegate.debug(removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void debug(final String format, final Object arg1, final Object arg2) {
-        super.debug(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.debug(removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void debug(final String format, final Object... arguments) {
-        super.debug(removeTicketIdFromMessage(format), arguments);
+        delegate.debug(removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void debug(final String format, final Object arg) {
-        super.debug(removeTicketIdFromMessage(format), arg);
+        delegate.debug(removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void debug(final String msg, final Throwable t) {
-        super.debug(removeTicketIdFromMessage(msg), t);
+        delegate.debug(removeTicketIdFromMessage(msg), t);
     }
 
     @Override
     public void debug(final Marker marker, final String msg) {
-        super.debug(marker, removeTicketIdFromMessage(msg));
+        delegate.debug(marker, removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg) {
-        super.debug(marker, removeTicketIdFromMessage(format), arg);
+        delegate.debug(marker, removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        super.debug(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.debug(marker, removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object... arguments) {
-        super.debug(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.debug(marker, removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void debug(final Marker marker, final String msg, final Throwable t) {
-        super.debug(marker, removeTicketIdFromMessage(msg), t);
+        delegate.debug(marker, removeTicketIdFromMessage(msg), t);
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+        return delegate.isInfoEnabled();
     }
 
     @Override
     public void info(final String format, final Object arg) {
-        super.info(removeTicketIdFromMessage(format), arg);
+        delegate.info(removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void info(final String msg, final Throwable t) {
-        super.info(removeTicketIdFromMessage(msg), t);
+        delegate.info(removeTicketIdFromMessage(msg), t);
     }
 
     @Override
     public void info(final String format, final Object... arguments) {
-        super.info(removeTicketIdFromMessage(format), arguments);
+        delegate.info(removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void info(final String format, final Object arg1, final Object arg2) {
-        super.info(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.info(removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void info(final Marker marker, final String msg) {
-        super.info(marker, removeTicketIdFromMessage(msg));
+        delegate.info(marker, removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg) {
-        super.info(marker, removeTicketIdFromMessage(format), arg);
+        delegate.info(marker, removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object... arguments) {
-        super.info(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.info(marker, removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        super.info(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.info(marker, removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void info(final Marker marker, final String msg, final Throwable t) {
-        super.info(marker, removeTicketIdFromMessage(msg), t);
+        delegate.info(marker, removeTicketIdFromMessage(msg), t);
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+        return delegate.isWarnEnabled();
     }
 
     @Override
     public void warn(final String msg) {
-        super.warn(removeTicketIdFromMessage(msg));
+        delegate.warn(removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void warn(final String format, final Object arg) {
-        super.warn(removeTicketIdFromMessage(format), arg);
+        delegate.warn(removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void warn(final String format, final Object arg1, final Object arg2) {
-        super.warn(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.warn(removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void warn(final String format, final Object... arguments) {
-        super.warn(removeTicketIdFromMessage(format), arguments);
+        delegate.warn(removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void warn(final String msg, final Throwable t) {
-        super.warn(removeTicketIdFromMessage(msg), t);
+        delegate.warn(removeTicketIdFromMessage(msg), t);
     }
 
     @Override
     public void warn(final Marker marker, final String msg) {
-        super.warn(marker, removeTicketIdFromMessage(msg));
+        delegate.warn(marker, removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg) {
-        super.warn(marker, removeTicketIdFromMessage(format), arg);
+        delegate.warn(marker, removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        super.warn(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.warn(marker, removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object... arguments) {
-        super.warn(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.warn(marker, removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void warn(final Marker marker, final String msg, final Throwable t) {
-        super.warn(marker, removeTicketIdFromMessage(msg), t);
+        delegate.warn(marker, removeTicketIdFromMessage(msg), t);
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+        return delegate.isErrorEnabled();
     }
 
     @Override
     public void error(final String msg) {
-        super.error(removeTicketIdFromMessage(msg));
+        delegate.error(removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void error(final String format, final Object arg) {
-        super.error(removeTicketIdFromMessage(format), arg);
+        delegate.error(removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void error(final String format, final Object arg1, final Object arg2) {
-        super.error(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.error(removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void error(final String format, final Object... arguments) {
-        super.error(removeTicketIdFromMessage(format), arguments);
+        delegate.error(removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void error(final String msg, final Throwable t) {
-        super.error(removeTicketIdFromMessage(msg), t);
+        delegate.error(removeTicketIdFromMessage(msg), t);
     }
 
     @Override
     public void error(final Marker marker, final String msg) {
-        super.error(marker, removeTicketIdFromMessage(msg));
+        delegate.error(marker, removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg) {
-        super.error(marker, removeTicketIdFromMessage(format), arg);
+        delegate.error(marker, removeTicketIdFromMessage(format), arg);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        super.error(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.error(marker, removeTicketIdFromMessage(format), arg1, arg2);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object... arguments) {
-        super.error(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.error(marker, removeTicketIdFromMessage(format), arguments);
     }
 
     @Override
     public void error(final Marker marker, final String msg, final Throwable t) {
-        super.error(marker, removeTicketIdFromMessage(msg), t);
+        delegate.error(marker, removeTicketIdFromMessage(msg), t);
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return delegate.isTraceEnabled();
     }
 
     @Override
     public void trace(final String msg) {
-        super.trace(removeTicketIdFromMessage(msg));
+        delegate.trace(removeTicketIdFromMessage(msg));
     }
 
     @Override
     public void info(final String msg) {
-        super.info(removeTicketIdFromMessage(msg));
+        delegate.info(removeTicketIdFromMessage(msg));
     }
 }
