@@ -64,6 +64,15 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     }
 
     /**
+     * Manipulate the log message. For now, removes ticket ids from the log.
+     * @param msg log message
+     * @return message to log
+     */
+    private String manipulateLogMessage(final String msg) {
+        return removeTicketIdFromMessage(msg);
+    }
+
+    /**
      * Remove ticket id from the log message.
      *
      * @param msg the message
@@ -84,47 +93,47 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void trace(final String format, final Object arg) {
-        delegate.trace(removeTicketIdFromMessage(format), arg);
+        delegate.trace(manipulateLogMessage(format), arg);
     }
 
     @Override
     public void trace(final String format, final Object arg1, final Object arg2) {
-        delegate.trace(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.trace(manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void trace(final String format, final Object... arguments) {
-        delegate.trace(removeTicketIdFromMessage(format), arguments);
+        delegate.trace(manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void trace(final String msg, final Throwable t) {
-        delegate.trace(removeTicketIdFromMessage(msg), t);
+        delegate.trace(manipulateLogMessage(msg), t);
     }
 
     @Override
     public void trace(final Marker marker, final String msg) {
-        delegate.trace(marker, removeTicketIdFromMessage(msg));
+        delegate.trace(marker, manipulateLogMessage(msg));
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg) {
-        delegate.trace(marker, removeTicketIdFromMessage(format), arg);
+        delegate.trace(marker, manipulateLogMessage(format), arg);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.trace(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.trace(marker, manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object... arguments) {
-        delegate.trace(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.trace(marker, manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void trace(final Marker marker, final String msg, final Throwable t) {
-        delegate.trace(marker, removeTicketIdFromMessage(msg), t);
+        delegate.trace(marker, manipulateLogMessage(msg), t);
     }
 
     @Override
@@ -134,52 +143,52 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void debug(final String msg) {
-        delegate.debug(removeTicketIdFromMessage(msg));
+        delegate.debug(manipulateLogMessage(msg));
     }
 
     @Override
     public void debug(final String format, final Object arg1, final Object arg2) {
-        delegate.debug(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.debug(manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void debug(final String format, final Object... arguments) {
-        delegate.debug(removeTicketIdFromMessage(format), arguments);
+        delegate.debug(manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void debug(final String format, final Object arg) {
-        delegate.debug(removeTicketIdFromMessage(format), arg);
+        delegate.debug(manipulateLogMessage(format), arg);
     }
 
     @Override
     public void debug(final String msg, final Throwable t) {
-        delegate.debug(removeTicketIdFromMessage(msg), t);
+        delegate.debug(manipulateLogMessage(msg), t);
     }
 
     @Override
     public void debug(final Marker marker, final String msg) {
-        delegate.debug(marker, removeTicketIdFromMessage(msg));
+        delegate.debug(marker, manipulateLogMessage(msg));
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg) {
-        delegate.debug(marker, removeTicketIdFromMessage(format), arg);
+        delegate.debug(marker, manipulateLogMessage(format), arg);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.debug(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.debug(marker, manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object... arguments) {
-        delegate.debug(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.debug(marker, manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void debug(final Marker marker, final String msg, final Throwable t) {
-        delegate.debug(marker, removeTicketIdFromMessage(msg), t);
+        delegate.debug(marker, manipulateLogMessage(msg), t);
     }
 
     @Override
@@ -189,47 +198,47 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void info(final String format, final Object arg) {
-        delegate.info(removeTicketIdFromMessage(format), arg);
+        delegate.info(manipulateLogMessage(format), arg);
     }
 
     @Override
     public void info(final String msg, final Throwable t) {
-        delegate.info(removeTicketIdFromMessage(msg), t);
+        delegate.info(manipulateLogMessage(msg), t);
     }
 
     @Override
     public void info(final String format, final Object... arguments) {
-        delegate.info(removeTicketIdFromMessage(format), arguments);
+        delegate.info(manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void info(final String format, final Object arg1, final Object arg2) {
-        delegate.info(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.info(manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void info(final Marker marker, final String msg) {
-        delegate.info(marker, removeTicketIdFromMessage(msg));
+        delegate.info(marker, manipulateLogMessage(msg));
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg) {
-        delegate.info(marker, removeTicketIdFromMessage(format), arg);
+        delegate.info(marker, manipulateLogMessage(format), arg);
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object... arguments) {
-        delegate.info(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.info(marker, manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.info(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.info(marker, manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void info(final Marker marker, final String msg, final Throwable t) {
-        delegate.info(marker, removeTicketIdFromMessage(msg), t);
+        delegate.info(marker, manipulateLogMessage(msg), t);
     }
 
     @Override
@@ -239,52 +248,52 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void warn(final String msg) {
-        delegate.warn(removeTicketIdFromMessage(msg));
+        delegate.warn(manipulateLogMessage(msg));
     }
 
     @Override
     public void warn(final String format, final Object arg) {
-        delegate.warn(removeTicketIdFromMessage(format), arg);
+        delegate.warn(manipulateLogMessage(format), arg);
     }
 
     @Override
     public void warn(final String format, final Object arg1, final Object arg2) {
-        delegate.warn(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.warn(manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void warn(final String format, final Object... arguments) {
-        delegate.warn(removeTicketIdFromMessage(format), arguments);
+        delegate.warn(manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void warn(final String msg, final Throwable t) {
-        delegate.warn(removeTicketIdFromMessage(msg), t);
+        delegate.warn(manipulateLogMessage(msg), t);
     }
 
     @Override
     public void warn(final Marker marker, final String msg) {
-        delegate.warn(marker, removeTicketIdFromMessage(msg));
+        delegate.warn(marker, manipulateLogMessage(msg));
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg) {
-        delegate.warn(marker, removeTicketIdFromMessage(format), arg);
+        delegate.warn(marker, manipulateLogMessage(format), arg);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.warn(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.warn(marker, manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object... arguments) {
-        delegate.warn(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.warn(marker, manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void warn(final Marker marker, final String msg, final Throwable t) {
-        delegate.warn(marker, removeTicketIdFromMessage(msg), t);
+        delegate.warn(marker, manipulateLogMessage(msg), t);
     }
 
     @Override
@@ -294,52 +303,52 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void error(final String msg) {
-        delegate.error(removeTicketIdFromMessage(msg));
+        delegate.error(manipulateLogMessage(msg));
     }
 
     @Override
     public void error(final String format, final Object arg) {
-        delegate.error(removeTicketIdFromMessage(format), arg);
+        delegate.error(manipulateLogMessage(format), arg);
     }
 
     @Override
     public void error(final String format, final Object arg1, final Object arg2) {
-        delegate.error(removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.error(manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void error(final String format, final Object... arguments) {
-        delegate.error(removeTicketIdFromMessage(format), arguments);
+        delegate.error(manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void error(final String msg, final Throwable t) {
-        delegate.error(removeTicketIdFromMessage(msg), t);
+        delegate.error(manipulateLogMessage(msg), t);
     }
 
     @Override
     public void error(final Marker marker, final String msg) {
-        delegate.error(marker, removeTicketIdFromMessage(msg));
+        delegate.error(marker, manipulateLogMessage(msg));
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg) {
-        delegate.error(marker, removeTicketIdFromMessage(format), arg);
+        delegate.error(marker, manipulateLogMessage(format), arg);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.error(marker, removeTicketIdFromMessage(format), arg1, arg2);
+        delegate.error(marker, manipulateLogMessage(format), arg1, arg2);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object... arguments) {
-        delegate.error(marker, removeTicketIdFromMessage(format), arguments);
+        delegate.error(marker, manipulateLogMessage(format), arguments);
     }
 
     @Override
     public void error(final Marker marker, final String msg, final Throwable t) {
-        delegate.error(marker, removeTicketIdFromMessage(msg), t);
+        delegate.error(marker, manipulateLogMessage(msg), t);
     }
 
     @Override
@@ -349,11 +358,11 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void trace(final String msg) {
-        delegate.trace(removeTicketIdFromMessage(msg));
+        delegate.trace(manipulateLogMessage(msg));
     }
 
     @Override
     public void info(final String msg) {
-        delegate.info(removeTicketIdFromMessage(msg));
+        delegate.info(manipulateLogMessage(msg));
     }
 }
