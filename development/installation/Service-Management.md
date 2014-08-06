@@ -114,6 +114,9 @@ service registry data and the UI will not be used.
 Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `ui` attribute.
 
 {% highlight xml %}
+
+<context:component-scan base-package="org.jasig.cas" />
+
 <bean id="serviceRegistryDao"
       class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
@@ -123,6 +126,8 @@ Service registry implementation which stores the services in a LDAP Directory. U
 <bean id="ldapMapper"
       class="org.jasig.cas.adaptors.ldap.services.DefaultLdapServiceMapper"/>
 {% endhighlight %}
+
+Note that you will need to add the `context` namespace and schema location to the `beans` declaration of the file.
 
 <p/>
 
