@@ -115,6 +115,7 @@
     <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)" />
     <transition on="AccountDisabledException" to="casAccountDisabledView"/>
     <transition on="AccountLockedException" to="casAccountLockedView"/>
+    <transition on="AccountPasswordMustChangeException" to="casMustChangePassView"/>
     <transition on="CredentialExpiredException" to="casExpiredPassView"/>
     <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
     <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
