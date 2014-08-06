@@ -19,15 +19,6 @@
 
 package org.jasig.cas.support.saml.web.view;
 
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.xml.namespace.QName;
-
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
@@ -48,6 +39,14 @@ import org.opensaml.saml1.core.StatusCode;
 import org.opensaml.saml1.core.StatusMessage;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.ConfigurationException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.xml.namespace.QName;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 /**
  * Base class for all views that render SAML1 SOAP messages directly to the HTTP response stream.

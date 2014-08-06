@@ -93,12 +93,10 @@ public class TicketsResource {
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
 
             return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(fmt);
         }
     }
@@ -113,15 +111,15 @@ public class TicketsResource {
     @RequestMapping(value = "/tickets/{tgtId:.+}",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody, @PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                            @PathVariable("tgtId") final String tgtId) {
         try {
-            final String serviceTicketId = this.cas.grantServiceTicket(tgtId, new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
+            final String serviceTicketId = this.cas.grantServiceTicket(tgtId,
+                    new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
             return new ResponseEntity<String>(serviceTicketId, HttpStatus.OK);
-        }
-        catch (final InvalidTicketException e) {
+        } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

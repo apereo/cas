@@ -123,7 +123,8 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      * @return the final map
      * @since 4.1
      */
-    private Map<String, Object> prepareSamlAttributes(final Authentication authentication, final org.jasig.cas.validation.Assertion assertion) {
+    private Map<String, Object> prepareSamlAttributes(final Authentication authentication,
+                                                      final org.jasig.cas.validation.Assertion assertion) {
         final Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
 
         final Map<String, Object> authnAttributes = new TreeMap<String, Object>(authentication.getAttributes());
