@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.LogoutType;
@@ -37,6 +29,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Jerome Leleu
@@ -87,7 +87,7 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeNull() {
+    public void testLogoutTypeNotSet() {
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         final LogoutRequest logoutRequest = logoutRequests.iterator().next();
@@ -106,6 +106,22 @@ public class LogoutManagerImplTests {
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
+    }
+
+    @Test
+    public void testLogoutTypeNone() {
+        this.registeredService.setLogoutType(LogoutType.NONE);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(0, logoutRequests.size());
+    }
+
+    @Test
+    public void testLogoutTypeNull() {
+        this.registeredService.setLogoutType(null);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(1, logoutRequests.size());
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        assertEquals(ID, logoutRequest.getTicketId());
     }
 
     @Test
