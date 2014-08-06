@@ -19,12 +19,14 @@
 
 package org.slf4j.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.helpers.NOPLogger;
 import org.slf4j.helpers.Util;
 
 import java.net.URL;
@@ -86,10 +88,13 @@ public final class CasLoggerFactory implements ILoggerFactory {
      */
     @Override
     public Logger getLogger(final String name) {
+        if (StringUtils.isBlank(name)) {
+            return NOPLogger.NOP_LOGGER;
+        }
         synchronized (loggerMap) {
             if (!loggerMap.containsKey(name)) {
                 final Logger logger = getRealLoggerInstance(name);
-                loggerMap.put(name, new CasDelegatingLogger(name, logger));
+                loggerMap.put(name, new CasDelegatingLogger(logger));
             }
             return loggerMap.get(name);
         }
