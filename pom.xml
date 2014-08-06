@@ -242,13 +242,6 @@
                 <maxmem>256m</maxmem>
                 <!-- aggregated reports for multi-module projects -->
                 <aggregate>true</aggregate>
-
-                <excludes>
-                    <!-- Exclude generated classes -->
-                    <exclude>**/*_.class</exclude>
-                    <exclude>**/*_.java</exclude>
-                </excludes>
-
             </configuration>
         </plugin>
 
@@ -450,12 +443,12 @@
       <scope>test</scope>
     </dependency>
 
-	<dependency>
-		<groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>${mockito.version}</version>
-	    <scope>test</scope>
-	</dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -873,6 +866,13 @@
         </exclusions>
       </dependency>
 
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -992,7 +992,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-		    <version>${maven-javadoc-plugin.version}</version>
+            <version>${maven-javadoc-plugin.version}</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>
@@ -1028,7 +1028,7 @@
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
-    <slf4j.version>1.7.5</slf4j.version>
+    <slf4j.version>1.7.7</slf4j.version>
     <person.directory.version>1.5.2</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
@@ -1045,6 +1045,7 @@
     <joda-time.version>2.2</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
+    <reflections.version>0.9.8</reflections.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
 
     <!-- Plugin Versions -->
