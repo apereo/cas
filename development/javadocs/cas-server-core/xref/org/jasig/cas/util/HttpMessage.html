@@ -28,12 +28,12 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.util;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.io.UnsupportedEncodingException;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.net.URLEncoder;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.springframework.http.MediaType;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.springframework.http.MediaType;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.io.UnsupportedEncodingException;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> java.net.URLEncoder;
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment"> * Abstraction for a message that is sent to an http endpoint.</em>
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>      }
 <a class="jxr_linenumber" name="83" href="#83">83</a>      
 <a class="jxr_linenumber" name="84" href="#84">84</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> String getMessage() {
-<a class="jxr_linenumber" name="85" href="#85">85</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.message;
+<a class="jxr_linenumber" name="85" href="#85">85</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.formatOutputMessageInternal(<strong class="jxr_keyword">this</strong>.message);
 <a class="jxr_linenumber" name="86" href="#86">86</a>      }
 <a class="jxr_linenumber" name="87" href="#87">87</a>      
 <a class="jxr_linenumber" name="88" href="#88">88</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> String getContentType() {
