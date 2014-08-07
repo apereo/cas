@@ -37,7 +37,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
   
   echo -e "Invoking Maven to generate the site documentation...\n"
-  mvn site site:stage -q -ff -B
+  mvn site site:stage -q -ff -B -DskipTests=true
   
   echo -e "Copying the generated docs over...\n"
   cp -R target/staging $HOME/javadoc-latest
@@ -50,15 +50,15 @@ if [ "$invokeJavadoc" == true ]; then
 
   cd gh-pages
   echo -e "Removing javadocs...\n"
-  git rm -rf ./current/javadocs
-  git rm -rf ./development/javadocs
+  git rm -rf ./current/javadocs > /dev/null
+  git rm -rf ./development/javadocs > /dev/null
 
   echo -e "Copying new javadocs to current...\n"
   cp -Rf $HOME/javadoc-latest ./development/javadocs
   echo -e "Adding changes to the index...\n"
-  git add -f .
-  echo -e "Committing changes...\n"
-  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+  git add -f . > /dev/null
+  echo -e "Committing changes...\n" 
+  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
