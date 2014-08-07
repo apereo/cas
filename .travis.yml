@@ -17,9 +17,9 @@
 # under the License.
 #
 
-# Steps to enable the this build are:
+# Steps to enable this build are:
 #
-# Generate the OAUTH-TOKEN atd at https://github.com/settings/applications
+# Generate the OAUTH-TOKEN at https://github.com/settings/applications
 # Install travis: gem install travis
 # Login to travis: travis login
 # Encrypt the token: travis encrypt GH_TOKEN=[OAUTH-TOKEN] -r Jasig/cas --add env.global
