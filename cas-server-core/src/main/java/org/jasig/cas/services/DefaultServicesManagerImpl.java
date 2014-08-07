@@ -62,9 +62,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
-     * @deprecated As of 4.1.
+     * <p>
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
+     * @deprecated As of 4.1. Use {@link org.jasig.cas.services.DefaultServicesManagerImpl(ServiceRegistryDao)}
+     * instead. The <code>defaultAttributes</code> parameter is no longer used.
      *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
