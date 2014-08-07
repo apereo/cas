@@ -18,25 +18,26 @@
  */
 package org.jasig.cas.logout;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.HttpMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jerome Leleu
@@ -47,7 +48,7 @@ public class LogoutManagerImplTests {
 
     private static final String ID = "id";
 
-    private static final String URL = "http://url";
+    private static final String URL = "http://www.github.com";
 
     private LogoutManagerImpl logoutManager;
 
@@ -61,8 +62,14 @@ public class LogoutManagerImplTests {
 
     @Before
     public void setUp() {
+
+        final HttpClient client = mock(HttpClient.class);
+        when(client.isValidEndPoint(any(String.class))).thenReturn(true);
+        when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
+        when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
+
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
+        this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
         this.tgt = mock(TicketGrantingTicket.class);
         this.services = new HashMap<String, Service>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
