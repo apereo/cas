@@ -36,7 +36,7 @@ if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
   
-  echo -e "Invokin Maven to generate the site documentation...\n"
+  echo -e "Invoking Maven to generate the site documentation...\n"
   mvn site site:stage -q -ff -B
   
   echo -e "Copying the generated docs over...\n"
