@@ -131,10 +131,10 @@ public final class LogoutManagerImpl implements LogoutManager {
                 final Service service = services.get(ticketId);
                 // it's a SingleLogoutService, else ignore
                 if (service instanceof SingleLogoutService) {
-                      final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, ticketId);
-                      if (logoutRequest != null) {
-                          logoutRequests.add(logoutRequest);
-                      }
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, ticketId);
+                    if (logoutRequest != null) {
+                        logoutRequests.add(logoutRequest);
+                    }
                 }
             }
         }
@@ -152,6 +152,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         return registeredService != null && registeredService.isEnabled()
                                          && registeredService.getLogoutType() != LogoutType.NONE;
     }
+
     /**
      * Handle logout for slo service.
      *
