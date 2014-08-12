@@ -18,12 +18,8 @@
  */
 package org.jasig.cas.userdetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.jasig.cas.authentication.AbstractLdapTests;
 import org.jasig.cas.util.LdapTestUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +27,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.springframework.core.io.Resource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -47,10 +45,6 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Parameterized.class)
 public class LdapUserDetailsServiceTests extends AbstractLdapTests {
-
-    private Resource groupsLdif;
-
-    private Collection<LdapEntry> groupEntries;
 
     private LdapUserDetailsService userDetailsService;
 
@@ -74,43 +68,19 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.groupsLdif = context.getBean("groupsLdif", Resource.class);
-        this.groupEntries = LdapTestUtils.readLdif(this.groupsLdif, this.baseDn);
-        final Connection connection = getConnection();
-        try {
-            connection.open();
-            LdapTestUtils.createLdapEntries(connection, this.directoryType, this.groupEntries);
-        } finally {
-            connection.close();
-        }
         this.userDetailsService = this.context.getBean(LdapUserDetailsService.class);
     }
 
     @Test
     public void testLoadUserByUsername() throws Exception {
-        UserDetails user;
-        String username;
+        final Connection c = super.getConnection();
+        c.
         for (final LdapEntry entry : this.testEntries) {
-            username = getUsername(entry);
-            user = userDetailsService.loadUserByUsername(username);
+            final String username = getUsername(entry);
+            final UserDetails user = userDetailsService.loadUserByUsername(username);
             assertEquals(username, user.getUsername());
             assertTrue(hasAuthority(user, "ROLE_ADMINISTRATORS"));
             assertTrue(hasAuthority(user, "ROLE_USERS"));
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (!this.enableLdapTests) {
-            return;
-        }
-        final Connection connection = getConnection();
-        try {
-            connection.open();
-            LdapTestUtils.removeLdapEntries(connection, this.groupEntries);
-        } finally {
-            connection.close();
         }
     }
 

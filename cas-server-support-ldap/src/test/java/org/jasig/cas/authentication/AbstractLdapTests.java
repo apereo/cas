@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.util.Collection;
-
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LdapTestUtils;
-import org.jasig.cas.util.LdapUtils;
-import org.junit.After;
-import org.junit.Assume;
+import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -33,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Base class for LDAP tests that provision and deprovision directory data as part of test setup/teardown.
@@ -42,9 +41,7 @@ import org.springframework.core.io.Resource;
  *
  * @author Marvin S. Addison
  */
-public class AbstractLdapTests {
-
-    private Resource usersLdif;
+public abstract class AbstractLdapTests {
 
     private String usernameAttribute;
 
@@ -60,44 +57,30 @@ public class AbstractLdapTests {
 
     protected ApplicationContext context;
 
-    protected Collection<LdapEntry> testEntries;
+    private static InMemoryTestLdapDirectoryServer DIRECTORY;
 
-    protected boolean enableLdapTests;
+    @BeforeClass
+    public static void initTests() throws Exception {
+        final ClassPathResource properties = new ClassPathResource("openldap.properties");
+        final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
+        final ClassPathResource ldif = new ClassPathResource("ldif/ldif-users.ldif");
+
+        DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(), ldif.getFile());
+    }
+
+    @AfterClass
+    public static void endTests() {
+        IOUtils.closeQuietly(DIRECTORY);
+    }
 
     @Before
     public void setUp() throws Exception {
-        // Environment check
-        this.enableLdapTests = System.getProperty("enableLdapTests") != null;
-        Assume.assumeTrue("enableLdapTests system property not set", this.enableLdapTests);
-
         this.context = new ClassPathXmlApplicationContext(this.contextPaths);
         this.baseDn = this.context.getBean("baseDn", String.class);
-        this.usersLdif = this.context.getBean("usersLdif", Resource.class);
+
         this.usernameAttribute = this.context.getBean("usernameAttribute", String.class);
         this.provisioningConnectionFactory = this.context.getBean(
                 "provisioningConnectionFactory", ConnectionFactory.class);
-        this.testEntries = LdapTestUtils.readLdif(this.usersLdif, this.baseDn);
-        final Connection connection = getConnection();
-        try {
-            connection.open();
-            LdapTestUtils.createLdapEntries(connection, this.directoryType, this.testEntries);
-        } finally {
-            LdapUtils.closeConnection(connection);
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (!this.enableLdapTests) {
-            return;
-        }
-        final Connection connection = getConnection();
-        try {
-            connection.open();
-            LdapTestUtils.removeLdapEntries(connection, this.testEntries);
-        } finally {
-            LdapUtils.closeConnection(connection);
-        }
     }
 
     /**

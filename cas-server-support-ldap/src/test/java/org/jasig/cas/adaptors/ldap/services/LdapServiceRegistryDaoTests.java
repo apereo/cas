@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
@@ -34,9 +28,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for {@link LdapServiceRegistryDao} class.
@@ -48,7 +48,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/openldap-regservice-test.xml" })
-@IfProfileValue(name = "enableLdapTests", value = "true")
 public class LdapServiceRegistryDaoTests {
 
     @Autowired
