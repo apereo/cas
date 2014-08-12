@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.logout;
 
+import java.net.URL;
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
@@ -168,14 +169,19 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return if the logout has been performed.
      */
     private boolean performBackChannelLogout(final LogoutRequest request) {
-        final String logoutRequest = this.logoutMessageBuilder.create(request);
-        request.getService().setLoggedOutAlready(true);
+        try {
+            final String logoutRequest = this.logoutMessageBuilder.create(request);
+            request.getService().setLoggedOutAlready(true);
+    
+            LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
+            final String originalUrl = request.getService().getOriginalUrl();        
+            final LogoutHttpMessage sender = new LogoutHttpMessage(new URL(originalUrl), logoutRequest);
 
-        LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        final String originalUrl = request.getService().getOriginalUrl();        
-        final LogoutHttpMessage sender = new LogoutHttpMessage(originalUrl, logoutRequest);
-
-        return this.httpClient.sendMessageToEndPoint(sender);
+            return this.httpClient.sendMessageToEndPoint(sender);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**
@@ -219,7 +225,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          * @param url The url to send the message to
          * @param message Message to send to the url
          */
-        public LogoutHttpMessage(final String url, final String message) {
+        public LogoutHttpMessage(final URL url, final String message) {
             super(url, message, LogoutManagerImpl.this.asynchronous);
             setContentType("application/xml");
         }
