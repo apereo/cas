@@ -70,7 +70,7 @@
 
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="3"
-          p:location="${cas.viewResolver.xmlFile:/WEB-INF/view/views.xml}" />
+          p:location="${cas.viewResolver.xmlFile:classpath:views.xml}" />
 
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
