@@ -503,8 +503,6 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     /**
      * Prepare the http client with configured settings.
-     *
-     * @return the http client
      */
     private void init() {
         try {
