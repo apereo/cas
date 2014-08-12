@@ -32,7 +32,7 @@
     </description>
 
     <!-- Sample configuration to turn on SAML validation. Note that the SAML module dependency
-         is required to be included in the final weba application file.
+         is required to be included in the final weba application file.  -->
 
     <bean id="abstractsamlView" class="org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView"
           abstract="true"
@@ -40,9 +40,10 @@
 
     <bean id="casSamlServiceSuccessView" class="org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView"
           parent="abstractsamlView"
-          p:issuer="localhost"  />
+          p:issuer="localhost"
+          p:skewAllowance="0" />
 
     <bean id="casSamlServiceFailureView" class="org.jasig.cas.support.saml.web.view.Saml10FailureResponseView"
           parent="abstractsamlView"  />
-    -->
+
 </beans>
