@@ -65,7 +65,7 @@
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
           p:ldapUrl="${ldap.url}"
           p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}"
+          p:useStartTLS="${ldap.useStartTLS: false}"
           p:sslConfig-ref="sslConfig"
           p:connectionInitializer-ref="bindConnectionInitializer"/>
 
@@ -78,10 +78,20 @@
         </property>
     </bean>
 
+    <!--
+    Use this config if there's a certificate that is required
+    to connect to the ldap instance.
     <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
             <bean class="org.ldaptive.ssl.X509CredentialConfig"
                   p:trustCertificates="${ldap.trustedCert}" />
+        </property>
+    </bean>
+    -->
+
+    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
         </property>
     </bean>
 

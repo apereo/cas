@@ -32,14 +32,6 @@
 
     <context:property-placeholder location="classpath:/openldap.properties"/>
 
-    <bean id="usersLdif"
-          class="org.springframework.core.io.ClassPathResource"
-          c:path="/ldif/openldap-users.ldif" />
-
-    <bean id="groupsLdif"
-          class="org.springframework.core.io.ClassPathResource"
-          c:path="/ldif/openldap-groups.ldif" />
-
     <bean id="baseDn" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
     </bean>
@@ -107,7 +99,7 @@
           class="org.ldaptive.ConnectionConfig"
           p:ldapUrl="${ldap.url}"
           p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}"
+          p:useStartTLS="${ldap.useStartTLS: false}"
           p:sslConfig-ref="sslConfig"
           p:connectionInitializer-ref="bindConnectionInitializer" />
 
@@ -120,13 +112,22 @@
         </property>
     </bean>
 
+    <!--
+    Use this config if there's a certificate that is required
+    to connect to the ldap instance.
     <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
             <bean class="org.ldaptive.ssl.X509CredentialConfig"
                   p:trustCertificates="${ldap.trustedCert}" />
         </property>
     </bean>
+    -->
 
+    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
+        </property>
+    </bean>
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
           p:prunePeriod="${ldap.pool.prunePeriod}"
           p:idleTime="${ldap.pool.idleTime}" />

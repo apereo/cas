@@ -834,6 +834,13 @@
       </dependency>
 
       <dependency>
+        <groupId>com.unboundid</groupId>
+        <artifactId>unboundid-ldapsdk</artifactId>
+        <version>${uboundid.ldapsdk.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
         <version>${joda-time.version}</version>
@@ -1046,6 +1053,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
