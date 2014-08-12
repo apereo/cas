@@ -101,7 +101,6 @@ public class LogoutManagerImplTests {
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
-        
     }
 
     @Test

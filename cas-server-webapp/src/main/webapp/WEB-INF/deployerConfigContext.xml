@@ -90,7 +90,7 @@
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
           class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="httpClient" />
+          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient" />
 
     <!--
        | TODO: Replace this component with one suitable for your enviroment.
