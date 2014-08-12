@@ -9,6 +9,7 @@ This page documents the steps that a release engineer should take for cutting a 
 
 
 ##Environment Review
+
 - Sanity test pending CAS release by testing protocol and major features.
 - Ensure criteria for a release has been met and that there are no outstanding JIRA issues, etc.
 - Ensure all outstanding changes are committed.
@@ -65,6 +66,7 @@ mvn -DreleaseVersion=x.y.z -DdevelopmentVersion=a.b.c release:prepare
 
 
 ##Performing the Release
+
 {% highlight bash %}
 mvn release:perform
 {% endhighlight %}
@@ -91,14 +93,17 @@ John Smith
 
 Finally, trigger the release in [JIRA](https://issues.jasig.org/secure/Dashboard.jspa). You will need to
 have proper permissions in order to mark a given CAS version as "Released". 
-- Mark the version released, moving remaining open issues to the next version.
-- Do a query for all unresolved issues that affect the previous release and release candidates. Add the new release version as an affected version for each issue in the results.
-- Batch transition all resolved issues for the version to closed.
+
+* Mark the version released, moving remaining open issues to the next version.
+* Do a query for all unresolved issues that affect the previous release and release candidates. Add the new release version as an affected version for each issue in the results.
+* Batch transition all resolved issues for the version to closed.
 
 ##Post Release
+
 <div class="alert alert-warning"><strong>GA Releases</strong><p>The following steps should only be executed for public GA releases.</p></div>
 
 ###Publishing Artifacts
+
 - Check out source from generated branch/tag
 - Build the assembly using the following command:
 {% highlight bash %}

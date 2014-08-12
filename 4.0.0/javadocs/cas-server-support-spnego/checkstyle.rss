@@ -29,10 +29,10 @@
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoPrincipalResolver.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoNegociateCredentialsAction.java</a>
                 </td>
                 <td>
-                  0
+                  5
                 </td>
                 <td>
                   0
@@ -43,10 +43,10 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoNegociateCredentialsAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoPrincipalResolver.java</a>
                 </td>
                 <td>
-                  5
+                  0
                 </td>
                 <td>
                   0

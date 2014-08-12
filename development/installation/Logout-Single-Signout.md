@@ -37,6 +37,15 @@ The redirect behavior is turned off by default, and is activated via the followi
 
 The specified url must be registered in the service registry of CAS and enabled.
 
+##Web Session Termination
+By default, CAS comes with a `TerminateWebSessionListener` whose job is to expire the web session once the webflow has ended. The goal is to clean up the session as soon as possible to decrease memory consumption.
+
+The listener configures the maximum inactivity interval for the web session, which is the time, in seconds, between client requests before the servlet container will invalidate this session. An interval value of zero or less indicates that the session should never timeout. This value can be controlled via the following setting in `cas.properties`:
+
+{% highlight bash %}
+# Specifies the time, in seconds, to invalidate the web session.
+# terminate.web.session.timeout=2
+{% endhighlight %}
 
 ##Single Logout (SLO)
 CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
@@ -101,6 +110,9 @@ By default, backchannel logout messages are sent to endpoint in an asynchronous 
 # To send callbacks to endpoints synchronously, set this to false
 # slo.callbacks.asynchronous=true
 {% endhighlight %}
+
+###Single Logout per Service
+By default, all services will receive single logout callbacks depending on their logout type. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. See [Service Management](Service-Management.html) for more details
 
 ###Ticket Registry Cleaner Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
