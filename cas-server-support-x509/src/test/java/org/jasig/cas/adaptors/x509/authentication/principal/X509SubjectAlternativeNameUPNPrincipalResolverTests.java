@@ -56,8 +56,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                     new FileInputStream(getClass().getResource(certPath).getPath()));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
         this.expected = expectedResult;

@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Abstraction for a message that is sent to an http endpoint.
@@ -83,7 +83,7 @@ public class HttpMessage {
     }
     
     protected final String getMessage() {
-        return this.message;
+        return this.formatOutputMessageInternal(this.message);
     }
     
     protected final String getContentType() {
