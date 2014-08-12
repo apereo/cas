@@ -69,6 +69,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
+    private int skewAllowance = 0;
+
     /**
      * Sets the character encoding in the HTTP response.
      *
@@ -76,6 +78,31 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
+    }
+
+    /**
+    * Sets the allowance for time skew in seconds
+    * between CAS and the client server.  Default 0s.
+    * This value will be subtracted from the current time when setting the SAML
+    * <code>NotBeforeDate</code> attribute, thereby allowing for the
+    * CAS server to be ahead of the client by as much as the value defined here.
+    *
+    * <p><strong>Note:</strong> Skewing of the issue instant via setting this property
+    * applies to all saml assertions that are issued by CAS and it
+    * currently cannot be controlled on a per relying party basis.
+    * Before configuring this, it is recommended that each service provider
+    * attempt to correctly sync their system time with an NTP server
+    * so as to match the CAS server's issue instant config and to
+    * avoid applying this setting globally. This should only
+    * be used in situations where the NTP server is unresponsive to
+    * sync time on the client, or the client is simply unable
+    * to adjust their server time configuration.</p>
+    *
+    * @param skewAllowance Number of seconds to allow for variance.
+    */
+    public void setSkewAllowance(final int skewAllowance) {
+        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        this.skewAllowance = skewAllowance;
     }
 
     static {
@@ -111,7 +138,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         try {
             final Response samlResponse = newSamlObject(Response.class);
             samlResponse.setID(generateId());
-            samlResponse.setIssueInstant(new DateTime());
+            samlResponse.setIssueInstant(DateTime.now().minusSeconds(skewAllowance));
             samlResponse.setVersion(SAMLVersion.VERSION_11);
             samlResponse.setRecipient(serviceId);
             if (service instanceof SamlService) {
