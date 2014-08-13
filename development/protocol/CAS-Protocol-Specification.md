@@ -529,23 +529,23 @@ in the XML schema in Appendix A. Below are example responses:
 
 **On ticket validation success:**
 
-```xml
+{% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationSuccess>
   <cas:user>username</cas:user>
   <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
  </cas:authenticationSuccess>
 </cas:serviceResponse>
-```
+{% endhighlight %}
 **On ticket validation failure:**
 
-```xml
+{% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationFailure code="INVALID_TICKET">
     Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized`
   </cas:authenticationFailure>
 </cas:serviceResponse>
-```
+{% endhighlight %}
 
 For proxy responses, see section [2.6.2](<#head2.6.2>).
 
@@ -675,7 +675,7 @@ Pass in a callback URL for proxying:
 <a name="head2.5.7"/>
 
 ### **2.5.7 Example response with custom attributes**
-```xml
+{% highlight xml %}
   <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
     <cas:authenticationSuccess>
       <cas:user>username</cas:user>
@@ -690,7 +690,7 @@ Pass in a callback URL for proxying:
       <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
     </cas:authenticationSuccess>
   </cas:serviceResponse>
-```
+{% endhighlight %}
 
 
 <a name="head2.6"/>
@@ -723,7 +723,7 @@ the XML schema in Appendix A. Below are example responses:
 
 Response on ticket validation success:
 
-```xml
+{% highlight xml %}
   <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas"> 
     <cas:authenticationSuccess>
       <cas:user>username</cas:user>
@@ -734,7 +734,7 @@ Response on ticket validation success:
       </cas:proxies>
     </cas:authenticationSuccess> 
   </cas:serviceResponse>
-```
+{% endhighlight %}
 
 >   Note: when authentication has proceeded through multiple proxies, the order
 >   in which the proxies were traversed MUST be reflected in the \<cas:proxies\>
@@ -746,13 +746,13 @@ Response on ticket validation success:
 
 Response on ticket validation failure:
 
-```xml
+{% highlight xml %}
   <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
       <cas:authenticationFailure code="INVALID_TICKET">
          ticket PT-1856376-1HMgO86Z2ZKeByc5XdYD not recognized
       </cas:authenticationFailure>
   </cas:serviceResponse>
-```
+{% endhighlight %}
 
 
 <a name="head2.6.3"/>
@@ -808,23 +808,23 @@ schema in [Appendix A](#head_appdx_a). Below are example responses:
 
 Response on request success:
 
-```xml
+{% highlight xml %}
   <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
       <cas:proxySuccess>
           <cas:proxyTicket>PT-1856392-b98xZrQN4p90ASrw96c8</cas:proxyTicket>
       </cas:proxySuccess>
   </cas:serviceResponse>
-```
+{% endhighlight %}
 
 Response on request failure:
 
-```xml
+{% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
       <cas:proxyFailure code="INVALID_REQUEST">
           'pgt' and 'targetService' parameters are both required
       </cas:proxyFailure>
   </cas:serviceResponse>
-```
+{% endhighlight %}
 
 
 <a name="head2.7.3"/>
@@ -855,8 +855,6 @@ Simple proxy request:
 `https://server/cas/proxy?targetService=http%3A%2F%2Fwww.service.com&pgt=PGT-490649-W81Y9Sa2vTM7hda7xNTkezTbVge4CUsybAr`
 
 
-
-\newpage
 <a name="head3"/>
 
 ### **2.7.4 Service Ticket Lifecycle implications**
@@ -1102,7 +1100,7 @@ and the hyphen character "-"}.
 
 
 
-\newpage
+
 <a name="head4"/>
 
 **4. Optional Features**
@@ -1246,14 +1244,14 @@ SAML 1.0 or 1.1 request XML document of document type "text/xml".
 
 ### **4.2.4 Example of /samlValidate POST request**
 
-```txt
+{% highlight bash %}
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
 Content-Length: 491
 Content-Type: text/xml 
-```
+{% endhighlight %}
 
-```xml
+{% highlight xml %}
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"http://schemas.xmlsoap.org/soap/envelope/>
   <SOAP-ENV:Header/>
   <SOAP-ENV:Body>
@@ -1266,7 +1264,7 @@ Content-Type: text/xml
     </samlp:Request>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-```
+{% endhighlight %}
 
 
 <a name="head4.2.5"/>
@@ -1277,7 +1275,7 @@ CAS Server response to a /samlValidate request. MUST be a SAML 1.1 response.
 
 Example SAML 1.1 validation response
 
-```xml
+{% highlight xml %}
 
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -1340,7 +1338,7 @@ Example SAML 1.1 validation response
     </Response>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-```
+{% endhighlight %}
 
 
 <a name="head4.2.5.1"/>
@@ -1356,13 +1354,13 @@ The following additional attributes might be provided within the SAML response:
 
 
 
-\newpage
+
 <a name="head_appdx_a"/>
 
 **Appendix A: CAS response XML schema**
 =======================================
 
-```xml
+{% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Licensed to Jasig under one or more contributor license
@@ -1477,7 +1475,7 @@ under the License.
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
-```
+{% endhighlight %}
 
 
 >   Note: As userAttributes can be extended by the CAS Server implementor (see
@@ -1485,7 +1483,7 @@ under the License.
 >   as \<cas:attributes\>\<cas:attribute name="NAME"\>VALUE\<cas:attribute\>\</cas:attributes\>.
 
 
-\newpage
+
 <a name="head_appdx_b"/>
 
 **Appendix B: Safe redirection**
@@ -1505,7 +1503,7 @@ correctly.
 The recommended method of redirection is thus JavaScript. A page containing a
 window.location.href in the following manner performs adequately:
 
-```html
+{% highlight html %}
  <html>
     <head>
         <title>Yale Central Authentication Service</title>
@@ -1523,7 +1521,7 @@ mce_href="https://portal.yale.edu/Login?ticket=ST-...">here</a>
         </noscript>
     </body>
  </html>
-```
+{% endhighlight %}
 
 
 Additionally, CAS should disable browser caching by setting all of the various
@@ -1546,7 +1544,7 @@ was successful, and provide a link to the requested service. The client must
 then manually click to proceed.
 
 
-\newpage
+
 <a name="head_appdx_c"/>
 
 **Appendix C: Logout XML document**
@@ -1557,7 +1555,7 @@ services that are registered with the system and send a POST request with the
 following SAML Logout Request XML document:
 
 
-```xml
+{% highlight xml %}
   <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
      ID="[RANDOM ID]" Version="2.0" IssueInstant="[CURRENT DATE/TIME]">
     <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
@@ -1565,9 +1563,9 @@ following SAML Logout Request XML document:
     </saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
   </samlp:LogoutRequest>`
-```
+{% endhighlight %}
 
-\newpage
+
 <a name="head_appdx_d"/>
 
 **Appendix D: References**
@@ -1603,7 +1601,7 @@ Engineering Task Force, October 1989.
 <a name="8"/>[8] JASIG [CAS Server](<http://www.jasig.org/cas>) reference
 implementation
 
-\newpage
+
 <a name="head_appdx_e"/>
 
 **Appendix E: CAS License**
@@ -1655,7 +1653,7 @@ met:
     promote products derived from this software.
 
 
-\newpage
+
 <a name="head_appdx_f"/>
 
 **Appendix F: Changes to this Document**
