@@ -30,6 +30,5 @@
     <suppress checks="LocalFinalVariableName" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
-    <suppress checks="\w+" files="\.(crt|crl|class|keystore)"/>
+    <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
 </suppressions>
-        
