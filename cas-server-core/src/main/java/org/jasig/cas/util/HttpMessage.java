@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Abstraction for a message that is sent to an http endpoint.
@@ -36,7 +37,7 @@ public class HttpMessage {
     /** The default asynchronous callbacks enabled. */
     private static boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private String url;
+    private URL url;
     private String message;
     
     /**
@@ -57,7 +58,7 @@ public class HttpMessage {
      * @param url the url to which the message will be sent.
      * @param message the message itself.
      */
-    public HttpMessage(final String url, final String message) {
+    public HttpMessage(final URL url, final String message) {
         this(url, message, DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED);
     }
     
@@ -68,7 +69,7 @@ public class HttpMessage {
      * @param message the message itself.
      * @param async whether the message should be sent asynchronously.
      */
-    public HttpMessage(final String url, final String message, final boolean async) {
+    public HttpMessage(final URL url, final String message, final boolean async) {
         this.url = url;
         this.message = message;
     }
@@ -77,12 +78,12 @@ public class HttpMessage {
         return this.asynchronous;
     }
 
-    protected final String getUrl() {
+    protected final URL getUrl() {
         return this.url;
     }
     
     protected final String getMessage() {
-        return this.message;
+        return this.formatOutputMessageInternal(this.message);
     }
     
     protected final String getContentType() {
