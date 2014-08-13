@@ -584,4 +584,4 @@ _Only permit users with SSO sessions created from both a username/password and O
 
 ## Login Throttling
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
-Please [see this guide](../Configuring-Authentication-Throttling.html) for additional details on login throttling.
+Please [see this guide](Configuring-Authentication-Throttling.html) for additional details on login throttling.
