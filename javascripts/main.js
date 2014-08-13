@@ -46,7 +46,7 @@ function generateToolbarIcons() {
 	page = page.replace(".html", ".md");
 
   var activeVersion = getActiveDocumentationVersionInView();
-  if (activeVersion !=) {
+  if (activeVersion != CONST_CURRENT_VER) {
     var linkToDev = page.replace(activeVersion, CONST_CURRENT_VER);
      
     $('#toolbarIcons').append("<a href='" + linkToDev +
