@@ -25,7 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MarkerIgnoringBase;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +47,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(" + TicketGrantingTicket.PREFIX + "|"
             + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + ")(-)*(\\w)*(-)*(\\w)*");
-    
+
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
      * for troubleshooting purposes.
@@ -69,7 +71,25 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return message to log
      */
     private String manipulateLogMessage(final String msg) {
-        return removeTicketIdFromMessage(msg);
+        return removeTicketId(msg);
+    }
+
+    /**
+     * Manipulate the log arguments. For now, removes ticket ids from the log.
+     * @param args log args
+     * @return sanitized arguments
+     */
+    private Object[] manipulateLogArguments(final Object... args) {
+        final Object[] results = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] != null) {
+                final String objStr = removeTicketId(args[i].toString());
+                results[i] = objStr;
+            } else {
+                results[i] = args[i].toString();
+            }
+        }
+        return results;
     }
 
     /**
@@ -78,37 +98,62 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @param msg the message
      * @return the modified message with tgt id removed
      */
-    private String removeTicketIdFromMessage(final String msg) {
+    private String removeTicketId(final String msg) {
+        final StringBuilder builder = new StringBuilder(msg.length());
+
+        String modifiedMessage = msg;
+
         final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
-        if (matcher.find()) {
+        while (matcher.find()) {
             final String match = matcher.group();
             final String newId = matcher.group(1) + "-"
                     + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
                     + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
 
-            return msg.replaceAll(match, newId);
+            modifiedMessage = modifiedMessage.replaceAll(match, newId);
         }
-        return msg;
+        return modifiedMessage;
     }
 
+    /**
+     * Gets exception to log.
+     *
+     * @param msg the msg
+     * @param t the t
+     * @return the exception to log
+     */
+    private String getExceptionToLog(final String msg, final Throwable t) {
+        final StringWriter sW = new StringWriter();
+        final PrintWriter w = new PrintWriter(sW);
+        w.println(manipulateLogMessage(msg));
+        t.printStackTrace(w);
+
+        final String log = sW.getBuffer().toString();
+        return manipulateLogMessage(log);
+    }
+
+    /*
+    * TRACE level logging
+    */
     @Override
     public void trace(final String format, final Object arg) {
-        delegate.trace(manipulateLogMessage(format), arg);
+        delegate.trace(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void trace(final String format, final Object arg1, final Object arg2) {
-        delegate.trace(manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.trace(manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void trace(final String format, final Object... arguments) {
-        delegate.trace(manipulateLogMessage(format), arguments);
+        delegate.trace(manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void trace(final String msg, final Throwable t) {
-        delegate.trace(manipulateLogMessage(msg), t);
+        delegate.trace(getExceptionToLog(msg, t));
     }
 
     @Override
@@ -118,23 +163,38 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg) {
-        delegate.trace(marker, manipulateLogMessage(format), arg);
+        delegate.trace(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.trace(marker, manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.trace(marker, manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object... arguments) {
-        delegate.trace(marker, manipulateLogMessage(format), arguments);
+        delegate.trace(marker, manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void trace(final Marker marker, final String msg, final Throwable t) {
-        delegate.trace(marker, manipulateLogMessage(msg), t);
+        delegate.trace(marker, getExceptionToLog(msg, t));
     }
+
+    @Override
+    public void trace(final String msg) {
+        delegate.trace(manipulateLogMessage(msg));
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return delegate.isTraceEnabled();
+    }
+
+    /*
+    * DEBUG level logging
+    */
 
     @Override
     public boolean isDebugEnabled() {
@@ -142,28 +202,24 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     }
 
     @Override
-    public void debug(final String msg) {
-        delegate.debug(manipulateLogMessage(msg));
+    public void debug(final String format, final Object arg) {
+        delegate.debug(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void debug(final String format, final Object arg1, final Object arg2) {
-        delegate.debug(manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.debug(manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void debug(final String format, final Object... arguments) {
-        delegate.debug(manipulateLogMessage(format), arguments);
-    }
-
-    @Override
-    public void debug(final String format, final Object arg) {
-        delegate.debug(manipulateLogMessage(format), arg);
+        delegate.debug(manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void debug(final String msg, final Throwable t) {
-        delegate.debug(manipulateLogMessage(msg), t);
+        delegate.debug(getExceptionToLog(msg, t));
     }
 
     @Override
@@ -173,23 +229,33 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg) {
-        delegate.debug(marker, manipulateLogMessage(format), arg);
+        delegate.debug(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.debug(marker, manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.debug(marker, manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object... arguments) {
-        delegate.debug(marker, manipulateLogMessage(format), arguments);
+        delegate.debug(marker, manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void debug(final Marker marker, final String msg, final Throwable t) {
-        delegate.debug(marker, manipulateLogMessage(msg), t);
+        delegate.debug(marker, getExceptionToLog(msg, t));
     }
+
+    @Override
+    public void debug(final String msg) {
+        delegate.debug(manipulateLogMessage(msg));
+    }
+
+    /*
+    * INFO level logging
+    */
 
     @Override
     public boolean isInfoEnabled() {
@@ -198,22 +264,23 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void info(final String format, final Object arg) {
-        delegate.info(manipulateLogMessage(format), arg);
-    }
-
-    @Override
-    public void info(final String msg, final Throwable t) {
-        delegate.info(manipulateLogMessage(msg), t);
-    }
-
-    @Override
-    public void info(final String format, final Object... arguments) {
-        delegate.info(manipulateLogMessage(format), arguments);
+        delegate.info(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void info(final String format, final Object arg1, final Object arg2) {
-        delegate.info(manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.info(manipulateLogMessage(format), args[0], args[1]);
+    }
+
+    @Override
+    public void info(final String format, final Object... arguments) {
+        delegate.info(manipulateLogMessage(format), manipulateLogArguments(arguments));
+    }
+
+    @Override
+    public void info(final String msg, final Throwable t) {
+        delegate.info(getExceptionToLog(msg, t));
     }
 
     @Override
@@ -223,23 +290,33 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void info(final Marker marker, final String format, final Object arg) {
-        delegate.info(marker, manipulateLogMessage(format), arg);
-    }
-
-    @Override
-    public void info(final Marker marker, final String format, final Object... arguments) {
-        delegate.info(marker, manipulateLogMessage(format), arguments);
+        delegate.info(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.info(marker, manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.info(marker, manipulateLogMessage(format), args[0], args[1]);
+    }
+
+    @Override
+    public void info(final Marker marker, final String format, final Object... arguments) {
+        delegate.info(marker, manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void info(final Marker marker, final String msg, final Throwable t) {
-        delegate.info(marker, manipulateLogMessage(msg), t);
+        delegate.info(marker, getExceptionToLog(msg, t));
     }
+
+    @Override
+    public void info(final String msg) {
+        delegate.info(manipulateLogMessage(msg));
+    }
+
+    /*
+    * WARN level logging
+    */
 
     @Override
     public boolean isWarnEnabled() {
@@ -247,28 +324,24 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     }
 
     @Override
-    public void warn(final String msg) {
-        delegate.warn(manipulateLogMessage(msg));
-    }
-
-    @Override
     public void warn(final String format, final Object arg) {
-        delegate.warn(manipulateLogMessage(format), arg);
+        delegate.warn(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void warn(final String format, final Object arg1, final Object arg2) {
-        delegate.warn(manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.warn(manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void warn(final String format, final Object... arguments) {
-        delegate.warn(manipulateLogMessage(format), arguments);
+        delegate.warn(manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void warn(final String msg, final Throwable t) {
-        delegate.warn(manipulateLogMessage(msg), t);
+        delegate.warn(getExceptionToLog(msg, t));
     }
 
     @Override
@@ -278,23 +351,33 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg) {
-        delegate.warn(marker, manipulateLogMessage(format), arg);
+        delegate.warn(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.warn(marker, manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.warn(marker, manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object... arguments) {
-        delegate.warn(marker, manipulateLogMessage(format), arguments);
+        delegate.warn(marker, manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void warn(final Marker marker, final String msg, final Throwable t) {
-        delegate.warn(marker, manipulateLogMessage(msg), t);
+        delegate.warn(marker, getExceptionToLog(msg, t));
     }
+
+    @Override
+    public void warn(final String msg) {
+        delegate.warn(manipulateLogMessage(msg));
+    }
+
+    /*
+    * ERROR level logging
+    */
 
     @Override
     public boolean isErrorEnabled() {
@@ -302,28 +385,24 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     }
 
     @Override
-    public void error(final String msg) {
-        delegate.error(manipulateLogMessage(msg));
-    }
-
-    @Override
     public void error(final String format, final Object arg) {
-        delegate.error(manipulateLogMessage(format), arg);
+        delegate.error(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void error(final String format, final Object arg1, final Object arg2) {
-        delegate.error(manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.error(manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void error(final String format, final Object... arguments) {
-        delegate.error(manipulateLogMessage(format), arguments);
+        delegate.error(manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void error(final String msg, final Throwable t) {
-        delegate.error(manipulateLogMessage(msg), t);
+        delegate.error(getExceptionToLog(msg, t));
     }
 
     @Override
@@ -333,36 +412,32 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void error(final Marker marker, final String format, final Object arg) {
-        delegate.error(marker, manipulateLogMessage(format), arg);
+        delegate.error(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        delegate.error(marker, manipulateLogMessage(format), arg1, arg2);
+        final Object[] args = manipulateLogArguments(arg1, arg2);
+        delegate.error(marker, manipulateLogMessage(format), args[0], args[1]);
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object... arguments) {
-        delegate.error(marker, manipulateLogMessage(format), arguments);
+        delegate.error(marker, manipulateLogMessage(format), manipulateLogArguments(arguments));
     }
 
     @Override
     public void error(final Marker marker, final String msg, final Throwable t) {
-        delegate.error(marker, manipulateLogMessage(msg), t);
+        delegate.error(marker, getExceptionToLog(msg, t));
     }
 
     @Override
-    public boolean isTraceEnabled() {
-        return delegate.isTraceEnabled();
+    public void error(final String msg) {
+        delegate.error(manipulateLogMessage(msg));
     }
 
     @Override
-    public void trace(final String msg) {
-        delegate.trace(manipulateLogMessage(msg));
-    }
-
-    @Override
-    public void info(final String msg) {
-        delegate.info(manipulateLogMessage(msg));
+    public String getName() {
+        return "CAS Delegating Logger";
     }
 }
