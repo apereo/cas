@@ -411,6 +411,8 @@
             <exclude>**/*.license</exclude>
             <exclude>**/*.txt</exclude>
             <exclude>**/*.crt</exclude>
+            <exclude>**/*.cer</exclude>
+            <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
             <exclude>**/*.checkstyle</exclude>
@@ -450,12 +452,12 @@
       <scope>test</scope>
     </dependency>
 
-	<dependency>
-		<groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>${mockito.version}</version>
-	    <scope>test</scope>
-	</dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -557,6 +559,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${apache.httpclient.version}</version>
+      </dependency>
+
+        <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
@@ -847,6 +855,32 @@
         <scope>runtime</scope>
       </dependency>
 
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+        <type>jar</type>
+        <scope>compile</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>javax.jms</groupId>
+                <artifactId>jms</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.sun.jdmk</groupId>
+                <artifactId>jmxtools</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.sun.jmx</groupId>
+                <artifactId>jmxri</artifactId>
+            </exclusion>
+        </exclusions>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -980,7 +1014,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-		    <version>${maven-javadoc-plugin.version}</version>
+            <version>${maven-javadoc-plugin.version}</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>
@@ -1030,6 +1064,7 @@
     <mockito.version>1.9.5</mockito.version>
     <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
+    <apache.httpclient.version>4.3.4</apache.httpclient.version>
     <joda-time.version>2.2</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
