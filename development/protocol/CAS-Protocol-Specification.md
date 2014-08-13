@@ -27,7 +27,7 @@ Release Date: 2014-05-05
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2014, JA-SIG, Inc.
+Copyright &copy; 2014, JASIG, Inc.
 
 <a name="head1"/>
 
