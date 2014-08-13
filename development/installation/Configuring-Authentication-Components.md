@@ -290,138 +290,9 @@ required to support optional CAS features, they will be explicitly identified an
 
 
 ## Long Term Authentication
-This feature, also known as *Remember Me*, extends the length of the SSO session beyond the typical period of hours
-such that users can go days or weeks without having to log in to CAS. See the
-[security guide](../planning/Security-Guide.html)
-for discussion of security concerns related to long term authentication.
-
-
-### Policy and Deployment Considerations
-While users can elect to establish a long term authentication session, the duration is established through
-configuration as a matter of security policy. Deployers must determine the length of long term authentication sessions
-by weighing convenience against security risks. The length of the long term authentication session is configured
-(somewhat unhelpfully) in seconds, but the Google calculator provides a convenient converter:
-
-[2 weeks in seconds](https://www.google.com/search?q=2+weeks+in+seconds&oq=2+weeks+in+seconds)
-
-The use of long term authentication sessions dramatically increases the length of time ticket-granting tickets are
-stored in the ticket registry. Loss of a ticket-granting ticket corresponding to a long-term SSO session would require
-the user to reauthenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
-be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage. Memcached is a notable example of a store that has no facility for durable storage. In many cases loss of
-ticket-granting tickets is acceptable, even for long term authentication sessions.
-
-It's important to note that ticket-granting tickets and service tickets can be stored in separate registries, where
-the former provides durable storage for persistent long-term authentication tickets and the latter provides less
-durable storage for ephemeral service tickets. Thus deployers could mix `JpaTicketRegistry` and
-`MemcachedTicketRegistry`, for example, to take advantage of their strengths, durability and speed respectively.
-
-
-### Component Configuration
-Long term authentication requires configuring CAS components in Spring configuration, modification of the CAS login
-webflow, and UI customization of the login form. The length of the long term authentication session is represented
-in following sections by the following property:
-
-    # Long term authentication session length in seconds
-    rememberMeDuration=1209600
-
-The duration of the long term authentication session is configured in two different places:
-1. `ticketExpirationPolicies.xml`
-2. `ticketGrantingTicketCookieGenerator.xml`
-
-Update the ticket-granting ticket expiration policy in `ticketExpirationPolicies.xml` to accommodate both long term
-and stardard sessions.
-{% highlight xml %}
-<!--
-   | The following policy applies to standard CAS SSO sessions.
-   | Default 2h (7200s) sliding expiration with default 8h (28800s) maximum lifetime.
-   -->
-<bean id="standardSessionTGTExpirationPolicy"
-      class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
-      p:maxTimeToLiveInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
-      p:timeToKillInSeconds="${tgt.timeToKillInSeconds:7200}"/>
-
-<!--
-   | The following policy applies to long term CAS SSO sessions.
-   | Default duration is two weeks (1209600s).
-   -->
-<bean id="longTermSessionTGTExpirationPolicy"
-      class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy"
-      c:timeToKillInMilliSeconds="#{ ${rememberMeDuration:1209600} * 1000 }" />
-
-<bean id="grantingTicketExpirationPolicy"
-      class="org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy"
-      p:sessionExpirationPolicy-ref="standardSessionTGTExpirationPolicy"
-      p:rememberMeExpirationPolicy-ref="longTermSessionTGTExpirationPolicy" />
-{% endhighlight %}
-
-Update the CASTGC cookie expiration in `ticketGrantingTicketCookieGenerator.xml` to match the long term authentication
-duration:
-{% highlight xml %}
-<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-      p:cookieSecure="true"
-      p:cookieMaxAge="-1"
-      p:rememberMeMaxAge="${rememberMeDuration:1209600}"
-      p:cookieName="CASTGC"
-      p:cookiePath="/cas" />
-{% endhighlight %}
-
-Modify the `PolicyBasedAuthenticationManager` bean in `deployerConfigContext.xml` to include the
-`RememberMeAuthenticationMetaDataPopulator` component that flags long-term SSO sessions:
-{% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-  <constructor-arg>
-    <map>
-      <entry key-ref="passwordHandler" value-ref="ldapPrincipalResolver"/>
-    </map>
-  </constructor-arg>
-  <property name="authenticationMetaDataPopulators">
-    <list>
-      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
-      <bean class="org.jasig.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator" />
-    </list>
-  </property>
-</bean>
-{% endhighlight %}
-
-
-### Webflow Configuration
-Two sections of `login-webflow.xml` require changes:
-1. `credential` variable declaration
-2. `viewLoginForm` action state
-
-Change the `credential` variable declaration as follows:
-{% highlight xml %}
-<var name="credential" class="org.jasig.cas.authentication.principal.RememberMeUsernamePasswordCredential" />
-{% endhighlight %}
-
-Change the `viewLoginForm` action state as follows:
-{% highlight xml %}
-<view-state id="viewLoginForm" view="casLoginView" model="credential">
-  <binder>
-    <binding property="username" />
-    <binding property="password" />
-    <binding property="rememberMe" />
-  </binder>
-  <on-entry>
-    <set name="viewScope.commandName" value="'credential'" />
-  </on-entry>
-  <transition on="submit" bind="true" validate="true" to="realSubmit">
-    <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credential)" />
-  </transition>
-</view-state>
-{% endhighlight %}
-
-
-### User Interface Customization
-A checkbox or other suitable control must be added to the CAS login form to allow user selection of long term
-authentication. We recommend adding a checkbox control to `casLoginView.jsp` as in the following code snippet.
-The only functional consideration is that the name of the form element is _rememberMe_.
-{% highlight xml %}
-<input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
-<label for="rememberMe">Remember Me</label>
-{% endhighlight %}
-
+CAS has support for long term Ticket Granting Tickets, a feature that is also referred to as _"Remember Me"_
+to extends the length of the SSO session beyond the typical configuration.
+Please [see this guide](Configuring-LongTerm-Authentication.html) for more details.
 
 ## Proxy Authentication
 Proxy authentication support for CASv2 and CASv3 protocols is enabled by default, thus it is entirely a matter of CAS
@@ -488,6 +359,32 @@ Protocol handler compliant with CAS v2 protocol that is responsible to callback 
           p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
 {% endhighlight %}
 
+#####Handling SSL-enabled Proxy URLs
+By default, CAS ships with a bundled HTTP client that is partly responsible to callback the URL
+for proxy authentication. Note that this URL need also be authorized by the CAS service registry
+before the callback can be made. [See this guide](Service-Management.md) for more info.
+
+If the callback URL is authorized by the service registry, and if the endpoint is under HTTPS
+and protected by an SSL certificate, CAS will also attempt to verify the validity of the endpoint's
+certificate before it can establish a successful connection. If the certificate is invalid, expired,
+missing a step in its chain, self-signed or otherwise, CAS will fail to execute the callback.
+
+The HTTP client of CAS does present a local trust store that is similar to that of the Java platform.
+It is recommended that this trust store be used to handle the management of all certificates that need
+to be imported into the platform to allow CAS to execute the callback URL successfully. While by default, 
+the local trust store to CAS is empty, CAS will still utilize **both** the default and the local trust store.
+The local trust store should only be used for CAS-related functionality of course, and the trust store file
+can be carried over across CAS and Java upgrades, and certainly managed by the source control system that should
+host all CAS configuration. 
+
+The trust store configuration is inside the `applicationContext.xml` file, as such:
+
+{% highlight xml %}
+<bean id="trustStoreSslSocketFactory"
+          class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
+          c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
+          c:trustStorePassword="${http.client.truststore.psw:changeit}" />
+{% endhighlight %}
 
 
 ## Multi-factor Authentication (MFA)

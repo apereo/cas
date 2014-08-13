@@ -46,7 +46,6 @@ acceptable client certificates.
 
 ### Principal Resolver Components
 
-
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 The following configuration snippet produces prinicpals of the form _cn@example.com_. For example, given a
