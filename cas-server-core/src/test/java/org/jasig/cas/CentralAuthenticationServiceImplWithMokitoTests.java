@@ -102,7 +102,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     @Before
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
-        when(this.authentication.getAuthenticatedDate()).thenReturn(new Date());
+        when(this.authentication.getAuthenticationDate()).thenReturn(new Date());
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
         successes.put("handler1", new HandlerResult(mock(AuthenticationHandler.class), metadata));
