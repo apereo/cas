@@ -45,6 +45,14 @@ function generateToolbarIcons() {
 	}
 	page = page.replace(".html", ".md");
 
+  var activeVersion = getActiveDocumentationVersionInView();
+  if (activeVersion !=) {
+    var linkToDev = page.replace(activeVersion, CONST_CURRENT_VER);
+     
+    $('#toolbarIcons').append("<a href='" + linkToDev +
+      "'><img src='/cas/images/indev.png' alt='See the in-development version of this page' title='See the in-development version of this page'></a>");
+  }
+
 	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
 	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
 		"'><img src='/cas/images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
