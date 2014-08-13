@@ -220,7 +220,7 @@ In order to "invoke" a specific language for the UI, the `/login` endpoint may b
 
 
 ###Configuration
-All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there any custom messages that need to be presented into views, they may also be formatted under `custom_messages_xx.properties` files.
+All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, they may also be formatted under `custom_messages.properties` files.
 
 Messages are parsed and loaded via the following configuration:
 
