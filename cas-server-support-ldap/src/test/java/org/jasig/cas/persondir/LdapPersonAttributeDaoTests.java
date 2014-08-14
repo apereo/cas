@@ -19,7 +19,6 @@
 package org.jasig.cas.persondir;
 
 import org.jasig.cas.authentication.AbstractLdapTests;
-import org.jasig.cas.util.LdapTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,21 +41,13 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
 
     private LdapPersonAttributeDao attributeDao;
 
-    public LdapPersonAttributeDaoTests(
-            final LdapTestUtils.DirectoryType directoryType, final String ... contextPaths) {
-
-        this.directoryType = directoryType;
+    public LdapPersonAttributeDaoTests(final String ... contextPaths) {
         this.contextPaths = contextPaths;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][]{
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        new String[]{"/ldap-context.xml", "/openldap-persondir-test.xml"},
-                },
-        });
+        return Arrays.asList(new Object[][]{new String[]{"/ldap-context.xml", "/openldap-persondir-test.xml"}});
     }
 
     @Before

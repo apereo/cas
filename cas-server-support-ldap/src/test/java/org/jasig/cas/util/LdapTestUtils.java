@@ -42,12 +42,6 @@ import java.util.Collection;
  * @author Marvin S. Addison
  */
 public final class LdapTestUtils {
-
-    public enum DirectoryType {
-        ActiveDirectory,
-        OpenLdap
-    }
-
     /** Placeholder for base DN in LDIF files. */
     private static final String BASE_DN_PLACEHOLDER = "${ldapBaseDn}";
 
@@ -95,13 +89,12 @@ public final class LdapTestUtils {
      * Creates the given LDAP entries.
      *
      * @param connection Open LDAP connection used to connect to directory.
-     * @param dirType Directory type (AD, OpenLDAP).
      * @param entries Collection of LDAP entries.
      *
      * @throws LdapException On LDAP errors.
      */
     public static void createLdapEntries(
-            final Connection connection, final DirectoryType dirType, final Collection<LdapEntry> entries)
+            final Connection connection, final Collection<LdapEntry> entries)
             throws Exception {
 
         for (final LdapEntry entry : entries) {
