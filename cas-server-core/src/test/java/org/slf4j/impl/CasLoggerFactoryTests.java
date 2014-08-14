@@ -21,6 +21,7 @@ package org.slf4j.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,7 @@ import java.lang.reflect.Field;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
@@ -70,6 +72,12 @@ public class CasLoggerFactoryTests {
     @Test
     public void testLoggerSelectedCorrectly() {
         assertTrue(LOGGER instanceof CasDelegatingLogger);
+    }
+
+    @Test
+    public void testLogging1() {
+        LOGGER.trace(mock(Marker.class), getMessageToLogWithParams(), null, null);
+        validateLogData();
     }
 
     @Test
@@ -147,6 +155,16 @@ public class CasLoggerFactoryTests {
     @Test
     public void testLogging61() {
         LOGGER.debug(getMessageToLog());
+        validateLogData();
+    }
+
+    @Test
+    public void testLogging771() {
+        final TicketGrantingTicket t = mock(TicketGrantingTicket.class);
+        when(t.getId()).thenReturn(ID1);
+        when(t.toString()).thenReturn(ID1);
+
+        LOGGER.debug(getMessageToLogWithParams(), ID2, t);
         validateLogData();
     }
 
