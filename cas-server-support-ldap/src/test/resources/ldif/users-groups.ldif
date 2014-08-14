@@ -33,5 +33,5 @@ userPrincipalName: mmoayyed@springframework.org
 userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=springframework,dc=org
 userPassword: misagh
-unicodePwd: ignored
+unicodePwd: ignoredForTests
 
