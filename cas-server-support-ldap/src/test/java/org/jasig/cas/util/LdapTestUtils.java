@@ -18,13 +18,6 @@
  */
 package org.jasig.cas.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-import java.util.Collection;
-
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -42,6 +35,13 @@ import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.util.Collection;
 
 /**
  * Utility class used by all tests that provision and deprovision LDAP test data.
@@ -124,7 +124,7 @@ public final class LdapTestUtils {
      */
     public static void createLdapEntries(
             final Connection connection, final DirectoryType dirType, final Collection<LdapEntry> entries)
-            throws LdapException {
+            throws Exception {
 
         for (final LdapEntry entry : entries) {
             try {
@@ -143,6 +143,7 @@ public final class LdapTestUtils {
             for (final LdapEntry entry : entries) {
                 // AD requires quotes around literal password string
                 final String password = '\"' + getPassword(entry) + '\"';
+
                 final ModifyRequest modify = new ModifyRequest(
                         entry.getDn(),
                         new AttributeModification(
@@ -151,12 +152,16 @@ public final class LdapTestUtils {
                         new AttributeModification(
                                 AttributeModificationType.REPLACE,
                                 new LdapAttribute(AD_ACCT_CONTROL_ATTR, AD_ACCT_ACTIVE)));
+
+
                 try {
                     new ModifyOperation(connection).execute(modify);
                 } catch (final LdapException e) {
                     LOGGER.warn("LDAP error modifying entry {}", entry, e);
                     throw e;
                 }
+
+
             }
         }
     }
@@ -178,6 +183,10 @@ public final class LdapTestUtils {
     }
 
     public static String getPassword(final LdapEntry entry) {
-        return PASSWORD_PREFIX + entry.getAttribute("sn").getStringValue();
+        return getPassword(entry.getAttribute("sn").getStringValue());
+    }
+
+    public static String getPassword(final String value) {
+       return PASSWORD_PREFIX + value;
     }
 }
