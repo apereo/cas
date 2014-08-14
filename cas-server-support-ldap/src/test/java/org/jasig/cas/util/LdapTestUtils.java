@@ -18,18 +18,12 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.io.IOUtils;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
-import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
-import org.ldaptive.DeleteOperation;
-import org.ldaptive.DeleteRequest;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.ModifyOperation;
-import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
@@ -40,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.Collection;
 
 /**
@@ -54,21 +47,6 @@ public final class LdapTestUtils {
         ActiveDirectory,
         OpenLdap
     }
-
-    /** Prefix for creating strong but predictable passwords of the format {prefix}{sn}. */
-    public static final String PASSWORD_PREFIX = "Pa$$word.";
-
-    /** AD user password attribute name. */
-    private static final String AD_PASSWORD_ATTR = "unicodePwd";
-
-    /** AD user password character encoding. */
-    private static final Charset AD_PASSWORD_ENCODING = Charset.forName("UTF-16LE");
-
-    /** AD user account control attribute name. */
-    private static final String AD_ACCT_CONTROL_ATTR = "userAccountControl";
-
-    /** AD user account control value for active account. */
-    private static final String AD_ACCT_ACTIVE = "512";
 
     /** Placeholder for base DN in LDIF files. */
     private static final String BASE_DN_PLACEHOLDER = "${ldapBaseDn}";
@@ -108,7 +86,7 @@ public final class LdapTestUtils {
                 builder.append(NEWLINE);
             }
         } finally {
-            reader.close();
+            IOUtils.closeQuietly(reader);
         }
         return new LdifReader(new StringReader(builder.toString())).read().getEntries();
     }
@@ -138,55 +116,5 @@ public final class LdapTestUtils {
             }
         }
 
-        // AD requires some special handling for setting password and account state
-        if (DirectoryType.ActiveDirectory.equals(dirType)) {
-            for (final LdapEntry entry : entries) {
-                // AD requires quotes around literal password string
-                final String password = '\"' + getPassword(entry) + '\"';
-
-                final ModifyRequest modify = new ModifyRequest(
-                        entry.getDn(),
-                        new AttributeModification(
-                                AttributeModificationType.REPLACE,
-                                new LdapAttribute(AD_PASSWORD_ATTR, password.getBytes(AD_PASSWORD_ENCODING))),
-                        new AttributeModification(
-                                AttributeModificationType.REPLACE,
-                                new LdapAttribute(AD_ACCT_CONTROL_ATTR, AD_ACCT_ACTIVE)));
-
-
-                try {
-                    new ModifyOperation(connection).execute(modify);
-                } catch (final LdapException e) {
-                    LOGGER.warn("LDAP error modifying entry {}", entry, e);
-                    throw e;
-                }
-
-
-            }
-        }
-    }
-
-    /**
-     * Removes the given LDAP entries.
-     *
-     * @param connection Open LDAP connection used to connect to directory.
-     * @param entries Collection of LDAP entries.
-     */
-    public static void removeLdapEntries(final Connection connection, final Collection<LdapEntry> entries) {
-        for (final LdapEntry entry : entries) {
-            try {
-                new DeleteOperation(connection).execute(new DeleteRequest(entry.getDn()));
-            } catch (final LdapException e) {
-                LOGGER.warn("LDAP error removing entry {}", entry, e);
-            }
-        }
-    }
-
-    public static String getPassword(final LdapEntry entry) {
-        return getPassword(entry.getAttribute("sn").getStringValue());
-    }
-
-    public static String getPassword(final String value) {
-       return PASSWORD_PREFIX + value;
     }
 }
