@@ -20,10 +20,10 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LdapTestUtils;
+import org.jasig.cas.util.LdapUtils;
 import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.Collection;
 
 /**
  * Base class for LDAP tests that provision and deprovision directory data as part of test setup/teardown.
@@ -57,30 +59,41 @@ public abstract class AbstractLdapTests {
 
     protected ApplicationContext context;
 
-    private static InMemoryTestLdapDirectoryServer DIRECTORY;
+    private InMemoryTestLdapDirectoryServer directory;
 
-    @BeforeClass
-    public static void initTests() throws Exception {
-        final ClassPathResource properties = new ClassPathResource("openldap.properties");
-        final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
-        final ClassPathResource ldif = new ClassPathResource("ldif/ldif-users.ldif");
+    protected Collection<LdapEntry> testEntries;
 
-        DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(), ldif.getFile());
-    }
-
-    @AfterClass
-    public static void endTests() {
-        IOUtils.closeQuietly(DIRECTORY);
+    @After
+    public void tearDown() {
+        IOUtils.closeQuietly(directory);
     }
 
     @Before
     public void setUp() throws Exception {
+
+        final ClassPathResource properties = new ClassPathResource("ldap.properties");
+        final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
+
+        directory = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(),
+                new ClassPathResource("ldif/ldap-base.ldif").getFile());
+
         this.context = new ClassPathXmlApplicationContext(this.contextPaths);
         this.baseDn = this.context.getBean("baseDn", String.class);
 
         this.usernameAttribute = this.context.getBean("usernameAttribute", String.class);
         this.provisioningConnectionFactory = this.context.getBean(
                 "provisioningConnectionFactory", ConnectionFactory.class);
+
+        this.testEntries = LdapTestUtils.readLdif(new ClassPathResource("ldif/users-groups.ldif"), this.baseDn);
+        final Connection connection = getConnection();
+        try {
+            connection.open();
+            LdapTestUtils.createLdapEntries(connection, this.directoryType, this.testEntries);
+        } finally {
+            LdapUtils.closeConnection(connection);
+        }
+
+
     }
 
     /**

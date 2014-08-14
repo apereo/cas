@@ -28,96 +28,31 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/ad.properties"/>
-
-    <bean id="usersLdif"
-          class="org.springframework.core.io.ClassPathResource"
-          c:path="/ldif/ad-users.ldif" />
-
-    <bean id="baseDn" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
-    </bean>
-
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>
 
-    <bean id="ldapAuthenticationHandler"
-          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute="sAMAccountName"
-          c:authenticator-ref="authenticator">
-        <property name="principalAttributeMap">
-            <map>
-                <!--
-                   | This map provides a simple attribute resolution mechanism.
-                   | Keys are LDAP attribute names, values are CAS attribute names.
-                   | Use this facility instead of a PrincipalResolver if LDAP is
-                   | the only attribute source.
-                   -->
-                <entry key="displayName" value="displayName" />
-                <entry key="mail" value="mail" />
-                <entry key="memberOf" value="memberOf" />
-            </map>
-        </property>
-    </bean>
+    <!--
+        When testing against ActiveDirectory, Use the following instead:
 
-    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-          c:resolver-ref="dnResolver"
-          c:handler-ref="authHandler"
-          p:entryResolver-ref="entryResolver" />
+        <bean id="dnResolver"
+                class="org.ldaptive.auth.FormatDnResolver"
+                c:format="%s@${ldap.domain}" />
 
-    <!-- Active Directory UPN format. -->
+        <bean id="entryResolver"
+                class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
+                p:baseDn="${ldap.baseDn}" />
+    -->
+
     <bean id="dnResolver"
           class="org.ldaptive.auth.FormatDnResolver"
-          c:format="%s@${ldap.domain}" />
-
-    <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-          p:connectionFactory-ref="pooledLdapConnectionFactory" />
-
-    <bean id="pooledLdapConnectionFactory"
-          class="org.ldaptive.pool.PooledConnectionFactory"
-          p:connectionPool-ref="connectionPool" />
-
-    <bean id="connectionPool"
-          class="org.ldaptive.pool.BlockingConnectionPool"
-          init-method="initialize"
-          p:poolConfig-ref="ldapPoolConfig"
-          p:blockWaitTime="${ldap.pool.blockWaitTime}"
-          p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy"
-          p:connectionFactory-ref="connectionFactory" />
-
-    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
-          p:minPoolSize="${ldap.pool.minSize}"
-          p:maxPoolSize="${ldap.pool.maxSize}"
-          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-          p:validatePeriodically="${ldap.pool.validatePeriodically}"
-          p:validatePeriod="${ldap.pool.validatePeriod}" />
-
-    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="connectionConfig" />
-
-    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="${ldap.url}"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}"
-          p:sslConfig-ref="sslConfig"/>
-
-    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.X509CredentialConfig"
-                  p:trustCertificates="${ldap.trustedCert}" />
-        </property>
-    </bean>
-
-    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-          p:prunePeriod="${ldap.pool.prunePeriod}"
-          p:idleTime="${ldap.pool.idleTime}" />
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+          c:format="cn=%s,${ldap.baseDn}" />
 
     <bean id="entryResolver"
           class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-          p:baseDn="${ldap.baseDn}" />
+          p:baseDn="${ldap.baseDn}"
+          p:resolveSearchEntryByFullDn="false"
+          p:searchFilter="userPrincipalName={user}@${ldap.domain}"/>
+
 
 </beans>
