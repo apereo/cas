@@ -80,16 +80,15 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return sanitized arguments
      */
     private Object[] manipulateLogArguments(final Object... args) {
-        final Object[] results = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] != null) {
                 final String objStr = removeTicketId(args[i].toString());
-                results[i] = objStr;
+                args[i] = objStr;
             } else {
-                results[i] = args[i].toString();
+                args[i] = args[i];
             }
         }
-        return results;
+        return args;
     }
 
     /**
@@ -137,13 +136,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     */
     @Override
     public void trace(final String format, final Object arg) {
-        delegate.trace(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.trace(manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void trace(final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.trace(manipulateLogMessage(format), args[0], args[1]);
+        delegate.trace(manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -163,13 +161,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg) {
-        delegate.trace(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.trace(marker, manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void trace(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.trace(marker, manipulateLogMessage(format), args[0], args[1]);
+        delegate.trace(marker, manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -203,13 +200,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void debug(final String format, final Object arg) {
-        delegate.debug(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.debug(manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void debug(final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.debug(manipulateLogMessage(format), args[0], args[1]);
+        delegate.debug(manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -229,13 +225,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg) {
-        delegate.debug(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.debug(marker, manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void debug(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.debug(marker, manipulateLogMessage(format), args[0], args[1]);
+        delegate.debug(marker, manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -264,13 +259,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void info(final String format, final Object arg) {
-        delegate.info(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.info(manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void info(final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.info(manipulateLogMessage(format), args[0], args[1]);
+        delegate.info(manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -290,13 +284,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void info(final Marker marker, final String format, final Object arg) {
-        delegate.info(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.info(marker, manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void info(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.info(marker, manipulateLogMessage(format), args[0], args[1]);
+        delegate.info(marker, manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -325,13 +318,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void warn(final String format, final Object arg) {
-        delegate.warn(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.warn(manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void warn(final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.warn(manipulateLogMessage(format), args[0], args[1]);
+        delegate.warn(manipulateLogMessage(format),  manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -351,13 +343,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg) {
-        delegate.warn(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.warn(marker, manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void warn(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.warn(marker, manipulateLogMessage(format), args[0], args[1]);
+        delegate.warn(marker, manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -386,13 +377,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void error(final String format, final Object arg) {
-        delegate.error(manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.error(manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void error(final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.error(manipulateLogMessage(format), args[0], args[1]);
+        delegate.error(manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
@@ -412,13 +402,12 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public void error(final Marker marker, final String format, final Object arg) {
-        delegate.error(marker, manipulateLogMessage(format), manipulateLogArguments(arg)[0]);
+        delegate.error(marker, manipulateLogMessage(format), manipulateLogArguments(arg));
     }
 
     @Override
     public void error(final Marker marker, final String format, final Object arg1, final Object arg2) {
-        final Object[] args = manipulateLogArguments(arg1, arg2);
-        delegate.error(marker, manipulateLogMessage(format), args[0], args[1]);
+        delegate.error(marker, manipulateLogMessage(format), manipulateLogArguments(arg1, arg2));
     }
 
     @Override
