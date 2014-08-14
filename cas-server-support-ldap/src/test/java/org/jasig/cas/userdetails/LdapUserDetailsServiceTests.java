@@ -19,7 +19,6 @@
 package org.jasig.cas.userdetails;
 
 import org.jasig.cas.authentication.AbstractLdapTests;
-import org.jasig.cas.util.LdapTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,21 +43,13 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
 
     private LdapUserDetailsService userDetailsService;
 
-    public LdapUserDetailsServiceTests(
-            final LdapTestUtils.DirectoryType directoryType, final String ... contextPaths) {
-
-        this.directoryType = directoryType;
+    public LdapUserDetailsServiceTests(final String ... contextPaths) {
         this.contextPaths = contextPaths;
     }
 
     @Parameters
     public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][]{
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        new String[]{"/ldap-context.xml", "/openldap-userdetails-test.xml"},
-                },
-        });
+        return Arrays.asList(new Object[][]{{new String[]{"/ldap-context.xml", "/openldap-userdetails-test.xml"}}});
     }
 
     @Before

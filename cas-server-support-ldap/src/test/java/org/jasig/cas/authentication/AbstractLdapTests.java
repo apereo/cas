@@ -55,8 +55,6 @@ public abstract class AbstractLdapTests {
 
     protected String[] contextPaths;
 
-    protected LdapTestUtils.DirectoryType directoryType;
-
     protected ApplicationContext context;
 
     private InMemoryTestLdapDirectoryServer directory;
@@ -88,7 +86,7 @@ public abstract class AbstractLdapTests {
         final Connection connection = getConnection();
         try {
             connection.open();
-            LdapTestUtils.createLdapEntries(connection, this.directoryType, this.testEntries);
+            LdapTestUtils.createLdapEntries(connection, this.testEntries);
         } finally {
             LdapUtils.closeConnection(connection);
         }
