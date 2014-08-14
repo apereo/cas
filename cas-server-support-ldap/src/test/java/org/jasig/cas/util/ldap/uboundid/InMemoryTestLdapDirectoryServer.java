@@ -22,15 +22,19 @@ package org.jasig.cas.util.ldap.uboundid;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.schema.Schema;
+import com.unboundid.util.ssl.KeyStoreKeyManager;
+import com.unboundid.util.ssl.SSLUtil;
+import com.unboundid.util.ssl.TrustStoreTrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Properties;
 
 /**
@@ -47,11 +51,15 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
     public InMemoryTestLdapDirectoryServer(final File properties, final File schemaFile, final File ldifFile) {
 
         try {
-            //final File rootResourcesDirectory = new File("cas-server-support-ldap/src/test/resources");
-            //final File rootLdifDirectory = new File(rootResourcesDirectory, "ldif");
-            //final File rootschemaDirectory = new File(rootResourcesDirectory, "schema");
-            //final File schemaFile = new File(rootschemaDirectory, "standard-ldap.schema");
-            //final Collection<File> collection = FileUtils.listFiles(rootLdifDirectory, new String[]{"ldif"}, true);
+            if (!properties.exists()) {
+                throw new FileNotFoundException("properties file does not exist");
+            }
+            if (!schemaFile.exists()) {
+                throw new FileNotFoundException("schemaFile file does not exist");
+            }
+            if (!ldifFile.exists()) {
+                throw new FileNotFoundException("ldifFile file does not exist");
+            }
 
             final Properties p = new Properties();
             p.load(new FileInputStream(properties));
@@ -59,9 +67,25 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             final InMemoryDirectoryServerConfig config =
                     new InMemoryDirectoryServerConfig(p.getProperty("ldap.rootDn"));
             config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
+
+            final String serverKeyStorePath = new File(System.getProperty("java.home"), "lib/security/cacerts").getCanonicalPath();
+
+            final SSLUtil serverSSLUtil = new SSLUtil(
+                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), new TrustStoreTrustManager(serverKeyStorePath));
+            final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
             config.setListenerConfigs(
-                    new InMemoryListenerConfig("ldapListener", InetAddress.getLocalHost(), 10389, null, null, null)
-            );
+                    InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
+                            null, // Listen address. (null = listen on all interfaces)
+                            389, // Listen port (0 = automatically choose an available port)
+                            serverSSLUtil.createSSLSocketFactory()), // StartTLS factory
+                    InMemoryListenerConfig.createLDAPSConfig("LDAPS", // Listener name
+                            null, // Listen address. (null = listen on all interfaces)
+                            636, // Listen port (0 = automatically choose an available port)
+                            serverSSLUtil.createSSLServerSocketFactory(), // Server factory
+                            clientSSLUtil.createSSLSocketFactory())); // Client factory
+
+            config.setEnforceSingleStructuralObjectClass(false);
+            config.setEnforceAttributeSyntaxCompliance(false);
 
             final Schema s = Schema.getSchema(schemaFile.getCanonicalPath());
             config.setSchema(s);
@@ -72,6 +96,9 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             this.directoryServer.importFromLDIF(true, ldifFile.getCanonicalPath());
             this.directoryServer.startListening();
 
+            final LDAPConnection c = this.directoryServer.getConnection();
+            LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
+            c.close();
 
         } catch (final Exception e) {
             throw new RuntimeException(e);

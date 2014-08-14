@@ -30,12 +30,6 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:property-placeholder location="classpath:/openldap.properties"/>
-
-    <bean id="baseDn" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
-    </bean>
-
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
