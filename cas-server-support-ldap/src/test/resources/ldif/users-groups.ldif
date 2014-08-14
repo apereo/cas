@@ -1,8 +1,4 @@
 #
-# log4j configuration to get clean console listing during Maven tests
-#
-
-#
 # Licensed to Jasig under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
 # for additional information regarding copyright ownership.
@@ -21,11 +17,21 @@
 # under the License.
 #
 
-log4j.rootCategory=INFO, stdout
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - &lt;%m&gt;%n
+dn: CN=mmoayyed,ou=people,dc=springframework,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: ad
+objectClass: inetOrgPerson
+cn: Misagh Moayyed
+sn: Moayyed
+givenName: Misagh
+displayName: Misagh Moayyed
+sAMAccountName: mmoayyed
+mail: mmoayyed@springframework.org
+userPrincipalName: mmoayyed@springframework.org
+userAccountControl: 66048
+distinguishedName: CN=mmoayyed,ou=people,dc=springframework,dc=org
+userPassword: misagh
+unicodePwd: ignored
 
-log4j.logger.org.jasig.cas=DEBUG
-log4j.logger.org.ldaptive=WARN
-log4j.logger.org.springframework=WARN

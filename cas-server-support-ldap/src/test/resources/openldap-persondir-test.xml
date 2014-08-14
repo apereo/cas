@@ -28,16 +28,6 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/openldap.properties"/>
-
-    <bean id="usersLdif"
-          class="org.springframework.core.io.ClassPathResource"
-          c:path="/ldif/openldap-users.ldif" />
-
-    <bean id="baseDn" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
-    </bean>
-
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
@@ -107,10 +97,18 @@
         </property>
     </bean>
 
+    <!--
     <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
             <bean class="org.ldaptive.ssl.X509CredentialConfig"
                   p:trustCertificates="${ldap.trustedCert}" />
+        </property>
+    </bean>
+    -->
+
+    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
         </property>
     </bean>
 

@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
 import org.jasig.cas.util.LdapTestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +26,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ldaptive.LdapEntry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import javax.security.auth.login.FailedLoginException;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -66,6 +62,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                         false,
                         new String[] {"/ldap-provision-context.xml", "/ad-authn-test.xml"},
                 },
+                /*
                 {
                         LdapTestUtils.DirectoryType.OpenLdap,
                         true,
@@ -80,7 +77,8 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                         LdapTestUtils.DirectoryType.OpenLdap,
                         false,
                         new String[] {"/ldap-provision-context.xml", "/openldap-directbind-authn-test.xml"},
-                },
+                }
+                */
         });
     }
 
@@ -89,14 +87,14 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         super.setUp();
         this.handler = this.context.getBean(LdapAuthenticationHandler.class);
     }
-
     @Test
     public void testAuthenticateSuccess() throws Exception {
         String username;
         for (final LdapEntry entry : this.testEntries) {
             username = getUsername(entry);
             final HandlerResult result = this.handler.authenticate(
-                    new UsernamePasswordCredential(username, LdapTestUtils.getPassword(entry)));
+                    new UsernamePasswordCredential(username,
+                            entry.getAttribute("userPassword").getStringValue()));
             assertNotNull(result.getPrincipal());
             assertEquals(username, result.getPrincipal().getId());
             assertEquals(
@@ -108,34 +106,19 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
-    @Test
+    @Test(expected=FailedLoginException.class)
     public void testAuthenticateFailure() throws Exception {
-        String username;
         for (final LdapEntry entry : this.testEntries) {
-            username = getUsername(entry);
-            try {
-                this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
-                fail("Should have thrown FailedLoginException.");
-            } catch (final FailedLoginException e) {
-                assertNotNull(e.getMessage());
-            }
+            final String username = getUsername(entry);
+            this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
+            fail("Should have thrown FailedLoginException.");
+
         }
     }
 
-    @Test
+    @Test(expected=FailedLoginException.class)
     public void testAuthenticateNotFound() throws Exception {
-        if (!this.supportsNotFound) {
-            return;
-        }
-        String username;
-        for (final LdapEntry entry : this.testEntries) {
-            username = getUsername(entry);
-            try {
-                this.handler.authenticate(new UsernamePasswordCredential("nobody", "badpassword"));
-                fail("Should have thrown AccountNotFoundException.");
-            } catch (final AccountNotFoundException e) {
-                assertNotNull(e.getMessage());
-            }
-        }
+        this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
+        fail("Should have thrown FailedLoginException.");
     }
 }
