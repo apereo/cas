@@ -36,15 +36,15 @@ public class HttpMessage {
     /** The default asynchronous callbacks enabled. */
     private static boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    final private String url;
-    final private String message;
-    final private String parameterName;
+    private String url;
+    private String message;
+    private String parameterName;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    final private boolean asynchronous;
+    private boolean asynchronous;
     
     /**
      * The content type for this message once submitted.
