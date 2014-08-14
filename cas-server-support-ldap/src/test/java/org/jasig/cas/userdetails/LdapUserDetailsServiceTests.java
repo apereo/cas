@@ -56,7 +56,7 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
         return Arrays.asList(new Object[][]{
                 {
                         LdapTestUtils.DirectoryType.OpenLdap,
-                        new String[]{"/ldap-provision-context.xml", "/openldap-userdetails-test.xml"},
+                        new String[]{"/ldap-context.xml", "/openldap-userdetails-test.xml"},
                 },
         });
     }
