@@ -60,23 +60,23 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
                 {
                         LdapTestUtils.DirectoryType.ActiveDirectory,
                         false,
-                        new String[] {"/ldap-provision-context.xml", "/ad-authn-test.xml"},
+                        new String[] {"/ldap-context.xml", "/ad-authn-test.xml"},
                 },
                 /*
                 {
                         LdapTestUtils.DirectoryType.OpenLdap,
                         true,
-                        new String[] {"/ldap-provision-context.xml", "/openldap-searchbind-authn-test.xml"},
+                        new String[] {"/ldap-context.xml", "/openldap-searchbind-authn-test.xml"},
                 },
                 {
                         LdapTestUtils.DirectoryType.OpenLdap,
                         true,
-                        new String[] {"/ldap-provision-context.xml", "/openldap-anonsearchbind-authn-test.xml"},
+                        new String[] {"/ldap-context.xml", "/openldap-anonsearchbind-authn-test.xml"},
                 },
                 {
                         LdapTestUtils.DirectoryType.OpenLdap,
                         false,
-                        new String[] {"/ldap-provision-context.xml", "/openldap-directbind-authn-test.xml"},
+                        new String[] {"/ldap-context.xml", "/openldap-directbind-authn-test.xml"},
                 }
                 */
         });
