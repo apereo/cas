@@ -29,6 +29,7 @@ import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
 import java.nio.charset.Charset;
@@ -221,7 +222,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          */
         public LogoutHttpMessage(final String url, final String message) {
             super(url, message, LogoutManagerImpl.this.asynchronous);
-            setContentType("application/xml");
+            setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         }
 
         /**
