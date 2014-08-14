@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.util.LdapTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,44 +41,14 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     private LdapAuthenticationHandler handler;
 
-    private boolean supportsNotFound;
+    public LdapAuthenticationHandlerTests(final String ... contextPaths) {
 
-    public LdapAuthenticationHandlerTests(
-            final LdapTestUtils.DirectoryType directoryType,
-            final boolean supportsNotFound,
-            final String ... contextPaths) {
-
-        this.directoryType = directoryType;
-        this.supportsNotFound = supportsNotFound;
         this.contextPaths = contextPaths;
     }
 
     @Parameters
     public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][] {
-                {
-                        LdapTestUtils.DirectoryType.ActiveDirectory,
-                        false,
-                        new String[] {"/ldap-context.xml", "/ad-authn-test.xml"},
-                },
-                /*
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        true,
-                        new String[] {"/ldap-context.xml", "/openldap-searchbind-authn-test.xml"},
-                },
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        true,
-                        new String[] {"/ldap-context.xml", "/openldap-anonsearchbind-authn-test.xml"},
-                },
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        false,
-                        new String[] {"/ldap-context.xml", "/openldap-directbind-authn-test.xml"},
-                }
-                */
-        });
+        return Arrays.asList(new Object[][] {new String[] {"/ldap-context.xml", "/authn-context.xml"}});
     }
 
     @Before
