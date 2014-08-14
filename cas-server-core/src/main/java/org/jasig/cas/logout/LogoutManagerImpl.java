@@ -173,7 +173,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
         final String originalUrl = request.getService().getOriginalUrl();        
-        final LogoutHttpMessage sender = new LogoutHttpMessage(originalUrl, logoutRequest);
+        final HttpMessage sender = new HttpMessage(originalUrl, LOGOUT_PARAMETER_NAME, logoutRequest);
 
         return this.httpClient.sendMessageToEndPoint(sender);
     }
@@ -203,34 +203,5 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
         this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
-    }
-           
-    /**
-     * A logout http message that is accompanied by a special content type
-     * and formatting.
-     * @since 4.1
-     */
-    private final class LogoutHttpMessage extends HttpMessage {
-        
-        /**
-         * Constructs a logout message, whose method of submission
-         * is controlled by the {@link LogoutManagerImpl#asynchronous}.
-         * 
-         * @param url The url to send the message to
-         * @param message Message to send to the url
-         */
-        public LogoutHttpMessage(final String url, final String message) {
-            super(url, message, LogoutManagerImpl.this.asynchronous);
-            setContentType("application/xml");
-        }
-
-        /**
-         * {@inheritDoc}.
-         * Prepends the string "<code>logoutRequest=</code>" to the message body.
-         */
-        @Override
-        protected String formatOutputMessageInternal(final String message) {
-            return LOGOUT_PARAMETER_NAME + "=" + super.formatOutputMessageInternal(message);
-        }        
     }
 }

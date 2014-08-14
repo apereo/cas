@@ -36,14 +36,15 @@ public class HttpMessage {
     /** The default asynchronous callbacks enabled. */
     private static boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private String url;
-    private String message;
+    final private String url;
+    final private String message;
+    final private String parameterName;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private boolean asynchronous = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
+    final private boolean asynchronous;
     
     /**
      * The content type for this message once submitted.
@@ -55,22 +56,26 @@ public class HttpMessage {
      * Prepare the sender with a given url and the message to send.
      *
      * @param url the url to which the message will be sent.
+     * @param parameterName the name of parameter to encode in the form data
      * @param message the message itself.
      */
-    public HttpMessage(final String url, final String message) {
-        this(url, message, DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED);
+    public HttpMessage(final String url, final String parameterName, final String message) {
+        this(url, parameterName, message, DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED);
     }
     
     /**
      * Prepare the sender with a given url and the message to send.
      *
      * @param url the url to which the message will be sent.
+     * @param parameterName the name of parameter to encode in the form data
      * @param message the message itself.
      * @param async whether the message should be sent asynchronously.
      */
-    public HttpMessage(final String url, final String message, final boolean async) {
+    public HttpMessage(final String url, final String parameterName, final String message, final boolean async) {
         this.url = url;
+        this.parameterName = parameterName;
         this.message = message;
+        this.asynchronous = async;
     }
     
     protected boolean isAsynchronous() {
@@ -100,7 +105,7 @@ public class HttpMessage {
      */
     protected String formatOutputMessageInternal(final String message) {
         try {
-            return URLEncoder.encode(message, "UTF-8"); 
+            return parameterName + "=" + URLEncoder.encode(message, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
             LOGGER.warn(e.getMessage(), e);
         }
