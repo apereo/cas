@@ -18,16 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.security.auth.login.FailedLoginException;
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -36,31 +31,16 @@ import static org.junit.Assert.*;
  *
  * @author Marvin S. Addison
  */
-@RunWith(Parameterized.class)
+
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
+    @Autowired
     private LdapAuthenticationHandler handler;
 
-    public LdapAuthenticationHandlerTests(final String ... contextPaths) {
-
-        this.contextPaths = contextPaths;
-    }
-
-    @Parameters
-    public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][] {new String[] {"/ldap-context.xml", "/authn-context.xml"}});
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.handler = this.context.getBean(LdapAuthenticationHandler.class);
-    }
     @Test
     public void testAuthenticateSuccess() throws Exception {
-        String username;
-        for (final LdapEntry entry : this.testEntries) {
-            username = getUsername(entry);
+        for (final LdapEntry entry : this.getEntries()) {
+            final String username = getUsername(entry);
             final HandlerResult result = this.handler.authenticate(
                     new UsernamePasswordCredential(username,
                             entry.getAttribute("userPassword").getStringValue()));
@@ -77,7 +57,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Test(expected=FailedLoginException.class)
     public void testAuthenticateFailure() throws Exception {
-        for (final LdapEntry entry : this.testEntries) {
+        for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
             this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
             fail("Should have thrown FailedLoginException.");

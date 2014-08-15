@@ -23,18 +23,23 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.schema.Schema;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
+import org.jasig.cas.util.LdapTestUtils;
+import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -44,6 +49,8 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTestLdapDirectoryServer.class);
 
     private final InMemoryDirectoryServer directoryServer;
+
+    private Collection<LdapEntry> ldapEntries;
 
     /**
      * Instantiates a new Ldap directory server.
@@ -96,13 +103,33 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             this.directoryServer.importFromLDIF(true, ldifFile.getCanonicalPath());
             this.directoryServer.startListening();
 
-            final LDAPConnection c = this.directoryServer.getConnection();
+            final LDAPConnection c = getConnection();
             LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
-            c.close();
+
+            populateEntries();
 
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void populateEntries() throws Exception {
+        this.ldapEntries = LdapTestUtils.readLdif(new ClassPathResource("ldif/users-groups.ldif"), getBaseDn());
+        final LDAPConnection c = getConnection();
+        LdapTestUtils.createLdapEntries(c, ldapEntries);
+        c.close();
+    }
+
+    public String getBaseDn() {
+        return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
+    }
+
+    public  Collection<LdapEntry> getLdapEntries() {
+        return this.ldapEntries;
+    }
+
+    public LDAPConnection getConnection() throws LDAPException {
+        return this.directoryServer.getConnection();
     }
 
     @Override
