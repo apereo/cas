@@ -220,8 +220,7 @@ CAS server depends heavily on the Spring framework. There are exact and specific
 Spring beans in the XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. There are two approaches to this:
 
 1. The XML file can be obtained from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured correctly, the build will use the locally-provided XML file rather than the default.
-
-2. CAS server is able to load patterns of XML configuration files to overwrite what is provided by default. These configuration files that intend to overrule CAS default behvaior can be placed at `/WEB-INF/` and must be named by the following pattern: `cas-servlet-*.xml`. Beans places in this file will overwrite others. This configuration is recognized by the `DispatcherServlet` in the `web.xml` file:
+2. CAS server is able to load patterns of XML configuration files to overwrite what is provided by default. These configuration files that intend to overrule CAS default behavior can be placed at `/WEB-INF/` and must be named by the following pattern: `cas-servlet-*.xml`. Beans placed in this file will overwrite others. This configuration is recognized by the `DispatcherServlet` in the `web.xml` file:
 
 {% highlight xml %}
 ...
