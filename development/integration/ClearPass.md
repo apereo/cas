@@ -43,13 +43,14 @@ If the validation fails, the traditional response is a 403 Status code being ret
 ## Components
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-       <groupId>org.jasig.cas</groupId>
-       <artifactId>cas-server-extension-clearpass</artifactId>
-       <version>${cas.version}</version>
-       <scope>runtime</scope>
-    </dependency>
-
+{% highlight xml %}
+<dependency>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-extension-clearpass</artifactId>
+	<version>${cas.version}</version>
+	<scope>runtime</scope>
+</dependency>
+{% endhighlight %}
 
 ###`CacheCredentialsMetaDataPopulator`
 Retrieve and store the password in our cache.
@@ -137,10 +138,15 @@ will report back that the proxy chain is invalid for the requesting proxy url.
 
 Alternatively, you may replace:
 
-    <property name="allowedProxyChains" ref="clearPassProxyList" />
+{% highlight xml %}
+<property name="allowedProxyChains" ref="clearPassProxyList" />
+{% endhighlight %}
+
 with:
 
-    <property name="acceptAnyProxy" value="true" />
+{% highlight xml %}
+<property name="acceptAnyProxy" value="true" />
+{% endhighlight %}
 
 ...to allow all proxying services to be able to obtain ClearPass credentials.
 
@@ -152,11 +158,15 @@ Obtain a copy of the [`ticketRegistry.xml`](https://github.com/Jasig/cas/blob/ma
 
 Replace:
 
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+{% highlight xml %}
+<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+{% endhighlight %}
 
 with:
 
-    <bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+{% highlight xml %}
+<bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+{% endhighlight %}
 
 
 ##Multiple Nodes Configuration
