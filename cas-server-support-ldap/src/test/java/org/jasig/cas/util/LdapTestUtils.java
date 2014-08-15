@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.util;
 
+import com.unboundid.ldap.sdk.AddRequest;
+import com.unboundid.ldap.sdk.Attribute;
+import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apache.commons.io.IOUtils;
-import org.ldaptive.AddOperation;
-import org.ldaptive.AddRequest;
-import org.ldaptive.Connection;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -94,19 +95,17 @@ public final class LdapTestUtils {
      * @throws LdapException On LDAP errors.
      */
     public static void createLdapEntries(
-            final Connection connection, final Collection<LdapEntry> entries)
+            final LDAPConnection connection, final Collection<LdapEntry> entries)
             throws Exception {
 
         for (final LdapEntry entry : entries) {
-            try {
-                new AddOperation(connection).execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-            } catch (final LdapException e) {
-                // ignore entry already exists
-                if (ResultCode.ENTRY_ALREADY_EXISTS != e.getResultCode()) {
-                    LOGGER.warn("LDAP error creating entry {}", entry, e);
-                    throw e;
-                }
+
+            final Collection<Attribute> attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
+            for (final LdapAttribute a : entry.getAttributes()) {
+                attrs.add(new Attribute(a.getName(), a.getStringValues()));
             }
+            connection.add(new AddRequest(entry.getDn(), attrs));
+
         }
 
     }

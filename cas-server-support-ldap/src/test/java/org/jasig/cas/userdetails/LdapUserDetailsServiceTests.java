@@ -18,18 +18,12 @@
  */
 package org.jasig.cas.userdetails;
 
-import org.jasig.cas.authentication.AbstractLdapTests;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.ldaptive.Connection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Unit test for the {@link LdapUserDetailsService} class.
@@ -39,30 +33,20 @@ import java.util.Collection;
  * @author Marvin Addison
  */
 @RunWith(Parameterized.class)
-public class LdapUserDetailsServiceTests extends AbstractLdapTests {
+public class LdapUserDetailsServiceTests {
 
+    @Autowired
     private LdapUserDetailsService userDetailsService;
 
     public LdapUserDetailsServiceTests(final String ... contextPaths) {
-        this.contextPaths = contextPaths;
-    }
-
-    @Parameters
-    public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][]{{new String[]{"/ldap-context.xml", "/openldap-userdetails-test.xml"}}});
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.userDetailsService = this.context.getBean(LdapUserDetailsService.class);
+        //super(new String[]{"/ldap-context.xml", "/openldap-userdetails-test.xml"});
     }
 
     @Test
     public void testLoadUserByUsername() throws Exception {
-        final Connection c = super.getConnection();
+        //final Connection c = super.getConnection();
         /*
-        for (final LdapEntry entry : this.testEntries) {
+        for (final LdapEntry entry : this.ldapEntries) {
             final String username = getUsername(entry);
             final UserDetails user = userDetailsService.loadUserByUsername(username);
             assertEquals(username, user.getUsername());
