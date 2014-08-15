@@ -19,89 +19,56 @@
 package org.jasig.cas.authentication;
 
 import org.apache.commons.io.IOUtils;
-import org.jasig.cas.util.LdapTestUtils;
-import org.jasig.cas.util.LdapUtils;
 import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
-import org.junit.After;
-import org.junit.Before;
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
 
 /**
- * Base class for LDAP tests that provision and deprovision directory data as part of test setup/teardown.
+ * Base class for LDAP tests that provision and deprovision DIRECTORY data as part of test setup/teardown.
  * <p>
  * NOTE: The <code>enableLdapTests</code> system property must be set to execute tests that derive from this class.
  *
  * @author Marvin S. Addison
  */
-public abstract class AbstractLdapTests {
+@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
+public abstract class AbstractLdapTests  {
 
+    @Autowired
+    @Qualifier("usernameAttribute")
     private String usernameAttribute;
-
-    private ConnectionFactory provisioningConnectionFactory;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected String baseDn;
+    private static InMemoryTestLdapDirectoryServer DIRECTORY;
 
-    protected String[] contextPaths;
-
-    protected ApplicationContext context;
-
-    private InMemoryTestLdapDirectoryServer directory;
-
-    protected Collection<LdapEntry> testEntries;
-
-    @After
-    public void tearDown() {
-        IOUtils.closeQuietly(directory);
-    }
-
-    @Before
-    public void setUp() throws Exception {
-
+    @BeforeClass
+    public static void beforeClass() throws Exception {
         final ClassPathResource properties = new ClassPathResource("ldap.properties");
         final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
 
-        directory = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(),
+        DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(),
                 new ClassPathResource("ldif/ldap-base.ldif").getFile());
-
-        this.context = new ClassPathXmlApplicationContext(this.contextPaths);
-        this.baseDn = this.context.getBean("baseDn", String.class);
-
-        this.usernameAttribute = this.context.getBean("usernameAttribute", String.class);
-        this.provisioningConnectionFactory = this.context.getBean(
-                "provisioningConnectionFactory", ConnectionFactory.class);
-
-        this.testEntries = LdapTestUtils.readLdif(new ClassPathResource("ldif/users-groups.ldif"), this.baseDn);
-        final Connection connection = getConnection();
-        try {
-            connection.open();
-            LdapTestUtils.createLdapEntries(connection, this.testEntries);
-        } finally {
-            LdapUtils.closeConnection(connection);
-        }
-
-
     }
 
-    /**
-     * Gets a connection for provisioning/deprovisioning test data.
-     *
-     * @return LDAP connection.
-     * @throws LdapException On errors.
-     */
-    protected Connection getConnection() throws LdapException {
-        return provisioningConnectionFactory.getConnection();
+    @AfterClass
+    public static void tearDown() {
+        IOUtils.closeQuietly(DIRECTORY);
+    }
+
+    protected Collection<LdapEntry> getEntries() {
+        return DIRECTORY.getLdapEntries();
     }
 
     protected String getUsername(final LdapEntry entry) {

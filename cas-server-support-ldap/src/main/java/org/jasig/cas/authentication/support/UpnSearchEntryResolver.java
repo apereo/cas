@@ -18,16 +18,11 @@
  */
 package org.jasig.cas.authentication.support;
 
-import org.ldaptive.Connection;
-import org.ldaptive.LdapException;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.SearchEntryResolver;
-
-import java.util.Arrays;
 
 /**
  * Ldaptive extension component for Active Directory that supports querying for an entry by User Principal Name (UPN).
@@ -44,20 +39,10 @@ import java.util.Arrays;
 public class UpnSearchEntryResolver extends SearchEntryResolver {
 
     /** UPN-based search filter. */
-    private static final String DEFAULT_SEARCH_FILTER = "userPrincipalName={user}";
+    private static final String SEARCH_FILTER = "userPrincipalName={0}";
 
     /** Base DN of LDAP subtree search. */
     private String baseDn;
-
-    private SearchScope searchScope = SearchScope.SUBTREE;
-
-    private boolean resolveSearchEntryByFullDn = true;
-
-    private String searchFilter = DEFAULT_SEARCH_FILTER;
-
-    public void setSearchFilter(final String searchFilter) {
-        this.searchFilter = searchFilter;
-    }
 
     /**
      * Sets the base DN used for the subtree search for LDAP entry.
@@ -68,45 +53,15 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
         this.baseDn = dn;
     }
 
-    public void setSearchScope(final SearchScope searchScope) {
-        this.searchScope = searchScope;
-    }
-
-    public void setResolveSearchEntryByFullDn(final boolean resolveSearchEntryByFullDn) {
-        this.resolveSearchEntryByFullDn = resolveSearchEntryByFullDn;
-    }
-
-    @Override
-    public SearchResult performLdapSearch(final Connection conn, final AuthenticationCriteria ac) throws LdapException {
-        final SearchResult result = super.performLdapSearch(conn, ac);
-        if (result.getEntries().size() == 0) {
-            logger.warn("Unable to find any entries after the search for {}", ac.getDn());
-        }
-        return result;
-    }
-
     /** {@inheritDoc} */
     @Override
     protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {
-
         final SearchRequest sr = new SearchRequest();
-        sr.setSearchScope(this.searchScope);
+        sr.setSearchScope(SearchScope.SUBTREE);
         sr.setBaseDn(this.baseDn);
-
-        final SearchFilter filter = new SearchFilter(this.searchFilter);
-        if (this.resolveSearchEntryByFullDn) {
-            filter.setParameter("user", ac.getDn());
-        } else {
-            filter.setParameter("user", ac.getAuthenticationRequest().getUser());
-        }
-        sr.setSearchFilter(filter);
-
+        sr.setSearchFilter(new SearchFilter(SEARCH_FILTER, new Object[] {ac.getDn()}));
         sr.setSearchEntryHandlers(getSearchEntryHandlers());
         sr.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
-
-        logger.debug("Searching entries by [{}] to return attributes [{}]",
-                sr.getSearchFilter().format(), Arrays.toString(sr.getReturnAttributes()));
-
         return sr;
     }
 }

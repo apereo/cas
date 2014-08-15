@@ -30,78 +30,37 @@
 
     <bean id="serviceRegistryDao"
           class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
-          p:connectionFactory-ref="pooledLdapConnectionFactory"
+          p:connectionFactory-ref="provisioningConnectionFactory"
           p:searchRequest-ref="searchRequest" />
 
     <bean id="searchRequest"
           class="org.ldaptive.SearchRequest"
           p:baseDn="${ldap.service.baseDn}" />
 
-    <bean id="pooledLdapConnectionFactory"
-          class="org.ldaptive.pool.PooledConnectionFactory"
-          p:connectionPool-ref="connectionPool" />
-
-    <bean id="connectionPool"
-          class="org.ldaptive.pool.BlockingConnectionPool"
-          init-method="initialize"
-          p:poolConfig-ref="ldapPoolConfig"
-          p:blockWaitTime="${ldap.pool.blockWaitTime}"
-          p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy"
-          p:connectionFactory-ref="connectionFactory" />
-
-    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
-          p:minPoolSize="${ldap.pool.minSize}"
-          p:maxPoolSize="${ldap.pool.maxSize}"
-          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-          p:validatePeriodically="${ldap.pool.validatePeriodically}"
-          p:validatePeriod="${ldap.pool.validatePeriod}" />
-
-    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="connectionConfig" />
-
-    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="${ldap.url}"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS: false}"
-          p:sslConfig-ref="sslConfig"
-          p:connectionInitializer-ref="bindConnectionInitializer"/>
-
-    <bean id="bindConnectionInitializer"
-          class="org.ldaptive.BindConnectionInitializer"
-          p:bindDn="${ldap.managerDn}">
-        <property name="bindCredential">
-            <bean class="org.ldaptive.Credential"
-                  c:password="${ldap.managerPassword}" />
-        </property>
+    <bean id="usernameAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>
 
     <!--
-    Use this config if there's a certificate that is required
-    to connect to the ldap instance.
-    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.X509CredentialConfig"
-                  p:trustCertificates="${ldap.trustedCert}" />
-        </property>
-    </bean>
+        When testing against ActiveDirectory, Use the following instead:
+
+        <bean id="dnResolver"
+                class="org.ldaptive.auth.FormatDnResolver"
+                c:format="%s@${ldap.domain}" />
+
+        <bean id="entryResolver"
+                class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
+                p:baseDn="${ldap.baseDn}" />
     -->
 
-    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
-        </property>
-    </bean>
+    <bean id="dnResolver"
+          class="org.ldaptive.auth.FormatDnResolver"
+          c:format="cn=%s,${ldap.baseDn}" />
 
-    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-          p:prunePeriod="${ldap.pool.prunePeriod}"
-          p:idleTime="${ldap.pool.idleTime}" />
+    <bean id="entryResolver"
+          class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
+          p:baseDn="${ldap.baseDn}"
+          p:resolveSearchEntryByFullDn="false"
+          p:searchFilter="userPrincipalName={user}@${ldap.domain}"/>
 
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
-    <bean id="executor"
-          class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-          p:corePoolSize="1"
-          p:maxPoolSize="1"
-          p:keepAliveSeconds="1" />
 </beans>
