@@ -49,10 +49,6 @@
           c:format="cn=%s,${ldap.baseDn}" />
 
     <bean id="entryResolver"
-          class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-          p:baseDn="${ldap.baseDn}"
-          p:resolveSearchEntryByFullDn="false"
-          p:searchFilter="userPrincipalName={user}@${ldap.domain}"/>
-
+          class="org.ldaptive.auth.SearchEntryResolver"/>
 
 </beans>

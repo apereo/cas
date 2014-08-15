@@ -18,13 +18,9 @@
  */
 package org.jasig.cas.persondir;
 
-import org.jasig.cas.authentication.AbstractLdapTests;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
@@ -36,24 +32,13 @@ import static org.junit.Assert.assertTrue;
  * @author Marvin S. Addison
  * @since 4.0
  */
-@RunWith(Parameterized.class)
-public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
+public class LdapPersonAttributeDaoTests  {
 
+    @Autowired
     private LdapPersonAttributeDao attributeDao;
 
-    public LdapPersonAttributeDaoTests(final String ... contextPaths) {
-        this.contextPaths = contextPaths;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][]{new String[]{"/ldap-context.xml", "/openldap-persondir-test.xml"}});
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.attributeDao = this.context.getBean(LdapPersonAttributeDao.class);
+    public LdapPersonAttributeDaoTests() {
+        //super(new String[]{"/ldap-context.xml", "/openldap-persondir-test.xml"});
     }
 
     @Test
@@ -61,7 +46,7 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
         /*
         IPersonAttributes actual;
         String username;
-        for (final LdapEntry entry : this.testEntries) {
+        for (final LdapEntry entry : this.ldapEntries) {
             username = getUsername(entry);
             actual = attributeDao.getPerson(username);
             assertNotNull(actual);
