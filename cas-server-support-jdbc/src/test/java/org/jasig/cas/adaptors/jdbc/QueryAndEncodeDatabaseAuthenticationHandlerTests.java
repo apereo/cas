@@ -19,8 +19,11 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.junit.After;
 import org.junit.Before;
@@ -37,8 +40,11 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.Statement;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
@@ -46,8 +52,11 @@ import java.sql.Statement;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
-
+    private static final String ALG_NAME = MessageDigestAlgorithms.SHA_512;
+    private static final MessageDigest DIGEST = DigestUtils.getDigest(ALG_NAME);
     private static final String SQL = "SELECT * FROM users where %s";
+    private static final int NUM_ITERATIONS = 5;
+    private static final String STATIC_SALT = "STATIC_SALT";
 
     @Autowired
     private DataSource dataSource;
@@ -67,9 +76,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     private String getSqlInsertStatementToCreateUserAccount(final int i) {
+        final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
+
         final String sql = String.format(
                 "insert into users (username, password, salt, numIterations) values('%s', '%s', '%s', %s);",
-                "user" + i, "password" + i, "salt" + i, i);
+                "user" + i, psw, "salt" + i, NUM_ITERATIONS);
         return sql;
     }
 
@@ -90,7 +101,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     public void testAuthenticationFailsToFindUser() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        MessageDigestAlgorithms.SHA_512);
+                        ALG_NAME);
         q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
@@ -99,7 +110,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     public void testAuthenticationInvalidSql() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql("makesNoSenseInSql"),
-                        MessageDigestAlgorithms.SHA_512);
+                        ALG_NAME);
         q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
@@ -108,10 +119,24 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     public void testAuthenticationMultipleAccounts() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        MessageDigestAlgorithms.SHA_512);
+                        ALG_NAME);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "someotherpass"));
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
+    }
+
+    public void testAuthenticationSuccessful() throws Exception {
+        final QueryAndEncodeDatabaseAuthenticationHandler q =
+                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
+                        ALG_NAME);
+        q.setNumberOfIterationsFieldName("numIterations");
+        q.setStaticSalt(STATIC_SALT);
+
+        final HandlerResult r = q.authenticateUsernamePasswordInternal(
+                TestUtils.getCredentialsWithSameUsernameAndPassword("user1"));
+
+        assertNotNull(r);
+        assertEquals(r.getPrincipal().getId(), "user1");
     }
 
     private String buildSql(final String where) {
@@ -122,6 +147,25 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         return String.format(SQL, "username=?;");
     }
 
+
+    private String genPassword(final String psw, final String salt, final int iter) {
+        try {
+
+            DIGEST.reset();
+            DIGEST.update(psw.getBytes());
+            DIGEST.update(STATIC_SALT.getBytes());
+            DIGEST.update(salt.getBytes());
+
+            byte[] encP = DIGEST.digest();
+            for (int i = 0; i < iter - 1; i++) {
+                encP = DIGEST.digest(encP);
+            }
+            return Hex.encodeHexString(encP);
+
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Entity(name="users")
     public class UsersTable {
         @Id
