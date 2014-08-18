@@ -25,6 +25,8 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,6 +127,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     }
 
+    @Test
     public void testAuthenticationSuccessful() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
@@ -134,6 +137,28 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
         final HandlerResult r = q.authenticateUsernamePasswordInternal(
                 TestUtils.getCredentialsWithSameUsernameAndPassword("user1"));
+
+        assertNotNull(r);
+        assertEquals(r.getPrincipal().getId(), "user1");
+    }
+
+    @Test
+    public void testAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
+        final QueryAndEncodeDatabaseAuthenticationHandler q =
+                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
+                        ALG_NAME);
+        q.setNumberOfIterationsFieldName("numIterations");
+        q.setStaticSalt(STATIC_SALT);
+        q.setPasswordEncoder(new PasswordEncoder() {
+            @Override
+            public String encode(final String password) {
+                return password.concat("1");
+            }
+        });
+
+        q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
+        final HandlerResult r = q.authenticateUsernamePasswordInternal(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
