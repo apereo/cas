@@ -130,12 +130,16 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
             this.messageDigest.update(this.staticSalt.getBytes());
         }
 
+        if (!values.containsKey(this.saltFieldName)) {
+            throw new RuntimeException("Specified field name for salt does not exist in the resultset");
+        }
         this.messageDigest.update(values.get(this.saltFieldName).toString().getBytes());
         byte[] digestedPassword = this.messageDigest.digest();
 
         long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
-            numOfIterations = Long.getLong(values.get(this.numberOfIterationsFieldName).toString());
+            final String longAsStr = values.get(this.numberOfIterationsFieldName).toString();
+            numOfIterations = Long.valueOf(longAsStr);
         }
 
         for (int i = 0; i < numOfIterations - 1; i++) {
