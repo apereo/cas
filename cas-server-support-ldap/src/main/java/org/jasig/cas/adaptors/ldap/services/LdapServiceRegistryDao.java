@@ -18,13 +18,6 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryDao;
 import org.jasig.cas.util.LdapUtils;
@@ -49,6 +42,12 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
@@ -93,7 +92,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
         Connection connection = null;
         try {
-            connection = this.connectionFactory.getConnection();
+            connection = getConnection();
             final AddOperation operation = new AddOperation(connection);
 
             final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
@@ -115,21 +114,21 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private RegisteredService update(final RegisteredService rs) {
         Connection searchConnection = null;
         try {
-            searchConnection = this.connectionFactory.getConnection();
+            searchConnection = getConnection();
             final Response<SearchResult> response = searchForServiceById(searchConnection, rs.getId());
             if (hasResults(response)) {
                 final String currentDn = response.getResult().getEntry().getDn();
 
                 Connection modifyConnection = null;
                 try {
-                    modifyConnection = this.connectionFactory.getConnection();
+                    modifyConnection = getConnection();
                     final ModifyOperation operation = new ModifyOperation(searchConnection);
 
                     final List<AttributeModification> mods = new ArrayList<AttributeModification>();
 
                     final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
                     for (final LdapAttribute attr : entry.getAttributes()) {
-                        mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                        mods.add(new AttributeModification(AttributeModificationType.ADD, attr));
                     }
                     final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
                     operation.execute(request);
@@ -149,7 +148,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     public boolean delete(final RegisteredService registeredService) {
         Connection connection = null;
         try {
-            connection = this.connectionFactory.getConnection();
+            connection = getConnection();
 
             final Response<SearchResult> response = searchForServiceById(connection, registeredService.getId());
             if (hasResults(response)) {
@@ -173,7 +172,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         Connection connection = null;
         final List<RegisteredService> list = new LinkedList<RegisteredService>();
         try {
-            connection = this.connectionFactory.getConnection();
+            connection = getConnection();
             final Response<SearchResult> response =
                     executeSearchOperation(connection, new SearchFilter(this.loadFilter));
             if (hasResults(response)) {
@@ -194,7 +193,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     public RegisteredService findServiceById(final long id) {
         Connection connection = null;
         try {
-            connection = this.connectionFactory.getConnection();
+            connection = getConnection();
 
             final Response<SearchResult> response = searchForServiceById(connection, id);
             if (hasResults(response)) {
@@ -285,5 +284,20 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         sr.setTypesOnly(this.searchRequest.getTypesOnly());
         sr.setControls(this.searchRequest.getControls());
         return sr;
+    }
+
+    /**
+     * Gets connection from the factory.
+     * Opens the connection if needed.
+     *
+     * @return the connection
+     * @throws LdapException the ldap exception
+     */
+    private Connection getConnection() throws LdapException {
+        final Connection c = this.connectionFactory.getConnection();
+        if (!c.isOpen()) {
+            c.open();
+        }
+        return c;
     }
 }
