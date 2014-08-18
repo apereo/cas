@@ -50,7 +50,7 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
 
     private static final String DEFAULT_PASSWORD_FIELD = "password";
     private static final String DEFAULT_SALT_FIELD = "salt";
-    private static final String DEFAULT_NUM_ITERATIONS_FIELD = "num_iterations";
+    private static final String DEFAULT_NUM_ITERATIONS_FIELD = "numIterations";
 
     @NotNull
     private String sql;
