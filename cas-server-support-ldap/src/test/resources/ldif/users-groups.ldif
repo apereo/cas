@@ -35,3 +35,11 @@ distinguishedName: CN=mmoayyed,ou=people,dc=springframework,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
 
+dn: ou=CASTest,dc=springframework,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: CAS Test
+sn: CAS
+

@@ -1026,7 +1026,7 @@
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
     <spring.version>4.0.5.RELEASE</spring.version>
-    <ldaptive.version>1.0.3</ldaptive.version>
+    <ldaptive.version>1.0.4</ldaptive.version>
     <spring.security.version>3.2.4.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.7.3</aspectj.version>

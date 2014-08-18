@@ -116,6 +116,21 @@
 
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
+    <!--
+    When testing against ActiveDirectory, Use the following instead:
 
+    <bean id="dnResolver"
+            class="org.ldaptive.auth.FormatDnResolver"
+            c:format="%s@${ldap.domain}" />
 
+    <bean id="entryResolver"
+            class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
+            p:baseDn="${ldap.baseDn}" />
+    -->
+    <bean id="dnResolver"
+          class="org.ldaptive.auth.FormatDnResolver"
+          c:format="cn=%s,${ldap.baseDn}"/>
+
+    <bean id="entryResolver"
+          class="org.ldaptive.auth.SearchEntryResolver"/>
 </beans>
