@@ -46,7 +46,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  */
-public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String DEFAULT_PASSWORD_FIELD = "password";
     private static final String DEFAULT_SALT_FIELD = "salt";
@@ -55,18 +55,20 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     @NotNull
     private String sql;
 
-    private String staticSalt = null;
-
-    @NotNull
     private final MessageDigest messageDigest;
 
+    @NotNull
     private String passwordFieldName = DEFAULT_PASSWORD_FIELD;
 
+    @NotNull
     private String saltFieldName = DEFAULT_SALT_FIELD;
 
+    @NotNull
     private String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
     private long numberOfIterations = 0;
+
+    private String staticSalt = null;
 
     /**
      * Instantiates a new Query and encode database authentication handler.
@@ -87,7 +89,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
         final String username = getPrincipalNameTransformer().transform(transformedCredential.getUsername());
         final String encodedPsw = this.getPasswordEncoder().encode(transformedCredential.getPassword());
@@ -120,8 +122,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param values the values retrieved from database
      * @return the digested password
      */
-    protected byte[] digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
-
+    private byte[] digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
+        this.messageDigest.reset();
         this.messageDigest.update(encodedPassword.getBytes());
 
         if (StringUtils.isNotBlank(this.staticSalt)) {
@@ -133,10 +135,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
-            numOfIterations = Long.decode(values.get(this.numberOfIterationsFieldName).toString());
+            numOfIterations = Long.getLong(values.get(this.numberOfIterationsFieldName).toString());
         }
 
-        for (int i = 0; i < numOfIterations; i++) {
+        for (int i = 0; i < numOfIterations - 1; i++) {
             this.messageDigest.reset();
             digestedPassword = this.messageDigest.digest(digestedPassword);
         }
