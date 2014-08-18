@@ -41,7 +41,8 @@ import java.util.Map;
  * A JDBC querying handler that will pull back the password and
  * the private salt value for a user and validate the encoded
  * password using the private salt value. Assumes everything
- * is inside the same database table.
+ * is inside the same database table. Supports settings for
+ * number of iterations as well as statis salt.
  *
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
