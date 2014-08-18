@@ -30,25 +30,8 @@
 
     <bean id="monitor"
           class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
-          c:factory-ref="connectionFactory"
+          c:factory-ref="provisioningConnectionFactory"
           c:validator-ref="searchValidator" />
 
-    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="connectionConfig" />
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
-    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="${ldap.url}"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}"
-          p:sslConfig-ref="sslConfig"/>
-
-    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.X509CredentialConfig"
-                  p:trustCertificates="${ldap.trustedCert}" />
-        </property>
-    </bean>
 
 </beans>

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
+import org.jasig.cas.authentication.AbstractLdapTests;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
@@ -43,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Misagh Moayyed
  * @author Marvin S. Addison
  */
-public class LdapServiceRegistryDaoTests {
+public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
     private LdapServiceRegistryDao dao;
@@ -72,6 +73,7 @@ public class LdapServiceRegistryDaoTests {
         rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
         rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler8", "handle92")));
 
         this.dao.save(rs);
 

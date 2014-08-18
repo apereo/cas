@@ -41,26 +41,4 @@
         <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>
 
-    <!--
-        When testing against ActiveDirectory, Use the following instead:
-
-        <bean id="dnResolver"
-                class="org.ldaptive.auth.FormatDnResolver"
-                c:format="%s@${ldap.domain}" />
-
-        <bean id="entryResolver"
-                class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-                p:baseDn="${ldap.baseDn}" />
-    -->
-
-    <bean id="dnResolver"
-          class="org.ldaptive.auth.FormatDnResolver"
-          c:format="cn=%s,${ldap.baseDn}" />
-
-    <bean id="entryResolver"
-          class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-          p:baseDn="${ldap.baseDn}"
-          p:resolveSearchEntryByFullDn="false"
-          p:searchFilter="userPrincipalName={user}@${ldap.domain}"/>
-
 </beans>

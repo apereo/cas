@@ -37,7 +37,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
@@ -55,18 +54,9 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
     /**
      * Instantiates a new Ldap directory server.
      */
-    public InMemoryTestLdapDirectoryServer(final File properties, final File schemaFile, final File ldifFile) {
+    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile, final File... schemaFile) {
 
         try {
-            if (!properties.exists()) {
-                throw new FileNotFoundException("properties file does not exist");
-            }
-            if (!schemaFile.exists()) {
-                throw new FileNotFoundException("schemaFile file does not exist");
-            }
-            if (!ldifFile.exists()) {
-                throw new FileNotFoundException("ldifFile file does not exist");
-            }
 
             final Properties p = new Properties();
             p.load(new FileInputStream(properties));
@@ -94,8 +84,8 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             config.setEnforceSingleStructuralObjectClass(false);
             config.setEnforceAttributeSyntaxCompliance(false);
 
-            final Schema s = Schema.getSchema(schemaFile.getCanonicalPath());
-            config.setSchema(s);
+            final Schema s = Schema.mergeSchemas(Schema.getSchema(schemaFile));
+            config.setSchema(null);
 
             this.directoryServer = new InMemoryDirectoryServer(config);
 
