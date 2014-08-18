@@ -41,7 +41,7 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  */
-@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml"})
+@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml", "/ldap-regservice-test.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractLdapTests  {
 
@@ -58,8 +58,9 @@ public abstract class AbstractLdapTests  {
         final ClassPathResource properties = new ClassPathResource("ldap.properties");
         final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
 
-        DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getFile(), schema.getFile(),
-                new ClassPathResource("ldif/ldap-base.ldif").getFile());
+        DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getFile(),
+                new ClassPathResource("ldif/ldap-base.ldif").getFile(),
+                schema.getFile());
     }
 
     @AfterClass

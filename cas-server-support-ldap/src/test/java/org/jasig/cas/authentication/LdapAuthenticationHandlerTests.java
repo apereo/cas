@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
  *
  * @author Marvin S. Addison
  */
-
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired
