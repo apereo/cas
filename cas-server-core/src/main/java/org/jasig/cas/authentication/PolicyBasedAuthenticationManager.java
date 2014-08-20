@@ -231,8 +231,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                         }
                     } catch (final GeneralSecurityException e) {
                         logger.info("{} failed authenticating {}", handler.getName(), credential);
+                        logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     } catch (final PreventedException e) {
+                        logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     }
                 }

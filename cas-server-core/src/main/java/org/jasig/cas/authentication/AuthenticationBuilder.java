@@ -288,7 +288,7 @@ public class AuthenticationBuilder {
      */
     public static AuthenticationBuilder newInstance(final Authentication source) {
         final AuthenticationBuilder builder = new AuthenticationBuilder(source.getPrincipal());
-        builder.setAuthenticationDate(source.getAuthenticatedDate());
+        builder.setAuthenticationDate(source.getAuthenticationDate());
         builder.setCredentials(source.getCredentials());
         builder.setSuccesses(source.getSuccesses());
         builder.setFailures(source.getFailures());
