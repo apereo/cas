@@ -28,21 +28,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.*;
-
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link org.jasig.cas.support.rest.TicketsResource}.
@@ -53,7 +50,7 @@ import java.util.Map;
 public class TicketsResourceTests {
 
     @Mock
-    CentralAuthenticationService casMock;
+    private CentralAuthenticationService casMock;
 
     @InjectMocks
     private TicketsResource ticketsResourceUnderTest;
@@ -72,9 +69,11 @@ public class TicketsResourceTests {
 
     @Test
     public void normalCreationOfTGT() throws Throwable {
-        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">" +
-                "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1><form action=\"http://localhost/cas/v1/tickets/TGT-1\" " +
-                "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>";
+        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+                + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
+                + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
+                + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
+                + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
 
         configureCasMockToCreateValidTGT();
 
@@ -88,7 +87,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void creationOfTGT_WithAuthenticationException() throws Throwable {
+    public void creationOfTGTWithAuthenticationException() throws Throwable {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
         this.mockMvc.perform(post("/cas/v1/tickets")
@@ -110,7 +109,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void creationOfST_WithInvalidTicketException() throws Throwable {
+    public void creationOfSTWithInvalidTicketException() throws Throwable {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
@@ -120,7 +119,7 @@ public class TicketsResourceTests {
     }
 
     @Test
-    public void creationOfST_WithGeneralException() throws Throwable {
+    public void creationOfSTWithGeneralException() throws Throwable {
         configureCasMockSTCreationToThrow(new RuntimeException("Other exception"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
@@ -140,12 +139,12 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
-        Map<String, Class<? extends Exception>> handlerErrors = new HashMap<String, Class<? extends Exception>>(1);
+        final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<String, Class<? extends Exception>>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(new AuthenticationException(handlerErrors));
     }
 
-    private void configureCasMockSTCreationToThrow(Throwable e) throws Throwable {
+    private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenThrow(e);
     }
 
