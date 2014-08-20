@@ -54,9 +54,10 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
     private static final String DEFAULT_NUM_ITERATIONS_FIELD = "numIterations";
 
     @NotNull
-    private String sql;
+    private final String algorithmName;
 
-    private final MessageDigest messageDigest;
+    @NotNull
+    private String sql;
 
     @NotNull
     private String passwordFieldName = DEFAULT_PASSWORD_FIELD;
@@ -86,7 +87,7 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
                                                        final String algorithmName) {
         setDataSource(datasource);
         this.sql = sql;
-        this.messageDigest = DigestUtils.getDigest(algorithmName);
+        this.algorithmName = algorithmName;
     }
 
     @Override
@@ -124,18 +125,20 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      * @return the digested password
      */
     private byte[] digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
-        this.messageDigest.reset();
-        this.messageDigest.update(encodedPassword.getBytes());
+        final MessageDigest messageDigest = DigestUtils.getDigest(this.algorithmName);
+
+        messageDigest.reset();
+        messageDigest.update(encodedPassword.getBytes());
 
         if (StringUtils.isNotBlank(this.staticSalt)) {
-            this.messageDigest.update(this.staticSalt.getBytes());
+            messageDigest.update(this.staticSalt.getBytes());
         }
 
         if (!values.containsKey(this.saltFieldName)) {
             throw new RuntimeException("Specified field name for salt does not exist in the resultset");
         }
-        this.messageDigest.update(values.get(this.saltFieldName).toString().getBytes());
-        byte[] digestedPassword = this.messageDigest.digest();
+        messageDigest.update(values.get(this.saltFieldName).toString().getBytes());
+        byte[] digestedPassword = messageDigest.digest();
 
         long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
@@ -144,8 +147,8 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
         }
 
         for (int i = 0; i < numOfIterations - 1; i++) {
-            this.messageDigest.reset();
-            digestedPassword = this.messageDigest.digest(digestedPassword);
+            messageDigest.reset();
+            digestedPassword = messageDigest.digest(digestedPassword);
         }
         return digestedPassword;
     }
