@@ -82,7 +82,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         session.removeAttribute(OAuthConstants.APPROVAL_PROMPT);
 
         // Clients that auto-approve do not need authorization.
-        if (StringUtils.equals(approvalPrompt, OAuthConstants.AUTO_APPROVE)) {
+        if (OAuthConstants.AUTO_APPROVE.equals(approvalPrompt)) {
             return OAuthUtils.redirectTo(callbackUrl);
         }
 
