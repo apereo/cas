@@ -544,28 +544,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Add LDAP (sgregory BEGIN) -->
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-support-ldap</artifactId>
-        <version>${cas.version}</version>
-      </dependency>
-      <!-- Add LDAP (sgregory END) -->
-      <!-- Oauth Dependencies (sgregory BEGIN) -->
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-support-oauth</artifactId>
-        <version>${cas.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <!-- Oauth Dependencies (sgregory END) -->
-      <!-- SAML Dependencies (sgregory BEGIN) -->
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-support-saml</artifactId>
-        <version>${cas.version}</version>
-      </dependency>
-      <!-- SAML Dependencies (sgregory END) -->
 
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
