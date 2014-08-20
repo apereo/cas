@@ -559,6 +559,13 @@
         <scope>runtime</scope>
       </dependency>
       <!-- Oauth Dependencies (sgregory END) -->
+      <!-- SAML Dependencies (sgregory BEGIN) -->
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-support-saml</artifactId>
+        <version>${cas.version}</version>
+      </dependency>
+      <!-- SAML Dependencies (sgregory END) -->
 
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
