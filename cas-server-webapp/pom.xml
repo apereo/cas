@@ -40,11 +40,6 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-saml</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- END iPlant Deps. -->
     <dependency>
       <groupId>org.jasig.cas</groupId>
