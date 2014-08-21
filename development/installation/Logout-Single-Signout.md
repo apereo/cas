@@ -115,10 +115,10 @@ Sample configuration follows:
 
 <!--
 For back-channel requests:
-	<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
 
 For front-channel requests:
-	<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
 -->
 
 <bean class="org.jasig.cas.services.RegexRegisteredService"
@@ -129,10 +129,6 @@ For front-channel requests:
          p:logoutType-ref="LOGOUTTYPE" />
 {% endhighlight %}
 
-{% highlight bash %}
-# To turn off all back channel SLO requests set slo.disabled to true
-# slo.callbacks.disabled=false
-{% endhighlight %}
 
 ###Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
