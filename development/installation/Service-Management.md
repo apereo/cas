@@ -1,4 +1,3 @@
----
 layout: default
 title: CAS - Service Management
 ---
@@ -58,7 +57,7 @@ Registered services present the following metadata:
 | `usernameAttribute`        		| Name of the attribute that would identify the principal for this service definition only. The attribute need not be configured in the release policy, but must only be resolvable by the attribute repository.
 | `requiredHandlers`        		| Set of authentication handler names that must successfully authenticate credentials in order to access the service.
 | `attributeReleasePolicy`        	| The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL` or `LogoutType.FRONT_CHANNEL`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
+| `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
 
 ###Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT. 

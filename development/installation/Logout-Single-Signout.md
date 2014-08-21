@@ -103,6 +103,37 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 # slo.callbacks.disabled=false
 {% endhighlight %}
 
+###Single Logout Per Service
+Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
+
+Sample configuration follows:
+
+{% highlight xml %}
+
+<!-- Turning single logout off for this application -->
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
+
+<!--
+For back-channel requests:
+	<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
+
+For front-channel requests:
+	<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
+-->
+
+<bean class="org.jasig.cas.services.RegexRegisteredService"
+         p:id="10000001" p:name="HTTP and IMAP"
+         p:description="Allows HTTP(S) and IMAP(S) protocols"
+         p:serviceId="^https://web.application.net"
+         p:evaluationOrder="10000001"
+         p:logoutType-ref="LOGOUTTYPE" />
+{% endhighlight %}
+
+{% highlight bash %}
+# To turn off all back channel SLO requests set slo.disabled to true
+# slo.callbacks.disabled=false
+{% endhighlight %}
+
 ###Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
 
