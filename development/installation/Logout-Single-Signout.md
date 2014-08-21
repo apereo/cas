@@ -104,7 +104,7 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 {% endhighlight %}
 
 ###Single Logout Per Service
-Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
+Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 
@@ -138,8 +138,6 @@ By default, backchannel logout messages are sent to endpoint in an asynchronous 
 # slo.callbacks.asynchronous=true
 {% endhighlight %}
 
-###Single Logout per Service
-By default, all services will receive single logout callbacks depending on their logout type. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. See [Service Management](Service-Management.html) for more details
 
 ###Ticket Registry Cleaner Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
