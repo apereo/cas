@@ -39,7 +39,7 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
 
     private static final long serialVersionUID = 7050462900237284803L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
     /** Encoder to generate PseudoIds. */
     @NotNull
@@ -65,7 +65,7 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
         final String id = this.persistentIdGenerator.generate(principal, service);
-        logger.debug("Resolved username [{}] for anonymous access", id);
+        LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }
 }

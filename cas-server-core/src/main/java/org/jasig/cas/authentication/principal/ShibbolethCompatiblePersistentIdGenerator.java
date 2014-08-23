@@ -36,7 +36,7 @@ import java.security.NoSuchAlgorithmException;
 public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     /** Log instance. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
 
     private static final byte CONST_SEPARATOR = (byte) '!';
 
