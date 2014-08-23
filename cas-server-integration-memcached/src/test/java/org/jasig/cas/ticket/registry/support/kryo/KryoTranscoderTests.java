@@ -18,20 +18,8 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.FailedLoginException;
-
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -45,6 +33,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -52,8 +41,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -110,7 +109,9 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setServiceId("https://some.app.edu");
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), svc);
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, proxyCredential);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false);
