@@ -39,7 +39,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class ThemeBasedViewResolverTests {
 
-    private ThemeBasedViewResolver themeBasedViewResolver;
+    private RegisteredServiceThemeBasedViewResolver registeredServiceThemeBasedViewResolver;
 
     private ServicesManager servicesManager;
 
@@ -60,7 +60,7 @@ public class ThemeBasedViewResolverTests {
         r2.setServiceId("myDefaultId");
         this.servicesManager.save(r2);
 
-        this.themeBasedViewResolver = new ThemeBasedViewResolver("defaultTheme", this.servicesManager);
+        this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver("defaultTheme", this.servicesManager);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ThemeBasedViewResolverTests {
         WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myServiceId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
-        assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView", this.themeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ThemeBasedViewResolverTests {
         WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myDefaultId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.themeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 
     @Test
@@ -90,6 +90,6 @@ public class ThemeBasedViewResolverTests {
         MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.themeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 }

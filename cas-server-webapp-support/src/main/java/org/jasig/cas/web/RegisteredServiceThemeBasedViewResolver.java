@@ -33,29 +33,47 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
- * ThemeBasedViewResolver is an alternate Spring View Resolver that utilizes a service's
+ * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
  * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
  *
+ * <p>Views associated with a particular theme by default are expected to be found at:
+ * {@link #DEFAULT_PATH_PREFIX}/<code>themeId/ui</code>. A starting point may be to
+ * clone the default set of view pages into a new directory based on the theme id.</p>
+ *
+ * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
+ * that attempts to resolve the view name based on the service theme id. The difference
+ * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates
+ * the default view pages with additional tags and coloring, such as CSS and JS. The
+ * component presented here on the other hand has the ability to load an entirely new
+ * set of pages that are may be totally different from that of the default's. This
+ * is specially useful in cases where the set of pages for a theme that are targetted
+ * for a different type of audience are entirely different structurally that simply
+ * using the {@link org.jasig.cas.services.web.ServiceThemeResolver} is not practical
+ * to augment the default views. In such cases, new view pages may be required.</p>
+ *
  * @author John Gasper
+ * @author Misagh Moayyed
  * @since 4.1
  */
-public class ThemeBasedViewResolver extends InternalResourceViewResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
+public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
+    private static final String DEFAULT_PATH_PREFIX = "/WEB-INF/view/jsp";
 
     /** The ServiceRegistry to look up the service. */
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
-    private final String pathPrefix = "/WEB-INF/view/jsp";
     private final String defaultThemeId;
 
+    private String pathPrefix = DEFAULT_PATH_PREFIX;
+
     /**
-     * The ThemeBasedViewResolver constructor.
+     * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      * @param defaultThemeId the theme to apply if the service doesn't specific one or a service is not provided
      * @param servicesManager the serviceManager implementation
      * @see #setCache(boolean)
      */
-    public ThemeBasedViewResolver(final String defaultThemeId, final ServicesManager servicesManager) {
+    public RegisteredServiceThemeBasedViewResolver(final String defaultThemeId, final ServicesManager servicesManager) {
         super();
         super.setCache(false);
 
@@ -64,7 +82,7 @@ public class ThemeBasedViewResolver extends InternalResourceViewResolver {
     }
 
     /**
-     * buildView uses the viewName and the theme associated with the service.
+     * Uses the viewName and the theme associated with the service.
      * being requested and returns the appropriate view.
      * @param viewName the name of the view to be resolved
      * @return a theme-based UrlBasedView
@@ -104,7 +122,7 @@ public class ThemeBasedViewResolver extends InternalResourceViewResolver {
     }
 
     /**
-     * setCache is not supported in the ThemeBasedViewResourceViewResolver because each
+     * setCache is not supported in the {@link RegisteredServiceThemeBasedViewResolver} because each
      * request must be independently evaluated.
      * @param cache a value indicating whether the view should cache results.
      */
@@ -112,5 +130,16 @@ public class ThemeBasedViewResolver extends InternalResourceViewResolver {
     public void setCache(final boolean cache) {
         LOGGER.warn("The {} does not support caching. Turned off caching forcefully.", this.getClass().getSimpleName());
         super.setCache(false);
+    }
+
+    /**
+     * Sets path prefix. This is the location where
+     * views are expected to be found. The default
+     * prefix is {@link #DEFAULT_PATH_PREFIX}.
+     *
+     * @param pathPrefix the path prefix
+     */
+    public void setPathPrefix(final String pathPrefix) {
+        this.pathPrefix = pathPrefix;
     }
 }
