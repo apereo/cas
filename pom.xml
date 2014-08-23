@@ -1059,6 +1059,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <opensaml.version>2.6.1</opensaml.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
