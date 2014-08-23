@@ -39,7 +39,7 @@ public interface HttpClient {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      * @since 4.1
      */
-    boolean sendMessageToEndPoint(final HttpMessage message);
+    boolean sendMessageToEndPoint(HttpMessage message);
 
     /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.
