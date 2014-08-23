@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -30,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -52,6 +51,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Repository of principal attributes to be retrieved. */
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
 
     /** Optional prinicpal attribute name. */
     private String principalAttributeName;
@@ -108,7 +111,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         }
-        return new SimplePrincipal(principalId, convertedAttributes);
+        return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
@@ -126,6 +129,15 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**

@@ -18,19 +18,14 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import javax.security.auth.login.FailedLoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -39,6 +34,12 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+
+import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * This handler authenticates the client credentials : it uses them to get the user profile returned by the provider
@@ -49,6 +50,10 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  */
 @SuppressWarnings("unchecked")
 public final class ClientAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
 
     /**
      * The clients for authentication.
@@ -97,9 +102,19 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
             return new HandlerResult(
                     this,
                     new BasicCredentialMetaData(credential),
-                    new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
+                    this.principalFactory.createPrincipal(userProfile.getId(), userProfile.getAttributes()));
         }
 
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
+    }
+
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 }

@@ -31,9 +31,10 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.AttributeReleasePolicy;
@@ -153,6 +154,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
 
     /**
      * Build the central authentication service implementation.
@@ -422,7 +427,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
                     
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
-            final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
+            final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
 
@@ -535,6 +540,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      */
     public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**
