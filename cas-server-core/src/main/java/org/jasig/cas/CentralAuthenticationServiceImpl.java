@@ -18,14 +18,7 @@
  */
 package org.jasig.cas;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import com.github.inspektr.audit.annotation.Audit;
-
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -34,8 +27,8 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
@@ -67,6 +60,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -251,7 +249,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         synchronized (ticketGrantingTicket) {
             if (ticketGrantingTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-                logger.debug("TicketGrantingTicket[{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
+                logger.debug("TicketGrantingTicket [{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
                 throw new InvalidTicketException(ticketGrantingTicketId);
             }
         }
@@ -301,29 +299,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
 
-        final String generatedServiceTicketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
-        logger.debug("Generated service ticket id [{}] for ticket granting ticket [{}]",
-                generatedServiceTicketId, ticketGrantingTicket.getId());
-        
-        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(generatedServiceTicketId, service,
+        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
+        final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
+        final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
+        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(ticketId, service,
                 this.serviceTicketExpirationPolicy, credentials != null);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
-        if (logger.isInfoEnabled()) {
-            final List<Authentication> authentications = serviceTicket.getGrantingTicket().getChainedAuthentications();
-            final String formatString = "Granted %s ticket [%s] for service [%s] for user [%s]";
-            final String type;
-            final String principalId = authentications.get(authentications.size() - 1).getPrincipal().getId();
-
-            if (authentications.size() == 1) {
-                type = "service";
-            } else {
-                type = "proxy";
-            }
-
-            logger.info(String.format(formatString, type, serviceTicket.getId(), service.getId(), principalId));
-        }
+        final String principalId = authentications.get(authentications.size() - 1).getPrincipal().getId();
+        logger.info("Granted ticket [{}] for service [{}] for user [{}]",
+                serviceTicket.getId(), service.getId(), principalId);
 
         return serviceTicket.getId();
     }
@@ -376,15 +362,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(
-                        this.ticketGrantingTicketUniqueTicketIdGenerator
-                                .getNewTicketId(TicketGrantingTicket.PREFIX),
-                        authentication, this.ticketGrantingTicketExpirationPolicy);
+        final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
+                TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        final TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
+                                    authentication, this.ticketGrantingTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
+        logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
+        this.ticketRegistry.addTicket(proxyGrantingTicket);
 
-        return ticketGrantingTicket.getId();
+        return proxyGrantingTicket.getId();
     }
 
     @Audit(

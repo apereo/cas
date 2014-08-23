@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -18,15 +19,10 @@
     under the License.
 
 -->
-<html>
-<body>
-<p>This package is concerned with the deployment of CAS regardless of
-configuration exceptions. The default Spring behavior is to fail fast on
-deployment if there is an initialization exception. The classes in this
-package override that ability. The application will deploy regardless.
-However, when a user attempts to access the system, they will be
-presented with an error message regarding access to the application.</p>
-<p>These classes are useful in the case where Tomcat is not fronted by
-Apache.</p>
-</body>
-</html>
+<project name="Jasig CAS ${project.version}">
+    <body>        
+		<menu ref="parent" />
+        <menu ref="reports" name="Reports" inherit="top" />
+		<menu ref="modules" name="Modules" inherit="top" />
+    </body>
+</project>

@@ -88,7 +88,7 @@
         </dependency>
     </dependencies>
 
-  <properties>
+    <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    </properties>
 </project>
