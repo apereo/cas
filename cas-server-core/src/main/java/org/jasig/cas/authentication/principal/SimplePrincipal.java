@@ -18,15 +18,17 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
- * Simple implementation of a AttributePrincipal that exposes an unmodifiable
- * map of attributes.
+ * Simple implementation of a {@link Principal} that exposes an unmodifiable
+ * map of attributes. The attributes are cached upon construction and
+ * will not be updated unless the principal is entirely and newly
+ * resolved again.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -52,7 +54,7 @@ public class SimplePrincipal implements Principal {
      *
      * @param id the id
      */
-    public SimplePrincipal(final String id) {
+    protected SimplePrincipal(final String id) {
         this(id, null);
     }
 
@@ -62,7 +64,7 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      * @param attributes the attributes
      */
-    public SimplePrincipal(final String id, final Map<String, Object> attributes) {
+    protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
         Assert.notNull(id, "id cannot be null");
         this.id = id;
         this.attributes = attributes;
