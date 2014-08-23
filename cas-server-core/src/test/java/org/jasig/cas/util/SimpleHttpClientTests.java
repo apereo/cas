@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Test;
 
@@ -50,7 +48,7 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testBadUrl() {
-        assertFalse(this.getHttpClient().isValidEndPoint("http://www.jasig.org/scottb.html"));
+        assertFalse(this.getHttpClient().isValidEndPoint("http://www.apereo.org/scottb.html"));
     }
 
     @Test
