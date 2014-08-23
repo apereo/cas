@@ -8,11 +8,13 @@ CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-saml</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-saml</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 #SAML 1.1
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
@@ -113,7 +115,7 @@ Content-Type: text/xml
 
 ##Configuration
 
-In addition to the `cas-server-support-saml` module dependency, the following 5 steps are required to enabled the SAML 1.1 support.
+In addition to the `cas-server-support-saml` module dependency, the following steps are required to enabled the SAML 1.1 support.
 
 ###Definition/Mapping of `samlValidateController` 
 
@@ -182,19 +184,13 @@ In the uniqueIdGenerators.xml file:
 {% endhighlight %}
 
 ###SAML Views 
-
-In the `cas-servlet.xml` file:
+In `cas-servlet.xml`, uncomment the following:
 
 {% highlight xml %}
-<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver" p:order="0">
-  <property name="basenames">
-    <list>
-      <value>${cas.viewResolver.basename}</value>
-      <value>protocol_views</value>
-      <value>saml_views</value>
-    </list>
-  </property>
-</bean>
+<bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="3"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
 {% endhighlight %}
+
 
 
