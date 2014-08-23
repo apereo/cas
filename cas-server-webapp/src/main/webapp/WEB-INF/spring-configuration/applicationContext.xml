@@ -94,8 +94,8 @@
 
     <bean id="trustStoreSslSocketFactory"
           class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
-          c:trustStoreFile="${proxy.authn.truststore.file:classpath:truststore.jks}"
-          c:trustStorePassword="${proxy.authn.truststore.psw:changeit}" />
+          c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
+          c:trustStorePassword="${http.client.truststore.psw:changeit}" />
 
     <bean id="supportsTrustStoreSslSocketFactoryHttpClient" parent="httpClient"
           c:sslSocketFactory-ref="trustStoreSslSocketFactory" />
