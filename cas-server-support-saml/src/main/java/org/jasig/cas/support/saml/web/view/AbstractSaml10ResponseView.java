@@ -20,6 +20,7 @@
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
@@ -66,6 +67,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private final SecureRandomIdentifierGenerator idGenerator;
 
+    /** The Services manager. */
+    protected ServicesManager servicesManager = null;
+
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
@@ -78,6 +82,10 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
+    }
+
+    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     /**
