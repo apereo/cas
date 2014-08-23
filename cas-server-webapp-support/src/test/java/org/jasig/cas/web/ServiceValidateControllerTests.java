@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Credential;
@@ -39,10 +37,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -158,7 +155,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     }
 
     @Test
-    public void testValidServiceTicketWithInsecurePgtUrl() throws Exception {
+    public void testValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -167,11 +164,11 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService().getId());
         request.addParameter("ticket", sId);
-        request.addParameter("pgtUrl", "http://www.github.com");
+        request.addParameter("pgtUrl", "https://www.github.com");
 
         final ModelAndView modelAndView = this.serviceValidateController
                 .handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         
     }
 
@@ -289,10 +286,10 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", svc.getId());
         request.addParameter("ticket", sId);
-        request.addParameter("pgtUrl", "https://www.github.com");
+        request.addParameter("pgtUrl", "http://www.github.com");
         
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }

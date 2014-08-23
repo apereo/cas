@@ -67,12 +67,19 @@
         p:suffix=".jsp"
         p:order="1"/>
         
+
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
         p:order="2"/>
   
+  <!--
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="3"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+  -->
+  	
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -168,7 +175,8 @@
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
 
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
+        p:timeToDieInSeconds="${terminate.web.session.timeout:2}"/>
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">

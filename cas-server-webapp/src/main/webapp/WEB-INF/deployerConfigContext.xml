@@ -90,7 +90,7 @@
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
           class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="httpClient" />
+          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient" />
 
     <!--
        | TODO: Replace this component with one suitable for your enviroment.
@@ -164,6 +164,14 @@
         <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
               p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+
+            <!--
+            <property name="proxyPolicy">
+                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern="^(https?)://.*" />
+            </property>
+            -->
+
             <!-- 
             <property name="attributeReleasePolicy">
                 <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
