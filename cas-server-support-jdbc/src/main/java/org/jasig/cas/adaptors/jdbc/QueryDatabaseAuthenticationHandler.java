@@ -18,18 +18,16 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -69,7 +67,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        return createHandlerResult(credential, new SimplePrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     /**
