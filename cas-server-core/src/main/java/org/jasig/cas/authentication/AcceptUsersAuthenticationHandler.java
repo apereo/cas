@@ -18,16 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.Map;
-
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -70,7 +68,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!cachedPassword.equals(encodedPassword)) {
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential, new SimplePrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     /**
