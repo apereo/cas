@@ -27,7 +27,15 @@ import java.util.Map;
  */
 public interface PrincipalFactory {
     /**
-     * Create principal with a reference to the underlying attribute repository.
+     * Create principal.
+     *
+     * @param id the id
+     * @return the principal
+     */
+    Principal createPrincipal(String id);
+
+    /**
+     * Create principal along with its attributes.
      *
      * @param id the id
      * @param attributes the attributes
