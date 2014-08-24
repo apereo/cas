@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import static org.junit.Assert.*;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -39,7 +39,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void testSupports() {
-        assertTrue(this.resolver.supports(new PrincipalBearingCredential(new SimplePrincipal("test"))));
+        assertTrue(this.resolver.supports(new PrincipalBearingCredential(new SimplePrincipalFactory().createPrincipal("test"))));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
     }
@@ -47,7 +47,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     @Test
     public void testReturnedPrincipal() {
         assertEquals("test", this.resolver.resolve(
-                new PrincipalBearingCredential(new SimplePrincipal("test"))).getId());
+                new PrincipalBearingCredential(new SimplePrincipalFactory().createPrincipal("test"))).getId());
     }
 
 }
