@@ -21,6 +21,7 @@ package org.jasig.cas.authentication;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
@@ -36,11 +37,6 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  */
 public class PolicyBasedAuthenticationManagerTests {
-
-    /** Factory to create the principal type. **/
-    @NotNull
-    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
-
 
     @Test
     public void testAuthenticateAnySuccess() throws Exception {
@@ -164,10 +160,12 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
+            final Principal p = new SimplePrincipalFactory().createPrincipal("nobody");
+
             final HandlerResult result = new HandlerResult(
                     mock,
                     mock(CredentialMetaData.class),
-                    this.principalFactory.createPrincipal("nobody"));
+                    p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());

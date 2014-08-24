@@ -18,20 +18,19 @@
  */
 package org.jasig.cas;
 
-import java.security.GeneralSecurityException;
-import java.util.Map;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.springframework.util.StringUtils;
+
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * Test one-time password authentication handler that supports {@link MultifactorAuthenticationTests}.
@@ -63,7 +62,8 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
-            return new HandlerResult(this, new BasicCredentialMetaData(otp), new SimplePrincipal(otp.getId()));
+            return new HandlerResult(this, new BasicCredentialMetaData(otp),
+                    new SimplePrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }

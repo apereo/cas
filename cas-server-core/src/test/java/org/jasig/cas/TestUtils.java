@@ -29,7 +29,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -121,7 +121,7 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return new SimplePrincipal(name);
+        return new SimplePrincipalFactory().createPrincipal(name);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
