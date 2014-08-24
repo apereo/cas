@@ -18,20 +18,18 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
 import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -70,7 +68,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
-                     return createHandlerResult(credential, new SimplePrincipal(username), null);
+                     return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
                 } 
                                 
                 if (!this.failoverOnAuthenticationFailure) {
