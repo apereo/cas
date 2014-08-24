@@ -18,23 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -43,6 +29,18 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+
+import javax.annotation.PostConstruct;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
@@ -255,7 +253,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
             }
         }
-        return new SimplePrincipal(id, attributeMap);
+        return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
     /**
