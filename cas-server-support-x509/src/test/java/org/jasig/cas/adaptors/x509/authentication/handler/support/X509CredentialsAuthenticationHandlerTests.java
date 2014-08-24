@@ -23,7 +23,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,8 +36,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link X509CredentialsAuthenticationHandler} class.
@@ -106,7 +105,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential,
+                new SimplePrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
@@ -148,7 +148,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
@@ -172,7 +172,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
@@ -203,7 +203,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #11: Revoked end user certificate
