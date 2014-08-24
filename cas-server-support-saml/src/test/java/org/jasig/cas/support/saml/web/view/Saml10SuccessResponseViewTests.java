@@ -22,7 +22,8 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
@@ -37,15 +38,14 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -88,7 +88,7 @@ public class Saml10SuccessResponseViewTests {
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        final Principal principal = new SimplePrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();
         authAttributes.put(
@@ -122,7 +122,7 @@ public class Saml10SuccessResponseViewTests {
     public void testResponseWithNoAttributes() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
 
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
+        final Principal principal = new SimplePrincipalFactory().createPrincipal("testPrincipal");
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();
         authAttributes.put(
@@ -152,7 +152,7 @@ public class Saml10SuccessResponseViewTests {
 
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("testAttribute", "testValue");
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        final Principal principal = new SimplePrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<String, Object>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
