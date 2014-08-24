@@ -74,7 +74,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             }
             if (credential.getPassword() != null
                     && this.getPasswordEncoder().encode(credential.getPassword()).equals(passwordOnRecord)) {
-                return createHandlerResult(credential, new SimplePrincipal(username), null);
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
