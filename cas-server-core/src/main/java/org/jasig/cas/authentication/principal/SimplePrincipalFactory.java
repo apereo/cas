@@ -28,6 +28,11 @@ import java.util.Map;
 public final class SimplePrincipalFactory implements PrincipalFactory {
 
     @Override
+    public Principal createPrincipal(final String id) {
+        return new SimplePrincipal(id);
+    }
+
+    @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
         return new SimplePrincipal(id, attributes);
     }

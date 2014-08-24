@@ -18,8 +18,11 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.Set;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -29,13 +32,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.springframework.util.Assert;
+import java.security.GeneralSecurityException;
+import java.util.Set;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -139,7 +137,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         Principal principal = null;
         final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
         if (principals != null && principals.size() > 0) {
-            principal = new SimplePrincipal(principals.iterator().next().getName());
+            principal = this.principalFactory.createPrincipal(principals.iterator().next().getName());
         }
         return createHandlerResult(credential, principal, null);
     }
