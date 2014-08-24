@@ -20,7 +20,9 @@
 package org.jasig.cas.util;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +38,25 @@ public final class PrincipalUtils {
 
     /**
      * Convert person attributes to principal attributes.
+     * Obtains attributes first from the repository by calling
+     * {@link org.jasig.services.persondir.IPersonAttributeDao#getPerson(String)}
+     * and converts the results into a map of attributes that CAS can understand.
      *
-     * @param id the id
+     * @param id the person id to locate in the attribute repository
      * @param attributeRepository the attribute repository
      * @return the map of principal attributes
      */
     public static Map<String, Object> convertPersonAttributesToPrincipalAttributes(final String id, final IPersonAttributeDao attributeRepository) {
-        final Map<String, List<Object>> attributes = attributeRepository.getPerson(id).getAttributes();
+        final IPersonAttributes attrs = attributeRepository.getPerson(id);
+        if (attrs == null) {
+            return Collections.emptyMap();
+        }
+
+        final Map<String, List<Object>> attributes = attrs.getAttributes();
+        if (attributes == null) {
+            return Collections.emptyMap();
+        }
+
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
         for (final String key : attributes.keySet()) {
             final List<Object> values = attributes.get(key);
