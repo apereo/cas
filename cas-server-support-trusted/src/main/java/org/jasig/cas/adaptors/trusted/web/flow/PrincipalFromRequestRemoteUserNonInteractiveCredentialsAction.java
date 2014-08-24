@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.adaptors.trusted.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of the NonInteractiveCredentialsAction that looks for a remote
@@ -54,7 +53,7 @@ public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
 
         if (StringUtils.hasText(remoteUser)) {
             logger.debug("Remote  User [{}] found in HttpServletRequest", remoteUser);
-            return new PrincipalBearingCredential(new SimplePrincipal(remoteUser));
+            return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser));
         }
 
         logger.debug("Remote User not found in HttpServletRequest.");
