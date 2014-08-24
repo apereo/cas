@@ -18,18 +18,20 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
@@ -39,8 +41,11 @@ import org.springframework.webflow.execution.RequestContext;
 
  * @since 3.0.4
  */
-public abstract class AbstractNonInteractiveCredentialsAction extends
-    AbstractAction {
+public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -104,6 +109,15 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**

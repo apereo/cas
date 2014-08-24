@@ -148,7 +148,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new HandlerResult(this, x509Credential, new SimplePrincipal(x509Credential.getId()));
+            return new HandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         throw new FailedLoginException();
     }

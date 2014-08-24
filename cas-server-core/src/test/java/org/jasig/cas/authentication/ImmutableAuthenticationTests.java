@@ -18,21 +18,20 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.FailedLoginException;
-
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -59,7 +58,7 @@ public class ImmutableAuthenticationTests {
         final ImmutableAuthentication auth = new ImmutableAuthentication(
                 new Date(),
                 credentials,
-                new SimplePrincipal("test"),
+                new SimplePrincipalFactory().createPrincipal("test"),
                 attributes,
                 successes,
                 failures);
