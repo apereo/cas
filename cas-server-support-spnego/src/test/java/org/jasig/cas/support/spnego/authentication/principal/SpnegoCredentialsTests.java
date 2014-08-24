@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class SpnegoCredentialsTests {
 
@@ -36,7 +36,7 @@ public class SpnegoCredentialsTests {
     @Test
     public void testToStringWithPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
-        final Principal principal = new SimplePrincipal("test");
+        final Principal principal = new SimplePrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.toString());
     }
