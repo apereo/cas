@@ -19,36 +19,38 @@
 
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.util.PrincipalUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
-import java.util.HashMap;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
- * Factory to create {@link UncachedAttributesPrincipal} objects.
+ * A {@link org.jasig.cas.authentication.principal.Principal} whose attributes are not cached.
+ * Every time attributes are requested, the request is submitted to the underlying
+ * attribute repository to get a fresh copy.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class UncachedAttributesPrincipalFactory implements PrincipalFactory {
+public final class NotCachingAttributesPrincipal extends SimplePrincipal {
+
     private final IPersonAttributeDao attributeRepository;
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new Uncached attributes principal.
      *
+     * @param id the id
+     * @param attributes the attributes
      * @param attributeRepository the attribute repository
      */
-    public UncachedAttributesPrincipalFactory(final IPersonAttributeDao attributeRepository) {
+    public NotCachingAttributesPrincipal(@NotNull final String id, @NotNull final Map<String, Object> attributes,
+                                         @NotNull final IPersonAttributeDao attributeRepository) {
+        super(id, attributes);
         this.attributeRepository = attributeRepository;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>Creates the principal with an empty set of attributes first. Upon request for attributes
-     * the set will be updated again. No need to call the attribute repository for attributes
-     * when they are going to provided to the caller when accessed.</p>
-     */
     @Override
-    public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-         return new UncachedAttributesPrincipal(id, new HashMap<String, Object>(), this.attributeRepository);
+    public Map<String, Object> getAttributes() {
+        return PrincipalUtils.convertPersonAttributesToPrincipalAttributes(getId(), this.attributeRepository);
     }
 }
