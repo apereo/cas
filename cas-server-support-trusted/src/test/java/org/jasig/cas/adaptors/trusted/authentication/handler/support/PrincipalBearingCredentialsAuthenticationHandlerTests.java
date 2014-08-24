@@ -45,7 +45,8 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     @Test
     public void testSupports() {
-        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipalFactory().createPrincipal("scott"));
+        final PrincipalBearingCredential credentials =
+                new PrincipalBearingCredential(new SimplePrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

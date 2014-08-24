@@ -46,7 +46,8 @@ public final class PrincipalUtils {
      * @param attributeRepository the attribute repository
      * @return the map of principal attributes
      */
-    public static Map<String, Object> convertPersonAttributesToPrincipalAttributes(final String id, final IPersonAttributeDao attributeRepository) {
+    public static Map<String, Object> convertPersonAttributesToPrincipalAttributes(final String id,
+                                      final IPersonAttributeDao attributeRepository) {
         final IPersonAttributes attrs = attributeRepository.getPerson(id);
         if (attrs == null) {
             return Collections.emptyMap();

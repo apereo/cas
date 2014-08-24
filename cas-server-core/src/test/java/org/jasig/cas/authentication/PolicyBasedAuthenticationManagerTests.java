@@ -18,17 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.PrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import javax.security.auth.login.FailedLoginException;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
