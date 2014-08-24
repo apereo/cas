@@ -150,7 +150,6 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
      * @param isNtlm the is ntlm
      * @return the simple principal
      */
-    @Deprecated
     protected Principal getPrincipal(final String name, final boolean isNtlm) {
         if (this.principalWithDomainName) {
             return this.principalFactory.createPrincipal(name);
