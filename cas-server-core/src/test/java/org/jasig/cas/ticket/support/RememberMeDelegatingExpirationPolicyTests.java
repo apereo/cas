@@ -18,17 +18,19 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.util.Collections;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -38,6 +40,11 @@ import org.junit.Test;
  *
  */
 public final class RememberMeDelegatingExpirationPolicyTests {
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
+
 
     private RememberMeDelegatingExpirationPolicy p;
 
@@ -51,7 +58,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
     @Test
     public void testTicketExpirationWithRememberMe() {
         final Authentication authentication = TestUtils.getAuthentication(
-                new SimplePrincipal("test"),
+                this.principalFactory.createPrincipal("test"),
                 Collections.<String, Object>singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
