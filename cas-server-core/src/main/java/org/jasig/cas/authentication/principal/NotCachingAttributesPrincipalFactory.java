@@ -21,7 +21,6 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -41,15 +40,20 @@ public final class NotCachingAttributesPrincipalFactory implements PrincipalFact
         this.attributeRepository = attributeRepository;
     }
 
+    @Override
+    public Principal createPrincipal(final String id) {
+        return createPrincipal(id, null);
+    }
+
     /**
      * {@inheritDoc}
-     * <p>Creates the principal with an empty set of attributes first. Upon request for attributes
+     * <p>Creates the principal with an null set of attributes first. Upon request for attributes
      * the set will be updated again. No need to call the attribute repository for attributes
      * when they are going to provided to the caller when accessed.</p>
      */
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-         return new NotCachingAttributesPrincipal(id, new HashMap<String, Object>(), this.attributeRepository);
+         return new NotCachingAttributesPrincipal(id, null, this.attributeRepository);
     }
 
     /**
