@@ -18,16 +18,17 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.security.GeneralSecurityException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Marc-Antoine Garrigue
@@ -89,20 +90,22 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";
 
+        final PrincipalFactory factory = new SimplePrincipalFactory();
+
         this.authenticationHandler.setPrincipalWithDomainName(true);
-        assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, false));
-        assertEquals(new SimplePrincipal(myKerberosUser), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+        assertEquals(factory.createPrincipal(myNtlmUser), this.authenticationHandler
+                .getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
+                .getPrincipal(myNtlmUserWithNoDomain, false));
+        assertEquals(factory.createPrincipal(myKerberosUser), this.authenticationHandler
+                .getPrincipal(myKerberosUser, false));
 
         this.authenticationHandler.setPrincipalWithDomainName(false);
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myNtlmUserWithNoDomain, true));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myKerberosUser, false));
     }
 }
