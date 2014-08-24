@@ -122,15 +122,15 @@
        | against a deployer-specific store (e.g. LDAP).
        -->
     <bean id="primaryPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
-        <property name="attributeRepository" ref="attributeRepository" />
-    </bean>
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+          p:principalFactory-ref="principalFactory"
+          p:attributeRepository-ref="attributeRepository" />
 
     <!--
     Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
     may go against a database or LDAP server.  The id should remain "attributeRepository" though.
     +-->
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao"
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
             p:backingMap-ref="attrRepoBackingMap" />
     
     <util:map id="attrRepoBackingMap">

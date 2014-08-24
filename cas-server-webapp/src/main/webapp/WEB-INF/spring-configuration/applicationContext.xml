@@ -46,7 +46,6 @@
     -->
     <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
 
-
     <!-- 
         Message source for this context, loaded from localized "messages_xx" files.]
         
@@ -112,22 +111,22 @@
           p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
-    
+
+    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.SimplePrincipalFactory" />
+
     <!-- CentralAuthenticationService -->
-    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
-        <constructor-arg index="0" ref="ticketRegistry"/>
-        <constructor-arg index="1">
-          <null />
-        </constructor-arg>
-        <constructor-arg index="2" ref="authenticationManager"/>
-        <constructor-arg index="3" ref="ticketGrantingTicketUniqueIdGenerator"/>
-        <constructor-arg index="4" ref="uniqueIdGeneratorsMap"/>
-        <constructor-arg index="5" ref="grantingTicketExpirationPolicy"/>
-        <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
-        <constructor-arg index="7" ref="servicesManager"/>
-        <constructor-arg index="8" ref="logoutManager"/>
-        <property name="persistentIdGenerator" ref="persistentIdGenerator"/>
-    </bean>
+    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          c:ticketRegistry-ref="ticketRegistry"
+          c:serviceTicketRegistry="#{null}"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
+          c:authenticationManager-ref="authenticationManager"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
+          c:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
+          c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
+          c:servicesManager-ref="servicesManager"
+          c:logoutManager-ref="logoutManager"
+          p:persistentIdGenerator-ref="persistentIdGenerator"
+          p:principalFactory-ref="principalFactory"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
