@@ -7,7 +7,7 @@ title: CAS - Installation Requirements
 
 Requirements at a glance:
 
-1. [Java](http://www.java.com) >=1.6
+1. [Java](http://www.java.com) >=1.7
 2. [Servlet container](http://tomcat.apache.org/) supporting servlet specification >=2.5
 3. [Apache Maven](http://maven.apache.org/) >=3.0
 4. Familiarity with the [Spring Framework](http://www.springsource.org/)
