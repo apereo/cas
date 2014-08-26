@@ -18,19 +18,17 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.BufferedReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -86,15 +84,6 @@ public final class SamlService extends AbstractWebApplicationService {
             final String artifactId, final String requestId) {
         super(id, originalUrl, artifactId);
         this.requestId = requestId;
-    }
-
-    /**
-     * {@inheritDoc}
-     * This always returns true because a SAML Service does not receive the TARGET value on validation.
-     */
-    @Override
-    public boolean matches(final Service service) {
-        return true;
     }
 
     public String getRequestID() {
