@@ -612,6 +612,10 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -833,6 +837,12 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate.validator.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -880,7 +890,17 @@
             </exclusion>
         </exclusions>
       </dependency>
-
+      <dependency>
+          <groupId>org.apache.shiro</groupId>
+          <artifactId>shiro-core</artifactId>
+          <version>${apache.shiro.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1055,6 +1075,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <apache.shiro.version>1.2.3</apache.shiro.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
