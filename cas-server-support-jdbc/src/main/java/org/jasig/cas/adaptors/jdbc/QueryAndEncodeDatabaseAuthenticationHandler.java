@@ -19,9 +19,11 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.crypto.hash.ConfigurableHashService;
+import org.apache.shiro.crypto.hash.DefaultHashService;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -34,43 +36,70 @@ import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.util.Map;
 
 /**
  * A JDBC querying handler that will pull back the password and
  * the private salt value for a user and validate the encoded
- * password using the private salt value. Assumes everything
+ * password using the public salt value. Assumes everything
  * is inside the same database table. Supports settings for
- * number of iterations as well as statis salt.
+ * number of iterations as well as private salt.
  *
+ * <p>
+ * This handler uses the hashing method defined by Apache Shiro's
+ * {@link org.apache.shiro.crypto.hash.DefaultHashService}. Refer to the Javadocs
+ * to learn more about the behavior. If the hashing behavior and/or configuration
+ * of private and public salts does nto meet your needs, a extension can be developed
+ * to specify alternative methods of encoding and digestion of the encoded password.
+ * </p>
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  */
-public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String DEFAULT_PASSWORD_FIELD = "password";
     private static final String DEFAULT_SALT_FIELD = "salt";
     private static final String DEFAULT_NUM_ITERATIONS_FIELD = "numIterations";
 
+    /**
+     * The Algorithm name.
+     */
     @NotNull
-    private final String algorithmName;
+    protected final String algorithmName;
 
+    /**
+     * The Sql statement to execute.
+     */
     @NotNull
-    private String sql;
+    protected final String sql;
 
+    /**
+     * The Password field name.
+     */
     @NotNull
-    private String passwordFieldName = DEFAULT_PASSWORD_FIELD;
+    protected String passwordFieldName = DEFAULT_PASSWORD_FIELD;
 
+    /**
+     * The Salt field name.
+     */
     @NotNull
-    private String saltFieldName = DEFAULT_SALT_FIELD;
+    protected String saltFieldName = DEFAULT_SALT_FIELD;
 
+    /**
+     * The Number of iterations field name.
+     */
     @NotNull
-    private String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
+    protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
-    private long numberOfIterations = 0;
+    /**
+     * The number of iterations.
+     */
+    protected long numberOfIterations = 0;
 
-    private String staticSalt = null;
+    /**
+     * The static/private salt.
+     */
+    protected String staticSalt = null;
 
     /**
      * Instantiates a new Query and encode database authentication handler.
@@ -79,28 +108,28 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      * @param sql the sql query to execute which must include a parameter placeholder
      *            for the userid. (i.e. <code>SELECT * FROM table WHERE username = ?</code>
      * @param algorithmName the algorithm name (i.e. <code>MessageDigestAlgorithms.SHA_512</code>)
-     * @see {@link DigestUtils#getDigest(String)}
      * @see {@link org.apache.commons.codec.digest.MessageDigestAlgorithms}
      */
     public QueryAndEncodeDatabaseAuthenticationHandler(final DataSource datasource,
                                                        final String sql,
                                                        final String algorithmName) {
+        super();
         setDataSource(datasource);
         this.sql = sql;
         this.algorithmName = algorithmName;
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
         final String username = getPrincipalNameTransformer().transform(transformedCredential.getUsername());
         final String encodedPsw = this.getPasswordEncoder().encode(transformedCredential.getPassword());
 
         try {
             final Map<String, Object> values = getJdbcTemplate().queryForMap(this.sql, username);
-            final byte[] digestedPassword = digestEncodedPassword(encodedPsw, values);
+            final String digestedPassword = digestEncodedPassword(encodedPsw, values);
 
-            if (!values.get(this.passwordFieldName).equals(Hex.encodeHexString(digestedPassword))) {
+            if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             return createHandlerResult(transformedCredential, new SimplePrincipal(username), null);
@@ -124,42 +153,51 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      * @param values the values retrieved from database
      * @return the digested password
      */
-    private byte[] digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
-        final MessageDigest messageDigest = DigestUtils.getDigest(this.algorithmName);
-
-        messageDigest.reset();
-        messageDigest.update(encodedPassword.getBytes());
+    protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
+        final ConfigurableHashService hashService = new DefaultHashService();
 
         if (StringUtils.isNotBlank(this.staticSalt)) {
-            messageDigest.update(this.staticSalt.getBytes());
+            hashService.setPrivateSalt(ByteSource.Util.bytes(this.staticSalt));
         }
+        hashService.setHashAlgorithmName(this.algorithmName);
 
-        if (!values.containsKey(this.saltFieldName)) {
-            throw new RuntimeException("Specified field name for salt does not exist in the resultset");
-        }
-        messageDigest.update(values.get(this.saltFieldName).toString().getBytes());
-        byte[] digestedPassword = messageDigest.digest();
-
-        long numOfIterations = this.numberOfIterations;
+        Long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
             final String longAsStr = values.get(this.numberOfIterationsFieldName).toString();
             numOfIterations = Long.valueOf(longAsStr);
         }
 
-        for (int i = 0; i < numOfIterations - 1; i++) {
-            messageDigest.reset();
-            digestedPassword = messageDigest.digest(digestedPassword);
+        hashService.setHashIterations(numOfIterations.intValue());
+        if (!values.containsKey(this.saltFieldName)) {
+            throw new RuntimeException("Specified field name for salt does not exist in the results");
         }
-        return digestedPassword;
+
+        final String dynaSalt = values.get(this.saltFieldName).toString();
+        final HashRequest request = new HashRequest.Builder()
+                                    .setSalt(dynaSalt)
+                                    .setSource(encodedPassword)
+                                    .build();
+        return hashService.computeHash(request).toHex();
     }
 
     /**
-     * Sets static salt to be combined with the dynamic salt retrievd
+     * Sets static/private salt to be combined with the dynamic salt retrieved
      * from the database. Optional.
      *
+     * <p>If using this implementation as part of a password hashing strategy,
+     * it might be desirable to configure a private salt.
+     * A hash and the salt used to compute it are often stored together.
+     * If an attacker is ever able to access the hash (e.g. during password cracking)
+     * and it has the full salt value, the attacker has all of the input necessary
+     * to try to brute-force crack the hash (source + complete salt).</p>
+     *
+     * <p>However, if part of the salt is not available to the attacker (because it is not stored with the hash),
+     * it is much harder to crack the hash value since the attacker does not have the complete inputs necessary.
+     * The privateSalt property exists to satisfy this private-and-not-shared part of the salt.</p>
+     * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
      * @param staticSalt the static salt
      */
-    public void setStaticSalt(final String staticSalt) {
+    public final void setStaticSalt(final String staticSalt) {
         this.staticSalt = staticSalt;
     }
 
@@ -168,7 +206,7 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      *
      * @param passwordFieldName the password field name
      */
-    public void setPasswordFieldName(final String passwordFieldName) {
+    public final void setPasswordFieldName(final String passwordFieldName) {
         this.passwordFieldName = passwordFieldName;
     }
 
@@ -177,7 +215,7 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      *
      * @param saltFieldName the password field name
      */
-    public void setSaltFieldName(final String saltFieldName) {
+    public final void setSaltFieldName(final String saltFieldName) {
         this.saltFieldName = saltFieldName;
     }
 
@@ -186,7 +224,7 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      *
      * @param numberOfIterationsFieldName the password field name
      */
-    public void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
+    public final void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
     }
 
@@ -195,7 +233,8 @@ public final class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJ
      *
      * @param numberOfIterations the number of iterations
      */
-    public void setNumberOfIterations(final long numberOfIterations) {
+    public final void setNumberOfIterations(final long numberOfIterations) {
         this.numberOfIterations = numberOfIterations;
     }
+
 }

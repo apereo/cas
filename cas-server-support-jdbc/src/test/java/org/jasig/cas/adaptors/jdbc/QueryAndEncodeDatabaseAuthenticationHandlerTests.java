@@ -19,12 +19,14 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apache.shiro.crypto.hash.DefaultHashService;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
@@ -42,7 +44,6 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -55,7 +56,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = MessageDigestAlgorithms.SHA_512;
-    private static final MessageDigest DIGEST = DigestUtils.getDigest(ALG_NAME);
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
@@ -135,8 +135,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
 
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithSameUsernameAndPassword("user1"));
+        final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
+        final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
@@ -176,16 +176,16 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private String genPassword(final String psw, final String salt, final int iter) {
         try {
 
-            DIGEST.reset();
-            DIGEST.update(psw.getBytes());
-            DIGEST.update(STATIC_SALT.getBytes());
-            DIGEST.update(salt.getBytes());
+            final DefaultHashService hash = new DefaultHashService();
+            hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
+            hash.setHashIterations(iter);
+            hash.setGeneratePublicSalt(false);
+            hash.setHashAlgorithmName(ALG_NAME);
 
-            byte[] encP = DIGEST.digest();
-            for (int i = 0; i < iter - 1; i++) {
-                encP = DIGEST.digest(encP);
-            }
-            return Hex.encodeHexString(encP);
+            final String pswEnc = hash.computeHash(new HashRequest.Builder()
+                    .setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
+
+            return pswEnc;
 
         } catch (final Exception e) {
             throw new RuntimeException(e);
