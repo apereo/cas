@@ -863,6 +863,12 @@
         <version>${quartz.version}</version>
         <type>jar</type>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
