@@ -1078,8 +1078,8 @@
     <maven-antrun-plugin.version>1.5</maven-antrun-plugin.version>
 
     <!-- Project configuration -->
-    <project.build.sourceVersion>1.6</project.build.sourceVersion>
-    <project.build.targetVersion>1.6</project.build.targetVersion>
+    <project.build.sourceVersion>1.7</project.build.sourceVersion>
+    <project.build.targetVersion>1.7</project.build.targetVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>

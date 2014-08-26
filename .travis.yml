@@ -31,7 +31,6 @@ branches:
   - master
 jdk:
 - oraclejdk7
-- openjdk6
 - openjdk7
 env:
   global:
