@@ -23,6 +23,12 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.services.DefaultServicesManagerImpl;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
@@ -34,7 +40,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -53,7 +61,21 @@ public class Saml10SuccessResponseViewTests {
 
     @Before
     public void setUp() throws Exception {
+
+        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+
+        final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
+        regSvc.setServiceId(TestUtils.getService().getId());
+        regSvc.setEnabled(true);
+        regSvc.setName("Test Service");
+        regSvc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+
+        list.add(regSvc);
+        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        dao.setRegisteredServices(list);
+        final ServicesManager servicesManager = new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
+        this.response.setServicesManager(servicesManager);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
     }
