@@ -253,7 +253,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="id" value="sysOutConsoleLogs" />
     <metadata name="net.sf.eclipsecs.core.comment" value="Console output messages"/>
     <property name="severity" value="error"/>
-    <property name="format" value="System\.(out|err)\.print.*"/>
+    <property name="format" value="System\.(out|err)"/>
     <property name="message" value="Avoid sending messages to the console directly. Use a logger object instead"/>
   </module>
   <module name="RegexpSingleline">
