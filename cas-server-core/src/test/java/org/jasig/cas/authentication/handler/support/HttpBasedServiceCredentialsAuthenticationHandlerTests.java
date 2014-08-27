@@ -66,7 +66,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     public void testAcceptsNonHttpsCredentials() throws Exception {
         this.authenticationHandler.setHttpClient(new SimpleHttpClient());
         assertNotNull(this.authenticationHandler.authenticate(
-                TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org")));
+                TestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 
     @Test(expected = FailedLoginException.class)
