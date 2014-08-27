@@ -19,142 +19,139 @@
 
 package org.slf4j.impl;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
-import java.io.FilterOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Field;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
  */
 public class CasLoggerFactoryTests {
-    private static Logger LOGGER;
+
+    private static final File LOG_FILE = new File(System.getProperty("java.io.tmpdir"), "slf4j.log");
 
     private static final String ID1 = "TGT-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private static final String ID2 = "PGT-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
 
-    private static final PrintStream OUT = System.out;
+    private Logger logger;
 
-    private LoggedPrintStream loggedPrintStream;
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        if (LOG_FILE.exists()) {
+            FileUtils.write(LOG_FILE, "", false);
+        }
+    }
 
     @After
-    public void after() {
-        System.out.flush();
-        System.setOut(OUT);
-        System.setErr(OUT);
+    public void after() throws IOException {
+        FileUtils.write(LOG_FILE, "", false);
     }
 
     @Before
     public void beforeTest() {
-        System.out.flush();
-        loggedPrintStream = LoggedPrintStream.create(System.out);
-        System.setOut(loggedPrintStream);
-
-        LOGGER = LoggerFactory.getLogger(CasLoggerFactoryTests.class);
+        logger = LoggerFactory.getLogger(CasLoggerFactoryTests.class);
     }
 
     @Test
     public void testLoggerSelectedCorrectly() {
-        assertTrue(LOGGER instanceof CasDelegatingLogger);
+        assertTrue(logger instanceof CasDelegatingLogger);
     }
 
     @Test
     public void testLogging1() {
-        LOGGER.trace(mock(Marker.class), getMessageToLogWithParams(), null, null);
+        logger.trace(mock(Marker.class), getMessageToLogWithParams(), null, null);
         validateLogData();
     }
 
     @Test
     public void testLogging2() {
-        LOGGER.trace(mock(Marker.class), getMessageToLog());
+        logger.trace(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging3() {
-        LOGGER.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
+        logger.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging4() {
-        LOGGER.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging5() {
-        LOGGER.trace(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.trace(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging6() {
-        LOGGER.trace(getMessageToLog());
+        logger.trace(getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging7() {
-        LOGGER.trace(getMessageToLogWithParams(), ID2, ID1);
+        logger.trace(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging8() {
-        LOGGER.trace(getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.trace(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging9() {
-        LOGGER.trace(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.trace(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging21() {
-        LOGGER.debug(mock(Marker.class), getMessageToLog());
+        logger.debug(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging31() {
-        LOGGER.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
+        logger.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging41() {
-        LOGGER.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging51() {
-        LOGGER.debug(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.debug(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging61() {
-        LOGGER.debug(getMessageToLog());
+        logger.debug(getMessageToLog());
         validateLogData();
     }
 
@@ -164,169 +161,169 @@ public class CasLoggerFactoryTests {
         when(t.getId()).thenReturn(ID1);
         when(t.toString()).thenReturn(ID1);
 
-        LOGGER.debug(getMessageToLogWithParams(), ID2, t);
+        logger.debug(getMessageToLogWithParams(), ID2, t);
         validateLogData();
     }
 
     @Test
     public void testLogging71() {
-        LOGGER.debug(getMessageToLogWithParams(), ID2, ID1);
+        logger.debug(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging81() {
-        LOGGER.debug(getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.debug(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging91() {
-        LOGGER.debug(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.debug(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging211() {
-        LOGGER.info(mock(Marker.class), getMessageToLog());
+        logger.info(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging311() {
-        LOGGER.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
+        logger.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging411() {
-        LOGGER.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging511() {
-        LOGGER.info(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.info(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging611() {
-        LOGGER.info(getMessageToLog());
+        logger.info(getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging711() {
-        LOGGER.info(getMessageToLogWithParams(), ID2, ID1);
+        logger.info(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging811() {
-        LOGGER.info(getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.info(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging911() {
-        LOGGER.info(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.info(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging2111() {
-        LOGGER.warn(mock(Marker.class), getMessageToLog());
+        logger.warn(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging3111() {
-        LOGGER.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
+        logger.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging4111() {
-        LOGGER.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging5111() {
-        LOGGER.warn(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.warn(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging6111() {
-        LOGGER.warn(getMessageToLog());
+        logger.warn(getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging7111() {
-        LOGGER.warn(getMessageToLogWithParams(), ID2, ID1);
+        logger.warn(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging8111() {
-        LOGGER.warn(getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.warn(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging9111() {
-        LOGGER.warn(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.warn(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging21110() {
-        LOGGER.error(mock(Marker.class), getMessageToLog());
+        logger.error(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging31110() {
-        LOGGER.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
+        logger.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging41110() {
-        LOGGER.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging51110() {
-        LOGGER.error(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.error(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
     public void testLogging61110() {
-        LOGGER.error(getMessageToLog());
+        logger.error(getMessageToLog());
         validateLogData();
     }
 
     @Test
     public void testLogging71110() {
-        LOGGER.error(getMessageToLogWithParams(), ID2, ID1);
+        logger.error(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
     public void testLogging81110() {
-        LOGGER.error(getMessageToLogWithParams(), ID2, ID1, ID2);
+        logger.error(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
     public void testLogging91110() {
-        LOGGER.error(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        logger.error(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
@@ -339,55 +336,13 @@ public class CasLoggerFactoryTests {
     }
 
     private void validateLogData() {
-        final String data = this.loggedPrintStream.getBuffer();
-        assertTrue(StringUtils.isNotBlank(data));
-        assertFalse(data.contains(ID1));
-        assertFalse(data.contains(ID2));
-    }
-
-    private static class LoggedPrintStream extends PrintStream {
-
-        private static StringBuilder BUFFER = new StringBuilder();
-
-        private final PrintStream underlying;
-
-        public LoggedPrintStream(final OutputStream os, final PrintStream ul) {
-            super(os);
-            this.underlying = ul;
-        }
-
-        public static LoggedPrintStream create(final PrintStream toLog) {
-            try {
-                final StringBuilder sb = new StringBuilder();
-                final Field f = FilterOutputStream.class.getDeclaredField("out");
-                f.setAccessible(true);
-                final OutputStream psout = (OutputStream) f.get(toLog);
-                return new LoggedPrintStream(new FilterOutputStream(psout) {
-                    public void write(final int b) throws IOException {
-                        super.write(b);
-                        final char c = (char) b;
-                        BUFFER.append(c);
-                    }
-                }, toLog);
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void flush() {
-            super.flush();
-
-        }
-
-        public String getBuffer() {
-            final String buffer = BUFFER.toString();
-            BUFFER = new StringBuilder();
-            return buffer;
-        }
-
-        public PrintStream getOriginal() {
-            return this.underlying;
+        try {
+            final String data = FileUtils.readFileToString(LOG_FILE);
+            assertTrue("Logged buffer data is blank", StringUtils.isNotBlank(data));
+            assertFalse("Logged buffer data should not contain " + ID1, data.contains(ID1));
+            assertFalse("Logged buffer data should not contain " + ID2, data.contains(ID2));
+        } catch (final IOException e) {
+            fail(e.getMessage());
         }
     }
 }
