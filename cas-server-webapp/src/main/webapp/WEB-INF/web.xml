@@ -76,21 +76,30 @@
     </listener-class>
   </listener>
 
-  <!--
-    - This is the Spring dispatcher servlet which delegates all requests to the
-    - Spring WebMVC controllers as configured in cas-servlet.xml.
-  -->
-  <servlet>
-    <servlet-name>cas</servlet-name>
-    <servlet-class>
-        org.springframework.web.servlet.DispatcherServlet
-    </servlet-class>
-    <init-param>
-      <param-name>publishContext</param-name>
-      <param-value>false</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+    <!--
+      - This is the Spring dispatcher servlet which delegates all requests to the
+      - Spring WebMVC controllers as configured in cas-servlet.xml.
+      - This configuration also provides a plugin mechanism which enables un-intrusive contributions to the DispatcherServlet
+      - child application context (via local Maven or Gradle war overlays for example)
+      - and thus an ability to override beans defined in cas-servlet.xml by means of including additional
+      - Spring XML config files with a naming convention pattern of /WEB-INF/cas-servlet-*.xml
+    -->
+    <servlet>
+        <servlet-name>cas</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/cas-servlet.xml, /WEB-INF/cas-servlet-*.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>publishContext</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
