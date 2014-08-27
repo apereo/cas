@@ -67,7 +67,13 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="1"/>
-  
+
+  <!--
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="3"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+  -->
+  	
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
