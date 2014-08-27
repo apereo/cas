@@ -560,6 +560,12 @@
       </dependency>
 
       <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml.apis.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang.version}</version>
@@ -1065,6 +1071,7 @@
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
     <opensaml.version>2.6.1</opensaml.version>
+    <xml.apis.version>1.4.01</xml.apis.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
