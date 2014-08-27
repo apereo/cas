@@ -339,7 +339,7 @@ public class CasLoggerFactoryTests {
 
     private void validateLogData() {
         try {
-            assertTrue("Logged buffer data is blank", LOG_FILE.exists());
+            assertTrue("Log file " + LOG_FILE.getCanonicalPath() + " does not exist", LOG_FILE.exists());
 
             final String data = FileUtils.readFileToString(LOG_FILE);
             assertTrue("Logged buffer data is blank", StringUtils.isNotBlank(data));
