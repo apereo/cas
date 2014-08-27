@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.slf4j.helpers.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ import static org.mockito.Mockito.*;
  */
 public class CasLoggerFactoryTests {
 
-    private static final File LOG_FILE = new File(System.getProperty("java.io.tmpdir"), "slf4j.log");
+    private static final File LOG_FILE = new File("cas-server-core/target", "slf4j.log");
 
     private static final String ID1 = "TGT-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private static final String ID2 = "PGT-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
@@ -52,6 +53,7 @@ public class CasLoggerFactoryTests {
     @BeforeClass
     public static void beforeClass() throws IOException {
         if (LOG_FILE.exists()) {
+            Util.report("Initializing log file " + LOG_FILE.getCanonicalPath());
             FileUtils.write(LOG_FILE, "", false);
         }
     }
@@ -337,6 +339,8 @@ public class CasLoggerFactoryTests {
 
     private void validateLogData() {
         try {
+            assertTrue("Logged buffer data is blank", LOG_FILE.exists());
+
             final String data = FileUtils.readFileToString(LOG_FILE);
             assertTrue("Logged buffer data is blank", StringUtils.isNotBlank(data));
             assertFalse("Logged buffer data should not contain " + ID1, data.contains(ID1));
