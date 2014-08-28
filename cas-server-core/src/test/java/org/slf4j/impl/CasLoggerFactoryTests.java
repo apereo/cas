@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
  */
 public class CasLoggerFactoryTests {
 
-    private static final File LOG_FILE = new File("cas-server-core/target", "slf4j.log");
+    private static final File LOG_FILE = new File("target", "slf4j.log");
 
     private static final String ID1 = "TGT-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private static final String ID2 = "PGT-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
