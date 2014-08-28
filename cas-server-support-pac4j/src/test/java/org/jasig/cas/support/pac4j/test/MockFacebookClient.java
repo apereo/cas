@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.pac4j.web.flow;
+package org.jasig.cas.support.pac4j.test;
 
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuthCredentials;
+import org.pac4j.oauth.profile.facebook.FacebookProfile;
 
 /**
  * Mock class for the FacebookClient.
@@ -30,9 +31,13 @@ import org.pac4j.oauth.credentials.OAuthCredentials;
  */
 public class MockFacebookClient extends FacebookClient {
 
+    public final static String CLIENT_NAME = "FacebookClient";
+
+    private FacebookProfile facebookProfile;
+
     @Override
     public String getName() {
-        return "FacebookClient";
+        return CLIENT_NAME;
     }
 
     @Override
@@ -42,5 +47,18 @@ public class MockFacebookClient extends FacebookClient {
     @Override
     protected OAuthCredentials retrieveCredentials(final WebContext context) {
         return new OAuthCredentials("fakeVerifier", getName());
+    }
+
+    @Override
+    protected FacebookProfile retrieveUserProfile(final OAuthCredentials credentials, final WebContext context) {
+        return facebookProfile;
+    }
+
+    public FacebookProfile getFacebookProfile() {
+        return facebookProfile;
+    }
+
+    public void setFacebookProfile(FacebookProfile facebookProfile) {
+        this.facebookProfile = facebookProfile;
     }
 }
