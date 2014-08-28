@@ -58,4 +58,11 @@ public class FileTrustStoreSslSocketFactoryTests {
         final SimpleHttpClient client = new SimpleHttpClient(factory);
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
+    @Test
+    public void testTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
+        final ClassPathResource resource = new ClassPathResource("truststore.jks");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        assertTrue(client.isValidEndPoint("http://wikipedia.org"));
+    }
 }
