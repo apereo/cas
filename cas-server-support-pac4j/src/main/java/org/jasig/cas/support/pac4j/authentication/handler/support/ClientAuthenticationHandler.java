@@ -80,12 +80,12 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials());
         logger.debug("userProfile : {}", userProfile);
 
-        if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
+        if (userProfile != null && StringUtils.isNotBlank(userProfile.getTypedId())) {
             clientCredentials.setUserProfile(userProfile);
             return new HandlerResult(
                     this,
                     new BasicCredentialMetaData(credential),
-                    new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
+                    new SimplePrincipal(userProfile.getTypedId(), userProfile.getAttributes()));
         }
 
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
