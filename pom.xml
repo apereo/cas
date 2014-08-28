@@ -362,6 +362,13 @@
           <target>${project.build.targetVersion}</target>
           <complianceLevel>${project.build.sourceVersion}</complianceLevel>
         </configuration>
+        <dependencies>
+          <dependency>
+              <groupId>org.aspectj</groupId>
+              <artifactId>aspectjtools</artifactId>
+              <version>${aspectj.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -553,8 +560,14 @@
       </dependency>
 
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml.apis.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
 
@@ -1025,40 +1038,40 @@
   </profiles>
 
   <properties>
-    <cs.dir>${project.basedir}</cs.dir>
 
     <!-- Dependency Versions -->
-    <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
-    <spring.version>4.0.5.RELEASE</spring.version>
+    <spring.version>4.0.6.RELEASE</spring.version>
     <ldaptive.version>1.0.3</ldaptive.version>
-    <spring.security.version>3.2.4.RELEASE</spring.security.version>
+    <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.7.3</aspectj.version>
+    <aspectj.version>1.8.2</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
     <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
-    <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
-    <hibernate.core.version>4.1.0.Final</hibernate.core.version>
+    <hibernate.validator.version>4.3.2.Final</hibernate.validator.version>
+    <hibernate.core.version>4.3.6.Final</hibernate.core.version>
     <slf4j.version>1.7.5</slf4j.version>
-    <person.directory.version>1.5.2</person.directory.version>
+    <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
     <commons.codec.version>1.7</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
     <checkstyle.version>5.7</checkstyle.version>
-    <commons.lang.version>2.5</commons.lang.version>
+    <commons.lang.version>3.3.2</commons.lang.version>
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
     <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <apache.httpclient.version>4.3.4</apache.httpclient.version>
-    <joda-time.version>2.2</joda-time.version>
+    <joda-time.version>2.4</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <opensaml.version>2.6.1</opensaml.version>
+    <xml.apis.version>1.4.01</xml.apis.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
@@ -1080,6 +1093,8 @@
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
+    <cs.dir>${project.basedir}</cs.dir>
+    <issues.projectKey>CAS</issues.projectKey>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
