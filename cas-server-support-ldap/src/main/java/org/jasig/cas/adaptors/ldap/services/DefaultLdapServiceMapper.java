@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AttributeReleasePolicy;
