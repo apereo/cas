@@ -85,6 +85,22 @@ Additional loggers are available to specify the logging level for component cate
 </logger>
 {% endhighlight %}
 
+##Log Data Sanitation
+For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data. This will of course include messages that routed to a log destination by the logging framework as well as all audit messages. A sample follows below:
+
+{% highlight bash %}
+=============================================================
+WHO: audit:unknown
+WHAT: TGT-********************************************************-cas01.example.org
+ACTION: TICKET_GRANTING_TICKET_DESTROYED
+APPLICATION: CAS
+WHEN: Sat Jul 12 04:10:35 PDT 2014
+CLIENT IP ADDRESS: ...
+SERVER IP ADDRESS: ...
+=============================================================
+{% endhighlight %}
+
+Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics.
 
 ##Performance Statistics
 CAS also uses the [Perf4J framework](http://perf4j.codehaus.org/), that provides set of utilities for calculating and displaying performance statistics. Similar to above, there are specific appenders and loggers available for logging performance data.
