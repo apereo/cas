@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.util;
 
-import java.util.Date;
+import org.apache.commons.lang3.time.FastDateFormat;
 
-import org.apache.commons.lang.time.FastDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * A fast date format based on the ISO-8601 standard.
@@ -39,8 +41,7 @@ public final class ISOStandardDateFormat extends FastDateFormat {
      * based on the format {@link #DATE_FORMAT}.
      */
     public ISOStandardDateFormat() {
-        super(DATE_FORMAT, null, null);
-        super.init();
+        super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
     }
     
     /**
