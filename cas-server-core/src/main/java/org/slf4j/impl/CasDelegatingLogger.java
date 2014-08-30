@@ -19,7 +19,7 @@
 
 package org.slf4j.impl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.Marker;

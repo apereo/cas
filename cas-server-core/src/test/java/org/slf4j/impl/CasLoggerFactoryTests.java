@@ -342,7 +342,7 @@ public class CasLoggerFactoryTests {
             assertTrue("Log file " + LOG_FILE.getCanonicalPath() + " does not exist", LOG_FILE.exists());
 
             final String data = FileUtils.readFileToString(LOG_FILE);
-            assertTrue("Logged buffer data is blank", StringUtils.isNotBlank(data));
+            assertTrue("Logged buffer data is blank in " + LOG_FILE.getCanonicalPath(), StringUtils.isNotBlank(data));
             assertFalse("Logged buffer data should not contain " + ID1, data.contains(ID1));
             assertFalse("Logged buffer data should not contain " + ID2, data.contains(ID2));
         } catch (final IOException e) {
