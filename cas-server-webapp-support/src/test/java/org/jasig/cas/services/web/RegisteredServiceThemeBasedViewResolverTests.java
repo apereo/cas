@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web;
-
-import static org.junit.Assert.*;
+package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -31,13 +29,15 @@ import org.junit.Test;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.Assert.*;
+
 /**
  *
  * @author John Gasper
  * @since 4.1
  *
  */
-public class ThemeBasedViewResolverTests {
+public class RegisteredServiceThemeBasedViewResolverTests {
 
     private RegisteredServiceThemeBasedViewResolver registeredServiceThemeBasedViewResolver;
 
@@ -65,31 +65,34 @@ public class ThemeBasedViewResolverTests {
 
     @Test
     public void testGetServiceWithTheme() throws Exception {
-        MockRequestContext requestContext = new MockRequestContext();
+        final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myServiceId");
+        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myServiceId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
-        assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView",
+                this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 
     @Test
     public void testGetServiceWithDefault() throws Exception {
-        MockRequestContext requestContext = new MockRequestContext();
+        final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myDefaultId");
+        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myDefaultId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView",
+                this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 
     @Test
     public void testNoService() throws Exception {
-        MockRequestContext requestContext = new MockRequestContext();
+        final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView", this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
+        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView",
+                this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 }
