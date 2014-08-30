@@ -48,8 +48,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  */
 public final class ClientAuthenticationHandlerTests {
 
-    private final static String CALLBACK_URL = "http://localhost:8080/callback";
-    private final static String ID = "123456789";
+    private static final String CALLBACK_URL = "http://localhost:8080/callback";
+    private static final String ID = "123456789";
     
     private MockFacebookClient fbClient;
 
