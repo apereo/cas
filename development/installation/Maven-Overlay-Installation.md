@@ -55,7 +55,6 @@ in the overlay (1):
     |   +---resources
     |   |       apereo.properties
     |   |       cas-theme-default.properties
-    |   |       default_views.properties
     |   |       log4j.xml
     |   |       messages.properties
     |   |       protocol_views.properties

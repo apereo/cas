@@ -130,9 +130,6 @@ The default views are found at `WEB-INF/view/jsp/default/ui/`.
 
 Notice `top.jsp` and `bottom.jsp` include files located in the `../includes` directory. These serve as the layout template for the other JSP files, which get injected in between during compilation to create a complete HTML page.
 
-The location of these JSP files are configured in `WEB-INF/classes/default_views.properties`.
-
-
 ####Tag Libraries
 The following JSP tag libraries are used by the user interface:
 
