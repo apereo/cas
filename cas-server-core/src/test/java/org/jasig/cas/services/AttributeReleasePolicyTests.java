@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.junit.Test;
