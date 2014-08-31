@@ -31,12 +31,11 @@ branches:
   - master
 jdk:
 - oraclejdk7
-- openjdk6
 - openjdk7
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-script: mvn clean package -Dlog4j.configuration=/none.xml
+script: mvn clean package -Dlog4j.configuration=file:../travis/log4j.xml
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh

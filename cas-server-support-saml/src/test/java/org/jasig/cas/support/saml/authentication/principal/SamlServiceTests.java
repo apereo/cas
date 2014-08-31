@@ -18,12 +18,14 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Response.ResponseType;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -77,5 +79,31 @@ public class SamlServiceTests {
         final SamlService impl = SamlService.createServiceFrom(request);
         assertEquals("artifact", impl.getArtifactId());
         assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
+    }
+
+    @Test
+    public void testTargetMatchesingSamlService() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("TARGET", "https://some.service.edu/path/to/app");
+
+        final SamlArgumentExtractor ext = new SamlArgumentExtractor();
+        final WebApplicationService service = ext.extractService(request);
+
+        final SamlService impl = SamlService.createServiceFrom(request);
+        assertTrue(impl.matches(service));
+    }
+
+    @Test
+    public void testTargetMatchesNoSamlService() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("TARGET", "https://some.service.edu/path/to/app");
+        final SamlService impl = SamlService.createServiceFrom(request);
+
+        final MockHttpServletRequest request2 = new MockHttpServletRequest();
+        request2.setParameter("TARGET", "https://some.SERVICE.edu");
+        final SamlArgumentExtractor ext = new SamlArgumentExtractor();
+        final WebApplicationService service = ext.extractService(request2);
+
+        assertFalse(impl.matches(service));
     }
 }
