@@ -43,7 +43,7 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testOkayUrl() {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.apereo.org"));
+        assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
