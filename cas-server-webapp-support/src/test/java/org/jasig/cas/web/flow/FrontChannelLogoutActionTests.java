@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
