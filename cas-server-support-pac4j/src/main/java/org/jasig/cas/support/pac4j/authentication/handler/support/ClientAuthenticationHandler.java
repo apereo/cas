@@ -106,7 +106,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
               return new HandlerResult(
                       this,
                       new BasicCredentialMetaData(credential),
-                    this.principalFactory.createPrincipal(userProfile.getId(), userProfile.getAttributes()));
+                      this.principalFactory.createPrincipal(id, userProfile.getAttributes()));
             }
         }
 
