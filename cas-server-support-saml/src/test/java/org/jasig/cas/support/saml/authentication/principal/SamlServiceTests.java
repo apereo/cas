@@ -100,7 +100,7 @@ public class SamlServiceTests {
         final SamlService impl = SamlService.createServiceFrom(request);
 
         final MockHttpServletRequest request2 = new MockHttpServletRequest();
-        request.setParameter("TARGET", "https://some.SERVICE.edu");
+        request2.setParameter("TARGET", "https://some.SERVICE.edu");
         final SamlArgumentExtractor ext = new SamlArgumentExtractor();
         final WebApplicationService service = ext.extractService(request2);
 
