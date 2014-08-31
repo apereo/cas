@@ -159,7 +159,8 @@
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
-	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView">
+	
+    <end-state id="viewGenericLoginSuccess" view="casGenericSuccessView">
         <on-entry>
             <evaluate expression="authenticationSupport.getAuthenticatedPrincipalFrom(flowScope.ticketGrantingTicketId)"
                       result="requestScope.principal"/>
@@ -171,7 +172,7 @@
 	The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a
     view defines in default_views.properties that display the "Please click here to go to the service." message.
 	-->
-	<end-state id="showWarningView" view="casLoginConfirmView" />
+	<end-state id="showWarningView" view="casConfirmView" />
 
 
   <!-- Password policy failure states -->
@@ -200,9 +201,9 @@
 	-->
 	<end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}" />
 	
-	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
+	<end-state id="viewServiceErrorView" view="serviceErrorView" />
     
-    <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
+  <end-state id="viewServiceSsoErrorView" view="serviceSsoErrorView" />
 
   <global-transitions>
     <!--

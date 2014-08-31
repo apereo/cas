@@ -20,7 +20,7 @@ package org.jasig.cas.ticket.registry.support.kryo;
 
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
