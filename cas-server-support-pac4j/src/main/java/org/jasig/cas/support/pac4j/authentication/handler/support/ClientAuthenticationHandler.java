@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -31,6 +32,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -84,7 +86,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         logger.debug("clientName : {}", clientName);
 
         // get client
-        final Client<org.pac4j.core.credentials.Credentials, UserProfile> client = this.clients.findClient(clientName);
+        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
         logger.debug("client : {}", client);
 
         // web context
@@ -97,12 +99,15 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials(), webContext);
         logger.debug("userProfile : {}", userProfile);
 
-        if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
-            clientCredentials.setUserProfile(userProfile);
-            return new HandlerResult(
-                    this,
-                    new BasicCredentialMetaData(credential),
+        if (userProfile != null) {
+            final String id = userProfile.getTypedId();
+            if (StringUtils.isNotBlank(id)) {
+              clientCredentials.setUserProfile(userProfile);
+              return new HandlerResult(
+                      this,
+                      new BasicCredentialMetaData(credential),
                     this.principalFactory.createPrincipal(userProfile.getId(), userProfile.getAttributes()));
+            }
         }
 
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);

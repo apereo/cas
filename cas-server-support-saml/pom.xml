@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>2.5.1-1</version>
+            <version>${opensaml.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -77,6 +77,12 @@
             <artifactId>jdom</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
