@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.services.AttributeFilter;
 import org.jasig.cas.services.RegisteredService;
 import org.junit.Before;
