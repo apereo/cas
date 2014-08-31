@@ -31,7 +31,7 @@ import org.pac4j.oauth.profile.facebook.FacebookProfile;
  */
 public class MockFacebookClient extends FacebookClient {
 
-    public final static String CLIENT_NAME = "FacebookClient";
+    public static final String CLIENT_NAME = "FacebookClient";
 
     private FacebookProfile facebookProfile;
 
@@ -58,7 +58,7 @@ public class MockFacebookClient extends FacebookClient {
         return facebookProfile;
     }
 
-    public void setFacebookProfile(FacebookProfile facebookProfile) {
+    public void setFacebookProfile(final FacebookProfile facebookProfile) {
         this.facebookProfile = facebookProfile;
     }
 }
