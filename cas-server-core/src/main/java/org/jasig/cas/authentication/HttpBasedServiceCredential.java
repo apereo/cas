@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegisteredService;
 
 import javax.validation.constraints.NotNull;
