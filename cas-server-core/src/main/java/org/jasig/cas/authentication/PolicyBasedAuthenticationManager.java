@@ -231,8 +231,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                         }
                     } catch (final GeneralSecurityException e) {
                         logger.info("{} failed authenticating {}", handler.getName(), credential);
+                        logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     } catch (final PreventedException e) {
+                        logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     }
                 }
@@ -254,7 +256,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return builder;
     }
 
-
+      
+    /**
+     * Resolve principal.
+     *
+     * @param handlerName the handler name
+     * @param resolver the resolver
+     * @param credential the credential
+     * @return the principal
+     */
     protected Principal resolvePrincipal(
             final String handlerName, final PrincipalResolver resolver, final Credential credential) {
         if (resolver.supports(credential)) {
@@ -276,22 +286,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     }
 
     /**
-     * Creates a new authentication exception from an authentication event.
-     *
-     * @param authn Authentication event.
-     *
-     * @return Authentication exception containing information about authentication successes and failures.
-     */
-    private static AuthenticationException createAuthenticationException(final Authentication authn) {
-        return new AuthenticationException(authn.getFailures(), authn.getSuccesses());
-    }
-
-    /**
-     * Null prinicpal implementation that allows us to construct {@link Authentication}s in the event that no
+     * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
      * principal is resolved during the authentication process.
      */
     static class NullPrincipal implements Principal {
 
+        private static final long serialVersionUID = 2309300426720915104L;
         /** The nobody principal. */
         private static final String NOBODY = "nobody";
 

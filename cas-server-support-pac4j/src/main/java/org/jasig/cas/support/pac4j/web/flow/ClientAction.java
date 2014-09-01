@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
@@ -144,7 +144,7 @@ public final class ClientAction extends AbstractAction {
             } catch (final RequiresHttpAction e) {
                 logger.info("requires http action : {}", e);
                 response.flushBuffer();
-                ExternalContext externalContext = ExternalContextHolder.getExternalContext();
+                final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
                 return new Event(this, "stop");
             }
@@ -194,7 +194,8 @@ public final class ClientAction extends AbstractAction {
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
-            final String redirectionUrl = client.getRedirectionUrl(webContext);
+            final BaseClient baseClient = (BaseClient) client;
+            final String redirectionUrl = baseClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }

@@ -21,7 +21,7 @@ package org.jasig.cas.support.oauth.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -51,6 +51,13 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
     private final long timeout;
 
+    /**
+     * Instantiates a new o auth20 access token controller.
+     *
+     * @param servicesManager the services manager
+     * @param ticketRegistry the ticket registry
+     * @param timeout the timeout
+     */
     public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
             final long timeout) {
         this.servicesManager = servicesManager;
@@ -98,6 +105,17 @@ public final class OAuth20AccessTokenController extends AbstractController {
         return OAuthUtils.writeText(response, text, 200);
     }
 
+    /**
+     * Verify access token request by reviewing the values of
+     * client id, redirect uri, client secret, code, etc.
+     *
+     * @param response the response
+     * @param redirectUri the redirect uri
+     * @param clientId the client id
+     * @param clientSecret the client secret
+     * @param code the code
+     * @return true, if successful
+     */
     private boolean verifyAccessTokenRequest(final HttpServletResponse response, final String redirectUri,
                                              final String clientId, final String clientSecret, final String code) {
 

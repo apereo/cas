@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.util;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -34,10 +34,14 @@ import org.slf4j.LoggerFactory;
  */
 public final class LdapUtils {
 
+    /** The Constant OBJECTCLASS_ATTRIBUTE. */
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
+    /**
+     * Instantiates a new ldap utils.
+     */
     private LdapUtils() {
         // private constructor so that no one can instantiate.
     }
@@ -90,6 +94,7 @@ public final class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
+     * @return the long value
      */
     public static Long getLong(final LdapEntry ctx, final String attribute) {
         return getLong(ctx, attribute, Long.MIN_VALUE);
@@ -101,6 +106,7 @@ public final class LdapUtils {
      * @param ctx       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
+     * @return the long value
      */
     public static Long getLong(final LdapEntry ctx, final String attribute, final Long nullValue) {
         final String v = getString(ctx, attribute, nullValue.toString());
@@ -115,6 +121,7 @@ public final class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
+     * @return the string
      */
     public static String getString(final LdapEntry ctx, final String attribute) {
         return getString(ctx, attribute, null);
@@ -126,6 +133,7 @@ public final class LdapUtils {
      * @param ctx       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
+     * @return the string
      */
     public static String getString(final LdapEntry ctx, final String attribute, final String nullValue) {
         final LdapAttribute attr = ctx.getAttribute(attribute);
@@ -138,5 +146,25 @@ public final class LdapUtils {
             return v;
         }
         return nullValue;
+    }
+    
+    
+    /**
+     * Gets the value for a binary attribute.
+     *
+     * @param ctx the ctx
+     * @param attribute the attribute
+     * @return the binary value, or null.
+     */
+    public static byte[] getBinary(final LdapEntry ctx, final String attribute) {
+        final LdapAttribute attr = ctx.getAttribute(attribute);
+        if (attr == null) {
+            return null;
+        }
+        final byte[] v = attr.getBinaryValue();
+        if (v != null) {
+            return v;
+        }
+        return null;
     }
 }

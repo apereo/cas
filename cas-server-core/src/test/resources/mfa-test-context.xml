@@ -87,8 +87,8 @@
     </bean>
 
     <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          p:readTimeout="5000"
-          p:connectionTimeout="5000" />
+          c:readTimeout="5000"
+          c:connectionTimeout="5000" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
@@ -105,6 +105,7 @@
         <property name="users">
             <map>
                 <entry key="alice" value="alice"/>
+                <entry key="bob" value="bob"/>
                 <entry key="mallory" value="mallory"/>
             </map>
         </property>
@@ -116,6 +117,7 @@
         <constructor-arg>
             <map>
                 <entry key="alice" value="31415"/>
+                <entry key="bob" value="62831"/>
                 <entry key="mallory" value="14142"/>
             </map>
         </constructor-arg>

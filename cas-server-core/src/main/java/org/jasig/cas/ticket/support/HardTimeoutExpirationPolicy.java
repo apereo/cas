@@ -18,20 +18,19 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
  * "idle" timeout provided by {@link org.jasig.cas.ticket.support.TimeoutExpirationPolicy}.
  *
  * @author Andrew Feller
-
  * @since 3.1.2
  */
-public final class HardTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class HardTimeoutExpirationPolicy implements ExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
@@ -44,10 +43,26 @@ public final class HardTimeoutExpirationPolicy implements ExpirationPolicy, Seri
         this.timeToKillInMilliSeconds = 0;
     }
 
+    /**
+     * Instantiates a new hard timeout expiration policy.
+     *
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public HardTimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    /**
+     * Instantiates a new Hard timeout expiration policy.
+     *
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
+    public HardTimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
+        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    }
+
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
                 || (System.currentTimeMillis() - ticketState.getCreationTime() >= this.timeToKillInMilliSeconds);

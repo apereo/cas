@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -48,6 +48,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
 
     private final ServicesManager servicesManager;
 
+    /**
+     * Instantiates a new o auth20 authorize controller.
+     *
+     * @param servicesManager the services manager
+     * @param loginUrl the login url
+     */
     public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
         this.servicesManager = servicesManager;
         this.loginUrl = loginUrl;

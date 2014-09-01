@@ -43,8 +43,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-support-rest module
  */
+@Deprecated
 public final class TicketGrantingTicketResource extends ServerResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
@@ -53,6 +54,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
 
     private String ticketGrantingTicketId;
 
+    @Override
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
@@ -60,12 +62,20 @@ public final class TicketGrantingTicketResource extends ServerResource {
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
     }
 
+    /**
+     * Removes the TGT.
+     */
     @Delete
     public void removeRepresentations() {
         this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
         getResponse().setStatus(Status.SUCCESS_OK);
     }
 
+    /**
+     * Accept service and attempt to grant service ticket.
+     *
+     * @param entity the entity
+     */
     @Post
     public void acceptRepresentation(final Representation entity) {
         final Form form = new Form(entity);

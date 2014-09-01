@@ -22,7 +22,7 @@
   <parent>
     <artifactId>cas-server</artifactId>
     <groupId>org.jasig.cas</groupId>
-    <version>4.0.0-RC4-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-server-core</artifactId>
@@ -30,30 +30,9 @@
   <description>CAS core</description>
 
     <dependencies>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.jms</groupId>
-                    <artifactId>jms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jdmk</groupId>
-                    <artifactId>jmxtools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jmx</groupId>
-                    <artifactId>jmxri</artifactId>
-                </exclusion>
-            </exclusions>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>
@@ -74,6 +53,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>compile</scope>
+        </dependency>
+      
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -125,12 +110,6 @@
             <artifactId>spring-security-core</artifactId>
             <scope>compile</scope>
         </dependency>
-
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>test</scope>
-    </dependency>
 
       <dependency>
           <groupId>org.hibernate</groupId>
@@ -191,19 +170,28 @@
             <artifactId>joda-time</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <scope>compile</scope>
+        </dependency>
             
         <dependency>
-          <groupId>org.opensymphony.quartz</groupId>
+          <groupId>org.quartz-scheduler</groupId>
           <artifactId>quartz</artifactId>
-          <version>1.6.1</version>
           <scope>test</scope>
-          <type>jar</type>
         </dependency>
 
         <dependency>
           <groupId>com.github.inspektr</groupId>
           <artifactId>inspektr-support-spring</artifactId>
           <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
   </dependencies>
   

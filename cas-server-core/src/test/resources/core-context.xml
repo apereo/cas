@@ -54,8 +54,8 @@
     </util:map>
 
     <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          p:readTimeout="5000"
-          p:connectionTimeout="5000" />
+          c:readTimeout="5000"
+          c:connectionTimeout="5000" />
           
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
@@ -86,7 +86,10 @@
                     <property name="name" value="Test Service"/>
                     <property name="serviceId" value="test$"/>
                     <property name="evaluationOrder" value="1"/>
-                    <property name="allowedToProxy" value="true" />
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -103,7 +106,10 @@
                     <property name="serviceId" value="eduPersonTest"/>
                     <property name="evaluationOrder" value="3"/>
                     <property name="usernameAttribute" value="eduPersonAffiliation"/>
-                    <property name="ignoreAttributes" value="true"/>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+                    </property>
+                    
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -112,10 +118,14 @@
                     <property name="serviceId" value="eduPersonTestInvalid"/>
                     <property name="evaluationOrder" value="4"/>
                     <property name="usernameAttribute" value="nonExistentAttributeName"/>
-                    <property name="allowedAttributes">
-                        <list>
-                            <value>groupMembership</value>
-                        </list>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+                            <property name="allowedAttributes">
+                                <list>
+                                    <value>groupMembership</value>
+                                </list>
+                            </property>    
+                        </bean>
                     </property>
                 </bean>
 
@@ -125,6 +135,28 @@
                     <property name="serviceId" value="testAnonymous"/>
                     <property name="evaluationOrder" value="5"/>
                     <property name="anonymousAccess" value="true" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="10"/>
+                    <property name="name" value="Test Regex Jasig Service"/>
+                    <property name="serviceId" value="^http://www.jasig.org.+"/>
+                    <property name="evaluationOrder" value="10"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern=".+" />
+                    </property>
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestProxyService"/>
+                    <property name="serviceId" value="proxyService"/>
+                    <property name="evaluationOrder" value="100"/>
+                    <property name="proxyPolicy">
+                        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                            c:pgtUrlPattern="^https://.+" />
+                    </property>
                 </bean>
             </list>
         </property>
@@ -143,7 +175,7 @@
         </constructor-arg>
         <property name="authenticationMetaDataPopulators">
             <list>
-                <ref local="authenticationMetaDataPopulator" />
+                <ref bean="authenticationMetaDataPopulator" />
             </list>
         </property>
 

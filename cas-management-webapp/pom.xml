@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server</artifactId>
-    <version>4.0.0-RC4-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-management-webapp</artifactId>
@@ -90,13 +90,6 @@
     <dependency>
       <groupId>org.jasig.cas.client</groupId>
       <artifactId>cas-client-core</artifactId>
-      <version>3.2.1</version>
-      <exclusions>
-        <exclusion>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-      </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -123,15 +116,19 @@
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
+                <artifactId>spring</artifactId>
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring-mock</artifactId>
+                <artifactId>spring-mock</artifactId>
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring-webmvc</artifactId>
+                <artifactId>spring-webmvc</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    	  <artifactId>servlet-api</artifactId>
+	    	  <groupId>javax.servlet</groupId>
 	    	</exclusion>
 	    </exclusions>
 	</dependency>

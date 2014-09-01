@@ -65,6 +65,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountDisabledException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
+        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginTimeException.class);
     }
 
@@ -99,15 +100,15 @@ public class AuthenticationExceptionHandler {
     }
 
     /**
-     * Maps an authentication exception onto a state name equal to the simple class name of the
+     * Maps an authentication exception onto a state name equal to the simple class name of the.
+     *
+     * @param e Authentication error to handle.
+     * @param messageContext the spring message context
+     * @return Name of next flow state to transition to or {@value #UNKNOWN}
      * {@link org.jasig.cas.authentication.AuthenticationException#getHandlerErrors()} with highest precedence.
      * Also sets an ERROR severity message in the message context of the form
      * <code>[messageBundlePrefix][exceptionClassSimpleName]</code> for each handler error that is
      * configured. If not match is found, {@value #UNKNOWN} is returned.
-     *
-     * @param e Authentication error to handle.
-     *
-     * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     public String handle(final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {

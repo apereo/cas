@@ -93,6 +93,13 @@ public class AuthenticationViaFormAction {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Bind the request to credentials.
+     *
+     * @param context the context
+     * @param credential the credential
+     * @throws Exception the exception arising as the result of the bind op.
+     */
     public final void doBind(final RequestContext context, final Credential credential) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
@@ -100,6 +107,16 @@ public class AuthenticationViaFormAction {
             this.credentialsBinder.bind(request, credential);
         }
     }
+    
+    /**
+     * Handle the submission of credentials from the post.
+     *
+     * @param context the context
+     * @param credential the credential
+     * @param messageContext the message context
+     * @return the event
+     * @throws Exception the exception
+     */
     public final Event submit(final RequestContext context, final Credential credential,
             final MessageContext messageContext) throws Exception {
         // Validate login ticket
@@ -155,6 +172,11 @@ public class AuthenticationViaFormAction {
         }
     }
 
+    /**
+     * Put warn cookie if request parameter present.
+     *
+     * @param context the context
+     */
     private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
@@ -165,14 +187,23 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
-        return (AuthenticationException) e.getCause();
-    }
-
+    /**
+     * New event based on the given id.
+     *
+     * @param id the id
+     * @return the event
+     */
     private Event newEvent(final String id) {
         return new Event(this, id);
     }
 
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id the id
+     * @param error the error
+     * @return the event
+     */
     private Event newEvent(final String id, final Exception error) {
         return new Event(this, id, new LocalAttributeMap("error", error));
     }

@@ -18,14 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
@@ -39,13 +38,13 @@ import org.springframework.util.Assert;
  *
  * @since 3.0
  */
-public final class ImmutableAuthentication implements Authentication, Serializable {
+public final class ImmutableAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final long authenticatedDate;
+    private final long authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
     private final List<CredentialMetaData> credentials;
@@ -64,7 +63,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {
-        this.authenticatedDate = 0;
+        this.authenticationDate = 0;
         this.credentials = null;
         this.principal = null;
         this.attributes = null;
@@ -97,7 +96,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
         Assert.notEmpty(credentials, "Credential cannot be empty");
         Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticatedDate = date.getTime();
+        this.authenticationDate = date.getTime();
         this.credentials = credentials;
         this.principal = principal;
         this.attributes = attributes.isEmpty() ? null : attributes;
@@ -110,8 +109,8 @@ public final class ImmutableAuthentication implements Authentication, Serializab
         return this.principal;
     }
 
-    public Date getAuthenticatedDate() {
-        return new ImmutableDate(this.authenticatedDate);
+    public Date getAuthenticationDate() {
+        return new ImmutableDate(this.authenticationDate);
     }
 
     @Override
@@ -138,7 +137,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
         builder.append(this.principal);
-        builder.append(this.authenticatedDate);
+        builder.append(this.authenticationDate);
         builder.append(this.attributes);
         builder.append(this.credentials);
         builder.append(this.successes);
@@ -159,7 +158,7 @@ public final class ImmutableAuthentication implements Authentication, Serializab
         builder.append(this.principal, other.getPrincipal());
         builder.append(this.credentials, other.getCredentials());
         builder.append(this.successes, other.getSuccesses());
-        builder.append(this.authenticatedDate, other.getAuthenticatedDate().getTime());
+        builder.append(this.authenticationDate, other.getAuthenticationDate().getTime());
         builder.append(wrap(this.attributes), other.getAttributes());
         builder.append(wrap(this.failures), other.getFailures());
         return builder.isEquals();
@@ -168,8 +167,9 @@ public final class ImmutableAuthentication implements Authentication, Serializab
     /**
      * Wraps a possibly null map in an immutable wrapper.
      *
+     * @param <K> the key type
+     * @param <V> the value type
      * @param source Nullable map to wrap.
-     *
      * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
      * {@link java.util.Collections#emptyMap()}.
      */
@@ -184,6 +184,8 @@ public final class ImmutableAuthentication implements Authentication, Serializab
      * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
+
+        private static final long serialVersionUID = 6275827030191703183L;
 
         /** No-arg constructor for serialization support. */
         private ImmutableDate() {}

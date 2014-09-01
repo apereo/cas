@@ -24,8 +24,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -58,15 +58,32 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     /** @see #setSupportRegistryState(boolean)*/
     private boolean supportRegistryState = true;
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     */
     public EhCacheTicketRegistry() {
+        
     }
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     *
+     * @param serviceTicketsCache the service tickets cache
+     * @param ticketGrantingTicketsCache the ticket granting tickets cache
+     */
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
         super();
         setServiceTicketsCache(serviceTicketsCache);
         setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
     }
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     *
+     * @param serviceTicketsCache the service tickets cache
+     * @param ticketGrantingTicketsCache the ticket granting tickets cache
+     * @param supportRegistryState the support registry state
+     */
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache,
             final boolean supportRegistryState) {
         this(serviceTicketsCache, ticketGrantingTicketsCache);

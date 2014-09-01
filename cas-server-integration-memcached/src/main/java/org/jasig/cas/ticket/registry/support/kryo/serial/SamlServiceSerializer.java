@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
+
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.util.HttpClient;
@@ -45,15 +46,23 @@ public final class SamlServiceSerializer extends AbstractWebApplicationServiceSe
         }
     }
 
+    /**
+     * Instantiates a new SAML service serializer.
+     *
+     * @param kryo the kryo
+     * @param helper the helper
+     */
     public SamlServiceSerializer(final Kryo kryo, final FieldHelper helper) {
         super(kryo, helper);
     }
 
+    @Override
     public void write(final ByteBuffer buffer, final SamlService service) {
         super.write(buffer, service);
         kryo.writeObject(buffer, service.getRequestID());
     }
 
+    @Override
     protected SamlService createService(
             final ByteBuffer buffer,
             final String id,
