@@ -46,5 +46,5 @@ Please [see the maven docs][skip] on how to disable the tests.
 - [How to contribute to Jasig](http://www.jasig.org/jasig/contribute)
 
 [wiki]: http://jasig.github.io/cas
-[overlay]: http://jasig.github.io/cas/current/installation/Maven-Overlay-Installation.html
+[overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
 [skip]: http://maven.apache.org/general.html#skip-test
