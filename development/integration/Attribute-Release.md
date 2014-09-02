@@ -99,6 +99,8 @@ The following snippet assumes that connection information beans are already defi
 
 
 ####Caching, Merging and Cascading
+Note that this snippet below strictly uses the Person Directory components for resolving attributes.
+
 {% highlight xml %}
 <bean id="mergedPersonAttributeDao"
         class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
@@ -157,10 +159,13 @@ Once principal attributes are resolved, adopters may choose to allow/release eac
 
 
 ### Principal-Id Attribute
-The service registry component of CAS has the ability to allow for configuration of a `usernameAttribute` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
+The service registry component of CAS has the ability to allow for configuration of a `usernameAttributeProvider` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
 
 * Ensure the attribute is available and resolved for the principal
-* Set the `usernameAttribute` property of the given service to the attribute you defined
+* Set the `usernameAttributeProvider` property of the given service to the attribute you defined
+
+####`DefaultRegisteredServiceUsernameProvider`
+The default configuration which need not explicitly be defined, simply returns the resolved principal id as the username for this service.
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -169,7 +174,44 @@ The service registry component of CAS has the ability to allow for configuration
   <property name="description" value="YOUR HTTPS Service" />
   <property name="serviceId" value="https://**" />
   <property name="evaluationOrder" value="0" />
-  <property name="usernameAttribute" value="mail" />
+  <property name="usernameAttributeProvider">
+  	<bean class="org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider" />
+  </property>    
+</bean>
+{% endhighlight %}
+
+####`PrincipalAttributeRegisteredServiceUsernameProvider`
+Returns an attribute that is already resolved for the principal as the username for this service. If the attribute
+is not available, the default principal id will be used.
+
+{% highlight xml %}
+<bean class="org.jasig.cas.services.RegisteredServiceImpl">
+  <property name="id" value="0" />
+  <property name="name" value="HTTPS Services" />
+  <property name="description" value="YOUR HTTPS Service" />
+  <property name="serviceId" value="https://**" />
+  <property name="evaluationOrder" value="0" />
+  <property name="usernameAttributeProvider">
+  	<bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+            c:usernameAttribute="eduPersonAffiliation" />
+  </property>    
+</bean>
+{% endhighlight %}
+
+####`AnonymousRegisteredServiceUsernameAttributeProvider`
+Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
+of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
+
+{% highlight xml %}
+<bean class="org.jasig.cas.services.RegisteredServiceImpl">
+  <property name="id" value="0" />
+  <property name="name" value="HTTPS Services" />
+  <property name="description" value="YOUR HTTPS Service" />
+  <property name="serviceId" value="https://**" />
+  <property name="evaluationOrder" value="0" />
+  <property name="usernameAttributeProvider">
+  	<bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+  </property>    
 </bean>
 {% endhighlight %}
 

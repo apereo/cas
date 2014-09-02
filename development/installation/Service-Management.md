@@ -48,16 +48,15 @@ Registered services present the following metadata:
 | `name`        					| Required name (255 characters or less).      
 | `description`						| Optional free-text description of the service. (255 characters or less)   
 | `serviceId`        				| Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
-| `theme`        					| Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details on attribute release and filters.
+| `theme`        					| Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
 | `enabled`        					| Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`       				| Set to false to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `anonymousAccess`        			| Set to true to provide an opaque identifier for the username instead of the principal ID. The default behavior (false) is to release the principal ID. The identifier conforms to the requirements of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
+| `ssoEnabled`       				| Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
 | `proxyPolicy`        				| Determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication. 
 | `evaluationOrder`        			| Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first.      
-| `usernameAttribute`        		| Name of the attribute that would identify the principal for this service definition only. The attribute need not be configured in the release policy, but must only be resolvable by the attribute repository.
 | `requiredHandlers`        		| Set of authentication handler names that must successfully authenticate credentials in order to access the service.
 | `attributeReleasePolicy`        	| The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
+| `usernameAttributeProvider `      | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 
 ###Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT. 
@@ -142,10 +141,9 @@ The default mapper has support for the following items:
 | `serviceNameAttribute`     		| cn
 | `serviceEnabledAttribute`     	| casServiceEnabled
 | `serviceSsoEnabledAttribute`     	| casServiceSsoEnabled
-| `serviceAnonymousAccessAttribute` | casServiceAnonymousAccess
+| `casUsernameAttributeProvider`    | casUsernameAttributeProvider
 | `serviceProxyPolicyAttribute`     | casServiceProxyPolicy
 | `serviceThemeAttribute`     		| casServiceTheme
-| `usernameAttribute`     			| casUsernameAttribute
 | `attributeReleasePolicyAttribute` | casAttributeReleasePolicy
 | `evaluationOrderAttribute`     	| casEvaluationOrder
 | `requiredHandlersAttribute`     	| casRequiredHandlers
