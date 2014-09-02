@@ -79,7 +79,7 @@ public final class ClientAuthenticationHandlerTests {
 
     @Test
     public void testOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
-        this.handler.setUseTypedId(false);
+        this.handler.setTypedIdUsed(false);
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);
