@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/support/pac4j/test/MockFacebookClient.html">MockFacebookClient</a> <strong class="jxr_keyword">extends</strong> FacebookClient {
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
-<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> String CLIENT_NAME = <span class="jxr_string">"FacebookClient"</span>;
+<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CLIENT_NAME = <span class="jxr_string">"FacebookClient"</span>;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> FacebookProfile facebookProfile;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">return</strong> facebookProfile;
 <a class="jxr_linenumber" name="59" href="#59">59</a>      }
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setFacebookProfile(FacebookProfile facebookProfile) {
+<a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setFacebookProfile(<strong class="jxr_keyword">final</strong> FacebookProfile facebookProfile) {
 <a class="jxr_linenumber" name="62" href="#62">62</a>          <strong class="jxr_keyword">this</strong>.facebookProfile = facebookProfile;
 <a class="jxr_linenumber" name="63" href="#63">63</a>      }
 <a class="jxr_linenumber" name="64" href="#64">64</a>  }

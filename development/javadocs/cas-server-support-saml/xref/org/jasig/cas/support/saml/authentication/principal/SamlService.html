@@ -144,9 +144,9 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a>         }
 <a class="jxr_linenumber" name="135" href="#135">135</a> 
 <a class="jxr_linenumber" name="136" href="#136">136</a>         LOGGER.debug(<span class="jxr_string">"Attempted to extract Request from HttpServletRequest. Results:"</span>);
-<a class="jxr_linenumber" name="137" href="#137">137</a>         LOGGER.debug(String.format(<span class="jxr_string">"Request Body: %s"</span>, requestBody));
-<a class="jxr_linenumber" name="138" href="#138">138</a>         LOGGER.debug(String.format(<span class="jxr_string">"Extracted ArtifactId: %s"</span>, artifactId));
-<a class="jxr_linenumber" name="139" href="#139">139</a>         LOGGER.debug(String.format(<span class="jxr_string">"Extracted Request Id: %s"</span>, requestId));
+<a class="jxr_linenumber" name="137" href="#137">137</a>         LOGGER.debug(<span class="jxr_string">"Request Body: {}"</span>, requestBody);
+<a class="jxr_linenumber" name="138" href="#138">138</a>         LOGGER.debug(<span class="jxr_string">"Extracted ArtifactId: {}"</span>, artifactId);
+<a class="jxr_linenumber" name="139" href="#139">139</a>         LOGGER.debug(<span class="jxr_string">"Extracted Request Id: {}"</span>, requestId);
 <a class="jxr_linenumber" name="140" href="#140">140</a> 
 <a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/support/saml/authentication/principal/SamlService.html">SamlService</a>(id, service, artifactId, requestId);
 <a class="jxr_linenumber" name="142" href="#142">142</a>     }

@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> SamlService impl = SamlService.createServiceFrom(request);
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request2 = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="103" href="#103">103</a>         request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"https://some.SERVICE.edu"</span>);
+<a class="jxr_linenumber" name="103" href="#103">103</a>         request2.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"https://some.SERVICE.edu"</span>);
 <a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> SamlArgumentExtractor ext = <strong class="jxr_keyword">new</strong> SamlArgumentExtractor();
 <a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">final</strong> WebApplicationService service = ext.extractService(request2);
 <a class="jxr_linenumber" name="106" href="#106">106</a> 

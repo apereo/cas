@@ -17,3 +17,4 @@ org.jasig.cas.ticket.support
 org.jasig.cas.util
 org.jasig.cas.validation
 org.jasig.cas.web.flow
+org.slf4j.impl

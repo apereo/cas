@@ -69,3 +69,4 @@ org.jasig.cas.web.bind
 org.jasig.cas.web.flow
 org.jasig.cas.web.support
 org.jasig.cas.web.view
+org.slf4j.impl
