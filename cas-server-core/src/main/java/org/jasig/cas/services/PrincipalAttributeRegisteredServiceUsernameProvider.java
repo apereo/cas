@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.authentication.principal.Principal;
@@ -83,4 +85,29 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         return toStringBuilder.toString();
     }
 
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final PrincipalAttributeRegisteredServiceUsernameProvider rhs =
+                (PrincipalAttributeRegisteredServiceUsernameProvider) obj;
+        return new EqualsBuilder()
+                .append(this.usernameAttribute, rhs.usernameAttribute)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(usernameAttribute)
+                .toHashCode();
+    }
 }
