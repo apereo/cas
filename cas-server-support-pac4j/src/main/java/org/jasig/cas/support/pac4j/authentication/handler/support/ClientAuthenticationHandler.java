@@ -61,7 +61,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
     /**
      * Whether to use the typed identifier (by default) or just the identifier.
      */
-    private boolean useTypedId = true;
+    private boolean typedIdUsed = true;
 
     /**
      * Define the clients.
@@ -101,7 +101,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 
         if (userProfile != null) {
             final String id;
-            if (useTypedId) {
+            if (typedIdUsed) {
                 id = userProfile.getTypedId();
             } else {
                 id = userProfile.getId();
@@ -118,11 +118,11 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
     }
 
-    public boolean isUseTypedId() {
-        return useTypedId;
+    public boolean isTypedIdUsed() {
+        return typedIdUsed;
     }
 
-    public void setUseTypedId(final boolean useTypedId) {
-        this.useTypedId = useTypedId;
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
     }
 }
