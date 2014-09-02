@@ -20,6 +20,8 @@ package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,5 +89,30 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final ShibbolethCompatiblePersistentIdGenerator rhs = (ShibbolethCompatiblePersistentIdGenerator) obj;
+        return new EqualsBuilder()
+                .append(this.salt, rhs.salt)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(salt)
+                .toHashCode();
     }
 }

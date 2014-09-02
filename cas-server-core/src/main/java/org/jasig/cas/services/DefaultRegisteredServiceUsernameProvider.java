@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
@@ -38,4 +39,23 @@ public final class DefaultRegisteredServiceUsernameProvider implements Registere
         return principal.getId();
     }
 
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 113).toHashCode();
+    }
 }

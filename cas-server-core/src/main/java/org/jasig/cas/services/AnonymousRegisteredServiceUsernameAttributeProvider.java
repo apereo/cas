@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
@@ -67,5 +68,26 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
         final String id = this.persistentIdGenerator.generate(principal, service);
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AnonymousRegisteredServiceUsernameAttributeProvider rhs =
+                (AnonymousRegisteredServiceUsernameAttributeProvider) obj;
+        return this.persistentIdGenerator.equals(rhs.persistentIdGenerator);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 113).toHashCode();
     }
 }
