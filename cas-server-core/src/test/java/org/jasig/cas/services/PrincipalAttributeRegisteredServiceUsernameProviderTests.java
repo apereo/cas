@@ -68,4 +68,15 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         assertEquals(id, p.getId());
         
     }
+
+    @Test
+    public void testEquality() {
+        final PrincipalAttributeRegisteredServiceUsernameProvider provider =
+                new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        final PrincipalAttributeRegisteredServiceUsernameProvider provider2 =
+                new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        assertEquals(provider, provider2);
+    }
 }

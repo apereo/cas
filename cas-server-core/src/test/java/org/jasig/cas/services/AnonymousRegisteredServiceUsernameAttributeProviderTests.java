@@ -24,9 +24,8 @@ import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGe
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -45,5 +44,18 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         final Principal principal = new SimplePrincipal("uid");
         final String id = provider.resolveUsername(principal, service);
         assertNotNull(id);
+    }
+
+    @Test
+    public void testEquality() {
+        final AnonymousRegisteredServiceUsernameAttributeProvider provider =
+                new AnonymousRegisteredServiceUsernameAttributeProvider(
+                        new ShibbolethCompatiblePersistentIdGenerator("casrox"));
+
+        final AnonymousRegisteredServiceUsernameAttributeProvider provider2 =
+                new AnonymousRegisteredServiceUsernameAttributeProvider(
+                        new ShibbolethCompatiblePersistentIdGenerator("casrox"));
+
+        assertEquals(provider, provider2);
     }
 }
