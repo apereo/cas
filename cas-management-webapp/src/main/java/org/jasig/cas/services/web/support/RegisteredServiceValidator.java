@@ -18,12 +18,9 @@
  */
 package org.jasig.cas.services.web.support;
 
-import java.util.Set;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -101,16 +98,6 @@ public final class RegisteredServiceValidator implements Validator {
                 && r.getDescription().length() > this.maxDescriptionLength) {
             errors.rejectValue("description",
                     "registeredService.description.length", null);
-        }
-
-        if (!StringUtils.isBlank(r.getUsernameAttribute()) && !r.isAnonymousAccess()) {
-            final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
-            if (availableAttributes != null) {
-                if (!availableAttributes.contains(r.getUsernameAttribute())) {
-                    errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
-                            "This attribute is not available from configured user attribute sources.");
-                }
-            }
         }
     }
 

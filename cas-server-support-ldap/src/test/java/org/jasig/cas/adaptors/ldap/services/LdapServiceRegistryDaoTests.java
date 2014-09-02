@@ -18,13 +18,15 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
 import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
@@ -69,11 +71,10 @@ public class LdapServiceRegistryDaoTests {
         AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setAnonymousAccess(true);
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         rs.setDescription("Service description");
         rs.setServiceId("https://?.edu/**");
         rs.setTheme("the theme name");
-        rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
         rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
@@ -82,11 +83,10 @@ public class LdapServiceRegistryDaoTests {
         rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setAnonymousAccess(true);
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         rs.setDescription("Service description");
         rs.setServiceId("^http?://.+");
         rs.setTheme("the theme name");
-        rs.setUsernameAttribute("uid");
         rs.setEvaluationOrder(123);
 
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
