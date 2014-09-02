@@ -56,7 +56,7 @@ Registered services present the following metadata:
 | `requiredHandlers`        		| Set of authentication handler names that must successfully authenticate credentials in order to access the service.
 | `attributeReleasePolicy`        	| The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
-| `usernameAttributeProvider `      | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
+| `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 
 ###Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT. 
@@ -69,7 +69,7 @@ Note that by default, the proxy authentication is disallowed for all application
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
 #####`RegexMatchingRegisteredServiceProxyPolicy`
-A proxy policy that only allows proxying to pgt urls that match the specified regex pattern.
+A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegexRegisteredService"
@@ -141,7 +141,7 @@ The default mapper has support for the following items:
 | `serviceNameAttribute`     		| cn
 | `serviceEnabledAttribute`     	| casServiceEnabled
 | `serviceSsoEnabledAttribute`     	| casServiceSsoEnabled
-| `casUsernameAttributeProvider`    | casUsernameAttributeProvider
+| `usernameAttributeProvider`       | casUsernameAttributeProvider
 | `serviceProxyPolicyAttribute`     | casServiceProxyPolicy
 | `serviceThemeAttribute`     		| casServiceTheme
 | `attributeReleasePolicyAttribute` | casAttributeReleasePolicy
