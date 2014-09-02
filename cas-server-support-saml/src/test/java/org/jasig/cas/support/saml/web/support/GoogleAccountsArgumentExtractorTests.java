@@ -21,13 +21,16 @@ package org.jasig.cas.support.saml.web.support;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 /**
  *
  * @author Scott Battaglia
@@ -56,9 +59,10 @@ public class GoogleAccountsArgumentExtractorTests {
         pubKeyFactoryBean.afterPropertiesSet();
         privKeyFactoryBean.afterPropertiesSet();
 
-        this.extractor = new GoogleAccountsArgumentExtractor();
-        this.extractor.setPrivateKey((PrivateKey) privKeyFactoryBean.getObject());
-        this.extractor.setPublicKey((PublicKey) pubKeyFactoryBean.getObject());
+        final ServicesManager servicesManager = mock(ServicesManager.class);
+        
+        this.extractor = new GoogleAccountsArgumentExtractor((PublicKey) pubKeyFactoryBean.getObject(), 
+                (PrivateKey) privKeyFactoryBean.getObject(), servicesManager);
     }
 
     @Test
