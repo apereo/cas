@@ -20,7 +20,6 @@ package org.jasig.cas.authentication;
 
 import org.junit.Test;
 import org.ldaptive.LdapEntry;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -33,8 +32,13 @@ import static org.junit.Assert.*;
  */
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
-    @Autowired
     private LdapAuthenticationHandler handler;
+
+    public LdapAuthenticationHandlerTests() {
+        super("/ldap-context.xml", "/authn-context.xml");
+
+        this.handler = this.context.getBean("ldapAuthenticationHandler", LdapAuthenticationHandler.class);
+    }
 
     @Test
     public void testAuthenticateSuccess() throws Exception {
