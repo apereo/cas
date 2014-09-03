@@ -162,7 +162,7 @@ Once principal attributes are resolved, adopters may choose to allow/release eac
 The service registry component of CAS has the ability to allow for configuration of a `usernameAttributeProvider` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
 
 * Ensure the attribute is available and resolved for the principal
-* Set the `usernameAttributeProvider` property of the given service to the attribute you defined
+* Set the `usernameAttributeProvider` property of the given service to once of the attribute providers below
 
 ####`DefaultRegisteredServiceUsernameProvider`
 The default configuration which need not explicitly be defined, simply returns the resolved principal id as the username for this service.
@@ -306,7 +306,8 @@ The following configuration for instance considers the initial list of `uid`, `g
                 </list>
             </property>
             <property name="attributeFilter">
-                <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
+                <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter"
+					c:regex="^\w{3}$" /> 
             </property>
         </bean>
     </property>
