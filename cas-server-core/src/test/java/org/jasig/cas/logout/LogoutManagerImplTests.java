@@ -31,13 +31,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import java.net.URL;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+
 
 /**
  * @author Jerome Leleu
@@ -94,14 +96,13 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeNull() {
+    public void testLogoutTypeNotSet() {
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
-        
     }
 
     @Test
@@ -113,6 +114,22 @@ public class LogoutManagerImplTests {
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
+    }
+
+    @Test
+    public void testLogoutTypeNone() {
+        this.registeredService.setLogoutType(LogoutType.NONE);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(0, logoutRequests.size());
+    }
+
+    @Test
+    public void testLogoutTypeNull() {
+        this.registeredService.setLogoutType(null);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(1, logoutRequests.size());
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        assertEquals(ID, logoutRequest.getTicketId());
     }
 
     @Test
