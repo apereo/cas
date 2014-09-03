@@ -14,6 +14,9 @@ custom_require.rb:36:in 'gem_original_require': no such file to load -- json (Lo
 
 It means that the json gem is missing: `gem install json` should solve the problem...
 
+###Windows
+* You'll need to have Python 2.7.6 installed
+* You'll need to have Ruby 1.9.3 installed
 
 ## Getting Started
 

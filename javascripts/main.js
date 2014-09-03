@@ -1,9 +1,14 @@
 var CONST_CURRENT_VER = "development";
+var CONST_SITE_TARGET_DIR = "/_site/";
+
+function isDocumentationSiteViewedLocally() {
+  return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
+}
 
 function getActiveDocumentationVersionInView() {
   var currentVersion = CONST_CURRENT_VER;
   var href = location.href;
-  var index = href.indexOf("/_site/");
+  var index = isDocumentationSiteViewedLocally() ? href.indexOf(CONST_SITE_TARGET_DIR) : -1;
 
   if (index == -1) {
     var uri = new URI(document.location);
@@ -16,34 +21,36 @@ function getActiveDocumentationVersionInView() {
     index = href.indexOf("/");
     currentVersion = href.substring(0, index);
   }
-	return currentVersion;
+  return currentVersion;
 }
 
 function loadSidebarForActiveVersion() {
-	$("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
+  $("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
 }
 
 function generateSidebarLinksForActiveVersion() {
-	$('a').each(function() {
-		var href = this.href;
-		if (href.indexOf("$version") != -1) {
-			href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
-			$(this).attr('href', href);
-		}
+  $('a').each(function() {
+    var href = this.href;
+    if (href.indexOf("$version") != -1) {
+      href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
+      $(this).attr('href', href);
+    }
   });
 }
 
 function generateToolbarIcons() {
-	var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
+  var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
 
-	var uri = new URI(document.location);
-	var segments = uri.segment();
-	var page = "";
+  var uri = new URI(document.location);
+  var segments = uri.segment();
+  var page = "";
 
-	for (var i = 1; i < segments.length; i++) {
-		page += segments[i] + "/";    
-	}
-	page = page.replace(".html", ".md");
+  for (var i = 1; i < segments.length; i++) {
+    page += segments[i] + "/";    
+  }
+  page = page.replace(".html", ".md");
+
+  var imagesPath = isDocumentationSiteViewedLocally() ? "../images/" : "/cas/images/";
 
   var activeVersion = getActiveDocumentationVersionInView();
   if (activeVersion != CONST_CURRENT_VER) {
@@ -53,17 +60,17 @@ function generateToolbarIcons() {
       "'><img src='/cas/images/indev.png' alt='See the in-development version of this page' title='See the in-development version of this page'></a>");
   }
 
-	var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
-	$('#toolbarIcons').append("<a target='_blank' href='" + editLink +
-		"'><img src='/cas/images/edit.png' alt='Edit with Github' title='Edit with Github'></a>");
+  var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
+  $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
+    "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
-	var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + page;
-	$('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
-		"'><img src='/cas/images/history.png' alt='View commit history on Github' title='View commit history on Github'>");
+  var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + page;
+  $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
+    "'><img src='" + imagesPath + "history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
-	var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + page;
-	$('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-		"'><img src='/cas/images/delete.png' alt='Delete with Github' title='Delete with Github'>");
+  var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + page;
+  $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
+    "'><img src='" + imagesPath + "delete.png' alt='Delete with Github' title='Delete with Github'>");
 }
 
 function generateTableOfContentsForPage() {
@@ -94,17 +101,17 @@ function generateTableOfContentsForPage() {
 }
 
 $(function() {
-	loadSidebarForActiveVersion();
+  loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
-  	generateToolbarIcons();
+    generateToolbarIcons();
 
-	var formattedVersion = getActiveDocumentationVersionInView();
-	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-		formattedVersion = " (" + formattedVersion + ")"
-	} else {
-		formattedVersion = "";
-	}
-	document.title = $("h1").first().text() + formattedVersion;
+  var formattedVersion = getActiveDocumentationVersionInView();
+  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+    formattedVersion = " (" + formattedVersion + ")"
+  } else {
+    formattedVersion = "";
+  }
+  document.title = $("h1").first().text() + formattedVersion;
   
 });
 
