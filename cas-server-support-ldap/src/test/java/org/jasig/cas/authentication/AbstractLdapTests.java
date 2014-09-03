@@ -41,7 +41,7 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  */
-@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml", "/ldap-regservice-test.xml" })
+@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractLdapTests  {
 
