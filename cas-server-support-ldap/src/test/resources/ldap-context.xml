@@ -37,25 +37,7 @@
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
     </bean>
 
-    <bean id="ldapAuthenticationHandler"
-          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute-ref="usernameAttribute"
 
-          c:authenticator-ref="authenticator">
-        <property name="principalAttributeMap">
-            <map>
-                <!--
-                   | This map provides a simple attribute resolution mechanism.
-                   | Keys are LDAP attribute names, values are CAS attribute names.
-                   | Use this facility instead of a PrincipalResolver if LDAP is
-                   | the only attribute source.
-                   -->
-                <entry key="displayName" value="displayName" />
-                <entry key="mail" value="mail" />
-                <entry key="givenName" value="givenName" />
-            </map>
-        </property>
-    </bean>
 
     <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
           p:connectionConfig-ref="provisioningConnectionConfig" />
@@ -79,11 +61,6 @@
           p:useStartTLS="${ldap.useStartTLS: false}"
           p:connectionInitializer-ref="bindConnectionInitializer"
           p:sslConfig-ref="provisionSslConfig"/>
-
-    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-          c:resolver-ref="dnResolver"
-          c:handler-ref="authHandler"
-          p:entryResolver-ref="entryResolver" />
 
     <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
           p:connectionFactory-ref="pooledLdapConnectionFactory" />

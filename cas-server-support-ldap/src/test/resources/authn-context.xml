@@ -28,6 +28,31 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+          c:resolver-ref="dnResolver"
+          c:handler-ref="authHandler"
+          p:entryResolver-ref="entryResolver" />
+
+    <bean id="ldapAuthenticationHandler"
+          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          p:principalIdAttribute-ref="usernameAttribute"
+
+          c:authenticator-ref="authenticator">
+        <property name="principalAttributeMap">
+            <map>
+                <!--
+                   | This map provides a simple attribute resolution mechanism.
+                   | Keys are LDAP attribute names, values are CAS attribute names.
+                   | Use this facility instead of a PrincipalResolver if LDAP is
+                   | the only attribute source.
+                   -->
+                <entry key="displayName" value="displayName" />
+                <entry key="mail" value="mail" />
+                <entry key="givenName" value="givenName" />
+            </map>
+        </property>
+    </bean>
+
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>

@@ -22,15 +22,12 @@ import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.util.Collection;
 
@@ -41,17 +38,21 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  */
-@ContextConfiguration(locations= {"/ldap-context.xml", "/authn-context.xml" })
-@RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractLdapTests  {
 
-    @Autowired
-    @Qualifier("usernameAttribute")
-    private String usernameAttribute;
+    protected final XmlWebApplicationContext context;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static InMemoryTestLdapDirectoryServer DIRECTORY;
+
+    public AbstractLdapTests(final String... configLocations) {
+        this.context = new XmlWebApplicationContext();
+        this.context.setServletContext(new MockServletContext());
+        this.context.setConfigLocations(configLocations);
+        this.context.refresh();
+        this.context.start();
+    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -73,6 +74,7 @@ public abstract class AbstractLdapTests  {
     }
 
     protected String getUsername(final LdapEntry entry) {
-        return entry.getAttribute(usernameAttribute).getStringValue();
+        final String unameAttr = this.context.getBean("usernameAttribute", String.class);
+        return entry.getAttribute(unameAttr).getStringValue();
     }
 }
