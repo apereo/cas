@@ -54,8 +54,8 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
             <scope>compile</scope>
         </dependency>
       
@@ -170,6 +170,12 @@
             <artifactId>joda-time</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <scope>compile</scope>
+        </dependency>
             
         <dependency>
           <groupId>org.quartz-scheduler</groupId>
@@ -181,6 +187,11 @@
           <groupId>com.github.inspektr</groupId>
           <artifactId>inspektr-support-spring</artifactId>
           <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
   </dependencies>
   

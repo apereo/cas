@@ -21,7 +21,11 @@ package org.jasig.cas.support.saml.web.view;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.AttributeReleasePolicy;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
 import org.opensaml.saml1.core.Assertion;
@@ -44,6 +48,7 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +64,6 @@ import java.util.TreeMap;
  * <p>
  * Note that this class will currently not handle proxy authentication.
  * <p>
- * Note: This class currently expects a bean called "ServiceRegistry" to exist.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -102,7 +106,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         assertion.getAuthenticationStatements().add(authnStatement);
 
         final Subject subject = newSubject(authentication.getPrincipal().getId());
-        final Map<String, Object> attributesToSend = prepareSamlAttributes(authentication, casAssertion);
+        final Map<String, Object> attributesToSend = prepareSamlAttributes(authentication, casAssertion, service);
 
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(newAttributeStatement(subject, attributesToSend));
@@ -120,12 +124,29 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      *
      * @param authentication the authentication
      * @param assertion the assertion
+     * @param service the service
      * @return the final map
      * @since 4.1
      */
     private Map<String, Object> prepareSamlAttributes(final Authentication authentication,
-                                                      final org.jasig.cas.validation.Assertion assertion) {
-        final Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
+                                                      final org.jasig.cas.validation.Assertion assertion,
+                                                      final Service service) {
+
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService == null || !registeredService.isEnabled()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
+                    "Saml service " + service.getId()
+                    + " is not authorized to use CAS. Servoce is disabled or missing in the service registry.");
+        }
+
+        final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
+        logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
+
+        final Principal principal = authentication.getPrincipal();
+
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> attributes = attributePolicy != null
+                ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
 
         final Map<String, Object> authnAttributes = new TreeMap<String, Object>(authentication.getAttributes());
 
