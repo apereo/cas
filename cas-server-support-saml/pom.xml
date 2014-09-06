@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>2.5.1-1</version>
+            <version>${opensaml.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -80,6 +80,12 @@
         </dependency>
 
         <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core</artifactId>
             <version>${project.version}</version>
@@ -88,7 +94,7 @@
         </dependency>
     </dependencies>
 
-  <properties>
+    <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    </properties>
 </project>

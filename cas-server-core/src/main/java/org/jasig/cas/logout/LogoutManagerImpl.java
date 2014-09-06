@@ -18,14 +18,7 @@
  */
 package org.jasig.cas.logout;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-
-import javax.validation.constraints.NotNull;
-
+import java.net.URL;
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
@@ -33,10 +26,18 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpMessage;
 import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+
+import javax.validation.constraints.NotNull;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -48,6 +49,9 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
+
+    /** The parameter name that contains the logout request. */
+    private static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
 
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -132,25 +136,9 @@ public final class LogoutManagerImpl implements LogoutManager {
                 final Service service = services.get(ticketId);
                 // it's a SingleLogoutService, else ignore
                 if (service instanceof SingleLogoutService) {
-                    final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
-                    // the logout has not performed already
-                    if (!singleLogoutService.isLoggedOutAlready()) {
-                        final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
-                        // always add the logout request
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, ticketId);
+                    if (logoutRequest != null) {
                         logoutRequests.add(logoutRequest);
-                        final RegisteredService registeredService = servicesManager.findServiceBy(service);
-                        // the service is no more defined, or the logout type is not defined or is back channel
-                        if (registeredService == null || registeredService.getLogoutType() == null
-                                || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
-                            // perform back channel logout
-                            if (performBackChannelLogout(logoutRequest)) {
-                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                            } else {
-                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
-                                        singleLogoutService.getId());
-                            }
-                        }
                     }
                 }
             }
@@ -160,19 +148,72 @@ public final class LogoutManagerImpl implements LogoutManager {
     }
 
     /**
+     * Service supports back channel single logout?
+     * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
+     * @param registeredService the service
+     * @return true, if support is available.
+     */
+    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
+        return registeredService != null && registeredService.isEnabled()
+                                         && registeredService.getLogoutType() != LogoutType.NONE;
+    }
+
+    /**
+     * Handle logout for slo service.
+     *
+     * @param service the service
+     * @param ticketId the ticket id
+     * @return the logout request
+     */
+    private LogoutRequest handleLogoutForSloService(final SingleLogoutService service, final String ticketId) {
+        final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
+        if (!singleLogoutService.isLoggedOutAlready()) {
+
+            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+
+            if (serviceSupportsSingleLogout(registeredService)) {
+                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
+                final LogoutType type = registeredService.getLogoutType() == null
+                        ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+
+                switch (type) {
+                    case BACK_CHANNEL:
+                        if (performBackChannelLogout(logoutRequest)) {
+                            logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                        } else {
+                            logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                            LOGGER.warn("Logout message not sent to [{}]; Continuing processing...", singleLogoutService.getId());
+                        }
+                        break;
+                    default:
+                        logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
+                        break;
+                }
+                return logoutRequest;
+            }
+        }
+        return null;
+    }
+    /**
      * Log out of a service through back channel.
      *
      * @param request the logout request.
      * @return if the logout has been performed.
      */
     private boolean performBackChannelLogout(final LogoutRequest request) {
-        final String logoutRequest = this.logoutMessageBuilder.create(request);
-        request.getService().setLoggedOutAlready(true);
+        try {
+            final String logoutRequest = this.logoutMessageBuilder.create(request);
+            request.getService().setLoggedOutAlready(true);
+    
+            LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
+            final String originalUrl = request.getService().getOriginalUrl();        
+            final LogoutHttpMessage sender = new LogoutHttpMessage(new URL(originalUrl), logoutRequest);
 
-        LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        final String originalUrl = request.getService().getOriginalUrl();        
-        final LogoutHttpMessage sender = new LogoutHttpMessage(originalUrl, logoutRequest);
-        return this.httpClient.sendMessageToEndPoint(sender);
+            return this.httpClient.sendMessageToEndPoint(sender);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**
@@ -216,9 +257,9 @@ public final class LogoutManagerImpl implements LogoutManager {
          * @param url The url to send the message to
          * @param message Message to send to the url
          */
-        public LogoutHttpMessage(final String url, final String message) {
+        public LogoutHttpMessage(final URL url, final String message) {
             super(url, message, LogoutManagerImpl.this.asynchronous);
-            setContentType("application/xml");
+            setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         }
 
         /**
@@ -227,7 +268,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          */
         @Override
         protected String formatOutputMessageInternal(final String message) {
-            return "logoutRequest=" + super.formatOutputMessageInternal(message);
+            return LOGOUT_PARAMETER_NAME + "=" + super.formatOutputMessageInternal(message);
         }        
     }
 }
