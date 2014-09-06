@@ -14,5 +14,5 @@ bin/
 overlays/
 pom.xml.versionsBackup
 *.log
-
+rebel.xml
 **/.checkstyle

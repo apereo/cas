@@ -31,7 +31,6 @@ import java.util.Map;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -102,24 +101,7 @@ public class RegisteredServiceValidatorTests {
 
         assertEquals(1, exception.getErrorCount());
     }
-    
-    @Test
-    public void testUsernameAttributeWithAllFilteringPolicy() {
-        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
-        impl.setServiceId("test");
-        impl.setDescription("fasdfdsafsafsafdsa");
-        impl.setUsernameAttribute("k3");
-        impl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         
-        final BindException exception = new BindException(impl, "registeredService");
-
-        final RegisteredServiceValidator validator = getValidator(false);
-        validator.setMaxDescriptionLength(100);
-        validator.validate(impl, exception);
-
-        assertEquals(0, exception.getErrorCount());
-    }
-    
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
         final Validator validator = getValidator(exists);
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
