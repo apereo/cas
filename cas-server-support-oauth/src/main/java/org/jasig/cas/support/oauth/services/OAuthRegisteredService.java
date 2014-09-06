@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.oauth.services;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.services.RegexRegisteredService;
 
 /**
