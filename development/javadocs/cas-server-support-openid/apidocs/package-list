@@ -1,0 +1,6 @@
+org.jasig.cas.support.openid.authentication.handler.support
+org.jasig.cas.support.openid.authentication.principal
+org.jasig.cas.support.openid.web
+org.jasig.cas.support.openid.web.flow
+org.jasig.cas.support.openid.web.mvc
+org.jasig.cas.support.openid.web.support
