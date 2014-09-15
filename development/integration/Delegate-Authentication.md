@@ -224,6 +224,15 @@ To be able to finish authenticating users in the CAS server after a remote authe
 </bean>
 {% endhighlight %}
 
+By default, the identifier returned by a delegated authentication is composed of the profile name and the technical identifier of the provider, like `FacebookProfile#1234`, to ensure the identifier uniqueness. Though, you can remove this behaviour and only return the technical identifier by using:
+
+{% highlight xml %}
+<bean id="primaryAuthenticationHandler" class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler">
+    <constructor-arg index="0" ref="clients"/>
+    <property name="typedIdUsed" value="false" />
+</bean>
+{% endhighlight %}
+
 
 ###Add links on the login page to authenticate on remote providers
 
