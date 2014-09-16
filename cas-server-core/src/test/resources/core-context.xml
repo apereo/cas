@@ -30,7 +30,7 @@
 
     <bean id="persistentIdGenerator"
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          p:salt="casrocks"/>
+          c:salt="casrocks"/>
 
     <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
           c:authenticationManager-ref="authenticationManager"
@@ -41,8 +41,7 @@
           c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
           c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
           c:ticketRegistry-ref="ticketRegistry"
-          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
-          p:persistentIdGenerator-ref="persistentIdGenerator" />
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
@@ -97,7 +96,6 @@
                     <property name="name" value="Test Default Service"/>
                     <property name="serviceId" value="testDefault"/>
                     <property name="evaluationOrder" value="2"/>
-                    <property name="usernameAttribute" value="(default)"/>
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -105,7 +103,10 @@
                     <property name="name" value="EduPerson Test Service"/>
                     <property name="serviceId" value="eduPersonTest"/>
                     <property name="evaluationOrder" value="3"/>
-                    <property name="usernameAttribute" value="eduPersonAffiliation"/>
+                    <property name="usernameAttributeProvider">
+                        <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                            c:usernameAttribute="eduPersonAffiliation" />
+                    </property>
                     <property name="attributeReleasePolicy">
                         <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
                     </property>
@@ -117,7 +118,10 @@
                     <property name="name" value="EduPerson Test Invalid Service"/>
                     <property name="serviceId" value="eduPersonTestInvalid"/>
                     <property name="evaluationOrder" value="4"/>
-                    <property name="usernameAttribute" value="nonExistentAttributeName"/>
+                    <property name="usernameAttributeProvider">
+                        <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                            c:usernameAttribute="nonExistentAttributeName" />
+                    </property>
                     <property name="attributeReleasePolicy">
                         <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
                             <property name="allowedAttributes">
@@ -134,7 +138,9 @@
                     <property name="name" value="Test Service anonymous"/>
                     <property name="serviceId" value="testAnonymous"/>
                     <property name="evaluationOrder" value="5"/>
-                    <property name="anonymousAccess" value="true" />
+                    <property name="usernameAttributeProvider">
+                        <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+                    </property>
                 </bean>
                 
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
