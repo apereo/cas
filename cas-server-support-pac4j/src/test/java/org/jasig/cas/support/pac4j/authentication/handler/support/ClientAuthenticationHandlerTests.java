@@ -48,8 +48,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  */
 public final class ClientAuthenticationHandlerTests {
 
-    private final static String CALLBACK_URL = "http://localhost:8080/callback";
-    private final static String ID = "123456789";
+    private static final String CALLBACK_URL = "http://localhost:8080/callback";
+    private static final String ID = "123456789";
     
     private MockFacebookClient fbClient;
 
@@ -75,6 +75,17 @@ public final class ClientAuthenticationHandlerTests {
         final HandlerResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getSimpleName() + "#" + ID, principal.getId());
+    }
+
+    @Test
+    public void testOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
+        this.handler.setTypedIdUsed(false);
+        final FacebookProfile facebookProfile = new FacebookProfile();
+        facebookProfile.setId(ID);
+        this.fbClient.setFacebookProfile(facebookProfile);
+        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final Principal principal = result.getPrincipal();
+        assertEquals(ID, principal.getId());
     }
 
     @Test(expected = FailedLoginException.class)

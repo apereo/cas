@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -46,6 +45,7 @@ import javax.persistence.Transient;
  *
  * @author Marvin S. Addison
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  */
 @Entity
 @Inheritance
@@ -87,21 +87,21 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     private boolean ssoEnabled = true;
 
-    private boolean anonymousAccess = false;
-
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
     /**
-     * Name of the user attribute that this service expects as the value of the username payload in the
-     * validate responses.
+     * Resolve the username for this service.
+     * By default the resolver is {@link DefaultRegisteredServiceUsernameProvider}.
      */
-    @Column(name = "username_attr", nullable = true, length = 256)
-    private String usernameAttribute = null;
+    @Lob
+    @Column(name = "username_attr", nullable = true)
+    private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
+        new DefaultRegisteredServiceUsernameProvider();
 
     /**
-     * The logout type of the service. As front channel SLO is an experimental feature,
-     * the default logout type is the back channel one.
+     * The logout type of the service. 
+     * The default logout type is the back channel one.
      */
     @Transient
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
@@ -115,14 +115,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "attribute_release")
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
     
-    public boolean isAnonymousAccess() {
-        return this.anonymousAccess;
-    }
-
-    public void setAnonymousAccess(final boolean anonymousAccess) {
-        this.anonymousAccess = anonymousAccess;
-    }
-
     public long getId() {
         return this.id;
     }
@@ -171,23 +163,33 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        return new EqualsBuilder().append(this.proxyPolicy, that.proxyPolicy)
-                .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
+        return new EqualsBuilder()
+                .append(this.proxyPolicy, that.proxyPolicy)
+                .append(this.enabled, that.enabled)
                 .append(this.evaluationOrder, that.evaluationOrder)
                 .append(this.ssoEnabled, that.ssoEnabled)
                 .append(this.description, that.description)
-                .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
-                .append(this.usernameAttribute, that.usernameAttribute).append(this.logoutType, that.logoutType)
+                .append(this.name, that.name)
+                .append(this.serviceId, that.serviceId)
+                .append(this.theme, that.theme)
+                .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
+                .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(7, 31).append(this.description)
-                .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
-                .append(this.ssoEnabled).append(this.anonymousAccess)
-                .append(this.evaluationOrder).append(this.usernameAttribute).append(this.logoutType)
+        return new HashCodeBuilder(7, 31)
+                .append(this.description)
+                .append(this.serviceId)
+                .append(this.name)
+                .append(this.theme)
+                .append(this.enabled)
+                .append(this.ssoEnabled)
+                .append(this.evaluationOrder)
+                .append(this.usernameAttributeProvider)
+                .append(this.logoutType)
                 .append(this.attributeReleasePolicy).toHashCode();
     }
 
@@ -234,28 +236,18 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.evaluationOrder;
     }
 
-    public String getUsernameAttribute() {
-        return this.usernameAttribute;
+    public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
+        return this.usernameAttributeProvider;
     }
 
     /**
-     * Sets the name of the user attribute to use as the username when providing usernames to this registered service.
+     * Sets the user attribute provider instance
+     * when providing usernames to this registered service.
      *
-     * <p>Note: The username attribute will have no affect on services that are marked for anonymous access.
-     *
-     * @param username attribute to release for this service that may be one of the following values:
-     * <ul>
-     *  <li>name of the attribute this service prefers to consume as username</li>.
-     *  <li><code>null</code> to enforce default CAS behavior</li>
-     * </ul>
-     * @see #isAnonymousAccess()
+     * @param usernameProvider the new username attribute
      */
-    public void setUsernameAttribute(final String username) {
-        if (StringUtils.isBlank(username)) {
-            this.usernameAttribute = null;
-        } else {
-            this.usernameAttribute = username;
-        }
+    public void setUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider usernameProvider) {
+        this.usernameAttributeProvider = usernameProvider;
     }
 
     /**
@@ -297,9 +289,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setServiceId(source.getServiceId());
         this.setSsoEnabled(source.isSsoEnabled());
         this.setTheme(source.getTheme());
-        this.setAnonymousAccess(source.isAnonymousAccess());
         this.setEvaluationOrder(source.getEvaluationOrder());
-        this.setUsernameAttribute(source.getUsernameAttribute());
+        this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
     }
@@ -327,9 +318,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("name", this.name);
         toStringBuilder.append("description", this.description);
         toStringBuilder.append("serviceId", this.serviceId);
-        toStringBuilder.append("usernameAttribute", this.usernameAttribute);
+        toStringBuilder.append("usernameAttributeProvider", this.usernameAttributeProvider);
         toStringBuilder.append("enabled", this.enabled);
         toStringBuilder.append("ssoEnabled", this.ssoEnabled);
+        toStringBuilder.append("theme", this.theme);
+        toStringBuilder.append("evaluationOrder", this.evaluationOrder);
+        toStringBuilder.append("logoutType", this.logoutType);
 
         return toStringBuilder.toString();
     }
