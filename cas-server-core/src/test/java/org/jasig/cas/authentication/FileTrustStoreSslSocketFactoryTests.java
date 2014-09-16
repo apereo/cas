@@ -40,6 +40,15 @@ public class FileTrustStoreSslSocketFactoryTests {
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
     }
 
+    @Test
+    public void testTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
+        final ClassPathResource resource = new ClassPathResource("truststore.jks");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
+    }
+
+
     @Test(expected = RuntimeException.class)
      public void testTrustStoreNotFound() throws Exception {
         new FileTrustStoreSslSocketFactory(new File("test.jks"), "changeit");
