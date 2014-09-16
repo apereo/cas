@@ -120,9 +120,9 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             casTrustStore.load(casStream, trustStorePassword.toCharArray());
 
             final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-            final X509KeyManager customKeyManager = getKeyManager("SunX509", casTrustStore, trustStorePassword.toCharArray());
+            final X509KeyManager customKeyManager = getKeyManager("PKIX", casTrustStore, trustStorePassword.toCharArray());
             final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
-            final X509TrustManager customTrustManager = getTrustManager("SunX509", casTrustStore);
+            final X509TrustManager customTrustManager = getTrustManager("PKIX", casTrustStore);
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
             final KeyManager[] keyManagers = {
