@@ -51,7 +51,6 @@
         p:order="0">
     <property name="basenames">
       <util:list>
-        <value>${cas.viewResolver.basename}</value>
         <value>protocol_views</value>
       </util:list>
     </property>
@@ -68,6 +67,12 @@
         p:suffix=".jsp"
         p:order="1"/>
 
+  <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
+        p:suffix=".jsp"
+        p:order="2"/>
+  
   <!--
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="3"
@@ -183,6 +188,7 @@
     <property name="viewResolvers">
       <util:list>
         <ref bean="viewResolver"/>
+        <ref bean="internalViewResolver"/>
       </util:list>
     </property>
   </bean>
@@ -220,7 +226,9 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name}" c:ticketRegistry-ref="ticketRegistry" />
+        c:ticketRegistry-ref="ticketRegistry"
+        p:casTicketSuffix="${host.name}"
+        p:viewPath="/WEB-INF/view/jsp/monitoring/viewStatistics.jsp" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"

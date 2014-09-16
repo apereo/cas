@@ -242,13 +242,6 @@
                 <maxmem>256m</maxmem>
                 <!-- aggregated reports for multi-module projects -->
                 <aggregate>true</aggregate>
-
-                <excludes>
-                    <!-- Exclude generated classes -->
-                    <exclude>**/*_.class</exclude>
-                    <exclude>**/*_.java</exclude>
-                </excludes>
-
             </configuration>
         </plugin>
 
@@ -898,6 +891,13 @@
         </exclusions>
       </dependency>
 
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -996,6 +996,20 @@
         <notice.skip>true</notice.skip>
         <versions.skip>true</versions.skip>
       </properties>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                  <log4j.configuration>file:noLogs.xml</log4j.configuration>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>ci</id>
@@ -1051,7 +1065,7 @@
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>4.3.2.Final</hibernate.validator.version>
     <hibernate.core.version>4.3.6.Final</hibernate.core.version>
-    <slf4j.version>1.7.5</slf4j.version>
+    <slf4j.version>1.7.7</slf4j.version>
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
@@ -1069,6 +1083,7 @@
     <joda-time.version>2.4</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
+    <reflections.version>0.9.8</reflections.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>

@@ -37,7 +37,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Start to publish lastest Javadoc to gh-pages...\n"
   
   echo -e "Invoking Maven to generate the site documentation...\n"
-  mvn site site:stage -q -ff -B -DskipTests=true
+  mvn site site:stage -q -ff -B -P nocheck
   
   echo -e "Copying the generated docs over...\n"
   cp -R target/staging $HOME/javadoc-latest
