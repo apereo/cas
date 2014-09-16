@@ -23,9 +23,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="serviceRegistryDao"
@@ -33,9 +35,26 @@
           p:connectionFactory-ref="provisioningConnectionFactory"
           p:searchRequest-ref="searchRequest" />
 
+
+    <util:list id="returnAttrbutes">
+        <value>objectClass</value>
+        <value>casServiceUrlPattern</value>
+        <value>uid</value>
+        <value>cn</value>
+        <value>casServiceEnabled</value>
+        <value>casServiceSsoEnabled</value>
+        <value>casServiceTheme</value>
+        <value>casServiceProxyPolicy</value>
+        <value>casUsernameAttributeProvider</value>
+        <value>casAttributeReleasePolicy</value>
+        <value>casEvaluationOrder</value>
+        <value>casRequiredHandlers</value>
+    </util:list>
+
     <bean id="searchRequest"
           class="org.ldaptive.SearchRequest"
-          p:baseDn="${ldap.service.baseDn}" />
+          p:baseDn="${ldap.service.baseDn}"
+          p:returnAttributes="#{returnAttrbutes.toArray(new java.lang.String[0])}" />
 
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="sAMAccountName" />

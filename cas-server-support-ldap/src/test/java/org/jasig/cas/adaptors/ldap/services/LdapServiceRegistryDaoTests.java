@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import static org.junit.Assert.*;
 import org.jasig.cas.authentication.AbstractLdapTests;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -29,14 +28,12 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapServiceRegistryDao} class.
@@ -47,9 +44,13 @@ import static org.junit.Assert.assertNotNull;
  * @author Marvin S. Addison
  */
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
-
-    @Autowired
     private LdapServiceRegistryDao dao;
+
+    public LdapServiceRegistryDaoTests() {
+        super("/ldap-context.xml", "/ldap-regservice-test.xml");
+        this.dao = this.context.getBean("serviceRegistryDao", LdapServiceRegistryDao.class);
+        this.dao.init();
+    }
 
     @Before
     public void setUp() throws Exception {
