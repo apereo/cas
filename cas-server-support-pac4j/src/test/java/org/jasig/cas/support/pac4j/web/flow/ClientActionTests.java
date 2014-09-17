@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
