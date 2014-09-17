@@ -1,28 +1,28 @@
 {
-    "id" : 155300241554632,
+    "@class" : "org.jasig.cas.services.RegexRegisteredService",
+    "id" : 103935657744185,
     "description" : null,
     "serviceId" : "testId",
     "name" : "testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter",
     "theme" : "testtheme",
     "proxyPolicy" : {
+        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
         "pattern" : "https://.+"
     },
-    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
     "enabled" : true,
     "ssoEnabled" : false,
-    "anonymousAccess" : false,
     "evaluationOrder" : 1000,
-    "usernameAttribute" : null,
+    "usernameAttributeProvider" : {
+        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+    },
     "logoutType" : "BACK_CHANNEL",
-    "requiredHandlers" : [ "h1", "h2" ],
-    "@class" : "java.util.HashSet",
+    "requiredHandlers" : [ "java.util.HashSet", [ "h1", "h2" ] ],
     "attributeReleasePolicy" : {
+        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
         "attributeFilter" : {
+            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
             "pattern" : "\\w+"
         },
-        "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
-        "allowedAttributes" : [ "1", "2", "3" ],
-        "@class" : "java.util.ArrayList"
-    },
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
+        "allowedAttributes" : [ "java.util.ArrayList", [ "1", "2", "3" ] ]
+    }
 }

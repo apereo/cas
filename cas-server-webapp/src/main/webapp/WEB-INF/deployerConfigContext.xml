@@ -152,45 +152,9 @@
     would probably want to replace this with the JPA-backed ServiceRegistry DAO
     The name of this bean should remain "serviceRegistryDao".
     +-->
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
-            p:registeredServices-ref="registeredServicesList" />
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
+          c:configDirectory="file:/etc/cas/json" />
 
-    <util:list id="registeredServicesList">
-    	<bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="0" p:name="Apereo" p:description="Apereo foundation sample service"
-              p:serviceId="^http://www.apereo.org" p:evaluationOrder="0"
-              p:theme="apereo" />
-
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-
-            <!--
-            <property name="proxyPolicy">
-                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                      c:pgtUrlPattern="^(https?)://.*" />
-            </property>
-            -->
-
-            <!-- 
-            <property name="attributeReleasePolicy">
-                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-                    <property name="allowedAttributes">
-                        <list>
-                            <value>uid</value>
-                            <value>groupMembership</value>
-                            <value>memberOf</value>
-                        </list>
-                    </property>
-                    <property name="attributeFilter">
-                        <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
-                    </property>
-                </bean>
-            </property>
-            -->  
-        </bean>
-    </util:list>
-    
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
     
     <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />

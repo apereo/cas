@@ -107,7 +107,6 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         this.prettyPrinter = prettyPrinter;
     }
 
-
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
@@ -165,7 +164,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
                 }
             } catch (final Exception e) {
                 errorCount++;
-                LOGGER.error("Error reading {}", file, e);
+                LOGGER.error("Error reading configuration file", e);
             } finally {
                 IOUtils.closeQuietly(in);
             }
