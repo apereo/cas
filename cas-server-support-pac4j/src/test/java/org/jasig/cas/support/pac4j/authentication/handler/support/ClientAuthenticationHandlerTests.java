@@ -77,6 +77,17 @@ public final class ClientAuthenticationHandlerTests {
         assertEquals(FacebookProfile.class.getSimpleName() + "#" + ID, principal.getId());
     }
 
+    @Test
+    public void testOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
+        this.handler.setTypedIdUsed(false);
+        final FacebookProfile facebookProfile = new FacebookProfile();
+        facebookProfile.setId(ID);
+        this.fbClient.setFacebookProfile(facebookProfile);
+        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final Principal principal = result.getPrincipal();
+        assertEquals(ID, principal.getId());
+    }
+
     @Test(expected = FailedLoginException.class)
     public void testNoProfile() throws GeneralSecurityException, PreventedException {
         this.handler.authenticate(this.clientCredential);
