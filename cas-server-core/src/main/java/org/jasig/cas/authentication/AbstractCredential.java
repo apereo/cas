@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.io.Serializable;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.

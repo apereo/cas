@@ -18,10 +18,12 @@
  */
 package org.jasig.cas.services.support;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import org.jasig.cas.services.AttributeFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
+
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
