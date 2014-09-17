@@ -35,7 +35,9 @@ jdk:
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-script: mvn clean package -Dlog4j.configuration=file:../travis/log4j.xml
+  - secure: "coaX+Oo3D3TZBrU7o0jHuHJEFkWfwBfa6Ri51NPiyXjXFy6PRQ58ZDh9Sul1Dnm5sWS46rK+b2MNCvEkYWng/jWcdoLTUwfPIXl5FWO/UZMtqVhsaf70Np+0nOvV8HcAC0yJMD2mWDs0U+nkd5uv094wM06VMhq15ZFvx5l3s0Y="
+  - secure: "KSzqvnwLeJDCW2A/1FXxLJMORMIbWfrxq0SHJZ7Feb/v6hmTxc9qiE6lpPuNZzcFiytK4ZgpcskF5xDkWj9yDLVqcYE1+Dal1GU2FIPuEtnMYD3EAAcQZHxU2N2suTi9ML5fRiq6oxADD3c9HYehitrm1wuDWF2hK0PqZ4/Qm8Y="
+script: mvn clean deploy --settings travis/settings.xml -Dlog4j.configuration=file:../travis/log4j.xml
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
