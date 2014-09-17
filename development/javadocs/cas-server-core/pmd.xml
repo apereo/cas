@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-09-17T13:21:27.529">
+<pmd version="4.3" timestamp="2014-09-17T15:04:46.878">
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/CentralAuthenticationServiceImpl.java">
 <violation beginline="264" endline="270" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/FileTrustStoreSslSocketFactory.java">
+<violation beginline="111" endline="143" begincolumn="20" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.authentication" class="FileTrustStoreSslSocketFactory" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused method parameters such as 'trustStrategy'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/HandlerResult.java">
