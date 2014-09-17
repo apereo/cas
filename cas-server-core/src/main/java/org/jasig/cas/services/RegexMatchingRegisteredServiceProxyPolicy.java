@@ -18,10 +18,12 @@
  */
 package org.jasig.cas.services;
 
-import com.sun.istack.NotNull;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.net.URL;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.net.URL;
 import java.util.regex.Pattern;
