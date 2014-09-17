@@ -33,6 +33,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
+ * Handles test cases for {@link JsonServiceRegistryDao}.
  * @author Misagh Moayyed
  * @since 4.1
  */
