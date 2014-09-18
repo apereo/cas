@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
  * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
@@ -27,11 +30,12 @@ package org.jasig.cas.util;
  * </p>
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
-public final class DefaultUniqueTicketIdGenerator implements
-    UniqueTicketIdGenerator {
+public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+
+    /** The logger instance. */
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     /** The numeric generator to generate the static part of the id. */
     private final NumericGenerator numericGenerator;
@@ -106,7 +110,7 @@ public final class DefaultUniqueTicketIdGenerator implements
     }
 
     @Override
-    public String getNewTicketId(final String prefix) {
+    public final String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
         final StringBuilder buffer = new StringBuilder(prefix.length() + 2
             + (this.suffix != null ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
