@@ -41,7 +41,8 @@ public class HostNameBasedUniqueTicketIdGeneratorTests {
     @Test
     public void testSuffix() {
         final String SUFFIX = "suffix";
-        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(SUFFIX);
-        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10, SUFFIX);
+        final String id = generator.getNewTicketId("test");
+        assertTrue(id.endsWith(SUFFIX));
     }
 }

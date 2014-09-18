@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -41,7 +41,7 @@ public class DefaultUniqueTicketIdGeneratorTests {
     @Test
     public void testSuffix() {
         final String SUFFIX = "suffix";
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, SUFFIX);
 
         assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
     }
