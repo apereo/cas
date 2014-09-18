@@ -56,16 +56,7 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      * @param maxLength the max length
      */
     public HostNameBasedUniqueTicketIdGenerator(final int maxLength) {
-        super(maxLength, prepareTicketSuffix(null));
-    }
-
-    /**
-     * Instantiates a new Host name based unique ticket id generator.
-     *
-     * @param suffix the suffix
-     */
-    public HostNameBasedUniqueTicketIdGenerator(final String suffix) {
-        super(prepareTicketSuffix(suffix));
+        super(maxLength);
     }
 
     /**
@@ -75,26 +66,24 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      * @param suffix the suffix
      */
     public HostNameBasedUniqueTicketIdGenerator(final int maxLength, final String suffix) {
-        super(maxLength, prepareTicketSuffix(suffix));
+        super(maxLength, suffix);
     }
 
-
-    /**
-     * Prepare ticket suffix.
-     *
-     * @param suffix the suffix
-     */
-    private static String prepareTicketSuffix(final String suffix) {
+    @Override
+    protected void setSuffix(final String suffix) {
         if (StringUtils.isNotBlank(suffix)) {
-            return suffix;
+            super.setSuffix(suffix);
+            return;
         }
 
         try {
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
+
             if (hostName.indexOf(".") > 0) {
-                return hostName.substring(0, hostName.indexOf("."));
+                super.setSuffix(hostName.substring(0, hostName.indexOf(".")));
+            } else {
+                super.setSuffix(hostName);
             }
-            return hostName;
         } catch (final UnknownHostException e) {
             throw new RuntimeException("Host name could not be determined automatically for the ticket suffix.", e);
         }
