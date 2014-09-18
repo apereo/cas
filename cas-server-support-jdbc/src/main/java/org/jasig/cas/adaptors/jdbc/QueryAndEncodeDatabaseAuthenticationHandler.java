@@ -19,7 +19,7 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
