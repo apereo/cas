@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** The logger instance. */
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The numeric generator to generate the static part of the id. */
     private final NumericGenerator numericGenerator;
