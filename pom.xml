@@ -1111,6 +1111,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <reflections.version>0.9.8</reflections.version>
+    <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
