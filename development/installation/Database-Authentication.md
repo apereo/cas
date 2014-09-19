@@ -52,6 +52,7 @@ defined in `deployerConfigContext.xml`.
 
 The following properties may be used as a starting point for connection pool configuration/tuning.
 
+{% highlight properties %}
     # == Basic database connection pool configuration ==
     database.driverClass=org.postgresql.Driver
     database.url=jdbc:postgresql://database.example.com/cas?ssl=true
@@ -90,12 +91,11 @@ The following properties may be used as a starting point for connection pool con
      
     # Amount of time in ms to wait between successive aquire retry attempts.
     database.pool.acquireRetryDelay=2000
-
+{% endhighlight %}
 
 
 ## Database Components
-CAS provides 3 components to accommodate different database authentication needs.
-
+CAS provides the followng components to accommodate different database authentication needs.
 
 ######`QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
@@ -106,10 +106,12 @@ for simple queries based solely on username and password and builds the SQL quer
 The following database schema for user data is assumed in the following two examples that leverage SQL queries
 to authenticate users.
 
+{% highlight sql %}
     create table users (
         username varchar(50) not null,
         password varchar(50) not null,
         active bit not null );
+{% endhighlight %}
 
 The following example uses an MD5 hash algorithm and searches exclusively for _active_ users.
 {% highlight xml %}
@@ -175,11 +177,11 @@ number of iterations as well as private salt.
 <bean id="dbAuthHandler"
       class="org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler"
       c:dataSource-ref="dataSource"
-	  c:algorithmName-ref="ALG"
-	  c:sql="SELECT * FROM table WHERE username = ?"
+      c:algorithmName-ref="ALG"
+      c:sql="SELECT * FROM table WHERE username = ?"
       p:staticSalt="private_salt"
       p:passwordFieldName="password"
-	  p:saltFieldName="public_salt"
+      p:saltFieldName="public_salt"
       p:numberOfIterationsFieldName="num_iter"
       p:numberOfIterations="10" />
 {% endhighlight %}
