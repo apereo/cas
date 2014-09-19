@@ -47,7 +47,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
      * values.
      */
-    protected String suffix = null;
+    private String suffix = null;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
