@@ -62,6 +62,7 @@
   <util:list id="packagesToScan">
     <value>org.jasig.cas.services</value>
     <value>org.jasig.cas.ticket</value>
+    <value>org.jasig.cas.adaptors.jdbc</value>
   </util:list>
 
   <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
@@ -72,7 +73,7 @@
     <property name="jpaProperties">
       <props>
         <prop key="hibernate.dialect">${database.dialect}</prop>
-        <prop key="hibernate.hbm2ddl.auto">update</prop>
+        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
         <prop key="hibernate.jdbc.batch_size">${database.batchSize}</prop>
       </props>
     </property>
