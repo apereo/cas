@@ -33,6 +33,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
 
     private String clientSecret;
     private String clientId;
+    private String approvalPrompt;
 
     public String getClientId() {
         return this.clientId;
@@ -50,11 +51,20 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         this.clientSecret = clientSecret;
     }
 
+    public String getApprovalPrompt() {
+        return this.approvalPrompt;
+    }
+
+    public void setApprovalPrompt(final String approvalPrompt) {
+        this.approvalPrompt = approvalPrompt;
+    }
+
     @Override
     public String toString() {
         final ToStringBuilder builder = new ToStringBuilder(this);
         builder.appendSuper(super.toString());
         builder.append("clientId", getClientId());
+        builder.append("approvalPrompt", getApprovalPrompt());
         return builder.toString();
     }
 }

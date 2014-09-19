@@ -43,7 +43,7 @@
     	
     <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
         c:maxLength="20" c:suffix="${host.name}" />
-	 
+ 
 	<util:map id="uniqueIdGeneratorsMap">
 		<entry
 			key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"

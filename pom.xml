@@ -547,6 +547,17 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-support-ldap</artifactId>
+        <version>${cas.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-support-oauth</artifactId>
+        <version>${cas.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.databind.version}</version>
