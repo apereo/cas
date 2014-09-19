@@ -159,3 +159,27 @@ ability to establish a connection with username/password credentials. This handl
       class="org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler"
       p:dataSource-ref="dataSource" />
 {% endhighlight %}
+
+
+######`QueryAndEncodeDatabaseAuthenticationHandler`
+A JDBC querying handler that will pull back the password and
+the private salt value for a user and validate the encoded
+password using the public salt value. Assumes everything
+is inside the same database table. Supports settings for
+number of iterations as well as private salt.
+
+{% highlight xml %}
+
+<util:constant id="ALG" static-field="org.apache.commons.codec.digest.SHA_512"/>
+
+<bean id="dbAuthHandler"
+      class="org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler"
+      c:dataSource-ref="dataSource"
+	  c:algorithmName-ref="ALG"
+	  c:sql="SELECT * FROM table WHERE username = ?"
+      p:staticSalt="private_salt"
+      p:passwordFieldName="password"
+	  p:saltFieldName="public_salt"
+      p:numberOfIterationsFieldName="num_iter"
+      p:numberOfIterations="10" />
+{% endhighlight %}
