@@ -182,5 +182,15 @@ public class JsonServiceRegistryDaoTests {
         assertTrue(r2 instanceof  RegexRegisteredService);
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testServiceWithInvalidFileName() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("hello@world:*");
+        r.setEnabled(true);
+        r.setEvaluationOrder(1000);
+
+        final RegisteredService r2 = this.dao.save(r);
+    }
 
 }
