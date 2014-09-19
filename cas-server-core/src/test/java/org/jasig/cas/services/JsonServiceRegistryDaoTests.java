@@ -25,9 +25,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -191,6 +193,28 @@ public class JsonServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
 
         final RegisteredService r2 = this.dao.save(r);
+    }
+
+    @Test
+    public void testServiceRemovals() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("testServiceType");
+        r.setEnabled(true);
+        r.setTheme("testtheme");
+        r.setEvaluationOrder(1000);
+
+        final List<RegisteredService> list = new ArrayList<>(5);
+        for (int i = 1; i < 5; i++) {
+            r.setId(i * 100);
+            list.add(this.dao.save(r));
+        }
+
+        for (final RegisteredService r2 : list) {
+            this.dao.delete(r2);
+            assertNull(this.dao.findServiceById(r2.getId()));
+        }
+
     }
 
 }

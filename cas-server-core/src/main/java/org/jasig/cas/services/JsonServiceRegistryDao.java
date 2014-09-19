@@ -98,6 +98,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public final RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
+            LOGGER.debug("Service id not set. Calculating id based on system time...");
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
         LockedOutputStream out = null;
@@ -106,13 +107,14 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             out = new LockedOutputStream(new FileOutputStream(f));
             this.registeredServiceJsonSerializer.toJson(out, service);
 
+            this.serviceMap.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
         } catch (final IOException e) {
             throw new RuntimeException("IO error opening file stream.", e);
         } finally {
             IOUtils.closeQuietly(out);
         }
-        load();
+
         return findServiceById(service.getId());
     }
 
@@ -120,7 +122,6 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public final synchronized boolean delete(final RegisteredService service) {
         serviceMap.remove(service.getId());
         final boolean result = makeFile(service).delete();
-        load();
         return result;
     }
 
