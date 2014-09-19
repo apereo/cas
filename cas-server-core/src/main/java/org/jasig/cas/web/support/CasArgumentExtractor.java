@@ -49,7 +49,7 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
         final String targetService = request.getParameter(CasProtocolConstants.PARAM_TARGET_SERVICE);
         final String method = request.getParameter(CasProtocolConstants.PARAM_METHOD);
         final String serviceToUse = StringUtils.hasText(targetService)
-                ? targetService : request.getParameter(CasProtocolConstants.PARAM_TARGET_SERVICE);
+                ? targetService : request.getParameter(CasProtocolConstants.PARAM_SERVICE);
 
         if (!StringUtils.hasText(serviceToUse)) {
             return null;

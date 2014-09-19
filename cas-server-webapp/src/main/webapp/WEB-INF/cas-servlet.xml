@@ -223,6 +223,7 @@
         p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"/>
 
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
+        c:argumentExtractor-ref="casArgumentExtractor"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
