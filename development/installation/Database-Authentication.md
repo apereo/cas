@@ -7,16 +7,16 @@ title: CAS - Database Authentication
 Database authentication components are enabled by including the following dependencies in the Maven WAR overlay:
 
 {% highlight xml %}
-    <dependency>
-         <groupId>org.jasig.cas</groupId>
-         <artifactId>cas-server-support-jdbc</artifactId>
-         <version>${cas.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>c3p0</groupId>
-        <artifactId>c3p0</artifactId>
-        <version>0.9.1.2</version>
-    </dependency>
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+<dependency>
+    <groupId>c3p0</groupId>
+    <artifactId>c3p0</artifactId>
+    <version>0.9.1.2</version>
+</dependency>
 {% endhighlight %}
 
 ## Connection Pooling
