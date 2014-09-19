@@ -19,8 +19,6 @@
 
 package org.jasig.cas.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -48,6 +46,7 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      */
     public HostNameBasedUniqueTicketIdGenerator() {
         super();
+        setSuffix(null);
     }
 
     /**
@@ -57,25 +56,11 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      */
     public HostNameBasedUniqueTicketIdGenerator(final int maxLength) {
         super(maxLength);
-    }
-
-    /**
-     * Instantiates a new Host name based unique ticket id generator.
-     *
-     * @param maxLength the max length
-     * @param suffix the suffix
-     */
-    public HostNameBasedUniqueTicketIdGenerator(final int maxLength, final String suffix) {
-        super(maxLength, suffix);
+        setSuffix(null);
     }
 
     @Override
     protected void setSuffix(final String suffix) {
-        if (StringUtils.isNotBlank(suffix)) {
-            super.setSuffix(suffix);
-            return;
-        }
-
         try {
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
 

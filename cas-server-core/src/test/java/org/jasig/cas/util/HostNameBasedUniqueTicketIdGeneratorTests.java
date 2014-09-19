@@ -37,12 +37,4 @@ public class HostNameBasedUniqueTicketIdGeneratorTests {
         final String id2 = generator.getNewTicketId("TEST");
         assertNotSame(id1, id2);
     }
-
-    @Test
-    public void testSuffix() {
-        final String SUFFIX = "suffix";
-        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10, SUFFIX);
-        final String id = generator.getNewTicketId("test");
-        assertTrue(id.endsWith(SUFFIX));
-    }
 }
