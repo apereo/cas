@@ -1,5 +1,6 @@
 org.jasig.cas
 org.jasig.cas.adaptors.generic
+org.jasig.cas.adaptors.jdbc
 org.jasig.cas.adaptors.ldap.services
 org.jasig.cas.adaptors.radius
 org.jasig.cas.adaptors.trusted.authentication.handler.support
