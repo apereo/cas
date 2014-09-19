@@ -18,15 +18,12 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,20 +38,6 @@ import java.util.Map;
 public final class SamlService extends AbstractWebApplicationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
-
-    /** Constant representing service. */
-    private static final String CONST_PARAM_SERVICE = "TARGET";
-
-    /** Constant representing artifact. */
-    private static final String CONST_PARAM_TICKET = "SAMLart";
-
-    private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
-
-    private static final String CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE = "</AssertionArtifact>";
-
-    private static final String CONST_START_ARTIFACT_XML_TAG = "<samlp:AssertionArtifact>";
-
-    private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
     private String requestId;
 
@@ -80,7 +63,7 @@ public final class SamlService extends AbstractWebApplicationService {
      * @param artifactId the artifact id
      * @param requestId the request id
      */
-    protected SamlService(final String id, final String originalUrl,
+    public SamlService(final String id, final String originalUrl,
             final String artifactId, final String requestId) {
         super(id, originalUrl, artifactId);
         this.requestId = requestId;
@@ -90,110 +73,16 @@ public final class SamlService extends AbstractWebApplicationService {
         return this.requestId;
     }
 
-    /**
-     * Creates the SAML service from the request.
-     *
-     * @param request the request
-     * @return the SAML service
-     */
-    public static SamlService createServiceFrom(
-            final HttpServletRequest request) {
-        final String service = request.getParameter(CONST_PARAM_SERVICE);
-        final String artifactId;
-        final String requestBody = getRequestBody(request);
-        final String requestId;
-
-        if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            return null;
-        }
-
-        final String id = cleanupUrl(service);
-
-        if (StringUtils.hasText(requestBody)) {
-
-            final String tagStart;
-            final String tagEnd;
-            if (requestBody.contains(CONST_START_ARTIFACT_XML_TAG)) {
-                tagStart = CONST_START_ARTIFACT_XML_TAG;
-                tagEnd = CONST_END_ARTIFACT_XML_TAG;
-            } else {
-                tagStart = CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE;
-                tagEnd = CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE;
-            }
-            final int startTagLocation = requestBody.indexOf(tagStart);
-            final int artifactStartLocation = startTagLocation + tagStart.length();
-            final int endTagLocation = requestBody.indexOf(tagEnd);
-
-            artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
-
-            // is there a request id?
-            requestId = extractRequestId(requestBody);
-        } else {
-            artifactId = null;
-            requestId = null;
-        }
-
-        LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
-        LOGGER.debug("Request Body: {}", requestBody);
-        LOGGER.debug("Extracted ArtifactId: {}", artifactId);
-        LOGGER.debug("Extracted Request Id: {}", requestId);
-
-        return new SamlService(id, service, artifactId, requestId);
-    }
 
     @Override
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put(CONST_PARAM_TICKET, ticketId);
-        parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());
+        parameters.put(SamlProtocolConstants.SAML1_PARAM_TICKET, ticketId);
+        parameters.put(SamlProtocolConstants.SAML1_PARAM_SERVICE, getOriginalUrl());
 
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
-    /**
-     * Extract request id from the body.
-     *
-     * @param requestBody the request body
-     * @return the string
-     */
-    protected static String extractRequestId(final String requestBody) {
-        if (!requestBody.contains("RequestID")) {
-            return null;
-        }
 
-        try {
-            final int position = requestBody.indexOf("RequestID=\"") + 11;
-            final int nextPosition = requestBody.indexOf("\"", position);
-
-            return requestBody.substring(position,  nextPosition);
-        } catch (final Exception e) {
-            LOGGER.debug("Exception parsing RequestID from request.", e);
-            return null;
-        }
-    }
-
-    /**
-     * Gets the request body from the request.
-     *
-     * @param request the request
-     * @return the request body
-     */
-    protected static String getRequestBody(final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = request.getReader();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-            return builder.toString();
-        } catch (final Exception e) {
-            return null;
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
-    }
 }

@@ -18,10 +18,13 @@
  */
 package org.jasig.cas.web.support;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implements the traditional CAS2 protocol.
@@ -33,6 +36,32 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return createServiceFrom(request);
     }
+
+    /**
+     * Creates the service from the request.
+     *
+     * @param request the request
+     * @return the simple web application service impl
+     */
+    protected SimpleWebApplicationServiceImpl createServiceFrom(final HttpServletRequest request) {
+        final String targetService = request.getParameter(CasProtocolConstants.PARAM_TARGET_SERVICE);
+        final String method = request.getParameter(CasProtocolConstants.PARAM_METHOD);
+        final String serviceToUse = StringUtils.hasText(targetService)
+                ? targetService : request.getParameter(CasProtocolConstants.PARAM_TARGET_SERVICE);
+
+        if (!StringUtils.hasText(serviceToUse)) {
+            return null;
+        }
+
+        final String id = cleanupUrl(serviceToUse);
+        final String artifactId = request.getParameter(CasProtocolConstants.PARAM_TICKET);
+
+        return new SimpleWebApplicationServiceImpl(id, serviceToUse,
+                artifactId, "POST".equals(method) ? Response.ResponseType.POST
+                : Response.ResponseType.REDIRECT);
+    }
+
+
 }

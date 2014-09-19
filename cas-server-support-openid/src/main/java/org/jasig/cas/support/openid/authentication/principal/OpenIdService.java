@@ -18,11 +18,6 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
@@ -36,7 +31,9 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Scott Battaglia
@@ -48,8 +45,6 @@ public final class OpenIdService extends AbstractWebApplicationService {
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
-
-    private static final String CONST_PARAM_SERVICE = "openid.return_to";
 
     private final String identity;
 
@@ -67,7 +62,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
      * @param signature the signature
      * @param parameterList the parameter list
      */
-    protected OpenIdService(final String id, final String originalUrl,
+    public OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
             final String signature, final ParameterList parameterList) {
         super(id, originalUrl, artifactId);
@@ -159,29 +154,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return true;
     }
 
-    /**
-     * Creates the service from the request.
-     *
-     * @param request the request
-     * @return the OpenID service
-     */
-    public static OpenIdService createServiceFrom(
-            final HttpServletRequest request) {
-        final String service = request.getParameter(CONST_PARAM_SERVICE);
-        final String openIdIdentity = request.getParameter("openid.identity");
-        final String signature = request.getParameter("openid.sig");
 
-        if (openIdIdentity == null || !StringUtils.hasText(service)) {
-            return null;
-        }
-
-        final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter("openid.assoc_handle");
-        final ParameterList paramList = new ParameterList(request.getParameterMap());
-
-        return new OpenIdService(id, service, artifactId, openIdIdentity,
-                signature, paramList);
-    }
 
     @Override
     public int hashCode() {

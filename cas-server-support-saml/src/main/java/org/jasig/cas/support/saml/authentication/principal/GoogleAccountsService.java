@@ -18,9 +18,13 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.util.SamlUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -28,22 +32,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.util.SamlUtils;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -62,9 +50,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
     'p'};
 
-    private static final String CONST_PARAM_SERVICE = "SAMLRequest";
-
-    private static final String CONST_RELAY_STATE = "RelayState";
 
     private static final String TEMPLATE_SAML_RESPONSE =
             "<samlp:Response ID=\"<RESPONSE_ID>\" IssueInstant=\"<ISSUE_INSTANT>\" Version=\"2.0\""
@@ -121,7 +106,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param publicKey the public key
      * @param servicesManager the services manager
      */
-    protected GoogleAccountsService(final String id, final String relayState, final String requestId,
+    public GoogleAccountsService(final String id, final String relayState, final String requestId,
             final PrivateKey privateKey, final PublicKey publicKey, final ServicesManager servicesManager) {
         this(id, id, null, relayState, requestId, privateKey, publicKey, servicesManager);
     }
@@ -150,38 +135,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.servicesManager = servicesManager;
     }
 
-    /**
-     * Creates the service from request.
-     *
-     * @param request the request
-     * @param privateKey the private key
-     * @param publicKey the public key
-     * @param servicesManager the services manager
-     * @return the google accounts service
-     */
-    public static GoogleAccountsService createServiceFrom(
-            final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey, final ServicesManager servicesManager) {
-        final String relayState = request.getParameter(CONST_RELAY_STATE);
-
-        final String xmlRequest = decodeAuthnRequestXML(request.getParameter(CONST_PARAM_SERVICE));
-
-        if (!StringUtils.hasText(xmlRequest)) {
-            return null;
-        }
-
-        final Document document = SamlUtils.constructDocumentFromXmlString(xmlRequest);
-
-        if (document == null) {
-            return null;
-        }
-
-        final String assertionConsumerServiceUrl = document.getRootElement().getAttributeValue("AssertionConsumerServiceURL");
-        final String requestId = document.getRootElement().getAttributeValue("ID");
-
-        return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, servicesManager);
-    }
 
     @Override
     public Response getResponse(final String ticketId) {
@@ -253,106 +206,4 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
         return String.valueOf(chars);
     }
-
-    /**
-     * Decode authn request xml.
-     *
-     * @param encodedRequestXmlString the encoded request xml string
-     * @return the request
-     */
-    private static String decodeAuthnRequestXML(
-            final String encodedRequestXmlString) {
-        if (encodedRequestXmlString == null) {
-            return null;
-        }
-
-        final byte[] decodedBytes = base64Decode(encodedRequestXmlString);
-
-        if (decodedBytes == null) {
-            return null;
-        }
-
-        final String inflated = inflate(decodedBytes);
-
-        if (inflated != null) {
-            return inflated;
-        }
-
-        return zlibDeflate(decodedBytes);
-    }
-
-    /**
-     * Deflate the given bytes using zlib.
-     *
-     * @param bytes the bytes
-     * @return the converted string
-     */
-    private static String zlibDeflate(final byte[] bytes) {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final InflaterInputStream iis = new InflaterInputStream(bais);
-        final byte[] buf = new byte[1024];
-
-        try {
-            int count = iis.read(buf);
-            while (count != -1) {
-                baos.write(buf, 0, count);
-                count = iis.read(buf);
-            }
-            return new String(baos.toByteArray());
-        } catch (final Exception e) {
-            return null;
-        } finally {
-            IOUtils.closeQuietly(iis);
-        }
-    }
-
-    /**
-     * Base64 decode.
-     *
-     * @param xml the xml
-     * @return the byte[]
-     */
-    private static byte[] base64Decode(final String xml) {
-        try {
-            final byte[] xmlBytes = xml.getBytes("UTF-8");
-            return Base64.decodeBase64(xmlBytes);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Inflate the given byte array.
-     *
-     * @param bytes the bytes
-     * @return the string
-     */
-    private static String inflate(final byte[] bytes) {
-        final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[10000];
-
-        final byte[] extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-
-        inflater.setInput(extendedBytes);
-
-        try {
-            final int resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-
-            if (!inflater.finished()) {
-                throw new RuntimeException("buffer not large enough.");
-            }
-
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, "UTF-8");
-        } catch (final DataFormatException e) {
-            return null;
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("Cannot find encoding: UTF-8", e);
-        }
-    }
-   
 }
