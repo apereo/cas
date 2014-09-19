@@ -20,6 +20,8 @@ package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +44,7 @@ public class OpenIdServiceTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdServiceTests.class);
 
-    private OpenIdService openIdService;
+    private WebApplicationService openIdService;
     private ApplicationContext context;
     private CentralAuthenticationService cas;
     private ServerManager manager;
@@ -67,7 +69,7 @@ public class OpenIdServiceTests {
 
     @Test
     public void testGetResponse() {
-        openIdService = OpenIdService.createServiceFrom(request);
+        openIdService = new OpenIdArgumentExtractor().extractService(request);
         when(context.getBean("serverManager")).thenReturn(manager);
         when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         final Response response = this.openIdService.getResponse("test");
@@ -89,7 +91,7 @@ public class OpenIdServiceTests {
     @Test
     public void testSmartModeGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        openIdService = new OpenIdArgumentExtractor().extractService(request);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 60);
@@ -117,7 +119,7 @@ public class OpenIdServiceTests {
     @Test
     public void testExpiredAssociationGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        openIdService = new OpenIdArgumentExtractor().extractService(request);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 2);
@@ -153,8 +155,8 @@ public class OpenIdServiceTests {
         request2.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request2.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
 
-        final OpenIdService o1 = OpenIdService.createServiceFrom(request1);
-        final OpenIdService o2 = OpenIdService.createServiceFrom(request2);
+        final WebApplicationService o1 = new OpenIdArgumentExtractor().extractService(request1);
+        final WebApplicationService o2 = new OpenIdArgumentExtractor().extractService(request2);
 
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(null));
