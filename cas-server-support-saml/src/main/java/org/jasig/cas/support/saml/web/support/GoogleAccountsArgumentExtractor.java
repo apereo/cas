@@ -125,9 +125,9 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     protected GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
             final PublicKey publicKey, final ServicesManager servicesManager) {
-        final String relayState = request.getParameter(SamlProtocolConstants.CONST_RELAY_STATE);
+        final String relayState = request.getParameter(SamlProtocolConstants.SAML2_RELAY_STATE);
 
-        final String xmlRequest = decodeAuthnRequestXML(request.getParameter(SamlProtocolConstants.CONST_PARAM_SERVICE));
+        final String xmlRequest = decodeAuthnRequestXML(request.getParameter(SamlProtocolConstants.SAML2_PARAM_SERVICE));
 
         if (!StringUtils.hasText(xmlRequest)) {
             return null;
@@ -220,7 +220,7 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
      * @param bytes the bytes
      * @return the string
      */
-    private static String inflate(final byte[] bytes) {
+    private String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
         final byte[] xmlMessageBytes = new byte[10000];
 
