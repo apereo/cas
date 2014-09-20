@@ -34,6 +34,25 @@ public final class PrefixSuffixPrincipalNameTransformer implements PrincipalName
 
     private String suffix;
 
+    /**
+     * Instantiates a new Prefix suffix principal name transformer.
+     */
+    public PrefixSuffixPrincipalNameTransformer() {
+        this.prefix = null;
+        this.suffix = null;
+    }
+
+    /**
+     * Instantiates a new Prefix suffix principal name transformer.
+     *
+     * @param prefix the prefix
+     * @param suffix the suffix
+     */
+    public PrefixSuffixPrincipalNameTransformer(final String prefix, final String suffix) {
+        setPrefix(prefix);
+        setSuffix(suffix);
+    }
+
     @Override
     public String transform(final String formUserId) {
         final StringBuilder stringBuilder = new StringBuilder();
