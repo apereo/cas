@@ -188,7 +188,7 @@ public class JsonServiceRegistryDaoTests {
     public void testServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
-        r.setName("hello@world:*");
+        r.setName("hell/o@world:*");
         r.setEnabled(true);
         r.setEvaluationOrder(1000);
 
@@ -197,15 +197,14 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void testServiceRemovals() {
-        final RegexRegisteredService r = new RegexRegisteredService();
-        r.setServiceId("^https://.+");
-        r.setName("testServiceType");
-        r.setEnabled(true);
-        r.setTheme("testtheme");
-        r.setEvaluationOrder(1000);
-
         final List<RegisteredService> list = new ArrayList<>(5);
         for (int i = 1; i < 5; i++) {
+            final RegexRegisteredService r = new RegexRegisteredService();
+            r.setServiceId("^https://.+");
+            r.setName("testServiceType");
+            r.setEnabled(true);
+            r.setTheme("testtheme");
+            r.setEvaluationOrder(1000);
             r.setId(i * 100);
             list.add(this.dao.save(r));
         }
