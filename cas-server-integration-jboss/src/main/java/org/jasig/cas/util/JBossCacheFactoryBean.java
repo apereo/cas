@@ -31,10 +31,14 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 
 /**
+ * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
+ * Please use other means of confguring your distributed ticket registry, such as
+ * ehcache or memcached integrations with CAS.
  * @author Scott Battaglia
  * @since 3.0.5
  *
  */
+@Deprecated
 public final class JBossCacheFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
