@@ -323,7 +323,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
-        toStringBuilder.append("logoutType", this.logoutType);
+        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
 
         return toStringBuilder.toString();
     }

@@ -41,7 +41,41 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of <code>ServiceRegistryDao</code> that reads services definition from JSON
- * configuration file at the Spring Application Context initialization time.
+ * configuration file at the Spring Application Context initialization time. JSON files are
+ * expected to be found inside a directory location and this DAO will recursively look through
+ * the directory structure to find relevant JSON files. Files are expected to have the
+ * {@value #FILE_EXTENSION} extension. An example of the JSON file is included here:
+ *
+ * <pre>
+ {
+     "@class" : "org.jasig.cas.services.RegexRegisteredService",
+     "id" : 103935657744185,
+     "description" : "This is the application description",
+     "serviceId" : "https://app.school.edu",
+     "name" : "testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter",
+     "theme" : "testtheme",
+     "proxyPolicy" : {
+        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+        "pattern" : "https://.+"
+     },
+     "enabled" : true,
+     "ssoEnabled" : false,
+     "evaluationOrder" : 1000,
+     "usernameAttributeProvider" : {
+        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+     },
+     "logoutType" : "BACK_CHANNEL",
+     "requiredHandlers" : [ "java.util.HashSet", [ "handler1", "handler2" ] ],
+     "attributeReleasePolicy" : {
+        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+        "attributeFilter" : {
+            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
+            "pattern" : "\\w+"
+        },
+        "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "sn", "cn" ] ]
+     }
+ }
+ * </pre>
  *
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
@@ -87,7 +121,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
-     * stored.
+     * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
      *
      * @param configDirectory the config directory where service registry files can be found.
      */
@@ -120,9 +154,19 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public final synchronized boolean delete(final RegisteredService service) {
-        serviceMap.remove(service.getId());
-        final boolean result = makeFile(service).delete();
-        return result;
+        try {
+            final File f = makeFile(service);
+            final boolean result = f.delete();
+            if (!result) {
+                LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
+            } else {
+                serviceMap.remove(service.getId());
+                LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
+            }
+            return result;
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
