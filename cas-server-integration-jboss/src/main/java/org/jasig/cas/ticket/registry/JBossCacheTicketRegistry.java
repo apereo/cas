@@ -18,25 +18,28 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.jasig.cas.ticket.Ticket;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
+ * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
+ * Please use other means of confguring your distributed ticket registry, such as
+ * ehcache or memcached integrations with CAS.
+ *
+ * <p>Implementation of TicketRegistry that is backed by a JBoss TreeCache.
  * @author Scott Battaglia
  * @since 3.1
- *
  */
+@Deprecated
 public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry {
 
     /** Indicator of what tree branch to put tickets in. */
