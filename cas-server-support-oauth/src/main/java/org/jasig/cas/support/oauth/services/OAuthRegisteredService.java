@@ -29,7 +29,7 @@ import org.jasig.cas.services.RegexRegisteredService;
  */
 public final class OAuthRegisteredService extends RegexRegisteredService {
 
-    private static final long serialVersionUID = 6784839055053605375L;
+    private static final long serialVersionUID = 5318897374067731021L;
 
     private String clientSecret;
 
