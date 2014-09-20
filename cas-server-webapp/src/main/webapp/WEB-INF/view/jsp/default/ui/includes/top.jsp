@@ -33,7 +33,7 @@
   
   <title>CAS &#8211; Central Authentication Service</title>
   
-  <spring:theme code="standard.custom.css.file" var="customCssFile" />
+  <spring:theme code="standard.custom.css.file" var="customCssFile" text="/css/cas.css"  />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
   
