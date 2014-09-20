@@ -165,7 +165,7 @@
               p:id="10000001" p:name="HTTPS and IMAPS" p:description="Allows HTTPS and IMAPS protocols"
               p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001">
 
-            <!--
+        <!--
             <property name="proxyPolicy">
                 <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
                       c:pgtUrlPattern="^https://.*" />
