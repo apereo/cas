@@ -64,7 +64,6 @@ public interface JsonSerializer<T> extends Serializable {
      * Serialize the given object to its JSON equivalent to the output stream.
      * @param out the output stream
      * @param object the object to serialize
-     * @return JSON formatted string
      */
     void toJson(OutputStream out, T object);
 
@@ -72,7 +71,6 @@ public interface JsonSerializer<T> extends Serializable {
      * Serialize the given object to its JSON equivalent to the output writer.
      * @param out the output writer
      * @param object the object to serialize
-     * @return JSON formatted string
      */
     void toJson(Writer out, T object);
 
@@ -80,7 +78,6 @@ public interface JsonSerializer<T> extends Serializable {
      * Serialize the given object to its JSON equivalent to the output file.
      * @param out the output file
      * @param object the object to serialize
-     * @return JSON formatted string
      */
     void toJson(File out, T object);
 }
