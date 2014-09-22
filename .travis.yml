@@ -35,8 +35,8 @@ jdk:
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-  - secure: "b5FqileMNbcwC1YGOitbgvof43tOmIQv6jxlLdwnIy1efZRSflOPN9RZjdXMtaux79fPG4HH9HKDO+Rjq8axkNtybMF0JcLcCnGFLpdav67daQ1ZxHmZWNUW0YmUdyhLCB0FttXngIh1s5hiJRqt8dbPK1oiw9FmFzBu9MSK2mA="
-  - secure: "UtW3TmcKNUODpoyuqkkTrr/y5Bwr0oC6bIceDIzOhUa/W9fIq4b1S31hgA4OCHiPKb6pFbSQ2CmH885w5vcUEZ4cmpB5BAyczrAAvxna3arYQTAWF4fs84CUTq/X1oxiPs++aWRyDQVXZVXaiDDfKxyFuZlddXq5T2nRJjMIaJg="
+  - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
+  - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
 script: mvn clean package -Dlog4j.configuration=file:../travis/log4j.xml
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
