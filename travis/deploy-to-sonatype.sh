@@ -20,5 +20,5 @@
 
 # Only invoke the deployment to Sonatype when it's not a PR and only for master
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
-  mvn deploy --settings travis/settings.xml
+  mvn deploy --settings ./travis/settings.xml
 fi 
