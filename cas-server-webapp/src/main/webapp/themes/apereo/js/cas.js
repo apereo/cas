@@ -19,7 +19,10 @@
 
 $(document).ready(function(){
     //focus username field
-    $("input:visible:enabled:first").focus();
+    if ($(":focus").length === 0){
+      $("input:visible:enabled:first").focus();
+    }
+
     //flash error box
     $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
 
