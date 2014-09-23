@@ -160,7 +160,6 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/authorizationFailure.html</url-pattern>
   </servlet-mapping>
-
   <!-- REST support if cas-server-extension-rest is included -->
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
