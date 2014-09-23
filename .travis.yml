@@ -35,12 +35,15 @@ jdk:
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-  - secure: "coaX+Oo3D3TZBrU7o0jHuHJEFkWfwBfa6Ri51NPiyXjXFy6PRQ58ZDh9Sul1Dnm5sWS46rK+b2MNCvEkYWng/jWcdoLTUwfPIXl5FWO/UZMtqVhsaf70Np+0nOvV8HcAC0yJMD2mWDs0U+nkd5uv094wM06VMhq15ZFvx5l3s0Y="
-  - secure: "KSzqvnwLeJDCW2A/1FXxLJMORMIbWfrxq0SHJZ7Feb/v6hmTxc9qiE6lpPuNZzcFiytK4ZgpcskF5xDkWj9yDLVqcYE1+Dal1GU2FIPuEtnMYD3EAAcQZHxU2N2suTi9ML5fRiq6oxADD3c9HYehitrm1wuDWF2hK0PqZ4/Qm8Y="
-script: mvn clean package -Dlog4j.configuration=file:../travis/log4j.xml
+  - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
+  - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
+install:
+- mvn install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
+script:
+- mvn clean package -Dlog4j.configuration=file:../travis/log4j.xml
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
