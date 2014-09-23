@@ -192,7 +192,7 @@
       </util:list>
     </property>
   </bean>
-  
+
   <!--  CAS 2 Protocol service/proxy validation -->     
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"

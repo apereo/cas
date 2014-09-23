@@ -100,10 +100,6 @@
     <bean id="supportsTrustStoreSslSocketFactoryHttpClient" parent="httpClient"
           c:sslSocketFactory-ref="trustStoreSslSocketFactory" />
 
-    <bean id="persistentIdGenerator"
-          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          p:salt="casrocks"/>
-
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
@@ -126,7 +122,6 @@
         <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
         <constructor-arg index="7" ref="servicesManager"/>
         <constructor-arg index="8" ref="logoutManager"/>
-        <property name="persistentIdGenerator" ref="persistentIdGenerator"/>
     </bean>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>

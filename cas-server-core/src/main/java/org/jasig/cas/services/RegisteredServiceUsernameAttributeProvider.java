@@ -16,24 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.cas.services;
 
-$(document).ready(function(){
-    //focus username field
-    if ($(":focus").length === 0){
-      $("input:visible:enabled:first").focus();
-    }
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 
-    //flash error box
-    $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
+import java.io.Serializable;
 
-    //flash success box
-    $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
-    //flash confirm box
-    $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
-    /* 
-     * Using the JavaScript Debug library, you may issue log messages such as: 
-     * debug.log("Welcome to Central Authentication Service");
+/**
+ * Strategy interface to define what username attribute should
+ * be returned for a given registered service.
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public interface RegisteredServiceUsernameAttributeProvider extends Serializable {
+    /**
+     * Resolve the username that is to be returned to CAS clients.
+     *
+     * @param principal the principal
+     * @param service the service for which attribute should be calculated
+     * @return the username value configured for this service
      */
-});
+    String resolveUsername(Principal principal, Service service);
+}
