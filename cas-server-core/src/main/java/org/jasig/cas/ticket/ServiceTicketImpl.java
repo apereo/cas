@@ -23,10 +23,12 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Column;
+
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -40,11 +42,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="SERVICETICKET")
-public final class ServiceTicketImpl extends AbstractTicket implements
+public final class ServiceTicketImpl extends AbstractServiceTicket implements
     ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;
+
+    /** The TicketGrantingTicket this is associated with. */
+    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /** The service this ticket is valid for. */
     @Lob
@@ -54,9 +60,6 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     /** Is this service ticket the result of a new login. */
     @Column(name="FROM_NEW_LOGIN", nullable=false)
     private boolean fromNewLogin;
-
-    @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
-    private Boolean grantedTicketAlready = false;
 
     /**
      * Instantiates a new service ticket impl.
@@ -71,7 +74,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * creation was from a new Login or not.
      *
      * @param id the unique identifier for the ticket.
-     * @param ticket the TicketGrantingTicket parent.
+     * @param ticketGrantingTicket the TicketGrantingTicket parent.
      * @param service the service this ticket is for.
      * @param fromNewLogin is it from a new login.
      * @param policy the expiration policy for the Ticket.
@@ -79,13 +82,14 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * Service are null.
      */
     protected ServiceTicketImpl(final String id,
-        final TicketGrantingTicketImpl ticket, final Service service,
+        final TicketGrantingTicket ticketGrantingTicket, final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
-        super(id, ticket, policy);
+        super(id, policy);
 
-        Assert.notNull(ticket, "ticket cannot be null");
+        Assert.notNull(ticketGrantingTicket, "ticket cannot be null");
         Assert.notNull(service, "service cannot be null");
 
+        this.ticketGrantingTicket = ticketGrantingTicket;
         this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
@@ -132,24 +136,12 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 .isEquals();
     }
 
-    @Override
-    public TicketGrantingTicket grantTicketGrantingTicket(
-        final String id, final Authentication authentication,
-        final ExpirationPolicy expirationPolicy) {
-        synchronized (this) {
-            if(this.grantedTicketAlready) {
-                throw new IllegalStateException(
-                    "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
-            }
-            this.grantedTicketAlready = true;
-        }
-
-        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
-            authentication, expirationPolicy);
-    }
-
     public Authentication getAuthentication() {
         return null;
+    }
+
+    public TicketGrantingTicket getGrantingTicket() {
+        return this.ticketGrantingTicket;
     }
 
 }

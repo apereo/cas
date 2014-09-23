@@ -36,11 +36,7 @@ import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.*;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -150,10 +146,16 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         final Map ticketIdGenForServiceMock = mock(Map.class);
         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(true);
         when(ticketIdGenForServiceMock.get(any())).thenReturn(new DefaultUniqueTicketIdGenerator());
+
+        final TicketGenerator ticketGenerator = new TicketGeneratorImpl(mock(UniqueTicketIdGenerator.class),
+                ticketIdGenForServiceMock, mock(ExpirationPolicy.class), mock(ExpirationPolicy.class));
         
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
+        /*this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
-                mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+                mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));*/
+
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, ticketGenerator,
+                mock(AuthenticationManager.class), smMock, mock(LogoutManager.class));
     }
 
     @Test(expected=InvalidTicketException.class)

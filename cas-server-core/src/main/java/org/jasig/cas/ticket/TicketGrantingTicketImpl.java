@@ -20,20 +20,18 @@ package org.jasig.cas.ticket;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -48,13 +46,17 @@ import java.util.Map;
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
-public final class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
+public final class TicketGrantingTicketImpl extends AbstractTicketGrantingTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -8608149809180911599L;
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
+
+    /** The TicketGrantingTicket this is associated with. */
+    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
@@ -64,11 +66,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
     private Boolean expired = false;
-
-    /** The services associated to this ticket. */
-    @Lob
-    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
-    private final HashMap<String, Service> services = new HashMap<String, Service>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
@@ -86,17 +83,18 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
      * @param id the id of the Ticket
-     * @param ticketGrantingTicket the parent ticket
+     * @param ticketGrantingTicket the parent TicketGrantingTicket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
      */
     public TicketGrantingTicketImpl(final String id,
         final TicketGrantingTicket ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
-        super(id, ticketGrantingTicket, policy);
+        super(id, policy);
 
         Assert.notNull(authentication, "authentication cannot be null");
 
+        this.ticketGrantingTicket = ticketGrantingTicket;
         this.authentication = authentication;
     }
 
@@ -119,53 +117,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Override
     public Authentication getAuthentication() {
         return this.authentication;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>The state of the ticket is affected by this operation and the
-     * ticket will be considered used. The state update subsequently may
-     * impact the ticket expiration policy in that, depending on the policy
-     * configuration, the ticket may be considered expired.
-     */
-    @Override
-    public synchronized ServiceTicket grantServiceTicket(final String id,
-        final Service service, final ExpirationPolicy expirationPolicy,
-        final boolean credentialsProvided) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-            service, this.getCountOfUses() == 0 || credentialsProvided,
-            expirationPolicy);
-
-        updateState();
-
-        final List<Authentication> authentications = getChainedAuthentications();
-        service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
-
-        this.services.put(id, service);
-
-        return serviceTicket;
-    }
-
-    /**
-     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
-     *
-     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
-    */
-    @Override
-    public synchronized Map<String, Service> getServices() {
-        final Map<String, Service> map = new HashMap<String, Service>(services.size());
-        for (final String ticket : services.keySet()) {
-            map.put(ticket, services.get(ticket));
-        }
-        return Collections.unmodifiableMap(map);
-    }
-
-    /**
-     * Remove all services of the TGT (at logout).
-     */
-    @Override
-    public void removeAllServices() {
-        services.clear();
     }
 
     /**
@@ -225,6 +176,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
+    }
+
+    public TicketGrantingTicket getGrantingTicket() {
+        return this.ticketGrantingTicket;
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.ticket.TicketGenerator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,6 +44,9 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
     @Autowired(required = true)
     private AuthenticationManager authenticationManager;
 
+    @Autowired(required = true)
+    private TicketGenerator ticketGenerator;
+
     public AuthenticationManager getAuthenticationManager() {
         return this.authenticationManager;
     }
@@ -55,6 +59,9 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    public TicketGenerator getTicketGenerator() {
+        return this.ticketGenerator;
+    }
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }

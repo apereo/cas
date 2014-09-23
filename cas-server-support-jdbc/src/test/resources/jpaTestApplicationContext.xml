@@ -88,13 +88,32 @@
   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
     p:entityManagerFactory-ref="factoryBean" />
 
-  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
+  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry"
+          p:ticketImplementationInfo-ref="ticketGenerator"/>
+
+
+  <bean id="ticketGenerator" class="org.jasig.cas.ticket.TicketGeneratorImpl" >
+      <constructor-arg index="0">
+          <null/>
+      </constructor-arg>
+      <constructor-arg index="1">
+          <null/>
+      </constructor-arg>
+      <constructor-arg index="2">
+          <null/>
+      </constructor-arg>
+      <constructor-arg index="3">
+          <null/>
+      </constructor-arg>
+  </bean>
 
   <!--
     Injects EntityManager/Factory instances into beans with
     @PersistenceUnit and @PersistenceContext
   -->
   <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+  <bean id="applicationContextProvider" class="org.jasig.cas.util.ApplicationContextProvider" />
 
 </beans>
 

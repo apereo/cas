@@ -115,13 +115,17 @@
         <constructor-arg index="1">
           <null />
         </constructor-arg>
-        <constructor-arg index="2" ref="authenticationManager"/>
-        <constructor-arg index="3" ref="ticketGrantingTicketUniqueIdGenerator"/>
-        <constructor-arg index="4" ref="uniqueIdGeneratorsMap"/>
-        <constructor-arg index="5" ref="grantingTicketExpirationPolicy"/>
-        <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
-        <constructor-arg index="7" ref="servicesManager"/>
-        <constructor-arg index="8" ref="logoutManager"/>
+        <constructor-arg index="2" ref="ticketGenerator"/>
+        <constructor-arg index="3" ref="authenticationManager"/>
+        <constructor-arg index="4" ref="servicesManager"/>
+        <constructor-arg index="5" ref="logoutManager"/>
+    </bean>
+
+    <bean id="ticketGenerator" class="org.jasig.cas.ticket.TicketGeneratorImpl" >
+        <constructor-arg index="0" ref="ticketGrantingTicketUniqueIdGenerator"/>
+        <constructor-arg index="1" ref="uniqueIdGeneratorsMap"/>
+        <constructor-arg index="2" ref="grantingTicketExpirationPolicy"/>
+        <constructor-arg index="3" ref="serviceTicketExpirationPolicy"/>
     </bean>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
@@ -139,5 +143,7 @@
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
     <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
+
+    <bean id="applicationContextProvider" class="org.jasig.cas.util.ApplicationContextProvider"/>
             
 </beans>

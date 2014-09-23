@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -58,10 +57,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Column(name="ID", nullable=false)
     private String id;
 
-    /** The TicketGrantingTicket this is associated with. */
-    @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
-    private TicketGrantingTicket ticketGrantingTicket;
-
     /** The last time this ticket was used. */
     @Column(name="LAST_TIME_USED")
     private long lastTimeUsed;
@@ -90,11 +85,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * be null) and a specified Expiration Policy.
      *
      * @param id the unique identifier for the ticket
-     * @param ticket the parent TicketGrantingTicket
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id, final TicketGrantingTicket ticket,
+    public AbstractTicket(final String id,
         final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
@@ -103,7 +97,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.creationTime = System.currentTimeMillis();
         this.lastTimeUsed = System.currentTimeMillis();
         this.expirationPolicy = expirationPolicy;
-        this.ticketGrantingTicket = ticket;
     }
 
     public final String getId() {
@@ -132,10 +125,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     public final long getCreationTime() {
         return this.creationTime;
-    }
-
-    public final TicketGrantingTicket getGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 
     public final long getLastTimeUsed() {

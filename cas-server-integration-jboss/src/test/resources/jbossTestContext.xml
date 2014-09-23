@@ -29,4 +29,21 @@
             <property name="configLocation"
             value="classpath:jbossTestCache.xml" />
         </bean>
+
+    <bean id="ticketGenerator" class="org.jasig.cas.ticket.TicketGeneratorImpl" >
+        <constructor-arg index="0">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="3">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="applicationContextProvider" class="org.jasig.cas.util.ApplicationContextProvider" />
 </beans>

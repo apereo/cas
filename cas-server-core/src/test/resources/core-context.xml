@@ -36,12 +36,15 @@
           c:authenticationManager-ref="authenticationManager"
           c:logoutManager-ref="logoutManager"
           c:servicesManager-ref="servicesManager"
-          c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
           c:serviceTicketRegistry-ref="ticketRegistry"
-          c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
           c:ticketRegistry-ref="ticketRegistry"
-          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService" />
+          c:ticketGenerator-ref="ticketGenerator" />
+
+    <bean id="ticketGenerator" class="org.jasig.cas.ticket.TicketGeneratorImpl"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
+          c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
+          c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"/>
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
@@ -215,4 +218,6 @@
           class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+
+    <bean id="applicationContextProvider" class="org.jasig.cas.util.ApplicationContextProvider" />
 </beans>

@@ -29,9 +29,9 @@ import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketImplementationInfo;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -51,7 +51,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private EntityManager entityManager;
 
     @NotNull
-    private String ticketGrantingTicketPrefix = "TGT";
+    private TicketImplementationInfo ticketImplementationInfo;
 
     @Override
     protected void updateTicket(final Ticket ticket) {
@@ -92,23 +92,27 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
      * @param ticket the ticket
      */
     private void deleteTicketAndChildren(final Ticket ticket) {
-        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id",
-                    TicketGrantingTicketImpl.class)
+        final Class<? extends ServiceTicket> serviceTicketImplClass =
+                ticketImplementationInfo.getServiceTicketImplClass();
+        final Class<? extends TicketGrantingTicket> ticketGrantingTicketImplClass =
+                ticketImplementationInfo.getTicketGrantingTicketImplClass();
+        final List<? extends TicketGrantingTicket> ticketGrantingTickets = entityManager
+            .createQuery("select t from "+ ticketGrantingTicketImplClass.getSimpleName() +" t where t.ticketGrantingTicket.id = :id",
+                    ticketGrantingTicketImplClass)
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .setParameter("id", ticket.getId())
             .getResultList();
-        final List<ServiceTicketImpl> serviceTicketImpls = entityManager
-                .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id",
-                        ServiceTicketImpl.class)
+        final List<? extends ServiceTicket> serviceTickets = entityManager
+                .createQuery("select s from "+ serviceTicketImplClass.getSimpleName() +" s where s.ticketGrantingTicket.id = :id",
+                        serviceTicketImplClass)
                 .setParameter("id", ticket.getId())
                 .getResultList();
 
-        for (final ServiceTicketImpl s : serviceTicketImpls) {
+        for (final ServiceTicket s : serviceTickets) {
             removeTicket(s);
         }
 
-        for (final TicketGrantingTicketImpl t : ticketGrantingTicketImpls) {
+        for (final TicketGrantingTicket t : ticketGrantingTickets) {
             deleteTicketAndChildren(t);
         }
 
@@ -145,12 +149,16 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
      * @return the raw ticket
      */
     private Ticket getRawTicket(final String ticketId) {
+        final Class<? extends ServiceTicket> serviceTicketImplClass =
+                ticketImplementationInfo.getServiceTicketImplClass();
+        final Class<? extends TicketGrantingTicket> ticketGrantingTicketImplClass =
+                ticketImplementationInfo.getTicketGrantingTicketImplClass();
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)) {
+                return entityManager.find(ticketGrantingTicketImplClass, ticketId, LockModeType.PESSIMISTIC_WRITE);
             }
 
-            return entityManager.find(ServiceTicketImpl.class, ticketId);
+            return entityManager.find(serviceTicketImplClass, ticketId);
         } catch (final Exception e) {
             logger.error("Error getting ticket {} from registry.", ticketId, e);
         }
@@ -160,11 +168,15 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Transactional(readOnly=true)
     @Override
     public Collection<Ticket> getTickets() {
-        final List<TicketGrantingTicketImpl> tgts = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
+        final Class<? extends ServiceTicket> serviceTicketImplClass =
+                ticketImplementationInfo.getServiceTicketImplClass();
+        final Class<? extends TicketGrantingTicket> ticketGrantingTicketImplClass =
+                ticketImplementationInfo.getTicketGrantingTicketImplClass();
+        final List<? extends TicketGrantingTicket> tgts = entityManager
+            .createQuery("select t from "+ ticketGrantingTicketImplClass.getSimpleName()+" t", ticketGrantingTicketImplClass)
             .getResultList();
-        final List<ServiceTicketImpl> sts = entityManager
-            .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
+        final List<? extends ServiceTicket> sts = entityManager
+            .createQuery("select s from "+ serviceTicketImplClass.getSimpleName() +" s", serviceTicketImplClass)
             .getResultList();
 
         final List<Ticket> tickets = new ArrayList<Ticket>();
@@ -172,10 +184,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         tickets.addAll(sts);
 
         return tickets;
-    }
-
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
 
     @Override
@@ -186,14 +194,18 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Transactional(readOnly=true)
     @Override
     public int sessionCount() {
+        final Class<? extends TicketGrantingTicket> ticketGrantingTicketImplClass =
+                ticketImplementationInfo.getTicketGrantingTicketImplClass();
         return countToInt(entityManager.createQuery(
-                "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+                "select count(t) from "+ ticketGrantingTicketImplClass.getSimpleName() +" t").getSingleResult());
     }
 
     @Transactional(readOnly=true)
     @Override
     public int serviceTicketCount() {
-        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+        final Class<? extends ServiceTicket> serviceTicketImplClass = ticketImplementationInfo.getServiceTicketImplClass();
+        return countToInt(entityManager.createQuery(
+                "select count(t) from "+ serviceTicketImplClass.getSimpleName() +" t").getSingleResult());
     }
 
     /**
@@ -213,5 +225,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
             intval = ((Number) result).intValue();
         }
         return intval;
+    }
+
+    public void setTicketImplementationInfo(final TicketImplementationInfo ticketImplementationInfo) {
+        this.ticketImplementationInfo = ticketImplementationInfo;
     }
 }

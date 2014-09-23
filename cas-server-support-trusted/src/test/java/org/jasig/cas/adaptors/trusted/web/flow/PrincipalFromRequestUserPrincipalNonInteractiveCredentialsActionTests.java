@@ -36,6 +36,8 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.ticket.TicketGenerator;
+import org.jasig.cas.ticket.TicketGeneratorImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -69,9 +71,10 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
                         new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingPrincipalResolver()));
 
+        final TicketGenerator ticketGenerator = new TicketGeneratorImpl(new DefaultUniqueTicketIdGenerator(),
+                idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy());
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), null, authenticationManager, new DefaultUniqueTicketIdGenerator(),
-                idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
+                new DefaultTicketRegistry(), null, ticketGenerator, authenticationManager,
                 mock(ServicesManager.class), mock(LogoutManager.class));
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);

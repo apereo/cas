@@ -31,8 +31,7 @@ import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.ticket.ServiceTicketImpl;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketImplementationInfo;
 import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
@@ -74,6 +73,9 @@ public class KryoTranscoder implements Transcoder<Object> {
     /** Map of class to serializer that handles it. */
     private Map<Class<?>, Serializer> serializerMap;
 
+    /** Information about ticket implementation. */
+    private TicketImplementationInfo ticketImplementationInfo;
+
 
     /**
      * Creates a Kryo-based transcoder.
@@ -96,6 +98,15 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     /**
+     * Sets a TicketImplementationInfo bean.
+     *
+     * @param ticketImplementationInfo Bean from which retrieve info about ST and TGT implementation.
+     */
+    public void setTicketImplementationInfo(final TicketImplementationInfo ticketImplementationInfo) {
+        this.ticketImplementationInfo = ticketImplementationInfo;
+    }
+
+    /**
      * Initialize and register classes with kryo.
      */
     public void initialize() {
@@ -111,15 +122,19 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         kryo.register(NeverExpiresExpirationPolicy.class);
         kryo.register(RememberMeDelegatingExpirationPolicy.class);
-        kryo.register(ServiceTicketImpl.class);
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(kryo));
         kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
-        kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
         kryo.register(URL.class, new URLSerializer(kryo));
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer(kryo));
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer(kryo));
+        if (ticketImplementationInfo!=null) {
+            kryo.register(ticketImplementationInfo.getServiceTicketImplClass());
+            kryo.register(ticketImplementationInfo.getTicketGrantingTicketImplClass());
+        } else {
+            logger.warn("TicketImplementationInfo bean is not set. Ticket implementation classes are not registered.");
+        }
 
         // Register other types
         if (serializerMap != null) {

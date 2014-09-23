@@ -40,6 +40,7 @@ import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredent
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
+import org.jasig.cas.ticket.TicketGeneratorImpl;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -83,9 +84,11 @@ public class OpenIdSingleSignOnActionTests {
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
-        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
-                new DefaultUniqueTicketIdGenerator(), generator, new NeverExpiresExpirationPolicy(),
-                new NeverExpiresExpirationPolicy(),
+        final TicketGeneratorImpl ticketGenerator = new TicketGeneratorImpl
+                (new DefaultUniqueTicketIdGenerator(), generator, new NeverExpiresExpirationPolicy(),
+                new NeverExpiresExpirationPolicy());
+
+        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, ticketGenerator, this.authenticationManager,
                 new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()), mock(LogoutManager.class));
 
         this.action = new OpenIdSingleSignOnAction();
