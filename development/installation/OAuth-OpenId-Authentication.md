@@ -67,7 +67,6 @@ The *loginUrl* is the login url of the CAS server. The timeout is the lifetime o
 
 ##Add the needed CAS services
 
-
 ###Callback Authorization
 
 One service is needed to make the OAuth wrapper works in CAS. It defines the callback url after CAS authentication to return to the OAuth wrapper as a CAS service.  
@@ -78,13 +77,12 @@ One service is needed to make the OAuth wrapper works in CAS. It defines the cal
   <property name="registeredServices">
     <list>
       <!-- A dedicated component to recognize OAuth Callback Authorization requests -->
-      <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService">
-        <property name="id" value="0" />
-        <property name="name" value="HTTP" />
-        <property name="description" value="oauth wrapper callback url" />
-        <!-- By default, only support regex patterns if/when needed -->
-        <property name="serviceId" value="${server.prefix}/oauth2.0/callbackAuthorize" />
-      </bean>
+      <!-- By default, service ids only support regex patterns if/when needed -->
+      <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService"
+        	p:id="0"
+        	p:name="HTTP" 
+        	p:description="oauth wrapper callback url" 
+            p:serviceId="${server.prefix}/oauth2.0/callbackAuthorize" />
 ...
 {% endhighlight %}
 
@@ -97,17 +95,15 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
   <property name="registeredServices">
     <list>
-       
-      <bean class="org.jasig.cas.support.oauth.services.OAuthRegisteredService">
-        <property name="id" value="1" />
-        <property name="name" value="serviceName" />
-        <property name="description" value="Service Description" />
-        <!-- Supports regex patterns by default for service ids -->
-        <property name="serviceId" value="oauth client service url" />
-        <property name="clientId" value="client id goes here" />
-        <property name="clientSecret" value="client secret goes here" />
-      </bean>
+      <!-- Supports regex patterns by default for service ids --> 
+      <bean class="org.jasig.cas.support.oauth.services.OAuthRegisteredService"
+	        p:id="1"
+	        p:name="serviceName" 
+	        p:description="Service Description"
+	        p:serviceId="oauth client service url"
+	        p:bypassApprovalPrompt="false" 
+	        p:clientId="client id goes here" 
+	        p:clientSecret="client secret goes here" /> 
 ...
 {% endhighlight %}
 
-***
