@@ -30,7 +30,7 @@
 	<name>Jasig CAS JBoss Cache Integration - DEPRECATED</name>
     <description>
         The CAS cas-server-integration-jboss module is deprecated and will be removed from subsequent CAS releases.
-        You should not attempt to include this module in your CAS Maven overlays, and rather try to use altertive
+        You should not attempt to include this module in your CAS Maven overlays, and rather try to use alternative
         methods for your distributed ticket registry needs, such as the cas-server-integration-ehcache or
         cas-server-integration-memcached modules.
     </description>

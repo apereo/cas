@@ -18,13 +18,6 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -32,6 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This controller is called after successful authentication and
@@ -77,10 +76,21 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
 
+        final Boolean bypassApprovalPrompt = (Boolean) session.getAttribute(OAuthConstants.BYPASS_APPROVAL_PROMPT);
+        logger.debug("bypassApprovalPrompt : {}", bypassApprovalPrompt);
+        session.removeAttribute(OAuthConstants.BYPASS_APPROVAL_PROMPT);
+
+        // Clients that auto-approve do not need authorization.
+        if (bypassApprovalPrompt != null && bypassApprovalPrompt) {
+            return OAuthUtils.redirectTo(callbackUrl);
+        }
+
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
         logger.debug("serviceName : {}", serviceName);
         model.put("serviceName", serviceName);
+
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
+
     }
 }
