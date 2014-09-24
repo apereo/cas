@@ -78,11 +78,18 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
      */
     public static SimpleWebApplicationServiceImpl createServiceFrom(
         final HttpServletRequest request) {
-        final String targetService = request
-            .getParameter(CONST_PARAM_TARGET_SERVICE);
+        final String targetService = request.getParameter(CONST_PARAM_TARGET_SERVICE);
+        final String service = request.getParameter(CONST_PARAM_SERVICE);
+        final String serviceAttribute = (String) request.getAttribute(CONST_PARAM_SERVICE);
         final String method = request.getParameter(CONST_PARAM_METHOD);
-        final String serviceToUse = StringUtils.hasText(targetService)
-            ? targetService : request.getParameter(CONST_PARAM_SERVICE);
+        final String serviceToUse;
+        if (StringUtils.hasText(targetService)) {
+            serviceToUse = targetService;
+        } else if (StringUtils.hasText(service)) {
+            serviceToUse = service;
+        } else {
+            serviceToUse = serviceAttribute;
+        }
 
         if (!StringUtils.hasText(serviceToUse)) {
             return null;
