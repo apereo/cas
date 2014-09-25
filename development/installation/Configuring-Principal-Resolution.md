@@ -36,8 +36,7 @@ configuration for two common examples:
 We present a stub configuration here that can be modified accordingly by consulting the Person Directory documentation.
 
 {% highlight xml %}
-<bean id="attributeRepository"
-      class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+<bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao">
   <property name="backingMap">
     <map>
       <entry key="uid" value="username"/>
