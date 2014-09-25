@@ -184,7 +184,7 @@ public class JsonServiceRegistryDaoTests {
         assertTrue(r2 instanceof  RegexRegisteredService);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=RuntimeException.class)
     public void testServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
