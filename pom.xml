@@ -523,12 +523,6 @@
 
   <repositories>
     <repository>
-      <id>jasig-repository</id>
-      <name>Jasig Maven2 Repository</name>
-      <url>http://developer.ja-sig.org/maven2</url>
-    </repository>
-
-    <repository>
       <id>jboss</id>
       <name>JBoss Repository</name>
       <layout>default</layout>
