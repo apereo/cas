@@ -64,6 +64,11 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
     private final Clients clients;
 
     /**
+     * Whether to use the typed identifier (by default) or just the identifier.
+     */
+    private boolean typedIdUsed = true;
+
+    /**
      * Define the clients.
      *
      * @param theClients The clients for authentication
@@ -100,7 +105,12 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         logger.debug("userProfile : {}", userProfile);
 
         if (userProfile != null) {
-            final String id = userProfile.getTypedId();
+            final String id;
+            if (typedIdUsed) {
+                id = userProfile.getTypedId();
+            } else {
+                id = userProfile.getId();
+            }
             if (StringUtils.isNotBlank(id)) {
               clientCredentials.setUserProfile(userProfile);
               return new HandlerResult(
@@ -113,12 +123,14 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
     }
 
+    public boolean isTypedIdUsed() {
+        return typedIdUsed;
+    }
 
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
+    }
+    
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }

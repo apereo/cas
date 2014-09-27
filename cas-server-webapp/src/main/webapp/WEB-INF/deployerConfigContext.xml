@@ -158,17 +158,17 @@
     <util:list id="registeredServicesList">
     	<bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="0" p:name="Apereo" p:description="Apereo foundation sample service"
-              p:serviceId="^http://www.apereo.org" p:evaluationOrder="0"
+              p:serviceId="^https://www.apereo.org" p:evaluationOrder="0"
               p:theme="apereo" />
 
         <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+              p:id="10000001" p:name="HTTPS and IMAPS" p:description="Allows HTTPS and IMAPS protocols"
+              p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001">
 
             <!--
             <property name="proxyPolicy">
                 <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                      c:pgtUrlPattern="^(https?)://.*" />
+                      c:pgtUrlPattern="^https://.*" />
             </property>
             -->
 

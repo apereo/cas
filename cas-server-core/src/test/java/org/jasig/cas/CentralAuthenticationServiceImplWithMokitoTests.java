@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
@@ -58,12 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -233,14 +229,17 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         
         return new RegexMatchingRegisteredServiceProxyPolicy(".*");
     }
+
     private RegisteredService createMockRegisteredService(final String svcId,
             final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.isEnabled()).thenReturn(enabled);
+        when(mockRegSvc.isSsoEnabled()).thenReturn(true);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
+        when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
         return mockRegSvc;
     }
 }
