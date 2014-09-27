@@ -19,7 +19,6 @@
 package org.jasig.cas;
 
 import com.github.inspektr.audit.annotation.Audit;
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -33,7 +32,6 @@ import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
@@ -142,10 +140,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
     private ExpirationPolicy serviceTicketExpirationPolicy;
-
-    /** Encoder to generate PseudoIds. */
-    @NotNull
-    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
@@ -262,9 +256,19 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
+
+        Authentication currentAuthentication = null;
+        if (credentials != null) {
+            currentAuthentication = this.authenticationManager.authenticate(credentials);
+            final Authentication original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(
+                        currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+            }
+            ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
+        }
         
-        if (!registeredService.isSsoEnabled() && credentials == null
-            && ticketGrantingTicket.getCountOfUses() > 0) {
+        if (!registeredService.isSsoEnabled() && currentAuthentication == null) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -279,15 +283,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 logger.warn(message);
                 throw new UnauthorizedProxyingException(message);
             }
-        }
-
-        if (credentials != null) {
-            final Authentication current = this.authenticationManager.authenticate(credentials);
-            final Authentication original = ticketGrantingTicket.getAuthentication();
-            if (!current.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(current, current.getPrincipal(), original.getPrincipal());
-            }
-            ticketGrantingTicket.getSupplementalAuthentications().add(current);
         }
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
@@ -307,8 +302,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
         final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
-        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(ticketId, service,
-                this.serviceTicketExpirationPolicy, credentials != null);
+        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
+                ticketId,
+                service,
+                this.serviceTicketExpirationPolicy,
+                currentAuthentication != null);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
@@ -392,7 +390,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
-            logger.info("ServiceTicket [{}] does not exist.", serviceTicketId);
+            logger.info("Service ticket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
 
@@ -408,7 +406,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    logger.error("ServiceTicket [{}] with service [{}] does not match supplied service [{}]",
+                    logger.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                             serviceTicketId, serviceTicket.getService().getId(), service);
                     throw new TicketValidationException(serviceTicket.getService());
                 }
@@ -425,8 +423,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
-                    
-            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
+            
+            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
@@ -441,59 +439,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 this.serviceTicketRegistry.deleteTicket(serviceTicketId);
             }
         }
-    }
-
-    /**
-     * Determines the principal id to use for a {@link RegisteredService} using the following rules:
-     *
-     * <ul>
-     *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
-     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default
-     *  principal id is returned.</li>
-     *  <li>If the username attribute is available as part of the principal's attributes,
-     *  the corresponding attribute value will be returned.
-     *  </li>
-     *   <li>Otherwise, the default principal's id is returned as the username attribute
-     *   with an additional warning.</li>
-     * </ul>
-     *
-     * @param principal The principal object to be validated and constructed
-     * @param registeredService Requesting service for which a principal is being validated.
-     * @param serviceTicket An instance of the service ticket used for validation
-     *
-     * @return The principal id to use for the requesting registered service
-     */
-    private String determinePrincipalIdForRegisteredService(final Principal principal,
-                                                            final RegisteredService registeredService,
-                                                            final ServiceTicket serviceTicket) {
-        String principalId = null;
-        final String serviceUsernameAttribute = registeredService.getUsernameAttribute();
-
-        if (registeredService.isAnonymousAccess()) {
-            principalId = this.persistentIdGenerator.generate(principal, serviceTicket.getService());
-        } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
-            principalId = principal.getId();
-        } else {
-            if (principal.getAttributes().containsKey(serviceUsernameAttribute)) {
-                principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
-            } else {
-                principalId = principal.getId();
-                final Object[] errorLogParameters = new Object[] {
-                        principalId,
-                        registeredService.getUsernameAttribute(),
-                        principal.getAttributes(),
-                        registeredService.getServiceId(),
-                        principalId };
-                logger.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "
-                        + "provide on the validation response the user attribute the registered service [{}] expects. "
-                        + "CAS will instead return the default username attribute [{}]", errorLogParameters);
-            }
-
-        }
-
-        logger.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].",
-                new Object[]{registeredService.getName(), principal.getId(), principalId});
-        return principalId;
     }
     
     @Audit(
@@ -519,11 +464,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return ticketGrantingTicket.getId();
     }
 
-    public void setPersistentIdGenerator(
-        final PersistentIdGenerator persistentIdGenerator) {
-        this.persistentIdGenerator = persistentIdGenerator;
-    }
-
     public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
     }
@@ -543,14 +483,27 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
-     * Sets principal factory to create principal objects.
+     * @deprecated
+     * Sets persistent id generator.
      *
-     * @param principalFactory the principal factory
+     * @param persistentIdGenerator the persistent id generator
      */
+    @Deprecated
+    public void setPersistentIdGenerator(final PersistentIdGenerator persistentIdGenerator) {
+        logger.warn("setPersistentIdGenerator() is deprecated and no longer available. Consider "
+                + "configuring the an attribute provider for service definitions.");
+    }
+
+   /**
+    * Sets principal factory to create principal objects.
+    *
+    * @param principalFactory the principal factory
+    */
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 
+   
     /**
      * Gets the authentication satisfied by policy.
      *

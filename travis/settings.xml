@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -19,14 +18,25 @@
     under the License.
 
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
-         version="2.5">
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <localRepository/>
+  <interactiveMode/>
+  <usePluginRegistry/>
+  <offline/>
+  <pluginGroups/>
+  <servers>
+    <server>
+      <id>sonatype-nexus-snapshots</id>
+      <username>${env.SONATYPE_USER}</username>
+      <password>${env.SONATYPE_PWD}</password>
+    </server>
+  </servers>
+  <mirrors/>
+  <proxies/>
+  <profiles/>
+  <activeProfiles/>
+</settings>
 
-    <description>
-        The CAS uber-webapp module is deprecated and will be removed from subsequent CAS releases.
-        You should not attempt to include this module in your CAS Maven overlays, and rather try to use the cas-server-webapp
-        module instead, and include dependencies that are required for your build.
-    </description>
-</web-app>

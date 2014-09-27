@@ -26,6 +26,10 @@ import java.util.zip.DeflaterOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
@@ -33,6 +37,7 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
@@ -67,7 +72,13 @@ public class GoogleAccountsServiceTests {
               + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
 
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, "username");
+        final RegisteredService regSvc = mock(RegisteredService.class);
+        when(regSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
+        
+        final ServicesManager servicesManager = mock(ServicesManager.class);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
+        
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
     }
 
     @Before
