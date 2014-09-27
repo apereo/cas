@@ -1,6 +1,6 @@
 # Central Authentication Service (CAS)
 
-<http://www.jasig.org/cas>
+<http://www.apereo.org/cas>
 
 ## Introduction
 
@@ -22,10 +22,10 @@ rather utilizes Maven's overlay mechanism to combine CAS original artifacts and 
 customizations to further ease future upgrades and maintenance.
 
 ## Download
-- Binary releases may be downloaded from [here](http://www.jasig.org/cas/download).
-- CAS artifacts are published through the [Maven Central Repository.](http://mvnrepository.com/artifact/org.jasig.cas)
-- A snapshot of the codebase's `master` branch may be downloaded from [here](https://github.com/Jasig/cas/archive/master.zip).
-- Snapshot artifacts are also published through the [Sonatype snapashots repository](https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/) under the group id **`org.jasig.cas`**.
+- Binary releases may be downloaded from [here][downloadcas].
+- CAS artifacts are published through the [Maven Central Repository][casmavencentral].
+- A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
+- Snapshot artifacts are also published through the [Sonatype snapashots repository][cassonatype] under the group id **`org.jasig.cas`**.
 - The codebase may also be *cloned* using a Git client via the following command:
 ```bash
 git clone git@github.com:Jasig/cas.git
@@ -37,14 +37,21 @@ Please [see the maven docs][skip] on how to disable the tests.
 
 ## Documentation
 - [Official Documentation][wiki]
-- [Release Notes](https://issues.jasig.org/secure/ReleaseNote.jspa?projectId=10007)
+- [Release Notes][releasenotes]
 
 ## Addons
-- [CAS Addons](https://github.com/Unicon/cas-addons) is an open source collection of useful CAS server extensions.
+- [CAS Addons][casaddons] is an open source collection of useful CAS server extensions.
 
 ## Contributions
-- [How to contribute to Jasig](http://www.jasig.org/jasig/contribute)
+- [How to contribute][contribute]
 
 [wiki]: http://jasig.github.io/cas
-[overlay]: http://jasig.github.io/cas/current/installation/Maven-Overlay-Installation.html
+[overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
 [skip]: http://maven.apache.org/general.html#skip-test
+[contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
+[downloadcas]: http://www.apereo.org/cas/download
+[cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
+[casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
+[downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
+[releasenotes]: https://issues.jasig.org/secure/ReleaseNote.jspa?projectId=10007
+[casaddons]: https://github.com/Unicon/cas-addons

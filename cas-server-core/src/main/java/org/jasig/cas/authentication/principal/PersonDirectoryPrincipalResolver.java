@@ -56,7 +56,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     @NotNull
     private PrincipalFactory principalFactory = new SimplePrincipalFactory();
 
-    /** Optional prinicpal attribute name. */
+    /** Optional principal attribute name. */
     private String principalAttributeName;
 
     @Override

@@ -35,6 +35,9 @@ public interface OAuthConstants {
     /** The client secret. */
     String CLIENT_SECRET = "client_secret";
 
+    /** The approval prompt. */
+    String BYPASS_APPROVAL_PROMPT = "bypass_approval_prompt";
+
     /** The code. */
     String CODE = "code";
 
