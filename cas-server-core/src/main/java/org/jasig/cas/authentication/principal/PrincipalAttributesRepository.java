@@ -37,7 +37,6 @@ public interface PrincipalAttributesRepository extends Serializable {
      * or to entirely ignore them and return a fresh copy.
      *
      * @param attributes the attributes
-     * @return the attributes
      */
     void setAttributes(Map<String, Object> attributes);
 

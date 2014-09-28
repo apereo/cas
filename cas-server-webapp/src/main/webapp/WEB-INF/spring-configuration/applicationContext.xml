@@ -124,7 +124,6 @@
           c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
           c:servicesManager-ref="servicesManager"
           c:logoutManager-ref="logoutManager"
-          p:persistentIdGenerator-ref="persistentIdGenerator"
           p:principalFactory-ref="principalFactory"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
