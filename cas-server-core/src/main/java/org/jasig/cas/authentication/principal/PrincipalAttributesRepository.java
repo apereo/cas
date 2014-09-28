@@ -19,21 +19,33 @@
 
 package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Factory to create {@link org.jasig.cas.authentication.principal.SimplePrincipal} objects.
+ * Defines operations required for retrieving principal attributes.
  * @author Misagh Moayyed
+ * @since 4.1
+ * @see org.jasig.cas.authentication.principal.PrincipalFactory
  */
-public final class SimplePrincipalFactory implements PrincipalFactory {
+public interface PrincipalAttributesRepository extends Serializable {
 
-    @Override
-    public Principal createPrincipal(final String id) {
-        return new SimplePrincipal(id);
-    }
+    /**
+     * Sets the attributes initially received.
+     * Implementations may choose to cache these attributes
+     * and return them again via {@link #getAttributes(String)}
+     * or to entirely ignore them and return a fresh copy.
+     *
+     * @param attributes the attributes
+     * @return the attributes
+     */
+    void setAttributes(Map<String, Object> attributes);
 
-    @Override
-    public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        return new SimplePrincipal(id, attributes);
-    }
+    /**
+     * Gets attributes for the given principal id.
+     *
+     * @param id the id
+     * @return the attributes
+     */
+    Map<String, Object> getAttributes(String id);
 }

@@ -19,7 +19,7 @@
 package org.jasig.cas.support.spnego.authentication.principal;
 
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class SpnegoCredentialsToPrincipalResolverTests {
 
     @Test
     public void testValidCredentials() {
-        this.spnegoCredentials.setPrincipal(new SimplePrincipalFactory().createPrincipal("test"));
+        this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }

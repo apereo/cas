@@ -31,9 +31,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -195,7 +195,7 @@ public class KryoTranscoderTests {
 
         /** Factory to create the principal type. **/
         @NotNull
-        private PrincipalFactory principalFactory = new SimplePrincipalFactory();
+        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {

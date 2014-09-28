@@ -23,7 +23,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -106,7 +106,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
         params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential,
-                new SimplePrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
@@ -148,7 +148,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
@@ -172,7 +172,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
@@ -203,7 +203,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipalFactory().createPrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #11: Revoked end user certificate

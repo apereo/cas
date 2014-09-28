@@ -21,9 +21,9 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -45,7 +45,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
