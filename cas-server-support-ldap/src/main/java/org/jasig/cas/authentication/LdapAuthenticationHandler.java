@@ -39,6 +39,7 @@ import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -83,7 +84,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected List<String> additionalAttributes = Collections.emptyList();
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
-    private String[] authenticatedEntryAttributes;
+    private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -267,9 +268,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);
         }
-        attributes.addAll(this.principalAttributeMap.keySet());
-        attributes.addAll(this.additionalAttributes);
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        if (!this.principalAttributeMap.isEmpty()) {
+          attributes.addAll(this.principalAttributeMap.keySet());
+        }
+        if (!this.additionalAttributes.isEmpty()) {
+          attributes.addAll(this.additionalAttributes);
+        }
+        if (!attributes.isEmpty()) {
+          this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        }
     }
 
 }
