@@ -19,8 +19,8 @@
 
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.util.PrincipalUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +30,11 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -38,10 +43,14 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class CachingPrincipalAttributesRepository implements PrincipalAttributesRepository {
+public final class CachingPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
     private static final long serialVersionUID = 6350244643948535906L;
 
     private static final String ATTRIBUTES_CACHE_KEY = CachingPrincipalAttributesRepository.class.getSimpleName();
+    private static final String CACHE_NAME = CachingPrincipalAttributesRepository.class.getSimpleName();
+
+    private static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
+    private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingPrincipalAttributesRepository.class);
 
@@ -55,7 +64,37 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param attributeRepository the attribute repository
      */
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, prepConfiguration(new Duration(TimeUnit.HOURS, 8)));
+        this(attributeRepository, new HashMap<String, Object>());
+    }
+
+    /**
+     * Instantiates a new Uncached attributes principal factory.
+     * Caches the attributes based on duration units of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
+     * and {@link #DEFAULT_CACHE_EXPIRATION_UNIT}.
+     * @param attributeRepository the attribute repository
+     * @param attributes the initial attributes
+     */
+    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+                                                final Map<String, Object> attributes) {
+        this(attributeRepository, createCacheConfiguration(
+                new Duration(DEFAULT_CACHE_EXPIRATION_UNIT, DEFAULT_CACHE_EXPIRATION_DURATION)));
+        setAttributes(attributes);
+    }
+
+    /**
+     * Instantiates a new Uncached attributes principal factory.
+     *
+     * @param attributeRepository the attribute repository
+     * @param attributes the attributes
+     * @param timeUnit the time unit
+     * @param expiryDuration the expiry duration
+     */
+    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+                                                final Map<String, Object> attributes,
+                                                final TimeUnit timeUnit,
+                                                final long expiryDuration) {
+        this(attributeRepository, createCacheConfiguration(new Duration(timeUnit, expiryDuration)));
+        setAttributes(attributes);
     }
 
     /**
@@ -68,8 +107,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final TimeUnit timeUnit,
                                                 final long expiryDuration) {
-        this(attributeRepository, prepConfiguration(new Duration(timeUnit, expiryDuration)));
-
+        this(attributeRepository, createCacheConfiguration(new Duration(timeUnit, expiryDuration)));
     }
 
     /**
@@ -107,8 +145,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final MutableConfiguration<String, Map<String, Object>> config,
                                                 final CacheManager manager) {
-        this(attributeRepository,
-                manager.createCache(CachingPrincipalAttributesRepository.class.getSimpleName(), config));
+        this(attributeRepository, manager.createCache(CACHE_NAME, config));
     }
 
     /**
@@ -133,32 +170,79 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
+     * Gets cache configuration.
+     *
+     * @return the configuration
+     */
+    public MutableConfiguration<String, Map<String, Object>> getConfiguration() {
+        return this.cache.getConfiguration(MutableConfiguration.class);
+    }
+
+    /**
      * Prep cache configuration.
      *
      * @param expiryDuration the expiry duration
      * @return the mutable configuration
      */
-    private static MutableConfiguration<String, Map<String, Object>> prepConfiguration(final Duration expiryDuration) {
+    protected static MutableConfiguration<String, Map<String, Object>> createCacheConfiguration(final Duration expiryDuration) {
         final MutableConfiguration<String, Map<String, Object>> config = new MutableConfiguration<String, Map<String, Object>>();
         config.setStatisticsEnabled(true);
         config.setManagementEnabled(true);
+        config.setStoreByValue(true);
         config.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(expiryDuration));
         return config;
     }
 
     @Override
     public void setAttributes(final Map<String, Object> attributes) {
-        this.cache.put(ATTRIBUTES_CACHE_KEY, attributes);
+        synchronized (this.cache) {
+            this.cache.put(ATTRIBUTES_CACHE_KEY, attributes);
+        }
     }
 
     @Override
     public Map<String, Object> getAttributes(final String id) {
-        Map<String, Object> attributes = this.cache.get(id);
+        Map<String, Object> attributes = this.cache.get(ATTRIBUTES_CACHE_KEY);
         if (attributes == null) {
-            attributes = PrincipalUtils.convertPersonAttributesToPrincipalAttributes(id, this.attributeRepository);
+            attributes = convertPersonAttributesToPrincipalAttributes(id);
             setAttributes(attributes);
             return attributes;
         }
         return attributes;
+    }
+
+    /**
+     * Convert person attributes to principal attributes.
+     * Obtains attributes first from the repository by calling
+     * {@link org.jasig.services.persondir.IPersonAttributeDao#getPerson(String)}
+     * and converts the results into a map of attributes that CAS can understand.
+     *
+     * @param id the person id to locate in the attribute repository
+     * @return the map of principal attributes
+     */
+    private Map<String, Object> convertPersonAttributesToPrincipalAttributes(final String id) {
+
+        final IPersonAttributes attrs = this.attributeRepository.getPerson(id);
+        if (attrs == null) {
+            return Collections.emptyMap();
+        }
+
+        final Map<String, List<Object>> attributes = attrs.getAttributes();
+        if (attributes == null) {
+            return Collections.emptyMap();
+        }
+
+        final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
+        for (final String key : attributes.keySet()) {
+            final List<Object> values = attributes.get(key);
+            convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
+        }
+        return convertedAttributes;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.cache.close();
+        this.cache.getCacheManager().close();
     }
 }

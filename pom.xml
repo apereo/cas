@@ -580,7 +580,7 @@
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
-        <exclusions>                                     f
+        <exclusions>
             <exclusion>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -962,6 +962,12 @@
           <scope>compile</scope>
       </dependency>
 
+      <dependency>
+          <groupId>org.jsr107.ri</groupId>
+          <artifactId>cache-ri-impl</artifactId>
+          <version>${jcache.ri.version}</version>
+          <scope>runtime</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1153,6 +1159,7 @@
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
     <jcache.version>1.0.0</jcache.version>
+    <jcache.ri.version>1.0.0</jcache.ri.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
