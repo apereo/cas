@@ -19,8 +19,8 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";
 
-        final PrincipalFactory factory = new SimplePrincipalFactory();
+        final PrincipalFactory factory = new DefaultPrincipalFactory();
 
         this.authenticationHandler.setPrincipalWithDomainName(true);
         assertEquals(factory.createPrincipal(myNtlmUser), this.authenticationHandler

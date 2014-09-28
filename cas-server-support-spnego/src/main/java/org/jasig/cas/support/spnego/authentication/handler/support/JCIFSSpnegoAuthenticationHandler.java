@@ -24,9 +24,9 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import javax.security.auth.login.FailedLoginException;
@@ -132,14 +132,14 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         logger.warn("getSimplePrincipal() is deprecated and will be removed. Consider getPrincipal() instead.");
 
         if (this.principalWithDomainName) {
-            return (SimplePrincipal) new SimplePrincipalFactory().createPrincipal(name);
+            return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
         }
         if (isNtlm) {
             return Pattern.matches("\\S+\\\\\\S+", name)
-                    ? (SimplePrincipal) new SimplePrincipalFactory().createPrincipal(name.split("\\\\")[1])
-                    : (SimplePrincipal) new SimplePrincipalFactory().createPrincipal(name);
+                    ? (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("\\\\")[1])
+                    : (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
         }
-        return (SimplePrincipal) new SimplePrincipalFactory().createPrincipal(name.split("@")[0]);
+        return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("@")[0]);
     }
 
     /**

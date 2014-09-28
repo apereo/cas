@@ -28,11 +28,11 @@ import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.AttributeReleasePolicy;
@@ -151,7 +151,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * Build the central authentication service implementation.

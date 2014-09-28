@@ -54,7 +54,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Optional principal attribute name. */
     private String principalAttributeName;
@@ -87,7 +87,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
 
         if (attributes == null & !this.returnNullIfNoAttributes) {
-            return new SimplePrincipal(principalId);
+            return this.principalFactory.createPrincipal(principalId);
         }
 
         if (attributes == null) {

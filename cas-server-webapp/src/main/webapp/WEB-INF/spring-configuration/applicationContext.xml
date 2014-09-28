@@ -108,7 +108,10 @@
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
 
-    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.SimplePrincipalFactory" />
+    <bean id="principalAttributesRepository" class="org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository" />
+
+    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.DefaultPrincipalFactory"
+            c:attributesRepository-ref="principalAttributesRepository" />
 
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"

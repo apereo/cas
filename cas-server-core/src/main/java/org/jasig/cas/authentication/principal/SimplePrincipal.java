@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -41,12 +41,13 @@ public class SimplePrincipal implements Principal {
     /** The unique identifier for the principal. */
     private final String id;
 
-    /** Map of attributes for the Principal. */
-    private Map<String, Object> attributes;
+    /** The Attribute repository.*/
+    private final PrincipalAttributesRepository attributeRepository;
 
     /** No-arg constructor for serialization support. */
     private SimplePrincipal() {
         this.id = null;
+        this.attributeRepository = new DefaultPrincipalAttributesRepository();
     }
 
     /**
@@ -54,8 +55,8 @@ public class SimplePrincipal implements Principal {
      *
      * @param id the id
      */
-    protected SimplePrincipal(final String id) {
-        this(id, null);
+    private SimplePrincipal(final String id) {
+        this(id, new HashMap<String, Object>());
     }
 
     /**
@@ -64,19 +65,27 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      * @param attributes the attributes
      */
-    protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
+    private SimplePrincipal(final String id, final Map<String, Object> attributes) {
+        this(id, new DefaultPrincipalAttributesRepository(attributes));
+    }
+
+    /**
+     * Instantiates a new Simple principal.
+     *
+     * @param id the id
+     * @param attributeRepository the attribute repository
+     */
+    protected SimplePrincipal(final String id, final PrincipalAttributesRepository attributeRepository) {
         Assert.notNull(id, "id cannot be null");
         this.id = id;
-        this.attributes = attributes;
+        this.attributeRepository = attributeRepository;
     }
 
     /**
      * @return An immutable map of principal attributes
      */
     public Map<String, Object> getAttributes() {
-        return this.attributes == null
-                ? Collections.<String, Object>emptyMap()
-                : Collections.unmodifiableMap(this.attributes);
+        return this.attributeRepository.getAttributes(this.id);
     }
 
     @Override
