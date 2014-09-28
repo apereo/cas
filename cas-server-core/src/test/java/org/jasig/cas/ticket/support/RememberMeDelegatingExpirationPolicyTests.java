@@ -21,8 +21,8 @@ package org.jasig.cas.ticket.support;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
 
     private RememberMeDelegatingExpirationPolicy p;

@@ -27,9 +27,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -121,7 +121,7 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return new SimplePrincipalFactory().createPrincipal(name);
+        return new DefaultPrincipalFactory().createPrincipal(name);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {

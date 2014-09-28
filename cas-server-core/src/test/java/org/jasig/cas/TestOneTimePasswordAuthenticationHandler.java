@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.springframework.util.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
@@ -63,7 +63,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
             return new HandlerResult(this, new BasicCredentialMetaData(otp),
-                    new SimplePrincipalFactory().createPrincipal(otp.getId()));
+                    new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }
