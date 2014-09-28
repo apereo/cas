@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.junit.Test;
 
 import javax.security.auth.login.FailedLoginException;
@@ -156,7 +156,7 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
-            final Principal p = new SimplePrincipalFactory().createPrincipal("nobody");
+            final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
             final HandlerResult result = new HandlerResult(
                     mock,

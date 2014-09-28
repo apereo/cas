@@ -25,8 +25,8 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -55,7 +55,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * The clients for authentication.

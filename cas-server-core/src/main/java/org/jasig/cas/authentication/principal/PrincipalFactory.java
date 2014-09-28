@@ -19,13 +19,14 @@
 
 package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Defines operations to create principals.
  * @author Misagh Moayyed
  */
-public interface PrincipalFactory {
+public interface PrincipalFactory extends Serializable {
     /**
      * Create principal.
      *
@@ -42,4 +43,5 @@ public interface PrincipalFactory {
      * @return the principal
      */
     Principal createPrincipal(String id, Map<String, Object> attributes);
+
 }

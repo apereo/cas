@@ -19,38 +19,44 @@
 
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.util.PrincipalUtils;
-import org.jasig.services.persondir.IPersonAttributeDao;
-
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A {@link org.jasig.cas.authentication.principal.Principal} whose attributes are not cached.
- * Every time attributes are requested, the request is submitted to the underlying
- * attribute repository to get a fresh copy.
+ * Default implementation of {@link PrincipalAttributesRepository}
+ * that just returns the attributes as it receives them.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class NotCachingAttributesPrincipal extends SimplePrincipal {
+public class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
+    private static final long serialVersionUID = -4535358847021241725L;
 
-    private final IPersonAttributeDao attributeRepository;
+    private Map<String, Object> attributes;
 
     /**
-     * Instantiates a new Uncached attributes principal.
-     *
-     * @param id the id
-     * @param attributes the attributes
-     * @param attributeRepository the attribute repository
+     * Instantiates a new No op principal attribute repository.
      */
-    public NotCachingAttributesPrincipal(@NotNull final String id, @NotNull final Map<String, Object> attributes,
-                                         @NotNull final IPersonAttributeDao attributeRepository) {
-        super(id, attributes);
-        this.attributeRepository = attributeRepository;
+    public DefaultPrincipalAttributesRepository() {
+        setAttributes(new HashMap<String, Object>());
+    }
+
+    /**
+     * Instantiates a new Default principal attribute repository.
+     *
+     * @param attributes the attributes
+     */
+    public DefaultPrincipalAttributesRepository(final Map<String, Object> attributes) {
+        setAttributes(attributes);
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
-        return PrincipalUtils.convertPersonAttributesToPrincipalAttributes(getId(), this.attributeRepository);
+    public void setAttributes(@NotNull final Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes(final String id) {
+        return this.attributes;
     }
 }

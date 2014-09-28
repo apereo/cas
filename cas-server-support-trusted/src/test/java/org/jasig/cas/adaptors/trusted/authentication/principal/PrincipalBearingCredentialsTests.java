@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +34,7 @@ public class PrincipalBearingCredentialsTests {
 
     @Before
     public void setUp() throws Exception {
-        this.principalBearingCredentials = new PrincipalBearingCredential(new SimplePrincipalFactory().createPrincipal("test"));
+        this.principalBearingCredentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"));
     }
 
     @Test

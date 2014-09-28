@@ -20,8 +20,8 @@ package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -57,7 +57,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = new AuthenticationBuilder(new SimplePrincipalFactory().createPrincipal(principal)).build();
+        authentication = new AuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal)).build();
         created = new Date();
     }
 

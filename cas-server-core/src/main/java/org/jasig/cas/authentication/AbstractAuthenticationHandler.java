@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipalFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -33,7 +33,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = new SimplePrincipalFactory();
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Configurable handler name. */
     private String name;
