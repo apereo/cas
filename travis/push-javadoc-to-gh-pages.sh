@@ -62,6 +62,6 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Done magic with auto publishment to gh-pages.\n"
+  echo -e "Successfully published Javadocs to [gh-pages] branch.\n"
   
 fi
