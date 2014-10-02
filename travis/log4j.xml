@@ -44,7 +44,7 @@
     </logger>
 
     <logger name="org.jasig">
-        <level value="INFO" />
+        <level value="WARN" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">

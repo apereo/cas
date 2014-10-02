@@ -152,6 +152,9 @@ public final class ClientAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(SERVICE);
             context.getFlowScope().put(SERVICE, service);
+            if (service != null) {
+                request.setAttribute(SERVICE, service.getId());
+            }
             restoreRequestAttribute(request, session, THEME);
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
