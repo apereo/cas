@@ -103,7 +103,7 @@ Additional loggers are available to specify the logging level for component cate
 {% endhighlight %}
 
 ##Log Data Sanitation
-For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data. This will of course include messages that routed to a log destination by the logging framework as well as all audit messages. A sample follows below:
+For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data. This will of course include messages that are routed to a log destination by the logging framework as well as all audit messages. A sample follows below:
 
 {% highlight bash %}
 =============================================================
