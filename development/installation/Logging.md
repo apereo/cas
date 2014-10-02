@@ -224,7 +224,7 @@ Aspect modularizing management of an audit trail data concern.
 
 
 ###`TicketOrCredentialPrincipalResolver`
-`PrincipalResolver` that can retrieve the username from either the Ticket or from the `Credential`.
+`PrincipalResolver` that can retrieve the username from either the `Ticket` or from the `Credential`.
 
 ##Configuration
 Audit functionality is specifically controlled by the `WEB-INF/spring-configuration/auditTrailContext.xml`. Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
