@@ -43,30 +43,33 @@ import java.net.UnknownHostException;
 public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
     /**
      * Instantiates a new Host name based unique ticket id generator.
-     */
-    public HostNameBasedUniqueTicketIdGenerator() {
-        super();
-    }
-
-    /**
-     * Instantiates a new Host name based unique ticket id generator.
      *
      * @param maxLength the max length
      */
     public HostNameBasedUniqueTicketIdGenerator(final int maxLength) {
-        super(maxLength);
+        super(maxLength, determineTicketSuffixByHostName());
     }
 
-    @Override
-    protected void setSuffix(final String suffix) {
+    /**
+     * Appends the first part of the host name to the ticket id,
+     * so as to moderately provide a relevant unique value mapped to
+     * the host name AND not auto-leak infrastructure data out into the configuration and logs.
+     * <ul>
+     * <li>If the CAS node name is <code>cas-01.sso.edu</code> then, the suffix
+     * determined would just be <code>cas-01</code></li>
+     * <li>If the CAS node name is <code>cas-01</code> then, the suffix
+     * determined would just be <code>cas-01</code></li>
+     * </ul>
+     * @since 4.1
+     */
+    private static String determineTicketSuffixByHostName() {
         try {
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
 
             if (hostName.indexOf(".") > 0) {
-                super.setSuffix(hostName.substring(0, hostName.indexOf(".")));
-            } else {
-                super.setSuffix(hostName);
+                return (hostName.substring(0, hostName.indexOf(".")));
             }
+            return hostName;
         } catch (final UnknownHostException e) {
             throw new RuntimeException("Host name could not be determined automatically for the ticket suffix.", e);
         }
