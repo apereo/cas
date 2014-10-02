@@ -5,7 +5,6 @@ title: CAS - Troubleshooting Guide
 
 #Troubleshooting Guide
 
-
 ##Authentication
 
 ###Login Form Clearing Credentials on Submission
@@ -15,9 +14,12 @@ The CAS server itself initiates a web session upon authentication requests that 
 
 To remedy the problem, the  suggestion is to configure the default CAS session timeout to be an appropriate value that matches the time a given user is expected to stay on the login screen. Similarly, the same change may be applied to the load balancer to treat authentication requests within a longer time span. In `web.xml`, adjust the `session-timeout` attribute to extend the session expiration time. 
 
+###Application Not Authorized to Use CAS
+You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
+
+Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
 ##SSL
-
 
 ###PKIX Path Building Failed
 
@@ -99,7 +101,6 @@ Alternatively, you can disable the SNI detection in JDK7, by adding this flag to
 {% endhighlight %}
 
 
-
 ###When All Else Fails
 If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, please perform an SSL trace and attach it to a posting to the `cas-user@lists.jasig.org` mailing list. An SSL trace is written to STDOUT when the following system property is set, `javax.net.debug=ssl`. An example follows of how to do this in the Tomcat servlet container.
 
@@ -125,4 +126,17 @@ Sample `setenv.sh` Tomcat Script follows:
  
 export CATALINA_OPTS
 {% endhighlight %}
+
+##Review logs
+CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. Specifically you want to make sure `DEBUG` levels are turned on the `org.jasig` package in the log configuration:
+
+{% highlight xml %}
+<logger name="org.jasig" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="cas" />
+</logger>
+{% endhighlight %}
+
+When changes are applied, restart the server environment and observe the log files to get a better understanding of CAS behavior. For more info, please [review the this guide](Logging.html) on how to configure logs with CAS.
+
 

@@ -9,6 +9,23 @@ CAS provides a logging facility that logs important informational events like au
 
 The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j.xml`. By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`. 
 
+{% highlight xml %}
+...
+
+<logger name="org.springframework.webflow" additivity="true">
+    <level value="DEBUG" />
+    <appender-ref ref="cas" />
+</logger>
+
+<logger name="org.jasig" additivity="true">
+    <level value="DEBUG" />
+    <appender-ref ref="cas" />
+</logger>
+
+...
+{% endhighlight %}
+
+
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though, you probably want to run them both as `WARN`.</p></div>
 
 
@@ -158,6 +175,31 @@ CREATE_TICKET_GRANTING_TICKET                        42215.0       42215       4
 GRANT_SERVICE_TICKET                                 21023.0       21023       21023         0.0           1
 {% endhighlight %}
 
+
+##Routing logs to SysLog
+CAS logging framework does have the ability to route messages to an external syslog instance. To configure this, you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
+
+{% highlight xml %}
+...
+<appender name="syslog" class="org.apache.log4j.net.SyslogAppender">
+    <param name="Threshold" value="DEBUG" />
+    <param name="Facility" value="LOCAL1" />
+    <param name="FacilityPrinting" value="true" />
+    <param name="SyslogHost" value="log.syslog.edu" />
+    <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSSZ} %-5r %-5p [%c] (%t:%x) %m%n" />
+    </layout>
+</appender>
+
+...
+
+<logger name="org.jasig" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="cas" />
+        <appender-ref ref="syslog" />
+</logger>
+
+{% endhighlight %}
 
 
 #Audits
