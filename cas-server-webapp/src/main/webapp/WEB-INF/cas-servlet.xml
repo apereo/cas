@@ -34,7 +34,6 @@
   <!-- Theme Resolver -->
   <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
         p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-        p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
     <property name="mobileBrowsers">
       <util:map>
@@ -45,6 +44,9 @@
       </util:map>
     </property>
   </bean>
+
+  <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
+        p:paramName="theme" />
 
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
@@ -192,7 +194,7 @@
       </util:list>
     </property>
   </bean>
-  
+
   <!--  CAS 2 Protocol service/proxy validation -->     
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
