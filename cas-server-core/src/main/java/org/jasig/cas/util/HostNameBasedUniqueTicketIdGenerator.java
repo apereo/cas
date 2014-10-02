@@ -46,7 +46,6 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      */
     public HostNameBasedUniqueTicketIdGenerator() {
         super();
-        setSuffix(null);
     }
 
     /**
@@ -56,7 +55,6 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      */
     public HostNameBasedUniqueTicketIdGenerator(final int maxLength) {
         super(maxLength);
-        setSuffix(null);
     }
 
     @Override
