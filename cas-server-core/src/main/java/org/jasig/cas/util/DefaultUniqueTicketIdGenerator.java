@@ -41,7 +41,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     private final NumericGenerator numericGenerator;
 
     /** The RandomStringGenerator to generate the secure random part of the id. */
-    private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator();
+    private final RandomStringGenerator randomStringGenerator;
 
     /**
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
@@ -55,7 +55,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * 1.
      */
     public DefaultUniqueTicketIdGenerator() {
-        this.numericGenerator = new DefaultLongNumericGenerator(1);
+        this(DefaultRandomStringGenerator.DEFAULT_MAX_RANDOM_LENGTH);
     }
 
     /**
@@ -66,8 +66,25 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * the id.
      */
     public DefaultUniqueTicketIdGenerator(final int maxLength) {
-        this();
-        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
+        this(maxLength, null);
+    }
+
+    /**
+     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
+     * maximum length for the random portion.
+     *
+     * @param numericGenerator the numeric generator
+     * @param randomStringGenerator the random string generator
+     * @param suffix the value to append at the end of the unique id to ensure
+     * uniqueness across JVMs.
+     * @since 4.1
+     */
+    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
+                                             final RandomStringGenerator randomStringGenerator,
+                                             final String suffix) {
+        this.randomStringGenerator = randomStringGenerator;
+        this.numericGenerator = numericGenerator;
+        setSuffix(suffix);
     }
 
     /**
@@ -80,9 +97,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * uniqueness across JVMs.
      */
     public DefaultUniqueTicketIdGenerator(final int maxLength, final String suffix) {
-        this(maxLength);
-        setSuffix(suffix);
+        this(new DefaultLongNumericGenerator(1), new DefaultRandomStringGenerator(maxLength), suffix);
     }
+
 
     /**
      * Sets suffix.
