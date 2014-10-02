@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
      * values.
      */
-    private String suffix = null;
+    private final String suffix;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -80,11 +81,12 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @since 4.1
      */
     public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
-                                             final RandomStringGenerator randomStringGenerator,
-                                             final String suffix) {
+                                          final RandomStringGenerator randomStringGenerator,
+                                          final String suffix) {
+
         this.randomStringGenerator = randomStringGenerator;
         this.numericGenerator = numericGenerator;
-        setSuffix(suffix);
+        this.suffix = StringUtils.isNoneBlank(suffix) ? "-" + suffix : null;
     }
 
     /**
@@ -101,25 +103,12 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     }
 
 
-    /**
-     * Sets suffix.
-     *
-     * @param suffix the suffix
-     * @since 4.1
-     */
-    protected void setSuffix(final String suffix) {
-        if (suffix != null) {
-            this.suffix = "-" + suffix;
-        } else {
-            this.suffix = null;
-        }
-    }
 
     @Override
     public final String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
         final StringBuilder buffer = new StringBuilder(prefix.length() + 2
-            + (this.suffix != null ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
+            + (StringUtils.isNotBlank(this.suffix) ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
             + number.length());
 
         buffer.append(prefix);
