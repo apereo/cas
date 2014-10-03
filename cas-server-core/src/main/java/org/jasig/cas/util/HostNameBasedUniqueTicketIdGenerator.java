@@ -61,6 +61,7 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      * determined would just be <code>cas-01</code></li>
      * </ul>
      * @since 4.1
+     * @return the shortened ticket suffix based on the hostname
      */
     private static String determineTicketSuffixByHostName() {
         try {
