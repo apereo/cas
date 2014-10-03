@@ -8,7 +8,7 @@
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>
-      <title>File: 211,
+      <title>File: 212,
              Errors: 0,
              Warnings: 3,
              Infos: 0
@@ -2200,6 +2200,20 @@
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.RegexRegisteredService.java">org/jasig/cas/services/RegexRegisteredService.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.HostNameBasedUniqueTicketIdGenerator.java">org/jasig/cas/util/HostNameBasedUniqueTicketIdGenerator.java</a>
                 </td>
                 <td>
                   0

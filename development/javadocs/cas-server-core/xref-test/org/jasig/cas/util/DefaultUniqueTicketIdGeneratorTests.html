@@ -28,9 +28,9 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.util;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
 <a class="jxr_linenumber" name="22" href="#22">22</a>  
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
 <a class="jxr_linenumber" name="24" href="#24">24</a>  
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>      @Test
 <a class="jxr_linenumber" name="42" href="#42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSuffix() {
 <a class="jxr_linenumber" name="43" href="#43">43</a>          <strong class="jxr_keyword">final</strong> String SUFFIX = <span class="jxr_string">"suffix"</span>;
-<a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">final</strong> DefaultUniqueTicketIdGenerator generator = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(SUFFIX);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">final</strong> DefaultUniqueTicketIdGenerator generator = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(10, SUFFIX);
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
 <a class="jxr_linenumber" name="46" href="#46">46</a>          assertTrue(generator.getNewTicketId(<span class="jxr_string">"test"</span>).endsWith(SUFFIX));
 <a class="jxr_linenumber" name="47" href="#47">47</a>      }
