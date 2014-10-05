@@ -34,7 +34,8 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 <bean id="loginThrottle"
       class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
       p:failureRangeInSeconds="3"
-      p:failureThreshold="1" />
+      p:failureThreshold="1"
+      p:usernameParameter="username" />
 {% endhighlight %}
 
 
@@ -44,7 +45,8 @@ Uses a memory map to prevent successive failed login attempts for a particular u
 <bean id="loginThrottle"
       class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
       p:failureRangeInSeconds="3"
-      p:failureThreshold="1" />
+      p:failureThreshold="1"
+      p:usernameParameter="username" />
 {% endhighlight %}
 
 
@@ -129,10 +131,12 @@ Configure the throttle to fire during the login webflow by editing `cas-servlet.
 <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
       p:flowRegistry-ref="loginFlowRegistry"
       p:order="2">
-  <property name="interceptors">
-    <ref local="localeChangeInterceptor" />
-    <ref local="loginThrottle" />
-  </property>
+	  <property name="interceptors">
+	      <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+          	<ref bean="localeChangeInterceptor" />
+			<ref local="loginThrottle" />		
+	      </array>
+      </property>
 </bean>
 {% endhighlight %}
 
