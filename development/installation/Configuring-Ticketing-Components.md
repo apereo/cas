@@ -80,10 +80,22 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 #####`UniqueTicketIdGenerator`
 Strategy parent interface that describes operations needed to generate a unique id for a ticket.
 
-
 #####`DefaultUniqueTicketIdGenerator`
 Uses numeric and random string generators to create a unique id, while supporting prefixes for each ticket type, as is outlined by the CAS protocol, as well as a suffix that typically is mapped to the CAS server node identifier in order to indicate which node is the author of this ticket. The latter configuration point helps with troubleshooting and diagnostics in a clustered CAS environment.
 
+#####`HostNameBasedUniqueTicketIdGenerator`
+An extension of `DefaultUniqueTicketIdGenerator` that is able auto-configure the suffix based on the underlying host name.
+In order to assist with multi-node deployments, in scenarios where CAS configuration
+and specially `cas.properties` file is externalized, it would be ideal to simply just have one set
+of configuration files for all nodes, such that there would for instance be one `cas.properties` file
+for all nodes. This would remove the need to copy/sync configuration files over across nodes, again in a
+situation where they are externalized.
+
+The drawback is that in keeping only one `cas.properties` file, we'd lose the ability
+to define unique `host.name` property values for each node as the suffix, which would assist with troubleshooting
+and diagnostics. To provide a remedy, this ticket generator is able to retrieve the `host.name` value directly from
+the actual node name, rather than relying on the configuration, only if one isn't specified in
+the `cas.properties` file. 
 
 #####`SamlCompliantUniqueTicketIdGenerator`
 Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifacts, that is also compliant with the SAML v2 specification.
