@@ -24,7 +24,7 @@ import java.net.UnknownHostException;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
- * the suffix based on the underlying host name, if one isn't specified.
+ * the suffix based on the underlying host name.
  *
  * <p>In order to assist with multi-node deployments, in scenarios where CAS configuration
  * and specially <code>cas.properties</code> file is externalized, it would be ideal to simply just have one set
@@ -36,7 +36,6 @@ import java.net.UnknownHostException;
  * and diagnostics. To provide a remedy, this ticket generator is able to retrieve the <code>host.name</code> value directly from
  * the actual node name, rather than relying on the configuration, only if one isn't specified in
  * the <code>cas.properties</code> file. </p>
- * <p>The auto calculation of hostname only takes place if no suffix is strictly defined.</p>
  * @author Misagh Moayyed
  * @since 4.1
  */
