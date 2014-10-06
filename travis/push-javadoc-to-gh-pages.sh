@@ -58,10 +58,10 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Adding changes to the index...\n"
   git add -f . > /dev/null
   echo -e "Committing changes...\n" 
-  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
+  git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Done magic with auto publishment to gh-pages.\n"
+  echo -e "Successfully published Javadocs to [gh-pages] branch.\n"
   
 fi
