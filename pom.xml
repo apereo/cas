@@ -1082,7 +1082,7 @@
 
     <!-- Dependency Versions -->
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
-    <spring.version>4.0.6.RELEASE</spring.version>
+    <spring.version>4.1.1.RELEASE</spring.version>
     <ldaptive.version>1.0.3</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
