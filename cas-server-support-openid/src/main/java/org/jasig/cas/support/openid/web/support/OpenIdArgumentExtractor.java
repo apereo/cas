@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
-import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.AbstractArgumentExtractor;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Constructs an OpenId Service.
@@ -30,10 +30,10 @@ import org.jasig.cas.web.support.ArgumentExtractor;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class OpenIdArgumentExtractor implements ArgumentExtractor {
+public class OpenIdArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
-    public WebApplicationService extractService(final HttpServletRequest request) {
+    protected WebApplicationService extractServiceInternal(final HttpServletRequest request) {
         return OpenIdService.createServiceFrom(request);
     }
 }
