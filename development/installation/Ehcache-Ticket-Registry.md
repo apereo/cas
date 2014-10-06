@@ -49,6 +49,7 @@ The following Spring configuration provides a template for `ticketRegistry.xml`.
 <bean id="ticketGrantingTicketsCache"
       class="org.springframework.cache.ehcache.EhCacheFactoryBean"
       p:cacheName="cas_tgt"
+      parent="abstractTicketCache"
       p:timeToIdle="0"
       p:timeToLive="7201" />
 
@@ -112,6 +113,7 @@ Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi
 
 <bean id="ticketGrantingTicketsCache"
       class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+      parent="abstractTicketCache"
       p:cacheName="cas_tgt"
       p:timeToIdle="0"
       p:timeToLive="7201"
@@ -202,20 +204,20 @@ The configuration is similar to above, except that ticket replicators and cache 
 {% highlight xml %}
 ...
 <bean id="ticketjgroupsSynchronousCacheReplicator" class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicator">
-        <constructor-arg name="replicatePuts" value="true"/> 
-        <constructor-arg name="replicateUpdates" value="true"/>  
-        <constructor-arg name="replicateUpdatesViaCopy" value="true"/>  
-        <constructor-arg name="replicateRemovals" value="true"/>       
-    </bean>
-     
-    <bean id="ticketjgroupsAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicator" parent="ticketjgroupsSynchronousCacheReplicator">
-        <constructor-arg name="asynchronousReplicationInterval" value="1000"/>  
-    </bean>
-     
-    <bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoader">
-      <constructor-arg name="asynchronous" value="true"/>
-      <constructor-arg name="maximumChunkSize" value="5000000"/>
-    </bean>
+    <constructor-arg name="replicatePuts" value="true"/> 
+    <constructor-arg name="replicateUpdates" value="true"/>  
+    <constructor-arg name="replicateUpdatesViaCopy" value="true"/>  
+    <constructor-arg name="replicateRemovals" value="true"/>       
+</bean>
+ 
+<bean id="ticketjgroupsAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicator" parent="ticketjgroupsSynchronousCacheReplicator">
+    <constructor-arg name="asynchronousReplicationInterval" value="1000"/>  
+</bean>
+ 
+<bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.jgroups.JGroupsBootstrapCacheLoader">
+  <constructor-arg name="asynchronous" value="true"/>
+  <constructor-arg name="maximumChunkSize" value="5000000"/>
+</bean>
 ...
 {% endhighlight %}
 
