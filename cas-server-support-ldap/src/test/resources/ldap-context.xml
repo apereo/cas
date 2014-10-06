@@ -39,10 +39,12 @@
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
     </bean>
 
-
+    <bean id="unboundidLdapProvider"
+          class="org.ldaptive.provider.unboundid.UnboundIDProvider" />
 
     <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="provisioningConnectionConfig" />
+          p:connectionConfig-ref="provisioningConnectionConfig"
+          p:provider-ref="unboundidLdapProvider"  />
 
     <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
           p:minPoolSize="${ldap.pool.minSize}"

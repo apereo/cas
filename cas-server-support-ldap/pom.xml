@@ -70,6 +70,13 @@
     </dependency>
 
     <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive-unboundid</artifactId>
+        <version>${ldaptive.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
     </dependency>
