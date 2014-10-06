@@ -120,6 +120,7 @@
 
 <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ticketGrantingTicketsCache&quot;</span>
       <span class="na">class=</span><span class="s">&quot;org.springframework.cache.ehcache.EhCacheFactoryBean&quot;</span>
+      <span class="na">parent=</span><span class="s">&quot;abstractTicketCache&quot;</span>
       <span class="na">p:cacheName=</span><span class="s">&quot;cas_tgt&quot;</span>
       <span class="na">p:timeToIdle=</span><span class="s">&quot;0&quot;</span>
       <span class="na">p:timeToLive=</span><span class="s">&quot;7201&quot;</span> <span class="nt">/&gt;</span>
@@ -183,6 +184,7 @@
 
 <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ticketGrantingTicketsCache&quot;</span>
       <span class="na">class=</span><span class="s">&quot;org.springframework.cache.ehcache.EhCacheFactoryBean&quot;</span>
+      <span class="na">parent=</span><span class="s">&quot;abstractTicketCache&quot;</span>
       <span class="na">p:cacheName=</span><span class="s">&quot;cas_tgt&quot;</span>
       <span class="na">p:timeToIdle=</span><span class="s">&quot;0&quot;</span>
       <span class="na">p:timeToLive=</span><span class="s">&quot;7201&quot;</span>
