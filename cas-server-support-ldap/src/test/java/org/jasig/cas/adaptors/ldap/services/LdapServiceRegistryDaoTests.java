@@ -87,6 +87,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setServiceId("^http?://.+");
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
+        rs.setDescription("Here is another description");
 
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
         this.dao.save(rs);

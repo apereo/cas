@@ -95,45 +95,49 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
-        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) svc).setId(System.nanoTime());
-        }
-        final String newDn = getDnForRegisteredService(dn, svc);
-        LOGGER.debug("Creating entry {}", newDn);
+        try {
+            if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+                ((AbstractRegisteredService) svc).setId(System.nanoTime());
+            }
+            final String newDn = getDnForRegisteredService(dn, svc);
+            LOGGER.debug("Creating entry {}", newDn);
 
-        final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
-        attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
-        attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
-        attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
-        attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
-        attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
-        attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
-        
-        if (svc.getUsernameAttributeProvider() != null) {
-            final byte[] data = SerializationUtils.serialize(svc.getUsernameAttributeProvider());
-            final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, data);
-            attrs.add(attr);
-        }        
-        if (svc.getProxyPolicy() != null) {
-            final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
-            final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
-            attrs.add(attr);
-        }
-        if (svc.getAttributeReleasePolicy() != null) {
-            final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
-            final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
-            attrs.add(attr);
-        }
+            final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
+            attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
+            attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
+            attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
+            attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
+            attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
+            attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
+            attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
+            attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
 
-        if (svc.getRequiredHandlers().size() > 0) {
-            attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[] {})));
+            if (svc.getUsernameAttributeProvider() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getUsernameAttributeProvider());
+                final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, data);
+                attrs.add(attr);
+            }
+            if (svc.getProxyPolicy() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
+                final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
+                attrs.add(attr);
+            }
+            if (svc.getAttributeReleasePolicy() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
+                final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
+                attrs.add(attr);
+            }
+
+            if (svc.getRequiredHandlers().size() > 0) {
+                attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[]{})));
+            }
+
+            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectClass));
+
+            return new LdapEntry(newDn, attrs);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-
-        attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectClass));
-
-        return new LdapEntry(newDn, attrs);
     }
 
     @Override
@@ -156,10 +160,10 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
                 
-                final byte[] usenameAttrData = LdapUtils.getBinary(entry, this.usernameAttributeProvider);
-                if (usenameAttrData != null && usenameAttrData.length > 0) {
+                final byte[] usernameAttrData = LdapUtils.getBinary(entry, this.usernameAttributeProvider);
+                if (usernameAttrData != null && usernameAttrData.length > 0) {
                     final RegisteredServiceUsernameAttributeProvider provider =
-                            (RegisteredServiceUsernameAttributeProvider) SerializationUtils.deserialize(usenameAttrData);
+                            (RegisteredServiceUsernameAttributeProvider) SerializationUtils.deserialize(usernameAttrData);
                     s.setUsernameAttributeProvider(provider);
                 }
                 
