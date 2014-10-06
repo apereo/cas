@@ -17,23 +17,24 @@
  * under the License.
  */
 
-$(document).ready(function(){
-    //focus username field
-    if ($(":focus").length === 0){
-      $("input:visible:enabled:first").focus();
+package org.jasig.cas.util;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Handles tests for {@link org.jasig.cas.util.HostNameBasedUniqueTicketIdGenerator}.
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class HostNameBasedUniqueTicketIdGeneratorTests {
+
+    @Test
+    public void testUniqueGenerationOfTicketIds() throws Exception {
+        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10);
+        final String id1 = generator.getNewTicketId("TEST");
+        final String id2 = generator.getNewTicketId("TEST");
+        assertNotSame(id1, id2);
     }
-
-    //flash error box
-    $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
-
-    //flash success box
-    $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
-    //flash confirm box
-    $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
-    
-    /* 
-     * Using the JavaScript Debug library, you may issue log messages such as: 
-     * debug.log("Welcome to Central Authentication Service");
-     */
-});
+}

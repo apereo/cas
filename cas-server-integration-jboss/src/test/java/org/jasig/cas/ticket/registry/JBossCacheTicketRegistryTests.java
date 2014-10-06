@@ -18,11 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -38,13 +33,24 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
+
 /**
- * Test case to test the DefaultTicketRegistry based on test cases to test all
+ * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
+ * Please use other means of confguring your distributed ticket registry, such as
+ * ehcache or memcached integrations with CAS.
+ *
+ * <p>Test case to test the DefaultTicketRegistry based on test cases to test all
  * Ticket Registries.
  *
+ * either ehcache or memcached modules.
  * @author Scott Battaglia
  * @author Marc-Antoine Garrigue
  */
+@Deprecated
 public final class JBossCacheTicketRegistryTests {
 
     private static final String APPLICATION_CONTEXT_FILE_NAME = "jbossTestContext.xml";
