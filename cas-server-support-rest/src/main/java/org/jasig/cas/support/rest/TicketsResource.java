@@ -131,8 +131,9 @@ public class TicketsResource {
      * @param tgtId ticket granting ticket id URI path param
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final void deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
+        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
     }
 
     /**
