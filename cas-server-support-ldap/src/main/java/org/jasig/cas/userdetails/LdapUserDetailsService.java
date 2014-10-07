@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.userdetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.validation.constraints.NotNull;
-
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -37,6 +33,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Provides a simple {@link UserDetailsService} implementation that obtains user details from an LDAP search.
@@ -185,7 +185,11 @@ public class LdapUserDetailsService implements UserDetailsService {
                 logger.warn("Role attribute not found on entry {}", entry);
                 continue;
             }
-            roles.add(new SimpleGrantedAuthority(this.rolePrefix + roleAttribute.getStringValue().toUpperCase()));
+
+            for (final String role : roleAttribute.getStringValues()) {
+                roles.add(new SimpleGrantedAuthority(this.rolePrefix + role.toUpperCase()));
+            }
+
         }
 
         return new User(id, UNKNOWN_PASSWORD, roles);

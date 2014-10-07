@@ -23,24 +23,40 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-    <bean id="serviceRegistryDao"
-          class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
-          p:connectionFactory-ref="provisioningConnectionFactory"
-          p:searchRequest-ref="searchRequest" />
-
-    <bean id="searchRequest"
-          class="org.ldaptive.SearchRequest"
-          p:baseDn="${ldap.service.baseDn}"/>
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="usernameAttribute" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="sAMAccountName" />
+        <constructor-arg type="java.lang.String" value="mail" />
     </bean>
+
+    <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
+          c:factory-ref="provisioningConnectionFactory"
+          c:roleSearchExecutor-ref="searchExecutorRole"
+          c:userSearchExecutor-ref="searchExecutorUser"
+          c:userAttributeName="mail"
+          c:roleAttributeName="uugid" />
+
+    <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
+          p:baseDn="${ldap.baseDn}"
+          p:searchFilter="${ldap.user.searchFilter}"
+          p:returnAttributes-ref="userDetailsUserAttributes" />
+
+    <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
+          p:baseDn="${ldap.role.baseDn}"
+          p:searchFilter="${ldap.role.searchFilter}"
+          p:returnAttributes-ref="userDetailsRoleAttributes" />
+
+    <util:list id="userDetailsUserAttributes">
+        <value>mail</value>
+    </util:list>
+
+    <util:list id="userDetailsRoleAttributes">
+        <value>uugid</value>
+    </util:list>
 
 </beans>
