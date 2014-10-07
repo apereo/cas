@@ -106,7 +106,7 @@ public class TicketsResource {
      *
      * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
-     * @return @return ResponseEntity representing RESTful response
+     * @return {@link }ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}",
             method = RequestMethod.POST,
@@ -129,10 +129,13 @@ public class TicketsResource {
      * Destroy ticket granting ticket.
      *
      * @param tgtId ticket granting ticket id URI path param
+     * @return {@link ResponseEntity} representing RESTful response. Signals
+     * {@link HttpStatus#OK} when successful.
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final void deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
+        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
     }
 
     /**

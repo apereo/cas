@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.util;
 
 import org.junit.Test;
@@ -23,26 +24,17 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * @author Scott Battaglia
-
- * @since 3.0
+ * Handles tests for {@link org.jasig.cas.util.HostNameBasedUniqueTicketIdGenerator}.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public class DefaultUniqueTicketIdGeneratorTests {
+public class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testUniqueGenerationOfTicketIds() {
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
-            10);
-
-        assertNotSame(generator.getNewTicketId("TEST"), generator
-            .getNewTicketId("TEST"));
-    }
-
-    @Test
-    public void testSuffix() {
-        final String SUFFIX = "suffix";
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, SUFFIX);
-
-        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+    public void testUniqueGenerationOfTicketIds() throws Exception {
+        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10);
+        final String id1 = generator.getNewTicketId("TEST");
+        final String id2 = generator.getNewTicketId("TEST");
+        assertNotSame(id1, id2);
     }
 }

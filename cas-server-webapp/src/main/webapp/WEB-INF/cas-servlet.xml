@@ -121,7 +121,9 @@
   <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="loginFlowRegistry" p:order="2">
     <property name="interceptors">
-      <ref bean="localeChangeInterceptor" />
+        <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+            <ref bean="localeChangeInterceptor" />
+        </array>
     </property>
   </bean>
 
@@ -147,9 +149,11 @@
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
-    <property name="interceptors">
-      <ref bean="localeChangeInterceptor" />
-    </property>
+      <property name="interceptors">
+          <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+              <ref bean="localeChangeInterceptor" />
+          </array>
+      </property>
   </bean>
 
   <bean id="logoutHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
