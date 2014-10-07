@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Collections;
+import org.jasig.cas.authentication.principal.Principal;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jasig.cas.authentication.principal.Principal;
+import java.util.TreeMap;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -34,7 +34,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
 
     private static final long serialVersionUID = -6249488544306639050L;
     
-    private Map<String, String> allowedAttributes = Collections.emptyMap();
+    private Map<String, String> allowedAttributes = new TreeMap<String, String>();
     
     /**
      * Sets the allowed attributes.
@@ -51,7 +51,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
      * @return the allowed attributes
      */
     protected Map<String, String> getAllowedAttributes() {
-        return Collections.unmodifiableMap(this.allowedAttributes);
+        return new TreeMap<String, String>(this.allowedAttributes);
     }
     
     @Override

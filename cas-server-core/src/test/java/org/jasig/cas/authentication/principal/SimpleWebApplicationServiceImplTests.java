@@ -45,6 +45,14 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
+    public void testCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("service", "service");
+        final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        assertNotNull(impl);
+    }
+
+    @Test
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");

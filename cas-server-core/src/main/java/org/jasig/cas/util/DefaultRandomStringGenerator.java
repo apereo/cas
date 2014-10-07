@@ -36,7 +36,7 @@ public final class DefaultRandomStringGenerator implements
         .toCharArray();
 
     /** The default maximum length. */
-    private static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
+    protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** An instance of secure random to ensure randomness is secure. */
     private SecureRandom randomizer = new SecureRandom();
