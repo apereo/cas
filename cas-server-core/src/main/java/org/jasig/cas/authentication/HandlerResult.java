@@ -22,8 +22,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
@@ -57,19 +57,47 @@ public class HandlerResult implements Serializable {
     /** No-arg constructor for serialization support. */
     private HandlerResult() {}
 
+    /**
+     * Instantiates a new handler result.
+     *
+     * @param source the source
+     * @param metaData the meta data
+     */
     public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
         this(source, metaData, null, null);
     }
 
+    /**
+     * Instantiates a new handler result.
+     *
+     * @param source the source
+     * @param metaData the meta data
+     * @param p the p
+     */
     public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, null);
     }
 
+    /**
+     * Instantiates a new handler result.
+     *
+     * @param source the source
+     * @param metaData the meta data
+     * @param warnings the warnings
+     */
     public HandlerResult(
             final AuthenticationHandler source, final CredentialMetaData metaData, final List<Message> warnings) {
         this(source, metaData, null, null);
     }
 
+    /**
+     * Instantiates a new handler result.
+     *
+     * @param source the source
+     * @param metaData the meta data
+     * @param p the p
+     * @param warnings the warnings
+     */
     public HandlerResult(
             final AuthenticationHandler source,
             final CredentialMetaData metaData,

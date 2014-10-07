@@ -18,10 +18,14 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -71,23 +75,17 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private String serviceSsoEnabledAttribute = "casServiceSsoEnabled";
 
     @NotNull
-    private String serviceAnonymousAccessAttribute = "casServiceAnonymousAccess";
-
-    @NotNull
-    private String serviceAllowedToProxyAttribute = "casServiceAllowedToProxy";
+    private String serviceProxyPolicyAttribute = "casServiceProxyPolicy";
 
     @NotNull
     private String serviceThemeAttribute = "casServiceTheme";
 
     @NotNull
-    private String usernameAttribute = "casUsernameAttribute";
+    private String usernameAttributeProvider = "casUsernameAttributeProvider";
 
     @NotNull
-    private String serviceAllowedAttributesAttribute = "casAllowedAttributes";
-
-    @NotNull
-    private String ignoreAttributesAttribute = "casIgnoreAttributes";
-
+    private String attributeReleasePolicyAttribute = "casAttributeReleasePolicy";
+    
     @NotNull
     private String evaluationOrderAttribute = "casEvaluationOrder";
 
@@ -96,7 +94,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
 
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
-
 
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) svc).setId(System.nanoTime());
@@ -110,16 +107,24 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
         attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
         attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceAllowedToProxyAttribute, Boolean.toString(svc.isAllowedToProxy()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceAnonymousAccessAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
         attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.ignoreAttributesAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
         attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
         attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
-        attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
-
-        if (svc.getAllowedAttributes().size() > 0) {
-            attrs.add(new LdapAttribute(this.serviceAllowedAttributesAttribute, svc.getAllowedAttributes().toArray(new String[] {})));
+        
+        if (svc.getUsernameAttributeProvider() != null) {
+            final byte[] data = SerializationUtils.serialize(svc.getUsernameAttributeProvider());
+            final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, data);
+            attrs.add(attr);
+        }        
+        if (svc.getProxyPolicy() != null) {
+            final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
+            final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
+            attrs.add(attr);
+        }
+        if (svc.getAttributeReleasePolicy() != null) {
+            final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
+            final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
+            attrs.add(attr);
         }
 
         if (svc.getRequiredHandlers().size() > 0) {
@@ -148,13 +153,27 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
                 s.setTheme(LdapUtils.getString(entry, this.serviceThemeAttribute));
                 s.setEvaluationOrder(LdapUtils.getLong(entry, this.evaluationOrderAttribute).intValue());
-                s.setUsernameAttribute(LdapUtils.getString(entry, this.usernameAttribute));
-                s.setAllowedToProxy(LdapUtils.getBoolean(entry, this.serviceAllowedToProxyAttribute));
-                s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
-                s.setAllowedAttributes(new ArrayList<String>(getMultiValuedAttributeValues(entry, this.serviceAllowedAttributesAttribute)));
-                s.setIgnoreAttributes(LdapUtils.getBoolean(entry, this.ignoreAttributesAttribute));
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
+                
+                final byte[] usenameAttrData = LdapUtils.getBinary(entry, this.usernameAttributeProvider);
+                if (usenameAttrData != null && usenameAttrData.length > 0) {
+                    final RegisteredServiceUsernameAttributeProvider provider =
+                            (RegisteredServiceUsernameAttributeProvider) SerializationUtils.deserialize(usenameAttrData);
+                    s.setUsernameAttributeProvider(provider);
+                }
+                
+                final byte[] data = LdapUtils.getBinary(entry, this.attributeReleasePolicyAttribute);
+                if (data != null && data.length > 0) {
+                    final AttributeReleasePolicy policy = (AttributeReleasePolicy) SerializationUtils.deserialize(data);
+                    s.setAttributeReleasePolicy(policy);
+                }
+                
+                final byte[] proxyData = LdapUtils.getBinary(entry, this.serviceProxyPolicyAttribute);
+                if (proxyData != null && proxyData.length > 0) {
+                    final RegisteredServiceProxyPolicy policy = (RegisteredServiceProxyPolicy) SerializationUtils.deserialize(proxyData);
+                    s.setProxyPolicy(policy);
+                }
             }
             return s;
         }
@@ -197,37 +216,37 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.serviceSsoEnabledAttribute = serviceSsoEnabledAttribute;
     }
 
-    public void setServiceAnonymousAccessAttribute(final String serviceAnonymousAccessAttribute) {
-        this.serviceAnonymousAccessAttribute = serviceAnonymousAccessAttribute;
-    }
-
-    public void setServiceAllowedToProxyAttribute(final String serviceAllowedToProxyAttribute) {
-        this.serviceAllowedToProxyAttribute = serviceAllowedToProxyAttribute;
+    public void setServiceProxyPolicyAttribute(final String proxyPolicyAttribute) {
+        this.serviceProxyPolicyAttribute = proxyPolicyAttribute;
     }
 
     public void setServiceThemeAttribute(final String serviceThemeAttribute) {
         this.serviceThemeAttribute = serviceThemeAttribute;
     }
 
-    public void setServiceAllowedAttributesAttribute(final String serviceAllowedAttributesAttribute) {
-        this.serviceAllowedAttributesAttribute = serviceAllowedAttributesAttribute;
-    }
-
-    public void setIgnoreAttributesAttribute(final String ignoreAttributesAttribute) {
-        this.ignoreAttributesAttribute = ignoreAttributesAttribute;
-    }
-
     public void setRequiredHandlersAttribute(final String handlers) {
         this.requiredHandlersAttribute = handlers;
     }
 
-
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
+    public void setUsernameAttributeProvider(final String usernameAttributeProvider) {
+        this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
     public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
         this.evaluationOrderAttribute = evaluationOrderAttribute;
+    }
+
+    public void setAttributeReleasePolicyAttribute(final String attributeReleasePolicyAttribute) {
+        this.attributeReleasePolicyAttribute = attributeReleasePolicyAttribute;
+    }
+
+    /**
+     * @deprecated As of 4.1. Consider using {@link #setUsernameAttributeProvider}
+     * @param usernameAttribute the uername attribute to return
+     */
+    @Deprecated
+    public void setUsernameAttribute(final String usernameAttribute) {
+        LOGGER.warn("setUsernameAttribute() is deprecated and has no effect. Consider setUsernameAttributeProvider() instead.");
     }
 
     @Override
@@ -235,6 +254,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);
     }
 
+    /**
+     * Checks if is valid regex pattern.
+     *
+     * @param pattern the pattern
+     * @return true, if  valid regex pattern
+     */
     private boolean isValidRegexPattern(final String pattern) {
         try {
             Pattern.compile(pattern);
@@ -245,6 +270,13 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return true;
     }
 
+    /**
+     * Gets the attribute values if more than one, otherwise an empty list.
+     *
+     * @param entry the entry
+     * @param attrName the attr name
+     * @return the collection of attribute values
+     */
     private Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
         final LdapAttribute attrs = entry.getAttribute(attrName);
         if (attrs != null) {
@@ -253,6 +285,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return Collections.emptyList();
     }
 
+    /**
+     * Gets the registered service by id that would either match an ant or regex pattern.
+     *
+     * @param id the id
+     * @return the registered service
+     */
     private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
         if (isValidRegexPattern(id)) {
             return new RegexRegisteredService();

@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import javax.security.auth.login.FailedLoginException;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.SimpleHttpClient;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
 
@@ -63,17 +62,11 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
                 TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
     }
 
-    @Test(expected = FailedLoginException.class)
-    public void testRejectsNonHttpsCredentials() throws Exception {
-        this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
-    }
-
     @Test
     public void testAcceptsNonHttpsCredentials() throws Exception {
         this.authenticationHandler.setHttpClient(new SimpleHttpClient());
-        this.authenticationHandler.setRequireSecure(false);
         assertNotNull(this.authenticationHandler.authenticate(
-                TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org")));
+                TestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 
     @Test(expected = FailedLoginException.class)
@@ -84,8 +77,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test(expected = FailedLoginException.class)
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
-        final SimpleHttpClient httpClient = new SimpleHttpClient();
-        httpClient.setAcceptableCodes(new int[] {900});
+        final SimpleHttpClient httpClient = new SimpleHttpClient(new int[] {900});
         this.authenticationHandler.setHttpClient(httpClient);
         this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }

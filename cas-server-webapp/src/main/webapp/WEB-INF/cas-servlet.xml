@@ -34,7 +34,6 @@
   <!-- Theme Resolver -->
   <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
         p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-        p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
     <property name="mobileBrowsers">
       <util:map>
@@ -46,12 +45,14 @@
     </property>
   </bean>
 
+  <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
+        p:paramName="theme" />
+
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
     <property name="basenames">
       <util:list>
-        <value>${cas.viewResolver.basename}</value>
         <value>protocol_views</value>
       </util:list>
     </property>
@@ -67,7 +68,19 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="1"/>
+
+  <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
+        p:suffix=".jsp"
+        p:order="2"/>
   
+  <!--
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="3"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+  -->
+  	
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -79,9 +92,13 @@
     <property name="mappings">
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
+        <prop key="/proxyValidate">proxyValidateController</prop>
+        
+        <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
+        <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
+        
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
-        <prop key="/proxyValidate">proxyValidateController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
@@ -104,7 +121,9 @@
   <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="loginFlowRegistry" p:order="2">
     <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
+        <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+            <ref bean="localeChangeInterceptor" />
+        </array>
     </property>
   </bean>
 
@@ -135,8 +154,8 @@
     </constructor-arg>
   </bean>
 
-  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <bean id="loginFlowStateTranscoder" class="edu.vt.middleware.webflow.EncryptedTranscoder" init-method="init"
@@ -148,9 +167,11 @@
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
-    <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
-    </property>
+      <property name="interceptors">
+          <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+              <ref bean="localeChangeInterceptor" />
+          </array>
+      </property>
   </bean>
 
   <bean id="logoutHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
@@ -169,15 +190,16 @@
     </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/logout-webflow.xml" id="logout" />
+  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
 
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
+        p:timeToDieInSeconds="${terminate.web.session.timeout:2}"/>
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">
@@ -189,35 +211,48 @@
   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
     <property name="viewResolvers">
       <util:list>
-        <ref local="viewResolver"/>
+        <ref bean="viewResolver"/>
+        <ref bean="internalViewResolver"/>
       </util:list>
     </property>
   </bean>
 
-  <bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+  <!--  CAS 2 Protocol service/proxy validation -->     
+  <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+        p:argumentExtractor-ref="casArgumentExtractor"
+        p:servicesManager-ref="servicesManager" />
+  
+  <bean id="proxyValidateController" parent="abstractValidateController"/>
 
-  <bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+  <bean id="serviceValidateController" parent="abstractValidateController"
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"/>
 
-  <bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+  <!--  CAS 3 Protocol service/proxy validation with attributes -->
+  <bean id="v3AbstractValidateController" parent="abstractValidateController" abstract="true"
+        p:successView="cas3ServiceSuccessView"
+        p:failureView="cas3ServiceFailureView" />
+        
+  <bean id="v3ProxyValidateController" parent="v3AbstractValidateController" />
+
+  <bean id="v3ServiceValidateController" parent="v3AbstractValidateController"
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"/>
+ 
+  <!--  CAS 1 legacy validation -->       
+  <bean id="legacyValidateController" parent="abstractValidateController"
         p:proxyHandler-ref="proxy10Handler"
         p:successView="cas1ServiceSuccessView"
         p:failureView="cas1ServiceFailureView"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+        p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"/>
 
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name}" c:ticketRegistry-ref="ticketRegistry" />
+        c:ticketRegistry-ref="ticketRegistry"
+        p:casTicketSuffix="${host.name}"
+        p:viewPath="/WEB-INF/view/jsp/monitoring/viewStatistics.jsp" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
@@ -236,7 +271,8 @@
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"
+        p:ticketRegistry-ref="ticketRegistry"/>
 
   <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
 

@@ -18,19 +18,19 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.junit.Test;
 
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -55,7 +55,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -65,9 +65,11 @@ public class RejectUsersAuthenticationHandlerTests {
     @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
+            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+            svc.setServiceId("https://some.app.edu");
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"))));
+                    "http://www.rutgers.edu"), svc)));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }

@@ -74,6 +74,7 @@ public class UsernamePasswordCredentials implements Credentials {
         this.username = userName;
     }
 
+    @Override
     public String toString() {
         return "[username: " + this.username + "]";
     }
@@ -87,7 +88,7 @@ public class UsernamePasswordCredentials implements Credentials {
             return false;
         }
 
-        UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
+        final UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
 
         if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;
