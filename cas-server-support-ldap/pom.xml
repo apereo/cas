@@ -98,13 +98,6 @@
       <artifactId>unboundid-ldapsdk</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-legacy</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <properties>
