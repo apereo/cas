@@ -24,7 +24,6 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
