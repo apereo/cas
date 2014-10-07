@@ -21,11 +21,14 @@ package org.jasig.cas.adaptors.ldap.services;
 import org.jasig.cas.authentication.AbstractLdapTests;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,13 +63,90 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         }
     }
 
+    @Test
+    public void testEmptyRegistry() {
+        assertEquals(0, this.dao.load().size());
+    }
 
     @Test
-    public void testServices() throws Exception {
+    public void testNonExistingService() {
+        assertNull(this.dao.findServiceById(9999991));
+    }
 
+    @Test
+    public void testSavingServices() {
+        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
+        assertEquals(2, services.size());
+    }
+
+    @Test
+    public void testUpdatingServices() {
+        this.dao.save(getRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
+
+        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        assertNotNull(rs);
+        rs.setEvaluationOrder(9999);
+        rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        rs.setName("Another Test Service");
+        rs.setDescription("The new description");
+        rs.setServiceId("https://hello.world");
+        rs.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https"));
+        rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
+        assertNotNull(this.dao.save(rs));
+
+        final RegisteredService rs3 = this.dao.findServiceById(rs.getId());
+        assertEquals(rs3.getName(), rs.getName());
+        assertEquals(rs3.getDescription(), rs.getDescription());
+        assertEquals(rs3.getEvaluationOrder(), rs.getEvaluationOrder());
+        assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
+        assertEquals(rs3.getProxyPolicy(), rs.getProxyPolicy());
+        assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
+        assertEquals(rs3.getServiceId(), rs.getServiceId());
+    }
+
+    @Test
+    public void testSavingServiceChangesDn() {
+        this.dao.save(getRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
+
+        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        final long originalId = rs.getId();
+        assertNotNull(rs);
+        rs.setId(666);
+        assertNotNull(this.dao.save(rs));
+        assertNotEquals(rs.getId(), originalId);
+    }
+
+    @Test
+    public void testDeletingSingleService() throws Exception {
+        final RegisteredService rs = getRegexRegisteredService();
+        this.dao.save(getRegisteredService());
+        this.dao.save(rs);
+        List<RegisteredService> services = this.dao.load();
+        this.dao.delete(services.get(0));
+
+        services = this.dao.load();
+        assertEquals(1, services.size());
+        assertEquals(services.get(0).getId(), rs.getId());
+        assertEquals(services.get(0).getName(), rs.getName());
+    }
+
+    @Test
+    public void testDeletingServices() throws Exception {
+        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
+        for (final RegisteredService registeredService : services) {
+            this.dao.delete(registeredService);
+        }
         assertEquals(0, this.dao.load().size());
+    }
 
-        AbstractRegisteredService rs = new RegisteredServiceImpl();
+    private RegisteredService getRegisteredService() {
+        final AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
@@ -76,10 +156,11 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setEvaluationOrder(123);
         rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler8", "handle92")));
+        return rs;
+    }
 
-        this.dao.save(rs);
-
-        rs = new RegexRegisteredService();
+    private RegisteredService getRegexRegisteredService() {
+        final AbstractRegisteredService rs  = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
@@ -88,28 +169,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
-        this.dao.save(rs);
-
-        final List<RegisteredService> services = this.dao.load();
-        assertEquals(2, services.size());
-
-        AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
-        assertNotNull(rs2);
-        rs2.setEvaluationOrder(9999);
-
-        rs2.setName("Another Test Service");
-
-        rs2 = (AbstractRegisteredService) this.dao.save(rs2);
-        assertNotNull(rs2);
-
-        assertEquals(this.dao.findServiceById(rs2.getId()).getName(), rs2.getName());
-
-        for (final RegisteredService registeredService : services) {
-            this.dao.delete(registeredService);
-        }
-        assertEquals(0, this.dao.load().size());
+        return rs;
     }
-
 }

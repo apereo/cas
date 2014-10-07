@@ -129,10 +129,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
                     final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
                     for (final LdapAttribute attr : entry.getAttributes()) {
-                        mods.add(new AttributeModification(AttributeModificationType.ADD, attr));
+                        if (!attr.getName().equals(this.ldapServiceMapper.getIdAttribute())) {
+                            mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                        }
                     }
-                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[] {}));
+                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
                     operation.execute(request);
+                }catch (final LdapException e) {
+                    logger.error(e.getMessage(), e);
                 } finally {
                     LdapUtils.closeConnection(modifyConnection);
                 }
@@ -261,7 +265,13 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return true, if successful
      */
     private boolean hasResults(final Response<SearchResult> response) {
-        return response.getResult() != null && response.getResult().getEntry() != null;
+        if (response.getResult() != null && response.getResult().getEntry() != null) {
+            return true;
+        }
+
+        logger.trace("Requested ldap operation did not return a result or an ldap entry. Code: {}, Message: {}",
+                response.getResultCode(), response.getMessage());
+        return false;
     }
 
     /**
