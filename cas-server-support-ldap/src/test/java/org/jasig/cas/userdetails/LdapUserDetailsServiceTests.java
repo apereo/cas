@@ -41,7 +41,7 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
 
     public LdapUserDetailsServiceTests() {
         super("/ldap-context.xml", "/ldap-userdetails-test.xml");
-        this.userDetailsService = this.context.getBean("ldapUserDetailsService", LdapUserDetailsService.class);
+        this.userDetailsService = getBean("ldapUserDetailsService", LdapUserDetailsService.class);
     }
 
     @Test
