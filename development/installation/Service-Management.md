@@ -108,6 +108,49 @@ This component is _NOT_ suitable for use with the service management console sin
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
+######`JsonServiceRegistryDao`
+This DAO reads services definition from JSON configuration files at the application context initialization time. JSON files are
+expected to be found inside a configured directory location and this DAO will recursively look through the directory structure to find relevant JSON files.
+
+{% highlight xml %}
+<bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
+          c:configDirectory="file:/etc/cas/json" />
+{% endhighlight %}
+
+A sample JSON file follows:
+
+{% highlight json %}
+{
+    "@class" : "org.jasig.cas.services.RegexRegisteredService",
+    "id" : 103935657744185,
+    "description" : "Service description",
+    "serviceId" : "https://**",
+    "name" : "testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter",
+    "theme" : "testtheme",
+    "proxyPolicy" : {
+        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+        "pattern" : "https://.+"
+    },
+    "enabled" : true,
+    "ssoEnabled" : false,
+    "evaluationOrder" : 1000,
+    "usernameAttributeProvider" : {
+        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+    },
+    "logoutType" : "BACK_CHANNEL",
+    "requiredHandlers" : [ "java.util.HashSet", [ "handler1", "handler2" ] ],
+    "attributeReleasePolicy" : {
+        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+        "attributeFilter" : {
+            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
+            "pattern" : "\\w+"
+        },
+        "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "cn", "sn" ] ]
+    }
+}
+
+{% endhighlight %}
+
 
 ######`LdapServiceRegistryDao`
 Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `uid` attribute.
