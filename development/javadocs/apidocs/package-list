@@ -63,6 +63,7 @@ org.jasig.cas.ticket.registry.support.kryo.serial
 org.jasig.cas.ticket.support
 org.jasig.cas.userdetails
 org.jasig.cas.util
+org.jasig.cas.util.services
 org.jasig.cas.validation
 org.jasig.cas.web
 org.jasig.cas.web.bind

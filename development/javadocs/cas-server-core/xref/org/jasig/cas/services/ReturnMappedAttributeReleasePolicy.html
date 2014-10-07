@@ -28,11 +28,11 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.services;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.util.TreeMap;
 <a class="jxr_linenumber" name="26" href="#26">26</a>  
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment"> * Return a collection of allowed attributes for the principal, but additionally,</em>
@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
 <a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -6249488544306639050L;
 <a class="jxr_linenumber" name="36" href="#36">36</a>      
-<a class="jxr_linenumber" name="37" href="#37">37</a>      <strong class="jxr_keyword">private</strong> Map&lt;String, String&gt; allowedAttributes = Collections.emptyMap();
+<a class="jxr_linenumber" name="37" href="#37">37</a>      <strong class="jxr_keyword">private</strong> Map&lt;String, String&gt; allowedAttributes = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, String&gt;();
 <a class="jxr_linenumber" name="38" href="#38">38</a>      
 <a class="jxr_linenumber" name="39" href="#39">39</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * Sets the allowed attributes.</em>
@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * @return the allowed attributes</em>
 <a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">protected</strong> Map&lt;String, String&gt; getAllowedAttributes() {
-<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">return</strong> Collections.unmodifiableMap(<strong class="jxr_keyword">this</strong>.allowedAttributes);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> TreeMap&lt;String, String&gt;(<strong class="jxr_keyword">this</strong>.allowedAttributes);
 <a class="jxr_linenumber" name="55" href="#55">55</a>      }
 <a class="jxr_linenumber" name="56" href="#56">56</a>      
 <a class="jxr_linenumber" name="57" href="#57">57</a>      @Override

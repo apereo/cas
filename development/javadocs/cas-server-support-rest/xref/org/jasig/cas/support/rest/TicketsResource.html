@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="106" href="#106">106</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="107" href="#107">107</a> <em class="jxr_javadoccomment">     * @param requestBody service application/x-www-form-urlencoded value</em>
 <a class="jxr_linenumber" name="108" href="#108">108</a> <em class="jxr_javadoccomment">     * @param tgtId ticket granting ticket id URI path param</em>
-<a class="jxr_linenumber" name="109" href="#109">109</a> <em class="jxr_javadoccomment">     * @return @return ResponseEntity representing RESTful response</em>
+<a class="jxr_linenumber" name="109" href="#109">109</a> <em class="jxr_javadoccomment">     * @return {@link }ResponseEntity} representing RESTful response</em>
 <a class="jxr_linenumber" name="110" href="#110">110</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="111" href="#111">111</a>     @RequestMapping(value = <span class="jxr_string">"/tickets/{tgtId:.+}"</span>,
 <a class="jxr_linenumber" name="112" href="#112">112</a>             method = RequestMethod.POST,
@@ -139,22 +139,25 @@
 <a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">     * Destroy ticket granting ticket.</em>
 <a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="131" href="#131">131</a> <em class="jxr_javadoccomment">     * @param tgtId ticket granting ticket id URI path param</em>
-<a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="133" href="#133">133</a>     @RequestMapping(value = <span class="jxr_string">"/tickets/{tgtId:.+}"</span>, method = RequestMethod.DELETE)
-<a class="jxr_linenumber" name="134" href="#134">134</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> deleteTicketGrantingTicket(@PathVariable(<span class="jxr_string">"tgtId"</span>) <strong class="jxr_keyword">final</strong> String tgtId) {
-<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">this</strong>.cas.destroyTicketGrantingTicket(tgtId);
-<a class="jxr_linenumber" name="136" href="#136">136</a>     }
-<a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     * Obtain credential from the request. Could be overridden by subclasses.</em>
-<a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     * @param requestBody raw entity request body</em>
-<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * @return the credential instance</em>
-<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="144" href="#144">144</a>     <strong class="jxr_keyword">protected</strong> Credential obtainCredential(<strong class="jxr_keyword">final</strong> MultiValueMap&lt;String, String&gt; requestBody) {
-<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> UsernamePasswordCredential(requestBody.getFirst(<span class="jxr_string">"username"</span>), requestBody.getFirst(<span class="jxr_string">"password"</span>));
-<a class="jxr_linenumber" name="146" href="#146">146</a>     }
-<a class="jxr_linenumber" name="147" href="#147">147</a> }
+<a class="jxr_linenumber" name="132" href="#132">132</a> <em class="jxr_javadoccomment">     * @return {@link ResponseEntity} representing RESTful response. Signals</em>
+<a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">     * {@link HttpStatus#OK} when successful.</em>
+<a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="135" href="#135">135</a>     @RequestMapping(value = <span class="jxr_string">"/tickets/{tgtId:.+}"</span>, method = RequestMethod.DELETE)
+<a class="jxr_linenumber" name="136" href="#136">136</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> ResponseEntity&lt;String&gt; deleteTicketGrantingTicket(@PathVariable(<span class="jxr_string">"tgtId"</span>) <strong class="jxr_keyword">final</strong> String tgtId) {
+<a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">this</strong>.cas.destroyTicketGrantingTicket(tgtId);
+<a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ResponseEntity&lt;String&gt;(tgtId, HttpStatus.OK);
+<a class="jxr_linenumber" name="139" href="#139">139</a>     }
+<a class="jxr_linenumber" name="140" href="#140">140</a> 
+<a class="jxr_linenumber" name="141" href="#141">141</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> <em class="jxr_javadoccomment">     * Obtain credential from the request. Could be overridden by subclasses.</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="144" href="#144">144</a> <em class="jxr_javadoccomment">     * @param requestBody raw entity request body</em>
+<a class="jxr_linenumber" name="145" href="#145">145</a> <em class="jxr_javadoccomment">     * @return the credential instance</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">protected</strong> Credential obtainCredential(<strong class="jxr_keyword">final</strong> MultiValueMap&lt;String, String&gt; requestBody) {
+<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> UsernamePasswordCredential(requestBody.getFirst(<span class="jxr_string">"username"</span>), requestBody.getFirst(<span class="jxr_string">"password"</span>));
+<a class="jxr_linenumber" name="149" href="#149">149</a>     }
+<a class="jxr_linenumber" name="150" href="#150">150</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
