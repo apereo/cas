@@ -415,6 +415,7 @@
             <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.json</exclude>
             <exclude>**/*.checkstyle</exclude>
             <exclude>**/*.properties</exclude>
             <exclude>**/.gitignore</exclude>
