@@ -33,14 +33,12 @@ import java.util.Collection;
 
 /**
  * Base class for LDAP tests that provision and deprovision DIRECTORY data as part of test setup/teardown.
- * <p>
- * NOTE: The <code>enableLdapTests</code> system property must be set to execute tests that derive from this class.
- *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  */
 public abstract class AbstractLdapTests  {
 
-    protected final XmlWebApplicationContext context;
+    private final XmlWebApplicationContext context;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -77,4 +75,9 @@ public abstract class AbstractLdapTests  {
         final String unameAttr = this.context.getBean("usernameAttribute", String.class);
         return entry.getAttribute(unameAttr).getStringValue();
     }
+
+    protected <T> T getBean(final String id, final Class<T> clazz) {
+        return (T) this.context.getBean(id, clazz);
+    }
+
 }

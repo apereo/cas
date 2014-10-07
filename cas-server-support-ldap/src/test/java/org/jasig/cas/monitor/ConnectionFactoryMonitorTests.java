@@ -18,27 +18,22 @@
  */
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link ConnectionFactoryMonitor} class.
- *
- * @author Middleware Services
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/openldap-monitor-test.xml"})
-@IfProfileValue(name = "enableLdapTests", value = "true")
-public class ConnectionFactoryMonitorTests {
+public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
 
-    @Autowired
     private ConnectionFactoryMonitor monitor;
+
+    public ConnectionFactoryMonitorTests() {
+        super("/ldap-context.xml", "/ldap-monitor-test.xml");
+        this.monitor = getBean("monitor", ConnectionFactoryMonitor.class);
+    }
 
     @Test
     public void testObserve() throws Exception {
