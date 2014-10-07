@@ -58,6 +58,7 @@
       --%>
       <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
       <form:password cssClass="required" cssErrorClass="error" id="password" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
+      <span id="capslock-on" style="display:none;"><p><img src="images/warning.png" valign="top"> <spring:message code="screen.capslock.on" /></p></span>
     </section>
     
     <section class="row check">

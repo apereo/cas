@@ -21,7 +21,7 @@ package org.jasig.cas;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -42,10 +42,22 @@ public class Message implements Serializable {
 
     private Serializable[] params;
 
+    /**
+     * Instantiates a new message.
+     *
+     * @param code the code
+     */
     public Message(final String code) {
         this(code, code);
     }
 
+    /**
+     * Instantiates a new message.
+     *
+     * @param code the code
+     * @param defaultMessage the default message
+     * @param params the params
+     */
     public Message(final String code, final String defaultMessage, final Serializable... params) {
         Assert.hasText(code, "Code cannot be null or empty");
         Assert.hasText(defaultMessage, "Default message cannot be null or empty");

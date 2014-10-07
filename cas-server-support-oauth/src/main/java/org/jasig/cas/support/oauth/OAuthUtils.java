@@ -26,7 +26,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -46,6 +47,9 @@ public final class OAuthUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
 
+    /**
+     * Instantiates a new OAuth utils.
+     */
     private OAuthUtils() {}
 
     /**
@@ -69,13 +73,15 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        PrintWriter printWriter;
+        PrintWriter printWriter = null;
         try {
             printWriter = response.getWriter();
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
             LOGGER.error("Failed to write to response", e);
+        } finally {
+            IOUtils.closeQuietly(printWriter);
         }
         return null;
     }

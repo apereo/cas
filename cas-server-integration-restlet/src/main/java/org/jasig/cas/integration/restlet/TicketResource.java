@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -52,8 +52,9 @@ import org.springframework.web.context.request.WebRequest;
  *
  * @author Scott Battaglia
  * @since 3.3
- *
+ * @deprecated Use TicketsResource implementation from cas-server-support-rest module
  */
+@Deprecated
 public class TicketResource extends ServerResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketResource.class);
@@ -61,10 +62,18 @@ public class TicketResource extends ServerResource {
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * Instantiates a new ticket resource.
+     */
     public TicketResource() {
         setNegotiated(false);
     }
 
+    /**
+     * Accept credentials and attempt to create the TGT.
+     *
+     * @param entity the entity
+     */
     @Post
     public final void acceptRepresentation(final Representation entity)  {
         LOGGER.debug("Obtaining credentials...");
@@ -104,6 +113,11 @@ public class TicketResource extends ServerResource {
         return Status.SUCCESS_CREATED;
     }
 
+    /**
+     * Obtain credentials from the request.
+     *
+     * @return the credential
+     */
     protected Credential obtainCredentials() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
@@ -115,6 +129,11 @@ public class TicketResource extends ServerResource {
         return c;
     }
 
+    /**
+     * Log the form request.
+     *
+     * @param form the form
+     */
     private void logFormRequest(final Form form) {
         if (LOGGER.isDebugEnabled()) {
             final Set<String> pairs = new HashSet<String>();
@@ -137,6 +156,11 @@ public class TicketResource extends ServerResource {
         private final Form form;
         private final Request request;
 
+        /**
+         * Instantiates a new restlet web request.
+         *
+         * @param request the request
+         */
         public RestletWebRequest(final Request request) {
             this.form = new Form(request.getEntity());
             this.request = request;

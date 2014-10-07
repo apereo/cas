@@ -39,7 +39,7 @@
           class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler">
       <property name="servers">
           <list>
-              <ref local="radiusServer" />
+              <ref bean="radiusServer" />
           </list>
       </property>
     </bean>

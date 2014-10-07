@@ -22,7 +22,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
@@ -71,7 +71,8 @@
                           p:timeToLive="21600"
                           p:timeToIdle="21600">
                         <property name="cacheManager">
-                            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+                            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+                                 p:shared="false" p:cacheManagerName="crlcache-mgmr" />
                         </property>
                     </bean>
                 </constructor-arg>

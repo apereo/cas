@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-
-import org.springframework.util.Assert;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -77,6 +78,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Column(name="NUMBER_OF_TIMES_USED")
     private int countOfUses;
 
+    /**
+     * Instantiates a new abstract ticket.
+     */
     protected AbstractTicket() {
         // nothing to do
     }
@@ -152,10 +156,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         return false;
     }
 
+    @Override
     public final int hashCode() {
-        return this.getId().hashCode();
+        return new HashCodeBuilder().append(this.getId()).toHashCode();
     }
 
+    @Override
     public final String toString() {
         return this.getId();
     }

@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -95,6 +95,7 @@ public final class ImmutableAssertion implements Assertion, Serializable {
         return this.service;
     }
 
+    @Override
     public boolean equals(final Object o) {
         if (!(o instanceof Assertion)) {
             return false;
@@ -107,6 +108,7 @@ public final class ImmutableAssertion implements Assertion, Serializable {
                 && this.fromNewLogin == a.isFromNewLogin();
     }
 
+    @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(15, 11);
         builder.append(this.primaryAuthentication);
@@ -116,6 +118,7 @@ public final class ImmutableAssertion implements Assertion, Serializable {
         return builder.toHashCode();
     }
 
+    @Override
     public String toString() {
         return this.primaryAuthentication + ":" + this.service;
     }

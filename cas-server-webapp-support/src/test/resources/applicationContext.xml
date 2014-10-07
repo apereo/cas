@@ -22,6 +22,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
     <description>
         Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified intervals.
@@ -33,14 +34,14 @@
     <!--Quartz -->
     <!-- TICKET REGISTRY CLEANER -->
     <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-        p:ticketRegistry-ref="ticketRegistry"
-        p:logoutManager-ref="logoutManager"/>
+        c:ticketRegistry-ref="ticketRegistry"
+        c:logoutManager-ref="logoutManager"/>
 
     <bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
         p:targetObject-ref="ticketRegistryCleaner"
         p:targetMethod="clean" />
 
-    <bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    <bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
         p:jobDetail-ref="jobDetailTicketRegistryCleaner"
         p:startDelay="20000"
         p:repeatInterval="5000000" />
