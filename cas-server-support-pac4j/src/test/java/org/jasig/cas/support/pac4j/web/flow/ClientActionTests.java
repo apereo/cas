@@ -123,6 +123,7 @@ public final class ClientActionTests {
         assertEquals(MY_THEME, mockRequest.getAttribute(ClientAction.THEME));
         assertEquals(MY_LOCALE, mockRequest.getAttribute(ClientAction.LOCALE));
         assertEquals(MY_METHOD, mockRequest.getAttribute(ClientAction.METHOD));
+        assertEquals(MY_SERVICE, mockRequest.getAttribute(ClientAction.SERVICE));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         assertEquals(service, flowScope.get(ClientAction.SERVICE));
     }

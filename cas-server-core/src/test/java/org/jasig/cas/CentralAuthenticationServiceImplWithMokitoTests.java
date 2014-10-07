@@ -238,6 +238,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.isEnabled()).thenReturn(enabled);
+        when(mockRegSvc.isSsoEnabled()).thenReturn(true);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
