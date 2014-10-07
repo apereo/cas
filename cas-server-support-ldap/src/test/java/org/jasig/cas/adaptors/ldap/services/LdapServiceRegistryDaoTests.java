@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import org.jasig.cas.authentication.AbstractLdapTests;
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -123,10 +123,11 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     @Test
     public void testDeletingSingleService() throws Exception {
         final RegisteredService rs = getRegexRegisteredService();
-        this.dao.save(getRegisteredService());
+        final RegisteredService rs2 = getRegisteredService();
+        this.dao.save(rs2);
         this.dao.save(rs);
         List<RegisteredService> services = this.dao.load();
-        this.dao.delete(services.get(0));
+        this.dao.delete(rs2);
 
         services = this.dao.load();
         assertEquals(1, services.size());

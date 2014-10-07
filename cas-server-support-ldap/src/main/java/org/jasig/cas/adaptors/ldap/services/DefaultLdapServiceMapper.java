@@ -132,7 +132,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[]{})));
             }
 
-            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectClass));
+
+            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", this.objectClass));
 
             return new LdapEntry(newDn, attrs);
         } catch (final Exception e) {
