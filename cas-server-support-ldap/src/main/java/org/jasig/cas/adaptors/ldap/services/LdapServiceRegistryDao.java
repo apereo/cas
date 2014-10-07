@@ -36,6 +36,7 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -270,13 +271,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return the search request
      */
     private SearchRequest newRequest(final SearchFilter filter) {
+
         final SearchRequest sr = new SearchRequest(this.searchRequest.getBaseDn(), filter);
-        sr.setBinaryAttributes(this.searchRequest.getBinaryAttributes());
+        sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
         sr.setDerefAliases(this.searchRequest.getDerefAliases());
         sr.setSearchEntryHandlers(this.searchRequest.getSearchEntryHandlers());
         sr.setSearchReferenceHandlers(this.searchRequest.getSearchReferenceHandlers());
         sr.setFollowReferrals(this.searchRequest.getFollowReferrals());
-        sr.setReturnAttributes(this.searchRequest.getReturnAttributes());
+        sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
         sr.setSearchScope(this.searchRequest.getSearchScope());
         sr.setSizeLimit(this.searchRequest.getSizeLimit());
         sr.setSortBehavior(this.searchRequest.getSortBehavior());
