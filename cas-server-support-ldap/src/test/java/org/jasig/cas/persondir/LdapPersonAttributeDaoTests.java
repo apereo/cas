@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.persondir;
 
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ldaptive.LdapEntry;
 
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapPersonAttributeDao}.
@@ -32,28 +33,27 @@ import static org.junit.Assert.assertTrue;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class LdapPersonAttributeDaoTests  {
+public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
 
-    @Autowired
     private LdapPersonAttributeDao attributeDao;
 
     public LdapPersonAttributeDaoTests() {
-        //super(new String[]{"/ldap-context.xml", "/openldap-persondir-test.xml"});
+        super("/ldap-context.xml", "/ldap-persondir-test.xml");
+        this.attributeDao = getBean("ldapPersonAttributeDao", LdapPersonAttributeDao.class);
     }
 
     @Test
     public void testGetPerson() throws Exception {
-        /*
+
         IPersonAttributes actual;
         String username;
-        for (final LdapEntry entry : this.ldapEntries) {
+        for (final LdapEntry entry : this.getEntries()) {
             username = getUsername(entry);
             actual = attributeDao.getPerson(username);
             assertNotNull(actual);
             assertEquals(username, actual.getName());
             assertSameValues(entry.getAttribute("mail").getStringValues(), actual.getAttributes().get("mail"));
         }
-        */
     }
 
     /**
