@@ -38,7 +38,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     public LdapAuthenticationHandlerTests() {
         super("/ldap-context.xml", "/authn-context.xml");
 
-        this.handler = this.context.getBean("ldapAuthenticationHandler", LdapAuthenticationHandler.class);
+        this.handler = getBean("ldapAuthenticationHandler", LdapAuthenticationHandler.class);
     }
 
     @Test
