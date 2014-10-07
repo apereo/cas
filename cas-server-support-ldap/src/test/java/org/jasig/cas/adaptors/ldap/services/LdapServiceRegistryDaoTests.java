@@ -104,6 +104,8 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs2 = (AbstractRegisteredService) this.dao.save(rs2);
         assertNotNull(rs2);
 
+        assertEquals(this.dao.findServiceById(rs2.getId()).getName(), rs2.getName());
+
         for (final RegisteredService registeredService : services) {
             this.dao.delete(registeredService);
         }
