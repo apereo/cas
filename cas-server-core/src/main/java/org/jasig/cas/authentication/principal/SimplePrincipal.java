@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.principal;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -47,10 +47,21 @@ public class SimplePrincipal implements Principal {
         this.id = null;
     }
 
+    /**
+     * Instantiates a new simple principal.
+     *
+     * @param id the id
+     */
     public SimplePrincipal(final String id) {
         this(id, null);
     }
 
+    /**
+     * Instantiates a new simple principal.
+     *
+     * @param id the id
+     * @param attributes the attributes
+     */
     public SimplePrincipal(final String id, final Map<String, Object> attributes) {
         Assert.notNull(id, "id cannot be null");
         this.id = id;
@@ -66,10 +77,12 @@ public class SimplePrincipal implements Principal {
                 : Collections.unmodifiableMap(this.attributes);
     }
 
+    @Override
     public String toString() {
         return this.id;
     }
 
+    @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
         builder.append(this.id);
@@ -79,7 +92,7 @@ public class SimplePrincipal implements Principal {
     public final String getId() {
         return this.id;
     }
-
+    @Override
     public boolean equals(final Object o) {
         return o instanceof SimplePrincipal && ((SimplePrincipal) o).getId().equals(this.id);
     }

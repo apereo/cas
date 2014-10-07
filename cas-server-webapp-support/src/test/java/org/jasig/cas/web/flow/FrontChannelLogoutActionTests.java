@@ -30,12 +30,13 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
+import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.jasig.cas.web.support.WebUtils;
@@ -70,7 +71,8 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() throws Exception {
-        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class), new SimpleHttpClient());
+        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class),
+                new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
         this.request = new MockHttpServletRequest();
@@ -112,16 +114,15 @@ public class FrontChannelLogoutActionTests {
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
         final String FAKE_URL = "http://url";
-        LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
-        List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
+        final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
         assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));

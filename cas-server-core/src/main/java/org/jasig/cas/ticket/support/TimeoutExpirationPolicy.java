@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
@@ -34,7 +34,7 @@ import org.jasig.cas.ticket.TicketState;
 
  * @since 3.0
  */
-public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class TimeoutExpirationPolicy implements ExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -7636642464326939536L;
@@ -48,10 +48,26 @@ public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializ
         this.timeToKillInMilliSeconds = 0;
     }
 
+    /**
+     * Instantiates a new timeout expiration policy.
+     *
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    /**
+     * Instantiates a new Timeout expiration policy.
+     *
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
+    public TimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
+        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    }
+
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
             || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);

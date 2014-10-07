@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -39,17 +39,22 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
+    /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
 
+    /** The login url. */
     @NotNull
     protected String loginUrl;
 
+    /** The services manager. */
     @NotNull
     protected ServicesManager servicesManager;
 
+    /** The ticket registry. */
     @NotNull
     protected TicketRegistry ticketRegistry;
 
+    /** The timeout. */
     @NotNull
     protected long timeout;
 
@@ -62,6 +67,15 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return internalHandleRequest(method, request, response);
     }
 
+    /**
+     * Internal handle request.
+     *
+     * @param method the method
+     * @param request the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 

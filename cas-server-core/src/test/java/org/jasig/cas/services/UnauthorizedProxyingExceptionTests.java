@@ -24,12 +24,10 @@ import org.junit.Test;
 
 public class UnauthorizedProxyingExceptionTests {
 
-    private static final String CODE = "service.not.authorized.proxy";
-
     @Test
     public void testGetCode() {
-        UnauthorizedProxyingException e = new UnauthorizedProxyingException();
-        assertEquals(CODE, e.getMessage());
+        final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
+        assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
     }
 
     @Test
