@@ -51,7 +51,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     public LdapServiceRegistryDaoTests() {
         super("/ldap-context.xml", "/ldap-regservice-test.xml");
-        this.dao = this.context.getBean("serviceRegistryDao", LdapServiceRegistryDao.class);
+        this.dao = getBean("serviceRegistryDao", LdapServiceRegistryDao.class);
         this.dao.init();
     }
 
