@@ -1088,7 +1088,7 @@
   <properties>
 
     <!-- Dependency Versions -->
-    <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
+    <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.1.RELEASE</spring.version>
     <ldaptive.version>1.0.4</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
