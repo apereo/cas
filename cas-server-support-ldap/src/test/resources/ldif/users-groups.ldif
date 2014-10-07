@@ -40,12 +40,38 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: ad
 cn: CAS Test
 givenName: CAS
 sn: CAS
 displayName: CAS Test
 sAMAccountName: casTest
+distinguishedName: CN=casTest,ou=people,dc=springframework,dc=org
 mail: casTest@springframework.org
 userPassword: thePassw0rd
 unicodePwd: ignoredForTests
 userPrincipalName: castest@springframework.org
+userAccountControl: 66048
+
+dn: cn=Administrators,ou=people,dc=springframework,dc=org
+cn: Administrators
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: casServiceUserDetails
+objectClass: ad
+unicodePwd: ignoredForTests
+uid: 31415926535
+sAMAccountName: administrators
+sn: Administrators
+contactPerson: uid=9000000100,ou=people,dc=springframework,dc=org
+creationDate: 2012 12 21
+uugid: Administrators
+uugid: Users
+member: cn=Administrators,ou=people,dc=springframework,dc=org
+mail: Administrators@springframework.org
+userAccountControl: 66048
+distinguishedName: cn=Administrators,ou=people,dc=springframework,dc=org
+userPassword: thePassw0rd
+displayName: Administrators

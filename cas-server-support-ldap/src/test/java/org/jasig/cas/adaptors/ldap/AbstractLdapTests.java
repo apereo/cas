@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
