@@ -257,7 +257,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
-        final ServiceTicket serviceTicket = ticketGenerator.generateServiceTicket(ticketGrantingTicket, service, currentAuthentication != null);
+        final ServiceTicket serviceTicket = ticketGenerator.generateServiceTicket(
+                ticketGrantingTicket, service, currentAuthentication != null);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
@@ -316,11 +317,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-        final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
-                TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        final TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
-                                    authentication, this.ticketGrantingTicketExpirationPolicy);
+        final TicketGrantingTicket proxyGrantingTicket = ticketGenerator.generateProxyGrantingTicket(serviceTicket, authentication);
 
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
@@ -407,10 +404,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-            this.ticketGrantingTicketUniqueTicketIdGenerator
-                .getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, this.ticketGrantingTicketExpirationPolicy);
+        final TicketGrantingTicket ticketGrantingTicket = ticketGenerator.generateTicketGrantingTicket(authentication);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         return ticketGrantingTicket.getId();
@@ -418,20 +412,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    /**
-     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
-     */
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-    }
-
-    /**
-     * @param serviceTicketExpirationPolicy a ST expiration policy.
-     */
-    public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
 
     /**
