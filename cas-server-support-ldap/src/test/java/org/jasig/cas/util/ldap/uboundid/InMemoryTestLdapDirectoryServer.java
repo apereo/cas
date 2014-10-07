@@ -82,10 +82,10 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
                             clientSSLUtil.createSSLSocketFactory())); // Client factory
 
             config.setEnforceSingleStructuralObjectClass(false);
-            config.setEnforceAttributeSyntaxCompliance(false);
+            config.setEnforceAttributeSyntaxCompliance(true);
 
             final Schema s = Schema.mergeSchemas(Schema.getSchema(schemaFile));
-            config.setSchema(null);
+            config.setSchema(s);
 
             this.directoryServer = new InMemoryDirectoryServer(config);
 

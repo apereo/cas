@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.Test;
 import org.ldaptive.LdapEntry;
 
@@ -44,9 +45,9 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     public void testAuthenticateSuccess() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
+            final String psw = entry.getAttribute("userPassword").getStringValue();
             final HandlerResult result = this.handler.authenticate(
-                    new UsernamePasswordCredential(username,
-                            entry.getAttribute("userPassword").getStringValue()));
+                    new UsernamePasswordCredential(username, psw));
             assertNotNull(result.getPrincipal());
             assertEquals(username, result.getPrincipal().getId());
             assertEquals(
