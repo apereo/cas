@@ -18,20 +18,20 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import static org.junit.Assert.*;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -50,7 +50,7 @@ public class FileAuthenticationHandlerTests  {
 
     @Test
     public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -60,8 +60,10 @@ public class FileAuthenticationHandlerTests  {
     @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
+            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+            svc.setServiceId("https://some.app.edu");
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"));
+                new URL("http://www.rutgers.edu"), svc);
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");

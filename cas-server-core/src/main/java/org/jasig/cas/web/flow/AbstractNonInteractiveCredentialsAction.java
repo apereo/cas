@@ -46,10 +46,17 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * Checks if is renew present.
+     *
+     * @param context the context
+     * @return true, if  renew present
+     */
     protected final boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getRequestParameters().get("renew"));
     }
 
+    @Override
     protected final Event doExecute(final RequestContext context) {
         final Credential credential = constructCredentialsFromRequest(context);
 

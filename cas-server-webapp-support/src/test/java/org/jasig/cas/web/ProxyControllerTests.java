@@ -46,7 +46,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         this.proxyController
         .setCentralAuthenticationService(getCentralAuthenticationService());
 
-        StaticApplicationContext context = new StaticApplicationContext();
+        final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.proxyController.setApplicationContext(context);
     }
@@ -61,7 +61,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void testNonExistentPGT() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("pgt", "TestService");
         request.addParameter("targetService", "testDefault");
 
@@ -76,7 +76,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
                 "ticketGrantingTicketId", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request
         .addParameter("pgt", ticket.getId());
         request.addParameter(

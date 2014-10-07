@@ -18,14 +18,15 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -57,6 +58,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = false;
 
+    /**
+     * Instantiates a new service ticket impl.
+     */
     public ServiceTicketImpl() {
         // exists for JPA purposes
     }
@@ -108,6 +112,27 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ServiceTicket)) {
+            return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
+    }
+
+    @Override
     public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
@@ -127,14 +152,4 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return null;
     }
 
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-
-        return serviceTicket.getId().equals(this.getId());
-    }
 }

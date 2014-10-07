@@ -35,7 +35,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
-      <property name="severity" value="info"/>  
+      <property name="severity" value="error"/>  
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
@@ -46,7 +46,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="allowMissingParamTags" value="true" />
     </module>
     <module name="JavadocVariable">
-      <property name="severity" value="info"/>
+      <property name="severity" value="error"/>
       <property name="scope" value="package" />
     </module>
     <module name="JavadocStyle">
@@ -89,6 +89,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="LineLength">
       <property name="max" value="140"/>
       <property name="tabWidth" value="4"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="EmptyForIteratorPad"/>
     <module name="MethodParamPad">
@@ -137,9 +138,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     </module>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
-    <module name="DesignForExtension">
-      <property name="severity" value="info"/>
-    </module>
     <module name="FinalClass">
       <property name="severity" value="error"/>
     </module>
@@ -158,6 +156,10 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
       <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH"/>
     </module>
+    <module name="FinalLocalVariable">
+      <property name="severity" value="error"/>
+      <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+    </module>
     <module name="TodoComment">
       <property name="severity" value="error"/>
     </module>
@@ -174,7 +176,9 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="lineSeparator" value="lf" />
     <property name="severity" value="error" />
   </module>
-  <module name="Translation"/>
+  <module name="Translation">
+    <property name="severity" value="ignore"/>
+  </module>
   <module name="FileLength"/>
   <module name="FileTabCharacter">
     <property name="severity" value="error"/>

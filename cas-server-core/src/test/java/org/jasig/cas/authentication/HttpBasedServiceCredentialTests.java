@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
 
 import java.net.URL;
 
-import org.jasig.cas.TestUtils;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -39,15 +39,18 @@ public final class HttpBasedServiceCredentialTests {
 
     @Test
     public void testEqualsWithNull() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
+                TestUtils.getRegisteredService("https://some.app.edu"));
 
         assertFalse(c.equals(null));
     }
 
     @Test
     public void testEqualsWithFalse() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
-        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"));
+        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
+                TestUtils.getRegisteredService("https://some.app.edu"));
+        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"),
+                TestUtils.getRegisteredService("https://some.app.edu"));
 
         assertFalse(c.equals(c2));
         assertFalse(c.equals(new Object()));
@@ -55,8 +58,10 @@ public final class HttpBasedServiceCredentialTests {
 
     @Test
     public void testEqualsWithTrue() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
-        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
+                TestUtils.getRegisteredService("https://some.app.edu"));
+        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
+                TestUtils.getRegisteredService("https://some.app.edu"));
 
         assertTrue(c.equals(c2));
         assertTrue(c2.equals(c));

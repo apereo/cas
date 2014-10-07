@@ -24,6 +24,7 @@ import java.net.URL;
  * Define the behaviour of a HTTP client.
  *
  * @author Jerome Leleu
+ * @author Misagh Moayyed
  * @since 4.0
  */
 public interface HttpClient {
@@ -34,12 +35,11 @@ public interface HttpClient {
      * <p>
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
      *
-     * @param url the url to send the message to
-     * @param message the message itself
-     * @param async true if you don't want to wait for the response, false otherwise.
+     * @param message The message that should be sent to the http endpoint
      * @return boolean if the message was sent, or async was used.  false if the message failed.
+     * @since 4.1
      */
-    boolean sendMessageToEndPoint(String url, String message, boolean async);
+    boolean sendMessageToEndPoint(HttpMessage message);
 
     /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.

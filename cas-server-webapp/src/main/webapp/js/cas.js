@@ -19,7 +19,10 @@
 
 $(document).ready(function(){
     //focus username field
-    $("input:visible:enabled:first").focus();
+    if ($(":focus").length === 0){
+      $("input:visible:enabled:first").focus();
+    }
+
     //flash error box
     $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
 
@@ -28,6 +31,16 @@ $(document).ready(function(){
 
     //flash confirm box
     $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+
+    $('#capslock-on').hide();
+    $('#password').keypress(function(e) {
+        var s = String.fromCharCode( e.which );
+        if ( s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey ) {
+            $('#capslock-on').show();
+        } else {
+            $('#capslock-on').hide();
+        }
+    });
 
     /*
      * Using the JavaScript Debug library, you may issue log messages such as:
