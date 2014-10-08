@@ -17,22 +17,22 @@
 # under the License.
 #
 
-dn: dc=springframework,dc=org
+dn: dc=example,dc=org
 objectclass: domain
 objectclass: top
-dc: springframework
+dc: example
 
-dn: ou=groups,dc=springframework,dc=org
+dn: ou=groups,dc=example,dc=org
 objectclass: top
 objectclass: organizationalUnit
 ou: groups
 
-dn: ou=people,dc=springframework,dc=org
+dn: ou=people,dc=example,dc=org
 objectclass: top
 objectclass: organizationalUnit
 ou: people
 
-dn: uid=rod,ou=people,dc=springframework,dc=org
+dn: uid=rod,ou=people,dc=example,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
@@ -42,7 +42,7 @@ sn: Johnson
 uid: rod
 userPassword: koala
 
-dn: uid=dianne,ou=people,dc=springframework,dc=org
+dn: uid=dianne,ou=people,dc=example,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
@@ -52,7 +52,7 @@ sn: Emu
 uid: dianne
 userPassword: emu
 
-dn: uid=scott,ou=people,dc=springframework,dc=org
+dn: uid=scott,ou=people,dc=example,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
@@ -62,26 +62,26 @@ sn: Wombat
 uid: scott
 userPassword: wombat
 
-dn: cn=user,ou=groups,dc=springframework,dc=org
+dn: cn=user,ou=groups,dc=example,dc=org
 objectclass: top
 objectclass: groupOfNames
 cn: user
-member: uid=rod,ou=people,dc=springframework,dc=org
-member: uid=dianne,ou=people,dc=springframework,dc=org
-member: uid=scott,ou=people,dc=springframework,dc=org
+member: uid=rod,ou=people,dc=example,dc=org
+member: uid=dianne,ou=people,dc=example,dc=org
+member: uid=scott,ou=people,dc=example,dc=org
 
-dn: cn=teller,ou=groups,dc=springframework,dc=org
+dn: cn=teller,ou=groups,dc=example,dc=org
 objectclass: top
 objectclass: groupOfNames
 cn: teller
-member: uid=rod,ou=people,dc=springframework,dc=org
-member: dianne=rod,ou=people,dc=springframework,dc=org
+member: uid=rod,ou=people,dc=example,dc=org
+member: dianne=rod,ou=people,dc=example,dc=org
 
-dn: cn=supervisor,ou=groups,dc=springframework,dc=org
+dn: cn=supervisor,ou=groups,dc=example,dc=org
 objectclass: top
 objectclass: groupOfNames
 cn: supervisor
-member: uid=rod,ou=people,dc=springframework,dc=org
+member: uid=rod,ou=people,dc=example,dc=org
 
 
 

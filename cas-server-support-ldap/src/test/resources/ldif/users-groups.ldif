@@ -17,7 +17,7 @@
 # under the License.
 #
 
-dn: CN=mmoayyed,ou=people,dc=springframework,dc=org
+dn: CN=mmoayyed,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -28,14 +28,14 @@ sn: Moayyed
 givenName: Misagh
 displayName: Misagh Moayyed
 sAMAccountName: mmoayyed
-mail: mmoayyed@springframework.org
-userPrincipalName: mmoayyed@springframework.org
+mail: mmoayyed@example.org
+userPrincipalName: mmoayyed@example.org
 userAccountControl: 66048
-distinguishedName: CN=mmoayyed,ou=people,dc=springframework,dc=org
+distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
 
-dn: CN=casTest,ou=people,dc=springframework,dc=org
+dn: CN=casTest,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -46,14 +46,14 @@ givenName: CAS
 sn: CAS
 displayName: CAS Test
 sAMAccountName: casTest
-distinguishedName: CN=casTest,ou=people,dc=springframework,dc=org
-mail: casTest@springframework.org
+distinguishedName: CN=casTest,ou=people,dc=example,dc=org
+mail: casTest@example.org
 userPassword: thePassw0rd
 unicodePwd: ignoredForTests
-userPrincipalName: castest@springframework.org
+userPrincipalName: castest@example.org
 userAccountControl: 66048
 
-dn: cn=Administrators,ou=people,dc=springframework,dc=org
+dn: cn=Administrators,ou=people,dc=example,dc=org
 cn: Administrators
 objectClass: top
 objectClass: person
@@ -65,13 +65,13 @@ unicodePwd: ignoredForTests
 uid: 31415926535
 sAMAccountName: administrators
 sn: Administrators
-contactPerson: uid=9000000100,ou=people,dc=springframework,dc=org
+contactPerson: uid=9000000100,ou=people,dc=example,dc=org
 creationDate: 2012 12 21
 uugid: Administrators
 uugid: Users
-member: cn=Administrators,ou=people,dc=springframework,dc=org
-mail: Administrators@springframework.org
+member: cn=Administrators,ou=people,dc=example,dc=org
+mail: Administrators@example.org
 userAccountControl: 66048
-distinguishedName: cn=Administrators,ou=people,dc=springframework,dc=org
+distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
 userPassword: thePassw0rd
 displayName: Administrators
