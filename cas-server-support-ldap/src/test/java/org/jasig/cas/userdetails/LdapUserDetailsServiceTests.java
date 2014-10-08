@@ -20,9 +20,13 @@ package org.jasig.cas.userdetails;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
@@ -33,16 +37,14 @@ import static org.junit.Assert.*;
  *
  * @author Marvin Addison
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/ldap-context.xml", "/ldap-userdetails-test.xml"})
 public class LdapUserDetailsServiceTests extends AbstractLdapTests {
 
     private static final String CAS_SERVICE_DETAILS_OBJ_CLASS = "casServiceUserDetails";
 
+    @Autowired
     private LdapUserDetailsService userDetailsService;
-
-    public LdapUserDetailsServiceTests() {
-        super("/ldap-context.xml", "/ldap-userdetails-test.xml");
-        this.userDetailsService = getBean("ldapUserDetailsService", LdapUserDetailsService.class);
-    }
 
     @Test
     public void testLoadUserByUsername() throws Exception {

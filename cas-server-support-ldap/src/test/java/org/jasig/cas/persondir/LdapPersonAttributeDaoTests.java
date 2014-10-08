@@ -21,7 +21,11 @@ package org.jasig.cas.persondir;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
 
@@ -33,14 +37,12 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/ldap-context.xml", "/ldap-persondir-test.xml"})
 public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
 
+    @Autowired
     private LdapPersonAttributeDao attributeDao;
-
-    public LdapPersonAttributeDaoTests() {
-        super("/ldap-context.xml", "/ldap-persondir-test.xml");
-        this.attributeDao = getBean("ldapPersonAttributeDao", LdapPersonAttributeDao.class);
-    }
 
     @Test
     public void testGetPerson() throws Exception {

@@ -20,7 +20,11 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -31,15 +35,12 @@ import static org.junit.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/ldap-context.xml", "/authn-context.xml"})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
+    @Autowired
     private LdapAuthenticationHandler handler;
-
-    public LdapAuthenticationHandlerTests() {
-        super("/ldap-context.xml", "/authn-context.xml");
-
-        this.handler = getBean("ldapAuthenticationHandler", LdapAuthenticationHandler.class);
-    }
 
     @Test
     public void testAuthenticateSuccess() throws Exception {
