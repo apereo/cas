@@ -415,6 +415,7 @@
             <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.json</exclude>
             <exclude>**/*.checkstyle</exclude>
             <exclude>**/*.properties</exclude>
             <exclude>**/.gitignore</exclude>
@@ -621,6 +622,10 @@
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -843,6 +848,12 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate.validator.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -863,6 +874,12 @@
         <version>${quartz.version}</version>
         <type>jar</type>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -890,7 +907,18 @@
             </exclusion>
         </exclusions>
       </dependency>
-
+      <dependency>
+          <groupId>org.apache.shiro</groupId>
+          <artifactId>shiro-core</artifactId>
+          <version>${apache.shiro.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
@@ -1054,8 +1082,8 @@
   <properties>
 
     <!-- Dependency Versions -->
-    <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
-    <spring.version>4.0.6.RELEASE</spring.version>
+    <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
+    <spring.version>4.1.1.RELEASE</spring.version>
     <ldaptive.version>1.0.3</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
@@ -1069,7 +1097,7 @@
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
-    <commons.codec.version>1.7</commons.codec.version>
+    <commons.codec.version>1.9</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
     <checkstyle.version>5.7</checkstyle.version>
@@ -1084,6 +1112,7 @@
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <reflections.version>0.9.8</reflections.version>
+    <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
