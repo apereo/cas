@@ -40,9 +40,9 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
@@ -131,20 +131,20 @@
     may go against a database or LDAP server.  The id should remain "attributeRepository" though.
     +-->
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao"
-            p:backingMap-ref="attrRepoBackingMap" />
-    
+          p:backingMap-ref="attrRepoBackingMap" />
+
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
+        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>
-          <key><value>memberOf</value></key>
-          <list>
-              <value>faculty</value>
-              <value>staff</value>
-              <value>org</value>
-          </list>
-      </entry>
+            <key><value>memberOf</value></key>
+            <list>
+                <value>faculty</value>
+                <value>staff</value>
+                <value>org</value>
+            </list>
+        </entry>
     </util:map>
 
     <!-- 
@@ -153,22 +153,22 @@
     The name of this bean should remain "serviceRegistryDao".
     +-->
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
-            p:registeredServices-ref="registeredServicesList" />
+          p:registeredServices-ref="registeredServicesList" />
 
     <util:list id="registeredServicesList">
-    	<bean class="org.jasig.cas.services.RegexRegisteredService"
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="0" p:name="Apereo" p:description="Apereo foundation sample service"
-              p:serviceId="^http://www.apereo.org" p:evaluationOrder="0"
+              p:serviceId="^https://www.apereo.org" p:evaluationOrder="0"
               p:theme="apereo" />
 
         <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+              p:id="10000001" p:name="HTTPS and IMAPS" p:description="Allows HTTPS and IMAPS protocols"
+              p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001">
 
-            <!--
+        <!--
             <property name="proxyPolicy">
                 <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                      c:pgtUrlPattern="^(https?)://.*" />
+                      c:pgtUrlPattern="^https://.*" />
             </property>
             -->
 
@@ -187,26 +187,26 @@
                     </property>
                 </bean>
             </property>
-            -->  
+            -->
         </bean>
     </util:list>
-    
+
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
-    
+
     <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />
-  
+
     <util:list id="monitorsList">
-      <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
-      <!--
-        NOTE
-        The following ticket registries support SessionMonitor:
-          * DefaultTicketRegistry
-          * JpaTicketRegistry
-        Remove this monitor if you use an unsupported registry.
-      -->
-      <bean class="org.jasig.cas.monitor.SessionMonitor"
-          p:ticketRegistry-ref="ticketRegistry"
-          p:serviceTicketCountWarnThreshold="5000"
-          p:sessionCountWarnThreshold="100000" />
+        <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+        <!--
+          NOTE
+          The following ticket registries support SessionMonitor:
+            * DefaultTicketRegistry
+            * JpaTicketRegistry
+          Remove this monitor if you use an unsupported registry.
+        -->
+        <bean class="org.jasig.cas.monitor.SessionMonitor"
+              p:ticketRegistry-ref="ticketRegistry"
+              p:serviceTicketCountWarnThreshold="5000"
+              p:sessionCountWarnThreshold="100000" />
     </util:list>
 </beans>
