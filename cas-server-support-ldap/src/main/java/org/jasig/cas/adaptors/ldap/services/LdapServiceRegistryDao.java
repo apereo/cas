@@ -265,7 +265,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return true, if successful
      */
     private boolean hasResults(final Response<SearchResult> response) {
-        if (response.getResult() != null && response.getResult().getEntry() != null) {
+        final SearchResult result = response.getResult();
+        if (result != null && result.getEntry() != null) {
             return true;
         }
 
