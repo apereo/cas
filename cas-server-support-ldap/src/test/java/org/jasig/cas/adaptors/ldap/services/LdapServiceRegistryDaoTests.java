@@ -29,8 +29,13 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.jasig.cas.services.ServiceRegistryDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,18 +51,15 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @author Marvin S. Addison
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/ldap-context.xml", "/ldap-regservice-test.xml"})
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
-    private LdapServiceRegistryDao dao;
 
-    public LdapServiceRegistryDaoTests() {
-        super("/ldap-context.xml", "/ldap-regservice-test.xml");
-        this.dao = getBean("serviceRegistryDao", LdapServiceRegistryDao.class);
-        this.dao.init();
-    }
+    @Autowired
+    private ServiceRegistryDao dao;
 
     @Before
     public void setUp() throws Exception {
-
         for (final RegisteredService service : this.dao.load()) {
             this.dao.delete(service);
         }

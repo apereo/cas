@@ -25,9 +25,10 @@ import org.junit.BeforeClass;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.util.Collection;
 
@@ -36,21 +37,13 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @author Misagh Moayyed
  */
-public abstract class AbstractLdapTests  {
+public abstract class AbstractLdapTests implements ApplicationContextAware {
 
-    private final XmlWebApplicationContext context;
+    private ApplicationContext context;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static InMemoryTestLdapDirectoryServer DIRECTORY;
-
-    public AbstractLdapTests(final String... configLocations) {
-        this.context = new XmlWebApplicationContext();
-        this.context.setServletContext(new MockServletContext());
-        this.context.setConfigLocations(configLocations);
-        this.context.refresh();
-        this.context.start();
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -80,4 +73,8 @@ public abstract class AbstractLdapTests  {
         return (T) this.context.getBean(id, clazz);
     }
 
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 }
