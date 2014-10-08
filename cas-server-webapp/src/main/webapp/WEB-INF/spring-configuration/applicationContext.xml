@@ -127,9 +127,6 @@
           p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient"
           p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
 
-    <bean id="authenticationSupport" class="org.jasig.cas.util.DefaultAuthenticationSupport"
-          c:ticketRegistry-ref="ticketRegistry"/>
-
     <!-- ADVISORS -->
     <bean id="advisorAutoProxyCreator"
           class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
