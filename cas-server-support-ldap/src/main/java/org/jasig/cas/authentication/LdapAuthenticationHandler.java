@@ -185,7 +185,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
-        throw new FailedLoginException("Invalid credentials: " + response.getMessage());
+        throw new FailedLoginException("Invalid credentials");
     }
 
     /**
