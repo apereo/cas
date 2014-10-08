@@ -73,6 +73,7 @@ public interface CentralAuthenticationService {
      * need to check for the validity of the ticket by making sure
      * it exists and has not expired yet, etc.
      *
+     * @since 4.1
      * @param ticketGrantingTicketId the ticket granting ticket id
      * @return the ticket granting ticket
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
