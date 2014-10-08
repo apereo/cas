@@ -138,6 +138,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
         try {
             try {
                 connection = this.connectionFactory.getConnection();
+                connection.open();
             } catch (final LdapException e) {
                 throw new RuntimeException("Failed getting LDAP connection", e);
             }
