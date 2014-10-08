@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired
-    private LdapAuthenticationHandler handler;
+    private AuthenticationHandler handler;
 
     @Test
     public void testAuthenticateSuccess() throws Exception {
