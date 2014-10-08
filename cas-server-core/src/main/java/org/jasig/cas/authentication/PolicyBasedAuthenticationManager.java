@@ -21,13 +21,13 @@ package org.jasig.cas.authentication;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
+import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
@@ -285,24 +285,4 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return null;
     }
 
-    /**
-     * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
-     * principal is resolved during the authentication process.
-     */
-    static class NullPrincipal implements Principal {
-
-        private static final long serialVersionUID = 2309300426720915104L;
-        /** The nobody principal. */
-        private static final String NOBODY = "nobody";
-
-        @Override
-        public String getId() {
-            return NOBODY;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return Collections.emptyMap();
-        }
-    }
 }
