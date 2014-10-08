@@ -202,22 +202,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        Assert.notNull(ticketGrantingTicketId);
-
-        logger.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
-        final TicketGrantingTicket ticket = this.ticketRegistry.getTicket(ticketGrantingTicketId,
-                TicketGrantingTicket.class);
-
-        if (ticket == null) {
+        try {
+            logger.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
+            final TicketGrantingTicket ticket = getTicketGrantingTicket(ticketGrantingTicketId);
+            logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
+            final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
+            this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+            return logoutRequests;
+        } catch (final InvalidTicketException e) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            return Collections.emptyList();
         }
-
-        logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
-        final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
-        this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-
-        return logoutRequests;
+        return Collections.emptyList();
     }
 
     @Audit(
@@ -230,24 +225,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public String grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
-        Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
+
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-
-        if (ticketGrantingTicket == null) {
-            logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-            throw new InvalidTicketException(ticketGrantingTicketId);
-        }
-
-        synchronized (ticketGrantingTicket) {
-            if (ticketGrantingTicket.isExpired()) {
-                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-                logger.debug("TicketGrantingTicket [{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
-                throw new InvalidTicketException(ticketGrantingTicketId);
-            }
-        }
-
+        final TicketGrantingTicket ticketGrantingTicket = getTicketGrantingTicket(ticketGrantingTicketId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
@@ -457,6 +438,30 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         return ticketGrantingTicket.getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket(final String ticketGrantingTicketId)
+            throws InvalidTicketException {
+        Assert.notNull(ticketGrantingTicketId, "ticketGrantingTicketId cannot be null");
+        final TicketGrantingTicket ticketGrantingTicket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+
+        if (ticketGrantingTicket == null) {
+            logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
+            throw new InvalidTicketException(ticketGrantingTicketId);
+        }
+
+        synchronized (ticketGrantingTicket) {
+            if (ticketGrantingTicket.isExpired()) {
+                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+                logger.debug("TicketGrantingTicket [{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
+                throw new InvalidTicketException(ticketGrantingTicketId);
+            }
+        }
+        return ticketGrantingTicket;
     }
 
     public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {

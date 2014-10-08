@@ -156,14 +156,15 @@
     </decision-state>
 
 	<!-- 
-		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
+		the "viewGenericLoginSuccess" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
 	
     <end-state id="viewGenericLoginSuccess" view="casGenericSuccessView">
         <on-entry>
-            <evaluate expression="authenticationSupport.getAuthenticatedPrincipalFrom(flowScope.ticketGrantingTicketId)"
-                      result="requestScope.principal"/>
+            <evaluate expression="genericSuccessViewAction.getAuthenticationPrincipal(flowScope.ticketGrantingTicketId)"
+                      result="requestScope.principal"
+                      result-type="org.jasig.cas.authentication.principal.Principal" />
         </on-entry>
     </end-state>
 
