@@ -25,20 +25,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -324,6 +323,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
+        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
 
         return toStringBuilder.toString();
     }

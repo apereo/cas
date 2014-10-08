@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -31,6 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * This controller is in charge of responding to the authorize
@@ -99,6 +99,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
         final HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
         session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getName());
+        session.setAttribute(OAuthConstants.BYPASS_APPROVAL_PROMPT, service.isBypassApprovalPrompt());
         session.setAttribute(OAuthConstants.OAUTH20_STATE, state);
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()

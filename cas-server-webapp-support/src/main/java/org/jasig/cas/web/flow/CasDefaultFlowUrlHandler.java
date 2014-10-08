@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Provides special handling for parameters in requests made to the CAS login
@@ -62,7 +61,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuffer builder = new StringBuffer();
+        final StringBuilder builder = new StringBuilder();
         builder.append(request.getRequestURI());
         builder.append("?");
         @SuppressWarnings("unchecked")
