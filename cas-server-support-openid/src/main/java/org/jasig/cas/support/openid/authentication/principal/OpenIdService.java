@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
@@ -185,11 +186,9 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + (this.identity == null ? 0 : this.identity.hashCode());
-        return result;
+        return new HashCodeBuilder()
+                .append(this.identity)
+                .toHashCode();
     }
 
     @Override

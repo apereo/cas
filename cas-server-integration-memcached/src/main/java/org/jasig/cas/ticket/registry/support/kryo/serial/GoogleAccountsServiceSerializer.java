@@ -97,7 +97,7 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
         final String requestId = kryo.readObject(buffer, String.class);
         final String relayState = kryo.readObject(buffer, String.class);
         try {
-            final GoogleAccountsService service = (GoogleAccountsService) CONSTRUCTOR.newInstance(
+            return (GoogleAccountsService) CONSTRUCTOR.newInstance(
                     id,
                     originalUrl,
                     artifactId,
@@ -106,7 +106,6 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
                     privateKey,
                     publicKey,
                     alternateUsername);
-            return service;
         } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }

@@ -74,7 +74,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     @Override
     public boolean deleteTicket(final String ticketId) {
         try {
-            logger.debug("Removing ticket from registry for: ", ticketId);
+            logger.debug("Removing ticket from registry for: {}", ticketId);
             return this.cache.remove(FQN_TICKET, ticketId) != null;
         } catch (final CacheException e) {
             logger.error(e.getMessage(), e);

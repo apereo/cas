@@ -39,7 +39,7 @@ public final class RememberMeAuthenticationMetaDataPopulator implements
         if (credential instanceof RememberMeCredential) {
             final RememberMeCredential r = (RememberMeCredential) credential;
             if (r.isRememberMe()) {
-                builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true);
+                builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
             }
         }
     }

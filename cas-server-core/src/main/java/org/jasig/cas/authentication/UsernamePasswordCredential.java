@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * Credential for authenticating with a username and password.
@@ -124,8 +126,10 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(username)
+                .append(password)
+                .toHashCode();
     }
+
 }
