@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -103,8 +105,10 @@ public class UsernamePasswordCredentials implements Credentials {
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(username)
+                .append(password)
+                .toHashCode();
+
     }
 }

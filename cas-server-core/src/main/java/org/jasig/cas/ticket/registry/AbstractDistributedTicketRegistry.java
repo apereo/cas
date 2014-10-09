@@ -73,7 +73,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private static final long serialVersionUID = 1780193477774123440L;
 
-        private transient final AbstractDistributedTicketRegistry ticketRegistry;
+        private final AbstractDistributedTicketRegistry ticketRegistry;
 
         private final T ticket;
 

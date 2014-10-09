@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -137,11 +138,9 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     @Override
     public int hashCode() {
-        final int prime = 41;
-        int result = 1;
-        result = prime * result
-            + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return new HashCodeBuilder()
+                .append(this.id)
+                .toHashCode();
     }
 
     protected Principal getPrincipal() {
