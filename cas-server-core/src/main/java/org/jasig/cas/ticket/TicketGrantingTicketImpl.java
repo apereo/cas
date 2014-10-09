@@ -181,7 +181,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** {@inheritDoc} */
     @Override
     public void markTicketExpired() {
-        this.expired = Boolean.FALSE;
+        this.expired = Boolean.TRUE;
     }
 
     /** {@inheritDoc} */
