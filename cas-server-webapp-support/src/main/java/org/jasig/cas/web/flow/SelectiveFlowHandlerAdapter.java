@@ -39,8 +39,8 @@ public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
     @NotNull
     private Set<String> supportedFlowIds;
 
-    public void setSupportedFlowIds(final Set<String> flowIdList) {
-        this.supportedFlowIds = flowIdList;
+    public void setSupportedFlowIds(final Set<String> flowIdSet) {
+        this.supportedFlowIds = flowIdSet;
     }
 
     public void setSupportedFlowId(final String flowId) {
