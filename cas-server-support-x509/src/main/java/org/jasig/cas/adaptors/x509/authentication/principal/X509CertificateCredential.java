@@ -52,7 +52,7 @@ public final class X509CertificateCredential extends AbstractCredential {
     }
 
     public X509Certificate[] getCertificates() {
-        return  this.certificates;
+        return this.certificates;
     }
 
     public void setCertificate(final X509Certificate certificate) {

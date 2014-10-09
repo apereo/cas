@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,12 +121,12 @@ public class JpaLockingStrategy implements LockingStrategy {
 
         boolean result = false;
         if (lock != null) {
-            final Date expDate = lock.getExpirationDate();
+            final DateTime expDate = new DateTime(lock.getExpirationDate());
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 logger.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
-            } else if (expDate != null && new Date().after(expDate)) {
+            } else if (new DateTime().isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
                 logger.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
@@ -274,8 +275,8 @@ public class JpaLockingStrategy implements LockingStrategy {
         /**
          * @return the expirationDate
          */
-        public Date getExpirationDate() {
-            return expirationDate;
+        public DateTime getExpirationDate() {
+            return this.expirationDate == null ? null : new DateTime(this.expirationDate);
         }
 
         /**

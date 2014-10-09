@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
 import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -97,7 +98,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /** The revocation date. */
-    private final Date revocationDate;
+    private final DateTime revocationDate;
 
     /** The serial. */
     private final BigInteger serial;
@@ -123,7 +124,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
      * @param reason the reason
      */
     public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
-        this.revocationDate = revoked;
+        this.revocationDate = new DateTime(revoked);
         this.serial = serial;
         this.reason = reason;
     }
@@ -134,7 +135,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
      * @param entry the entry
      */
     public RevokedCertificateException(final X509CRLEntry entry) {
-        this.revocationDate = entry.getRevocationDate();
+        this.revocationDate = new DateTime(entry.getRevocationDate());
         this.serial = entry.getSerialNumber();
         if (entry.hasExtensions()) {
             try {
@@ -154,8 +155,8 @@ public class RevokedCertificateException extends GeneralSecurityException {
      *
      * @return Returns the revocationDate.
      */
-    public Date getRevocationDate() {
-        return this.revocationDate;
+    public DateTime getRevocationDate() {
+        return this.revocationDate == null ? null : new DateTime(this.revocationDate);
     }
 
     /**
