@@ -18,12 +18,11 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import java.util.Locale;
-
-import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
@@ -44,14 +43,15 @@ public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResol
     @Override
     protected String extractPrincipalId(final Credential credential) {
         final SpnegoCredential c = (SpnegoCredential) credential;
+        final String id = c.getPrincipal().getId();
 
         switch (this.transformPrincipalId) {
         case UPPERCASE:
-            return c.getPrincipal().getId().toUpperCase(Locale.ENGLISH);
+            return id.toUpperCase(Locale.ENGLISH);
         case LOWERCASE:
-            return c.getPrincipal().getId().toLowerCase(Locale.ENGLISH);
+            return id.toLowerCase(Locale.ENGLISH);
         default:
-            return c.getPrincipal().getId();
+            return id;
         }
     }
 

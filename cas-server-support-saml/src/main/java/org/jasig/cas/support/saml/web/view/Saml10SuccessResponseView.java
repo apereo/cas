@@ -151,7 +151,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final Map<String, Object> authnAttributes = new TreeMap<String, Object>(authentication.getAttributes());
 
         final Object o = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = (o == Boolean.TRUE) && assertion.isFromNewLogin();
+        final boolean isRemembered = o.equals(Boolean.TRUE) && assertion.isFromNewLogin();
 
         if (isRemembered) {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);

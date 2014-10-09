@@ -109,7 +109,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
-    private final ServicesManager servicesManager;
+    private transient final ServicesManager servicesManager;
     
     /**
      * Instantiates a new google accounts service.

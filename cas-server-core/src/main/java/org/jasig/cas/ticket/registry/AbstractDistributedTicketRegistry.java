@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -73,7 +73,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private static final long serialVersionUID = 1780193477774123440L;
 
-        private final AbstractDistributedTicketRegistry ticketRegistry;
+        private transient final AbstractDistributedTicketRegistry ticketRegistry;
 
         private final T ticket;
 

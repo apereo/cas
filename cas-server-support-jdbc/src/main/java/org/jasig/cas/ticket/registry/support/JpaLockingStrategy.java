@@ -18,8 +18,9 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,10 +33,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.

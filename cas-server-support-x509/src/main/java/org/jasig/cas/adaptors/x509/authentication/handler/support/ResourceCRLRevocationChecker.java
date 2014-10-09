@@ -18,6 +18,13 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
+
+import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -28,14 +35,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.security.auth.x500.X500Principal;
-
-import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
 
 /**
  * CRL-based revocation checker that uses one or more CRL resources to fetch
@@ -177,7 +176,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
                     this.resources.add(r);
                 }
             }
-            if (this.resources.size() == 0) {
+            if (this.resources.isEmpty()) {
                 throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
             }
         }

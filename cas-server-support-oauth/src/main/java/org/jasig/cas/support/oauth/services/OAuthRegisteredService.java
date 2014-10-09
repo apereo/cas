@@ -35,7 +35,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
 
     private String clientId;
 
-    private Boolean bypassApprovalPrompt = false;
+    private Boolean bypassApprovalPrompt = Boolean.FALSE;
 
     public String getClientId() {
         return this.clientId;
