@@ -78,7 +78,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
                 : null;
 
         Message response = null;
-        if (mode != null && mode.equals("associate")) {
+        if ("associate".equals(mode)) {
             response = serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<String, String>();
@@ -101,7 +101,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final String openIdMode = request.getParameter("openid.mode");
-        if (openIdMode != null && openIdMode.equals("associate")) {
+        if ("associate".equals(openIdMode)) {
             logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }

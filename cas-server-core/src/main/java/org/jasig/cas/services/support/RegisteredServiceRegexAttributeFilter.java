@@ -21,18 +21,17 @@ package org.jasig.cas.services.support;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import org.jasig.cas.services.AttributeFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 
@@ -166,7 +165,7 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
      * @return the string[]
      */
     private String[] filterArrayAttributes(final String[] valuesToFilter, final String attributeName) {
-        final Vector<String> vector = new Vector<String>(valuesToFilter.length);
+        final List<String> vector = new ArrayList<String>(valuesToFilter.length);
         for (final String attributeValue : valuesToFilter) {
             if (patternMatchesAttributeValue(attributeValue)) {
                 logReleasedAttributeEntry(attributeName, attributeValue);
