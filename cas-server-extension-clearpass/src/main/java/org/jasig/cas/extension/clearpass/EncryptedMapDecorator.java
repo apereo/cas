@@ -32,6 +32,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -130,7 +131,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final String salt,
             final String secretKeyAlgorithm, final String secretKey) throws Exception {
-        this(decoratedMap, hashAlgorithm, salt.getBytes(), secretKeyAlgorithm,
+        this(decoratedMap, hashAlgorithm, salt.getBytes(Charset.defaultCharset()), secretKeyAlgorithm,
                 getSecretKey(secretKeyAlgorithm, secretKey, salt));
     }
 
@@ -262,7 +263,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(this.salt);
-        messageDigest.update(key.toLowerCase().getBytes());
+        messageDigest.update(key.toLowerCase().getBytes(Charset.defaultCharset()));
         final String hash = getFormattedText(messageDigest.digest());
 
         logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
@@ -283,7 +284,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            final byte[] ivCiphertext = decode(value.getBytes());
+            final byte[] ivCiphertext = decode(value.getBytes(Charset.defaultCharset()));
             final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
             final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
             final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
@@ -293,7 +294,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
             final byte[] plaintext = cipher.doFinal(ciphertext);
 
-            return new String(plaintext);
+            return new String(plaintext, Charset.defaultCharset());
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -372,14 +373,14 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
             cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
             
-            final byte[] ciphertext = cipher.doFinal(value.getBytes());
+            final byte[] ciphertext = cipher.doFinal(value.getBytes(Charset.defaultCharset()));
             final byte[] ivCiphertext = new byte[INTEGER_LEN + this.ivSize + ciphertext.length];
 
             System.arraycopy(int2byte(this.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return new String(encode(ivCiphertext));
+            return new String(encode(ivCiphertext), Charset.defaultCharset());
         } catch(final Exception e) {
             throw new RuntimeException(e);
         }

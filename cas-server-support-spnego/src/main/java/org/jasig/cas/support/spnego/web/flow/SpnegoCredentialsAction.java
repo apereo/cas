@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
@@ -76,7 +77,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             final byte[] token = Base64.decode(authorizationHeader
                     .substring(this.messageBeginPrefix.length()));
 
-            logger.debug("Obtained token: {}", new String(token));
+            logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
@@ -122,7 +123,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            logger.debug("Obtained output token: {}", new String(nextToken));
+            logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                     + " " + Base64.encode(nextToken));
