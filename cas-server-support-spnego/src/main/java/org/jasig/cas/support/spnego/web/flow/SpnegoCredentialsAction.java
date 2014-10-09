@@ -24,8 +24,6 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -71,16 +69,14 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SPNEGO Authorization header found with "
-                        + (authorizationHeader.length() - this.messageBeginPrefix
-                                .length()) + " bytes");
-            }
+
+            logger.debug("SPNEGO Authorization header found with {} bytes",
+                    authorizationHeader.length() - this.messageBeginPrefix.length());
+
             final byte[] token = Base64.decode(authorizationHeader
                     .substring(this.messageBeginPrefix.length()));
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained token: " + new String(token));
-            }
+
+            logger.debug("Obtained token: {}", new String(token));
             return new SpnegoCredential(token);
         }
 

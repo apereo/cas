@@ -109,7 +109,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
-    private transient final ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
     
     /**
      * Instantiates a new google accounts service.
@@ -228,9 +228,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", currentDateTime);
         samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
         samlResponse = samlResponse.replaceAll("<ACS_URL>", getId());
-        samlResponse = samlResponse.replace("<REQUEST_ID>", this.requestId);
-
-        return samlResponse;
+        return samlResponse.replace("<REQUEST_ID>", this.requestId);
     }
 
     /**

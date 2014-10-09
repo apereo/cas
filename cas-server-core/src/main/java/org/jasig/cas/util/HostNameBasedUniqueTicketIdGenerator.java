@@ -67,7 +67,7 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
 
             if (hostName.indexOf(".") > 0) {
-                return (hostName.substring(0, hostName.indexOf(".")));
+                return hostName.substring(0, hostName.indexOf("."));
             }
             return hostName;
         } catch (final UnknownHostException e) {

@@ -18,17 +18,9 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import java.nio.ByteBuffer;
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.KeySpec;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.Arrays;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -38,10 +30,17 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Decorator for a map that will hash the key and encrypt the value.
@@ -507,9 +506,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
         final KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
         final SecretKey tmp = factory.generateSecret(spec);
-        final SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
-
-        return secret;
+        return new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
     }
 
     public String getSecretKeyAlgorithm() {
