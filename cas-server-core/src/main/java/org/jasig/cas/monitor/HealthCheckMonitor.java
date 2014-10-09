@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
 
 /**
  * Simple health check monitor that reports the overall health as the greatest reported
@@ -61,8 +61,9 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         for (final Monitor monitor : this.monitors) {
             try {
                 result = monitor.observe();
-                if (result.getCode().value() > code.value()) {
-                    code = result.getCode();
+                final StatusCode resCode = result.getCode();
+                if (resCode.value() > code.value()) {
+                    code = resCode;
                 }
             } catch (final Exception e) {
                 code = StatusCode.ERROR;

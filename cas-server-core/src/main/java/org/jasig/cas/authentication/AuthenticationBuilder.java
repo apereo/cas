@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jasig.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -132,9 +132,7 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setCredentials(final List<CredentialMetaData> credentials) {
         Assert.notNull(credentials, "Credential cannot be null");
         this.credentials.clear();
-        for (final CredentialMetaData c : credentials) {
-            this.credentials.add(c);
-        }
+        this.credentials.addAll(credentials);
         return this;
     }
 
@@ -169,8 +167,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
         Assert.notNull(attributes, "Attributes cannot be null");
         this.attributes.clear();
-        for (final String name : attributes.keySet()) {
-            this.attributes.put(name, attributes.get(name));
+        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+            this.attributes.put(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -207,8 +205,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setSuccesses(final Map<String, HandlerResult> successes) {
         Assert.notNull(successes, "Successes cannot be null");
         this.successes.clear();
-        for (final String handler : successes.keySet()) {
-            this.successes.put(handler, successes.get(handler));
+        for (final Map.Entry<String, HandlerResult> entry : successes.entrySet()) {
+            this.successes.put(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -245,8 +243,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
-        for (final String handler : failures.keySet()) {
-            this.failures.put(handler, failures.get(handler));
+        for (final Map.Entry<String, Class<? extends Exception>> entry : failures.entrySet()) {
+            this.failures.put(entry.getKey(), entry.getValue());
         }
         return this;
     }

@@ -216,10 +216,10 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         final String fileName = service.getName() + "-" + service.getId() + "." + FILE_EXTENSION;
         final File svcFile = new File(serviceRegistryDirectory, fileName);
         try {
-            final String path = svcFile.getCanonicalPath();
+            svcFile.getCanonicalPath();
             return svcFile;
         } catch (final IOException e) {
-            LOGGER.warn("Service file name " + fileName + " is invalid; Examine for illegal characters in the name.", e);
+            LOGGER.warn("Service file name {}  is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }

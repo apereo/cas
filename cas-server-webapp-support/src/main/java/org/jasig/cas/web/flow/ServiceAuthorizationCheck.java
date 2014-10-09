@@ -60,7 +60,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
             return success();
         }
         
-        if (this.servicesManager.getAllServices().size() == 0) {
+        if (this.servicesManager.getAllServices().isEmpty()) {
             final String msg = String.format("No service definitions are found in the service manager. "
                     + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             logger.warn(msg);

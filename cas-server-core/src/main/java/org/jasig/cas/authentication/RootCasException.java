@@ -79,7 +79,7 @@ public abstract class RootCasException extends Exception {
    */
   public final String getCode() {
       final Throwable cause = this.getCause();
-      if (cause != null && (cause instanceof RootCasException)) {
+      if (cause instanceof RootCasException) {
         return ((RootCasException) cause).getCode();
       }
       return this.code;
