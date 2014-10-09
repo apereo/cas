@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.net.URL;
-
 import jcifs.Config;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.net.URL;
 
 /**
  * Configuration helper for JCIFS and the Spring framework.
@@ -88,8 +87,8 @@ public final class JCIFSConfig implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
-            logger.warn("found login config in system property, may overide : "
-                    + System.getProperty(SYS_PROP_LOGIN_CONF));
+            logger.warn("found login config in system property, may overide : {}"
+                    , System.getProperty(SYS_PROP_LOGIN_CONF));
         }
 
         URL url = getClass().getResource(
@@ -105,8 +104,8 @@ public final class JCIFSConfig implements InitializingBean {
                 System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
             }
         }
-        logger.debug("configured login configuration path : "
-                + System.getProperty(SYS_PROP_LOGIN_CONF));
+        logger.debug("configured login configuration path : {}"
+                , System.getProperty(SYS_PROP_LOGIN_CONF));
     }
 
     /**

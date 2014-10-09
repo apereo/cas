@@ -195,7 +195,8 @@ public class ServiceValidateController extends DelegateController {
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou);
         } catch (final TicketValidationException e) {
-            return generateErrorView(e.getCode(), e.getCode(),
+            final String code = e.getCode();
+            return generateErrorView(code, code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
@@ -245,7 +246,7 @@ public class ServiceValidateController extends DelegateController {
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
         final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
         final Object o = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = (o == Boolean.TRUE && !assertion.isFromNewLogin());
+        final boolean isRemembered = (o.equals(Boolean.TRUE) && !assertion.isFromNewLogin());
         
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);

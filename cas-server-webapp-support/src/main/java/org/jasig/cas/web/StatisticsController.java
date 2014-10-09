@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.web;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -36,6 +30,11 @@ import org.springframework.web.servlet.view.InternalResourceView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @author Scott Battaglia

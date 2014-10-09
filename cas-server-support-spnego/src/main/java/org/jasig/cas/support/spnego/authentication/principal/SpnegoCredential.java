@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Credential that are a holder for Spnego init token.
@@ -137,7 +137,7 @@ public final class SpnegoCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
+        return Arrays.hashCode(this.initToken) ^ Arrays.hashCode(this.nextToken) ^ this.principal.hashCode();
     }
 
 }
