@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -44,6 +45,7 @@ import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
+import org.jdom.Element;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -176,8 +178,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final String assertionConsumerServiceUrl = document.getRootElement().getAttributeValue("AssertionConsumerServiceURL");
-        final String requestId = document.getRootElement().getAttributeValue("ID");
+        final Element root = document.getRootElement();
+        final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
+        final String requestId = root.getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
                 relayState, requestId, privateKey, publicKey, servicesManager);
@@ -297,7 +300,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 baos.write(buf, 0, count);
                 count = iis.read(buf);
             }
-            return new String(baos.toByteArray());
+            return new String(baos.toByteArray(), Charset.defaultCharset());
         } catch (final Exception e) {
             return null;
         } finally {

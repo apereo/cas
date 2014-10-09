@@ -101,7 +101,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
             return url;
         }
 
-        final int questionMarkPosition = url.indexOf("?");
+        final int questionMarkPosition = url.indexOf('?');
 
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
