@@ -276,7 +276,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            for (X509TrustManager trustManager : trustManagers) {
+            for (final X509TrustManager trustManager : trustManagers) {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return;
@@ -290,7 +290,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            for (X509TrustManager trustManager : trustManagers) {
+            for (final X509TrustManager trustManager : trustManagers) {
                 final List<X509Certificate> list = Arrays.asList(trustManager.getAcceptedIssuers());
                 certificates.addAll(list);
             }

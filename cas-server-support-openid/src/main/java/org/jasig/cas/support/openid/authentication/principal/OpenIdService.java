@@ -18,11 +18,6 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
@@ -38,6 +33,10 @@ import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Scott Battaglia
@@ -93,8 +92,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
         if (ticketId != null) {
 
             final ServerManager manager = (ServerManager) ApplicationContextProvider.getApplicationContext().getBean("serverManager");
-            final CentralAuthenticationService cas = (CentralAuthenticationService) ApplicationContextProvider.getApplicationContext()
-                                                .getBean("centralAuthenticationService");
+            final CentralAuthenticationService cas = ApplicationContextProvider.getApplicationContext()
+                                                .getBean("centralAuthenticationService", CentralAuthenticationService.class);
             boolean associated = false;
             boolean associationValid = true;
             try {

@@ -19,6 +19,7 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
+import org.joda.time.DateTime;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -49,15 +50,14 @@ public class AuthenticationBuilder {
     /** Map of handler names to authentication failures. */
     private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<String, Class<? extends Exception>>();
 
-
     /** Authentication date. */
-    private Date authenticationDate;
+    private DateTime authenticationDate;
 
     /**
      * Creates a new instance using the current date for the authentication date.
      */
     public AuthenticationBuilder() {
-        authenticationDate = new Date();
+        authenticationDate = new DateTime();
     }
 
     /**
@@ -76,8 +76,8 @@ public class AuthenticationBuilder {
      *
      * @return Authentication date.
      */
-    public Date getAuthenticationDate() {
-        return authenticationDate;
+    public DateTime getAuthenticationDate() {
+        return this.authenticationDate == null ? null : new DateTime(this.authenticationDate);
     }
 
     /**
@@ -88,7 +88,7 @@ public class AuthenticationBuilder {
      * @return This builder instance.
      */
     public AuthenticationBuilder setAuthenticationDate(final Date d) {
-        this.authenticationDate = d;
+        this.authenticationDate = new DateTime(d);
         return this;
     }
 
