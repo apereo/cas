@@ -85,9 +85,11 @@ public class RevokedCertificateException extends GeneralSecurityException {
          * @return the reason
          */
         public static Reason fromCode(final int code) {
-            for (int i = 0; i < Reason.values().length; i++) {
+            final Reason[] reasons = Reason.values();
+
+            for (int i = 0; i < reasons.length; i++) {
                 if (i == code) {
-                    return Reason.values()[i];
+                    return reasons[i];
                 }
             }
             throw new IllegalArgumentException("Unknown CRL reason code.");

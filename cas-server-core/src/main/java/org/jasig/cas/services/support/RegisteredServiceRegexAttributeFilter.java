@@ -95,8 +95,9 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
     @SuppressWarnings("unchecked")
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
-        for (final String attributeName : givenAttributes.keySet()) {
-            final Object attributeValue = givenAttributes.get(attributeName);
+        for (final Map.Entry<String, Object> entry: givenAttributes.entrySet()) {
+            final String attributeName = entry.getKey();
+            final Object attributeValue = entry.getValue();
 
             logger.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
@@ -136,8 +137,9 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
      */
     private Map<String, String> filterMapAttributes(final Map<String, String> valuesToFilter) {
         final Map<String, String> attributesToFilter = new HashMap<String, String>(valuesToFilter.size());
-        for (final String attributeName : valuesToFilter.keySet()) {
-            final String attributeValue = valuesToFilter.get(attributeName);
+        for (final Map.Entry<String, String> entry: valuesToFilter.entrySet()) {
+            final String attributeName = entry.getKey();
+            final String attributeValue = entry.getValue();
             if (patternMatchesAttributeValue(attributeValue)) {
                 logReleasedAttributeEntry(attributeName, attributeValue);
                 attributesToFilter.put(attributeName, valuesToFilter.get(attributeName));

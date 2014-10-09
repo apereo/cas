@@ -24,6 +24,8 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,8 +44,8 @@ import javax.servlet.http.HttpServletResponse;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
-public final class SpnegoCredentialsAction extends
-AbstractNonInteractiveCredentialsAction {
+public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
+
 
     private boolean ntlm = false;
 
@@ -124,9 +126,7 @@ AbstractNonInteractiveCredentialsAction {
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained output token: " + new String(nextToken));
-            }
+            logger.debug("Obtained output token: {}", new String(nextToken));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                     + " " + Base64.encode(nextToken));
