@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 
 /**
@@ -106,7 +107,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String getPasswordOnRecord(final String username) throws IOException {
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(
+                    this.fileName.getInputStream(), Charset.defaultCharset()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
