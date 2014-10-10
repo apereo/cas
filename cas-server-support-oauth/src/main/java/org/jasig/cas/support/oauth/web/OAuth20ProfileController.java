@@ -71,7 +71,14 @@ public final class OAuth20ProfileController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 
-        final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        if (StringUtils.isBlank(accessToken)) {
+            // try getting the bearer token from the authorization header
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("bearer ")) {
+                accessToken = authHeader.substring(7);
+            }
+        }
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
         final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
