@@ -32,8 +32,34 @@ import java.util.Map;
 public final class NullPrincipal implements Principal {
 
     private static final long serialVersionUID = 2309300426720915104L;
+
     /** The nobody principal. */
     private static final String NOBODY = "nobody";
+
+    /** The singleton instance. **/
+    private static NullPrincipal INSTANCE = null;
+
+    private final Map<String, Object> attributes;
+
+    /**
+     * Returns the single instance of this class. Will create
+     * one if none exists.
+     *
+     * @return the instance
+     */
+    public static NullPrincipal getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new NullPrincipal();
+        }
+        return INSTANCE;
+    }
+
+    /**
+     * Instantiates a new Null principal.
+     */
+    private NullPrincipal() {
+        attributes = Collections.emptyMap();
+    }
 
     @Override
     public String getId() {
@@ -42,6 +68,6 @@ public final class NullPrincipal implements Principal {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Collections.emptyMap();
+        return this.attributes;
     }
 }

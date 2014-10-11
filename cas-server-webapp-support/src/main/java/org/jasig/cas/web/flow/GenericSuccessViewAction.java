@@ -63,6 +63,6 @@ public final class GenericSuccessViewAction {
         }
         logger.debug("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
                 NullPrincipal.class.getSimpleName());
-        return new NullPrincipal();
+        return NullPrincipal.getInstance();
     }
 }
