@@ -73,9 +73,8 @@ public final class OAuth20ProfileController extends AbstractController {
 
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
-            // try getting the bearer token from the authorization header
             final String authHeader = request.getHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("bearer ")) {
+            if (StringUtils.isNotBlank(accessToken) && authHeader.startsWith("bearer ")) {
                 accessToken = authHeader.substring(7);
             }
         }
