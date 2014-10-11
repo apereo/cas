@@ -141,7 +141,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 throw new IllegalStateException(
                     "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
             }
-            this.grantedTicketAlready = Boolean.FALSE;
+            this.grantedTicketAlready = Boolean.TRUE;
         }
 
         return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
