@@ -53,6 +53,9 @@ public interface OAuthConstants {
     /** The access token. */
     String ACCESS_TOKEN = "access_token";
 
+    /** The bearer token. */
+    String BEARER_TOKEN = "bearer";
+    
     /** The OAUT h20_ callbackurl. */
     String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
