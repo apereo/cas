@@ -28,29 +28,30 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/openldap.properties"/>
+    <bean id="usernameAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="mail" />
+    </bean>
 
-    <bean id="monitor"
-          class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
-          c:factory-ref="connectionFactory"
-          c:validator-ref="searchValidator" />
-
-    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="connectionConfig" />
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
-    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="${ldap.url}"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}"
-          p:sslConfig-ref="sslConfig"/>
-
-    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.X509CredentialConfig"
-                  p:trustCertificates="${ldap.trustedCert}" />
+    <bean id="ldapPersonAttributeDao"
+          class="org.jasig.cas.persondir.LdapPersonAttributeDao"
+          p:connectionFactory-ref="pooledLdapConnectionFactory"
+          p:baseDN="${ldap.baseDn}"
+          p:searchControls-ref="searchControls"
+          p:searchFilter="mail={0}">
+        <property name="resultAttributeMapping">
+            <map>
+                <!--
+                   | Key is LDAP attribute name, value is principal attribute name.
+                   -->
+                <entry key="member" value="member" />
+                <entry key="mail" value="mail" />
+                <entry key="displayName" value="displayName" />
+            </map>
         </property>
     </bean>
 
+    <bean id="searchControls"
+          class="javax.naming.directory.SearchControls"
+          p:searchScope="1"
+          p:countLimit="2" />
 </beans>
