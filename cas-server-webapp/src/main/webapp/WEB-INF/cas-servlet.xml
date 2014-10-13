@@ -141,10 +141,14 @@
         p:executionKeyFactory-ref="loginFlowExecutionRepository"
         p:executionListenerLoader-ref="loginFlowListenerLoader"/>
   
-  <bean id="loginFlowExecutionRepository" class="edu.vt.middleware.webflow.ClientFlowExecutionRepository"
+  <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
         c:flowExecutionFactory-ref="loginFlowExecutionFactory"
         c:flowDefinitionLocator-ref="loginFlowRegistry"
         c:transcoder-ref="loginFlowStateTranscoder" />
+
+  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"
+          p:cipherBean-ref="loginFlowCipherBean"
+          p:compression="true" />
 
   <bean id="loginFlowListenerLoader" class="org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader">
     <constructor-arg>
@@ -158,12 +162,6 @@
     <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
   </webflow:flow-registry>
 
-  <bean id="loginFlowStateTranscoder" class="edu.vt.middleware.webflow.EncryptedTranscoder" init-method="init"
-        p:cipherSpec="${login.webflow.state.cipher.spec:AES/CBC/PKCS5Padding}"
-        p:IV="${login.webflow.state.transcoder.iv}"
-        p:key="${login.webflow.state.transcoder.key}"
-        p:compression="true" />
-      
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
