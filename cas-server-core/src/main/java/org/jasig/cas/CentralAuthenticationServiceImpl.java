@@ -443,6 +443,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
     public TicketGrantingTicket getTicketGrantingTicket(final String ticketGrantingTicketId)
             throws InvalidTicketException {
