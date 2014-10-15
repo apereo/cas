@@ -57,11 +57,6 @@
       </util:list>
     </property>
   </bean>
-  
-  <!-- Locale Resolver -->
-  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
-
-  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
@@ -74,13 +69,18 @@
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
         p:order="2"/>
-  
+
   <!--
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="3"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
   -->
-  	
+
+  <!-- Locale Resolver -->
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
+
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -250,6 +250,9 @@
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+
+  <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
