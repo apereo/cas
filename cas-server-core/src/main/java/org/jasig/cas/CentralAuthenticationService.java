@@ -18,14 +18,16 @@
  */
 package org.jasig.cas;
 
-import java.util.List;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
+
+import java.util.List;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -63,6 +65,21 @@ public interface CentralAuthenticationService {
      */
     String createTicketGrantingTicket(Credential... credentials)
         throws AuthenticationException, TicketException;
+
+
+    /**
+     * Obtains and validates a ticket granting ticket by its id,
+     * and returns the CAS-representative object. Implementations
+     * need to check for the validity of the ticket by making sure
+     * it exists and has not expired yet, etc.
+     *
+     * @since 4.1
+     * @param ticketGrantingTicketId the ticket granting ticket id
+     * @return the ticket granting ticket
+     * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
+     */
+    TicketGrantingTicket getTicketGrantingTicket(String ticketGrantingTicketId)
+        throws InvalidTicketException;
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
