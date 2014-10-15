@@ -124,6 +124,10 @@ public final class TestUtils {
         return new SimplePrincipal(name);
     }
 
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new SimplePrincipal(name, attributes);
+    }
+
     public static AbstractRegisteredService getRegisteredService(final String id) {
         final RegisteredServiceImpl s = new RegisteredServiceImpl();
         s.setServiceId(id);
