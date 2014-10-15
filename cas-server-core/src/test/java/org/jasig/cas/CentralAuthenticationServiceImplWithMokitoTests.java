@@ -169,9 +169,17 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws TicketException {
         this.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
     }
-    
 
-    
+    @Test(expected=IllegalArgumentException.class)
+    public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
+        this.cas.getTicketGrantingTicket(null);
+    }
+
+    @Test(expected=InvalidTicketException.class)
+    public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
+        this.cas.getTicketGrantingTicket("TGT-9000");
+    }
+
     @Test
     public void testChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
