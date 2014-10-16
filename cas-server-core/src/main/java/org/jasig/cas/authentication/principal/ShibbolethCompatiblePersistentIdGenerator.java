@@ -37,6 +37,8 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
+    private static final long serialVersionUID = 6182838799563190289L;
+
     /** Log instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
 
