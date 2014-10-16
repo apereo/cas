@@ -146,9 +146,13 @@
         c:flowDefinitionLocator-ref="loginFlowRegistry"
         c:transcoder-ref="loginFlowStateTranscoder" />
 
-  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"
-          p:cipherBean-ref="loginFlowCipherBean"
-          p:compression="true" />
+  <!--
+  The login flow transcoder encrypts the flow execution identifier
+  using the  128-bit AES in CBC ciphering mode with compression turned on.
+
+  This behaviour can be altered by defining an explicit CipherBean.
+  -->
+  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
 
   <bean id="loginFlowListenerLoader" class="org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader">
     <constructor-arg>
