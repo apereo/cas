@@ -27,10 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import org.jasig.cas.authentication.principal.NullPrincipal;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
+
+import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,9 +73,6 @@ import java.util.Map;
  * @since 4.0
  */
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
-
-    /** Default principal implementation that allows us to create {@link Authentication}s (principal cannot be null). */
-    private static final Principal NULL_PRINCIPAL = new NullPrincipal();
 
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -195,7 +195,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
             throws AuthenticationException {
 
-        final AuthenticationBuilder builder = new AuthenticationBuilder(NULL_PRINCIPAL);
+        final AuthenticationBuilder builder = new AuthenticationBuilder(NullPrincipal.getInstance());
         for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
@@ -285,24 +285,4 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return null;
     }
 
-    /**
-     * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
-     * principal is resolved during the authentication process.
-     */
-    static class NullPrincipal implements Principal {
-
-        private static final long serialVersionUID = 2309300426720915104L;
-        /** The nobody principal. */
-        private static final String NOBODY = "nobody";
-
-        @Override
-        public String getId() {
-            return NOBODY;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return Collections.emptyMap();
-        }
-    }
 }
