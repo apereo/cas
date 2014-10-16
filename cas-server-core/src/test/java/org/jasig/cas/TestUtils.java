@@ -121,11 +121,11 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return new DefaultPrincipalFactory().createPrincipal(name);
+        return getPrincipal(name, Collections.EMPTY_MAP);
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
-        return new SimplePrincipal(name, attributes);
+        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
