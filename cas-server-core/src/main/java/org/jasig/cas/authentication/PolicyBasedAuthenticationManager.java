@@ -19,16 +19,13 @@
 package org.jasig.cas.authentication;
 
 import com.github.inspektr.audit.annotation.Audit;
+import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotNull;
-import org.jasig.cas.authentication.principal.NullPrincipal;
-import org.jasig.cas.authentication.principal.PrincipalResolver;
 
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
