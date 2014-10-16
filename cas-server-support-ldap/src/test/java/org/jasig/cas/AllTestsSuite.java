@@ -16,29 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.monitor;
 
-import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
-import org.junit.Test;
+package org.jasig.cas;
+
+import org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDaoTests;
+import org.jasig.cas.authentication.LdapAuthenticationHandlerTests;
+import org.jasig.cas.monitor.ConnectionFactoryMonitorTests;
+import org.jasig.cas.monitor.PooledConnectionFactoryMonitorTests;
+import org.jasig.cas.persondir.LdapPersonAttributeDaoTests;
+import org.jasig.cas.userdetails.LdapUserDetailsServiceTests;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.*;
+import org.junit.runners.Suite;
 
 /**
- * Unit test for {@link ConnectionFactoryMonitor} class.
+ * Test suite to run all LDAP tests.
+ * @author Misagh Moayyed
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/ldap-context.xml", "/ldap-monitor-test.xml"})
-public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
-
-    @Autowired
-    private ConnectionFactoryMonitor monitor;
-
-    @Test
-    public void testObserve() throws Exception {
-        assertEquals(StatusCode.OK, monitor.observe().getCode());
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    LdapServiceRegistryDaoTests.class,
+    LdapAuthenticationHandlerTests.class,
+    ConnectionFactoryMonitorTests.class,
+    PooledConnectionFactoryMonitorTests.class,
+    LdapPersonAttributeDaoTests.class,
+    LdapUserDetailsServiceTests.class
+})
+public class AllTestsSuite {
 }

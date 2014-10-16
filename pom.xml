@@ -415,6 +415,7 @@
             <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.json</exclude>
             <exclude>**/*.checkstyle</exclude>
             <exclude>**/*.properties</exclude>
             <exclude>**/.gitignore</exclude>
@@ -869,6 +870,13 @@
       </dependency>
 
       <dependency>
+        <groupId>com.unboundid</groupId>
+        <artifactId>unboundid-ldapsdk</artifactId>
+        <version>${uboundid.ldapsdk.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
         <version>${joda-time.version}</version>
@@ -1090,7 +1098,7 @@
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.1.RELEASE</spring.version>
     <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
-    <ldaptive.version>1.0.3</ldaptive.version>
+    <ldaptive.version>1.0.4</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.8.2</aspectj.version>
@@ -1120,6 +1128,7 @@
     <reflections.version>0.9.8</reflections.version>
     <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
 
