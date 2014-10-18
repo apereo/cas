@@ -16,36 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.web.view;
+
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * Custom View to Return the CAS 1.0 Protocol Response. Implemented as a view
- * class rather than a JSP (like CAS 2.0 spec) because of the requirement of the
- * line feeds to be "\n".
- *
- * @author Scott Battaglia
- * @since 3.0
+ * Renders and prepares CAS2 views. This view is responsible
+ * to simply just prep the base model, and delegates to
+ * a the real view to render the final output.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public final class Cas10ResponseView extends AbstractCasView {
-
-
-
-    @Override
-    protected void renderMergedOutputModel(final Map model,
-            final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
-
-        if (this.successResponse) {
-            response.getWriter().print(
-                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + "\n");
-        } else {
-            response.getWriter().print("no\n\n");
-        }
+public class Cas30ResponseView extends Cas20ResponseView {
+    /**
+     * Instantiates a new Abstract cas jstl view.
+     *
+     * @param view the view
+     */
+    protected Cas30ResponseView(final AbstractUrlBasedView view) {
+        super(view);
     }
 
-
+    @Override
+    protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
+                                            final HttpServletResponse response) throws Exception {
+        super.putIntoModel(model, "attributes", getPrincipalAttributes(model));
+        super.putIntoModel(model, "authenticationDate", getAuthenticationDate(model));
+        super.prepareMergedOutputModel(model, request, response);
+    }
 }
