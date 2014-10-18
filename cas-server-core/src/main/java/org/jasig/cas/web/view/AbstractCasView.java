@@ -117,8 +117,8 @@ public abstract class AbstractCasView extends AbstractView {
     protected final boolean isRememberMeAuthentication(final Map<String, Object> model) {
         final Map<String, Object> authnAttributes = getAuthenticationAttributes(model);
         final Assertion assertion = getAssertionFrom(model);
-        final Object o = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        return Boolean.TRUE.equals(o) && assertion.isFromNewLogin();
+        final Collection authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
     }
     /**
      * Convert attribute values to multi valued objects.
