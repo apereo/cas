@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.validation.Assertion;
@@ -54,7 +55,7 @@ public class MultifactorAuthenticationTests {
     public void testAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
         assertNotNull(st);
     }
 
@@ -62,7 +63,7 @@ public class MultifactorAuthenticationTests {
     public void testAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
         assertNotNull(st);
     }
 
@@ -77,7 +78,7 @@ public class MultifactorAuthenticationTests {
     public void testDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
         assertNotNull(st);
     }
 
@@ -87,7 +88,7 @@ public class MultifactorAuthenticationTests {
                 newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
         assertNotNull(st);
     }
 
@@ -97,14 +98,14 @@ public class MultifactorAuthenticationTests {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);
         final Service service = newService("https://example.com/high/");
-        final String st = cas.grantServiceTicket(
+        final ServiceTicket st = cas.grantServiceTicket(
                 tgt.getId(),
                 service,
                 newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(st);
         // Confirm the authentication in the assertion is the one that satisfies security policy
-        final Assertion assertion = cas.validateServiceTicket(st, service);
+        final Assertion assertion = cas.validateServiceTicket(st.getId(), service);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
