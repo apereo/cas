@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.adaptors.trusted.web.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
@@ -47,6 +39,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -82,7 +82,9 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setUserPrincipal(new Principal() {
             @Override
-            public String getName() { return "test"; }
+            public String getName() {
+                return "test";
+            }
         });
 
         final MockRequestContext context = new MockRequestContext();

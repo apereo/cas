@@ -31,7 +31,7 @@ import static org.junit.Assert.fail;
 
 /**
  * @author Scott Battaglia
-
+   @deprecated As of 4.1
  * @since 3.0
  */
 @Deprecated

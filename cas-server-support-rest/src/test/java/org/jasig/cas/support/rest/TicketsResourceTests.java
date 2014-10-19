@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,6 +153,8 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockToCreateValidST() throws Throwable {
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenReturn("ST-1");
+        final ServiceTicket st = mock(ServiceTicket.class);
+        when(st.getId()).thenReturn("ST-1");
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenReturn(st);
     }
 }
