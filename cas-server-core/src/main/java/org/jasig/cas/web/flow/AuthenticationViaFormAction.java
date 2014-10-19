@@ -18,17 +18,13 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -44,6 +40,11 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * Action to authenticate credential and retrieve a TicketGrantingTicket for
@@ -79,10 +80,6 @@ public class AuthenticationViaFormAction {
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
-
-    /** Ticket registry used to retrieve tickets by ID. */
-    @NotNull
-    private TicketRegistry ticketRegistry;
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
@@ -134,7 +131,7 @@ public class AuthenticationViaFormAction {
                 && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                         ticketGrantingTicketId, service, credential);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
@@ -152,10 +149,10 @@ public class AuthenticationViaFormAction {
         }
 
         try {
-            final String tgtId = this.centralAuthenticationService.createTicketGrantingTicket(credential);
-            WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
+            WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
-            final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
+
             for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
                 for (final Message message : entry.getValue().getWarnings()) {
                     addWarningToContext(messageContext, message);
@@ -212,8 +209,15 @@ public class AuthenticationViaFormAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    /**
+     * Sets ticket registry.
+     *
+     * @param ticketRegistry the ticket registry. No longer needed as the core service layer
+     *                       returns the correct object type. Will be removed in future versions.
+     * @deprecated As of 4.1
+     */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
     }
 
     /**
