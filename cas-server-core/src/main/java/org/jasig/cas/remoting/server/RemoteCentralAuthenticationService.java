@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
@@ -84,7 +85,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * {@inheritDoc}
      */
     @Override
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
+    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
@@ -94,7 +95,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if given invalid credentials
      */
     @Override
-    public String grantServiceTicket(
+    public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
@@ -139,7 +140,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if the credentials are invalid.
      */
     @Override
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
