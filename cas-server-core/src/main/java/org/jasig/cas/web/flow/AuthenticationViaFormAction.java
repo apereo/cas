@@ -216,6 +216,7 @@ public class AuthenticationViaFormAction {
      *                       returns the correct object type. Will be removed in future versions.
      * @deprecated As of 4.1
      */
+    @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
     }
