@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +80,8 @@ public class TicketsResource {
 
         Formatter fmt = null;
         try {
-            final String tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId);
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);

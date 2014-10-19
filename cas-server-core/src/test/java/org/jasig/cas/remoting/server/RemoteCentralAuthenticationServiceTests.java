@@ -22,6 +22,7 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ import static org.junit.Assert.fail;
 
  * @since 3.0
  */
+@Deprecated
 public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTest {
 
     private RemoteCentralAuthenticationService remoteCentralAuthenticationService;
@@ -78,40 +80,40 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
 
     @Test
     public void testGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
-        final String ticketId = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
-        this.remoteCentralAuthenticationService.grantServiceTicket(ticketId,
+        this.remoteCentralAuthenticationService.grantServiceTicket(ticketId.getId(),
             TestUtils.getService());
     }
 
     @Test
     public void testGrantServiceTicketWithValidCredentials() throws Exception {
-        final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, TestUtils.getService(), TestUtils
+            ticketGrantingTicketId.getId(), TestUtils.getService(), TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void testGrantServiceTicketWithNullCredentials() throws Exception {
-        final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, TestUtils.getService(), (Credential[]) null);
+            ticketGrantingTicketId.getId(), TestUtils.getService(), (Credential[]) null);
     }
 
     @Test
     public void testGrantServiceTicketWithEmptyCredentials() throws Exception {
-        final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         try {
             this.remoteCentralAuthenticationService.grantServiceTicket(
-                ticketGrantingTicketId, TestUtils.getService(), TestUtils
+                ticketGrantingTicketId.getId(), TestUtils.getService(), TestUtils
                     .getCredentialsWithDifferentUsernameAndPassword("", ""));
             fail("IllegalArgumentException expected.");
         } catch (final IllegalArgumentException e) {
@@ -121,11 +123,11 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
 
     @Test
     public void testValidateServiceTicketWithValidService() throws Exception {
-        final String ticketGrantingTicket = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
 
         this.remoteCentralAuthenticationService.validateServiceTicket(
             serviceTicket, TestUtils.getService());
@@ -133,30 +135,26 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
 
     @Test
     public void testDelegateTicketGrantingTicketWithValidCredentials() throws Exception {
-        final String ticketGrantingTicket = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
         this.remoteCentralAuthenticationService.delegateTicketGrantingTicket(
             serviceTicket, TestUtils.getHttpBasedServiceCredentials());
     }
 
-    @Test
+    @Test(expected=IllegalArgumentException.class)
     public void testDelegateTicketGrantingTicketWithInvalidCredentials() throws Exception {
-        final String ticketGrantingTicket = this.remoteCentralAuthenticationService
+        final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
-        try {
-            this.remoteCentralAuthenticationService
-                .delegateTicketGrantingTicket(serviceTicket, TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword("", ""));
-            fail("IllegalArgumentException expected.");
-        } catch (final IllegalArgumentException e) {
-            return;
-        }
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
 
+        this.remoteCentralAuthenticationService
+            .delegateTicketGrantingTicket(serviceTicket, TestUtils
+                .getCredentialsWithDifferentUsernameAndPassword("", ""));
+        fail("IllegalArgumentException expected.");
     }
 }
