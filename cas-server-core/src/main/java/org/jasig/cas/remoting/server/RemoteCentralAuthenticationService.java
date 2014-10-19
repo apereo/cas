@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Wrapper implementation around a CentralAuthenticationService that does
+ * Wrapper implementation around a CentralAuthenticationService that
  * completes the marshalling of parameters from the web-service layer to the
  * service layer. Typically the only thing that is done is to validate the
  * parameters (as you would in the web tier) and then delegate to the service
@@ -50,9 +50,11 @@ import java.util.Set;
  * </ul>
  *
  * @author Scott Battaglia
-
+   @deprecated As of 4.1. No longer required. The default implementation can be used
+   to delegate calls to the service layer from WS.
  * @since 3.0
  */
+@Deprecated
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
 
     /** The CORE to delegate to. */
@@ -69,7 +71,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * invalid credentials.
      */
     @Override
-    public String createTicketGrantingTicket(final Credential... credentials)
+    public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");

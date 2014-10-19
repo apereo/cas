@@ -20,6 +20,7 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -129,8 +130,8 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInRequestScope(
-        final RequestContext context, final String ticketValue) {
-        context.getRequestScope().put("ticketGrantingTicketId", ticketValue);
+        final RequestContext context, final TicketGrantingTicket ticketValue) {
+        context.getRequestScope().put("ticketGrantingTicketId", ticketValue.getId());
     }
 
     /**
@@ -140,8 +141,8 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInFlowScope(
-        final RequestContext context, final String ticketValue) {
-        context.getFlowScope().put("ticketGrantingTicketId", ticketValue);
+        final RequestContext context, final TicketGrantingTicket ticketValue) {
+        context.getFlowScope().put("ticketGrantingTicketId", ticketValue.getId());
     }
 
     /**

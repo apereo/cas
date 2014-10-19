@@ -63,7 +63,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credential... credentials)
+    TicketGrantingTicket createTicketGrantingTicket(Credential... credentials)
         throws AuthenticationException, TicketException;
 
 

@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -135,7 +136,9 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockToCreateValidTGT() throws Throwable {
-        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenReturn("TGT-1");
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("TGT-1");
+        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
