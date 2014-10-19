@@ -184,10 +184,10 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     @Test
     public void testChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
-        final String st = this.cas.grantServiceTicket(TGT2_ID, svc);
+        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);
         
-        final Assertion assertion = this.cas.validateServiceTicket(st, svc);
+        final Assertion assertion = this.cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
         
         assertEquals(assertion.getService(), svc);
