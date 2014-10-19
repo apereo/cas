@@ -424,7 +424,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public String createTicketGrantingTicket(final Credential... credentials)
+    public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
@@ -437,7 +437,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             authentication, this.ticketGrantingTicketExpirationPolicy);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);
-        return ticketGrantingTicket.getId();
+        return ticketGrantingTicket;
     }
 
     /**
