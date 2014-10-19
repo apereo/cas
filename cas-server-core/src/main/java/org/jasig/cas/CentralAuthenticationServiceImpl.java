@@ -222,7 +222,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public String grantServiceTicket(
+    public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
@@ -290,7 +290,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principalId);
 
-        return serviceTicket.getId();
+        return serviceTicket;
     }
 
     @Audit(
@@ -300,7 +300,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public String grantServiceTicket(final String ticketGrantingTicketId,
+    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         try {
             return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
@@ -316,7 +316,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="GRANT_PROXY_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -349,7 +349,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
 
-        return proxyGrantingTicket.getId();
+        return proxyGrantingTicket;
     }
 
     @Audit(
