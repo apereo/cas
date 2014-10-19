@@ -18,12 +18,11 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +33,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Scott Battaglia
@@ -146,7 +147,7 @@ public class AuthenticationViaFormActionTests extends
 
     @Test
     public void testRenewWithServiceAndSameCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -167,7 +168,7 @@ public class AuthenticationViaFormActionTests extends
 
     @Test
     public void testRenewWithServiceAndDifferentCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -188,7 +189,7 @@ public class AuthenticationViaFormActionTests extends
 
     @Test
     public void testRenewWithServiceAndBadCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final MockHttpServletRequest request = new MockHttpServletRequest();
