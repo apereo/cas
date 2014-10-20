@@ -18,18 +18,20 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import static org.junit.Assert.*;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.net.URL;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -40,24 +42,31 @@ public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
 
+    @Mock
+    private TicketGrantingTicket proxyGrantingTicket;
+
+    public Cas20ProxyHandlerTests() {
+        MockitoAnnotations.initMocks(this);
+    }
     @Before
     public void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
         this.handler.setHttpClient(new SimpleHttpClient());
         this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        when(this.proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
     }
 
     @Test
     public void testValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
-            new URL("http://www.rutgers.edu/"), TestUtils.getRegisteredService("https://some.app.edu")), "proxyGrantingTicketId"));
+            new URL("http://www.rutgers.edu/"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
     public void testValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("http://www.rutgers.edu/?test=test"), TestUtils.getRegisteredService("https://some.app.edu")),
-            "proxyGrantingTicketId"));
+                proxyGrantingTicket));
     }
 
     @Test
@@ -65,6 +74,6 @@ public class Cas20ProxyHandlerTests {
         final SimpleHttpClient httpClient = new SimpleHttpClient(new int[] {900});
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
-            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu")), "proxyGrantingTicketId"));
+            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 }
