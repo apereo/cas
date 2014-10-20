@@ -173,12 +173,12 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 
     @Test(expected=IllegalArgumentException.class)
     public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
-        this.cas.getTicketGrantingTicket(null);
+        this.cas.getTicket(null, TicketGrantingTicket.class);
     }
 
     @Test(expected=InvalidTicketException.class)
     public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
-        this.cas.getTicketGrantingTicket("TGT-9000");
+        this.cas.getTicket("TGT-9000", TicketGrantingTicket.class);
     }
 
     @Test
