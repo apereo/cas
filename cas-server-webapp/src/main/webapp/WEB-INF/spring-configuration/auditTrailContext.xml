@@ -86,7 +86,7 @@
   </util:map>
       
   <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver"
-    c:ticketRegistry-ref="ticketRegistry" />
+    c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationActionResolver"
     class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver"
