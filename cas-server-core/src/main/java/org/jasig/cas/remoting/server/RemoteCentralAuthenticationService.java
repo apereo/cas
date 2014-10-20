@@ -25,6 +25,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
@@ -108,9 +109,9 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * {@inheritDoc}
      */
     @Override
-    public TicketGrantingTicket getTicketGrantingTicket(final String ticketGrantingTicketId)
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
             throws InvalidTicketException {
-        return this.centralAuthenticationService.getTicketGrantingTicket(ticketGrantingTicketId);
+        return this.centralAuthenticationService.getTicket(ticketId, clazz);
     }
 
     /**
