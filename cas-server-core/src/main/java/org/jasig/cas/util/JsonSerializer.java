@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.util.services;
+package org.jasig.cas.util;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,34 +28,35 @@ import java.io.Writer;
 
 /**
  * Interface to define operations needed to map objects from/to JSON clobs.
+ * @param <T>  the type parameter
  * @author Misagh Moayyed
  * @since 4.1
  */
 public interface JsonSerializer<T> extends Serializable {
     /**
      * Create the object type from the given JSON string.
-     * @param json the jsob string
+     * @param json the json string
      * @return the object instance constructed from JSON
      */
     T fromJson(String json);
 
     /**
      * Create the object type from the given JSON reader.
-     * @param json the jsob string
+     * @param json the json string
      * @return the object instance constructed from JSON
      */
     T fromJson(Reader json);
 
     /**
      * Create the object type from the given JSON stream.
-     * @param json the jsob string
+     * @param json the json string
      * @return the object instance constructed from JSON
      */
     T fromJson(InputStream json);
 
     /**
      * Create the object type from the given JSON file.
-     * @param json the jsob string
+     * @param json the json string
      * @return the object instance constructed from JSON
      */
     T fromJson(File json);
