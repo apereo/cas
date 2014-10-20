@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
@@ -46,7 +47,7 @@ import java.util.List;
  * @author Dmitry Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
+ * @author Misagh Moayyed
  * @since 3.0
  */
 public interface CentralAuthenticationService {
@@ -69,18 +70,20 @@ public interface CentralAuthenticationService {
 
 
     /**
-     * Obtains and validates a ticket granting ticket by its id,
+     * Obtains the given ticket by its id and type
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure
-     * it exists and has not expired yet, etc.
+     * it exists and has not expired yet, etc. This method is specifically
+     * designed to remove the need to access the ticket registry.
      *
-     * @since 4.1
-     * @param ticketGrantingTicketId the ticket granting ticket id
-     * @return the ticket granting ticket
+     * @param ticketId the ticket granting ticket id
+     * @param clazz the ticket type that is reques to be found
+     * @return the ticket object
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
+     * @since 4.1
      */
-    TicketGrantingTicket getTicketGrantingTicket(String ticketGrantingTicketId)
-        throws InvalidTicketException;
+    <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
+            throws InvalidTicketException;
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
