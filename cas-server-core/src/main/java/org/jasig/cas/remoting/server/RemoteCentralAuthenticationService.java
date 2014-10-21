@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.remoting.server;
 
+import org.apache.commons.collections.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -35,6 +36,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -89,6 +91,14 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Ticket> getTickets(@NotNull final Predicate predicate) {
+        return this.centralAuthenticationService.getTickets(predicate);
     }
 
     /**
