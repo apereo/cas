@@ -24,10 +24,12 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -131,8 +133,8 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInRequestScope(
-        final RequestContext context, final TicketGrantingTicket ticketValue) {
-        context.getRequestScope().put("ticketGrantingTicketId", ticketValue.getId());
+        final RequestContext context, @NotNull final TicketGrantingTicket ticketValue) {
+        putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
     }
 
     /**
@@ -142,8 +144,21 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInFlowScope(
-        final RequestContext context, final TicketGrantingTicket ticketValue) {
-        context.getFlowScope().put("ticketGrantingTicketId", ticketValue.getId());
+        final RequestContext context, @NotNull final TicketGrantingTicket ticketValue) {
+        putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
+    }
+
+    /**
+     * Put ticket granting ticket into map that is either backed by the flow/request scope.
+     *
+     * @param map the map
+     * @param ticketValue the ticket value
+     */
+    private static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
+                                                       @NotNull final TicketGrantingTicket ticketValue) {
+        if (ticketValue != null) {
+            map.put("ticketGrantingTicketId", ticketValue.getId());
+        }
     }
 
     /**
@@ -153,7 +168,7 @@ public final class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(
-        final RequestContext context) {
+            @NotNull final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
         final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
 
