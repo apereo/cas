@@ -19,6 +19,7 @@
 
 package org.jasig.cas.web.view;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,23 @@ import java.util.Map;
  * @since 4.1
  */
 public class Cas30ResponseView extends Cas20ResponseView {
+
+    /**
+     * Represents the collection of attributes in the view.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_ATTRIBUTES = "attributes";
+
+    /**
+     * Represents the authentication date object in the view.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = "authenticationDate";
+
+    /**
+     * Represents the flag to note whether assertion is backed by new login.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = "isFromNewLogin";
+
+
     /**
      * Instantiates a new Abstract cas jstl view.
      *
@@ -45,8 +63,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-        super.putIntoModel(model, "attributes", getPrincipalAttributes(model));
-        super.putIntoModel(model, "authenticationDate", getAuthenticationDate(model));
+
         super.prepareMergedOutputModel(model, request, response);
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, getPrincipalAttributesAsMultiValuedAttributes(model));
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, getAuthenticationDate(model));
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, isAssertionBackedByNewLogin(model));
+        super.putIntoModel(model, CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+                isRememberMeAuthentication(model));
     }
 }

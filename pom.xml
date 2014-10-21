@@ -933,6 +933,13 @@
         <scope>compile</scope>
       </dependency>
 
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -1124,6 +1131,7 @@
     <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
+    <jstl.version>1.2</jstl.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
