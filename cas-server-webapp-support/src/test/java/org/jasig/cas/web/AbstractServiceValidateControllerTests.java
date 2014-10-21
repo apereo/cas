@@ -32,6 +32,7 @@ import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -45,9 +46,12 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0
  */
-public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
+public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
-    private ServiceValidateController serviceValidateController;
+    protected ServiceValidateController serviceValidateController;
+
+    @Autowired
+    private ServicesManager servicesManager;
 
     @Before
     public void onSetUp() throws Exception {
@@ -60,7 +64,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
-        this.serviceValidateController.setServicesManager(this.applicationContext.getBean("servicesManager", ServicesManager.class));
+        this.serviceValidateController.setServicesManager(this.servicesManager);
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
@@ -157,17 +161,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     @Test
     public void testValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
-        final String tId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String sId = getCentralAuthenticationService().grantServiceTicket(tId, TestUtils.getService());
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService().getId());
-        request.addParameter("ticket", sId);
-        request.addParameter("pgtUrl", "https://www.github.com");
-
-        final ModelAndView modelAndView = this.serviceValidateController
-                .handleRequestInternal(request, new MockHttpServletResponse());
+        final ModelAndView modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         
     }
@@ -291,5 +285,20 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
+    }
+
+    protected final ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
+        final String tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final String sId = getCentralAuthenticationService().grantServiceTicket(tId, TestUtils.getService());
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", TestUtils.getService().getId());
+        request.addParameter("ticket", sId);
+        request.addParameter("pgtUrl", "https://www.github.com");
+
+
+        return this.serviceValidateController
+                .handleRequestInternal(request, new MockHttpServletResponse());
     }
 }

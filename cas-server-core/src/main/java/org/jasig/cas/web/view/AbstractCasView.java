@@ -88,43 +88,59 @@ public abstract class AbstractCasView extends AbstractView {
 
     /**
      * Gets principal attributes.
-     *
+     * Single-valued attributes are converted to a collection
+     * so the review can easily loop through all.
      * @param model the model
      * @return the attributes
      * @since 4.1
+     * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
      */
-    protected final Map<String, Object> getPrincipalAttributes(final Map<String, Object> model) {
+    protected final Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
     }
 
     /**
      * Gets authentication attributes.
-     *
+     * Single-valued attributes are converted to a collection
+     * so the review can easily loop through all.
      * @param model the model
      * @return the attributes
      * @since 4.1
+     * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
      */
-    protected final Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
+    protected final Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrimaryAuthenticationFrom(model).getAttributes());
     }
 
     /**
-     * Is remember me authentication.
-     *
+     * Is remember me authentication?
+     * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
+     * and expects the assertion to also note a new login session.
      * @param model the model
-     * @return the boolean
+     * @return true if remember-me, false if otherwise.
      */
     protected final boolean isRememberMeAuthentication(final Map<String, Object> model) {
-        final Map<String, Object> authnAttributes = getAuthenticationAttributes(model);
-        final Assertion assertion = getAssertionFrom(model);
+        final Map<String, Object> authnAttributes = getAuthenticationAttributesAsMultiValuedAttributes(model);
         final Collection authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
+        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && isAssertionBackedByNewLogin(model);
     }
+
+
+    /**
+     * Is assertion backed by new login?
+     *
+     * @param model the model
+     * @return true/false.
+     */
+    protected final boolean isAssertionBackedByNewLogin(final Map<String, Object> model) {
+        return getAssertionFrom(model).isFromNewLogin();
+    }
+
     /**
      * Convert attribute values to multi valued objects.
      *
      * @param attributes the attributes
-     * @return the map
+     * @return the map of attributes to return
      */
     private Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
         final Map<String, Object> attributesToReturn = new HashMap<>();
@@ -140,6 +156,7 @@ public abstract class AbstractCasView extends AbstractView {
         }
         return attributesToReturn;
     }
+
     /**
      * Gets authentication date.
      *

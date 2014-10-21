@@ -19,7 +19,7 @@
 
 package org.jasig.cas.web.view;
 
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,21 +32,37 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class Cas20ResponseView extends AbstractCasUrlBasedView {
+public class Cas20ResponseView extends AbstractDelegatingCasView {
+
+    /**
+     * Represents the {@link org.jasig.cas.authentication.principal.Principal} object in the view.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_PRINCIPAL = "principal";
+
+    /**
+     * Represents the chained authentication objects in the view for proxying.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS = "chainedAuthentications";
+
+    /**
+     * Represents the {@link org.jasig.cas.authentication.Authentication} object in the view.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION = "primaryAuthentication";
 
     /**
      * Instantiates a new Abstract cas jstl view.
      *
      * @param view the view
      */
-    protected Cas20ResponseView(final AbstractUrlBasedView view) {
+    protected Cas20ResponseView(final View view) {
         super(view);
     }
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-        super.putIntoModel(model, "principal", getPrincipal(model));
-        super.putIntoModel(model, "chainedAuthentications", getChainedAuthentications(model));
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
     }
 }

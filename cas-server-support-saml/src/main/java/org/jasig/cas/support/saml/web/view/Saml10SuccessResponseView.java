@@ -119,13 +119,13 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      * @since 4.1
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
-        final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributes(model));
+        final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributesAsMultiValuedAttributes(model));
         if (isRememberMeAuthentication(model)) {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
         final Map<String, Object> attributesToReturn = new HashMap<String, Object>();
-        attributesToReturn.putAll(getPrincipalAttributes(model));
+        attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
         return attributesToReturn;
     }
