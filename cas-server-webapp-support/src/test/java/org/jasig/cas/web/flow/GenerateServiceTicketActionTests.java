@@ -59,7 +59,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     public void testServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
+        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
