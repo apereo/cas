@@ -19,7 +19,7 @@
 
 package org.jasig.cas.web.view;
 
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,22 +32,26 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class AbstractCasUrlBasedView extends AbstractCasView {
-   private final AbstractUrlBasedView view;
+public abstract class AbstractDelegatingCasView extends AbstractCasView {
+   private final View view;
 
     /**
      * Instantiates a new Abstract cas jstl view.
      *
      * @param view the view
      */
-    protected AbstractCasUrlBasedView(final AbstractUrlBasedView view) {
+    protected AbstractDelegatingCasView(final View view) {
         this.view = view;
     }
 
     @Override
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
+        logger.debug("Preparing the output model for model...");
         prepareMergedOutputModel(model, request, response);
+
+        logger.trace("Prepared output model with objects [{}]. Now rendering view...",
+                model.keySet().toArray());
         this.view.render(model, request, response);
     }
 
