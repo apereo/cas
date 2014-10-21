@@ -107,6 +107,28 @@ public class AuthenticationViaFormAction {
     }
 
     /**
+     * Handle the submission of credentials from the post.
+     *
+     * @param context the context
+     * @param credential the credential
+     * @param messageContext the message context
+     * @return the event
+     * @since 4.1
+     */
+    public final Event submit(final RequestContext context, final Credential credential,
+                              final MessageContext messageContext)  {
+        if (!checkLoginTicketIfExists(context)) {
+            return returnInvalidLoginTicketEvent(context, messageContext);
+        }
+
+        if (isRequestAskingForServiceTicket(context)) {
+            return grantServiceTicket(context, credential);
+        }
+
+        return createTicketGrantingTicket(context, credential, messageContext);
+    }
+
+    /**
      * Tries to to determine if the login ticket in the request flow scope
      * matches the login ticket provided by the request. The comparison
      * is case-sensitive.
@@ -115,7 +137,7 @@ public class AuthenticationViaFormAction {
      * @return true if valid
      * @since 4.1
      */
-    protected boolean isValidLoginTicket(final RequestContext context) {
+    protected boolean checkLoginTicketIfExists(final RequestContext context) {
         final String loginTicketFromFlowScope = WebUtils.getLoginTicketFromFlowScope(context);
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
 
@@ -137,28 +159,6 @@ public class AuthenticationViaFormAction {
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
         messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
         return newEvent(ERROR);
-    }
-
-    /**
-     * Handle the submission of credentials from the post.
-     *
-     * @param context the context
-     * @param credential the credential
-     * @param messageContext the message context
-     * @return the event
-     * @since 4.1
-     */
-    public final Event submit(final RequestContext context, final Credential credential,
-            final MessageContext messageContext)  {
-        if (!isValidLoginTicket(context)) {
-            return returnInvalidLoginTicketEvent(context, messageContext);
-        }
-
-        if (isRequestAskingForServiceTicket(context)) {
-            return grantServiceTicket(context, credential);
-        }
-
-        return createTicketGrantingTicket(context, credential, messageContext);
     }
 
     /**
@@ -205,6 +205,7 @@ public class AuthenticationViaFormAction {
             return newEvent(ERROR, e);
         }
         return newEvent(ERROR);
+
     }
     /**
      * Create ticket granting ticket for the given credentials.
@@ -251,6 +252,7 @@ public class AuthenticationViaFormAction {
             }
         }
         return foundAndAddedWarnings;
+
     }
     /**
      * Put warn cookie if request parameter present.
