@@ -19,6 +19,10 @@
 
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.ticket.Ticket;
+
+import java.util.Collection;
+
 /**
  * Strategy interface to denote the start of cleaning the registry.
  *
@@ -33,6 +37,7 @@ public interface RegistryCleaner {
 
     /**
      * Method to kick-off the cleaning of a registry.
+     * @return the collection of removed/cleaned tickets
      */
-    void clean();
+    Collection<Ticket> clean();
 }

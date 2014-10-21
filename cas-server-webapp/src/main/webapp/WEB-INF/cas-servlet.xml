@@ -232,9 +232,8 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:ticketRegistry-ref="ticketRegistry"
-        p:casTicketSuffix="${host.name}"
-        p:viewPath="/WEB-INF/view/jsp/monitoring/viewStatistics.jsp" />
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        p:casTicketSuffix="${host.name}"/>
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
@@ -282,7 +281,7 @@
         p:messageInterpolator-ref="messageInterpolator"/>
 
   <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
-        c:registry-ref="ticketRegistry" />
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="terminateSessionAction" class="org.jasig.cas.web.flow.TerminateSessionAction"
         c:cas-ref="centralAuthenticationService"
