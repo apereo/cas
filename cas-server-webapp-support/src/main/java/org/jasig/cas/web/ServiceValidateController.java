@@ -23,7 +23,6 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
@@ -243,15 +242,11 @@ public class ServiceValidateController extends DelegateController {
      * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
      */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
-        final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
-        final Object o = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = (o == Boolean.TRUE && !assertion.isFromNewLogin());
-        
+
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);
         success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
-        success.addObject(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, isRemembered);
-        
+
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);
