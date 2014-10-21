@@ -18,19 +18,18 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import org.apache.commons.collections.Predicate;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * The default ticket registry cleaner scans the entire CAS ticket registry
@@ -67,77 +66,57 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     /** The Commons Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The instance of the TicketRegistry to clean. */
     @NotNull
-    private TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     /** Execution locking strategy. */
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
-    /** The logout manager. */
-    @NotNull
-    private LogoutManager logoutManager;
+    /**
+     * Instantiates a new Default ticket registry cleaner.
+     *
+     * @param centralAuthenticationService the CAS interface acting as the service layer
+     */
+    public DefaultTicketRegistryCleaner(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
 
-    /**
-     * Instantiates a new default ticket registry cleaner.
-     *
-     * @param logoutManager the logout manager
-     * @param ticketRegistry the ticket registry
-     */
-    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry) {
-        this.logoutManager = logoutManager;
-        this.ticketRegistry = ticketRegistry;
-    }
-    
-    /**
-     * Instantiates a new default ticket registry cleaner.
-     *
-     * @param logoutManager the logout manager
-     * @param ticketRegistry the ticket registry
-     * @param lockingStrategy the locking strategy
-     * @since 4.1
-     */
-    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry, 
-            final LockingStrategy lockingStrategy) {
-        this.logoutManager = logoutManager;
-        this.ticketRegistry = ticketRegistry;
-    }
-    
-    /**
-     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
-     */
-    public void clean() {
-        logger.info("Beginning ticket cleanup.");
-        logger.debug("Attempting to acquire ticket cleanup lock.");
-        if (!this.lock.acquire()) {
-            logger.info("Could not obtain lock.  Aborting cleanup.");
-            return;
-        }
-        logger.debug("Acquired lock.  Proceeding with cleanup.");
+    @Override
+    public Collection<Ticket> clean() {
         try {
-            final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
-            final Collection<Ticket> ticketsInCache;
-            ticketsInCache = this.ticketRegistry.getTickets();
-            for (final Ticket ticket : ticketsInCache) {
-                if (ticket.isExpired()) {
-                    ticketsToRemove.add(ticket);
-                }
+            logger.info("Beginning ticket cleanup.");
+            logger.debug("Attempting to acquire ticket cleanup lock.");
+            if (!this.lock.acquire()) {
+                logger.info("Could not obtain lock.  Aborting cleanup.");
+                return Collections.emptyList();
             }
+            logger.debug("Acquired lock.  Proceeding with cleanup.");
+
+            final Collection<Ticket> ticketsToRemove = this.centralAuthenticationService.getTickets(new Predicate() {
+                @Override
+                public boolean evaluate(final Object o) {
+                    final Ticket ticket = (Ticket) o;
+                    return ticket.isExpired();
+                }
+            });
 
             logger.info("{} expired tickets found to be removed.", ticketsToRemove.size());
-            for (final Ticket ticket : ticketsToRemove) {
-                if (ticket instanceof TicketGrantingTicket) {
-                    this.logoutManager.performLogout((TicketGrantingTicket) ticket);
+
+            try {
+                for (final Ticket ticket : ticketsToRemove) {
+                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticket.getId());
                 }
-                this.ticketRegistry.deleteTicket(ticket.getId());
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
             }
+
+            return ticketsToRemove;
         } finally {
             logger.debug("Releasing ticket cleanup lock.");
             this.lock.release();
+            logger.info("Finished ticket cleanup.");
         }
-
-        logger.info("Finished ticket cleanup.");
     }
 
     /**
@@ -146,7 +125,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        logger.warn("Invoking setTicketRegistry() is deprecated and has no impact.");
     }
 
 
@@ -180,6 +159,6 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     @Deprecated
     public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
+        logger.warn("Invoking setLogoutManager() is deprecated and has no impact.");
     }
 }
