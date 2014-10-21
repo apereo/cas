@@ -135,7 +135,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                     return tgt.getAuthentication().getPrincipal().getId();
                 }
             } catch (final InvalidTicketException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.trace(e.getMessage(), e);
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         } else {

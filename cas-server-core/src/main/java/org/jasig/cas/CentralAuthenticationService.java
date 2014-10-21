@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.apache.commons.collections.Predicate;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -29,6 +30,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -78,12 +80,27 @@ public interface CentralAuthenticationService {
      *
      * @param ticketId the ticket granting ticket id
      * @param clazz the ticket type that is reques to be found
+     * @param <T> the generic ticket type to return that extends {@link Ticket}
      * @return the ticket object
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
      * @since 4.1
      */
     <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
             throws InvalidTicketException;
+
+    /**
+     * Retrieve a collection of tickets from the underlying ticket registry.
+     * The retrieval operation must pass the predicate check that is solely
+     * used to filter the collection of tickets received. Implementations
+     * can use the predicate to request a collection of expired tickets,
+     * or tickets whose id matches a certain pattern, etc. The resulting
+     * collection will include ticktes that have been evaluated by the predicate.
+     *
+     * @param predicate the predicate
+     * @return the tickets
+     * @since 4.1
+     */
+     Collection<Ticket> getTickets(Predicate predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.

@@ -19,6 +19,7 @@
 package org.jasig.cas;
 
 import com.github.inspektr.audit.annotation.Audit;
+import org.apache.commons.collections.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -61,7 +62,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -457,13 +461,30 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
 
         if (ticket instanceof TicketGrantingTicket) {
-            if (ticket.isExpired()) {
-                this.ticketRegistry.deleteTicket(ticketId);
-                logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticketId);
-                throw new InvalidTicketException(ticketId);
+            synchronized (ticket) {
+                if (ticket.isExpired()) {
+                    this.ticketRegistry.deleteTicket(ticketId);
+                    logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticketId);
+                    throw new InvalidTicketException(ticketId);
+                }
             }
         }
         return (T) ticket;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Collection<Ticket> getTickets(@NotNull final Predicate predicate) {
+        final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
+        final Iterator<Ticket> it = c.iterator();
+        while (it.hasNext()) {
+            if (!predicate.evaluate(it.next())) {
+                it.remove();
+            }
+        }
+        return c;
     }
 
     public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
