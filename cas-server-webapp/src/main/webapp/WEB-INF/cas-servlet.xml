@@ -138,8 +138,7 @@
         c:executionRepository-ref="loginFlowExecutionRepository" />
    
   <bean name="loginFlowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"
-        p:executionKeyFactory-ref="loginFlowExecutionRepository"
-        p:executionListenerLoader-ref="loginFlowListenerLoader"/>
+        p:executionKeyFactory-ref="loginFlowExecutionRepository"/>
   
   <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
         c:flowExecutionFactory-ref="loginFlowExecutionFactory"
@@ -153,14 +152,6 @@
   This behaviour can be altered by defining an explicit CipherBean.
   -->
   <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
-
-  <bean id="loginFlowListenerLoader" class="org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader">
-    <constructor-arg>
-      <list>
-        <ref bean="terminateWebSessionListener" />
-      </list>
-    </constructor-arg>
-  </bean>
 
   <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
     <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
@@ -187,9 +178,6 @@
       <webflow:always-redirect-on-pause value="false" />
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
   <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
@@ -199,9 +187,6 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
-
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
-        p:timeToDieInSeconds="${terminate.web.session.timeout:2}"/>
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">
