@@ -317,6 +317,10 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
     /**
      * Adds a warning message to the message context.
      *
