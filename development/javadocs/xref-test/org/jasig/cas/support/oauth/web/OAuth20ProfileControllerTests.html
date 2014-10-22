@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="106" href="#106">106</a>         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 <a class="jxr_linenumber" name="107" href="#107">107</a>         assertEquals(<span class="jxr_string">"{\&quot;error\&quot;:\&quot;"</span> + OAuthConstants.EXPIRED_ACCESS_TOKEN + <span class="jxr_string">"\&quot;}"</span>, mockResponse.getContentAsString());
 <a class="jxr_linenumber" name="108" href="#108">108</a>     }
-<a class="jxr_linenumber" name="109" href="#109">109</a> 
+<a class="jxr_linenumber" name="109" href="#109">109</a>     
 <a class="jxr_linenumber" name="110" href="#110">110</a>     @Test
 <a class="jxr_linenumber" name="111" href="#111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOK() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="112" href="#112">112</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
@@ -146,7 +146,37 @@
 <a class="jxr_linenumber" name="136" href="#136">136</a>         assertEquals(<span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
 <a class="jxr_linenumber" name="137" href="#137">137</a>                 + <span class="jxr_string">"\&quot;:[\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;,\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;]}]}"</span>, mockResponse.getContentAsString());
 <a class="jxr_linenumber" name="138" href="#138">138</a>     }
-<a class="jxr_linenumber" name="139" href="#139">139</a> }
+<a class="jxr_linenumber" name="139" href="#139">139</a>     
+<a class="jxr_linenumber" name="140" href="#140">140</a>     @Test
+<a class="jxr_linenumber" name="141" href="#141">141</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOKWithAuthorizationHeader() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
+<a class="jxr_linenumber" name="143" href="#143">143</a>                 + OAuthConstants.PROFILE_URL);
+<a class="jxr_linenumber" name="144" href="#144">144</a>         mockRequest.addHeader(<span class="jxr_string">"Authorization"</span>, <span class="jxr_string">"bearer "</span> + TGT_ID);
+<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
+<a class="jxr_linenumber" name="146" href="#146">146</a>         <strong class="jxr_keyword">final</strong> OAuth20WrapperController oauth20WrapperController = <strong class="jxr_keyword">new</strong> OAuth20WrapperController();
+<a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="149" href="#149">149</a>         when(ticketGrantingTicket.isExpired()).thenReturn(false);
+<a class="jxr_linenumber" name="150" href="#150">150</a>         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
+<a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">final</strong> Authentication authentication = mock(Authentication.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">final</strong> Principal principal = mock(Principal.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="153" href="#153">153</a>         when(principal.getId()).thenReturn(ID);
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="155" href="#155">155</a>         map.put(NAME, VALUE);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(VALUE, VALUE);
+<a class="jxr_linenumber" name="157" href="#157">157</a>         map.put(NAME2, list);
+<a class="jxr_linenumber" name="158" href="#158">158</a>         when(principal.getAttributes()).thenReturn(map);
+<a class="jxr_linenumber" name="159" href="#159">159</a>         when(authentication.getPrincipal()).thenReturn(principal);
+<a class="jxr_linenumber" name="160" href="#160">160</a>         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
+<a class="jxr_linenumber" name="161" href="#161">161</a>         oauth20WrapperController.setTicketRegistry(ticketRegistry);
+<a class="jxr_linenumber" name="162" href="#162">162</a>         oauth20WrapperController.afterPropertiesSet();
+<a class="jxr_linenumber" name="163" href="#163">163</a>         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         assertEquals(200, mockResponse.getStatus());
+<a class="jxr_linenumber" name="165" href="#165">165</a>         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+<a class="jxr_linenumber" name="166" href="#166">166</a>         assertEquals(<span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
+<a class="jxr_linenumber" name="167" href="#167">167</a>                 + <span class="jxr_string">"\&quot;:[\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;,\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;]}]}"</span>, mockResponse.getContentAsString());
+<a class="jxr_linenumber" name="168" href="#168">168</a>     }
+<a class="jxr_linenumber" name="169" href="#169">169</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
