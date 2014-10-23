@@ -116,8 +116,14 @@
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+
+
+      <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
       <scope>compile</scope>

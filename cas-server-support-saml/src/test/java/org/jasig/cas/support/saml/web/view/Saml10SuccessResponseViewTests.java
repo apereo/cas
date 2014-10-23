@@ -75,7 +75,6 @@ public class Saml10SuccessResponseViewTests {
         dao.setRegisteredServices(list);
         final ServicesManager servicesManager = new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
-        this.response.setServicesManager(servicesManager);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
     }
