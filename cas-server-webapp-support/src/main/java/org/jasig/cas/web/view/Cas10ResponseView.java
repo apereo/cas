@@ -18,12 +18,9 @@
  */
 package org.jasig.cas.web.view;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jasig.cas.validation.Assertion;
+import java.util.Map;
 
 /**
  * Custom View to Return the CAS 1.0 Protocol Response. Implemented as a view
@@ -35,29 +32,20 @@ import org.jasig.cas.validation.Assertion;
  */
 public final class Cas10ResponseView extends AbstractCasView {
 
-    /**
-     * Indicate whether this view will be generating the success response or
-     * not.
-     */
-    private boolean successResponse;
+
 
     @Override
     protected void renderMergedOutputModel(final Map model,
             final HttpServletRequest request, final HttpServletResponse response)
                     throws Exception {
-        final Assertion assertion = getAssertionFrom(model);
 
         if (this.successResponse) {
             response.getWriter().print(
-                    "yes\n"
-                            + assertion.getPrimaryAuthentication().getPrincipal()
-                            .getId() + "\n");
+                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + "\n");
         } else {
             response.getWriter().print("no\n\n");
         }
     }
 
-    public void setSuccessResponse(final boolean successResponse) {
-        this.successResponse = successResponse;
-    }
+
 }
