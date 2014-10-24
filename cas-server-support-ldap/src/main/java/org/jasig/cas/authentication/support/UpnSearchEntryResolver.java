@@ -39,7 +39,10 @@ import org.ldaptive.auth.SearchEntryResolver;
 public class UpnSearchEntryResolver extends SearchEntryResolver {
 
     /** UPN-based search filter. */
-    private static final String SEARCH_FILTER = "userPrincipalName={0}";
+    private static final String DEFAULT_SEARCH_FILTER = "userPrincipalName={0}";
+
+    private String searchFilter = DEFAULT_SEARCH_FILTER;
+    private boolean searchUserOnly = false;
 
     /** Base DN of LDAP subtree search. */
     private String baseDn;
@@ -53,13 +56,33 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
         this.baseDn = dn;
     }
 
+    /**
+     * Use only user (without domain) for search filter.
+     * default false
+     *
+     * @param searchUserOnly true or false
+     */
+    public void setSearchUserOnly(final boolean searchUserOnly) {
+        this.searchUserOnly = searchUserOnly;
+    }
+
+    /**
+     * Search filter string.
+     *
+     * @param searchFilter search filter
+     */
+     public void setSearchFilter(final String searchFilter) {
+         this.searchFilter = searchFilter;
+     }
+
     /** {@inheritDoc} */
     @Override
     protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {
         final SearchRequest sr = new SearchRequest();
         sr.setSearchScope(SearchScope.SUBTREE);
         sr.setBaseDn(this.baseDn);
-        sr.setSearchFilter(new SearchFilter(SEARCH_FILTER, new Object[] {ac.getDn()}));
+        final String principal = searchUserOnly ? ac.getAuthenticationRequest().getUser() : ac.getDn();
+        sr.setSearchFilter(new SearchFilter(searchFilter, new Object[] {principal}));
         sr.setSearchEntryHandlers(getSearchEntryHandlers());
         sr.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
         return sr;
