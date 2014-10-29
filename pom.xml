@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -28,8 +28,8 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server</artifactId>
   <packaging>pom</packaging>
-  <name>Jasig Central Authentication Service</name>
-  <description>Jasig CAS SSO server libraries and Web application.</description>
+  <name>Apereo Central Authentication Service</name>
+  <description>Apereo CAS SSO server libraries and Web application.</description>
   <version>4.1.0-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
