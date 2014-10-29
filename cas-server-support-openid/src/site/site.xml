@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<project name="Jasig CAS ${project.version}">
+<project name="Apereo CAS ${project.version}">
     <body>        
 		<menu ref="parent" />
         <menu ref="reports" name="Reports" inherit="top" />
