@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Utilities related to LDAP functions.
@@ -141,14 +146,34 @@ public final class LdapUtils {
             return nullValue;
         }
 
-        final String v = attr.getStringValue();
+        String v = attr.getStringValue();
         if (v != null) {
+
+            if (Base64.isBase64(v)) {
+                v = new String(Base64.decodeBase64(v));
+            }
+
             return v;
         }
         return nullValue;
     }
-    
-    
+
+
+    /**
+     * Gets the attribute values if more than one, otherwise an empty list.
+     *
+     * @param entry the entry
+     * @param attrName the attr name
+     * @return the collection of attribute values or an empty list
+     */
+     public static Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
+        final LdapAttribute attrs = entry.getAttribute(attrName);
+        if (attrs != null) {
+            return attrs.getStringValues();
+        }
+        return Collections.emptyList();
+    }
+
     /**
      * Gets the value for a binary attribute.
      *
