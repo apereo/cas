@@ -23,13 +23,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
-        <cas:user>${fn:escapeXml(assertion.primaryAuthentication.principal.id)}</cas:user>
+        <cas:user>${fn:escapeXml(principal.id)}</cas:user>
         <c:if test="${not empty pgtIou}">
             <cas:proxyGrantingTicket>${pgtIou}</cas:proxyGrantingTicket>
         </c:if>
-        <c:if test="${fn:length(assertion.chainedAuthentications) > 1}">
+        <c:if test="${fn:length(chainedAuthentications) > 0}">
             <cas:proxies>
-                <c:forEach var="proxy" items="${assertion.chainedAuthentications}" varStatus="loopStatus" begin="0" end="${fn:length(assertion.chainedAuthentications)-2}" step="1">
+                <c:forEach var="proxy" items="${chainedAuthentications}" varStatus="loopStatus" begin="0" end="${fn:length(chainedAuthentications)}" step="1">
                     <cas:proxy>${fn:escapeXml(proxy.principal.id)}</cas:proxy>
                 </c:forEach>
             </cas:proxies>
