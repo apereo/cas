@@ -47,7 +47,14 @@ body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; ba
 
 @media only screen and (max-width: 960px) {
     #container { width: 100%; }
-    #content { -webkit-border-bottom-right-radius: 0px; -webkit-border-bottom-left-radius: 0px; -moz-border-radius-bottomright: 0px; -moz-border-radius-bottomleft: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; }
+    #content {
+        -webkit-border-bottom-right-radius: 0px;
+        -webkit-border-bottom-left-radius: 0px;
+        -moz-border-radius-bottomright: 0px;
+        -moz-border-radius-bottomleft: 0px;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
 }
 
 body {
@@ -216,8 +223,8 @@ footer a:link, footer a:visited {
     }
 }
 
-@media only screen and (max-width: 799px) {
-    #logo { width: 100px; height: 40px; background-size: 80px 40px; margin-right: 20px; }
+@media only screen and (max-width: 855px) {
+    #logo { display: none; }
     header h1 { font-size: 1em; width: 70px; height: 40px; background-size: 70px 40px; }
     #login { float: none; width: 100%; }
     #fm1 .row input[type=text],
