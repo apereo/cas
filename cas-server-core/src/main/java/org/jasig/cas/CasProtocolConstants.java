@@ -37,7 +37,10 @@ public interface CasProtocolConstants {
     
     /** Constant representing the proxy callback url parameter in the request. */
     String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
-    
+
+    /** Constant representing the renew parameter in the request. */
+    String PARAMETER_RENEW = "renew";
+
     /** Constant representing an invalid request for validation. */
     String ERROR_CODE_INVALID_REQUEST = "INVALID_REQUEST";
     
