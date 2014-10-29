@@ -186,7 +186,7 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             putWarnCookieIfRequestParameterPresent(context);
@@ -220,7 +220,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
-            if (addWarningMessagesToMessageContextIfNeeded(tgtId, messageContext)) {
+            if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(SUCCESS);
@@ -239,10 +239,9 @@ public class AuthenticationViaFormAction {
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1
      */
-    protected boolean addWarningMessagesToMessageContextIfNeeded(final String tgtId, final MessageContext messageContext) {
+    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
-        final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
-        for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
+        for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final Message message : entry.getValue().getWarnings()) {
                 addWarningToContext(messageContext, message);
                 foundAndAddedWarnings = true;
@@ -291,14 +290,6 @@ public class AuthenticationViaFormAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    /**
-     * Sets ticket registry.
-     *
-     * @param ticketRegistry the ticket registry. No longer needed as the core service layer
-     *                       returns the correct object type. Will be removed in future versions.
-     * @deprecated As of 4.1
-     */
-    @Deprecated
     /**
      * Set a CredentialsBinder for additional binding of the HttpServletRequest
      * to the Credential instance, beyond our default binding of the
