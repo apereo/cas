@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<project name="Jasig CAS ${project.version}">
+<project name="Apereo CAS ${project.version}">
 	<skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -33,7 +33,7 @@
             <sitesearch/>
           </googleSearch>
           <twitter>
-            <user>Jasig</user>
+            <user>Apereo</user>
             <showUser>true</showUser>
             <showFollowers>true</showFollowers>
           </twitter>
@@ -47,7 +47,7 @@
         <href>http://www.jasig.org/cas</href>
     </bannerLeft>
     <bannerRight>
-        <name>Jasig</name>
+        <name>Apereo</name>
         <src>images/jasig-logo.png</src>
         <href>http://www.jasig.org</href>
     </bannerRight>
