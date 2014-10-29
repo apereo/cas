@@ -25,7 +25,7 @@
       <footer>
         <div id="copyright">
           <p><spring:message code="copyright" /></p>
-          <p>Powered by <a href="http://www.jasig.org/cas">Apereo Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
+          <p>Powered by <a href="http://www.apereo.org/cas">Apereo Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
         </div>
       </footer>
 

@@ -44,7 +44,7 @@
 <body id="cas">
   <div id="container">
       <header>
-        <a id="logo" href="http://www.jasig.org" title="<spring:message code="logo.title" />">Apereo</a>
+        <a id="logo" href="http://www.apereo.org" title="<spring:message code="logo.title" />">Apereo</a>
         <h1>Central Authentication Service (CAS)</h1>
       </header>
       <div id="content">
