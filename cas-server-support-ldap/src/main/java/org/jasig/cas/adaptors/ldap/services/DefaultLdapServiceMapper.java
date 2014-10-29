@@ -21,12 +21,16 @@ package org.jasig.cas.adaptors.ldap.services;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AttributeReleasePolicy;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
+import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -35,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -83,7 +88,7 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private String serviceThemeAttribute = "casServiceTheme";
 
     @NotNull
-    private String usernameAttributeProvider = "casUsernameAttributeProvider";
+    private String usernameAttributeProviderAttribute = "casUsernameAttributeProvider";
 
     @NotNull
     private String attributeReleasePolicyAttribute = "casAttributeReleasePolicy";
@@ -114,37 +119,9 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
             attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
             attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
 
-
-            if (svc.getUsernameAttributeProvider() != null) {
-                final RegisteredServiceUsernameAttributeProviderJsonSerializer mapper =
-                        new RegisteredServiceUsernameAttributeProviderJsonSerializer();
-
-                final Writer writer = new StringWriter();
-                mapper.toJson(writer, svc.getUsernameAttributeProvider());
-                final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, writer.toString());
-                attrs.add(attr);
-            }
-
-            if (svc.getProxyPolicy() != null) {
-                final RegisteredServiceProxyPolicyJsonSerializer mapper =
-                        new RegisteredServiceProxyPolicyJsonSerializer();
-
-                final Writer writer = new StringWriter();
-                mapper.toJson(writer, svc.getProxyPolicy());
-                final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, writer.toString());
-                attrs.add(attr);
-            }
-
-            if (svc.getAttributeReleasePolicy() != null) {
-                final AttributeReleasePolicyJsonSerializer mapper =
-                        new AttributeReleasePolicyJsonSerializer();
-
-                final Writer writer = new StringWriter();
-                mapper.toJson(writer, svc.getAttributeReleasePolicy());
-
-                final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, writer.toString());
-                attrs.add(attr);
-            }
+            serializeAttributePolicyObjectIntoLdap(attrs, svc);
+            serializeProxyingPolicyObjectIntoLdap(attrs, svc);
+            serializeUsernameProviderObjectIntoLdap(attrs, svc);
 
             if (svc.getRequiredHandlers().size() > 0) {
                 attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[]{})));
@@ -179,9 +156,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
                 
-                final String usernameAttrData = LdapUtils.getString(entry, this.usernameAttributeProvider);
+                final String usernameAttrData = LdapUtils.getString(entry, this.usernameAttributeProviderAttribute);
                 if (StringUtils.isNotBlank(usernameAttrData)) {
-
                     final RegisteredServiceUsernameAttributeProviderJsonSerializer mapper =
                             new RegisteredServiceUsernameAttributeProviderJsonSerializer();
 
@@ -191,7 +167,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 
                 final String data = LdapUtils.getString(entry, this.attributeReleasePolicyAttribute);
                 if (StringUtils.isNotBlank(data)) {
-
                     final AttributeReleasePolicyJsonSerializer mapper =
                             new AttributeReleasePolicyJsonSerializer();
 
@@ -201,7 +176,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 
                 final String proxyData = LdapUtils.getString(entry, this.serviceProxyPolicyAttribute);
                 if (StringUtils.isNotBlank(proxyData)) {
-
                     final RegisteredServiceProxyPolicyJsonSerializer mapper =
                             new RegisteredServiceProxyPolicyJsonSerializer();
 
@@ -262,8 +236,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.requiredHandlersAttribute = handlers;
     }
 
-    public void setUsernameAttributeProvider(final String usernameAttributeProvider) {
-        this.usernameAttributeProvider = usernameAttributeProvider;
+    public void setUsernameAttributeProviderAttribute(final String usernameAttributeProviderAttribute) {
+        this.usernameAttributeProviderAttribute = usernameAttributeProviderAttribute;
     }
 
     public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
@@ -275,12 +249,12 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     }
 
     /**
-     * @deprecated As of 4.1. Consider using {@link #setUsernameAttributeProvider}
+     * @deprecated As of 4.1. Consider using {@link #setUsernameAttributeProviderAttribute}
      * @param usernameAttribute the uername attribute to return
      */
     @Deprecated
     public void setUsernameAttribute(final String usernameAttribute) {
-        LOGGER.warn("setUsernameAttribute() is deprecated and has no effect. Consider setUsernameAttributeProvider() instead.");
+        LOGGER.warn("setUsernameAttribute() is deprecated and has no effect. Consider setUsernameAttributeProviderAttribute() instead.");
     }
 
     @Override
@@ -319,6 +293,73 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return Collections.emptyList();
     }
 
+
+    /**
+     * Serialize object to json format, and create an ldap attribute
+     * object based on the given name and the data produced.
+     *
+     * @param serializer the serializer
+     * @param object the object
+     * @param attrName the attr name
+     * @return the ldap attribute
+     */
+    private LdapAttribute serializeObjectToJson(final JsonSerializer serializer, final Serializable object,
+                                       final String attrName) {
+        final Writer writer = new StringWriter();
+        serializer.toJson(writer, object);
+        return new LdapAttribute(attrName, writer.toString());
+    }
+
+    /**
+     * Serialize username provider object into ldap.
+     *
+     * @param attrs the attrs
+     * @param svc the svc
+     */
+    private void serializeUsernameProviderObjectIntoLdap(final Collection<LdapAttribute> attrs, final RegisteredService svc) {
+        /*
+        final RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
+                svc.getUsernameAttributeProvider() != null ? svc.getUsernameAttributeProvider()
+                        : new DefaultRegisteredServiceUsernameProvider();
+        */
+
+        final DefaultRegisteredServiceUsernameProvider usernameAttributeProvider =new DefaultRegisteredServiceUsernameProvider();
+
+        attrs.add(serializeObjectToJson(new RegisteredServiceUsernameAttributeProviderJsonSerializer(),
+                usernameAttributeProvider, this.usernameAttributeProviderAttribute));
+    }
+
+    /**
+     * Serialize proxying policy object into ldap.
+     *
+     * @param attrs the attrs
+     * @param svc the svc
+     */
+    private void serializeProxyingPolicyObjectIntoLdap(final Collection<LdapAttribute> attrs, final RegisteredService svc) {
+        final RegisteredServiceProxyPolicy proxyPolicy =
+                svc.getProxyPolicy() != null ? svc.getProxyPolicy()
+                        : new RefuseRegisteredServiceProxyPolicy();
+
+        attrs.add(serializeObjectToJson(new RegisteredServiceProxyPolicyJsonSerializer(),
+                proxyPolicy, this.serviceProxyPolicyAttribute));
+    }
+
+    /**
+     * Serialize attribute policy object into ldap.
+     *
+     * @param attrs the attrs
+     * @param svc the svc
+     */
+    private void serializeAttributePolicyObjectIntoLdap(final Collection<LdapAttribute> attrs, final RegisteredService svc) {
+        final AttributeReleasePolicy attributeReleasePolicy =
+                svc.getAttributeReleasePolicy() != null ? svc.getAttributeReleasePolicy()
+                        : new ReturnAllowedAttributeReleasePolicy();
+
+        attrs.add(serializeObjectToJson(new RegisteredServiceUsernameAttributeProviderJsonSerializer(),
+                attributeReleasePolicy, this.attributeReleasePolicyAttribute));
+
+    }
+
     /**
      * Gets the registered service by id that would either match an ant or regex pattern.
      *
@@ -336,19 +377,34 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         return null;
     }
 
+    private abstract class AbstractLdapJsonSerializer<T> extends AbstractJacksonBackedJsonSerializer<T> {
+        private static final long serialVersionUID = 1413706307815086084L;
+    }
 
     private class RegisteredServiceUsernameAttributeProviderJsonSerializer
-                    extends AbstractJacksonBackedJsonSerializer<RegisteredServiceUsernameAttributeProvider> {
+                    extends AbstractLdapJsonSerializer<RegisteredServiceUsernameAttributeProvider> {
         private static final long serialVersionUID = -3767936758995953132L;
+        @Override
+        protected Class<RegisteredServiceUsernameAttributeProvider> getTypeToSerialize() {
+            return RegisteredServiceUsernameAttributeProvider.class;
+        }
     }
 
     private class AttributeReleasePolicyJsonSerializer
-            extends AbstractJacksonBackedJsonSerializer<AttributeReleasePolicy> {
+            extends AbstractLdapJsonSerializer<AttributeReleasePolicy> {
         private static final long serialVersionUID = 7204572931178439162L;
+        @Override
+        protected Class<AttributeReleasePolicy> getTypeToSerialize() {
+            return AttributeReleasePolicy.class;
+        }
     }
 
     private class RegisteredServiceProxyPolicyJsonSerializer
-            extends AbstractJacksonBackedJsonSerializer<RegisteredServiceProxyPolicy> {
+            extends AbstractLdapJsonSerializer<RegisteredServiceProxyPolicy> {
         private static final long serialVersionUID = 5036309681680084491L;
+        @Override
+        protected Class<RegisteredServiceProxyPolicy> getTypeToSerialize() {
+            return RegisteredServiceProxyPolicy.class;
+        }
     }
 }
