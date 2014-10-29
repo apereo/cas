@@ -20,6 +20,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,6 +65,44 @@ public class JsonServiceRegistryDaoTests {
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void testSaveMethodWithDefaultUsernameAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultUsernameAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void testSaveMethodWithDefaultPrincipalAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultPrincipalAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn"));
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+    @Test
+    public void testSaveMethodWithDefaultAnonymousAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultAnonymousAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
+                new ShibbolethCompatiblePersistentIdGenerator("helloworld")
+        ));
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 

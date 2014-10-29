@@ -35,7 +35,6 @@ import java.net.URL;
 public final class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSerializer<RegisteredService> {
     private static final long serialVersionUID = 7645698151115635245L;
 
-
     @Override
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
@@ -60,4 +59,8 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         boolean isAllowedProxyCallbackUrl(URL pgtUrl);
     }
 
+    @Override
+    protected Class<RegisteredService> getTypeToSerialize() {
+        return RegisteredService.class;
+    }
 }
