@@ -9,10 +9,10 @@
 <div id="overview"><a href="../../../../../../testapidocs/org/jasig/cas/web/flow/GenericSuccessViewActionTests.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Licensed to Jasig under one or more contributor license</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Licensed to Apereo under one or more contributor license</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * agreements. See the NOTICE file distributed with this work</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * for additional information regarding copyright ownership.</em>
-<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * Jasig licenses this file to you under the Apache License,</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * Apereo licenses this file to you under the Apache License,</em>
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * Version 2.0 (the "License"); you may not use this file</em>
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * except in compliance with the License.  You may obtain a</em>
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * copy of the License at the following location:</em>
@@ -26,50 +26,49 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> * specific language governing permissions and limitations</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_comment"> * under the License.</em>
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
-<a class="jxr_linenumber" name="19" href="#19">19</a>  
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.flow;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.TestUtils;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.NullPrincipal;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.InvalidTicketException;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="30" href="#30">30</a>  
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.mockito.Mockito.*;
-<a class="jxr_linenumber" name="33" href="#33">33</a>  
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> * Tests for {@link GenericSuccessViewAction}</em>
-<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/flow/GenericSuccessViewActionTests.html">GenericSuccessViewActionTests</a> {
-<a class="jxr_linenumber" name="39" href="#39">39</a>      @Test
-<a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidPrincipal() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
-<a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="42" href="#42">42</a>          <strong class="jxr_keyword">final</strong> Authentication authn = mock(Authentication.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="43" href="#43">43</a>          when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal(<span class="jxr_string">"cas"</span>));
-<a class="jxr_linenumber" name="44" href="#44">44</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="45" href="#45">45</a>          when(tgt.getAuthentication()).thenReturn(authn);
-<a class="jxr_linenumber" name="46" href="#46">46</a>          when(cas.getTicketGrantingTicket(any(String.<strong class="jxr_keyword">class</strong>))).thenReturn(tgt);
-<a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">final</strong> GenericSuccessViewAction action = <strong class="jxr_keyword">new</strong> GenericSuccessViewAction(cas);
-<a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">final</strong> Principal p = action.getAuthenticationPrincipal(<span class="jxr_string">"TGT-1"</span>);
-<a class="jxr_linenumber" name="49" href="#49">49</a>          assertNotNull(p);
-<a class="jxr_linenumber" name="50" href="#50">50</a>          assertEquals(p.getId(), <span class="jxr_string">"cas"</span>);
-<a class="jxr_linenumber" name="51" href="#51">51</a>      }
-<a class="jxr_linenumber" name="52" href="#52">52</a>  
-<a class="jxr_linenumber" name="53" href="#53">53</a>      @Test
-<a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPrincipalCanNotBeDetemined() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
-<a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="56" href="#56">56</a>          when(cas.getTicketGrantingTicket(any(String.<strong class="jxr_keyword">class</strong>))).thenThrow(<strong class="jxr_keyword">new</strong> InvalidTicketException(<span class="jxr_string">"TGT-1"</span>));
-<a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">final</strong> GenericSuccessViewAction action = <strong class="jxr_keyword">new</strong> GenericSuccessViewAction(cas);
-<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">final</strong> Principal p = action.getAuthenticationPrincipal(<span class="jxr_string">"TGT-1"</span>);
-<a class="jxr_linenumber" name="59" href="#59">59</a>          assertNotNull(p);
-<a class="jxr_linenumber" name="60" href="#60">60</a>          assertTrue(p instanceof NullPrincipal);
-<a class="jxr_linenumber" name="61" href="#61">61</a>      }
-<a class="jxr_linenumber" name="62" href="#62">62</a>  }
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.flow;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.TestUtils;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.NullPrincipal;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.InvalidTicketException;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.mockito.Mockito.*;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * Tests for {@link GenericSuccessViewAction}</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/flow/GenericSuccessViewActionTests.html">GenericSuccessViewActionTests</a> {
+<a class="jxr_linenumber" name="38" href="#38">38</a>      @Test
+<a class="jxr_linenumber" name="39" href="#39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidPrincipal() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="40" href="#40">40</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">final</strong> Authentication authn = mock(Authentication.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="42" href="#42">42</a>          when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal(<span class="jxr_string">"cas"</span>));
+<a class="jxr_linenumber" name="43" href="#43">43</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          when(tgt.getAuthentication()).thenReturn(authn);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          when(cas.getTicketGrantingTicket(any(String.<strong class="jxr_keyword">class</strong>))).thenReturn(tgt);
+<a class="jxr_linenumber" name="46" href="#46">46</a>          <strong class="jxr_keyword">final</strong> GenericSuccessViewAction action = <strong class="jxr_keyword">new</strong> GenericSuccessViewAction(cas);
+<a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">final</strong> Principal p = action.getAuthenticationPrincipal(<span class="jxr_string">"TGT-1"</span>);
+<a class="jxr_linenumber" name="48" href="#48">48</a>          assertNotNull(p);
+<a class="jxr_linenumber" name="49" href="#49">49</a>          assertEquals(p.getId(), <span class="jxr_string">"cas"</span>);
+<a class="jxr_linenumber" name="50" href="#50">50</a>      }
+<a class="jxr_linenumber" name="51" href="#51">51</a>  
+<a class="jxr_linenumber" name="52" href="#52">52</a>      @Test
+<a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPrincipalCanNotBeDetemined() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="54" href="#54">54</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="55" href="#55">55</a>          when(cas.getTicketGrantingTicket(any(String.<strong class="jxr_keyword">class</strong>))).thenThrow(<strong class="jxr_keyword">new</strong> InvalidTicketException(<span class="jxr_string">"TGT-1"</span>));
+<a class="jxr_linenumber" name="56" href="#56">56</a>          <strong class="jxr_keyword">final</strong> GenericSuccessViewAction action = <strong class="jxr_keyword">new</strong> GenericSuccessViewAction(cas);
+<a class="jxr_linenumber" name="57" href="#57">57</a>          <strong class="jxr_keyword">final</strong> Principal p = action.getAuthenticationPrincipal(<span class="jxr_string">"TGT-1"</span>);
+<a class="jxr_linenumber" name="58" href="#58">58</a>          assertNotNull(p);
+<a class="jxr_linenumber" name="59" href="#59">59</a>          assertTrue(p instanceof NullPrincipal);
+<a class="jxr_linenumber" name="60" href="#60">60</a>      }
+<a class="jxr_linenumber" name="61" href="#61">61</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

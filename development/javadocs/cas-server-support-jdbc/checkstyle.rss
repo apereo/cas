@@ -2,9 +2,9 @@
 
 <rss version="0.91">
   <channel>
-    <title>Jasig CAS JDBC Support - Checkstyle report</title>
+    <title>Apereo CAS JDBC Support - Checkstyle report</title>
     <link>http://www.jasig.org/cas/cas-server-support-jdbc/</link>
-    <description>Jasig CAS JDBC Support - Checkstyle report</description>
+    <description>Apereo CAS JDBC Support - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>

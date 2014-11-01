@@ -2,9 +2,9 @@
 
 <rss version="0.91">
   <channel>
-    <title>Jasig CAS Restlet Integration - Checkstyle report</title>
+    <title>Apereo CAS Restlet Integration - Checkstyle report</title>
     <link>http://www.jasig.org/cas/cas-server-integration-restlet/</link>
-    <description>Jasig CAS Restlet Integration - Checkstyle report</description>
+    <description>Apereo CAS Restlet Integration - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>

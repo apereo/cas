@@ -9,10 +9,10 @@
 <div id="overview"><a href="../../../../../../apidocs/org/jasig/cas/web/view/Cas30ResponseView.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Licensed to Jasig under one or more contributor license</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Licensed to Apereo under one or more contributor license</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * agreements. See the NOTICE file distributed with this work</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * for additional information regarding copyright ownership.</em>
-<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * Jasig licenses this file to you under the Apache License,</em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * Apereo licenses this file to you under the Apache License,</em>
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_comment"> * Version 2.0 (the "License"); you may not use this file</em>
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_comment"> * except in compliance with the License.  You may obtain a</em>
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_comment"> * copy of the License at the following location:</em>
@@ -26,62 +26,61 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment"> * specific language governing permissions and limitations</em>
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_comment"> * under the License.</em>
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
-<a class="jxr_linenumber" name="19" href="#19">19</a>  
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.view;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CasProtocolConstants;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.AbstractUrlBasedView;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * Renders and prepares CAS2 views. This view is responsible</em>
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * to simply just prep the base model, and delegates to</em>
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * a the real view to render the final output.</em>
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> * @since 4.1</em>
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/view/Cas30ResponseView.html">Cas30ResponseView</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../org/jasig/cas/web/view/Cas20ResponseView.html">Cas20ResponseView</a> {
-<a class="jxr_linenumber" name="37" href="#37">37</a>  
-<a class="jxr_linenumber" name="38" href="#38">38</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * Represents the collection of attributes in the view.</em>
-<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_ATTRIBUTES = <span class="jxr_string">"attributes"</span>;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * Represents the authentication date object in the view.</em>
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = <span class="jxr_string">"authenticationDate"</span>;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  
-<a class="jxr_linenumber" name="48" href="#48">48</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     * Represents the flag to note whether assertion is backed by new login.</em>
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = <span class="jxr_string">"isFromNewLogin"</span>;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.view;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CasProtocolConstants;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.AbstractUrlBasedView;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment"> * Renders and prepares CAS2 views. This view is responsible</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> * to simply just prep the base model, and delegates to</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment"> * a the real view to render the final output.</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment"> * @since 4.1</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/view/Cas30ResponseView.html">Cas30ResponseView</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../org/jasig/cas/web/view/Cas20ResponseView.html">Cas20ResponseView</a> {
+<a class="jxr_linenumber" name="36" href="#36">36</a>  
+<a class="jxr_linenumber" name="37" href="#37">37</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * Represents the collection of attributes in the view.</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_ATTRIBUTES = <span class="jxr_string">"attributes"</span>;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  
+<a class="jxr_linenumber" name="42" href="#42">42</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * Represents the authentication date object in the view.</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = <span class="jxr_string">"authenticationDate"</span>;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     * Represents the flag to note whether assertion is backed by new login.</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = <span class="jxr_string">"isFromNewLogin"</span>;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
-<a class="jxr_linenumber" name="53" href="#53">53</a>  
-<a class="jxr_linenumber" name="54" href="#54">54</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     * Instantiates a new Abstract cas jstl view.</em>
-<a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment">     * @param view the view</em>
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/jasig/cas/web/view/Cas30ResponseView.html">Cas30ResponseView</a>(<strong class="jxr_keyword">final</strong> AbstractUrlBasedView view) {
-<a class="jxr_linenumber" name="60" href="#60">60</a>          <strong class="jxr_keyword">super</strong>(view);
-<a class="jxr_linenumber" name="61" href="#61">61</a>      }
-<a class="jxr_linenumber" name="62" href="#62">62</a>  
-<a class="jxr_linenumber" name="63" href="#63">63</a>      @Override
-<a class="jxr_linenumber" name="64" href="#64">64</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> prepareMergedOutputModel(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model, <strong class="jxr_keyword">final</strong> HttpServletRequest request,
-<a class="jxr_linenumber" name="65" href="#65">65</a>                                              <strong class="jxr_keyword">final</strong> HttpServletResponse response) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">super</strong>.prepareMergedOutputModel(model, request, response);
-<a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, getPrincipalAttributesAsMultiValuedAttributes(model));
-<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, getAuthenticationDate(model));
-<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, isAssertionBackedByNewLogin(model));
-<a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-<a class="jxr_linenumber" name="72" href="#72">72</a>                  isRememberMeAuthentication(model));
-<a class="jxr_linenumber" name="73" href="#73">73</a>      }
-<a class="jxr_linenumber" name="74" href="#74">74</a>  }
+<a class="jxr_linenumber" name="53" href="#53">53</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     * Instantiates a new Abstract cas jstl view.</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment">     * @param view the view</em>
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/jasig/cas/web/view/Cas30ResponseView.html">Cas30ResponseView</a>(<strong class="jxr_keyword">final</strong> AbstractUrlBasedView view) {
+<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">super</strong>(view);
+<a class="jxr_linenumber" name="60" href="#60">60</a>      }
+<a class="jxr_linenumber" name="61" href="#61">61</a>  
+<a class="jxr_linenumber" name="62" href="#62">62</a>      @Override
+<a class="jxr_linenumber" name="63" href="#63">63</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> prepareMergedOutputModel(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model, <strong class="jxr_keyword">final</strong> HttpServletRequest request,
+<a class="jxr_linenumber" name="64" href="#64">64</a>                                              <strong class="jxr_keyword">final</strong> HttpServletResponse response) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="65" href="#65">65</a>  
+<a class="jxr_linenumber" name="66" href="#66">66</a>          <strong class="jxr_keyword">super</strong>.prepareMergedOutputModel(model, request, response);
+<a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, getPrincipalAttributesAsMultiValuedAttributes(model));
+<a class="jxr_linenumber" name="68" href="#68">68</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, getAuthenticationDate(model));
+<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, isAssertionBackedByNewLogin(model));
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">super</strong>.putIntoModel(model, CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+<a class="jxr_linenumber" name="71" href="#71">71</a>                  isRememberMeAuthentication(model));
+<a class="jxr_linenumber" name="72" href="#72">72</a>      }
+<a class="jxr_linenumber" name="73" href="#73">73</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

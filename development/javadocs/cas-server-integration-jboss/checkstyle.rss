@@ -2,9 +2,9 @@
 
 <rss version="0.91">
   <channel>
-    <title>Jasig CAS JBoss Cache Integration - DEPRECATED - Checkstyle report</title>
+    <title>Apereo CAS JBoss Cache Integration - DEPRECATED - Checkstyle report</title>
     <link>http://www.jasig.org/cas/cas-server-integration-jboss/</link>
-    <description>Jasig CAS JBoss Cache Integration - DEPRECATED - Checkstyle report</description>
+    <description>Apereo CAS JBoss Cache Integration - DEPRECATED - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>

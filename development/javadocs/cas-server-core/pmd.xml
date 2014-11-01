@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-11-01T20:02:27.648">
+<pmd version="4.3" timestamp="2014-11-01T20:01:42.106">
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/CentralAuthenticationServiceImpl.java">
 <violation beginline="255" endline="261" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
@@ -21,7 +21,7 @@ Avoid unused constructor parameters such as 'defaultAttributes'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/services/JsonServiceRegistryDao.java">
-<violation beginline="219" endline="219" begincolumn="26" endcolumn="29" rule="UnusedLocalVariable" ruleset="Unused Code Rules" package="org.jasig.cas.services" class="JsonServiceRegistryDao" method="makeFile" variable="path" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedLocalVariable" priority="3">
+<violation beginline="218" endline="218" begincolumn="26" endcolumn="29" rule="UnusedLocalVariable" ruleset="Unused Code Rules" package="org.jasig.cas.services" class="JsonServiceRegistryDao" method="makeFile" variable="path" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedLocalVariable" priority="3">
 Avoid unused local variables such as 'path'.
 </violation>
 </file>
@@ -59,12 +59,12 @@ Avoid unused constructor parameters such as 'async'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/util/services/RegisteredServiceJsonSerializer.java">
-<violation beginline="48" endline="48" begincolumn="33" endcolumn="38" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.util.services" class="RegisteredServiceJsonSerializer" variable="LOGGER" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+<violation beginline="47" endline="47" begincolumn="33" endcolumn="38" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.jasig.cas.util.services" class="RegisteredServiceJsonSerializer" variable="LOGGER" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'LOGGER'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/slf4j/impl/CasDelegatingLogger.java">
-<violation beginline="98" endline="98" begincolumn="29" endcolumn="35" rule="UnusedLocalVariable" ruleset="Unused Code Rules" package="org.slf4j.impl" class="CasDelegatingLogger" method="removeTicketId" variable="builder" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedLocalVariable" priority="3">
+<violation beginline="97" endline="97" begincolumn="29" endcolumn="35" rule="UnusedLocalVariable" ruleset="Unused Code Rules" package="org.slf4j.impl" class="CasDelegatingLogger" method="removeTicketId" variable="builder" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedLocalVariable" priority="3">
 Avoid unused local variables such as 'builder'.
 </violation>
 </file>

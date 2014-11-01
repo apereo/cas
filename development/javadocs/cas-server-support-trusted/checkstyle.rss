@@ -2,9 +2,9 @@
 
 <rss version="0.91">
   <channel>
-    <title>Jasig CAS Trusted User Support - Checkstyle report</title>
+    <title>Apereo CAS Trusted User Support - Checkstyle report</title>
     <link>http://www.jasig.org/cas/cas-server-support-trusted/</link>
-    <description>Jasig CAS Trusted User Support - Checkstyle report</description>
+    <description>Apereo CAS Trusted User Support - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>
