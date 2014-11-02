@@ -116,9 +116,12 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 
 <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
+<!-- If you wish to search by user, rather than by dn, change {dn} to {user} -->
 <bean id="entryResolver"
-      class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-      p:baseDn="${ldap.baseDn}" />
+      class="org.ldaptive.auth.SearchEntryResolver"
+      p:baseDn="${ldap.baseDn}"
+      p:userFilter="userPrincipalName={dn}"
+      p:subtreeSearch="true" />
 {% endhighlight %}
 
 
