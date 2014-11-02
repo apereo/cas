@@ -526,7 +526,7 @@
     <repository>
       <id>jasig-repository</id>
       <name>Jasig Maven2 Repository</name>
-      <url>http://developer.ja-sig.org/maven2</url>
+      <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
     </repository>
 
     <repository>
