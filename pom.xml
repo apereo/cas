@@ -445,6 +445,39 @@
             </execution>
         </executions>
       </plugin>
+
+
+      <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-clean-plugin</artifactId>
+	    <version>${maven-clean-plugin.version}</version>
+	    <configuration>
+	        <filesets>
+	            <fileset>
+	                <directory>target/</directory>
+	                <includes>
+	                    <include>**/*</include>
+	                </includes>
+	                <excludes>
+	                    <exclude>dependency/*.jar</exclude>
+	                    <exclude>*.war</exclude>
+	                </excludes>
+	                <followSymlinks>false</followSymlinks>
+	            </fileset>
+	        </filesets>
+	        <excludeDefaultDirectories>true</excludeDefaultDirectories>
+	    </configuration>
+	    <executions>
+	        <execution>
+	            <id>auto-clean</id>
+	            <phase>install</phase>
+	            <goals>
+	                <goal>clean</goal>
+	            </goals>
+	        </execution>
+	    </executions>
+	</plugin>
+
     </plugins>
   </build>
 
@@ -1164,7 +1197,8 @@
     <maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
     <maven-aspectj-plugin.version>1.5</maven-aspectj-plugin.version>
     <maven-antrun-plugin.version>1.5</maven-antrun-plugin.version>
-
+    <maven-clean-plugin.version>2.6</maven-clean-plugin.version>
+    
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
     <project.build.targetVersion>1.7</project.build.targetVersion>
