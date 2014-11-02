@@ -170,7 +170,7 @@ In the uniqueIdGenerators.xml file:
 
 {% highlight xml %}
 <bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator">
-  <constructor-arg index="0" value="https://localhost:8443" />
+  <constructor-arg index="0" value="[CAS-FQ-HOST-NAME]" />
 </bean>
 
 <util:map id="uniqueIdGeneratorsMap">
@@ -189,7 +189,7 @@ In `cas-servlet.xml`, uncomment the following:
 {% highlight xml %}
 <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="3"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
 {% endhighlight %}
 
 
