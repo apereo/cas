@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas;
 
-import java.util.Map;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.MixedPrincipalException;
@@ -27,7 +25,9 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
@@ -37,8 +37,9 @@ import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Map;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.mock;
  * @since 3.0
  */
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
-
+    
     @Test(expected=AuthenticationException.class)
     public void testBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
         getCentralAuthenticationService().createTicketGrantingTicket(
@@ -99,6 +100,20 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             TestUtils.getService());
     }
 
+    @Test
+    public void testGrantProxyTicketWithValidTicketGrantingTicket() throws Exception {
+        final String ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final String serviceTicketId = getCentralAuthenticationService()
+                .grantServiceTicket(ticketId, TestUtils.getService());
+        final String pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+                serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
+
+        final String pt = getCentralAuthenticationService().grantServiceTicket(pgt, TestUtils.getService(), null);
+        assertTrue(pt.startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
+    }
+
     @Test(expected=TicketException.class)
     public void testGrantServiceTicketWithInvalidTicketGrantingTicket() throws Exception {
         final String ticketId = getCentralAuthenticationService()
@@ -137,20 +152,9 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, TestUtils.getService());
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final String pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
             serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
-    }
-
-    @Test(expected=AuthenticationException.class)
-    public void testDelegateTicketGrantingTicketWithBadCredentials() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, TestUtils.getService());
-
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
-            serviceTicketId, TestUtils.getBadHttpBasedServiceCredentials());
+        assertTrue(pgt.startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
 
     @Test(expected=TicketException.class)
@@ -173,16 +177,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket, TestUtils.getService(),
             TestUtils.getCredentialsWithSameUsernameAndPassword());
-    }
-
-    @Test(expected=AuthenticationException.class)
-    public void testGrantServiceTicketWithInvalidCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getCentralAuthenticationService().grantServiceTicket(
-            ticketGrantingTicket, TestUtils.getService(),
-            TestUtils.getBadHttpBasedServiceCredentials());
     }
 
     @Test(expected=MixedPrincipalException.class)

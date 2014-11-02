@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,19 +18,17 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.BufferedReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -88,15 +86,6 @@ public final class SamlService extends AbstractWebApplicationService {
         this.requestId = requestId;
     }
 
-    /**
-     * {@inheritDoc}
-     * This always returns true because a SAML Service does not receive the TARGET value on validation.
-     */
-    @Override
-    public boolean matches(final Service service) {
-        return true;
-    }
-
     public String getRequestID() {
         return this.requestId;
     }
@@ -145,9 +134,9 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
-        LOGGER.debug(String.format("Request Body: %s", requestBody));
-        LOGGER.debug(String.format("Extracted ArtifactId: %s", artifactId));
-        LOGGER.debug(String.format("Extracted Request Id: %s", requestId));
+        LOGGER.debug("Request Body: {}", requestBody);
+        LOGGER.debug("Extracted ArtifactId: {}", artifactId);
+        LOGGER.debug("Extracted Request Id: {}", requestId);
 
         return new SamlService(id, service, artifactId, requestId);
     }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
@@ -44,7 +44,7 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final long authenticatedDate;
+    private final long authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
     private final List<CredentialMetaData> credentials;
@@ -63,7 +63,7 @@ public final class ImmutableAuthentication implements Authentication {
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {
-        this.authenticatedDate = 0;
+        this.authenticationDate = 0;
         this.credentials = null;
         this.principal = null;
         this.attributes = null;
@@ -96,7 +96,7 @@ public final class ImmutableAuthentication implements Authentication {
         Assert.notEmpty(credentials, "Credential cannot be empty");
         Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticatedDate = date.getTime();
+        this.authenticationDate = date.getTime();
         this.credentials = credentials;
         this.principal = principal;
         this.attributes = attributes.isEmpty() ? null : attributes;
@@ -109,8 +109,8 @@ public final class ImmutableAuthentication implements Authentication {
         return this.principal;
     }
 
-    public Date getAuthenticatedDate() {
-        return new ImmutableDate(this.authenticatedDate);
+    public Date getAuthenticationDate() {
+        return new ImmutableDate(this.authenticationDate);
     }
 
     @Override
@@ -137,7 +137,7 @@ public final class ImmutableAuthentication implements Authentication {
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
         builder.append(this.principal);
-        builder.append(this.authenticatedDate);
+        builder.append(this.authenticationDate);
         builder.append(this.attributes);
         builder.append(this.credentials);
         builder.append(this.successes);
@@ -158,7 +158,7 @@ public final class ImmutableAuthentication implements Authentication {
         builder.append(this.principal, other.getPrincipal());
         builder.append(this.credentials, other.getCredentials());
         builder.append(this.successes, other.getSuccesses());
-        builder.append(this.authenticatedDate, other.getAuthenticatedDate().getTime());
+        builder.append(this.authenticationDate, other.getAuthenticationDate().getTime());
         builder.append(wrap(this.attributes), other.getAttributes());
         builder.append(wrap(this.failures), other.getFailures());
         return builder.isEquals();

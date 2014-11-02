@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,23 +18,30 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.jasig.cas.services.ServiceRegistryDao;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.jasig.cas.services.AbstractRegisteredService;
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapServiceRegistryDao} class.
@@ -45,12 +52,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Marvin S. Addison
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/openldap-regservice-test.xml" })
-@IfProfileValue(name = "enableLdapTests", value = "true")
-public class LdapServiceRegistryDaoTests {
+@ContextConfiguration({"/ldap-context.xml", "/ldap-regservice-test.xml"})
+public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
-    private LdapServiceRegistryDao dao;
+    private ServiceRegistryDao dao;
 
     @Before
     public void setUp() throws Exception {
@@ -60,52 +66,113 @@ public class LdapServiceRegistryDaoTests {
     }
 
     @Test
-    public void testServices() throws Exception {
-
+    public void testEmptyRegistry() {
         assertEquals(0, this.dao.load().size());
+    }
 
-        AbstractRegisteredService rs = new RegisteredServiceImpl();
-        rs.setName("Service Name1");
-        rs.setAllowedToProxy(false);
-        rs.setAnonymousAccess(true);
-        rs.setDescription("Service description");
-        rs.setServiceId("https://?.edu/**");
-        rs.setTheme("the theme name");
-        rs.setUsernameAttribute("uid");
-        rs.setEvaluationOrder(123);
-        rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
+    @Test
+    public void testNonExistingService() {
+        assertNull(this.dao.findServiceById(9999991));
+    }
 
-        this.dao.save(rs);
-
-        rs = new RegexRegisteredService();
-        rs.setName("Service Name Regex");
-        rs.setAllowedToProxy(false);
-        rs.setAnonymousAccess(true);
-        rs.setDescription("Service description");
-        rs.setServiceId("^http?://.+");
-        rs.setTheme("the theme name");
-        rs.setUsernameAttribute("uid");
-        rs.setEvaluationOrder(123);
-        rs.setAllowedAttributes(Arrays.asList("test1", "test2"));
-        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
-        this.dao.save(rs);
-
+    @Test
+    public void testSavingServices() {
+        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
         assertEquals(2, services.size());
+    }
 
-        AbstractRegisteredService rs2 = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
-        assertNotNull(rs2);
-        rs2.setEvaluationOrder(9999);
-        rs2.setAllowedAttributes(Arrays.asList("test3"));
-        rs2.setName("Another Test Service");
+    @Test
+    public void testUpdatingServices() {
+        this.dao.save(getRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
 
-        rs2 = (AbstractRegisteredService) this.dao.save(rs2);
-        assertNotNull(rs2);
+        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        assertNotNull(rs);
+        rs.setEvaluationOrder(9999);
+        rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        rs.setName("Another Test Service");
+        rs.setDescription("The new description");
+        rs.setServiceId("https://hello.world");
+        rs.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https"));
+        rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
+        assertNotNull(this.dao.save(rs));
 
+        final RegisteredService rs3 = this.dao.findServiceById(rs.getId());
+        assertEquals(rs3.getName(), rs.getName());
+        assertEquals(rs3.getDescription(), rs.getDescription());
+        assertEquals(rs3.getEvaluationOrder(), rs.getEvaluationOrder());
+        assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
+        assertEquals(rs3.getProxyPolicy(), rs.getProxyPolicy());
+        assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
+        assertEquals(rs3.getServiceId(), rs.getServiceId());
+    }
+
+    @Test
+    public void testSavingServiceChangesDn() {
+        this.dao.save(getRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
+
+        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        final long originalId = rs.getId();
+        assertNotNull(rs);
+        rs.setId(666);
+        assertNotNull(this.dao.save(rs));
+        assertNotEquals(rs.getId(), originalId);
+    }
+
+    @Test
+    public void testDeletingSingleService() throws Exception {
+        final RegisteredService rs = getRegexRegisteredService();
+        final RegisteredService rs2 = getRegisteredService();
+        this.dao.save(rs2);
+        this.dao.save(rs);
+        List<RegisteredService> services = this.dao.load();
+        this.dao.delete(rs2);
+
+        services = this.dao.load();
+        assertEquals(1, services.size());
+        assertEquals(services.get(0).getId(), rs.getId());
+        assertEquals(services.get(0).getName(), rs.getName());
+    }
+
+    @Test
+    public void testDeletingServices() throws Exception {
+        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
+        final List<RegisteredService> services = this.dao.load();
         for (final RegisteredService registeredService : services) {
             this.dao.delete(registeredService);
         }
         assertEquals(0, this.dao.load().size());
     }
 
+    private RegisteredService getRegisteredService() {
+        final AbstractRegisteredService rs = new RegisteredServiceImpl();
+        rs.setName("Service Name1");
+        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        rs.setDescription("Service description");
+        rs.setServiceId("https://?.edu/**");
+        rs.setTheme("the theme name");
+        rs.setEvaluationOrder(123);
+        rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler8", "handle92")));
+        return rs;
+    }
+
+    private RegisteredService getRegexRegisteredService() {
+        final AbstractRegisteredService rs  = new RegexRegisteredService();
+        rs.setName("Service Name Regex");
+        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        rs.setDescription("Service description");
+        rs.setServiceId("^http?://.+");
+        rs.setTheme("the theme name");
+        rs.setEvaluationOrder(123);
+        rs.setDescription("Here is another description");
+        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
+        return rs;
+    }
 }

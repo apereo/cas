@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,22 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.validation.constraints.NotNull;
-
 import com.github.inspektr.audit.annotation.Audit;
-import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides an authenticaiton manager that is inherently aware of multiple credentials and supports pluggable
@@ -70,9 +70,6 @@ import org.springframework.util.Assert;
  * @since 4.0
  */
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
-
-    /** Default principal implementation that allows us to create {@link Authentication}s (principal cannot be null). */
-    private static final Principal NULL_PRINCIPAL = new NullPrincipal();
 
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -195,7 +192,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
             throws AuthenticationException {
 
-        final AuthenticationBuilder builder = new AuthenticationBuilder(NULL_PRINCIPAL);
+        final AuthenticationBuilder builder = new AuthenticationBuilder(NullPrincipal.getInstance());
         for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
@@ -231,8 +228,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                         }
                     } catch (final GeneralSecurityException e) {
                         logger.info("{} failed authenticating {}", handler.getName(), credential);
+                        logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     } catch (final PreventedException e) {
+                        logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
                         builder.addFailure(handler.getName(), e.getClass());
                     }
                 }
@@ -283,24 +282,4 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return null;
     }
 
-    /**
-     * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
-     * principal is resolved during the authentication process.
-     */
-    static class NullPrincipal implements Principal {
-
-        private static final long serialVersionUID = 2309300426720915104L;
-        /** The nobody principal. */
-        private static final String NOBODY = "nobody";
-
-        @Override
-        public String getId() {
-            return NOBODY;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return Collections.emptyMap();
-        }
-    }
 }

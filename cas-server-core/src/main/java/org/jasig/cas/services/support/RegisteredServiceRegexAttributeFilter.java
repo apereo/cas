@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,23 @@
  */
 package org.jasig.cas.services.support;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import org.jasig.cas.services.AttributeFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -38,8 +43,19 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+public final class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
+    private static final long serialVersionUID = 403015306984610128L;
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @NotNull
+    private Pattern pattern;
+
+    /**
+     * Instantiates a new Registered service regex attribute filter.
+     * Required for serialization.
+     */
+    protected RegisteredServiceRegexAttributeFilter() {}
 
     /**
      * Instantiates a new registered service regex attribute filter.
@@ -50,9 +66,15 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         this.pattern = Pattern.compile(regex);
     }
 
-    @NotNull
-    private Pattern pattern;
-
+    /**
+     * Gets the pattern.
+     *
+     * @return the pattern
+     */
+    protected Pattern getPattern() {
+        return this.pattern;
+    }
+    
     /**
      * {@inheritDoc}
      *
@@ -71,8 +93,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
-            final RegisteredService registeredService) {
+    public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
@@ -83,12 +104,12 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                     final String[] filteredAttributes = filterArrayAttributes(
                             ((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
+                        attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue.getClass().isArray()) {
                     final String[] filteredAttributes = filterArrayAttributes((String[]) attributeValue, attributeName);
                     if (filteredAttributes.length > 0) {
-                        attributesToRelease.put(attributeName, filteredAttributes);
+                        attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue instanceof Map) {
                     final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
@@ -162,5 +183,33 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
         logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 83).append(this.pattern).toHashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
+        return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("pattern", this.pattern.pattern())
+                .toString();
     }
 }

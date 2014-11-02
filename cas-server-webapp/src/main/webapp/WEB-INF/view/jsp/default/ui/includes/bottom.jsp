@@ -1,9 +1,9 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -25,7 +25,7 @@
       <footer>
         <div id="copyright">
           <p><spring:message code="copyright" /></p>
-          <p>Powered by <a href="http://www.jasig.org/cas">Jasig Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
+          <p>Powered by <a href="http://www.apereo.org/cas">Apereo Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
         </div>
       </footer>
 
@@ -38,7 +38,7 @@
         JavaScript Debug: A simple wrapper for console.log 
         See this link for more info: http://benalman.com/projects/javascript-debug-console-log/
     --%>
-    <script type="text/javascript" src="https://github.com/cowboy/javascript-debug/raw/master/ba-debug.min.js"></script>
+    <script type="text/javascript" src="https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"></script>
     
     <spring:theme code="cas.javascript.file" var="casJavascriptFile" text="" />
     <script type="text/javascript" src="<c:url value="${casJavascriptFile}" />"></script>

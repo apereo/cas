@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,29 +18,26 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.security.auth.login.FailedLoginException;
-
 import edu.vt.middleware.crypt.util.CryptReader;
-
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import org.springframework.core.io.ClassPathResource;
 
-import static org.junit.Assert.*;
+import javax.security.auth.login.FailedLoginException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link X509CredentialsAuthenticationHandler} class.
@@ -103,22 +100,13 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #1: Unsupported credential type
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new UsernamePasswordCredential(),
-                false,
-                null,
-        });
+        params.add(new Object[] {handler, new UsernamePasswordCredential(), false, null});
 
         // Test case #2:Valid certificate
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {
-                handler,
-                credential,
-                true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
@@ -135,11 +123,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
         handler.setMaxPathLengthAllowUnspecified(true);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredential(createCertificates("snake-oil.crt")),
-                true,
-                new FailedLoginException(),
+        params.add(new Object[] {handler, new X509CertificateCredential(createCertificates("snake-oil.crt")),
+                true, new FailedLoginException(),
         });
 
         // Test case #5: Disallowed subject

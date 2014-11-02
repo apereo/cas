@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -45,22 +45,22 @@
 
   <util:map id="auditActionResolverMap">
     <entry key="AUTHENTICATION_RESOLVER">
-      <ref local="authenticationActionResolver" />
+      <ref bean="authenticationActionResolver" />
     </entry>
     <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
-      <ref local="ticketCreationActionResolver" />
+      <ref bean="ticketCreationActionResolver" />
     </entry>
     <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
       <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
     </entry>
     <entry key="GRANT_SERVICE_TICKET_RESOLVER">
-      <ref local="ticketCreationActionResolver" />
+      <ref bean="ticketCreationActionResolver" />
     </entry>
     <entry key="GRANT_PROXY_GRANTING_TICKET_RESOLVER">
-      <ref local="ticketCreationActionResolver" />
+      <ref bean="ticketCreationActionResolver" />
     </entry>
     <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
-      <ref local="ticketValidationActionResolver" />
+      <ref bean="ticketValidationActionResolver" />
     </entry>
   </util:map>
   
@@ -69,19 +69,19 @@
       <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver" />
     </entry>
     <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-      <ref local="returnValueResourceResolver" />
+      <ref bean="returnValueResourceResolver" />
     </entry>
     <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-      <ref local="ticketResourceResolver" />
+      <ref bean="ticketResourceResolver" />
     </entry>
     <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
       <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver" />
     </entry>
     <entry key="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
-      <ref local="returnValueResourceResolver" />
+      <ref bean="returnValueResourceResolver" />
     </entry>
     <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
-      <ref local="ticketResourceResolver" />
+      <ref bean="ticketResourceResolver" />
     </entry>
   </util:map>
       

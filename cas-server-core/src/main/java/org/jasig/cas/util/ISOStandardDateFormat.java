@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.util;
 
-import java.util.Date;
+import org.apache.commons.lang3.time.FastDateFormat;
 
-import org.apache.commons.lang.time.FastDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * A fast date format based on the ISO-8601 standard.
@@ -39,8 +41,7 @@ public final class ISOStandardDateFormat extends FastDateFormat {
      * based on the format {@link #DATE_FORMAT}.
      */
     public ISOStandardDateFormat() {
-        super(DATE_FORMAT, null, null);
-        super.init();
+        super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
     }
     
     /**

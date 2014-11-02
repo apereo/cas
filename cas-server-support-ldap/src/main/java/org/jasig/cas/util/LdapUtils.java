@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.util;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -146,5 +146,25 @@ public final class LdapUtils {
             return v;
         }
         return nullValue;
+    }
+    
+    
+    /**
+     * Gets the value for a binary attribute.
+     *
+     * @param ctx the ctx
+     * @param attribute the attribute
+     * @return the binary value, or null.
+     */
+    public static byte[] getBinary(final LdapEntry ctx, final String attribute) {
+        final LdapAttribute attr = ctx.getAttribute(attribute);
+        if (attr == null) {
+            return null;
+        }
+        final byte[] v = attr.getBinaryValue();
+        if (v != null) {
+            return v;
+        }
+        return null;
     }
 }

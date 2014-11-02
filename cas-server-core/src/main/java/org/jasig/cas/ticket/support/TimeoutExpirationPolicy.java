@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -20,6 +20,8 @@ package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
@@ -53,6 +55,16 @@ public final class TimeoutExpirationPolicy implements ExpirationPolicy {
      */
     public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    }
+
+    /**
+     * Instantiates a new Timeout expiration policy.
+     *
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
+    public TimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
+        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
     }
 
     @Override

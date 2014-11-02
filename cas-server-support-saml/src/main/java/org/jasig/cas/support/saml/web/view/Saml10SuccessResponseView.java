@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,13 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.support.saml.web.view;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.Authentication;
@@ -48,6 +41,13 @@ import org.opensaml.saml1.core.SubjectConfirmation;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Implementation of a view to return a SAML SOAP response and assertion, based on
  * the SAML 1.1 specification.
@@ -58,7 +58,6 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  * <p>
  * Note that this class will currently not handle proxy authentication.
  * <p>
- * Note: This class currently expects a bean called "ServiceRegistry" to exist.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -67,8 +66,6 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
 public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     /** Namespace for custom attributes in the saml validation payload. */
     private static final String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
-    
-    private static final String REMEMBER_ME_ATTRIBUTE_VALUE = "true";
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
@@ -87,12 +84,9 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
+
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
-
-        final Object o = authentication.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = o == Boolean.TRUE && !getAssertionFrom(model).isFromNewLogin();
 
         // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
         final Assertion assertion = newSamlObject(Assertion.class);
@@ -100,15 +94,40 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         assertion.setIssueInstant(issuedAt);
         assertion.setIssuer(this.issuer);
         assertion.setConditions(newConditions(issuedAt, service.getId()));
-        final AuthenticationStatement authnStatement = newAuthenticationStatement(authentication);
+        final AuthenticationStatement authnStatement = newAuthenticationStatement(model);
         assertion.getAuthenticationStatements().add(authnStatement);
-        final Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
-        if (!attributes.isEmpty() || isRemembered) {
-            assertion.getAttributeStatements().add(
-                    newAttributeStatement(newSubject(authentication.getPrincipal().getId()), attributes, isRemembered));
+
+        final Subject subject = newSubject(getPrincipal(model).getId());
+        final Map<String, Object> attributesToSend = prepareSamlAttributes(model);
+
+        if (!attributesToSend.isEmpty()) {
+            assertion.getAttributeStatements().add(newAttributeStatement(subject, attributesToSend));
         }
+
         response.setStatus(newStatus(StatusCode.SUCCESS, null));
         response.getAssertions().add(assertion);
+    }
+
+
+    /**
+     * Prepare saml attributes. Combines both principal and authentication
+     * attributes. If the authentication is to be remembered, uses {@link #setRememberMeAttributeName(String)}
+     * for the remember-me attribute name.
+     *
+     * @param model the model
+     * @return the final map
+     * @since 4.1
+     */
+    private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
+        final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributesAsMultiValuedAttributes(model));
+        if (isRememberMeAuthentication(model)) {
+            authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+            authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
+        }
+        final Map<String, Object> attributesToReturn = new HashMap<String, Object>();
+        attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
+        attributesToReturn.putAll(authnAttributes);
+        return attributesToReturn;
     }
 
     /**
@@ -152,19 +171,20 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
     /**
      * New authentication statement.
      *
-     * @param authentication the authentication
+     * @param model the model
      * @return the authentication statement
      */
-    private AuthenticationStatement newAuthenticationStatement(final Authentication authentication) {
+    private AuthenticationStatement newAuthenticationStatement(final Map<String, Object> model) {
+        final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final String authenticationMethod = (String) authentication.getAttributes().get(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
         final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
-        authnStatement.setAuthenticationInstant(new DateTime(authentication.getAuthenticatedDate()));
+        authnStatement.setAuthenticationInstant(new DateTime(authentication.getAuthenticationDate()));
         authnStatement.setAuthenticationMethod(
                 authenticationMethod != null
                 ? authenticationMethod
                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
-        authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
+        authnStatement.setSubject(newSubject(getPrincipal(model).getId()));
         return authnStatement;
     }
 
@@ -173,11 +193,10 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      *
      * @param subject the subject
      * @param attributes the attributes
-     * @param isRemembered the is remembered
      * @return the attribute statement
      */
     private AttributeStatement newAttributeStatement(
-            final Subject subject, final Map<String, Object> attributes, final boolean isRemembered) {
+            final Subject subject, final Map<String, Object> attributes) {
 
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
@@ -201,13 +220,6 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
             attrStatement.getAttributes().add(attribute);
         }
 
-        if (isRemembered) {
-            final Attribute attribute = newSamlObject(Attribute.class);
-            attribute.setAttributeName(this.rememberMeAttributeName);
-            attribute.setAttributeNamespace(VALIDATION_SAML_ATTRIBUTE_NAMESPACE);
-            attribute.getAttributeValues().add(newAttributeValue(REMEMBER_ME_ATTRIBUTE_VALUE));
-            attrStatement.getAttributes().add(attribute);
-        }
         return attrStatement;
     }
 

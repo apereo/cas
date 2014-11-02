@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -38,7 +38,7 @@ import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,7 +168,9 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     
     /**
-     * @param nasIpAddress the NAS IP Address
+     * Sets the nas ip address.
+     *
+     * @param nasIpAddress the new nas ip address
      * @since 4.1
      */
     public void setNasIpAddress(final String nasIpAddress) {
@@ -176,7 +178,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasIpv6Address the NAS IP Address v6
+     * Sets the nas ipv6 address.
+     *
+     * @param nasIpv6Address the new nas ipv6 address
      * @since 4.1
      */
     public void setNasIpv6Address(final String nasIpv6Address) {
@@ -184,7 +188,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasPort the NAS port
+     * Sets the nas port.
+     *
+     * @param nasPort the new nas port
      * @since 4.1
      */
     public void setNasPort(final long nasPort) {
@@ -192,7 +198,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasPortId the NAS port identifier
+     * Sets the nas port id.
+     *
+     * @param nasPortId the new nas port id
      * @since 4.1
      */
     public void setNasPortId(final long nasPortId) {
@@ -200,7 +208,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasIdentifier the NAS identifier
+     * Sets the nas identifier.
+     *
+     * @param nasIdentifier the new nas identifier
      * @since 4.1
      */
     public void setNasIdentifier(final long nasIdentifier) {
@@ -208,7 +218,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasRealPort the NAS real port
+     * Sets the nas real port.
+     *
+     * @param nasRealPort the new nas real port
      * @since 4.1
      */
     public void setNasRealPort(final long nasRealPort) {
@@ -216,7 +228,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param nasPortType the NAS port type
+     * Sets the nas port type.
+     *
+     * @param nasPortType the new nas port type
      * @since 4.1
      */
     public void setNasPortType(final long nasPortType) {
@@ -224,7 +238,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     /**
-     * @param retries the number of retries
+     * Sets the retries.
+     *
+     * @param retries the new retries
      * @since 4.1
      */
     public void setRetries(final int retries) {

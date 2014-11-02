@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,20 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import static org.junit.Assert.*;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -60,8 +60,10 @@ public class FileAuthenticationHandlerTests  {
     @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
+            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+            svc.setServiceId("https://some.app.edu");
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"));
+                new URL("http://www.rutgers.edu"), svc);
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");

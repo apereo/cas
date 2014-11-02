@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,16 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
+
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -76,7 +76,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
         try {
             assertFalse(this.authenticationHandler
                     .supports(new HttpBasedServiceCredential(new URL(
-                            "http://www.rutgers.edu"))));
+                            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }

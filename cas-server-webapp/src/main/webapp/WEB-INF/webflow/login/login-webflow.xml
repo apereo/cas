@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -22,7 +22,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
-                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential" />
     <on-start>
@@ -83,8 +83,8 @@
     
 	<view-state id="viewLoginForm" view="casLoginView" model="credential">
         <binder>
-            <binding property="username" />
-            <binding property="password" />
+            <binding property="username" required="true" />
+            <binding property="password" required="true"/>
         </binder>
         <on-entry>
             <set name="viewScope.commandName" value="'credential'" />
@@ -115,6 +115,7 @@
     <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)" />
     <transition on="AccountDisabledException" to="casAccountDisabledView"/>
     <transition on="AccountLockedException" to="casAccountLockedView"/>
+    <transition on="AccountPasswordMustChangeException" to="casMustChangePassView"/>
     <transition on="CredentialExpiredException" to="casExpiredPassView"/>
     <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
     <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
@@ -155,17 +156,24 @@
     </decision-state>
 
 	<!-- 
-		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
+		the "viewGenericLoginSuccess" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
-	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
+	
+    <end-state id="viewGenericLoginSuccess" view="casGenericSuccessView">
+        <on-entry>
+            <evaluate expression="genericSuccessViewAction.getAuthenticationPrincipal(flowScope.ticketGrantingTicketId)"
+                      result="requestScope.principal"
+                      result-type="org.jasig.cas.authentication.principal.Principal" />
+        </on-entry>
+    </end-state>
 
 
 	<!-- 
-		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
-		view defines in default_views.properties that display the "Please click here to go to the service." message.
+	The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a
+    view defines in default_views.properties that display the "Please click here to go to the service." message.
 	-->
-	<end-state id="showWarningView" view="casLoginConfirmView" />
+	<end-state id="showWarningView" view="casConfirmView" />
 
 
   <!-- Password policy failure states -->
@@ -194,9 +202,9 @@
 	-->
 	<end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}" />
 	
-	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
+	<end-state id="viewServiceErrorView" view="serviceErrorView" />
     
-    <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
+  <end-state id="viewServiceSsoErrorView" view="serviceSsoErrorView" />
 
   <global-transitions>
     <!--

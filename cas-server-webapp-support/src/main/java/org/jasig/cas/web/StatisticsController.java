@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.view.InternalResourceView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,6 +59,8 @@ public final class StatisticsController extends AbstractController {
 
     private String casTicketSuffix;
 
+    private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
+
     /**
      * Instantiates a new statistics controller.
      *
@@ -71,10 +74,14 @@ public final class StatisticsController extends AbstractController {
         this.casTicketSuffix = casTicketSuffix;
     }
 
+    public void setViewPath(final String viewPath){
+        this.viewPath = viewPath;
+    }
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
                 throws Exception {
-        final ModelAndView modelAndView = new ModelAndView("viewStatisticsView");
+        final ModelAndView modelAndView = new ModelAndView(new InternalResourceView(viewPath));
         modelAndView.addObject("startTime", this.upTimeStartDate);
         final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
 

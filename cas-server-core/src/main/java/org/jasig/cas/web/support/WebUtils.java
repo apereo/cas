@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.web.support;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Common utilities for the web tier.
@@ -119,9 +118,8 @@ public final class WebUtils {
      * @param context the context
      * @return the service
      */
-    public static WebApplicationService getService(
-        final RequestContext context) {
-        return (WebApplicationService) context.getFlowScope().get("service");
+    public static WebApplicationService getService(final RequestContext context) {
+        return context != null ? (WebApplicationService) context.getFlowScope().get("service") : null;
     }
 
     /**

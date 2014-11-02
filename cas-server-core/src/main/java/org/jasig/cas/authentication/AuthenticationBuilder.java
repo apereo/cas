@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -288,7 +288,7 @@ public class AuthenticationBuilder {
      */
     public static AuthenticationBuilder newInstance(final Authentication source) {
         final AuthenticationBuilder builder = new AuthenticationBuilder(source.getPrincipal());
-        builder.setAuthenticationDate(source.getAuthenticatedDate());
+        builder.setAuthenticationDate(source.getAuthenticationDate());
         builder.setCredentials(source.getCredentials());
         builder.setSuccesses(source.getSuccesses());
         builder.setFailures(source.getFailures());

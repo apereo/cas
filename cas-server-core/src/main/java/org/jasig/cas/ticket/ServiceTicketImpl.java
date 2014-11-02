@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,15 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -111,6 +112,26 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ServiceTicket)) {
+            return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
+    }
+
     @Override
     public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
@@ -131,15 +152,4 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return null;
     }
 
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-
-        return serviceTicket.getId().equals(this.getId());
-    }
 }

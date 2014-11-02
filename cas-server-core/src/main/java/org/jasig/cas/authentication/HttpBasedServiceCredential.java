@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import java.net.URL;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.services.RegisteredService;
 
-import org.springframework.util.Assert;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
 
 /**
  * A credential representing an HTTP endpoint given by a URL. Authenticating the credential usually involves
@@ -42,25 +44,28 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /** String form of callbackUrl. */
     private final String callbackUrlAsString;
 
+    /** The registered service associated with this callback. **/
+    private final RegisteredService service;
+
     /**
      * Empty constructor used by Kryo for de-serialization.
      */
     protected HttpBasedServiceCredential() {
         this.callbackUrl =  null;
         this.callbackUrlAsString = null;
+        this.service = null;
     }
 
     /**
      * Creates a new instance for an HTTP endpoint located at the given URL.
      *
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
-     *
-     * @throws IllegalArgumentException if the callbackUrl is null.
+     * @param service The registered service associated with this callback.
      */
-    public HttpBasedServiceCredential(final URL callbackUrl) {
-        Assert.notNull(callbackUrl, "callbackUrl cannot be null");
+    public HttpBasedServiceCredential(@NotNull final URL callbackUrl, @NotNull final RegisteredService service) {
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
+        this.service = service;
     }
 
     /** {@inheritDoc} */
@@ -76,15 +81,21 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         return this.callbackUrl;
     }
 
+    /**
+     * Gets service associated with credentials.
+     *
+     * @return the service
+     */
+    public final RegisteredService getService() {
+        return this.service;
+    }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime
-            * result
-            + ((this.callbackUrlAsString == null) ? 0 : this.callbackUrlAsString
-                .hashCode());
-        return result;
+        final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
+        return bldr.append(this.callbackUrlAsString)
+                   .append(this.service)
+                   .toHashCode();
     }
 
     @Override
@@ -106,7 +117,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         } else if (!this.callbackUrlAsString.equals(other.callbackUrlAsString)) {
             return false;
         }
-        return true;
+
+        return (this.service.equals(other.getService()));
     }
 
 

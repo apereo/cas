@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,23 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -229,13 +230,21 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof TicketGrantingTicket)) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TicketGrantingTicket)) {
             return false;
         }
 
         final Ticket ticket = (Ticket) object;
 
-        return ticket.getId().equals(this.getId());
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
     }
+
 }

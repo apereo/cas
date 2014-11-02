@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,19 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -39,7 +27,11 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -57,6 +49,18 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests with the help of Mockito framework.
@@ -97,14 +101,14 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     @Before
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
-        when(this.authentication.getAuthenticatedDate()).thenReturn(new Date());
+        when(this.authentication.getAuthenticationDate()).thenReturn(new Date());
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
         successes.put("handler1", new HandlerResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new SimplePrincipal(PRINCIPAL));
-        
+         
         final Service service1 = TestUtils.getService(SVC1_ID);
         final ServiceTicket stMock = createMockServiceTicket(ST_ID, service1); 
         
@@ -133,9 +137,9 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
         
         //Mock ServicesManager
-        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, false);
-        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, true); 
-        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, true); 
+        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
+        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true)); 
+        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, getServiceProxyPolicy(true)); 
         
         final ServicesManager smMock = mock(ServicesManager.class);
         when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service1.getId())))).thenReturn(mockRegSvc1);
@@ -165,9 +169,17 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws TicketException {
         this.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
     }
-    
 
-    
+    @Test(expected=IllegalArgumentException.class)
+    public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
+        this.cas.getTicketGrantingTicket(null);
+    }
+
+    @Test(expected=InvalidTicketException.class)
+    public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
+        this.cas.getTicketGrantingTicket("TGT-9000");
+    }
+
     @Test
     public void testChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
@@ -218,14 +230,24 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         return stMock;
     }
     
+    private RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
+        if (!canProxy) {
+            return new RefuseRegisteredServiceProxyPolicy();
+        }
+        
+        return new RegexMatchingRegisteredServiceProxyPolicy(".*");
+    }
+
     private RegisteredService createMockRegisteredService(final String svcId,
-            final boolean enabled, final boolean canProxy) {
+            final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.isEnabled()).thenReturn(enabled);
-        when(mockRegSvc.isAllowedToProxy()).thenReturn(canProxy);
+        when(mockRegSvc.isSsoEnabled()).thenReturn(true);
+        when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
+        when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
         return mockRegSvc;
     }
 }

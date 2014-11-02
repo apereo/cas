@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,19 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -39,10 +26,24 @@ import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+
+import javax.annotation.PostConstruct;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
@@ -83,7 +84,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected List<String> additionalAttributes = Collections.emptyList();
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
-    private String[] authenticatedEntryAttributes;
+    private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -184,7 +185,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
-        throw new FailedLoginException("Invalid credentials.");
+        throw new FailedLoginException("Invalid credentials");
     }
 
     /**
@@ -263,13 +264,24 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     @PostConstruct
     public void initialize() {
-        final List<String> attributes = new ArrayList<String>();
+        /**
+         * Use a set to ensure we ignore duplicates.
+         */
+        final Set<String> attributes = new HashSet<String>();
+
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);
         }
-        attributes.addAll(this.principalAttributeMap.keySet());
-        attributes.addAll(this.additionalAttributes);
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        if (!this.principalAttributeMap.isEmpty()) {
+            attributes.addAll(this.principalAttributeMap.keySet());
+        }
+        if (!this.additionalAttributes.isEmpty()) {
+            attributes.addAll(this.additionalAttributes);
+        }
+        if (!attributes.isEmpty()) {
+            this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        }
     }
+
 
 }

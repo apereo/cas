@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.ticket;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main
@@ -35,8 +35,11 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public interface TicketGrantingTicket extends Ticket {
 
-    /** The prefix to use when generating an id for a TicketGrantingTicket. */
+    /** The prefix to use when generating an id for a Ticket Granting Ticket. */
     String PREFIX = "TGT";
+
+    /** The prefix to use when generating an id for a Proxy Granting Ticket. */
+    String PROXY_GRANTING_TICKET_PREFIX = "PGT";
 
     /**
      * Method to retrieve the authentication.

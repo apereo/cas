@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,20 +19,28 @@
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
 import java.security.GeneralSecurityException;
+
 import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 /**
  * This handler authenticates the client credentials : it uses them to get the user profile returned by the provider
@@ -49,6 +57,11 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
      */
     @NotNull
     private final Clients clients;
+
+    /**
+     * Whether to use the typed identifier (by default) or just the identifier.
+     */
+    private boolean typedIdUsed = true;
 
     /**
      * Define the clients.
@@ -73,21 +86,43 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         logger.debug("clientName : {}", clientName);
 
         // get client
-        final Client<org.pac4j.core.credentials.Credentials, UserProfile> client = this.clients.findClient(clientName);
+        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
         logger.debug("client : {}", client);
 
+        // web context
+        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        final HttpServletRequest request = (HttpServletRequest) servletExternalContext.getNativeRequest();
+        final HttpServletResponse response = (HttpServletResponse) servletExternalContext.getNativeResponse();
+        final WebContext webContext = new J2EContext(request, response);
+        
         // get user profile
-        final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials());
+        final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials(), webContext);
         logger.debug("userProfile : {}", userProfile);
 
-        if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
-            clientCredentials.setUserProfile(userProfile);
-            return new HandlerResult(
-                    this,
-                    new BasicCredentialMetaData(credential),
-                    new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
+        if (userProfile != null) {
+            final String id;
+            if (typedIdUsed) {
+                id = userProfile.getTypedId();
+            } else {
+                id = userProfile.getId();
+            }
+            if (StringUtils.isNotBlank(id)) {
+              clientCredentials.setUserProfile(userProfile);
+              return new HandlerResult(
+                      this,
+                      new BasicCredentialMetaData(credential),
+                      new SimplePrincipal(id, userProfile.getAttributes()));
+            }
         }
 
         throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
+    }
+
+    public boolean isTypedIdUsed() {
+        return typedIdUsed;
+    }
+
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
     }
 }

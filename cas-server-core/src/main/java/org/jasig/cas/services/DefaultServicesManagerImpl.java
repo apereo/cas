@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
@@ -32,6 +25,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -43,7 +41,7 @@ import javax.validation.constraints.NotNull;
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
@@ -57,23 +55,29 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(
-        final ServiceRegistryDao serviceRegistryDao) {
-        this(serviceRegistryDao, new ArrayList<String>());
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+        this.serviceRegistryDao = serviceRegistryDao;
+
+        load();
     }
 
     /**
+     * <p>
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
+     * @deprecated As of 4.1. Use {@link org.jasig.cas.services.DefaultServicesManagerImpl(ServiceRegistryDao)}
+     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
+     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
+     * for more details.
      *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
      */
+    @Deprecated
     public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao,
             final List<String> defaultAttributes) {
-        this.serviceRegistryDao = serviceRegistryDao;
-
-        load();
+        this(serviceRegistryDao);
+        LOGGER.warn("This constructor is deprecated and will be removed in future CAS versions");
     }
 
     @Transactional(readOnly = false)
@@ -152,7 +156,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     @Override
     public void reload() {
-        logger.info("Reloading registered services.");
+        LOGGER.info("Reloading registered services.");
         load();
     }
 
@@ -164,12 +168,12 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                 new ConcurrentHashMap<Long, RegisteredService>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            logger.debug("Adding registered service {}", r.getServiceId());
+            LOGGER.debug("Adding registered service {}", r.getServiceId());
             localServices.put(r.getId(), r);
         }
 
         this.services = localServices;
-        logger.info("Loaded {} services.", this.services.size());
+        LOGGER.info("Loaded {} services.", this.services.size());
         
     }
 }

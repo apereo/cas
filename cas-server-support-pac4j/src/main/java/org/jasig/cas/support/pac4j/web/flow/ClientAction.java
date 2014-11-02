@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
@@ -152,6 +152,9 @@ public final class ClientAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(SERVICE);
             context.getFlowScope().put(SERVICE, service);
+            if (service != null) {
+                request.setAttribute(SERVICE, service.getId());
+            }
             restoreRequestAttribute(request, session, THEME);
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
@@ -194,7 +197,8 @@ public final class ClientAction extends AbstractAction {
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
-            final String redirectionUrl = client.getRedirectionUrl(webContext);
+            final BaseClient baseClient = (BaseClient) client;
+            final String redirectionUrl = baseClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }

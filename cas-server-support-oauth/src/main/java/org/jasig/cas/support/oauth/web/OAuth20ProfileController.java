@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -71,7 +71,13 @@ public final class OAuth20ProfileController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 
-        final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        if (StringUtils.isBlank(accessToken)) {
+            final String authHeader = request.getHeader("Authorization");
+            if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith(OAuthConstants.BEARER_TOKEN + " ")) {
+                accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
+            }
+        }
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
         final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());

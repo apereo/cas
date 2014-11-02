@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.oauth.services;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.services.RegexRegisteredService;
 
 /**
@@ -29,10 +29,13 @@ import org.jasig.cas.services.RegexRegisteredService;
  */
 public final class OAuthRegisteredService extends RegexRegisteredService {
 
-    private static final long serialVersionUID = 6784839055053605375L;
+    private static final long serialVersionUID = 5318897374067731021L;
 
     private String clientSecret;
+
     private String clientId;
+
+    private Boolean bypassApprovalPrompt = false;
 
     public String getClientId() {
         return this.clientId;
@@ -50,11 +53,20 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         this.clientSecret = clientSecret;
     }
 
+    public Boolean isBypassApprovalPrompt() {
+        return bypassApprovalPrompt;
+    }
+
+    public void setBypassApprovalPrompt(final Boolean bypassApprovalPrompt) {
+        this.bypassApprovalPrompt = bypassApprovalPrompt;
+    }
+
     @Override
     public String toString() {
         final ToStringBuilder builder = new ToStringBuilder(this);
         builder.appendSuper(super.toString());
         builder.append("clientId", getClientId());
+        builder.append("approvalPrompt", isBypassApprovalPrompt());
         return builder.toString();
     }
 }

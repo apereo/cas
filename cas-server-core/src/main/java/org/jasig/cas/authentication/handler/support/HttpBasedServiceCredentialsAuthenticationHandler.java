@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -31,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -47,12 +46,6 @@ import javax.validation.constraints.NotNull;
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    /** The string representing the HTTPS protocol. */
-    private static final String PROTOCOL_HTTPS = "https";
-
-    /** Boolean variable denoting whether secure connection is required or not. */
-    private boolean requireSecure = true;
-
     /** Log instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -63,10 +56,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
-        if (this.requireSecure && !httpCredential.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
-            logger.debug("Authentication failed because url was not secure.");
-            throw new FailedLoginException(httpCredential.getCallbackUrl() + " is not an HTTPS endpoint as required.");
+        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
+            logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]",
+                    httpCredential.getService(), httpCredential.getCallbackUrl());
+            throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
+
         logger.debug("Attempting to authenticate {}", httpCredential);
         if (!this.httpClient.isValidEndPoint(httpCredential.getCallbackUrl())) {
             throw new FailedLoginException(
@@ -94,11 +89,14 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     }
 
     /**
-     * Set whether a secure url is required or not.
+     * @deprecated As of 4.1. Endpoint security is handled by service proxy policies
+     *
+     * <p>Set whether a secure url is required or not.</p>
      *
      * @param requireSecure true if its required, false if not. Default is true.
      */
+    @Deprecated
     public void setRequireSecure(final boolean requireSecure) {
-        this.requireSecure = requireSecure;
+         logger.warn("setRequireSecure() is deprecated and will be removed. Callback url validation is controlled by the proxy policy");
     }
 }

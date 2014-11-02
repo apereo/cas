@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,7 +19,6 @@
 package org.jasig.cas.services;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -44,35 +43,11 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean isEnabled();
 
     /**
-     * Determines whether the service is allowed anonymous or privileged access
-     * to user information. Anonymous access should not return any identifying
-     * information such as user id.
+     * Get the proxy policy rules for this service.
      *
-     * @return if we should use a pseudo random identifier instead of their real id
+     * @return the proxy policy
      */
-    boolean isAnonymousAccess();
-
-    /**
-     * Sets whether we should bother to read the attribute list or not.
-     *
-     * @return true if we should read it, false otherwise.
-     */
-    boolean isIgnoreAttributes();
-
-    /**
-     * Returns the list of allowed attributes.
-     *
-     * @return the list of attributes
-     */
-    List<String> getAllowedAttributes();
-
-    /**
-     * Is this application allowed to take part in the proxying capabilities of
-     * CAS?
-     *
-     * @return true if it can, false otherwise.
-     */
-    boolean isAllowedToProxy();
+    RegisteredServiceProxyPolicy getProxyPolicy();
 
     /**
      * The unique identifier for this service.
@@ -134,14 +109,9 @@ public interface RegisteredService extends Cloneable, Serializable {
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
-     *
-     * @return Either of the following values:
-     * <ul>
-     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
-     *  <li><code>null</code> indicating the default username</li>
-     * </ul>
+     * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
      */
-    String getUsernameAttribute();
+    RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
@@ -170,16 +140,18 @@ public interface RegisteredService extends Cloneable, Serializable {
     RegisteredService clone() throws CloneNotSupportedException;
 
     /**
-     * An instance of the attribute filter that imposes validation rules over
-     * the attribute release policy.
-     * @return An instance of an attribute filter for this service
-     */
-    RegisteredServiceAttributeFilter getAttributeFilter();
-
-    /**
      * Returns the logout type of the service.
      *
      * @return the logout type of the service.
      */
     LogoutType getLogoutType();
+    
+    /**
+     * Gets the attribute filtering policy to determine
+     * how attributes are to be filtered and released for
+     * this service.
+     *
+     * @return the attribute release policy
+     */
+    AttributeReleasePolicy getAttributeReleasePolicy();
 }

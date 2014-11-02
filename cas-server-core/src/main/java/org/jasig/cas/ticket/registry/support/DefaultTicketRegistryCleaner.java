@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -57,6 +57,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.0
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
@@ -78,9 +79,31 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LogoutManager logoutManager;
 
-    /** If the user must be logged out of the services. */
-    private boolean logUserOutOfServices = true;
-
+    /**
+     * Instantiates a new default ticket registry cleaner.
+     *
+     * @param logoutManager the logout manager
+     * @param ticketRegistry the ticket registry
+     */
+    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry) {
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+    }
+    
+    /**
+     * Instantiates a new default ticket registry cleaner.
+     *
+     * @param logoutManager the logout manager
+     * @param ticketRegistry the ticket registry
+     * @param lockingStrategy the locking strategy
+     * @since 4.1
+     */
+    public DefaultTicketRegistryCleaner(final LogoutManager logoutManager, final TicketRegistry ticketRegistry, 
+            final LockingStrategy lockingStrategy) {
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+    }
+    
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
@@ -102,11 +125,10 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
+            logger.info("{} expired tickets found to be removed.", ticketsToRemove.size());
             for (final Ticket ticket : ticketsToRemove) {
-                // CAS-686: Expire TGT to trigger single sign-out
-                if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout((TicketGrantingTicket) ticket);
+                if (ticket instanceof TicketGrantingTicket) {
+                    this.logoutManager.performLogout((TicketGrantingTicket) ticket);
                 }
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
@@ -118,10 +140,11 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
         logger.info("Finished ticket cleanup.");
     }
 
-
     /**
      * @param ticketRegistry The ticketRegistry to set.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -133,26 +156,29 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      * such as JPA, in a clustered CAS environment.  Use {@link JpaLockingStrategy}
      * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
      * CAS environment.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
     }
 
     /**
-     * Whether to logger users out of services when we remove an expired ticket.  The default is true. Set this to
-     * false to disable.
-     *
+     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.
      * @param logUserOutOfServices whether to logger the user out of services or not.
      */
+    @Deprecated
     public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        this.logUserOutOfServices = logUserOutOfServices;
+        logger.warn("Invoking setLogUserOutOfServices() is deprecated and has no impact.");
     }
 
     /**
      * Set the logout manager.
      *
      * @param logoutManager the logout manager.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
     }
