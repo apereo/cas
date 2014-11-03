@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class DefaultPrincipalFactoryTests {
     @Test
     public void testCreatingSimplePrincipal() {
-        final PrincipalFactory f = new DefaultPrincipalFactory();
+        final PrincipalFactory f = DefaultPrincipalFactory.getInstance();
         final Principal p = f.createPrincipal("uid");
         assertEquals(p.getId(), "uid");
         assertEquals(p.getAttributes().size(), 0);
@@ -41,7 +41,7 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void testCreatingSimplePrincipalWithAttributes() {
-        final PrincipalFactory f = new DefaultPrincipalFactory();
+        final PrincipalFactory f = DefaultPrincipalFactory.getInstance();
         final Principal p = f.createPrincipal("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
         assertEquals(p.getId(), "uid");
         assertEquals(p.getAttributes().size(), 1);

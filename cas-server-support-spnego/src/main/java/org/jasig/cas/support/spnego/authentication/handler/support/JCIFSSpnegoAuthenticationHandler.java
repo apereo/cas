@@ -132,14 +132,14 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         logger.warn("getSimplePrincipal() is deprecated and will be removed. Consider getPrincipal() instead.");
 
         if (this.principalWithDomainName) {
-            return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
+            return (SimplePrincipal) DefaultPrincipalFactory.getInstance().createPrincipal(name);
         }
         if (isNtlm) {
             return Pattern.matches("\\S+\\\\\\S+", name)
-                    ? (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("\\\\")[1])
-                    : (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
+                    ? (SimplePrincipal) DefaultPrincipalFactory.getInstance().createPrincipal(name.split("\\\\")[1])
+                    : (SimplePrincipal) DefaultPrincipalFactory.getInstance().createPrincipal(name);
         }
-        return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("@")[0]);
+        return (SimplePrincipal) DefaultPrincipalFactory.getInstance().createPrincipal(name.split("@")[0]);
     }
 
     /**

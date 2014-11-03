@@ -33,7 +33,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
 
     /** Configurable handler name. */
     private String name;

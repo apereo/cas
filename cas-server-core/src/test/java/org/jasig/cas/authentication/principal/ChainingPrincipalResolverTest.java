@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 public class ChainingPrincipalResolverTest {
 
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
 
     @Test
     public void testSupports() throws Exception {
