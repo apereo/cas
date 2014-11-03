@@ -58,8 +58,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     private String sql;
 
-    private boolean allowMultipleRecords = true;
-
     /** {@inheritDoc} */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
@@ -75,8 +73,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         }
         if (count == 0) {
             throw new FailedLoginException(username + " not found with SQL query.");
-        } else if (count > 1 && !this.allowMultipleRecords) {
-            throw new FailedLoginException("Multiple records found for " + username);
         }
 
         return createHandlerResult(credential, new SimplePrincipal(username), null);
@@ -109,14 +105,4 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         this.tableUsers = tableUsers;
     }
 
-    /**
-     * Set to allow multiple accounts on the table to be found
-     * during the search. Default is true.
-     * @since 4.1
-     * @param allowMultipleRecords true if multiple records are allowed during
-     *                             the search.
-     */
-    public void setAllowMultipleRecords(final boolean allowMultipleRecords) {
-        this.allowMultipleRecords = allowMultipleRecords;
-    }
 }

@@ -120,11 +120,5 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
     }
 
-    @Test(expected = FailedLoginException.class)
-    public void testMultipleUsersFoundButNotAllowed() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
-        handler.setAllowMultipleRecords(false);
-        assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
-    }
 }
 
