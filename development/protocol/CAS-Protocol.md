@@ -19,7 +19,7 @@ The key concepts are:
 
 
 ## Versions
-The current CAS protocol is the version 3.0. The draft version of the protocol is available as [part of the CAS codebase](https://github.com/Jasig/cas/blob/master/cas-server-protocol/3.0/cas_protocol_3_0.md), which is hereby implemented. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision 2.0. Among all features, the most noticeable update between versions 2.0 and 3.0 is the ability to return the authentication/user attributes in the `/serviceValidate` response.
+The current CAS protocol is the version 3.0. The draft version of the protocol is available as [part of the CAS codebase](https://github.com/Jasig/cas/blob/master/cas-server-protocol/3.0/cas_protocol_3_0.md), which is hereby implemented. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision 2.0. Among all features, the most noticeable update between versions 2.0 and 3.0 is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` response (in addition to the `/serviceValidate` endpoint, already existing for CAS 2.0 protocol).
 
 
 ## Web flow diagram
