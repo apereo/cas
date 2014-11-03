@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
@@ -67,9 +65,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private final SecureRandomIdentifierGenerator idGenerator;
 
-    /** The Services manager. */
-    protected ServicesManager servicesManager = null;
-
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
@@ -84,9 +79,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         this.encoding = encoding;
     }
 
-    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
+
 
     /**
     * Sets the allowance for time skew in seconds
