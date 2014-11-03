@@ -156,7 +156,7 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
-            final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
+            final Principal p = DefaultPrincipalFactory.getInstance().createPrincipal("nobody");
 
             final HandlerResult result = new HandlerResult(
                     mock,
