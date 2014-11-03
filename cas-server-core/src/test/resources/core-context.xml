@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -215,4 +215,18 @@
           class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+
+    <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/2.0/}"
+          p:suffix=".jsp"
+          p:order="0"/>
+
+    <bean id="protocolCas3ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
+          p:suffix=".jsp"
+          p:order="1"/>
+
+
 </beans>
