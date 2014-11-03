@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -28,8 +28,8 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server</artifactId>
   <packaging>pom</packaging>
-  <name>Jasig Central Authentication Service</name>
-  <description>Jasig CAS SSO server libraries and Web application.</description>
+  <name>Apereo Central Authentication Service</name>
+  <description>Apereo CAS SSO server libraries and Web application.</description>
   <version>4.1.0-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
@@ -940,6 +940,13 @@
         <scope>compile</scope>
       </dependency>
 
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -1098,7 +1105,7 @@
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.1.RELEASE</spring.version>
     <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
-    <ldaptive.version>1.0.4</ldaptive.version>
+    <ldaptive.version>1.0.5</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.8.2</aspectj.version>
@@ -1119,7 +1126,7 @@
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
-    <ehcache.version>2.7.2</ehcache.version>
+    <ehcache.version>2.9.0</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <apache.httpclient.version>4.3.4</apache.httpclient.version>
     <joda-time.version>2.4</joda-time.version>
@@ -1131,6 +1138,7 @@
     <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
+    <jstl.version>1.2</jstl.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
