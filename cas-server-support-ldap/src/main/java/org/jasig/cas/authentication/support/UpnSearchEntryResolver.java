@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,8 +23,14 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.SearchEntryResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * @deprecated As of 4.1, this component is no longer required. Ldaptive's own {@link SearchEntryResolver} now supports
+ * all the functionality that is presented by this class through various settings and filter parameters. This class
+ * is scheduled to be removed in future CAS versions.
+ *
  * Ldaptive extension component for Active Directory that supports querying for an entry by User Principal Name (UPN).
  * This component only provides meaningful results when used on a bound connection; therefore it cannot be used with
  * ldaptive support for the AD FastBind operation, <code>org.ldaptive.ad.extended.FastBindOperation</code>.
@@ -36,7 +42,10 @@ import org.ldaptive.auth.SearchEntryResolver;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class UpnSearchEntryResolver extends SearchEntryResolver {
+@Deprecated
+public final class UpnSearchEntryResolver extends SearchEntryResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpnSearchEntryResolver.class);
 
     /** UPN-based search filter. */
     private static final String SEARCH_FILTER = "userPrincipalName={0}";
@@ -44,6 +53,13 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
     /** Base DN of LDAP subtree search. */
     private String baseDn;
 
+    /**
+     * Instantiates a new Search entry resolver.
+     */
+    public UpnSearchEntryResolver() {
+        super();
+        LOGGER.warn("UpnSearchEntryResolver will be removed in future CAS versions. Consider using the SearchEntryResolver directly");
+    }
     /**
      * Sets the base DN used for the subtree search for LDAP entry.
      *
@@ -59,7 +75,7 @@ public class UpnSearchEntryResolver extends SearchEntryResolver {
         final SearchRequest sr = new SearchRequest();
         sr.setSearchScope(SearchScope.SUBTREE);
         sr.setBaseDn(this.baseDn);
-        sr.setSearchFilter(new SearchFilter(SEARCH_FILTER, new Object[] {ac.getDn()}));
+        sr.setSearchFilter(new SearchFilter(SEARCH_FILTER, new Object[]{ac.getDn()}));
         sr.setSearchEntryHandlers(getSearchEntryHandlers());
         sr.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
         return sr;

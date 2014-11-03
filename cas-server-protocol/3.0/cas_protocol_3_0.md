@@ -1367,10 +1367,10 @@ The following additional attributes might be provided within the SAML response:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Licensed to Jasig under one or more contributor license
+Licensed to Apereo under one or more contributor license
 agreements. See the NOTICE file distributed with this work
 for additional information regarding copyright ownership.
-Jasig licenses this file to you under the Apache License,
+Apereo licenses this file to you under the Apache License,
 Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a
 copy of the License at the following location:
@@ -1611,9 +1611,9 @@ implementation
 **Appendix E: CAS License**
 ===========================
 
-Licensed to Jasig under one or more contributor license agreements. See the
+Licensed to Apereo under one or more contributor license agreements. See the
 NOTICE file distributed with this work for additional information regarding
-copyright ownership. Jasig licenses this file to you under the Apache License,
+copyright ownership. Apereo licenses this file to you under the Apache License,
 Version 2.0 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at the following location:
 
