@@ -149,7 +149,7 @@ public class JpaTicketRegistryTests {
 
 
     static TicketGrantingTicket newTGT() {
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal(
+        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId("TGT"),

@@ -125,7 +125,7 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
-        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+        return DefaultPrincipalFactory.getInstance().createPrincipal(name, attributes);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {

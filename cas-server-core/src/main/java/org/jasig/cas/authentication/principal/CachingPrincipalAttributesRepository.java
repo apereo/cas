@@ -59,7 +59,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private final Cache<String, Map<String, Object>> cache;
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      */
@@ -68,7 +68,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      * Caches the attributes based on duration units of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
      * and {@link #DEFAULT_CACHE_EXPIRATION_UNIT}.
      * @param attributeRepository the attribute repository
@@ -82,7 +82,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param attributes the attributes
@@ -98,7 +98,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param timeUnit the time unit
@@ -111,7 +111,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param config the config
@@ -122,7 +122,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param config the config
@@ -136,7 +136,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param config the config
@@ -149,7 +149,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
-     * Instantiates a new Uncached attributes principal factory.
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param cache the cache
