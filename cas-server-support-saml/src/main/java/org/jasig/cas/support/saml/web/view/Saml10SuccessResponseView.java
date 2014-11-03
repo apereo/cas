@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -21,11 +21,7 @@ package org.jasig.cas.support.saml.web.view;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.AttributeReleasePolicy;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
 import org.opensaml.saml1.core.Assertion;
@@ -48,11 +44,9 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 /**
  * Implementation of a view to return a SAML SOAP response and assertion, based on
@@ -90,8 +84,6 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        final org.jasig.cas.validation.Assertion casAssertion = getAssertionFrom(model);
-        final Authentication authentication = casAssertion.getChainedAuthentications().get(0);
 
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
@@ -102,11 +94,11 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         assertion.setIssueInstant(issuedAt);
         assertion.setIssuer(this.issuer);
         assertion.setConditions(newConditions(issuedAt, service.getId()));
-        final AuthenticationStatement authnStatement = newAuthenticationStatement(authentication);
+        final AuthenticationStatement authnStatement = newAuthenticationStatement(model);
         assertion.getAuthenticationStatements().add(authnStatement);
 
-        final Subject subject = newSubject(authentication.getPrincipal().getId());
-        final Map<String, Object> attributesToSend = prepareSamlAttributes(authentication, casAssertion, service);
+        final Subject subject = newSubject(getPrincipal(model).getId());
+        final Map<String, Object> attributesToSend = prepareSamlAttributes(model);
 
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(newAttributeStatement(subject, attributesToSend));
@@ -122,44 +114,18 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      * attributes. If the authentication is to be remembered, uses {@link #setRememberMeAttributeName(String)}
      * for the remember-me attribute name.
      *
-     * @param authentication the authentication
-     * @param assertion the assertion
-     * @param service the service
+     * @param model the model
      * @return the final map
      * @since 4.1
      */
-    private Map<String, Object> prepareSamlAttributes(final Authentication authentication,
-                                                      final org.jasig.cas.validation.Assertion assertion,
-                                                      final Service service) {
-
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        if (registeredService == null || !registeredService.isEnabled()) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Saml service " + service.getId()
-                    + " is not authorized to use CAS. Servoce is disabled or missing in the service registry.");
-        }
-
-        final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
-        logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
-
-        final Principal principal = authentication.getPrincipal();
-
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> attributes = attributePolicy != null
-                ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
-
-        final Map<String, Object> authnAttributes = new TreeMap<String, Object>(authentication.getAttributes());
-
-        final Object o = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = (o == Boolean.TRUE) && assertion.isFromNewLogin();
-
-        if (isRemembered) {
+    private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
+        final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributesAsMultiValuedAttributes(model));
+        if (isRememberMeAuthentication(model)) {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
-
         final Map<String, Object> attributesToReturn = new HashMap<String, Object>();
-        attributesToReturn.putAll(attributes);
+        attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
         return attributesToReturn;
     }
@@ -205,10 +171,11 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
     /**
      * New authentication statement.
      *
-     * @param authentication the authentication
+     * @param model the model
      * @return the authentication statement
      */
-    private AuthenticationStatement newAuthenticationStatement(final Authentication authentication) {
+    private AuthenticationStatement newAuthenticationStatement(final Map<String, Object> model) {
+        final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final String authenticationMethod = (String) authentication.getAttributes().get(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
         final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
@@ -217,7 +184,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
                 authenticationMethod != null
                 ? authenticationMethod
                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
-        authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
+        authnStatement.setSubject(newSubject(getPrincipal(model).getId()));
         return authnStatement;
     }
 
