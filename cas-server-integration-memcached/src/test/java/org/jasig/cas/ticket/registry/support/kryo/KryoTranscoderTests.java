@@ -195,7 +195,7 @@ public class KryoTranscoderTests {
 
         /** Factory to create the principal type. **/
         @NotNull
-        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+        private PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {

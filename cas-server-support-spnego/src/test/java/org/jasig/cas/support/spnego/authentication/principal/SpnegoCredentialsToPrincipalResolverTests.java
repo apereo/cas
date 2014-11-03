@@ -44,7 +44,7 @@ public class SpnegoCredentialsToPrincipalResolverTests {
 
     @Test
     public void testValidCredentials() {
-        this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
+        this.spnegoCredentials.setPrincipal(DefaultPrincipalFactory.getInstance().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }

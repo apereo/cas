@@ -151,7 +151,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
 
     /**
      * Build the central authentication service implementation.
