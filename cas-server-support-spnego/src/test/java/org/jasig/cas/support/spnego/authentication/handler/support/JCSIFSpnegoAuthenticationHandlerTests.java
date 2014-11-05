@@ -84,25 +84,35 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testGetSimpleCredentials() {
+    public void testSplitName() {
         final String myNtlmUser = "DOMAIN\\Username";
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";
 
-        this.authenticationHandler.setPrincipalWithDomainName(true);
-        assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, false));
-        assertEquals(new SimplePrincipal(myKerberosUser), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+        String[] splitName = this.authenticationHandler
+                .splitName(myNtlmUser, true);
+        assertEquals("Username", splitName[0]);
+        assertEquals("DOMAIN", splitName[1]);
+        splitName = this.authenticationHandler
+                .splitName(myNtlmUser, false);
+        assertEquals("DOMAIN\\Username", splitName[0]);
+        assertNull(splitName[1]);
+        splitName = this.authenticationHandler
+                .splitName(myNtlmUserWithNoDomain, false);
+        assertEquals("Username", splitName[0]);
+        assertNull(splitName[1]);
+        splitName = this.authenticationHandler
+                .splitName(myNtlmUserWithNoDomain, true);
+        assertEquals("Username", splitName[0]);
+        assertNull(splitName[1]);
+        splitName = this.authenticationHandler
+                .splitName(myKerberosUser, false);
+        assertEquals("Username", splitName[0]);
+        assertEquals("DOMAIN.COM", splitName[1]);
+        splitName = this.authenticationHandler
+                .splitName(myKerberosUser, true);
+        assertEquals("Username@DOMAIN.COM", splitName[0]);
+        assertNull(splitName[1]);
 
-        this.authenticationHandler.setPrincipalWithDomainName(false);
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
     }
 }
