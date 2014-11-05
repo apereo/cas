@@ -29,8 +29,6 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 import javax.security.auth.login.FailedLoginException;
 
@@ -59,11 +57,6 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
      */
     private boolean isNTLMallowed = false;
 
-    /**
-     * If not null allow only a set of realm.
-     */
-    private Set<String> allowedRealm;
-
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
@@ -89,36 +82,22 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
             logger.debug("nextToken is null");
         }
 
-        if (principal == null) {
+        boolean success = false;
+        if (principal != null) {
+            if (spnegoCredential.isNtlm()) {
+                logger.debug("NTLM Credential is valid for user [{}]", principal.getName());
+                spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), true));
+                success = this.isNTLMallowed;
+            }
+            // else => kerberos
+            logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
+            spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), false));
+            success = true;
+        }
+
+        if (!success) {
             throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
         }
-
-        final String principalName = principal.getName();
-        final boolean isNtlm = spnegoCredential.isNtlm();
-
-        if (isNtlm){
-            if (!this.isNTLMallowed){
-                throw new FailedLoginException("NTLM not allowed");
-            } else {
-                logger.debug("NTLM Credential is valid for user [{}]", principalName);
-            }
-        } else {
-            logger.debug("Kerberos Credential is valid for user [{}]", principalName);
-        }
-
-        final String[] idAndRealm = splitName(principalName, isNtlm);
-        final String principalId = idAndRealm[0];
-        final String realm = idAndRealm[1];
-
-        if (allowedRealm != null && !allowedRealm.contains(realm==null ? null : realm.toUpperCase())) {
-            throw new FailedLoginException("Realm ["+realm+"] is not allowed for principal ["+principalName+"]");
-        }
-
-        final SimplePrincipal simplePrincipal = new SimplePrincipal(
-                    this.principalWithDomainName ? principalName : principalId
-            );
-        spnegoCredential.setPrincipal(simplePrincipal);
-
         return new HandlerResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
     }
 
@@ -139,57 +118,22 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         this.isNTLMallowed = isNTLMallowed;
     }
 
-    public Set<String> getAllowedRealm() {
-        return allowedRealm;
-    }
-
     /**
-     * Set upper case set of allowed realm.
-     *
-     * @param allowedRealm a set of allowed realm
-     */
-    public void setAllowedRealm(final Set<String> allowedRealm) {
-        if (allowedRealm!=null){
-            this.allowedRealm = new HashSet<>();
-            for (String key : allowedRealm){
-                this.allowedRealm.add(key.toUpperCase());
-            }
-        } else {
-            this.allowedRealm = null;
-        }
-    }
-
-    /**
-     * Splits the principal name in id and realm.
+     * Gets the simple principal from the given name.
      *
      * @param name the name
      * @param isNtlm the is ntlm
-     * @return an array with the principal id in the position 0 and the realm in the position 1
+     * @return the simple principal
      */
-    protected String[] splitName(final String name, final boolean isNtlm){
-        String id;
-        String realm;
-        if (isNtlm) {
-            if (Pattern.matches("\\S+\\\\\\S+", name)) {
-                final String[] split = name.split("\\\\");
-                id = split[1];
-                realm = split[0];
-            } else {
-                id = name;
-                realm = null;
-            }
-        } else {
-            if (Pattern.matches("\\S+@\\S+", name)) {
-                final String[] split = name.split("@");
-                id = split[0];
-                realm = split[1];
-            } else {
-                id = name;
-                realm = null;
-            }
-
+    protected SimplePrincipal getSimplePrincipal(final String name, final boolean isNtlm) {
+        if (this.principalWithDomainName) {
+            return new SimplePrincipal(name);
         }
-        return new String[]{id, realm};
+        if (isNtlm) {
+            return Pattern.matches("\\S+\\\\\\S+", name)
+                    ? new SimplePrincipal(name.split("\\\\")[1])
+                    : new SimplePrincipal(name);
+        }
+        return new SimplePrincipal(name.split("@")[0]);
     }
-
 }
