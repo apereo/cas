@@ -869,6 +869,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.jasig</groupId>
+        <artifactId>spring-webflow-client-repo</artifactId>
+        <version>${spring.webflow.client.repo.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
         <version>${aspectj.version}</version>
@@ -1142,10 +1149,10 @@
   </profiles>
 
   <properties>
-
     <!-- Dependency Versions -->
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.1.RELEASE</spring.version>
+    <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
     <ldaptive.version>1.0.5</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>

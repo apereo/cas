@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 
 /**
  * EhCache-backed implementation of a Map for caching a set of Strings.
@@ -66,7 +65,8 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
     @Override
     public boolean containsValue(final Object value) {
-        throw new UnsupportedOperationException("This operation is not supported on an Ehcache-backed Map");
+        final Collection<String> col = values();
+        return col.contains(value);
     }
 
     @Override
