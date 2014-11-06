@@ -29,8 +29,6 @@ import java.util.Map;
 public final class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 
-    private static PrincipalFactory INSTANCE;
-
     @NotNull
     private final PrincipalAttributesRepository attributesRepository;
 
@@ -59,17 +57,5 @@ public final class DefaultPrincipalFactory implements PrincipalFactory {
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
         this.attributesRepository.setAttributes(attributes);
         return new SimplePrincipal(id, this.attributesRepository);
-    }
-
-    /**
-     * Gets the singleton instance instance.
-     *
-     * @return the instance
-     */
-    public static PrincipalFactory getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = DefaultPrincipalFactory.getInstance();
-        }
-        return INSTANCE;
     }
 }

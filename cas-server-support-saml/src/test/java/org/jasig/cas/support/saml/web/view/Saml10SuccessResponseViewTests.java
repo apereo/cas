@@ -87,7 +87,7 @@ public class Saml10SuccessResponseViewTests {
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
-        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal("testPrincipal", attributes);
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();
         authAttributes.put(
@@ -121,7 +121,7 @@ public class Saml10SuccessResponseViewTests {
     public void testResponseWithNoAttributes() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
 
-        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal("testPrincipal");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal");
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();
         authAttributes.put(
@@ -151,7 +151,7 @@ public class Saml10SuccessResponseViewTests {
 
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("testAttribute", "testValue");
-        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal("testPrincipal", attributes);
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<String, Object>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");

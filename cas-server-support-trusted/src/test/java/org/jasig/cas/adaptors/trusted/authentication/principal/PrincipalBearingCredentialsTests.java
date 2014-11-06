@@ -34,7 +34,7 @@ public class PrincipalBearingCredentialsTests {
 
     @Before
     public void setUp() throws Exception {
-        this.principalBearingCredentials = new PrincipalBearingCredential(DefaultPrincipalFactory.getInstance().createPrincipal("test"));
+        this.principalBearingCredentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"));
     }
 
     @Test
