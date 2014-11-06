@@ -130,16 +130,27 @@
         p:supportedFlowId="login" p:flowExecutor-ref="loginFlowExecutor" p:flowUrlHandler-ref="loginFlowUrlHandler" />
 
   <bean id="loginFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
+              
+  <bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl" 
+        c:definitionLocator-ref="loginFlowRegistry"
+        c:executionFactory-ref="loginFlowExecutionFactory"
+        c:executionRepository-ref="loginFlowExecutionRepository" />
+   
+  <bean name="loginFlowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"
+        p:executionKeyFactory-ref="loginFlowExecutionRepository"/>
+  
+  <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+        c:flowExecutionFactory-ref="loginFlowExecutionFactory"
+        c:flowDefinitionLocator-ref="loginFlowRegistry"
+        c:transcoder-ref="loginFlowStateTranscoder" />
 
-  <webflow:flow-executor id="loginFlowExecutor" flow-registry="loginFlowRegistry">
-    <webflow:flow-execution-attributes>
-      <webflow:always-redirect-on-pause value="false" />
-      <webflow:redirect-in-same-state value="false" />
-    </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
-  </webflow:flow-executor>
+  <!--
+  The login flow transcoder encrypts the flow execution identifier
+  using the  128-bit AES in CBC ciphering mode with compression turned on.
+
+  This behaviour can be altered by defining an explicit CipherBean.
+  -->
+  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
 
   <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
     <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
@@ -166,9 +177,6 @@
       <webflow:always-redirect-on-pause value="false" />
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
   <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
@@ -178,9 +186,6 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
-
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
-        p:timeToDieInSeconds="${terminate.web.session.timeout:2}"/>
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">
