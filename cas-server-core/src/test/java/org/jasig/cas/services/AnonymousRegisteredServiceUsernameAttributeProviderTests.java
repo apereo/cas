@@ -41,7 +41,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         
         final Service service = mock(Service.class);
         when(service.getId()).thenReturn("id");
-        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal("uid");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("uid");
         final String id = provider.resolveUsername(principal, service);
         assertNotNull(id);
     }

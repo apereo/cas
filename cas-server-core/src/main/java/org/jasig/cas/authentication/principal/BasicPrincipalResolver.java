@@ -34,7 +34,7 @@ public class BasicPrincipalResolver implements PrincipalResolver {
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override
     public Principal resolve(final Credential credential) {

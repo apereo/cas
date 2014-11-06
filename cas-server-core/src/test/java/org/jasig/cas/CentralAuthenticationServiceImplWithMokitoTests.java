@@ -106,7 +106,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         successes.put("handler1", new HandlerResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
-        when(this.authentication.getPrincipal()).thenReturn(DefaultPrincipalFactory.getInstance().createPrincipal(PRINCIPAL));
+        when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
          
         final Service service1 = TestUtils.getService(SVC1_ID);
         final ServiceTicket stMock = createMockServiceTicket(ST_ID, service1); 

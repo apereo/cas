@@ -45,7 +45,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
     @NotNull

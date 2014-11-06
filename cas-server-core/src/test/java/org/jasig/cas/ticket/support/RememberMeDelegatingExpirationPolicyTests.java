@@ -43,7 +43,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
 
     private RememberMeDelegatingExpirationPolicy p;

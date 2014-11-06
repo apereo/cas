@@ -36,7 +36,7 @@ public class SpnegoCredentialsTests {
     @Test
     public void testToStringWithPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
-        final Principal principal = DefaultPrincipalFactory.getInstance().createPrincipal("test");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.toString());
     }
