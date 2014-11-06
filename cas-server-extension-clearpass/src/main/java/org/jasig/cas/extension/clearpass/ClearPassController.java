@@ -40,17 +40,17 @@ public final class ClearPassController extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
 
-    // view if clearpass request fails
-    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
+    /** view if clearpass request fails. */
+    protected static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
-    // view if clearpass request succeeds
-    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
+    /** view if clearpass request succeeds. */
+    protected static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
 
-    // key under which clearpass will be placed into the model
-    private static final String MODEL_CLEARPASS = "credentials";
+    /** key under which clearpass will be placed into the model. */
+    protected static final String MODEL_CLEARPASS = "credentials";
 
-    // key under which failure descriptions are placed into the model
-    private static final String MODEL_FAILURE_DESCRIPTION = "description";
+    /** key under which failure descriptions are placed into the model. */
+    protected static final String MODEL_FAILURE_DESCRIPTION = "description";
 
     @NotNull
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
