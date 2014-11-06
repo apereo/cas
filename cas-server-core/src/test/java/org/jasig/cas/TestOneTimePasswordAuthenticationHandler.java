@@ -63,7 +63,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
             return new HandlerResult(this, new BasicCredentialMetaData(otp),
-                    DefaultPrincipalFactory.getInstance().createPrincipal(otp.getId()));
+                    new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }

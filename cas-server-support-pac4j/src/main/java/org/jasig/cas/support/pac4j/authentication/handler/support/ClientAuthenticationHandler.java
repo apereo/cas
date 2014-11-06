@@ -55,7 +55,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * The clients for authentication.

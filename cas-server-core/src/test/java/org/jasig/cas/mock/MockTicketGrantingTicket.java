@@ -57,7 +57,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = new AuthenticationBuilder(DefaultPrincipalFactory.getInstance().createPrincipal(principal)).build();
+        authentication = new AuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal)).build();
         created = new Date();
     }
 
