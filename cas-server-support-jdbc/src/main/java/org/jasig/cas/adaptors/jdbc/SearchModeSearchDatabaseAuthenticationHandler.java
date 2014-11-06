@@ -102,4 +102,5 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     public final void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
     }
+
 }
