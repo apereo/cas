@@ -66,7 +66,9 @@ public class SimpleHttpClientTests  {
 
     private SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         final TrustManager trm = new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() { return null; }
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
         };
