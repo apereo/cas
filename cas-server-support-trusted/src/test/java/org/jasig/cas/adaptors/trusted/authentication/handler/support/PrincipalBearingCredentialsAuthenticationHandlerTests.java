@@ -39,14 +39,14 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
     @Test
     public void testNonNullPrincipal() throws Exception {
         final PrincipalBearingCredential credentials = new PrincipalBearingCredential(
-                DefaultPrincipalFactory.getInstance().createPrincipal("scott"));
+                new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
     public void testSupports() {
         final PrincipalBearingCredential credentials =
-                new PrincipalBearingCredential(DefaultPrincipalFactory.getInstance().createPrincipal("scott"));
+                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

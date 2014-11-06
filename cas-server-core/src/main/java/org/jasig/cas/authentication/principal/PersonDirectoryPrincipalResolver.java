@@ -54,7 +54,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Factory to create the principal type. **/
     @NotNull
-    private PrincipalFactory principalFactory = DefaultPrincipalFactory.getInstance();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Optional principal attribute name. */
     private String principalAttributeName;

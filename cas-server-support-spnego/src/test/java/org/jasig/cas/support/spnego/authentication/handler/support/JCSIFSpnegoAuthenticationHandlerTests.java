@@ -90,7 +90,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";
 
-        final PrincipalFactory factory = DefaultPrincipalFactory.getInstance();
+        final PrincipalFactory factory = new DefaultPrincipalFactory();
 
         this.authenticationHandler.setPrincipalWithDomainName(true);
         assertEquals(factory.createPrincipal(myNtlmUser), this.authenticationHandler

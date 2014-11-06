@@ -58,7 +58,7 @@ public class ImmutableAuthenticationTests {
         final ImmutableAuthentication auth = new ImmutableAuthentication(
                 new Date(),
                 credentials,
-                DefaultPrincipalFactory.getInstance().createPrincipal("test"),
+                new DefaultPrincipalFactory().createPrincipal("test"),
                 attributes,
                 successes,
                 failures);
