@@ -70,7 +70,7 @@ public class WiringTests {
         final DefaultPrincipalFactory factory2 =
                 applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
 
-        assertNotEquals(factory1, factory2);
+        assertNotEquals("principal factories should be unique instances", factory1, factory2);
         assertNotEquals("attribute repositories should not be equal instances",
                 factory1.getAttributesRepository(), factory2.getAttributesRepository());
     }
