@@ -23,9 +23,7 @@ import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
 import org.joda.time.DateTime;
-import org.opensaml.DefaultBootstrap;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.ConfigurationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,16 +86,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     public void setSkewAllowance(final int skewAllowance) {
         logger.debug("Using {} seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
-    }
-
-    static {
-        try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
-            DefaultBootstrap.bootstrap();
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
     }
 
     @Override

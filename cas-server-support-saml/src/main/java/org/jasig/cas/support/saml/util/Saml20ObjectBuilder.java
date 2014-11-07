@@ -57,7 +57,7 @@ import java.util.zip.InflaterInputStream;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public final class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
+public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
 
     /**
      * Create a new SAML response object.
