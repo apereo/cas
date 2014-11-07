@@ -30,7 +30,7 @@
     </on-start>
 
 	<action-state id="ticketGrantingTicketCheck">
-        <evaluate expression="ticketGrantingTicketCheckAction.checkValidity(flowRequestContext)"/>
+        <evaluate expression="ticketGrantingTicketCheckAction"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
         <transition on="invalid" to="terminateSession"/>
         <transition on="valid" to="hasServiceCheck"/>

@@ -18,15 +18,10 @@
  */
 package org.jasig.cas.web;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
-
+import org.apache.commons.collections.functors.TruePredicate;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.perf4j.log4j.GraphingStatisticsAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +31,11 @@ import org.springframework.web.servlet.view.InternalResourceView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @author Scott Battaglia
@@ -53,21 +53,21 @@ public final class StatisticsController extends AbstractController {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 
-    private final TicketRegistry ticketRegistry;
-
     private final Date upTimeStartDate = new Date();
 
     private String casTicketSuffix;
 
     private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
 
+    private final CentralAuthenticationService centralAuthenticationService;
+
     /**
      * Instantiates a new statistics controller.
      *
-     * @param ticketRegistry the ticket registry
+     * @param centralAuthenticationService the CAS service layer
      */
-    public StatisticsController(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    public StatisticsController(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     public void setCasTicketSuffix(final String casTicketSuffix) {
@@ -103,7 +103,7 @@ public final class StatisticsController extends AbstractController {
         int expiredSts = 0;
 
         try {
-            final Collection<Ticket> tickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.getInstance());
 
             for (final Ticket ticket : tickets) {
                 if (ticket instanceof ServiceTicket) {
