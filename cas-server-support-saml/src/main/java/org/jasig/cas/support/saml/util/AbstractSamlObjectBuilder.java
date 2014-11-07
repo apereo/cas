@@ -24,10 +24,12 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.opensaml.Configuration;
+import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
 import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallerFactory;
@@ -79,10 +81,28 @@ import java.util.List;
  */
 public abstract class AbstractSamlObjectBuilder {
 
-    private static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
+    /**
+     * The constant DEFAULT_ELEMENT_NAME_FIELD.
+     */
+    protected static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
+
+    /**
+     * The constant DEFAULT_ELEMENT_LOCAL_NAME_FIELD.
+     */
+    protected static final String DEFAULT_ELEMENT_LOCAL_NAME_FIELD = "DEFAULT_ELEMENT_LOCAL_NAME";
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    static {
+        try {
+            // Initialize OpenSAML default configuration
+            // (only needed once per classloader)
+            DefaultBootstrap.bootstrap();
+        } catch (final ConfigurationException e) {
+            throw new IllegalStateException("Error initializing OpenSAML library.", e);
+        }
+    }
 
     /**
      * Create a new SAML object.
@@ -92,22 +112,48 @@ public abstract class AbstractSamlObjectBuilder {
      * @return the t
      */
     public final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        final QName qName;
+        final QName qName = getSamlObjectQName(objectType);
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
+
+    /**
+     * Gets saml object QName.
+     *
+     * @param objectType the object type
+     * @return the saml object QName
+     * @throws RuntimeException the exception
+     */
+    public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            qName = (QName) f.get(null);
+            final QName qName = (QName) f.get(null);
+            return qName;
         } catch (final NoSuchFieldException e) {
             throw new IllegalStateException("Cannot find field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
         } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
         }
+    }
+
+    /**
+     * Build the saml object based on its QName.
+     *
+     * @param objectType the object
+     * @param qName the QName
+     * @param <T> the object type
+     * @return the saml object
+     */
+    private <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
         }
         return objectType.cast(builder.buildObject());
     }
-
 
     /**
      * New attribute value.
@@ -159,6 +205,7 @@ public abstract class AbstractSamlObjectBuilder {
             final TransformerFactory transFactory = TransformerFactory.newInstance();
             final Transformer transformer = transFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(element), new StreamResult(writer));
             return writer.toString();
         } catch (final Exception e) {
