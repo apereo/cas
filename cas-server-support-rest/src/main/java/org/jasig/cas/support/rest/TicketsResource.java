@@ -24,6 +24,8 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +81,8 @@ public class TicketsResource {
 
         Formatter fmt = null;
         try {
-            final String tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId);
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
@@ -114,9 +116,9 @@ public class TicketsResource {
     public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
-            final String serviceTicketId = this.cas.grantServiceTicket(tgtId,
+            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
                     new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
-            return new ResponseEntity<String>(serviceTicketId, HttpStatus.OK);
+            return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
