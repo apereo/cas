@@ -113,7 +113,8 @@
           scope="prototype"  />
 
     <bean id="principalFactory" class="org.jasig.cas.authentication.principal.DefaultPrincipalFactory"
-            c:attributesRepository-ref="principalAttributesRepository" />
+            c:attributesRepository-ref="principalAttributesRepository"
+            scope="prototype"/>
 
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"

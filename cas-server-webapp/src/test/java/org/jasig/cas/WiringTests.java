@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -26,7 +27,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test to verify Spring context wiring.
@@ -39,10 +40,10 @@ public class WiringTests {
     @Before
     public void setUp() {
         applicationContext = new XmlWebApplicationContext();
-        applicationContext.setConfigLocations(new String[]{
+        applicationContext.setConfigLocations(
                 "file:src/main/webapp/WEB-INF/cas-servlet.xml",
                 "file:src/main/webapp/WEB-INF/deployerConfigContext.xml",
-        "file:src/main/webapp/WEB-INF/spring-configuration/*.xml"});
+        "file:src/main/webapp/WEB-INF/spring-configuration/*.xml");
         applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
             @Override
             public Resource getResource(final String location) {
@@ -60,5 +61,17 @@ public class WiringTests {
     @Test
     public void testWiring() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
+    }
+
+    @Test
+    public void testPrincipalFactory() throws Exception {
+        final DefaultPrincipalFactory factory1 =
+                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
+        final DefaultPrincipalFactory factory2 =
+                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
+
+        assertNotEquals(factory1, factory2);
+        assertNotEquals("attribute repositories should not be equal instances",
+                factory1.getAttributesRepository(), factory2.getAttributesRepository());
     }
 }
