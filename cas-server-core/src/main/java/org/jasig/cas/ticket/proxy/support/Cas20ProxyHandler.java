@@ -20,6 +20,7 @@ package org.jasig.cas.ticket.proxy.support;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
@@ -44,6 +45,8 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     /** The Commons Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
+
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
 
@@ -62,11 +65,12 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     private HttpClient httpClient;
 
     @Override
-    public String handle(final Credential credential, final String proxyGrantingTicketId) {
+    public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
         final String serviceCredentialsAsString = serviceCredentials.getCallbackUrl().toExternalForm();
-        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length() + proxyGrantingTicketId.length() + 15;
+        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
+                + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
         final StringBuilder stringBuffer = new StringBuilder(bufferLength);
 
         stringBuffer.append(serviceCredentialsAsString);

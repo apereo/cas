@@ -30,6 +30,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
@@ -146,21 +147,21 @@ public class ServiceValidateController extends DelegateController {
 
         try {
             final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
-            String proxyGrantingTicketId = null;
+            TicketGrantingTicket proxyGrantingTicketId = null;
             
             if (serviceCredential != null) {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
                     logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
-                            proxyGrantingTicketId, serviceTicketId, serviceCredential);
+                            proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
                     logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
                     logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
                 }
                 
-                if (StringUtils.isEmpty(proxyGrantingTicketId)) {
+                if (proxyGrantingTicketId == null) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             new Object[] {serviceCredential.getId()});
