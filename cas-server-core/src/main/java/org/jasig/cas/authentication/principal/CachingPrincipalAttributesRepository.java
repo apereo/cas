@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,7 +48,6 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private static final long serialVersionUID = 6350244643948535906L;
 
     private static final String ATTRIBUTES_CACHE_KEY = CachingPrincipalAttributesRepository.class.getSimpleName();
-    private static final String CACHE_NAME = CachingPrincipalAttributesRepository.class.getSimpleName();
 
     private static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
     private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
@@ -57,6 +57,8 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private final IPersonAttributeDao attributeRepository;
 
     private final Cache<String, Map<String, Object>> cache;
+
+    private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
 
     /**
      * Instantiates a new caching attributes principal factory.
@@ -145,7 +147,8 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final MutableConfiguration<String, Map<String, Object>> config,
                                                 final CacheManager manager) {
-        this(attributeRepository, manager.createCache(CACHE_NAME, config));
+        this.attributeRepository = attributeRepository;
+        this.cache = manager.createCache(this.cacheName, config);
     }
 
     /**
@@ -244,5 +247,11 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     public void close() throws IOException {
         this.cache.close();
         this.cache.getCacheManager().close();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+        super.finalize();
     }
 }
