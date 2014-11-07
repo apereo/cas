@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.Saml20ObjectBuilder;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
@@ -54,7 +55,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private final Saml20ObjectBuilder builder = new Saml20ObjectBuilder();
+    private final GoogleSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder();
 
     private final String relayState;
 
@@ -103,6 +104,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.publicKey = publicKey;
         this.requestId = requestId;
         this.servicesManager = servicesManager;
+
+
     }
 
     /**
@@ -164,11 +167,13 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     /**
      * Construct SAML response.
-     *
+     * <a href="http://bit.ly/1uI8Ggu">See this reference for more info.</a>
      * @return the SAML response
      */
     private String constructSamlResponse() {
         final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime NOT_BEFORE_ISSUE_INSTANT = DateTime.parse("2003-04-17T00:46:02Z");
+
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
@@ -182,9 +187,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
         final Assertion assertion = this.builder.newAssertion(authnStatement,
                 "https://www.opensaml.org/IDP",
-                currentDateTime.minusYears(3), this.builder.generateSecureRandomId());
+                NOT_BEFORE_ISSUE_INSTANT, this.builder.generateSecureRandomId());
 
-        final Conditions conditions = builder.newConditions(currentDateTime.minusYears(3),
+        final Conditions conditions = builder.newConditions(NOT_BEFORE_ISSUE_INSTANT,
                 currentDateTime, getId());
         assertion.setConditions(conditions);
 
