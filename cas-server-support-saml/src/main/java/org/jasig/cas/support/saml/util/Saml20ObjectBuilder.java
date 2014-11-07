@@ -191,10 +191,6 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
                               final String recipient, final DateTime notOnOrAfter,
                               final String inResponseTo) {
 
-        final NameID nameId = newSamlObject(NameID.class);
-        nameId.setFormat(nameIdFormat);
-        nameId.setValue(nameIdValue);
-
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
@@ -206,9 +202,23 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
         confirmation.setSubjectConfirmationData(data);
 
         final Subject subject = newSamlObject(Subject.class);
-        subject.setNameID(nameId);
+        subject.setNameID(getNameID(nameIdFormat, nameIdValue));
         subject.getSubjectConfirmations().add(confirmation);
         return subject;
+    }
+
+    /**
+     * Gets name id.
+     *
+     * @param nameIdFormat the name id format
+     * @param nameIdValue the name id value
+     * @return the name iD
+     */
+    protected NameID getNameID(final String nameIdFormat, final String nameIdValue) {
+        final NameID nameId = newSamlObject(NameID.class);
+        nameId.setFormat(nameIdFormat);
+        nameId.setValue(nameIdValue);
+        return nameId;
     }
 
     @Override

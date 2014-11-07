@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
  */
 public class GoogleSaml20ObjectBuilder extends Saml20ObjectBuilder {
     @Override
-    public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
+    public final QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
             final String name = f.get(null).toString();
