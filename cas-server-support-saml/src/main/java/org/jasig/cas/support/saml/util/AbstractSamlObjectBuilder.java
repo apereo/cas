@@ -71,7 +71,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * An abstract response builder to serve as the template
+ * An abstract builder to serve as the template handler
  * for SAML1 and SAML2 responses.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
@@ -240,8 +240,7 @@ public abstract class AbstractSamlObjectBuilder {
                 signatureMethod = sigFactory.newSignatureMethod(
                         SignatureMethod.RSA_SHA1, null);
             } else {
-                throw new RuntimeException(
-                        "Error signing SAML element: Unsupported type of key");
+                throw new RuntimeException("Error signing SAML element: Unsupported type of key");
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
