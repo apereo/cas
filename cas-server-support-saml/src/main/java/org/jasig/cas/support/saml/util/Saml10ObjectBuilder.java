@@ -19,15 +19,17 @@
 
 package org.jasig.cas.support.saml.util;
 
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.common.binding.BasicSAMLMessageContext;
+import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.AttributeStatement;
+import org.opensaml.saml1.core.AttributeValue;
 import org.opensaml.saml1.core.Audience;
 import org.opensaml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml1.core.AuthenticationStatement;
@@ -40,7 +42,10 @@ import org.opensaml.saml1.core.StatusCode;
 import org.opensaml.saml1.core.StatusMessage;
 import org.opensaml.saml1.core.Subject;
 import org.opensaml.saml1.core.SubjectConfirmation;
+import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.Date;
@@ -59,17 +64,17 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     /**
      * Create a new SAML response object.
      * @param id the id
-     * @param skewAllowance the skew allowance
+     * @param issueInstant the issue instant
      * @param recipient the recipient
      * @param service the service
      * @return the response
      */
-    public Response newResponse(final String id, final int skewAllowance,
+    public Response newResponse(final String id, final DateTime issueInstant,
                                          final String recipient, final WebApplicationService service) {
 
         final Response samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
-        samlResponse.setIssueInstant(DateTime.now().minusSeconds(skewAllowance));
+        samlResponse.setIssueInstant(issueInstant);
         samlResponse.setVersion(SAMLVersion.VERSION_11);
         samlResponse.setRecipient(recipient);
         if (service instanceof SamlService) {
@@ -208,10 +213,10 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
                 for (final Object value : c) {
-                    attribute.getAttributeValues().add(newAttributeValue(value));
+                    attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
                 }
             } else {
-                attribute.getAttributeValues().add(newAttributeValue(e.getValue()));
+                attribute.getAttributeValues().add(newAttributeValue(e.getValue(), AttributeValue.DEFAULT_ELEMENT_NAME));
             }
             attrStatement.getAttributes().add(attribute);
         }
@@ -219,5 +224,24 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         return attrStatement;
     }
 
+    /**
+     * Encode response and pass it onto the outbound transport.
+     * Uses {@link CasHTTPSOAP11Encoder} to handle encoding.
+     *
+     * @param httpResponse the http response
+     * @param httpRequest the http request
+     * @param samlMessage the saml response
+     * @throws Exception the exception in case encoding fails.
+     */
+    public void encodeSamlResponse(final HttpServletResponse httpResponse,
+                                   final HttpServletRequest httpRequest,
+                                   final Response samlMessage) throws Exception {
+        final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+        messageContext.setOutboundMessageTransport(
+                new HttpServletResponseAdapter(httpResponse, httpRequest.isSecure()));
+        messageContext.setOutboundSAMLMessage(samlMessage);
 
+        final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
+        encoder.encode(messageContext);
+    }
 }

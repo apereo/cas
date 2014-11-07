@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
-import java.util.zip.DeflaterOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
@@ -36,6 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
+import java.util.zip.DeflaterOutputStream;
 
 import static org.mockito.Mockito.*;
 /**
@@ -87,14 +87,11 @@ public class GoogleAccountsServiceTests {
         this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
     }
 
-
-    // XXX: re-enable when we figure out JVM requirements
     @Test
     public void testResponse() {
-        return;
-        //    final Response response = this.googleAccountsService.getResponse("ticketId");
-        //  assertEquals(ResponseType.POST, response.getResponseType());
-        //    assertTrue(response.getAttributes().containsKey("SAMLResponse"));
+
+        this.googleAccountsService.getResponse("ticketId");
+
     }
 
 
