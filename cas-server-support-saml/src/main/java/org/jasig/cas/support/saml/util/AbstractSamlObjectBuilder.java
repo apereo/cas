@@ -199,8 +199,9 @@ public abstract class AbstractSamlObjectBuilder {
         try {
             final MarshallerFactory marshallerFactory = Configuration.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
-
             final Element element = marshaller.marshall(object);
+            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);
+            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
 
             final TransformerFactory transFactory = TransformerFactory.newInstance();
             final Transformer transformer = transFactory.newTransformer();
