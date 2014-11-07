@@ -28,24 +28,24 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedList;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Queue;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.Ticket;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.registry.TicketRegistry;
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.perf4j.log4j.GraphingStatisticsAppender;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.ModelAndView;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.mvc.AbstractController;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.InternalResourceView;
-<a class="jxr_linenumber" name="36" href="#36">36</a>  
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections.functors.TruePredicate;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.Ticket;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.perf4j.log4j.GraphingStatisticsAppender;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.ModelAndView;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.mvc.AbstractController;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.InternalResourceView;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedList;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> java.util.Queue;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
@@ -63,21 +63,21 @@
 <a class="jxr_linenumber" name="53" href="#53">53</a>  
 <a class="jxr_linenumber" name="54" href="#54">54</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  
-<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry;
+<a class="jxr_linenumber" name="56" href="#56">56</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Date upTimeStartDate = <strong class="jxr_keyword">new</strong> Date();
 <a class="jxr_linenumber" name="57" href="#57">57</a>  
-<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Date upTimeStartDate = <strong class="jxr_keyword">new</strong> Date();
+<a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">private</strong> String casTicketSuffix;
 <a class="jxr_linenumber" name="59" href="#59">59</a>  
-<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> String casTicketSuffix;
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">private</strong> String viewPath = <span class="jxr_string">"/WEB-INF/view/jsp/monitoring/viewStatistics.jsp"</span>;
 <a class="jxr_linenumber" name="61" href="#61">61</a>  
-<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> String viewPath = <span class="jxr_string">"/WEB-INF/view/jsp/monitoring/viewStatistics.jsp"</span>;
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService;
 <a class="jxr_linenumber" name="63" href="#63">63</a>  
 <a class="jxr_linenumber" name="64" href="#64">64</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * Instantiates a new statistics controller.</em>
 <a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     * @param ticketRegistry the ticket registry</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     * @param centralAuthenticationService the CAS service layer</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="69" href="#69">69</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/web/StatisticsController.html">StatisticsController</a>(<strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry) {
-<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">this</strong>.ticketRegistry = ticketRegistry;
+<a class="jxr_linenumber" name="69" href="#69">69</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/web/StatisticsController.html">StatisticsController</a>(<strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService) {
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
 <a class="jxr_linenumber" name="71" href="#71">71</a>      }
 <a class="jxr_linenumber" name="72" href="#72">72</a>  
 <a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setCasTicketSuffix(<strong class="jxr_keyword">final</strong> String casTicketSuffix) {
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">int</strong> expiredSts = 0;
 <a class="jxr_linenumber" name="104" href="#104">104</a> 
 <a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets();
+<a class="jxr_linenumber" name="106" href="#106">106</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(TruePredicate.getInstance());
 <a class="jxr_linenumber" name="107" href="#107">107</a> 
 <a class="jxr_linenumber" name="108" href="#108">108</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Ticket ticket : tickets) {
 <a class="jxr_linenumber" name="109" href="#109">109</a>                 <strong class="jxr_keyword">if</strong> (ticket instanceof ServiceTicket) {

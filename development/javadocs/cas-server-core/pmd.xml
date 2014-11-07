@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2014-11-06T04:10:24.766">
+<pmd version="4.3" timestamp="2014-11-07T23:09:41.752">
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/CentralAuthenticationServiceImpl.java">
-<violation beginline="255" endline="261" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="260" endline="266" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.jasig.cas" class="CentralAuthenticationServiceImpl" method="grantServiceTicket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
+</violation>
+</file>
+<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/audit/spi/TicketOrCredentialPrincipalResolver.java">
+<violation beginline="63" endline="66" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.audit.spi" class="TicketOrCredentialPrincipalResolver" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'ticketRegistry'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/authentication/FileTrustStoreSslSocketFactory.java">
@@ -46,11 +51,6 @@ Avoid unused private fields such as 'LOGGER'.
 </violation>
 <violation beginline="232" endline="232" begincolumn="20" endcolumn="46" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.jasig.cas.ticket" class="TicketGrantingTicketImpl" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
 Ensure you override both equals() and hashCode()
-</violation>
-</file>
-<file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleaner.java">
-<violation beginline="101" endline="105" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.jasig.cas.ticket.registry.support" class="DefaultTicketRegistryCleaner" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
-Avoid unused constructor parameters such as 'lockingStrategy'.
 </violation>
 </file>
 <file name="/home/travis/build/Jasig/cas/cas-server-core/src/main/java/org/jasig/cas/util/HttpMessage.java">

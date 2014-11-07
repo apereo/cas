@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> getAuthenticationPrincipal(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId) {
 <a class="jxr_linenumber" name="56" href="#56">56</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticketGrantingTicket =
-<a class="jxr_linenumber" name="58" href="#58">58</a>                      <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTicketGrantingTicket(ticketGrantingTicketId);
+<a class="jxr_linenumber" name="58" href="#58">58</a>                      <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="59" href="#59">59</a>              <strong class="jxr_keyword">return</strong> ticketGrantingTicket.getAuthentication().getPrincipal();
 <a class="jxr_linenumber" name="60" href="#60">60</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InvalidTicketException e){
 <a class="jxr_linenumber" name="61" href="#61">61</a>              logger.warn(e.getMessage());
