@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.Saml20ObjectBuilder;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
@@ -52,10 +53,6 @@ import java.util.Map;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
-
-    private static final String CONST_PARAM_SERVICE = "SAMLRequest";
-
-    private static final String CONST_RELAY_STATE = "RelayState";
 
     private final Saml20ObjectBuilder builder = new Saml20ObjectBuilder();
 
@@ -120,9 +117,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
             final PublicKey publicKey, final ServicesManager servicesManager) {
-        final String relayState = request.getParameter(CONST_RELAY_STATE);
+        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = Saml20ObjectBuilder.decodeSamlAuthnRequest(request.getParameter(CONST_PARAM_SERVICE));
+        final String xmlRequest = Saml20ObjectBuilder.decodeSamlAuthnRequest(
+                request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (!StringUtils.hasText(xmlRequest)) {
             return null;
@@ -148,8 +146,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String samlResponse = constructSamlResponse();
         final String signedResponse = this.builder.signSamlResponse(samlResponse,
                 this.privateKey, this.publicKey);
-        parameters.put("SAMLResponse", signedResponse);
-        parameters.put("RelayState", this.relayState);
+        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
+        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, this.relayState);
 
         return Response.getPostResponse(getOriginalUrl(), parameters);
     }
