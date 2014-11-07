@@ -19,22 +19,17 @@
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
+import org.joda.time.DateTime;
 import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.ConfigurationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
@@ -48,10 +43,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     private static final String DEFAULT_ENCODING = "UTF-8";
 
     private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
-
-    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-
-    private final SecureRandomIdentifierGenerator idGenerator;
 
     /**
      * The Saml object builder.
@@ -109,17 +100,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         }
     }
 
-    /**
-     * Instantiates a new abstract saml10 response view.
-     */
-    protected AbstractSaml10ResponseView() {
-        try {
-            this.idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
-        }
-    }
-
     @Override
     protected void renderMergedOutputModel(
             final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -130,14 +110,13 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         final String serviceId = service != null ? service.getId() : "UNKNOWN";
 
         try {
-            final Response samlResponse = this.samlObjectBuilder.newResponse(generateId(), this.skewAllowance,
-                                                                          serviceId, service);
+            final Response samlResponse = this.samlObjectBuilder.newResponse(
+                    this.samlObjectBuilder.generateSecureRandomId(),
+                    DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
 
             prepareResponse(samlResponse, model);
-            final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-            messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, request.isSecure()));
-            messageContext.setOutboundSAMLMessage(samlResponse);
-            this.encoder.encode(messageContext);
+
+            this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
             logger.error("Error generating SAML response for service {}.", serviceId);
             throw e;
@@ -154,14 +133,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
 
-    /**
-     * Generate id.
-     *
-     * @return the string
-     */
-    protected final String generateId() {
-        return this.idGenerator.generateIdentifier();
-    }
+
 
 
 

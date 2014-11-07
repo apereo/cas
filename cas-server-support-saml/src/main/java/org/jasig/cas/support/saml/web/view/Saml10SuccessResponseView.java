@@ -79,7 +79,8 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
                 authentication.getAuthenticationDate(), authenticationMethod, getPrincipal(model).getId());
 
-        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt, generateId());
+        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
+                this.samlObjectBuilder.generateSecureRandomId());
         final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.issueLength);
         assertion.setConditions(conditions);
 
