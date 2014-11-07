@@ -58,4 +58,8 @@ public final class DefaultPrincipalFactory implements PrincipalFactory {
         this.attributesRepository.setAttributes(attributes);
         return new SimplePrincipal(id, this.attributesRepository);
     }
+
+    public PrincipalAttributesRepository getAttributesRepository() {
+        return attributesRepository;
+    }
 }
