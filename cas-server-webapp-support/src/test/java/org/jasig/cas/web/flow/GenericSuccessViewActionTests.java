@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 
@@ -35,6 +36,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  */
 public class GenericSuccessViewActionTests {
+
+
     @Test
     public void testValidPrincipal() throws InvalidTicketException {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
@@ -42,7 +45,10 @@ public class GenericSuccessViewActionTests {
         when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal("cas"));
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
-        when(cas.getTicketGrantingTicket(any(String.class))).thenReturn(tgt);
+
+
+
+        when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenReturn(tgt);
         final GenericSuccessViewAction action = new GenericSuccessViewAction(cas);
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
@@ -52,7 +58,7 @@ public class GenericSuccessViewActionTests {
     @Test
     public void testPrincipalCanNotBeDetemined() throws InvalidTicketException {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
-        when(cas.getTicketGrantingTicket(any(String.class))).thenThrow(new InvalidTicketException("TGT-1"));
+        when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenThrow(new InvalidTicketException("TGT-1"));
         final GenericSuccessViewAction action = new GenericSuccessViewAction(cas);
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
