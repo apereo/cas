@@ -193,7 +193,6 @@ public abstract class AbstractSamlObjectBuilder {
      * @param object the object
      * @param writer the writer
      * @return the xml string
-     * @throws Exception the exception in case encoding fails.
      */
     public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer)  {
         try {
