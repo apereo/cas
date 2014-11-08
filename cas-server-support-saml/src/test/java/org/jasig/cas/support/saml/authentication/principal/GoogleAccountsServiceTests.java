@@ -20,14 +20,18 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -38,11 +42,15 @@ import java.security.interfaces.DSAPublicKey;
 import java.util.zip.DeflaterOutputStream;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
 public class GoogleAccountsServiceTests {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GoogleAccountsService googleAccountsService;
 
@@ -70,7 +78,8 @@ public class GoogleAccountsServiceTests {
               + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
               + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
               + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
-        request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
+        request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(SAMLRequest));
+        request.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "RelayStateAddedHere");
 
         final RegisteredService regSvc = mock(RegisteredService.class);
         when(regSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
@@ -89,17 +98,18 @@ public class GoogleAccountsServiceTests {
 
     @Test
     public void testResponse() {
-
-        this.googleAccountsService.getResponse("ticketId");
+        final Response resp = this.googleAccountsService.getResponse("ticketId");
+        assertEquals(resp.getResponseType(), Response.ResponseType.POST);
+        assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));
+        assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
 
     }
 
 
-    protected static String encodeMessage(final String xmlString) throws IOException {
+    private static String encodeMessage(final String xmlString) throws IOException {
         final byte[] xmlBytes = xmlString.getBytes("UTF-8");
         final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
-                byteOutputStream);
+        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
         deflaterOutputStream.close();
 
