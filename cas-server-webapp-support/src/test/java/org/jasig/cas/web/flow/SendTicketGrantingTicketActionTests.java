@@ -18,9 +18,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -30,7 +29,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.servlet.http.Cookie;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
@@ -67,25 +70,30 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     @Test
     public void testTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final String TICKET_VALUE = "test";
 
-        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
+
+        WebUtils.putTicketGrantingTicketInRequestScope(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
+        assertEquals(tgt.getId(), response.getCookies()[0].getValue());
     }
 
     @Test
     public void testTgtToSetRemovingOldTgt() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String TICKET_VALUE = "test";
+
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
+
         request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
-        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
+        WebUtils.putTicketGrantingTicketInRequestScope(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
+        assertEquals(tgt.getId(), response.getCookies()[0].getValue());
     }
 }
