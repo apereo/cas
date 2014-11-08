@@ -72,7 +72,8 @@ public final class Cas20ProxyHandler implements ProxyHandler {
 
         final URL callbackUrl = serviceCredentials.getCallbackUrl();
         final String serviceCredentialsAsString = callbackUrl.toExternalForm();
-        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length() + proxyGrantingTicketId.length() + 15;
+        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
+                + proxyGrantingTicketId.getId().length() + 15;
         final StringBuilder stringBuffer = new StringBuilder(bufferLength);
 
         stringBuffer.append(serviceCredentialsAsString);
