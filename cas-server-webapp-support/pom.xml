@@ -127,7 +127,13 @@
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
       <scope>compile</scope>
-    </dependency>   
+    </dependency>
+
+    <dependency>
+        <groupId>org.jasig</groupId>
+        <artifactId>spring-webflow-client-repo</artifactId>
+    </dependency>
+
   </dependencies>
 
   <properties>

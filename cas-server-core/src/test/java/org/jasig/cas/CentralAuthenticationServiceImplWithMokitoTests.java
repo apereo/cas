@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.apache.commons.collections.functors.TruePredicate;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -38,6 +39,7 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -52,15 +54,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests with the help of Mockito framework.
@@ -80,9 +87,11 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     private static final String PRINCIPAL = "principal";
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private CentralAuthenticationServiceImpl cas;
+
+    private CentralAuthenticationService cas;
     private Authentication authentication;
-    
+    private TicketRegistry ticketRegMock;
+
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private String id;
 
@@ -130,12 +139,13 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         final TicketGrantingTicket tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);        
         
         //Mock TicketRegistry
-        final TicketRegistry ticketRegMock = mock(TicketRegistry.class);
+        this.ticketRegMock = mock(TicketRegistry.class);
         when(ticketRegMock.getTicket(eq(tgtMock.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock);
         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
-        
+        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
+
         //Mock ServicesManager
         final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
         final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true)); 
@@ -172,21 +182,27 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 
     @Test(expected=IllegalArgumentException.class)
     public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
-        this.cas.getTicketGrantingTicket(null);
+        this.cas.getTicket(null, TicketGrantingTicket.class);
     }
 
     @Test(expected=InvalidTicketException.class)
     public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
-        this.cas.getTicketGrantingTicket("TGT-9000");
+        this.cas.getTicket("TGT-9000", TicketGrantingTicket.class);
+    }
+
+    @Test
+    public void getTicketsWithNoPredicate() {
+        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.getInstance());
+        assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
     @Test
     public void testChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
-        final String st = this.cas.grantServiceTicket(TGT2_ID, svc);
+        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);
         
-        final Assertion assertion = this.cas.validateServiceTicket(st, svc);
+        final Assertion assertion = this.cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
         
         assertEquals(assertion.getService(), svc);
