@@ -103,7 +103,7 @@
                     <property name="name" value="EduPerson Test Service"/>
                     <property name="serviceId" value="eduPersonTest"/>
                     <property name="evaluationOrder" value="3"/>
-                    <property name="usernameAttributeProviderAttribute">
+                    <property name="usernameAttributeProvider">
                         <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
                             c:usernameAttribute="eduPersonAffiliation" />
                     </property>
@@ -118,7 +118,7 @@
                     <property name="name" value="EduPerson Test Invalid Service"/>
                     <property name="serviceId" value="eduPersonTestInvalid"/>
                     <property name="evaluationOrder" value="4"/>
-                    <property name="usernameAttributeProviderAttribute">
+                    <property name="usernameAttributeProvider">
                         <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
                             c:usernameAttribute="nonExistentAttributeName" />
                     </property>
@@ -138,7 +138,7 @@
                     <property name="name" value="Test Service anonymous"/>
                     <property name="serviceId" value="testAnonymous"/>
                     <property name="evaluationOrder" value="5"/>
-                    <property name="usernameAttributeProviderAttribute">
+                    <property name="usernameAttributeProvider">
                         <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
                     </property>
                 </bean>
