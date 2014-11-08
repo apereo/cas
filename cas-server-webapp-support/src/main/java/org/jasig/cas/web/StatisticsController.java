@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.web;
 
+import org.apache.commons.collections.functors.TruePredicate;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.perf4j.log4j.GraphingStatisticsAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,21 +53,21 @@ public final class StatisticsController extends AbstractController {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 
-    private final TicketRegistry ticketRegistry;
-
     private final Date upTimeStartDate = new Date();
 
     private String casTicketSuffix;
 
     private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
 
+    private final CentralAuthenticationService centralAuthenticationService;
+
     /**
      * Instantiates a new statistics controller.
      *
-     * @param ticketRegistry the ticket registry
+     * @param centralAuthenticationService the CAS service layer
      */
-    public StatisticsController(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    public StatisticsController(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     public void setCasTicketSuffix(final String casTicketSuffix) {
@@ -102,7 +103,7 @@ public final class StatisticsController extends AbstractController {
         int expiredSts = 0;
 
         try {
-            final Collection<Ticket> tickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.getInstance());
 
             for (final Ticket ticket : tickets) {
                 if (ticket instanceof ServiceTicket) {

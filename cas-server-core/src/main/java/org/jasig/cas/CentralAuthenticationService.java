@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,20 @@
  */
 package org.jasig.cas;
 
-import java.util.List;
-
+import org.apache.commons.collections.Predicate;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -43,7 +49,7 @@ import org.jasig.cas.validation.Assertion;
  * @author Dmitry Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
+ * @author Misagh Moayyed
  * @since 3.0
  */
 public interface CentralAuthenticationService {
@@ -61,8 +67,40 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credential... credentials)
+    TicketGrantingTicket createTicketGrantingTicket(Credential... credentials)
         throws AuthenticationException, TicketException;
+
+
+    /**
+     * Obtains the given ticket by its id and type
+     * and returns the CAS-representative object. Implementations
+     * need to check for the validity of the ticket by making sure
+     * it exists and has not expired yet, etc. This method is specifically
+     * designed to remove the need to access the ticket registry.
+     *
+     * @param ticketId the ticket granting ticket id
+     * @param clazz the ticket type that is reques to be found
+     * @param <T> the generic ticket type to return that extends {@link Ticket}
+     * @return the ticket object
+     * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
+     * @since 4.1
+     */
+    <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
+            throws InvalidTicketException;
+
+    /**
+     * Retrieve a collection of tickets from the underlying ticket registry.
+     * The retrieval operation must pass the predicate check that is solely
+     * used to filter the collection of tickets received. Implementations
+     * can use the predicate to request a collection of expired tickets,
+     * or tickets whose id matches a certain pattern, etc. The resulting
+     * collection will include ticktes that have been evaluated by the predicate.
+     *
+     * @param predicate the predicate
+     * @return the tickets
+     * @since 4.1
+     */
+     Collection<Ticket> getTickets(Predicate predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
@@ -74,7 +112,7 @@ public interface CentralAuthenticationService {
      *
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
+    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
     /**
      * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
@@ -96,7 +134,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(
+    ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException;
 
@@ -136,6 +174,6 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if there was an error creating the ticket
      */
-    String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException;
 }

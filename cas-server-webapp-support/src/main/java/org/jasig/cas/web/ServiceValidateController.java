@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,7 +23,6 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
@@ -31,6 +30,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
@@ -147,21 +147,21 @@ public class ServiceValidateController extends DelegateController {
 
         try {
             final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
-            String proxyGrantingTicketId = null;
+            TicketGrantingTicket proxyGrantingTicketId = null;
             
             if (serviceCredential != null) {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
                     logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
-                            proxyGrantingTicketId, serviceTicketId, serviceCredential);
+                            proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
                     logger.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
                     logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
                 }
                 
-                if (StringUtils.isEmpty(proxyGrantingTicketId)) {
+                if (proxyGrantingTicketId == null) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             new Object[] {serviceCredential.getId()});
@@ -244,15 +244,11 @@ public class ServiceValidateController extends DelegateController {
      * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
      */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
-        final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
-        final Object o = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        final boolean isRemembered = (o.equals(Boolean.TRUE) && !assertion.isFromNewLogin());
-        
+
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);
         success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
-        success.addObject(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, isRemembered);
-        
+
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);

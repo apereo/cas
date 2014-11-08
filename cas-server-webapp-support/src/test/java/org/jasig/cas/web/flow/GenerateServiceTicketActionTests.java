@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -32,7 +30,10 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.servlet.http.Cookie;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -42,7 +43,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
     private GenerateServiceTicketAction action;
 
-    private String ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
 
     @Before
     public void onSetUp() throws Exception {
@@ -58,13 +59,13 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     public void testServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
-        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
+        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.setCookies(new Cookie[] {new Cookie("TGT",
-                this.ticketGrantingTicket)});
+                this.ticketGrantingTicket.getId())});
 
         this.action.execute(context);
 
@@ -96,7 +97,10 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");
+
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("bleh");
+        WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
 
         assertEquals("error", this.action.execute(context).getId());
     }
@@ -111,9 +115,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         request.addParameter("service", "service");
         WebUtils.putTicketGrantingTicketInRequestScope(context, this.ticketGrantingTicket);
 
-        final TicketGrantingTicket tgt = this.getTicketRegistry().getTicket(this.ticketGrantingTicket, TicketGrantingTicket.class);
-        tgt.markTicketExpired();
-        
+        this.ticketGrantingTicket.markTicketExpired();
         assertEquals("error", this.action.execute(context).getId());
     }
     
@@ -126,7 +128,10 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.addParameter("gateway", "true");
-        WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("bleh");
+        WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
+
 
         assertEquals("gateway", this.action.execute(context).getId());
     }
