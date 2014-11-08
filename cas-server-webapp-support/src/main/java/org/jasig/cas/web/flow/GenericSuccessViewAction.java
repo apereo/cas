@@ -55,7 +55,7 @@ public final class GenericSuccessViewAction {
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
             final TicketGrantingTicket ticketGrantingTicket =
-                    this.centralAuthenticationService.getTicketGrantingTicket(ticketGrantingTicketId);
+                    this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e){
             logger.warn(e.getMessage());

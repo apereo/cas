@@ -72,55 +72,55 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test
     public void testDestroyTicketGrantingTicketWithValidTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
     }
 
     @Test(expected=ClassCastException.class)
     public void testDestroyTicketGrantingTicketWithInvalidTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, TestUtils.getService());
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketId.getId(), TestUtils.getService());
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(
-                serviceTicketId);
+                serviceTicketId.getId());
 
     }
 
     @Test
     public void testGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getCentralAuthenticationService().grantServiceTicket(ticketId,
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
             TestUtils.getService());
     }
 
     @Test
     public void testGrantProxyTicketWithValidTicketGrantingTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(
                         TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-                .grantServiceTicket(ticketId, TestUtils.getService());
-        final String pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
-                serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+                .grantServiceTicket(ticketId.getId(), TestUtils.getService());
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+                serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
 
-        final String pt = getCentralAuthenticationService().grantServiceTicket(pgt, TestUtils.getService(), null);
-        assertTrue(pt.startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
+        final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(), TestUtils.getService(), null);
+        assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
     }
 
     @Test(expected=TicketException.class)
     public void testGrantServiceTicketWithInvalidTicketGrantingTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
-            getCentralAuthenticationService().grantServiceTicket(ticketId,
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
+            getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
                 TestUtils.getService());
     }
 
@@ -133,11 +133,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             public boolean isExpired(final TicketState ticket) {
                 return true;
             }});
-    final String ticketId = getCentralAuthenticationService()
+    final TicketGrantingTicket ticketId = getCentralAuthenticationService()
         .createTicketGrantingTicket(
             TestUtils.getCredentialsWithSameUsernameAndPassword());
     try {
-        getCentralAuthenticationService().grantServiceTicket(ticketId,
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
             TestUtils.getService());
     } finally {
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
@@ -147,45 +147,45 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test
     public void testDelegateTicketGrantingTicketWithProperParams() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, TestUtils.getService());
-        final String pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
-            serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
-        assertTrue(pgt.startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketId.getId(), TestUtils.getService());
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+            serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
+        assertTrue(pgt.getId().startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
 
     @Test(expected=TicketException.class)
     public void testDelegateTicketGrantingTicketWithBadServiceTicket() throws Exception {
-        final String ticketId = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, TestUtils.getService());
-        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketId.getId(), TestUtils.getService());
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
         getCentralAuthenticationService().delegateTicketGrantingTicket(
-            serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
+            serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
     }
 
     @Test
     public void testGrantServiceTicketWithValidCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(
-            ticketGrantingTicket, TestUtils.getService(),
+            ticketGrantingTicket.getId(), TestUtils.getService(),
             TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=MixedPrincipalException.class)
     public void testGrantServiceTicketWithDifferentCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
         getCentralAuthenticationService().grantServiceTicket(
-            ticketGrantingTicket, TestUtils.getService(),
+            ticketGrantingTicket.getId(), TestUtils.getService(),
             TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
     }
 
@@ -194,56 +194,56 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
             .setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(
                 1, 1100));
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+        final ServiceTicket serviceTicket = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
 
-        getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
             TestUtils.getService());
 
-        assertFalse(getTicketRegistry().deleteTicket(serviceTicket));
+        assertFalse(getTicketRegistry().deleteTicket(serviceTicket.getId()));
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
             .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
     }
 
     @Test
     public void testValidateServiceTicketWithValidService() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+        final ServiceTicket serviceTicket = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
 
-        getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
             TestUtils.getService());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void testValidateServiceTicketWithInvalidService() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+        final ServiceTicket serviceTicket = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
 
         getCentralAuthenticationService().validateServiceTicket(
-            serviceTicket, TestUtils.getService("test2"));
+            serviceTicket.getId(), TestUtils.getService("test2"));
     }
 
     @Test(expected=TicketException.class)
     public void testValidateServiceTicketWithInvalidServiceTicket() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final String serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+        final ServiceTicket serviceTicket = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicket.getId(), TestUtils.getService());
         getCentralAuthenticationService().destroyTicketGrantingTicket(
-            ticketGrantingTicket);
+            ticketGrantingTicket.getId());
 
         getCentralAuthenticationService().validateServiceTicket(
-                serviceTicket, TestUtils.getService());
+                serviceTicket.getId(), TestUtils.getService());
     }
 
     @Test(expected=TicketException.class)
@@ -255,11 +255,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void testValidateServiceTicketWithoutUsernameAttribute() throws Exception {
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
                 TestUtils.getService());
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 TestUtils.getService());
         final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
@@ -268,12 +268,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void testValidateServiceTicketWithDefaultUsernameAttribute() throws Exception {
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = TestUtils.getService("testDefault");
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
         final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
@@ -281,12 +281,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void testValidateServiceTicketWithUsernameAttribute() throws Exception {
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = TestUtils.getService("eduPersonTest");
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
         assertEquals("developer", assertion.getPrimaryAuthentication().getPrincipal().getId());
     }
 
@@ -294,11 +294,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void testValidateServiceTicketNoAttributesReturned() throws Exception {
         final Service service = TestUtils.getService();
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
                 service);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 service);
         final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(0, auth.getPrincipal().getAttributes().size());
@@ -308,11 +308,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void testValidateServiceTicketReturnAllAttributes() throws Exception {
         final Service service = TestUtils.getService("eduPersonTest");
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
                 service);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 service);
         final Authentication auth = assertion.getPrimaryAuthentication();
         assertEquals(3, auth.getPrincipal().getAttributes().size());
@@ -322,11 +322,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void testValidateServiceTicketReturnOnlyAllowedAttribute() throws Exception {
         final Service service = TestUtils.getService("eduPersonTestInvalid");
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
                 service);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 service);
         final Authentication auth = assertion.getPrimaryAuthentication();
         final Map<String, Object> attributes = auth.getPrincipal().getAttributes();
@@ -338,11 +338,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void testValidateServiceTicketAnonymous() throws Exception {
         final Service service = TestUtils.getService("testAnonymous");
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
                 service);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 service);
         final Authentication auth = assertion.getPrimaryAuthentication();
         assertNotEquals(cred.getUsername(), auth.getPrincipal().getId());
@@ -351,12 +351,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void testValidateServiceTicketWithInvalidUsernameAttribute() throws Exception {
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = TestUtils.getService("eduPersonTestInvalid");
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc);
 
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
         final Authentication auth = assertion.getPrimaryAuthentication();
 
         /*
@@ -384,11 +384,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final CentralAuthenticationService cas = getCentralAuthenticationService();
         final Service svc = TestUtils.getService("testDefault");
         final UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final String tgtId = cas.createTicketGrantingTicket(goodCredential);
-        cas.grantServiceTicket(tgtId, svc);
+        final TicketGrantingTicket tgtId = cas.createTicketGrantingTicket(goodCredential);
+        cas.grantServiceTicket(tgtId.getId(), svc);
         // simulate renew with new good same credentials
-        final String st2Id = cas.grantServiceTicket(tgtId, svc, goodCredential);
-        final Assertion assertion = cas.validateServiceTicket(st2Id, svc);
+        final ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, goodCredential);
+        final Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
         final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
         assertTrue(validationSpecification.isSatisfiedBy(assertion));
     }
