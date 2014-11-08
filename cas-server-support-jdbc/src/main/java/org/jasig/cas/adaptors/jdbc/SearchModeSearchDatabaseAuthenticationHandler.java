@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -29,6 +27,7 @@ import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -75,6 +74,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         if (count == 0) {
             throw new FailedLoginException(username + " not found with SQL query.");
         }
+
         return createHandlerResult(credential, new SimplePrincipal(username), null);
     }
 
@@ -104,4 +104,5 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     public final void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
     }
+
 }

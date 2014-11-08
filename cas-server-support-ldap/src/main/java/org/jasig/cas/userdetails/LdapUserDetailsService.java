@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,10 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.userdetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.validation.constraints.NotNull;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -37,6 +33,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Provides a simple {@link UserDetailsService} implementation that obtains user details from an LDAP search.
@@ -185,7 +185,11 @@ public class LdapUserDetailsService implements UserDetailsService {
                 logger.warn("Role attribute not found on entry {}", entry);
                 continue;
             }
-            roles.add(new SimpleGrantedAuthority(this.rolePrefix + roleAttribute.getStringValue().toUpperCase()));
+
+            for (final String role : roleAttribute.getStringValues()) {
+                roles.add(new SimpleGrantedAuthority(this.rolePrefix + role.toUpperCase()));
+            }
+
         }
 
         return new User(id, UNKNOWN_PASSWORD, roles);
