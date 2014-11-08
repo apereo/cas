@@ -18,19 +18,18 @@
  */
 package org.jasig.cas.adaptors.ldap.remote;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.GeneralSecurityException;
 
 /**
  * Checks if the remote address is in the range of allowed addresses.
@@ -86,7 +85,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
-        logger.debug("Checking IP address: {} in ", ip, network, netmask);
+        logger.debug("Checking IP address: {} in {} by {}", ip, network, netmask);
 
         final byte[] networkBytes = network.getAddress();
         final byte[] netmaskBytes = netmask.getAddress();
