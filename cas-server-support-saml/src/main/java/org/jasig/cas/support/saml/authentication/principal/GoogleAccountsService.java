@@ -201,6 +201,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
         final StringWriter writer = new StringWriter();
         this.builder.marshalSamlXmlObject(response, writer);
+
+        logger.debug("Generated Google SAML response: {}", writer.toString());
         return writer.toString();
     }
 }
