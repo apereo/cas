@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -77,12 +78,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
             && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
                         service,
                             credential);
-                WebUtils.putServiceTicketInRequestScope(context,
-                    serviceTicketId);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 return result("warn");
             } catch (final AuthenticationException e) {
                 onError(context, credential);
