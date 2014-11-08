@@ -60,12 +60,13 @@ public class OpenIdServiceTests {
         manager.setEnforceRpId(false);
         manager.setSharedAssociations(sharedAssociations);
         context = mock(ApplicationContext.class);
-        final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
-        contextProvider.setApplicationContext(context);
         cas = mock(CentralAuthenticationService.class);
 
         when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
+        when(context.getBean("centralAuthenticationService", CentralAuthenticationService.class)).thenReturn(cas);
+
+        final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
+        contextProvider.setApplicationContext(context);
     }
 
     @Test
