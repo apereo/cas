@@ -18,11 +18,21 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractRegistryCleanerTests;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
@@ -32,13 +42,27 @@ import static org.mockito.Mockito.*;
  */
 public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTests {
 
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Override
     public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
-        final LogoutManager logoutManager = mock(LogoutManager.class);
-        final DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner(logoutManager, ticketRegistry);
-        return cleaner;
+        this.centralAuthenticationService = new CentralAuthenticationServiceImpl(this.ticketRegistry, this.ticketRegistry,
+                mock(AuthenticationManager.class), mock(UniqueTicketIdGenerator.class), Collections.EMPTY_MAP,
+                new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(), mock(ServicesManager.class),
+                mock(LogoutManager.class));
+
+        return new DefaultTicketRegistryCleaner(this.centralAuthenticationService);
     }
 
+    @Override
     public TicketRegistry getNewTicketRegistry() {
         return new DefaultTicketRegistry();
+    }
+
+    @Override
+    protected void afterCleaning(final Collection<Ticket> removedCol) {
+        for (final Ticket ticket : removedCol) {
+            this.ticketRegistry.deleteTicket(ticket.getId());
+        }
     }
 }
