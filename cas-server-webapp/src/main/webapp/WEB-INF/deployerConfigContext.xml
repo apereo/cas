@@ -162,10 +162,12 @@
               p:theme="apereo" />
 
         <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="10000001" p:name="HTTPS and IMAPS" p:description="Allows HTTPS and IMAPS protocols"
-              p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001">
+              p:id="10000001" p:name="HTTPS and IMAPS"
+              p:description="This service definition authorized all application urls that support HTTPS and IMAPS protocols."
+              p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001"
+              p:logo="../images/webapp.png"  >
 
-        <!--
+            <!--
             <property name="proxyPolicy">
                 <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
                       c:pgtUrlPattern="^https://.*" />
