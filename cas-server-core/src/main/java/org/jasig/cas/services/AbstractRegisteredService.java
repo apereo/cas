@@ -112,7 +112,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Lob
     @Column(name = "attribute_release")
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-    
+
+    private String logo;
+
     public long getId() {
         return this.id;
     }
@@ -173,6 +175,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
                 .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+                .append(this.logo, that.logo)
                 .isEquals();
     }
 
@@ -188,7 +191,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
                 .append(this.logoutType)
-                .append(this.attributeReleasePolicy).toHashCode();
+                .append(this.logo)
+                .append(this.attributeReleasePolicy)
+                .toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -291,6 +296,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
+        this.setLogo(source.getLogo());
     }
 
     /**
@@ -324,6 +330,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
+        toStringBuilder.append("logo", this.logo);
 
         return toStringBuilder.toString();
     }
@@ -370,5 +377,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public final AttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
+    }
+
+    @Override
+    public String getLogo() {
+        return this.logo;
+    }
+
+    public void setLogo(final String logo) {
+        this.logo = logo;
     }
 }
