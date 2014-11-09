@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
@@ -130,11 +132,24 @@ public final class WebUtils {
      * Put ticket granting ticket in request scope.
      *
      * @param context the context
-     * @param ticketValue the ticket value
+     * @param ticket the ticket value
      */
     public static void putTicketGrantingTicketInRequestScope(
-        final RequestContext context, @NotNull final TicketGrantingTicket ticketValue) {
+        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+        final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
+    }
+
+    /**
+     * Put ticket granting ticket in flow scope.
+     *
+     * @param context the context
+     * @param ticket the ticket value
+     */
+    public static void putTicketGrantingTicketInFlowScope(
+        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+        final String ticketValue = ticket != null ? ticket.getId() : null;
+        putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
 
     /**
@@ -144,21 +159,19 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInFlowScope(
-        final RequestContext context, @NotNull final TicketGrantingTicket ticketValue) {
+            final RequestContext context, @NotNull final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
 
     /**
      * Put ticket granting ticket into map that is either backed by the flow/request scope.
-     *
+     * Will override the previous value and blank out the setting if value is null or empty.
      * @param map the map
      * @param ticketValue the ticket value
      */
     private static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                       @NotNull final TicketGrantingTicket ticketValue) {
-        if (ticketValue != null) {
-            map.put("ticketGrantingTicketId", ticketValue.getId());
-        }
+                                                       @NotNull final String ticketValue) {
+        map.put("ticketGrantingTicketId", ticketValue);
     }
 
     /**
@@ -249,5 +262,36 @@ public final class WebUtils {
      */
     public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
         return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
+    }
+
+    /**
+     * Put service into flowscope.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putService(final RequestContext context, final Service service) {
+        context.getFlowScope().put("service", service);
+    }
+
+    /**
+     * Put warning cookie value into flowscope.
+     *
+     * @param context the context
+     * @param cookieValue the cookie value
+     */
+    public static void putWarningCookie(final RequestContext context, final Boolean cookieValue) {
+        context.getFlowScope().put("warnCookieValue", cookieValue);
+    }
+
+    /**
+     * Put registered service into flowscope.
+     *
+     * @param context the context
+     * @param registeredService the service
+     */
+    public static void putRegisteredService(final RequestContext context,
+                                            final RegisteredService registeredService) {
+        context.getFlowScope().put("registeredService", registeredService);
     }
 }
