@@ -84,7 +84,6 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         }
 
         String eventId = INVALID;
-
         try {
             final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
             if (ticket != null && !ticket.isExpired()) {
