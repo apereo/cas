@@ -38,4 +38,9 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, new HashSet(builder.getSuccesses().keySet()));
     }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
 }
