@@ -18,15 +18,14 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+
+import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * We cheat and utilize the {@link org.jasig.cas.authentication.AuthenticationMetaDataPopulator} to retrieve and store
@@ -52,10 +51,15 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        if (credential instanceof UsernamePasswordCredential) {
+        if (supports(credential)) {
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
             final Authentication authentication = builder.build();
             this.credentialCache.put(authentication.getPrincipal().getId(), c.getPassword());
         }
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof UsernamePasswordCredential;
     }
 }
