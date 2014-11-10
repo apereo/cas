@@ -129,6 +129,15 @@ public final class WebUtils {
     }
 
     /**
+     * Gets the registered service from the flow scope.
+     *
+     * @param context the context
+     * @return the service
+     */
+    public static RegisteredService getRegisteredService(final RequestContext context) {
+        return context != null ? (RegisteredService) context.getFlowScope().get("registeredService") : null;
+    }
+    /**
      * Put ticket granting ticket in request scope.
      *
      * @param context the context
