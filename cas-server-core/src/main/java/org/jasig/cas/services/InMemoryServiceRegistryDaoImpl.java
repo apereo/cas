@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
@@ -31,6 +34,16 @@ import java.util.List;
  *
  */
 public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
+
+    /**
+     * Instantiates a new In memory service registry.
+     */
+    public InMemoryServiceRegistryDaoImpl() {
+        LOGGER.warn("[{}] is designed to retrieve and persist service definitions in memory. Changes that are made to service definitions during runtime "
+                + "will be LOST upon container restarts.", InMemoryServiceRegistryDaoImpl.class.getName());
+    }
 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
