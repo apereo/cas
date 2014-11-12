@@ -32,20 +32,20 @@ import static org.junit.Assert.*;
 public class InMemoryServiceRegistryDaoImplTests {
 
     @Test
-    public void testSave() throws Exception {
+    public void testSave()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
     }
 
     @Test
-    public void testLoadEmpty() throws Exception {
+    public void testLoadEmpty() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         assertEquals(reg.load().size(), 0);
     }
 
     @Test
-     public void testSaveAndLoad() throws Exception {
+     public void testSaveAndLoad()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -53,7 +53,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void testSaveAndFind() throws Exception {
+    public void testSaveAndFind()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -61,7 +61,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void testSaveAndDelete() throws Exception {
+    public void testSaveAndDelete()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
