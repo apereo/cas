@@ -34,10 +34,10 @@ public class DefaultPrincipalAttributesRepository implements PrincipalAttributes
     private Map<String, Object> attributes;
 
     /**
-     * Instantiates a new No op principal attribute repository.
+     * Instantiates a new Default principal attribute repository.
      */
     public DefaultPrincipalAttributesRepository() {
-        setAttributes(new HashMap<String, Object>());
+        this(new HashMap<String, Object>());
     }
 
     /**
@@ -46,11 +46,11 @@ public class DefaultPrincipalAttributesRepository implements PrincipalAttributes
      * @param attributes the attributes
      */
     public DefaultPrincipalAttributesRepository(final Map<String, Object> attributes) {
-        setAttributes(attributes);
+        setAttributes(getClass().getName(), attributes);
     }
 
     @Override
-    public void setAttributes(@NotNull final Map<String, Object> attributes) {
+    public void setAttributes(final String id, @NotNull final Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 

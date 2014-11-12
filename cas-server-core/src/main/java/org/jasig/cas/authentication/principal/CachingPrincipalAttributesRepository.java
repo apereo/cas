@@ -61,41 +61,14 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     /**
      * Instantiates a new caching attributes principal factory.
-     *
-     * @param attributeRepository the attribute repository
-     */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, new HashMap<String, Object>());
-    }
-
-    /**
-     * Instantiates a new caching attributes principal factory.
      * Caches the attributes based on duration units of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
      * and {@link #DEFAULT_CACHE_EXPIRATION_UNIT}.
      * @param attributeRepository the attribute repository
-     * @param attributes the initial attributes
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final Map<String, Object> attributes) {
+    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository) {
         this(attributeRepository, createCacheConfiguration(
                 new Duration(DEFAULT_CACHE_EXPIRATION_UNIT, DEFAULT_CACHE_EXPIRATION_DURATION)));
-        setAttributes(attributes);
-    }
 
-    /**
-     * Instantiates a new caching attributes principal factory.
-     *
-     * @param attributeRepository the attribute repository
-     * @param attributes the attributes
-     * @param timeUnit the time unit
-     * @param expiryDuration the expiry duration
-     */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final Map<String, Object> attributes,
-                                                final TimeUnit timeUnit,
-                                                final long expiryDuration) {
-        this(attributeRepository, createCacheConfiguration(new Duration(timeUnit, expiryDuration)));
-        setAttributes(attributes);
     }
 
     /**
@@ -196,18 +169,18 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     @Override
-    public void setAttributes(final Map<String, Object> attributes) {
+    public void setAttributes(final String id, final Map<String, Object> attributes) {
         synchronized (this.cache) {
-            this.cache.put(ATTRIBUTES_CACHE_KEY, attributes);
+            this.cache.put(id, attributes);
         }
     }
 
     @Override
     public Map<String, Object> getAttributes(final String id) {
-        Map<String, Object> attributes = this.cache.get(ATTRIBUTES_CACHE_KEY);
+        Map<String, Object> attributes = this.cache.get(id);
         if (attributes == null) {
             attributes = convertPersonAttributesToPrincipalAttributes(id);
-            setAttributes(attributes);
+            setAttributes(id, attributes);
             return attributes;
         }
         return attributes;
