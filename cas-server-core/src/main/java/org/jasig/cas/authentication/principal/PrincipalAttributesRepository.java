@@ -35,9 +35,11 @@ public interface PrincipalAttributesRepository extends Serializable {
      * and return them again via {@link #getAttributes(String)}
      * or to entirely ignore them and return a fresh copy.
      *
+     * @param id the identifier to which the attributes may be linked in the repository.
+     *           This typically would be the principal id.
      * @param attributes the attributes
      */
-    void setAttributes(Map<String, Object> attributes);
+    void setAttributes(String id, Map<String, Object> attributes);
 
     /**
      * Gets attributes for the given principal id.
