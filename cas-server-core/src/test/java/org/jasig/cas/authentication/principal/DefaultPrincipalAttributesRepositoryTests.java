@@ -49,7 +49,7 @@ public class DefaultPrincipalAttributesRepositoryTests {
     @Test
     public void testAttributesOnSetter() {
         final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
-        rep.setAttributes(Collections.<String, Object>singletonMap("mail", "final@example.com"));
+        rep.setAttributes("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
         assertEquals(rep.getAttributes("uid").size(), 1);
         assertTrue(rep.getAttributes("uid").containsKey("mail"));
     }
