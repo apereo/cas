@@ -41,8 +41,9 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
      * Instantiates a new In memory service registry.
      */
     public InMemoryServiceRegistryDaoImpl() {
-        LOGGER.warn("[{}] is designed to retrieve and persist service definitions in memory. Changes that are made to service definitions during runtime "
-                + "will be LOST upon container restarts.", InMemoryServiceRegistryDaoImpl.class.getName());
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime "
+                + "will be LOST upon container restarts.");
     }
 
     @NotNull
