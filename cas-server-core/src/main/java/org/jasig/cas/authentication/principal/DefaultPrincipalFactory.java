@@ -54,7 +54,7 @@ public final class DefaultPrincipalFactory implements PrincipalFactory {
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        this.attributesRepository.setAttributes(attributes);
+        this.attributesRepository.setAttributes(id, attributes);
         return new SimplePrincipal(id, this.attributesRepository);
     }
 
