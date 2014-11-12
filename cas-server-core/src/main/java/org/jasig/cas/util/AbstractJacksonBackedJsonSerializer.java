@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
@@ -143,69 +142,6 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     public void toJson(final File out, final T object) {
         try {
             this.objectMapper.writer(this.prettyPrinter).writeValue(out, object);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    /**
-     * Method to deserialize JSON content as tree expressed using set of JsonNode instances.
-     * Returns root of the resulting tree (where root can consist of just a single
-     * node if the current event is a value event, not container).
-     *
-     * @param json the json
-     * @return the json node
-     */
-    public JsonNode readJsonTree(final String json) {
-        try {
-            return this.objectMapper.readTree(json);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Method to deserialize JSON content as tree expressed using set of JsonNode instances.
-     * Returns root of the resulting tree (where root can consist of just a single
-     * node if the current event is a value event, not container).
-     *
-     * @param json the json
-     * @return the json node
-     */
-    public JsonNode readJsonTree(final Reader json) {
-        try {
-            return this.objectMapper.readTree(json);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Method to deserialize JSON content as tree expressed using set of JsonNode instances.
-     * Returns root of the resulting tree (where root can consist of just a single
-     * node if the current event is a value event, not container).
-     *
-     * @param json the json
-     * @return the json node
-     */
-    public JsonNode readJsonTree(final InputStream json) {
-        try {
-            return this.objectMapper.readTree(json);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Method to deserialize JSON content as tree expressed using set of JsonNode instances.
-     * Returns root of the resulting tree (where root can consist of just a single
-     * node if the current event is a value event, not container).
-     *
-     * @param json the json
-     * @return the json node
-     */
-    public JsonNode readJsonTree(final File json) {
-        try {
-            return this.objectMapper.readTree(json);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
