@@ -26,10 +26,6 @@ import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Collections;
-
 /**
  * Utilities related to LDAP functions.
  *
@@ -156,22 +152,6 @@ public final class LdapUtils {
             return v;
         }
         return nullValue;
-    }
-
-
-    /**
-     * Gets the attribute values if more than one, otherwise an empty list.
-     *
-     * @param entry the entry
-     * @param attrName the attr name
-     * @return the collection of attribute values or an empty list
-     */
-     public static Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
-        final LdapAttribute attrs = entry.getAttribute(attrName);
-        if (attrs != null) {
-            return attrs.getStringValues();
-        }
-        return Collections.emptyList();
     }
 
     /**
