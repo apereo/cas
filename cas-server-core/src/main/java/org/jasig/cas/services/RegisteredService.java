@@ -160,7 +160,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
      * @since 4.1
-     * @return URI location of the image
+     * @return location of the image as an absolute or relative url
      */
     String getLogo();
 }
