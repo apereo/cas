@@ -57,7 +57,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_tr.properties">messages_tr.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_nl.properties">messages_nl.properties</a>
                 </td>
                 <td>
                   0
@@ -71,7 +71,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_nl.properties">messages_nl.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_tr.properties">messages_tr.properties</a>
                 </td>
                 <td>
                   0
@@ -127,7 +127,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
                 </td>
                 <td>
                   0
@@ -141,7 +141,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
                 </td>
                 <td>
                   0
@@ -197,6 +197,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver.java">org/jasig/cas/web/view/AjaxAwareJsonExceptionResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#default_views.properties">default_views.properties</a>
                 </td>
                 <td>
@@ -212,20 +226,6 @@
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ar.properties">messages_ar.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver.java">org/jasig/cas/web/view/AjaxAwareJsonExceptionResolver.java</a>
                 </td>
                 <td>
                   0
@@ -323,7 +323,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ru.properties">messages_ru.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_hr.properties">messages_hr.properties</a>
                 </td>
                 <td>
                   0
@@ -337,7 +337,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_hr.properties">messages_hr.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ru.properties">messages_ru.properties</a>
                 </td>
                 <td>
                   0
