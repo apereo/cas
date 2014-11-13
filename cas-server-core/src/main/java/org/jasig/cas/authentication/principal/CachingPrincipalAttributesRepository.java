@@ -46,8 +46,6 @@ import java.util.concurrent.TimeUnit;
 public final class CachingPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
     private static final long serialVersionUID = 6350244643948535906L;
 
-    private static final String ATTRIBUTES_CACHE_KEY = CachingPrincipalAttributesRepository.class.getSimpleName();
-
     private static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
     private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
 
