@@ -1199,7 +1199,7 @@
     <maven-checkstyle-plugin.version>2.10</maven-checkstyle-plugin.version>
     <maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
     <maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
-    <maven-aspectj-plugin.version>1.5</maven-aspectj-plugin.version>
+    <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
     <maven-antrun-plugin.version>1.5</maven-antrun-plugin.version>
 
     <!-- Project configuration -->
