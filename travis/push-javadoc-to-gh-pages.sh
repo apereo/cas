@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Licensed to Jasig under one or more contributor license
+# Licensed to Apereo under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
 # for additional information regarding copyright ownership.
-# Jasig licenses this file to you under the Apache License,
+# Apereo licenses this file to you under the Apache License,
 # Version 2.0 (the "License"); you may not use this file
 # except in compliance with the License.  You may obtain a
 # copy of the License at the following location:
@@ -58,10 +58,10 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Adding changes to the index...\n"
   git add -f . > /dev/null
   echo -e "Committing changes...\n" 
-  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
+  git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Done magic with auto publishment to gh-pages.\n"
+  echo -e "Successfully published Javadocs to [gh-pages] branch.\n"
   
 fi

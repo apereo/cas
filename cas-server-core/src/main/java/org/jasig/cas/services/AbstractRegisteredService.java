@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -25,20 +24,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -324,6 +322,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
+        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
 
         return toStringBuilder.toString();
     }

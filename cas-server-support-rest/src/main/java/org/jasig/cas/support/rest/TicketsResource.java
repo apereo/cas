@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,6 +24,8 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +81,8 @@ public class TicketsResource {
 
         Formatter fmt = null;
         try {
-            final String tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId);
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
@@ -106,7 +108,7 @@ public class TicketsResource {
      *
      * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
-     * @return @return ResponseEntity representing RESTful response
+     * @return {@link }ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}",
             method = RequestMethod.POST,
@@ -114,9 +116,9 @@ public class TicketsResource {
     public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
-            final String serviceTicketId = this.cas.grantServiceTicket(tgtId,
+            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
                     new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
-            return new ResponseEntity<String>(serviceTicketId, HttpStatus.OK);
+            return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
@@ -129,10 +131,13 @@ public class TicketsResource {
      * Destroy ticket granting ticket.
      *
      * @param tgtId ticket granting ticket id URI path param
+     * @return {@link ResponseEntity} representing RESTful response. Signals
+     * {@link HttpStatus#OK} when successful.
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final void deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
+        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
     }
 
     /**

@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Licensed to Jasig under one or more contributor license
+# Licensed to Apereo under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
 # for additional information regarding copyright ownership.
-# Jasig licenses this file to you under the Apache License,
+# Apereo licenses this file to you under the Apache License,
 # Version 2.0 (the "License"); you may not use this file
 # except in compliance with the License.  You may obtain a
 # copy of the License at the following location:
@@ -20,5 +20,6 @@
 
 # Only invoke the deployment to Sonatype when it's not a PR and only for master
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
-  mvn deploy --settings travis/settings.xml
+  mvn deploy --settings ./travis/settings.xml -P nocheck -Dlog4j.configuration=file:./travis/log4j.xml
+  echo -e "Successfully deployed SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
 fi 

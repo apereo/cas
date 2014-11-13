@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -106,12 +106,42 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
     }
-
+    
     @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
+        final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
+        final TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.class);
+        when(ticketGrantingTicket.isExpired()).thenReturn(false);
+        when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
+        final Authentication authentication = mock(Authentication.class);
+        final Principal principal = mock(Principal.class);
+        when(principal.getId()).thenReturn(ID);
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+        when(principal.getAttributes()).thenReturn(map);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
+        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.afterPropertiesSet();
+        oauth20WrapperController.handleRequest(mockRequest, mockResponse);
+        assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
+    }
+    
+    @Test
+    public void testOKWithAuthorizationHeader() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.PROFILE_URL);
+        mockRequest.addHeader("Authorization", "bearer " + TGT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);

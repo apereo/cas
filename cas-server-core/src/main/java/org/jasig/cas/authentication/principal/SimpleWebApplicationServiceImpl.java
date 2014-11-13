@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -61,6 +61,17 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
         this.responseType = responseType;
     }
 
+        final String targetService = request.getParameter(CONST_PARAM_TARGET_SERVICE);
+        final String service = request.getParameter(CONST_PARAM_SERVICE);
+        final String serviceAttribute = (String) request.getAttribute(CONST_PARAM_SERVICE);
+        final String serviceToUse;
+        if (StringUtils.hasText(targetService)) {
+            serviceToUse = targetService;
+        } else if (StringUtils.hasText(service)) {
+            serviceToUse = service;
+        } else {
+            serviceToUse = serviceAttribute;
+        }
 
     @Override
     public Response getResponse(final String ticketId) {

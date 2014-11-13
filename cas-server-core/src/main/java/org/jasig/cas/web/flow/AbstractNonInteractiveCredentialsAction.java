@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,6 +24,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -72,12 +73,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
                         service,
                             credential);
-                WebUtils.putServiceTicketInRequestScope(context,
-                    serviceTicketId);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 return result("warn");
             } catch (final AuthenticationException e) {
                 onError(context, credential);

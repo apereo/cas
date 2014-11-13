@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,11 +31,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
+ * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
+ * Please use other means of confguring your distributed ticket registry, such as
+ * ehcache or memcached integrations with CAS.
+ *
+ * <p>Implementation of TicketRegistry that is backed by a JBoss TreeCache.
  * @author Scott Battaglia
  * @since 3.1
- *
  */
+@Deprecated
 public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry {
 
     /** Indicator of what tree branch to put tickets in. */
