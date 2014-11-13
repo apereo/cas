@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link TicketGrantingTicketCheckAction}.
- *
+ * @since 4.1
  * @author Misagh Moayyed mmoayyed@unicon.net
  */
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTest {
