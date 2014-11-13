@@ -47,9 +47,9 @@ import java.util.regex.PatternSyntaxException;
  * attribute of LDAP entries via {@link LdapUtils#OBJECTCLASS_ATTRIBUTE}.
  * @author Misagh Moayyed
  */
-public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapper {
+public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapServiceMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
 
     @NotNull
     private JsonSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
