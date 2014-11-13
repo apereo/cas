@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -38,6 +38,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
@@ -107,8 +109,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
-    private final String alternateUserName;
-
+    private final ServicesManager servicesManager;
+    
     /**
      * Instantiates a new google accounts service.
      *
@@ -117,11 +119,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
+     * @param servicesManager the services manager
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
+            final PrivateKey privateKey, final PublicKey publicKey, final ServicesManager servicesManager) {
+        this(id, id, null, relayState, requestId, privateKey, publicKey, servicesManager);
     }
 
     /**
@@ -134,17 +136,18 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
+     * @param servicesManager the services manager
      */
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
+            final PrivateKey privateKey, final PublicKey publicKey,
+            final ServicesManager servicesManager) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.requestId = requestId;
-        this.alternateUserName = alternateUserName;
+        this.servicesManager = servicesManager;
     }
 
     /**
@@ -153,23 +156,21 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param request the request
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param alternateUserName the alternate user name
+     * @param servicesManager the services manager
      * @return the google accounts service
      */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey, final String alternateUserName) {
+            final PublicKey publicKey, final ServicesManager servicesManager) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
-        final String xmlRequest = decodeAuthnRequestXML(request
-                .getParameter(CONST_PARAM_SERVICE));
+        final String xmlRequest = decodeAuthnRequestXML(request.getParameter(CONST_PARAM_SERVICE));
 
         if (!StringUtils.hasText(xmlRequest)) {
             return null;
         }
 
-        final Document document = SamlUtils
-                .constructDocumentFromXmlString(xmlRequest);
+        final Document document = SamlUtils.constructDocumentFromXmlString(xmlRequest);
 
         if (document == null) {
             return null;
@@ -179,7 +180,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, alternateUserName);
+                relayState, requestId, privateKey, publicKey, servicesManager);
     }
 
     @Override
@@ -215,19 +216,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         c.add(Calendar.YEAR, 1);
-
-        final String userId;
-
-        if (this.alternateUserName == null) {
-            userId = getPrincipal().getId();
-        } else {
-            final String attributeValue = (String) getPrincipal().getAttributes().get(this.alternateUserName);
-            if (attributeValue == null) {
-                userId = getPrincipal().getId();
-            } else {
-                userId = attributeValue;
-            }
-        }
+        
+        final RegisteredService svc = this.servicesManager.findServiceBy(this);
+        final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
         final String currentDateTime = new ISOStandardDateFormat().getCurrentDateAndTime();
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,7 +31,6 @@ import java.util.Map;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -102,24 +101,7 @@ public class RegisteredServiceValidatorTests {
 
         assertEquals(1, exception.getErrorCount());
     }
-    
-    @Test
-    public void testUsernameAttributeWithAllFilteringPolicy() {
-        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
-        impl.setServiceId("test");
-        impl.setDescription("fasdfdsafsafsafdsa");
-        impl.setUsernameAttribute("k3");
-        impl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         
-        final BindException exception = new BindException(impl, "registeredService");
-
-        final RegisteredServiceValidator validator = getValidator(false);
-        validator.setMaxDescriptionLength(100);
-        validator.validate(impl, exception);
-
-        assertEquals(0, exception.getErrorCount());
-    }
-    
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
         final Validator validator = getValidator(exists);
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();

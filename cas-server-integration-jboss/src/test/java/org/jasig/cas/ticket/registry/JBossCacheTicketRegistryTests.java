@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,11 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.ticket.registry;
-
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
@@ -38,13 +33,24 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
+
 /**
- * Test case to test the DefaultTicketRegistry based on test cases to test all
+ * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
+ * Please use other means of confguring your distributed ticket registry, such as
+ * ehcache or memcached integrations with CAS.
+ *
+ * <p>Test case to test the DefaultTicketRegistry based on test cases to test all
  * Ticket Registries.
  *
+ * either ehcache or memcached modules.
  * @author Scott Battaglia
  * @author Marc-Antoine Garrigue
  */
+@Deprecated
 public final class JBossCacheTicketRegistryTests {
 
     private static final String APPLICATION_CONTEXT_FILE_NAME = "jbossTestContext.xml";

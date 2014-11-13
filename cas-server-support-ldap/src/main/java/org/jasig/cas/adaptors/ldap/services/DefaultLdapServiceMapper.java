@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,13 +19,13 @@
 package org.jasig.cas.adaptors.ldap.services;
 
 import org.apache.commons.lang3.SerializationUtils;
-
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -75,16 +75,13 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     private String serviceSsoEnabledAttribute = "casServiceSsoEnabled";
 
     @NotNull
-    private String serviceAnonymousAccessAttribute = "casServiceAnonymousAccess";
-
-    @NotNull
     private String serviceProxyPolicyAttribute = "casServiceProxyPolicy";
 
     @NotNull
     private String serviceThemeAttribute = "casServiceTheme";
 
     @NotNull
-    private String usernameAttribute = "casUsernameAttribute";
+    private String usernameAttributeProvider = "casUsernameAttributeProvider";
 
     @NotNull
     private String attributeReleasePolicyAttribute = "casAttributeReleasePolicy";
@@ -98,43 +95,50 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
+        try {
+            if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+                ((AbstractRegisteredService) svc).setId(System.nanoTime());
+            }
+            final String newDn = getDnForRegisteredService(dn, svc);
+            LOGGER.debug("Creating entry {}", newDn);
 
-        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) svc).setId(System.nanoTime());
+            final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
+            attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
+            attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
+            attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
+            attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
+            attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
+            attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
+            attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
+            attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
+
+            if (svc.getUsernameAttributeProvider() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getUsernameAttributeProvider());
+                final LdapAttribute attr = new LdapAttribute(this.usernameAttributeProvider, data);
+                attrs.add(attr);
+            }
+            if (svc.getProxyPolicy() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
+                final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
+                attrs.add(attr);
+            }
+            if (svc.getAttributeReleasePolicy() != null) {
+                final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
+                final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
+                attrs.add(attr);
+            }
+
+            if (svc.getRequiredHandlers().size() > 0) {
+                attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[]{})));
+            }
+
+
+            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", this.objectClass));
+
+            return new LdapEntry(newDn, attrs);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        final String newDn = getDnForRegisteredService(dn, svc);
-        LOGGER.debug("Creating entry {}", newDn);
-
-        final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
-        attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
-        attrs.add(new LdapAttribute(this.serviceIdAttribute, svc.getServiceId()));
-        attrs.add(new LdapAttribute(this.serviceNameAttribute, svc.getName()));
-        attrs.add(new LdapAttribute(this.serviceDescriptionAttribute, svc.getDescription()));
-        attrs.add(new LdapAttribute(this.serviceEnabledAttribute, Boolean.toString(svc.isEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceAnonymousAccessAttribute, Boolean.toString(svc.isAnonymousAccess()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.serviceSsoEnabledAttribute, Boolean.toString(svc.isSsoEnabled()).toUpperCase()));
-        attrs.add(new LdapAttribute(this.evaluationOrderAttribute, String.valueOf(svc.getEvaluationOrder())));
-        attrs.add(new LdapAttribute(this.serviceThemeAttribute, svc.getTheme()));
-        attrs.add(new LdapAttribute(this.usernameAttribute, svc.getUsernameAttribute()));
-        
-        if (svc.getProxyPolicy() != null) {
-            final byte[] data = SerializationUtils.serialize(svc.getProxyPolicy());
-            final LdapAttribute attr = new LdapAttribute(this.serviceProxyPolicyAttribute, data);
-            attrs.add(attr);
-        }
-        if (svc.getAttributeReleasePolicy() != null) {
-            final byte[] data = SerializationUtils.serialize(svc.getAttributeReleasePolicy());
-            final LdapAttribute attr = new LdapAttribute(this.attributeReleasePolicyAttribute, data);
-            attrs.add(attr);
-        }
-
-        if (svc.getRequiredHandlers().size() > 0) {
-            attrs.add(new LdapAttribute(this.requiredHandlersAttribute, svc.getRequiredHandlers().toArray(new String[] {})));
-        }
-
-        attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectClass));
-
-        return new LdapEntry(newDn, attrs);
     }
 
     @Override
@@ -154,11 +158,15 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
                 s.setEnabled(LdapUtils.getBoolean(entry, this.serviceEnabledAttribute));
                 s.setTheme(LdapUtils.getString(entry, this.serviceThemeAttribute));
                 s.setEvaluationOrder(LdapUtils.getLong(entry, this.evaluationOrderAttribute).intValue());
-                s.setUsernameAttribute(LdapUtils.getString(entry, this.usernameAttribute));
-                s.setAnonymousAccess(LdapUtils.getBoolean(entry, this.serviceAnonymousAccessAttribute));
                 s.setSsoEnabled(LdapUtils.getBoolean(entry, this.serviceSsoEnabledAttribute));
-
                 s.setRequiredHandlers(new HashSet<String>(getMultiValuedAttributeValues(entry, this.requiredHandlersAttribute)));
+                
+                final byte[] usernameAttrData = LdapUtils.getBinary(entry, this.usernameAttributeProvider);
+                if (usernameAttrData != null && usernameAttrData.length > 0) {
+                    final RegisteredServiceUsernameAttributeProvider provider =
+                            (RegisteredServiceUsernameAttributeProvider) SerializationUtils.deserialize(usernameAttrData);
+                    s.setUsernameAttributeProvider(provider);
+                }
                 
                 final byte[] data = LdapUtils.getBinary(entry, this.attributeReleasePolicyAttribute);
                 if (data != null && data.length > 0) {
@@ -213,10 +221,6 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.serviceSsoEnabledAttribute = serviceSsoEnabledAttribute;
     }
 
-    public void setServiceAnonymousAccessAttribute(final String serviceAnonymousAccessAttribute) {
-        this.serviceAnonymousAccessAttribute = serviceAnonymousAccessAttribute;
-    }
-
     public void setServiceProxyPolicyAttribute(final String proxyPolicyAttribute) {
         this.serviceProxyPolicyAttribute = proxyPolicyAttribute;
     }
@@ -229,8 +233,8 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
         this.requiredHandlersAttribute = handlers;
     }
 
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
+    public void setUsernameAttributeProvider(final String usernameAttributeProvider) {
+        this.usernameAttributeProvider = usernameAttributeProvider;
     }
 
     public void setEvaluationOrderAttribute(final String evaluationOrderAttribute) {
@@ -240,7 +244,16 @@ public final class DefaultLdapServiceMapper implements LdapRegisteredServiceMapp
     public void setAttributeReleasePolicyAttribute(final String attributeReleasePolicyAttribute) {
         this.attributeReleasePolicyAttribute = attributeReleasePolicyAttribute;
     }
-    
+
+    /**
+     * @deprecated As of 4.1. Consider using {@link #setUsernameAttributeProvider}
+     * @param usernameAttribute the uername attribute to return
+     */
+    @Deprecated
+    public void setUsernameAttribute(final String usernameAttribute) {
+        LOGGER.warn("setUsernameAttribute() is deprecated and has no effect. Consider setUsernameAttributeProvider() instead.");
+    }
+
     @Override
     public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
         return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);

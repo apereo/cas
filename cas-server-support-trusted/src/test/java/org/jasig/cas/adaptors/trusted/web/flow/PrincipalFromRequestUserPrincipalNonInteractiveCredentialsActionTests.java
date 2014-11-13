@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,14 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.adaptors.trusted.web.flow;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
@@ -47,6 +39,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -82,7 +82,9 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setUserPrincipal(new Principal() {
             @Override
-            public String getName() { return "test"; }
+            public String getName() {
+                return "test";
+            }
         });
 
         final MockRequestContext context = new MockRequestContext();

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,13 @@
  */
 package org.jasig.cas.services;
 
-import java.net.URL;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
@@ -40,6 +39,14 @@ public final class RegexMatchingRegisteredServiceProxyPolicy implements Register
     private final Pattern pattern;
 
     /**
+     * Instantiates a new Regex matching registered service proxy policy.
+     * Required for serialization.
+     */
+    protected RegexMatchingRegisteredServiceProxyPolicy() {
+        this.pattern = null;
+    }
+
+    /**
      * Init the policy with the pgt url regex pattern that
      * will determine the urls allowed to receive the pgt.
      * The matching by default is done in a case insensitive manner.
@@ -47,6 +54,15 @@ public final class RegexMatchingRegisteredServiceProxyPolicy implements Register
      */
     public RegexMatchingRegisteredServiceProxyPolicy(@NotNull final String pgtUrlPattern) {
         this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * Gets the pattern.
+     *
+     * @return the pattern
+     */
+    protected Pattern getPattern() {
+        return this.pattern;
     }
 
     @Override
