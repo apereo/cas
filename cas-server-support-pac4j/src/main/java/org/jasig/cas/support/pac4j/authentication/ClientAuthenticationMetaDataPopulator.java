@@ -42,10 +42,8 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      */
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        if (supports(credential)) {
-            final ClientCredential clientCredential = (ClientCredential) credential;
-            builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
-        }
+        final ClientCredential clientCredential = (ClientCredential) credential;
+        builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
     }
 
     @Override
