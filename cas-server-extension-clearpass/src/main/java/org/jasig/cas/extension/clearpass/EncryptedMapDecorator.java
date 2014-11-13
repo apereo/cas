@@ -147,14 +147,13 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final byte[] salt,
-            final String secretKeyAlgorithm, final Key secretKey) throws NoSuchAlgorithmException {
-        this.decoratedMap = decoratedMap;
-        this.key = secretKey;
-        this.salt = salt;
-        this.secretKeyAlgorithm = secretKeyAlgorithm;
-        this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
-
+            final String secretKeyAlgorithm, final Key secretKey) {
         try {
+            this.decoratedMap = decoratedMap;
+            this.key = secretKey;
+            this.salt = salt;
+            this.secretKeyAlgorithm = secretKeyAlgorithm;
+            this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
             this.ivSize = getIvSize();
         } catch (final Exception e) {
             throw new RuntimeException(e);
