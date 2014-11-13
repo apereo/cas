@@ -65,7 +65,6 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
 
     @Override
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
-
         try {
             if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
                 ((AbstractRegisteredService) svc).setId(System.nanoTime());
@@ -89,9 +88,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
 
     @Override
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
-
         final String value = LdapUtils.getString(entry, this.serviceDefinitionAttribute);
-
         if (StringUtils.hasText(value)) {
             final RegisteredService service = this.jsonSerializer.fromJson(value);
             return service;
