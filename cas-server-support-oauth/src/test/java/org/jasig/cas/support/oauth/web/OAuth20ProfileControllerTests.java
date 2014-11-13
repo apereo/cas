@@ -18,15 +18,8 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -35,6 +28,15 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This class tests the {@link OAuth20ProfileController} class.
@@ -133,8 +135,20 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
+
+        final ObjectMapper mapper = new ObjectMapper();
+
+        final String EXPECTED = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        final JsonNode expectedObj = mapper.readTree(EXPECTED);
+        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        final JsonNode expectedAttributes = expectedObj.get("attributes");
+        final JsonNode receivedAttributes = receivedObj.get("attributes");
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
     
     @Test
@@ -163,7 +177,19 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final String EXPECTED = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        final JsonNode expectedObj = mapper.readTree(EXPECTED);
+        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        final JsonNode expectedAttributes = expectedObj.get("attributes");
+        final JsonNode receivedAttributes = receivedObj.get("attributes");
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 }
