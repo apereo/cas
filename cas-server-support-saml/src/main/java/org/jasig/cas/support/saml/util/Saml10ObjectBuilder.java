@@ -62,6 +62,11 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
     /**
+     * Encoder to wrap the saml response in a SOAP envelope.
+     */
+    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
+
+    /**
      * Create a new SAML response object.
      * @param id the id
      * @param issueInstant the issue instant
@@ -169,15 +174,27 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
-     * New subject element.
+     * New subject element that uses the confirmation method
+     * {@link #CONFIRMATION_METHOD}.
      *
      * @param identifier the identifier
      * @return the subject
      */
     public Subject newSubject(final String identifier) {
+        return newSubject(identifier, CONFIRMATION_METHOD);
+    }
+
+    /**
+     * New subject element with given confirmation method.
+     *
+     * @param identifier the identifier
+     * @param confirmationMethod the confirmation method
+     * @return the subject
+     */
+    public Subject newSubject(final String identifier, final String confirmationMethod) {
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
         final ConfirmationMethod method = newSamlObject(ConfirmationMethod.class);
-        method.setConfirmationMethod(CONFIRMATION_METHOD);
+        method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
         final NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.class);
         nameIdentifier.setNameIdentifier(identifier);
@@ -240,8 +257,6 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         messageContext.setOutboundMessageTransport(
                 new HttpServletResponseAdapter(httpResponse, httpRequest.isSecure()));
         messageContext.setOutboundSAMLMessage(samlMessage);
-
-        final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-        encoder.encode(messageContext);
+        this.encoder.encode(messageContext);
     }
 }
