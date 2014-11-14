@@ -128,6 +128,8 @@ public class ServiceValidateController extends DelegateController {
         }
 
         try {
+            final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+
             final Credentials serviceCredentials = getServiceCredentialsFromRequest(request);
             String proxyGrantingTicketId = null;
 
@@ -142,8 +144,6 @@ public class ServiceValidateController extends DelegateController {
                         + serviceCredentials, e);
                 }
             }
-
-            final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
 
             final ValidationSpecification validationSpecification = this.getCommandClass();
             final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
