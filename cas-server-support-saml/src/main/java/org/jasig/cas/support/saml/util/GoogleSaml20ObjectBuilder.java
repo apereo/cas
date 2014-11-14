@@ -29,8 +29,8 @@ import javax.xml.namespace.QName;
 import java.lang.reflect.Field;
 
 /**
- * This is {@link org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder}.
- * Attempts to build the saml response QName based on the spec described here:
+ * This is {@link org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder} that
+ * attempts to build the saml response QName based on the spec described here:
  * https://developers.google.com/google-apps/sso/saml_reference_implementation_web#samlReferenceImplementationWebSetupChangeDomain
  * @author Misagh Moayyed mmoayyed@unicon.net
  */
