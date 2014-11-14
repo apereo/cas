@@ -325,7 +325,7 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param encodedRequestXmlString the encoded request xml string
      * @return the request
      */
-    public static String decodeSamlAuthnRequest(final String encodedRequestXmlString) {
+    public String decodeSamlAuthnRequest(final String encodedRequestXmlString) {
         if (encodedRequestXmlString == null) {
             return null;
         }

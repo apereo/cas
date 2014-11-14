@@ -55,7 +55,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private final GoogleSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder();
+    private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 
     private final String relayState;
 
@@ -122,7 +122,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             final PublicKey publicKey, final ServicesManager servicesManager) {
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = Saml20ObjectBuilder.decodeSamlAuthnRequest(
+        final String xmlRequest = BUILDER.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (!StringUtils.hasText(xmlRequest)) {
@@ -147,7 +147,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
         final String samlResponse = constructSamlResponse();
-        final String signedResponse = this.builder.signSamlResponse(samlResponse,
+        final String signedResponse = BUILDER.signSamlResponse(samlResponse,
                 this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, this.relayState);
@@ -177,30 +177,30 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
-        final org.opensaml.saml2.core.Response response = this.builder.newResponse(
-                this.builder.generateSecureRandomId(),
+        final org.opensaml.saml2.core.Response response = BUILDER.newResponse(
+                BUILDER.generateSecureRandomId(),
                 currentDateTime,
                 getId(), this);
-        response.setStatus(builder.newStatus(StatusCode.SUCCESS_URI, null));
+        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS_URI, null));
 
-        final AuthnStatement authnStatement = this.builder.newAuthnStatement(
+        final AuthnStatement authnStatement = BUILDER.newAuthnStatement(
                 AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
-        final Assertion assertion = this.builder.newAssertion(authnStatement,
+        final Assertion assertion = BUILDER.newAssertion(authnStatement,
                 "https://www.opensaml.org/IDP",
-                NOT_BEFORE_ISSUE_INSTANT, this.builder.generateSecureRandomId());
+                NOT_BEFORE_ISSUE_INSTANT, BUILDER.generateSecureRandomId());
 
-        final Conditions conditions = builder.newConditions(NOT_BEFORE_ISSUE_INSTANT,
+        final Conditions conditions = BUILDER.newConditions(NOT_BEFORE_ISSUE_INSTANT,
                 currentDateTime, getId());
         assertion.setConditions(conditions);
 
-        final Subject subject = this.builder.newSubject(NameID.EMAIL, userId,
+        final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
                 getId(), currentDateTime, this.requestId);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
 
         final StringWriter writer = new StringWriter();
-        this.builder.marshalSamlXmlObject(response, writer);
+        BUILDER.marshalSamlXmlObject(response, writer);
 
         logger.debug("Generated Google SAML response: {}", writer.toString());
         return writer.toString();
