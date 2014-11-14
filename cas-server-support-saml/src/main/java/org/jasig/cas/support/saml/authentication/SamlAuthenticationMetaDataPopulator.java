@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -84,6 +84,11 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
 
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
     }
 
     /**
