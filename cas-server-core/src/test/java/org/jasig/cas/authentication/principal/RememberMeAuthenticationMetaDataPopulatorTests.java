@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -33,6 +31,9 @@ import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  *
@@ -79,7 +80,9 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
                 .addCredential(meta)
                 .addSuccess("test", new HandlerResult(handler, meta));
 
-        this.p.populateAttributes(builder, credential);
+        if (this.p.supports(credential)) {
+            this.p.populateAttributes(builder, credential);
+        }
         return builder;
     }
 
