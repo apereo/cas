@@ -1,0 +1,5 @@
+org.jasig.cas.adaptors.jdbc
+org.jasig.cas.monitor
+org.jasig.cas.services
+org.jasig.cas.ticket.registry
+org.jasig.cas.ticket.registry.support
