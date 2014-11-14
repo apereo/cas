@@ -144,7 +144,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
      * @param secretKeyAlgorithm the encryption algorithm. CANNOT BE NULL.
      * @param secretKey the secret to use.  CANNOT be NULL.
-     * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
+     * @throws RuntimeException if the algorithm cannot be found or the iv size cant be determined.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final byte[] salt,
             final String secretKeyAlgorithm, final Key secretKey) {
