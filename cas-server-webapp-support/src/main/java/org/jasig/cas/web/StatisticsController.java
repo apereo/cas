@@ -43,8 +43,6 @@ import java.util.Queue;
  */
 public final class StatisticsController extends AbstractController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
     private static final int NUMBER_OF_MILLISECONDS_IN_AN_HOUR = 3600000;
@@ -52,6 +50,8 @@ public final class StatisticsController extends AbstractController {
     private static final int NUMBER_OF_MILLISECONDS_IN_A_MINUTE = 60000;
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 
