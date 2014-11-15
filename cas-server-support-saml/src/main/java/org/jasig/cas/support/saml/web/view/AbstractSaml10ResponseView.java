@@ -68,7 +68,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
-    private int skewAllowance = 0;
+    /** Defaults to 0. */
+    private int skewAllowance;
 
     /**
      * Sets the character encoding in the HTTP response.
