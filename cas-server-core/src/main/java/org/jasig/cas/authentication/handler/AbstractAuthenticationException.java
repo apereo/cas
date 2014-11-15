@@ -29,20 +29,20 @@ import org.springframework.util.Assert;
  * @author Scott Battaglia
  * @since 3.0
  */
-public abstract class AuthenticationException extends RootCasException {
+public abstract class AbstractAuthenticationException extends RootCasException {
 
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
      /** The error type that provides additional info about the nature of the exception cause. **/
-    private String type = "error";
+    private final String type = "error";
 
     /**
      * Instantiates a new authentication exception.
      *
      * @param code the code
      */
-    public AuthenticationException(final String code) {
+    public AbstractAuthenticationException(final String code) {
         super(code);
     }
 
@@ -52,7 +52,7 @@ public abstract class AuthenticationException extends RootCasException {
      * @param code the code
      * @param msg the msg
      */
-    public AuthenticationException(final String code, final String msg) {
+    public AbstractAuthenticationException(final String code, final String msg) {
         super(code, msg);
     }
 
@@ -62,7 +62,7 @@ public abstract class AuthenticationException extends RootCasException {
      * @param code the exception code
      * @param msg the error message
      */
-    public AuthenticationException(final String code, final String msg, final String type) {
+    public AbstractAuthenticationException(final String code, final String msg, final String type) {
         this(code, msg);
 
         Assert.hasLength(type, "The exception type cannot be blank");
@@ -73,7 +73,7 @@ public abstract class AuthenticationException extends RootCasException {
      * @param code the exception code
      * @param throwable the exception that originally caused the authentication failure
      */
-    public AuthenticationException(final String code, final Throwable throwable) {
+    public AbstractAuthenticationException(final String code, final Throwable throwable) {
         super(code, throwable);
     }
 

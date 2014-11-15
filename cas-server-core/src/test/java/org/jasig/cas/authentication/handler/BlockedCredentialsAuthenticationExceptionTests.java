@@ -32,7 +32,7 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
 
     @Test
     public void testGetCode() {
-        final AuthenticationException e = new BlockedCredentialsAuthenticationException();
+        final AbstractAuthenticationException e = new BlockedCredentialsAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }

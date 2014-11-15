@@ -18,11 +18,6 @@
  */
 package org.jasig.cas.support.pac4j.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -47,6 +42,11 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
+
 /**
  * This class represents an action to put at the beginning of the webflow.<br />
  * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
@@ -59,12 +59,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public final class ClientAction extends AbstractAction {
-
-    /**
-     * The logger.
-     */
-    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
-
     /**
      * Constant for the service parameter.
      */
@@ -81,6 +75,11 @@ public final class ClientAction extends AbstractAction {
      * Constant for the method parameter.
      */
     public static final String METHOD = "method";
+
+    /**
+     * The logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
     /**
      * The clients used for authentication.

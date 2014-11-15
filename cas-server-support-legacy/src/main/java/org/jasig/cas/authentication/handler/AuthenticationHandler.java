@@ -49,11 +49,11 @@ public interface AuthenticationHandler {
      *
      * @param credential The credential to validate.
      * @return true if valid, return false otherwise.
-     * @throws AuthenticationException An AuthenticationException can contain
+     * @throws AbstractAuthenticationException An AuthenticationException can contain
      * details about why a particular authentication request failed.
      */
     boolean authenticate(Credentials credential)
-        throws AuthenticationException;
+        throws AbstractAuthenticationException;
 
     /**
      * Method to check if the handler knows how to handle the credential

@@ -29,7 +29,7 @@ package org.jasig.cas.authentication.handler;
  * @since 3.0
  */
 public class BadCredentialsAuthenticationException extends
-    AuthenticationException {
+        AbstractAuthenticationException {
 
     /**
      * Static instance of class to prevent cost incurred by creating new

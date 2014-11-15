@@ -32,7 +32,7 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests {
 
     @Test
     public void testGetCode() {
-        final AuthenticationException e = new BadUsernameOrPasswordAuthenticationException();
+        final AbstractAuthenticationException e = new BadUsernameOrPasswordAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
