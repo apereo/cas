@@ -34,7 +34,7 @@ public class PasswordPolicyConfiguration {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Disregard the warning period and warn all users of password expiration. */
-    private boolean alwaysDisplayPasswordExpirationWarning = false;
+    private boolean alwaysDisplayPasswordExpirationWarning;
 
     /** Threshold number of days till password expiration below which a warning is displayed. **/
     private int passwordWarningNumberOfDays = 30;
