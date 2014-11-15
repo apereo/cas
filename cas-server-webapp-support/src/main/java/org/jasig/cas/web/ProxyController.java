@@ -26,7 +26,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -89,7 +89,7 @@ public final class ProxyController extends AbstractController {
             return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     targetService));
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                 new Object[] {ticket});
         } catch (final UnauthorizedServiceException e) {

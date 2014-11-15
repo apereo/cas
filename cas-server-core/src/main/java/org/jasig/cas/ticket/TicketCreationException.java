@@ -25,7 +25,7 @@ package org.jasig.cas.ticket;
 
  * @since 3.0
  */
-public class TicketCreationException extends TicketException {
+public class TicketCreationException extends AbstractTicketException {
 
     /** Serializable ID for unique id. */
     private static final long serialVersionUID = 5501212207531289993L;

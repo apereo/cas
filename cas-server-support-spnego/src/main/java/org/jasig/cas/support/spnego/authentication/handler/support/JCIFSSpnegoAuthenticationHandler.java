@@ -55,7 +55,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     /**
      * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
      */
-    private boolean isNTLMallowed = false;
+    private boolean isNTLMallowed;
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
