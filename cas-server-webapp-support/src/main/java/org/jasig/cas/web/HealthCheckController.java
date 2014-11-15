@@ -53,7 +53,9 @@ public class HealthCheckController extends AbstractController {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     protected ModelAndView handleRequestInternal(
             final HttpServletRequest request, final HttpServletResponse response)

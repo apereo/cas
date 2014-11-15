@@ -89,7 +89,9 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.username = userName;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return this.username;

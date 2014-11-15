@@ -62,7 +62,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     protected final HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
