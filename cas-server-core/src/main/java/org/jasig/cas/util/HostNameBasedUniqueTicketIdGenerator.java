@@ -58,8 +58,8 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      * <li>If the CAS node name is <code>cas-01</code> then, the suffix
      * determined would just be <code>cas-01</code></li>
      * </ul>
-     * @since 4.1
      * @return the shortened ticket suffix based on the hostname
+     * @since 4.1
      */
     private static String determineTicketSuffixByHostName() {
         try {
