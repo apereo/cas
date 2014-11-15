@@ -19,7 +19,8 @@
 package org.jasig.cas.authentication.handler;
 
 import org.jasig.cas.authentication.RootCasException;
-import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The most generic type of authentication exception that one can catch if not
@@ -34,8 +35,10 @@ public abstract class AbstractAuthenticationException extends RootCasException {
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
+    private static final String DEFAULT_TYPE = "error";
+
      /** The error type that provides additional info about the nature of the exception cause. **/
-    private final String type = "error";
+    private final String type;
 
     /**
      * Instantiates a new authentication exception.
@@ -43,7 +46,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the code
      */
     public AbstractAuthenticationException(final String code) {
-        super(code);
+        this(code, "");
     }
 
     /**
@@ -53,7 +56,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param msg the msg
      */
     public AbstractAuthenticationException(final String code, final String msg) {
-        super(code, msg);
+        this(code, msg, DEFAULT_TYPE);
     }
 
     /**
@@ -62,10 +65,8 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the exception code
      * @param msg the error message
      */
-    public AbstractAuthenticationException(final String code, final String msg, final String type) {
-        this(code, msg);
-
-        Assert.hasLength(type, "The exception type cannot be blank");
+    public AbstractAuthenticationException(final String code, final String msg, @NotNull final String type) {
+        super(code, msg);
         this.type = type;
     }
 
@@ -75,6 +76,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      */
     public AbstractAuthenticationException(final String code, final Throwable throwable) {
         super(code, throwable);
+        this.type = DEFAULT_TYPE;
     }
 
     /**

@@ -28,10 +28,10 @@ public class InvalidTicketException extends TicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
 
-    private String ticketId = null;
-
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
+
+    private final String ticketId;
 
     /**
      * Constructs a InvalidTicketException with the default exception code.
@@ -51,6 +51,7 @@ public class InvalidTicketException extends TicketException {
      */
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
+        this.ticketId = ticketId;
     }
 
     /**

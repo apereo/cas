@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
@@ -32,6 +26,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -61,7 +60,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
     private List<ArgumentExtractor> argumentExtractors;
 
     /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated = false;
+    private boolean pathPopulated;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
