@@ -72,6 +72,9 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
+    /** Logger instance. **/
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * Binder that allows additional binding of form object beyond Spring
      * defaults.
@@ -84,9 +87,6 @@ public class AuthenticationViaFormAction {
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
-
-    /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Bind the request to credentials.
