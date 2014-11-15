@@ -110,7 +110,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

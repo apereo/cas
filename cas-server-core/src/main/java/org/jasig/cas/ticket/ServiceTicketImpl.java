@@ -112,7 +112,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {

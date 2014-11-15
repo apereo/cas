@@ -46,14 +46,18 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return MemoryMonitor.class.getSimpleName();
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemoryStatus observe() {
         final StatusCode code;
