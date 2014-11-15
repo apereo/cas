@@ -34,12 +34,11 @@ import org.slf4j.LoggerFactory;
  * @since 3.1
  */
 public final class Response {
-    /** Pattern to detect unprintable ASCII characters. */
-    private static final Pattern NON_PRINTABLE =
-        Pattern.compile("[\\x00-\\x1F\\x7F]+");
-
     /** Log instance. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
+
+    /** Pattern to detect unprintable ASCII characters. */
+    private static final Pattern NON_PRINTABLE = Pattern.compile("[\\x00-\\x1F\\x7F]+");
 
     /** An enumeration of different response types. **/
     public static enum ResponseType {

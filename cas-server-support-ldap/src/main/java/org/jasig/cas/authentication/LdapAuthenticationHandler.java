@@ -61,6 +61,14 @@ import java.util.Set;
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
+    /** Mapping of LDAP attribute name to principal attribute name. */
+    @NotNull
+    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
+
+    /** List of additional attributes to be fetched but are not principal attributes. */
+    @NotNull
+    protected List<String> additionalAttributes = Collections.emptyList();
+
     /** Performs LDAP authentication given username/password. */
     @NotNull
     private final Authenticator authenticator;
@@ -73,15 +81,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String principalIdAttribute;
 
     /** Flag indicating whether multiple values are allowed fo principalIdAttribute. */
-    private boolean allowMultiplePrincipalAttributeValues = false;
-
-    /** Mapping of LDAP attribute name to principal attribute name. */
-    @NotNull
-    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
-
-    /** List of additional attributes to be fetched but are not principal attributes. */
-    @NotNull
-    protected List<String> additionalAttributes = Collections.emptyList();
+    private boolean allowMultiplePrincipalAttributeValues;
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();

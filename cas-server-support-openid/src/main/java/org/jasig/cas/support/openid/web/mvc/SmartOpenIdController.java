@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.openid.web.mvc;
 
-import org.jasig.cas.web.DelegateController;
+import org.jasig.cas.web.AbstractDelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
@@ -38,19 +38,19 @@ import java.util.Map;
  * @author Frederic Esnault
  * @since 3.5
  */
-public class SmartOpenIdController extends DelegateController implements Serializable {
+public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
-
-    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
-
-    private ServerManager serverManager;
 
     /** View if association Fails. */
     private static final String DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME = "casOpenIdAssociationFailureView";
 
     /** View if association Succeeds. */
     private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
+
+    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+
+    private ServerManager serverManager;
 
     /** The view to redirect to on a successful validation. */
     @NotNull
