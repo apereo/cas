@@ -33,7 +33,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     private final String requiredHandlerName;
 
     /** Flag to try all credentials before policy is satisfied. */
-    private boolean tryAll = false;
+    private boolean tryAll;
 
     /**
      * Instantiates a new required handler authentication policy.
