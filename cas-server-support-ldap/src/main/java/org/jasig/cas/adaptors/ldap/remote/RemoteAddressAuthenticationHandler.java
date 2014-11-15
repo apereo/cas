@@ -46,11 +46,11 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
 
     /** The network netmask. */
     @NotNull
-    private InetAddress inetNetmask = null;
+    private InetAddress inetNetmask;
 
     /** The network base address. */
     @NotNull
-    private InetAddress inetNetwork = null;
+    private InetAddress inetNetwork;
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
