@@ -127,10 +127,10 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
             final KeyManager[] keyManagers = {
                     new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))
-            };
+            , };
             final TrustManager[] trustManagers = {
                     new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))
-            };
+            , };
 
             final SSLContext context = SSLContexts.custom().useSSL().build();
             context.init(keyManagers, trustManagers, null);

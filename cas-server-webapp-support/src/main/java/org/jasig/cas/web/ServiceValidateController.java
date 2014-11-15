@@ -29,7 +29,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -157,7 +157,7 @@ public class ServiceValidateController extends AbstractDelegateController {
                             proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
                     logger.info("Failed to authenticate service credential {}", serviceCredential);
-                } catch (final TicketException e) {
+                } catch (final AbstractTicketException e) {
                     logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
                 }
                 
@@ -197,7 +197,7 @@ public class ServiceValidateController extends AbstractDelegateController {
         } catch (final TicketValidationException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
-        } catch (final TicketException te) {
+        } catch (final AbstractTicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
         } catch (final UnauthorizedProxyingException e) {

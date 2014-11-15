@@ -19,8 +19,8 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -95,7 +95,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
             if (ticket != null && !ticket.isExpired()) {
                 eventId = VALID;
             }
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             logger.trace("Could not retrieve ticket id {} from registry.", e);
         }
         return new Event(this,  eventId);

@@ -54,7 +54,9 @@ public final class RegisteredServiceValidator implements Validator {
     @Min(0)
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
-    /** {@link IPersonAttributeDao} to manage person attributes. */
+    /**
+     * {@link IPersonAttributeDao} to manage person attributes.
+     **/
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 

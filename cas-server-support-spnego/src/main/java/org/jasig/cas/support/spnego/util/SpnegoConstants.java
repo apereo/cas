@@ -47,7 +47,7 @@ public interface SpnegoConstants {
 
     /** The ntlmssp signature. */
     byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
-            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
+            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0, };
 
     /** The ntlm. */
     String NTLM = "NTLM";
