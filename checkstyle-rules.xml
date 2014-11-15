@@ -42,6 +42,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="JavadocType">
       <property name="severity" value="error"/>
       <property name="scope" value="public"/>
+      <property name="authorFormat" value="@author"/>
+      <property name="versionFormat" value="@since"/>
       <property name="allowMissingParamTags" value="true" />
     </module>
     <module name="JavadocVariable">
@@ -338,7 +340,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <metadata name="net.sf.eclipsecs.core.comment" value="Using 'test' prefix for JUnit Tests"/>
     <property name="severity" value="error"/>
     <property name="format" value="(public|protected)\s+void\s+test\w+\(.+\{$"/>
-    <property name="message" value="JUnit test methods should no longer begin with the 'test' prefix. Use annotations instead and/or rename the method"/>
+    <property name="message" value="JUnit test methods should not begin with the 'test' prefix. Use annotations instead and/or rename the method"/>
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
