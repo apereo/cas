@@ -35,7 +35,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
-      <property name="severity" value="error"/>  
+      <property name="severity" value="error"/>
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
@@ -49,24 +49,50 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
       <property name="scope" value="package" />
     </module>
+    <module name="ArrayTrailingComma">
+      <property name="severity" value="error"/>
+    </module>
     <module name="JavadocStyle">
       <property name="severity" value="error"/>
     </module>
+    <module name="AnnotationLocation">
+      <property name="severity" value="error"/>
+      <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+    </module>
     <module name="ConstantName">
       <property name="severity" value="error"/>
-      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
     </module>
-    <module name="LocalFinalVariableName"/>
-    <module name="LocalVariableName"/>
-    <module name="MemberName"/>
-    <module name="MethodName"/>
-    <module name="PackageName"/>
-    <module name="ParameterName"/>
+    <module name="LocalFinalVariableName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="LocalVariableName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="AbstractClassName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="MemberName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="MethodName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="PackageName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="ParameterName">
+      <property name="severity" value="error"/>
+    </module>
     <module name="StaticVariableName">
       <property name="severity" value="error"/>
       <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
     </module>
-    <module name="TypeName"/>
+    <module name="AbbreviationAsWordInName">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="TypeName">
+      <property name="severity" value="error"/>
+    </module>
     <module name="AvoidStarImport">
       <property name="severity" value="error"/>
       <property name="allowStaticMemberImports" value="true"/>
@@ -119,6 +145,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="EmptyBlock">
       <property name="severity" value="error"/>
     </module>
+    <module name="DeclarationOrder">
+      <property name="severity" value="error"/>
+    </module>    
+    <module name="CovariantEquals">
+      <property name="severity" value="error"/>
+    </module>      
     <module name="LeftCurly">
       <property name="severity" value="error"/>
     </module>
@@ -148,6 +180,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="VisibilityModifier">
       <property name="severity" value="error"/>
       <property name="protectedAllowed" value="true"/>
+    </module>
+    <module name="AtclauseOrder">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="BooleanExpressionComplexity">
+      <property name="severity" value="error"/>
     </module>
     <module name="ArrayTypeStyle">
       <property name="severity" value="error"/>
@@ -183,8 +221,10 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="FileTabCharacter">
     <property name="severity" value="error"/>
   </module>
+
+  <!-- Custom checks based on regular expressions -->
   <module name="RegexpSingleline">
-    <metadata name="net.sf.eclipsecs.core.comment" value="Trailing spaces"/>  
+    <metadata name="net.sf.eclipsecs.core.comment" value="Trailing spaces"/>
     <property name="severity" value="error"/>
     <property name="format" value="\w+\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
