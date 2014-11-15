@@ -29,6 +29,7 @@ import java.util.Arrays;
 
 
 /**
+ * @author Scott Battaglia
  * @since 3.3.6
  */
 @Aspect
