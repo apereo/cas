@@ -41,10 +41,6 @@ import javax.validation.constraints.NotNull;
  * @since 3.0
  */
 public final class Cas20ProxyHandler implements ProxyHandler {
-
-    /** The Commons Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
     /** The PGTIOU ticket prefix. */
@@ -52,10 +48,13 @@ public final class Cas20ProxyHandler implements ProxyHandler {
 
     /** The proxy granting ticket identifier parameter. */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
-    
+
     /** The Constant proxy granting ticket parameter. */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
-    
+
+    /** The Commons Logging instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     /** Generate unique ids. */
     @NotNull
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();

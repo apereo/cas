@@ -37,15 +37,6 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
 
     /**
-     * Return the singleton of this class.
-     *
-     * @return the StaticLoggerBinder singleton
-     */
-    public static StaticLoggerBinder getSingleton() {
-        return SINGLETON;
-    }
-
-    /**
      * The {@link ILoggerFactory} instance returned by the
      * {@link #getLoggerFactory} method should always be the same
      * object.
@@ -57,6 +48,15 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
      */
     private StaticLoggerBinder() {
         this.loggerFactory = new CasLoggerFactory();
+    }
+
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+        return SINGLETON;
     }
 
     public ILoggerFactory getLoggerFactory() {

@@ -51,6 +51,8 @@ public final class StatisticsController extends AbstractController {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 
+    private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
@@ -89,9 +91,9 @@ public final class StatisticsController extends AbstractController {
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
                         NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
                         new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
-        modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / 1024 / 1024);
-        modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
-        modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
+        modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
+        modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
+        modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
         modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());

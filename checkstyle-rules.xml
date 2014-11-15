@@ -78,6 +78,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="AbstractClassName">
       <property name="ignoreModifier" value="true"/>
       <property name="severity" value="error"/>
+      <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$" />
     </module>
     <module name="MemberName">
       <property name="severity" value="error"/>

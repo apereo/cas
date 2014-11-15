@@ -99,10 +99,16 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private static final int MAX_POOLED_CONNECTIONS = 100;
     
     private static final int MAX_CONNECTIONS_PER_ROUTE = 50;
-        
+
+    private static final int DEFAULT_CONNECTION_TIMEOUT = 5000;
+
+    private static final int DEFAULT_THREAD_POOL_SIZE = 200;
+
+    private static final int DEFAULT_READ_TIMEOUT = 5000;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(200);
+    private ExecutorService executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
 
     /** The Max pooled connections.  */
     private int maxPooledConnections = MAX_POOLED_CONNECTIONS;
@@ -116,10 +122,10 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
 
     @Min(0)
-    private int connectionTimeout = 5000;
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
     @Min(0)
-    private int readTimeout = 5000;
+    private int readTimeout = DEFAULT_READ_TIMEOUT;
 
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
@@ -162,15 +168,15 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private AuthenticationStrategy proxyAuthenticationStrategy = new ProxyAuthenticationStrategy();
 
     /** Determines whether circular redirects (redirects to the same location) should be allowed. **/
-    private boolean circularRedirectsAllowed = true;
+    private boolean circularRedirectsAllowed;
 
     /** Determines whether authentication should be handled automatically. **/
-    private boolean authenticationEnabled = false;
+    private boolean authenticationEnabled;
 
     /** Determines whether redirects should be handled automatically. **/
-    private boolean redirectsEnabled = true;
+    private boolean redirectsEnabled;
 
-    private CloseableHttpClient httpClient = null;
+    private CloseableHttpClient httpClient;
 
     /**
      * Instantiates a new Simple http client.

@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.1
  */
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
-    private boolean toUpperCase = false;
+    private boolean toUpperCase;
     
     @NotNull
     private final PrincipalNameTransformer delegateTransformer;
