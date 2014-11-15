@@ -58,7 +58,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     @NotNull
     private String domainController = Config.getProperty("jcifs.smb.client.domain");
 
-    private String includePattern = null;
+    private String includePattern;
 
     @Override
     protected final HandlerResult doAuthentication(
