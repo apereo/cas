@@ -50,7 +50,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private Principal principal;
 
-    private boolean loggedOutAlready = false;
+    private boolean loggedOutAlready;
 
     /**
      * Instantiates a new abstract web application service.
