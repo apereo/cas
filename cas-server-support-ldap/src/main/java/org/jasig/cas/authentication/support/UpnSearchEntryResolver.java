@@ -69,7 +69,9 @@ public final class UpnSearchEntryResolver extends SearchEntryResolver {
         this.baseDn = dn;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected SearchRequest createSearchRequest(final AuthenticationCriteria ac) {
         final SearchRequest sr = new SearchRequest();

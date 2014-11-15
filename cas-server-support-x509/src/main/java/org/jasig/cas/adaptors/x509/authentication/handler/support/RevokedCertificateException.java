@@ -174,7 +174,9 @@ public class RevokedCertificateException extends GeneralSecurityException {
         return this.reason;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         if (this.reason != null) {

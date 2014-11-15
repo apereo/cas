@@ -117,7 +117,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                         .getClass());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 

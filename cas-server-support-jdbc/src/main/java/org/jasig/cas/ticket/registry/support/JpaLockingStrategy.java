@@ -106,8 +106,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         this.lockTimeout = seconds;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public boolean acquire() {
@@ -139,8 +140,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         return result;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public void release() {
@@ -177,7 +179,9 @@ public class JpaLockingStrategy implements LockingStrategy {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return uniqueId;

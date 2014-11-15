@@ -62,7 +62,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private static final int INTEGER_LEN = 4;
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f'};
+            'e', 'f', };
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

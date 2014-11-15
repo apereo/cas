@@ -128,7 +128,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         this.handlerResolverMap = map;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Audit(
         action="AUTHENTICATION",

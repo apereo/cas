@@ -68,7 +68,9 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         this.service = service;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return this.callbackUrlAsString;
