@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  *
  * @author Misagh Moayyed
  * @see org.jasig.cas.authentication.handler.AbstractAuthenticationException
- * @see org.jasig.cas.ticket.TicketException
+ * @see org.jasig.cas.ticket.AbstractTicketException
  * @since 4.0.0
  */
 public abstract class RootCasException extends Exception {

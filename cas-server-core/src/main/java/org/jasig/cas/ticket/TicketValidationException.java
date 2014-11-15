@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Service;
 
  * @since 3.0
  */
-public class TicketValidationException extends TicketException {
+public class TicketValidationException extends AbstractTicketException {
 
     /** Unique Serial ID. */
     private static final long serialVersionUID = 3257004341537093175L;

@@ -140,7 +140,7 @@ public final class StatisticsController extends AbstractController {
     }
 
     /**
-     * Convert to megabytes from bytes
+     * Convert to megabytes from bytes.
      * @param bytes the total number of bytes
      * @return value converted to MB
      */

@@ -26,7 +26,7 @@ import org.jasig.cas.authentication.RootCasException;
  * @author Scott Battaglia
  * @since 3.0
  */
-public abstract class TicketException extends RootCasException {
+public abstract class AbstractTicketException extends RootCasException {
     private static final long serialVersionUID = -5128676415951733624L;
 
     /**
@@ -35,7 +35,7 @@ public abstract class TicketException extends RootCasException {
      * @param code the code
      * @param throwable the throwable
      */
-    public TicketException(final String code, final Throwable throwable) {
+    public AbstractTicketException(final String code, final Throwable throwable) {
       super(code, throwable);
     }
 
@@ -44,7 +44,7 @@ public abstract class TicketException extends RootCasException {
      *
      * @param code the code
      */
-    public TicketException(final String code) {
+    public AbstractTicketException(final String code) {
       super(code);
     }
 
@@ -54,7 +54,7 @@ public abstract class TicketException extends RootCasException {
      * @param code the code
      * @param msg the msg
      */
-    public TicketException(final String code, final String msg) {
+    public AbstractTicketException(final String code, final String msg) {
       super(code, msg);
     }
 }

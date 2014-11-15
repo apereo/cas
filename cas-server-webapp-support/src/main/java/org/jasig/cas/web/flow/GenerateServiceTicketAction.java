@@ -20,9 +20,9 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -54,7 +54,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
                 .grantServiceTicket(ticketGrantingTicket, service);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }

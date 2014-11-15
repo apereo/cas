@@ -28,14 +28,14 @@ public class InvalidTicketExceptionTests {
 
     @Test
     public void testCodeNoThrowable() {
-        final TicketException t = new InvalidTicketException("InvalidTicketId");
+        final AbstractTicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     @Test
     public void testCodeWithThrowable() {
         final AbstractAuthenticationException a = new BadCredentialsAuthenticationException();
-        final TicketException t = new InvalidTicketException(a, "InvalidTicketId");
+        final AbstractTicketException t = new InvalidTicketException(a, "InvalidTicketId");
 
         assertEquals(a.toString(), t.getCode());
     }
