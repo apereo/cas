@@ -19,6 +19,34 @@ You may encounter this error, when the requesting application/service url cannot
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
+###Out of Heap Memory Error
+{% highlight bash %}
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+        at java.util.Arrays.copyOfRange(Arrays.java:3658)
+        at java.lang.StringBuffer.toString(StringBuffer.java:671)
+        at 
+{% endhighlight %}
+
+You may encounter this error, when in all likelihood, a cache-based ticket registry such as EhCache is used whose eviction policy is not correctly configured. Objects and tickets are cached inside the registry storage back-end tend to linger around longer than they should or the eviction policy is not doing a good enough job to clean unused tickets that may be marked as expired by CAS. 
+
+To troubleshoot, you can configure the JVM to perform a heap dump prior to exiting, which you should set up immediately so you have some additional information if/when it happens next time. The follow system properties should do the trick:
+
+{% highlight bash %}
+-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="/path/to/jvm-dump.hprof" 
+{% endhighlight %}
+
+Also ensure that your container is configured to have enough memory available. For Apache Tomcat, the following setting as an environment variable may be configured:
+
+{% highlight bash %}
+CATALINA_OPTS=-Xms1000m -Xmx2000m
+{% endhighlight %}
+
+You will want to profile your server with something like [JVisualVM](http://visualvm.java.net/) which should be [bundled with the JDK](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jvisualvm.html).  This will help you see what is actually going on with your memory.
+
+You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) and analyzing offline using some analysis tool. 
+
+Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
+
 ##SSL
 
 ###PKIX Path Building Failed
