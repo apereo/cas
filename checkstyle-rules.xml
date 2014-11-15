@@ -45,7 +45,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
       <property name="scope" value="public"/>
       <property name="authorFormat" value="\w+"/>
-      <property name="versionFormat" value="\d+\.\d+(.\d+)*"/>
       <property name="allowMissingParamTags" value="true" />
     </module>
     <module name="JavadocVariable">
@@ -66,6 +65,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
     </module>
     <module name="MagicNumber">
+      <property name="ignoreAnnotation" value="true"/>
+      <property name="ignoreHashCodeMethod" value="true"/>
       <property name="severity" value="error"/>
     </module>
     <module name="LocalFinalVariableName">
@@ -75,6 +76,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
     </module>
     <module name="AbstractClassName">
+      <property name="ignoreModifier" value="true"/>
       <property name="severity" value="error"/>
     </module>
     <module name="MemberName">

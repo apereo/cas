@@ -49,7 +49,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Indicate whether this view will be generating the success response or not.
      * By default, the view is treated as a failure.
      */
-    protected boolean successResponse = false;
+    protected boolean successResponse;
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -92,8 +92,8 @@ public abstract class AbstractCasView extends AbstractView {
      * so the review can easily loop through all.
      * @param model the model
      * @return the attributes
-     * @since 4.1
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
+     * @since 4.1
      */
     protected final Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
@@ -105,8 +105,8 @@ public abstract class AbstractCasView extends AbstractView {
      * so the review can easily loop through all.
      * @param model the model
      * @return the attributes
-     * @since 4.1
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
+     * @since 4.1
      */
     protected final Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrimaryAuthenticationFrom(model).getAttributes());
