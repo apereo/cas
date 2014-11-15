@@ -19,9 +19,6 @@
 package org.jasig.cas.adaptors.radius;
 
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.jradius.client.RadiusClient;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
@@ -37,11 +34,13 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -54,7 +53,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class JRadiusServerImpl implements RadiusServer {
 
-    /** Default retry count, {@value}. */
+    /**
+     * Default retry count, {@value}.
+     **/
     public static final int DEFAULT_RETRY_COUNT = 3;
 
     /** Logger instance. */
@@ -72,9 +73,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     @Min(0)
     private int retries = DEFAULT_RETRY_COUNT;
 
-    private String nasIpAddress = null;
+    private String nasIpAddress;
     
-    private String nasIpv6Address = null;
+    private String nasIpv6Address;
     
     private long nasPort = -1;
     

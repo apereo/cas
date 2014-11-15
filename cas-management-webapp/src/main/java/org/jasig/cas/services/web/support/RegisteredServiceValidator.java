@@ -44,7 +44,9 @@ public final class RegisteredServiceValidator implements Validator {
     /** Default length, which matches what is in the view. */
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
-    /** {@link ServicesManager} to look up services. */
+    /**
+     * {@link ServicesManager} to look up services.
+     **/
     @NotNull
     private final ServicesManager servicesManager;
 
