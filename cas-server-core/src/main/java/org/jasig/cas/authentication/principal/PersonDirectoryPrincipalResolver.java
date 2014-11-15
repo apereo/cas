@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -30,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -47,7 +46,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private boolean returnNullIfNoAttributes = false;
+    private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
     @NotNull

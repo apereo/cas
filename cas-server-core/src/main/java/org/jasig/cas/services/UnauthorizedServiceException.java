@@ -42,7 +42,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      * @param message the error message
      */
     public UnauthorizedServiceException(final String message) {
-        super(message, null);
+        this(null, message);
     }
     
     /**
@@ -53,7 +53,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      * @param code the error code mapped to the messaged bundle.
      */
     public UnauthorizedServiceException(final String code, final String message) {
-        this(message);
+        super(message);
         this.code = code;
     }
     /**
@@ -65,6 +65,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      */
     public UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
+        this.code = null;
     }
     
     /**

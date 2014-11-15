@@ -91,9 +91,10 @@ public final class StatisticsController extends AbstractController {
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
                         NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
                         new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
-        modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
-        modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
-        modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE);
+
+        modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
+        modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
+        modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
         modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
@@ -138,6 +139,14 @@ public final class StatisticsController extends AbstractController {
         return modelAndView;
     }
 
+    /**
+     * Convert to megabytes from bytes
+     * @param bytes the total number of bytes
+     * @return value converted to MB
+     */
+    private double convertToMegaBytes(final double bytes) {
+        return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
+    }
     /**
      * Calculates the up time.
      *

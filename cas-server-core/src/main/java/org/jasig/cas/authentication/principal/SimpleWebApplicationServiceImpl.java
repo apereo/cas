@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
@@ -33,6 +32,8 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
+
+    private static final long serialVersionUID = 8334068957483758042L;
 
     private static final String CONST_PARAM_SERVICE = "service";
 
@@ -43,8 +44,6 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
     private static final String CONST_PARAM_METHOD = "method";
 
     private final ResponseType responseType;
-
-    private static final long serialVersionUID = 8334068957483758042L;
 
     /**
      * Instantiates a new simple web application service impl.
