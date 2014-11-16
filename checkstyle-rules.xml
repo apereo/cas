@@ -351,6 +351,14 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="format" value="\(\w+\)\w+"/>
     <property name="message" value="There are no spaces after cast."/>
   </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="@since"/>
+    <property name="minimum" value="1"/>
+    <property name="fileExtensions" value="java,groovy"/>
+    <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
+  </module>
 
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
