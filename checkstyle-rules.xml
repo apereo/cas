@@ -192,6 +192,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     </module>
     <module name="RedundantThrows">
       <property name="suppressLoadErrors" value="true"/>
+      <property name="allowSubclasses" value="true" />
     </module>
     <module name="SimplifyBooleanExpression">
       <property name="severity" value="error"/>

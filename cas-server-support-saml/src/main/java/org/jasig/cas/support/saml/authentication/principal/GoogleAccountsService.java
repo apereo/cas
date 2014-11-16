@@ -18,6 +18,18 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.util.SamlUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
+import org.jdom.Document;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -32,19 +44,6 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.util.SamlUtils;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
-
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -55,6 +54,12 @@ import org.springframework.util.StringUtils;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
+    private static final int INFLATED_BYTE_ARRAY_LENGTH = 10000;
+    private static final int DEFLATED_BYTE_ARRAY_BUFFER_LENGTH = 1024;
+    private static final int SAML_RESPONSE_RANDOM_ID_LENGTH = 20;
+    private static final int SAML_RESPONSE_ID_LENGTH = 40;
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
     private static SecureRandom RANDOM_GENERATOR = new SecureRandom();
 
@@ -238,14 +243,14 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @return the id
      */
     private static String createID() {
-        final byte[] bytes = new byte[20]; // 160 bits
+        final byte[] bytes = new byte[SAML_RESPONSE_RANDOM_ID_LENGTH]; // 160 bits
         RANDOM_GENERATOR.nextBytes(bytes);
 
-        final char[] chars = new char[40];
+        final char[] chars = new char[SAML_RESPONSE_ID_LENGTH];
 
         for (int i = 0; i < bytes.length; i++) {
-            final int left = bytes[i] >> 4 & 0x0f;
-            final int right = bytes[i] & 0x0f;
+            final int left = bytes[i] >> HEX_RIGHT_SHIFT_COEFFICIENT & HEX_HIGH_BITS_BITWISE_FLAG;
+            final int right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
             chars[i * 2] = CHAR_MAPPINGS[left];
             chars[i * 2 + 1] = CHAR_MAPPINGS[right];
         }
@@ -290,7 +295,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final InflaterInputStream iis = new InflaterInputStream(bais);
-        final byte[] buf = new byte[1024];
+        final byte[] buf = new byte[DEFLATED_BYTE_ARRAY_BUFFER_LENGTH];
 
         try {
             int count = iis.read(buf);
@@ -329,7 +334,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      */
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[10000];
+        final byte[] xmlMessageBytes = new byte[INFLATED_BYTE_ARRAY_LENGTH];
 
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
