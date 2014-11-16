@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PasswordPolicyConfiguration {
 
+    private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
+
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -37,7 +39,7 @@ public class PasswordPolicyConfiguration {
     private boolean alwaysDisplayPasswordExpirationWarning;
 
     /** Threshold number of days till password expiration below which a warning is displayed. **/
-    private int passwordWarningNumberOfDays = 30;
+    private int passwordWarningNumberOfDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
 
     /** Url to the password policy application. **/
     private String passwordPolicyUrl;
