@@ -41,7 +41,8 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.4
  */
-public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTest {
+public class
+        AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTest {
 
     private AuthenticationViaFormAction action;
 
@@ -118,7 +119,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("password", "test");
         request.addParameter("warn", "true");
         request.addParameter("service", "test");
-                                                                                                    w
+
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,  response));
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
