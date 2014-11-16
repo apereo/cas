@@ -27,8 +27,8 @@ import org.ldaptive.LdapEntry;
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
- *
  * @see DefaultLdapServiceMapper
+ * @since 3.0
  */
 public interface LdapRegisteredServiceMapper {
 
