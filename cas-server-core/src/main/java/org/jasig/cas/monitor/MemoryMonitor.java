@@ -28,6 +28,7 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
 
     /** Default percent free memory warning threshold. */
     public static final int DEFAULT_FREE_MEMORY_WARN_THRESHOLD = 10;
+    private static final int PERCENTAGE_VALUE = 100;
 
     /** Percent free memory warning threshold. */
     private long freeMemoryWarnThreshold = DEFAULT_FREE_MEMORY_WARN_THRESHOLD;
@@ -63,7 +64,7 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
         final StatusCode code;
         final long free = Runtime.getRuntime().freeMemory();
         final long total = Runtime.getRuntime().totalMemory();
-        if (free * 100 / total < this.freeMemoryWarnThreshold) {
+        if (free * PERCENTAGE_VALUE / total < this.freeMemoryWarnThreshold) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;

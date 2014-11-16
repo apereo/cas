@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates a Response to send back for a particular service.
@@ -39,6 +39,8 @@ public final class Response {
 
     /** Pattern to detect unprintable ASCII characters. */
     private static final Pattern NON_PRINTABLE = Pattern.compile("[\\x00-\\x1F\\x7F]+");
+    private static final int CONST_REDIRECT_RESPONSE_MULTIPLIER = 40;
+    private static final int CONST_REDIRECT_RESPONSE_BUFFER = 100;
 
     /** An enumeration of different response types. **/
     public static enum ResponseType {
@@ -88,7 +90,8 @@ public final class Response {
      * @return the redirect response
      */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
-        final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
+        final StringBuilder builder = new StringBuilder(parameters.size() *
+                CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
         boolean isFirst = true;
         final String[] fragmentSplit = sanitizeUrl(url).split("#");
 

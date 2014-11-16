@@ -78,7 +78,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="AbstractClassName">
       <property name="ignoreModifier" value="true"/>
       <property name="severity" value="error"/>
-      <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$" />
+      <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$|^Root.*$" />
     </module>
     <module name="MemberName">
       <property name="severity" value="error"/>
@@ -118,9 +118,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="UnusedImports">
       <property name="severity" value="error"/>
     </module>
-    <module name="SuperClone">
-      <property name="severity" value="error"/>
-    </module>
+    <module name="SuperClone" />
     <module name="SuperFinalize">
       <property name="severity" value="error"/>
     </module>
@@ -217,6 +215,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     </module>
     <module name="BooleanExpressionComplexity">
       <property name="severity" value="error"/>
+      <property name="max" value="4"/>
     </module>
     <module name="ArrayTypeStyle">
       <property name="severity" value="error"/>

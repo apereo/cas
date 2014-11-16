@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.support.openid.web.mvc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.web.AbstractDelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
@@ -48,6 +49,8 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     /** View if association Succeeds. */
     private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
 
+    private static final String ASSOCIATE = "associate";
+
     private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
@@ -77,7 +80,8 @@ public class SmartOpenIdController extends AbstractDelegateController implements
                 : null;
 
         Message response = null;
-        if (mode != null && mode.equals("associate")) {
+
+        if (StringUtils.equals(mode, ASSOCIATE)) {
             response = serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<String, String>();
@@ -100,7 +104,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final String openIdMode = request.getParameter("openid.mode");
-        if (openIdMode != null && openIdMode.equals("associate")) {
+        if (StringUtils.equals(openIdMode, ASSOCIATE)) {
             logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }

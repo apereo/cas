@@ -40,8 +40,8 @@ public interface Ticket extends Serializable {
      * Determines if the ticket is expired. Most common implementations might
      * collaborate with <i>ExpirationPolicy </i> strategy.
      *
-     * @see org.jasig.cas.ticket.ExpirationPolicy
      * @return true, if the ticket is expired
+     * @see org.jasig.cas.ticket.ExpirationPolicy
      */
     boolean isExpired();
 

@@ -20,6 +20,8 @@ package org.jasig.cas.authentication;
 
 import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
  * unified logic around retrieval and configuration of exception codes that may be
@@ -35,7 +37,7 @@ public abstract class RootCasException extends Exception {
   private static final long serialVersionUID = -2384466176716541689L;
 
   /** The code description of the exception. */
-  private String code;
+  private final String code;
 
   /**
    * Constructor that takes a <code>code</code> description of the error along with the exception
@@ -44,8 +46,8 @@ public abstract class RootCasException extends Exception {
    *
    * @param code the code to describe what type of exception this is.
    */
-  public RootCasException(final String code) {
-      initException(code);
+  public RootCasException(@NotNull final String code) {
+      this.code = code;
   }
 
   /**
@@ -55,9 +57,9 @@ public abstract class RootCasException extends Exception {
    * @param code the code to describe what type of exception this is.
    * @param msg The error message associated with this exception for additional logging purposes.
    */
-  public RootCasException(final String code, final String msg) {
+  public RootCasException(@NotNull final String code, final String msg) {
       super(msg);
-      initException(code);
+      this.code = code;
   }
 
   /**
@@ -67,9 +69,9 @@ public abstract class RootCasException extends Exception {
    * @param code the code to describe what type of exception this is.
    * @param throwable the original exception we are chaining.
    */
-  public RootCasException(final String code, final Throwable throwable) {
+  public RootCasException(@NotNull final String code, final Throwable throwable) {
       super(throwable);
-      initException(code);
+      this.code = code;
   }
 
   /**
@@ -83,16 +85,6 @@ public abstract class RootCasException extends Exception {
         return ((RootCasException) cause).getCode();
       }
       return this.code;
-  }
-
-  /**
-   * Inits the exception with the code.
-   *
-   * @param code the code
-   */
-  private void initException(final String code) {
-      Assert.hasLength(code, "The exception code cannot be blank");
-      this.code = code;
   }
 
   @Override
