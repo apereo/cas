@@ -24,7 +24,8 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * @author Misagh Moayyed
  * An implementation of {@link ApplicationContextAware} that statically
- * holds the application context.
+ * holds the application context
+ * @since 3.0.
  */
 public final class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext CONTEXT;
