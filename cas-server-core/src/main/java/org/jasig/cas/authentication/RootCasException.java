@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.springframework.util.Assert;
-
 import javax.validation.constraints.NotNull;
 
 /**

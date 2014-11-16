@@ -36,11 +36,11 @@ import org.junit.Test;
  *
  */
 public class JCSIFSpnegoAuthenticationHandlerTests {
-    private JCIFSSpnegoAuthenticationHandler authenticationHandler;
+    private JcifsSpnegoAuthenticationHandler authenticationHandler;
 
     @Before
     public void setUp() throws Exception {
-        this.authenticationHandler = new JCIFSSpnegoAuthenticationHandler();
+        this.authenticationHandler = new JcifsSpnegoAuthenticationHandler();
     }
 
     @Test

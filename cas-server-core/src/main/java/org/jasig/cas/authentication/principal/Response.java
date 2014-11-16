@@ -90,8 +90,8 @@ public final class Response {
      * @return the redirect response
      */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
-        final StringBuilder builder = new StringBuilder(parameters.size() *
-                CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
+        final StringBuilder builder = new StringBuilder(parameters.size()
+                * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
         boolean isFirst = true;
         final String[] fragmentSplit = sanitizeUrl(url).split("#");
 
