@@ -61,6 +61,8 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
+    private static final int CONST_REQUEST_ID_LENGTH = 11;
+
     private String requestId;
 
     /**
@@ -163,7 +165,7 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         try {
-            final int position = requestBody.indexOf("RequestID=\"") + 11;
+            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
             final int nextPosition = requestBody.indexOf("\"", position);
 
             return requestBody.substring(position,  nextPosition);
