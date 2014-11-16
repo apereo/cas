@@ -48,6 +48,7 @@ import java.util.HashSet;
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
  * @author Andrew Tillinghast
+ * @since 3.5
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
 
