@@ -354,7 +354,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
     <property name="severity" value="error"/>
-    <property name="format" value="@since"/>
+    <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>
+    <property name="maximum" value="200"/>
     <property name="minimum" value="1"/>
     <property name="fileExtensions" value="java,groovy"/>
     <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
