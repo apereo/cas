@@ -51,7 +51,7 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapUserDetailsService implements UserDetailsService {
 

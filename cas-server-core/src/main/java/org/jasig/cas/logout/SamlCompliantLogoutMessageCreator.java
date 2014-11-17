@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * to build the logout request.
  * @author Misagh Moayyed
  * @see LogoutRequest
- * @since 4.0
+ * @since 4.0.0
  */
 public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 

@@ -22,7 +22,7 @@ package org.jasig.cas.authentication;
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 

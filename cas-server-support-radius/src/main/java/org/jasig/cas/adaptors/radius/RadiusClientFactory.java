@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
  * Factory for creating RADIUS client instances.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class RadiusClientFactory {
 
