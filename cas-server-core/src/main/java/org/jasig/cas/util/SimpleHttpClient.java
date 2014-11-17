@@ -18,6 +18,25 @@
  */
 package org.jasig.cas.util;
 
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ConnectionReuseStrategy;
@@ -64,21 +83,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * The type Simple http client.
  * @author Scott Battaglia
@@ -102,7 +106,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(200);
+    private FutureRequestExecutionService service;
 
     /** The Max pooled connections.  */
     private int maxPooledConnections = MAX_POOLED_CONNECTIONS;
@@ -176,7 +180,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * Instantiates a new Simple http client.
      */
     public SimpleHttpClient() {
-        init();
+        init(null);
     }
 
     /**
@@ -186,7 +190,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     public SimpleHttpClient(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
-        init();
+        init(null);
     }
 
     /**
@@ -196,7 +200,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     public SimpleHttpClient(final SSLConnectionSocketFactory sslSocketFactory) {
         this.sslSocketFactory = sslSocketFactory;
-        init();
+        init(null);
     }
 
     /**
@@ -208,7 +212,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     public SimpleHttpClient(final int readTimeout, final int connectionTimeout) {
         this.readTimeout = readTimeout;
         this.connectionTimeout = connectionTimeout;
-        init();
+        init(null);
     }
 
     /**
@@ -220,7 +224,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     public SimpleHttpClient(final boolean redirectsEnabled, final boolean circularRedirectsAllowed) {
         this.redirectsEnabled = redirectsEnabled;
         this.circularRedirectsAllowed = circularRedirectsAllowed;
-        init();
+        init(null);
     }
 
     /**
@@ -238,7 +242,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         this.connectionTimeout = connectionTimeout;
         this.circularRedirectsAllowed = circularRedirectsAllowed;
 
-        init();
+        init(null);
     }
 
     /**
@@ -253,7 +257,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         this.sslSocketFactory = sslSocketFactory;
         this.hostnameVerifier = hostnameVerifier;
         this.acceptableCodes = acceptableCodes;
-        init();
+        init(null);
     }
 
     /**
@@ -267,7 +271,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         this.sslSocketFactory = sslSocketFactory;
         this.readTimeout = readTimeout;
         this.connectionTimeout = connectionTimeout;
-        init();
+        init(null);
     }
 
     /**
@@ -309,7 +313,6 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
                             final boolean redirectsEnabled,
                             final int maxConnections,
                             final int maxConnectionsPerRoute) {
-        this.executorService = executorService;
         this.acceptableCodes = acceptableCodes;
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
@@ -329,22 +332,19 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         this.maxPooledConnections = maxConnections;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
 
-        init();
+        init(executorService);
     }
 
     @Override
     public boolean sendMessageToEndPoint(@NotNull final HttpMessage message) {
         Assert.notNull(this.httpClient);
 
-        FutureRequestExecutionService service = null;
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
             
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
-
-            service = new FutureRequestExecutionService(this.httpClient, executorService);
 
             final HttpRequestFutureTask<String> task = service.execute(request,
                     HttpClientContext.create(), new BasicResponseHandler());
@@ -354,11 +354,12 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             }
             
             return StringUtils.isNotBlank(task.get());
+        } catch (final RejectedExecutionException e) {
+            LOGGER.warn(e.getMessage(), e);
+            return false;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
             return false;
-        } finally {
-            IOUtils.closeQuietly(service);
         }
     }
         
@@ -418,8 +419,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
-        executorService.shutdown();
-        IOUtils.closeQuietly(this.httpClient);
+        IOUtils.closeQuietly(service);
     }
 
     /**
@@ -503,8 +503,11 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     /**
      * Prepare the http client with configured settings.
+     *
+     * @param providedExecutorService a provided executor service that will be wrapped in a {@link FutureRequestExecutionService}.
+     * May be <code>null</code> to use default settings.
      */
-    private void init() {
+    private void init(final ExecutorService providedExecutorService) {
         try {
 
             final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
@@ -550,6 +553,17 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
 
             this.httpClient = builder.build();
+
+            final ExecutorService definedExecutorService;
+            // no executor service provided -> default
+            if (providedExecutorService == null) {
+                definedExecutorService = new ThreadPoolExecutor(200, 200, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(1));
+            } else {
+                definedExecutorService = providedExecutorService;
+            }
+
+            service = new FutureRequestExecutionService(this.httpClient, definedExecutorService);
+
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
