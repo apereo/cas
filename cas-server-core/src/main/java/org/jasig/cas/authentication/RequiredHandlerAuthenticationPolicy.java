@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  * at least one credential.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 

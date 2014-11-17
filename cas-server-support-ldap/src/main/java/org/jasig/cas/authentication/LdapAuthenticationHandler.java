@@ -57,7 +57,7 @@ import java.util.Set;
  * </ul>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 

@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * for JSON requests.
  *
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
 

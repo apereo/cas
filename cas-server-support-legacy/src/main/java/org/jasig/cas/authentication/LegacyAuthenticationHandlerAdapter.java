@@ -32,7 +32,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * {@link AuthenticationHandler}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler {
 

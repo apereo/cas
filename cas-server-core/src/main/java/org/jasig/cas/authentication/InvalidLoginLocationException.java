@@ -25,7 +25,7 @@ import javax.security.auth.login.AccountException;
  * applied to the underlying user account.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class InvalidLoginLocationException extends AccountException {
 

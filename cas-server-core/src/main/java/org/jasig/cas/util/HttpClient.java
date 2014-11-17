@@ -25,7 +25,7 @@ import java.net.URL;
  *
  * @author Jerome Leleu
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public interface HttpClient {
 
