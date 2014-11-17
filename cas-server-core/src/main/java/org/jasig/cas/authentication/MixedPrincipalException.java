@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * multiple credentials.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class MixedPrincipalException extends PrincipalException {
 

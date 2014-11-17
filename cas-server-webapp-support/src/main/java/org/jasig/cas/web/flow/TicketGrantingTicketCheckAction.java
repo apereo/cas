@@ -39,7 +39,7 @@ import javax.validation.constraints.NotNull;
  * </ol>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
