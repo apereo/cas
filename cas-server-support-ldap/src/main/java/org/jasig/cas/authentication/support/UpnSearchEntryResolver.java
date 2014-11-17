@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * authenticated users are located, commonly <code>dc=example,dc=org</code> or <code>OU=Users,dc=example,dc=org</code>.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 @Deprecated
 public final class UpnSearchEntryResolver extends SearchEntryResolver {

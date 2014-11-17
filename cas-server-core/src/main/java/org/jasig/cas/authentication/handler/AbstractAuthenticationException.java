@@ -46,7 +46,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the code
      */
     public AbstractAuthenticationException(final String code) {
-        this(code, "");
+        this(code, "", DEFAULT_TYPE);
     }
 
     /**

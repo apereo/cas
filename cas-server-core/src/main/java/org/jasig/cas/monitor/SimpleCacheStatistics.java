@@ -31,7 +31,7 @@ import java.util.Formatter;
 public class SimpleCacheStatistics implements CacheStatistics {
 
     private static final double BYTES_PER_MB = 1048510.0;
-    private static final int PERCENTAGE = 100;
+    private static final int PERCENTAGE_VALUE = 100;
 
     private final long size;
 
@@ -92,7 +92,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((this.capacity - this.size) * PERCENTAGE / this.capacity);
+        return (int) ((this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity);
     }
 
     @Override
