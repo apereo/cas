@@ -38,10 +38,10 @@ public class HttpClientTests extends TestCase {
     }
     
     public void testOkayUrl() {
-        assertTrue(this.httpClient.isValidEndPoint("http://www.jasig.org"));
+        assertTrue(this.httpClient.isValidEndPoint("https://www.apereo.org"));
     }
     
     public void testBadUrl() {
-        assertFalse(this.httpClient.isValidEndPoint("http://www.jasig.org/scottb.html"));
+        assertFalse(this.httpClient.isValidEndPoint("https://www.apereo.org/scottb.html"));
     }
 }
