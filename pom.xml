@@ -523,14 +523,7 @@
     <repository>
       <id>jasig-repository</id>
       <name>Jasig Maven2 Repository</name>
-      <url>http://developer.ja-sig.org/maven2</url>
-    </repository>
-
-    <repository>
-      <id>jboss</id>
-      <name>JBoss Repository</name>
-      <layout>default</layout>
-      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
     </repository>
   </repositories>
 
