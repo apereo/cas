@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.web.support;
 
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -136,17 +135,6 @@ public final class WebUtils {
     public static void putTicketGrantingTicketInRequestScope(
         final RequestContext context, @NotNull final TicketGrantingTicket ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
-    }
-
-    /**
-     * Put credentials in request scope.
-     *
-     * @param context the context
-     * @param c the credential
-     */
-    public static void putCredentialInRequestScope(
-            final RequestContext context, @NotNull final Credential c) {
-        context.getRequestScope().put("credentials", c);
     }
 
     /**
