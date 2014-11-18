@@ -32,7 +32,10 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.validation.constraints.NotNull;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -41,8 +44,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.4
  */
-public class
-        AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTest {
+public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTest {
 
     private AuthenticationViaFormAction action;
 
@@ -75,7 +77,7 @@ public class
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        WebUtils.putCredentialInRequestScope(context, c);
+        putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
         assertEquals("success", this.action.submit(context, c, messageContext).getId());
@@ -98,7 +100,7 @@ public class
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, response));
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        WebUtils.putCredentialInRequestScope(context, c);
+        putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
         assertEquals("success", this.action.submit(context, c, messageContext).getId());
@@ -123,7 +125,7 @@ public class
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,  response));
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        WebUtils.putCredentialInRequestScope(context, c);
+        putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
         assertEquals("success", this.action.submit(context, c, messageContext).getId());
@@ -142,7 +144,7 @@ public class
                 new MockServletContext(), request, new MockHttpServletResponse()));
 
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        WebUtils.putCredentialInRequestScope(context, c);
+        putCredentialInRequestScope(context, c);
 
         context.getRequestScope().put(
             "org.springframework.validation.BindException.credentials",
@@ -213,7 +215,7 @@ public class
         final Credential c2 = TestUtils.getCredentialsWithDifferentUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putCredentialInRequestScope(context, c2);
+        putCredentialInRequestScope(context, c2);
         context.getRequestScope().put(
             "org.springframework.validation.BindException.credentials",
             new BindException(c2, "credentials"));
@@ -222,4 +224,15 @@ public class
         assertEquals("error", this.action.submit(context, c2, messageContext).getId());
     }
 
+
+    /**
+     * Put credentials in request scope.
+     *
+     * @param context the context
+     * @param c the credential
+     */
+    private static void putCredentialInRequestScope(
+            final RequestContext context, @NotNull final Credential c) {
+        context.getRequestScope().put("credentials", c);
+    }
 }
