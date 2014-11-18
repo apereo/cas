@@ -26,4 +26,9 @@ public class MockAuthenticationMetaDataPopulator implements AuthenticationMetaDa
 
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {}
 
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
+
 }

@@ -29,7 +29,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link CacheCredentialsMetaDataPopulator}.
@@ -64,7 +65,10 @@ public class CacheCredentialsMetaDataPopulatorTests {
             }
         };
 
-        populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+        if (populator.supports(c)) {
+            populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+        }
+
         assertEquals(map.size(), 0);
 
     }
