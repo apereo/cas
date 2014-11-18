@@ -18,15 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -82,7 +83,15 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
             return new Event(this, NOT_EXISTS);
         }
 
-        final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
-        return new Event(this, ticket != null && !ticket.isExpired() ? VALID : INVALID);
+        String eventId = INVALID;
+        try {
+            final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            if (ticket != null && !ticket.isExpired()) {
+                eventId = VALID;
+            }
+        } catch (final TicketException e) {
+            logger.trace("Could not retrieve ticket id {} from registry.", e);
+        }
+        return new Event(this,  eventId);
     }
 }
