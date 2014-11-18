@@ -18,20 +18,19 @@
  */
 package org.jasig.cas.web.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.binding.message.MessageContext;
+
+import javax.security.auth.login.AccountNotFoundException;
+import java.security.GeneralSecurityException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
 public class AuthenticationExceptionHandlerTests {
