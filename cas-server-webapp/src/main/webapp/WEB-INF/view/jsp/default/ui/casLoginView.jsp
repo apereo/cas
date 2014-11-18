@@ -27,11 +27,16 @@
     </div>
 </c:if>
 
-<c:if test="${registeredService.logo != null}" >
+<c:if test="${not empty registeredService}">
+    <c:set var="registeredServiceLogo" value="images/webapp.png"/>
+    <c:if test="${not empty registeredService.logo}">
+        <c:set var="registeredServiceLogo" value="${registeredService.logo}"/>
+    </c:if>
+
     <div id="serviceui" class="serviceinfo">
         <table>
             <tr>
-                <td><img src="images/webapp.png"></td>
+                <td><img src="${registeredServiceLogo}"></td>
                 <td id="servicedesc">
                     <h1>${fn:escapeXml(registeredService.name)}</h1>
                     <p>${fn:escapeXml(registeredService.description)}</p>
@@ -39,8 +44,8 @@
             </tr>
         </table>
     </div>
+    <p/>
 </c:if>
-<p/>
 
 <div class="box" id="login">
     <form:form method="post" id="fm1" commandName="${commandName}" htmlEscape="true">
