@@ -36,7 +36,7 @@ import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -176,7 +176,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
-    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws AbstractTicketException {
+    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws TicketException {
         this.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
     }
 
@@ -197,7 +197,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test
-    public void testChainedAuthenticationsOnValidation() throws AbstractTicketException {
+    public void testChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);

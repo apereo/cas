@@ -27,7 +27,7 @@ package org.jasig.cas.authentication.handler;
  * @since 3.0.0
  */
 public class BlockedCredentialsAuthenticationException extends
-        AbstractAuthenticationException {
+        AuthenticationException {
 
     /** Static instance of BlockedCredentialsAuthenticationException. */
     public static final BlockedCredentialsAuthenticationException ERROR =

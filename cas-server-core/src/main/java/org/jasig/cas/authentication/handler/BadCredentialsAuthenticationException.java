@@ -28,7 +28,7 @@ package org.jasig.cas.authentication.handler;
 
  * @since 3.0.0
  */
-public class BadCredentialsAuthenticationException extends AbstractAuthenticationException {
+public class BadCredentialsAuthenticationException extends AuthenticationException {
     /**
      * Default constructor that does not allow the chaining of exceptions and
      * uses the default code as the error code for this exception.
