@@ -56,7 +56,7 @@ import java.util.Formatter;
  * </ul>
  *
  * @author Dmitriy Kopylenko
- * @since 4.1
+ * @since 4.1.0
  */
 @RestController("/v1")
 public class TicketsResource {
