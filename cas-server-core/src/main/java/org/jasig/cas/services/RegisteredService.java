@@ -21,6 +21,7 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Set;
 
 /**
@@ -160,7 +161,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
      * @since 4.1
-     * @return location of the image as an absolute or relative url
+     * @return URL of the image as an absolute
      */
-    String getLogo();
+    URL getLogo();
 }
