@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
  *
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public class JpaLockingStrategy implements LockingStrategy {
 

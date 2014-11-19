@@ -110,10 +110,10 @@ public final class RegisteredServiceSimpleFormController {
      */
     @InitBinder
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) throws Exception {
-        binder.setRequiredFields(new String[] {"description", "serviceId",
+        binder.setRequiredFields("description", "serviceId",
                 "name", "enabled", "ssoEnabled",
-                "anonymousAccess", "evaluationOrder", });
-        binder.setDisallowedFields(new String[] {"id"});
+                "anonymousAccess", "evaluationOrder");
+        binder.setDisallowedFields("id");
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 

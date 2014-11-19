@@ -39,7 +39,7 @@ import java.security.GeneralSecurityException;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler

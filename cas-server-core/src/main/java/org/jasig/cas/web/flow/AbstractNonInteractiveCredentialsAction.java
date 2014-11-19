@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
 
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
     AbstractAction {

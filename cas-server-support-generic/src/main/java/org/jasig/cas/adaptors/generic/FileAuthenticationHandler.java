@@ -46,7 +46,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 

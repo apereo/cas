@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 

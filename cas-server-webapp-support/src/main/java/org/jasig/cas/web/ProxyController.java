@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * </ul>
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ProxyController extends AbstractController {
 
