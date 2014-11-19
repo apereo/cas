@@ -28,7 +28,7 @@ package org.jasig.cas.authentication.handler;
  * @since 3.0.0
  */
 public final class UnsupportedCredentialsException extends
-        AbstractAuthenticationException {
+        AuthenticationException {
 
     /** Static instance of UnsupportedCredentialsException. */
     public static final UnsupportedCredentialsException ERROR = new UnsupportedCredentialsException();

@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
+public class UnsatisfiedAuthenticationPolicyException extends TicketException {
 
     /** Serializable ID for unique id. */
     private static final long serialVersionUID = -827432780367197133L;

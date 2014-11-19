@@ -24,7 +24,7 @@ package org.jasig.cas.ticket;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class InvalidTicketException extends AbstractTicketException {
+public class InvalidTicketException extends TicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
 

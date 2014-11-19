@@ -23,8 +23,7 @@ import java.security.GeneralSecurityException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.handler.AbstractAuthenticationException;
-import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
+import org.jasig.cas.authentication.handler.*;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
@@ -88,7 +87,7 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
                 throw new FailedLoginException(
                         String.format("%s failed to authenticate %s", this.getName(), credential));
             }
-        } catch (final AbstractAuthenticationException e) {
+        } catch (final org.jasig.cas.authentication.handler.AuthenticationException e) {
             throw new GeneralSecurityException(
                     String.format("%s failed to authenticate %s", this.getName(), credential), e);
         }

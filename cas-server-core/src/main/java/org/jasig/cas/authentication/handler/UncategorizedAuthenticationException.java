@@ -24,8 +24,10 @@ package org.jasig.cas.authentication.handler;
  *
  * @author Scott Battaglia
  * @since 3.0.0
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
-public abstract class AbstractUncategorizedAuthenticationException extends AbstractAuthenticationException {
+@Deprecated
+public abstract class UncategorizedAuthenticationException extends AuthenticationException {
 
     private static final long serialVersionUID = 872764495107139229L;
 
@@ -36,7 +38,7 @@ public abstract class AbstractUncategorizedAuthenticationException extends Abstr
      *
      * @param code the custom code to use with this exception.
      */
-    public AbstractUncategorizedAuthenticationException(final String code) {
+    public UncategorizedAuthenticationException(final String code) {
         super(code);
     }
 
@@ -47,8 +49,8 @@ public abstract class AbstractUncategorizedAuthenticationException extends Abstr
      * @param code the custom error code to use in message resolving.
      * @param throwable the chained exception.
      */
-    public AbstractUncategorizedAuthenticationException(final String code,
-                                                        final Throwable throwable) {
+    public UncategorizedAuthenticationException(final String code,
+                                                final Throwable throwable) {
         super(code, throwable);
     }
 }
