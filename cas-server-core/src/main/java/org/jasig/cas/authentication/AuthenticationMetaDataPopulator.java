@@ -27,7 +27,7 @@ package org.jasig.cas.authentication;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public interface AuthenticationMetaDataPopulator {
 

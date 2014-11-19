@@ -26,7 +26,7 @@ package org.jasig.cas.authentication;
  * @author William G. Thompson, Jr.
  * @author Marvin S. Addison
  * @see CredentialMetaData
- * @since 3.0
+ * @since 3.0.0
  */
 public interface Credential {
 

@@ -96,7 +96,7 @@ import java.util.Map;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @since 3.0
+ * @since 3.0.0
  */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 

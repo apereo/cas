@@ -24,7 +24,7 @@ package org.jasig.cas;
  *
  * @author Dmitriy Kopylenko
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class CasVersion {
 

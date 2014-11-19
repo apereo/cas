@@ -40,7 +40,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 

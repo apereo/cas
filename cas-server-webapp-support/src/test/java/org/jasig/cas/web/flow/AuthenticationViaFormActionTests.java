@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public class AuthenticationViaFormActionTests extends
     AbstractCentralAuthenticationServiceTest {

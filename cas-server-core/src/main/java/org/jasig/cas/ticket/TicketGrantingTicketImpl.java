@@ -44,7 +44,7 @@ import java.util.Map;
  * specified as object creation.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")

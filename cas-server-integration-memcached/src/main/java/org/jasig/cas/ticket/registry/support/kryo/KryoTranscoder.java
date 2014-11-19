@@ -59,7 +59,7 @@ import java.util.Map;
  * suited for efficient serialization of tickets.
  *
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public class KryoTranscoder implements Transcoder<Object> {
 

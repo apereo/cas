@@ -74,7 +74,7 @@ import org.springframework.util.Assert;
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 

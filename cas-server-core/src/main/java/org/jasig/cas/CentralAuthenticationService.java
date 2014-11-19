@@ -50,7 +50,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public interface CentralAuthenticationService {
 

@@ -56,7 +56,7 @@ import java.util.Set;
  * @author Scott Battaglia
    @deprecated As of 4.1. No longer required. The default implementation can be used
    to delegate calls to the service layer from WS.
- * @since 3.0
+ * @since 3.0.0
  */
 @Deprecated
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
