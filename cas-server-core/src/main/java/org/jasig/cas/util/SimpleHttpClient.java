@@ -94,7 +94,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
         HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-        HttpURLConnection.HTTP_ACCEPTED, };
+        HttpURLConnection.HTTP_ACCEPTED};
 
     private static final int MAX_POOLED_CONNECTIONS = 100;
     
