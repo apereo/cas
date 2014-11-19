@@ -69,7 +69,7 @@ public abstract class AbstractCasView extends AbstractView {
      *
      * @param model the model
      * @return the assertion from
-     * @since 4.1
+     * @since 4.1.0
      */
     protected final Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
         return getAssertionFrom(model).getPrimaryAuthentication();
@@ -80,7 +80,7 @@ public abstract class AbstractCasView extends AbstractView {
      *
      * @param model the model
      * @return the assertion from
-     * @since 4.1
+     * @since 4.1.0
      */
     protected final Principal getPrincipal(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getPrincipal();
@@ -93,7 +93,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
-     * @since 4.1
+     * @since 4.1.0
      */
     protected final Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
@@ -106,7 +106,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
-     * @since 4.1
+     * @since 4.1.0
      */
     protected final Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrimaryAuthenticationFrom(model).getAttributes());
@@ -162,7 +162,7 @@ public abstract class AbstractCasView extends AbstractView {
      *
      * @param model the model
      * @return the authentication date
-     * @since 4.1
+     * @since 4.1.0
      */
     protected final Date getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
@@ -210,7 +210,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Sets whether this view functions as a success response.
      *
      * @param successResponse the success response
-     * @since 4.1
+     * @since 4.1.0
      */
     public final void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;

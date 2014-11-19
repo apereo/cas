@@ -53,7 +53,7 @@ import java.util.Map;
  * </p>
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
- * @since 4.1
+ * @since 4.1.0
  */
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 

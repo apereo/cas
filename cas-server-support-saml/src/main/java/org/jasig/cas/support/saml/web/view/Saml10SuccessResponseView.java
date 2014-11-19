@@ -121,7 +121,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      *
      * @param model the model
      * @return the final map
-     * @since 4.1
+     * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
         final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributesAsMultiValuedAttributes(model));

@@ -27,7 +27,7 @@ import org.slf4j.spi.LoggerFactoryBinder;
  * Note that this class MUST reside in the <code>org.slf4j.impl</code>
  * package so it can be loaded by the runtime dynamic lookup.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
 
