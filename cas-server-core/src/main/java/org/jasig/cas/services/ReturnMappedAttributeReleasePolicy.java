@@ -28,7 +28,7 @@ import java.util.TreeMap;
  * Return a collection of allowed attributes for the principal, but additionally,
  * offers the ability to rename attributes on a per-service level.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 

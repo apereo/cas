@@ -26,7 +26,7 @@ import java.util.Map;
  * principal is resolved during the authentication process.
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class NullPrincipal implements Principal {
 

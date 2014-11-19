@@ -46,7 +46,7 @@ public interface AuthenticationMetaDataPopulator {
      *
      * @param credential The credential to check.
      * @return True if populator supports the Credential, false otherwise.
-     * @since 4.1
+     * @since 4.1.0
      */
     boolean supports(Credential credential);
 }

@@ -164,7 +164,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
-     * @since 4.1
+     * @since 4.1.0
      */
     public final void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
@@ -184,7 +184,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
-     * @since 4.1
+     * @since 4.1.0
      */
     public final void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
