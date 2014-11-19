@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
  * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter {

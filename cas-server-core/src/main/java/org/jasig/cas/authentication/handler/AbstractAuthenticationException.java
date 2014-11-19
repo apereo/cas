@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  * other AuthenticationExceptions.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractAuthenticationException extends RootCasException {
 

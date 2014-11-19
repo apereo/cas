@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 

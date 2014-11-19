@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
  * </p>
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
