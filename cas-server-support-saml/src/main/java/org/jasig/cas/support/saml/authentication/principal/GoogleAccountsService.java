@@ -64,7 +64,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private static SecureRandom RANDOM_GENERATOR = new SecureRandom();
 
     private static final char[] CHAR_MAPPINGS = {
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', };
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'};
 
     private static final String CONST_PARAM_SERVICE = "SAMLRequest";
 

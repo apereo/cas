@@ -37,7 +37,7 @@ import java.security.NoSuchAlgorithmException;
 public final class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
-                                                '9', 'a', 'b', 'c', 'd', 'e', 'f', };
+                                                '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
