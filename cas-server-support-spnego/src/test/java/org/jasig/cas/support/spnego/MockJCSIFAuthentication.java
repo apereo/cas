@@ -28,15 +28,17 @@ import java.security.Principal;
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
-public class MockJcifsAuthentication extends Authentication {
+@Deprecated
+public class MockJCSIFAuthentication extends Authentication {
     private final Principal principal;
 
     private final boolean valid;
 
     private final byte[] outToken = new byte[] {4, 5, 6};
 
-    public MockJcifsAuthentication(final boolean valid) {
+    public MockJCSIFAuthentication(final boolean valid) {
         this.principal = new MockPrincipal("test");
         this.valid = valid;
 

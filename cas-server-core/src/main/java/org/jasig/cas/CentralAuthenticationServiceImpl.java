@@ -42,7 +42,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -229,7 +229,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         Assert.notNull(service, "service cannot be null");
 
@@ -306,7 +306,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service) throws AbstractTicketException {
+        final Service service) throws TicketException {
         try {
             return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
         } catch (final AuthenticationException e) {
@@ -322,7 +322,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(credentials, "credentials cannot be null");
@@ -364,7 +364,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
  
@@ -430,7 +430,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
 
@@ -523,10 +523,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param ticket the ticket
      * @param context the context
      * @return the authentication satisfied by policy
-     * @throws org.jasig.cas.ticket.AbstractTicketException the ticket exception
+     * @throws org.jasig.cas.ticket.TicketException the ticket exception
      */
     private Authentication getAuthenticationSatisfiedByPolicy(
-            final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
+            final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
                 serviceContextAuthenticationPolicyFactory.createPolicy(context);

@@ -23,7 +23,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -65,10 +65,10 @@ public interface CentralAuthenticationService {
      * @return Non-null ticket-granting ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.AbstractTicketException if ticket cannot be created
+     * @throws org.jasig.cas.ticket.TicketException if ticket cannot be created
      */
     TicketGrantingTicket createTicketGrantingTicket(Credential... credentials)
-        throws AuthenticationException, AbstractTicketException;
+        throws AuthenticationException, TicketException;
 
 
     /**
@@ -110,9 +110,9 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null service ticket identifier.
      *
-     * @throws org.jasig.cas.ticket.AbstractTicketException if the ticket could not be created.
+     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
-    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service) throws AbstractTicketException;
+    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
     /**
      * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
@@ -132,11 +132,11 @@ public interface CentralAuthenticationService {
      * @return Non-null service ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.AbstractTicketException if the ticket could not be created.
+     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException;
+            throws AuthenticationException, TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -146,9 +146,9 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null ticket validation assertion.
      *
-     * @throws org.jasig.cas.ticket.AbstractTicketException if there was an error validating the ticket.
+     * @throws org.jasig.cas.ticket.TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException;
+    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
@@ -172,8 +172,8 @@ public interface CentralAuthenticationService {
      * that proxy authentication.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.AbstractTicketException if there was an error creating the ticket
+     * @throws org.jasig.cas.ticket.TicketException if there was an error creating the ticket
      */
     TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException;
+            throws AuthenticationException, TicketException;
 }

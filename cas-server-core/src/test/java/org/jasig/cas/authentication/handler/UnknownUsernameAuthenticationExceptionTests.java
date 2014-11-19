@@ -32,7 +32,7 @@ public final class UnknownUsernameAuthenticationExceptionTests {
 
     @Test
     public void testGetCode() {
-        final AbstractAuthenticationException e = new UnknownUsernameAuthenticationException();
+        final AuthenticationException e = new UnknownUsernameAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }

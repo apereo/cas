@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public class TestAlwaysPassAuthenticationHandler implements AuthenticationHandler {
     @Override
-    public boolean authenticate(final Credentials credential) throws AbstractAuthenticationException {
+    public boolean authenticate(final Credentials credential) throws AuthenticationException {
         return true;
     }
 

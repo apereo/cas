@@ -29,8 +29,10 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @since 3.0.0
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
-public abstract class AbstractAuthenticationException extends RootCasException {
+@Deprecated
+public abstract class AuthenticationException extends RootCasException {
 
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
@@ -45,7 +47,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      *
      * @param code the code
      */
-    public AbstractAuthenticationException(final String code) {
+    public AuthenticationException(final String code) {
         this(code, "", DEFAULT_TYPE);
     }
 
@@ -55,7 +57,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the code
      * @param msg the msg
      */
-    public AbstractAuthenticationException(final String code, final String msg) {
+    public AuthenticationException(final String code, final String msg) {
         this(code, msg, DEFAULT_TYPE);
     }
 
@@ -65,7 +67,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the exception code
      * @param msg the error message
      */
-    public AbstractAuthenticationException(final String code, final String msg, @NotNull final String type) {
+    public AuthenticationException(final String code, final String msg, @NotNull final String type) {
         super(code, msg);
         this.type = type;
     }
@@ -74,7 +76,7 @@ public abstract class AbstractAuthenticationException extends RootCasException {
      * @param code the exception code
      * @param throwable the exception that originally caused the authentication failure
      */
-    public AbstractAuthenticationException(final String code, final Throwable throwable) {
+    public AuthenticationException(final String code, final Throwable throwable) {
         super(code, throwable);
         this.type = DEFAULT_TYPE;
     }
