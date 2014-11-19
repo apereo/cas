@@ -84,11 +84,11 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     * Binder that allows additional binding of form object beyond Spring</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     * defaults.</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../org/jasig/cas/web/bind/CredentialsBinder.html">CredentialsBinder</a> credentialsBinder;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> CredentialsBinder credentialsBinder;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <em class="jxr_javadoccomment">/** Core we delegate to for handling all ticket related tasks. */</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      @NotNull
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService;
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">private</strong> CentralAuthenticationService centralAuthenticationService;
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      @NotNull
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">private</strong> CookieGenerator warnCookieGenerator;
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     * @param credential the credential</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">     * @throws Exception the exception arising as the result of the bind op.</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> doBind(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> doBind(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> Credential credential) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> 
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.credentialsBinder != <strong class="jxr_keyword">null</strong> &amp;&amp; <strong class="jxr_keyword">this</strong>.credentialsBinder.supports(credential.getClass())) {
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * @return the event</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * @since 4.1</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> Event submit(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential,
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> Event submit(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> Credential credential,
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>                               <strong class="jxr_keyword">final</strong> MessageContext messageContext)  {
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         <strong class="jxr_keyword">if</strong> (!checkLoginTicketIfExists(context)) {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>             <strong class="jxr_keyword">return</strong> returnInvalidLoginTicketEvent(context, messageContext);
@@ -175,7 +175,7 @@
 <a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isRequestAskingForServiceTicket(<strong class="jxr_keyword">final</strong> RequestContext context) {
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = WebUtils.getService(context);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">final</strong> Service service = WebUtils.getService(context);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">return</strong> (StringUtils.isNotBlank(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW))
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>                 &amp;&amp; ticketGrantingTicketId != <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>                 &amp;&amp; service != <strong class="jxr_keyword">null</strong>);
@@ -190,11 +190,11 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     * @return the resulting event. Warning, authentication failure or error.</em>
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * @since 4.1</em>
 <a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">protected</strong> Event grantServiceTicket(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential) {
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">protected</strong> Event grantServiceTicket(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> Credential credential) {
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = WebUtils.getService(context);
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/ServiceTicket.html">ServiceTicket</a> serviceTicketId = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.grantServiceTicket(
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>             <strong class="jxr_keyword">final</strong> Service service = WebUtils.getService(context);
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>             <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicketId = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.grantServiceTicket(
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>                     ticketGrantingTicketId, service, credential);
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>             putWarnCookieIfRequestParameterPresent(context);
@@ -222,10 +222,10 @@
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">     * @return the resulting event.</em>
 <a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * @since 4.1</em>
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">protected</strong> Event createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential,
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">protected</strong> Event createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> Credential credential,
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>                                                <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> tgt = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.createTicketGrantingTicket(credential);
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.createTicketGrantingTicket(credential);
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>             WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>             putWarnCookieIfRequestParameterPresent(context);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>             <strong class="jxr_keyword">if</strong> (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
@@ -247,7 +247,7 @@
 <a class="jxr_linenumber" name="L239" href="#L239">239</a> <em class="jxr_javadoccomment">     * @return true if warnings were found and added, false otherwise.</em>
 <a class="jxr_linenumber" name="L240" href="#L240">240</a> <em class="jxr_javadoccomment">     * @since 4.1</em>
 <a class="jxr_linenumber" name="L241" href="#L241">241</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> addWarningMessagesToMessageContextIfNeeded(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> tgtId, <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> addWarningMessagesToMessageContextIfNeeded(<strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtId, <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">boolean</strong> foundAndAddedWarnings = false;
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, HandlerResult&gt; entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Message message : entry.getValue().getWarnings()) {
@@ -294,7 +294,7 @@
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Event(<strong class="jxr_keyword">this</strong>, id, <strong class="jxr_keyword">new</strong> LocalAttributeMap(<span class="jxr_string">"error"</span>, error));
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>     }
 <a class="jxr_linenumber" name="L288" href="#L288">288</a> 
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setCentralAuthenticationService(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService) {
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setCentralAuthenticationService(<strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService) {
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>     }
 <a class="jxr_linenumber" name="L292" href="#L292">292</a> 
@@ -313,7 +313,7 @@
 <a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * @param credentialsBinder the credential binder to set.</em>
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setCredentialsBinder(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/web/bind/CredentialsBinder.html">CredentialsBinder</a> credentialsBinder) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setCredentialsBinder(<strong class="jxr_keyword">final</strong> CredentialsBinder credentialsBinder) {
 <a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">this</strong>.credentialsBinder = credentialsBinder;
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>     }
 <a class="jxr_linenumber" name="L311" href="#L311">311</a> 
@@ -329,7 +329,7 @@
 <a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1</em>
 <a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>     @Deprecated
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry) {
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>         logger.warn(<span class="jxr_string">"setTicketRegistry() has no effect and will be removed in future CAS versions."</span>);
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>     }
 <a class="jxr_linenumber" name="L327" href="#L327">327</a> 
@@ -339,7 +339,7 @@
 <a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * @param context Message context.</em>
 <a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @param warning Warning message.</em>
 <a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addWarningToContext(<strong class="jxr_keyword">final</strong> MessageContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/Message.html">Message</a> warning) {
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addWarningToContext(<strong class="jxr_keyword">final</strong> MessageContext context, <strong class="jxr_keyword">final</strong> Message warning) {
 <a class="jxr_linenumber" name="L335" href="#L335">335</a>         <strong class="jxr_keyword">final</strong> MessageBuilder builder = <strong class="jxr_keyword">new</strong> MessageBuilder()
 <a class="jxr_linenumber" name="L336" href="#L336">336</a>                 .warning()
 <a class="jxr_linenumber" name="L337" href="#L337">337</a>                 .code(warning.getCode())
