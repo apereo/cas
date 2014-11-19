@@ -92,9 +92,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
       <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
     </module>
-    <module name="AbbreviationAsWordInName">
-      <property name="severity" value="error"/>
-    </module>
+    <module name="AbbreviationAsWordInName" />
     <module name="TypeName">
       <property name="severity" value="error"/>
     </module>
