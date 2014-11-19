@@ -22,7 +22,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -82,7 +82,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
-            } catch (final AbstractTicketException e) {
+            } catch (final TicketException e) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 logger.debug("Attempted to generate a ServiceTicket using renew=true with different credential", e);
             }

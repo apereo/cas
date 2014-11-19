@@ -26,7 +26,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -198,7 +198,7 @@ public class AuthenticationViaFormAction {
                     "Invalid attempt to access service using renew=true with different credential. "
                             + "Ending SSO session.");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-        } catch (final AbstractTicketException e) {
+        } catch (final TicketException e) {
             return newEvent(ERROR, e);
         }
         return newEvent(ERROR);

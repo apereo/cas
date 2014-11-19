@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -76,7 +76,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      */
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
         checkForErrors(credentials);
@@ -89,7 +89,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      */
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service)
-            throws AbstractTicketException {
+            throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
@@ -108,7 +108,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
 
@@ -128,7 +128,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * {@inheritDoc}
      */
     @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
     }
 
@@ -152,7 +152,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      */
     @Override
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
-            throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
 
