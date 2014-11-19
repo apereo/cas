@@ -29,7 +29,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(String, org.jasig.cas.authentication.principal.Service)
- * @since 3.0
+ * @since 3.0.0
  */
 public interface Assertion {
 

@@ -51,9 +51,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="severity" value="error"/>
       <property name="scope" value="protected" />
     </module>
-    <module name="ArrayTrailingComma">
-      <property name="severity" value="error"/>
-    </module>
     <module name="JavadocStyle">
       <property name="severity" value="error"/>
     </module>

@@ -31,7 +31,7 @@ import java.io.Serializable;
  * This is a published and supported CAS Server 3 API.
  * </p>
  * @see org.jasig.cas.ticket.Ticket
- * @since 3.0
+ * @since 3.0.0
  */
 public interface ExpirationPolicy extends Serializable {
 

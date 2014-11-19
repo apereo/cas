@@ -44,7 +44,7 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Inheritance
