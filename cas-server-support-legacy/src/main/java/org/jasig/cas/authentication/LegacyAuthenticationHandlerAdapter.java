@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
+import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.handler.*;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import java.security.GeneralSecurityException;
 
 /**
  * Adapts a CAS 3.x {@link org.jasig.cas.authentication.handler.AuthenticationHandler} onto a CAS 4.x
