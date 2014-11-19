@@ -35,6 +35,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,8 +82,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "proxy_policy", nullable = false)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
 
+    @Column(name = "ssoEnabled", nullable = false)
     private boolean ssoEnabled = true;
 
     @Column(name = "evaluation_order", nullable = false)
@@ -113,7 +116,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "attribute_release")
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
-    private String logo;
+    @Column(name = "logo")
+    private URL logo;
 
     public long getId() {
         return this.id;
@@ -191,8 +195,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
                 .append(this.logoutType)
-                .append(this.logo)
                 .append(this.attributeReleasePolicy)
+                .append(this.logo)
                 .toHashCode();
     }
 
@@ -380,11 +384,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public String getLogo() {
+    public URL getLogo() {
         return this.logo;
     }
 
-    public void setLogo(final String logo) {
+    public void setLogo(final URL logo) {
         this.logo = logo;
     }
 }
