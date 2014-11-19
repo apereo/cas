@@ -60,8 +60,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final int INTEGER_LEN = 4;
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f', };
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final int DEFAULT_SALT_SIZE = 8;
     private static final int DEFAULT_SECRET_KEY_SIZE = 32;
     private static final int BYTE_BUFFER_CAPACITY_SIZE = 4;
