@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  * Tests for the switch-case transformer.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class ConvertCasePrincipalNameTransformerTests {
 

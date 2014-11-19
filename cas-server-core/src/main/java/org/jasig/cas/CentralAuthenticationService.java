@@ -83,7 +83,7 @@ public interface CentralAuthenticationService {
      * @param <T> the generic ticket type to return that extends {@link Ticket}
      * @return the ticket object
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
-     * @since 4.1
+     * @since 4.1.0
      */
     <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
             throws InvalidTicketException;
@@ -98,7 +98,7 @@ public interface CentralAuthenticationService {
      *
      * @param predicate the predicate
      * @return the tickets
-     * @since 4.1
+     * @since 4.1.0
      */
      Collection<Ticket> getTickets(Predicate predicate);
 

@@ -78,7 +78,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @param randomStringGenerator the random string generator
      * @param suffix the value to append at the end of the unique id to ensure
      * uniqueness across JVMs.
-     * @since 4.1
+     * @since 4.1.0
      */
     public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
                                           final RandomStringGenerator randomStringGenerator,

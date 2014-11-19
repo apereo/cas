@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * The release policy that decides how attributes are to be released for a given service.
  * Each policy has the ability to apply an optional filter.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface AttributeReleasePolicy extends Serializable {
     

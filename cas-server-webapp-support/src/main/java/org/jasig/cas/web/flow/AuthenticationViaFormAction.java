@@ -110,7 +110,7 @@ public class AuthenticationViaFormAction {
      * @param credential the credential
      * @param messageContext the message context
      * @return the event
-     * @since 4.1
+     * @since 4.1.0
      */
     public final Event submit(final RequestContext context, final Credential credential,
                               final MessageContext messageContext)  {
@@ -132,7 +132,7 @@ public class AuthenticationViaFormAction {
      *
      * @param context the context
      * @return true if valid
-     * @since 4.1
+     * @since 4.1.0
      */
     protected boolean checkLoginTicketIfExists(final RequestContext context) {
         final String loginTicketFromFlowScope = WebUtils.getLoginTicketFromFlowScope(context);
@@ -149,7 +149,7 @@ public class AuthenticationViaFormAction {
      * @param context the context
      * @param messageContext the message context
      * @return the error event
-     * @since 4.1
+     * @since 4.1.0
      */
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
@@ -163,7 +163,7 @@ public class AuthenticationViaFormAction {
      *
      * @param context the context
      * @return true, if both service and tgt are found, and the request is not asking to renew.
-     * @since 4.1
+     * @since 4.1.0
      */
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -180,7 +180,7 @@ public class AuthenticationViaFormAction {
      * @param context the context
      * @param credential the credential
      * @return the resulting event. Warning, authentication failure or error.
-     * @since 4.1
+     * @since 4.1.0
      */
     protected Event grantServiceTicket(final RequestContext context, final Credential credential) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -212,7 +212,7 @@ public class AuthenticationViaFormAction {
      * @param credential the credential
      * @param messageContext the message context
      * @return the resulting event.
-     * @since 4.1
+     * @since 4.1.0
      */
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
@@ -237,7 +237,7 @@ public class AuthenticationViaFormAction {
      * @param tgtId the tgt id
      * @param messageContext the message context
      * @return true if warnings were found and added, false otherwise.
-     * @since 4.1
+     * @since 4.1.0
      */
     protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;

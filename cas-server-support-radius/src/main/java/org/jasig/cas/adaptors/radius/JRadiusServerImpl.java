@@ -172,7 +172,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas ip address.
      *
      * @param nasIpAddress the new nas ip address
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasIpAddress(final String nasIpAddress) {
         this.nasIpAddress = nasIpAddress;
@@ -182,7 +182,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas ipv6 address.
      *
      * @param nasIpv6Address the new nas ipv6 address
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasIpv6Address(final String nasIpv6Address) {
         this.nasIpv6Address = nasIpv6Address;
@@ -192,7 +192,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas port.
      *
      * @param nasPort the new nas port
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasPort(final long nasPort) {
         this.nasPort = nasPort;
@@ -202,7 +202,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas port id.
      *
      * @param nasPortId the new nas port id
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasPortId(final long nasPortId) {
         this.nasPortId = nasPortId;
@@ -212,7 +212,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas identifier.
      *
      * @param nasIdentifier the new nas identifier
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasIdentifier(final long nasIdentifier) {
         this.nasIdentifier = nasIdentifier;
@@ -222,7 +222,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas real port.
      *
      * @param nasRealPort the new nas real port
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasRealPort(final long nasRealPort) {
         this.nasRealPort = nasRealPort;
@@ -232,7 +232,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the nas port type.
      *
      * @param nasPortType the new nas port type
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setNasPortType(final long nasPortType) {
         this.nasPortType = nasPortType;
@@ -242,7 +242,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * Sets the retries.
      *
      * @param retries the new retries
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setRetries(final int retries) {
         this.retries = retries;

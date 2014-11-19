@@ -93,7 +93,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Set if messages are sent in an asynchronous fashion.
      *
      * @param asyncCallbacks if message is synchronously sent
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setAsynchronous(final boolean asyncCallbacks) {
         this.asynchronous = asyncCallbacks;
@@ -246,7 +246,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * A logout http message that is accompanied by a special content type
      * and formatting.
-     * @since 4.1
+     * @since 4.1.0
      */
     private final class LogoutHttpMessage extends HttpMessage {
         
