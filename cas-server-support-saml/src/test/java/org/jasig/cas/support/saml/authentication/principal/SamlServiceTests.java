@@ -38,7 +38,7 @@ public class SamlServiceTests {
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -50,7 +50,7 @@ public class SamlServiceTests {
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "http://www.cnn.com/;jsession=test");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -59,7 +59,7 @@ public class SamlServiceTests {
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -76,9 +76,10 @@ public class SamlServiceTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(body.getBytes());
 
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
+        assertTrue(impl instanceof SamlService);
         assertEquals("artifact", impl.getArtifactId());
-        assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
+        assertEquals("_192.168.16.51.1024506224022", ((SamlService) impl).getRequestID());
     }
 
     @Test
@@ -89,7 +90,7 @@ public class SamlServiceTests {
         final SamlArgumentExtractor ext = new SamlArgumentExtractor();
         final WebApplicationService service = ext.extractService(request);
 
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
         assertTrue(impl.matches(service));
     }
 
@@ -97,7 +98,7 @@ public class SamlServiceTests {
     public void testTargetMatchesNoSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "https://some.service.edu/path/to/app");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService impl = new SamlArgumentExtractor().extractService(request);
 
         final MockHttpServletRequest request2 = new MockHttpServletRequest();
         request2.setParameter("TARGET", "https://some.SERVICE.edu");

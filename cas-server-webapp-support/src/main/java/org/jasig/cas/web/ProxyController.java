@@ -18,18 +18,19 @@
  */
 package org.jasig.cas.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
@@ -61,11 +62,24 @@ public final class ProxyController extends AbstractController {
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    private final ArgumentExtractor argumentExtractor;
+
     /**
      * Instantiates a new proxy controller, with cache seconds set to 0.
+     * Uses the {@link org.jasig.cas.web.support.CasArgumentExtractor}.
      */
     public ProxyController() {
+        this(new CasArgumentExtractor());
         setCacheSeconds(0);
+    }
+
+    /**
+     * Instantiates a new proxy controller, with cache seconds set to 0.
+     * @param argumentExtractor the argument extractor
+     */
+    public ProxyController(final ArgumentExtractor argumentExtractor) {
+        setCacheSeconds(0);
+        this.argumentExtractor = argumentExtractor;
     }
 
     /**
@@ -105,7 +119,7 @@ public final class ProxyController extends AbstractController {
      * @return the target service
      */
     private Service getTargetService(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return this.argumentExtractor.extractService(request);
     }
 
     /**

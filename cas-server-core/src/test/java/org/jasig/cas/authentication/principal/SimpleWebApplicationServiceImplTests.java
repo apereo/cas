@@ -18,26 +18,34 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.principal.Response.ResponseType;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
- *
  */
 public class SimpleWebApplicationServiceImplTests {
+    private ArgumentExtractor extractor;
+
+    @Before
+    public void setUp() {
+        this.extractor = new CasArgumentExtractor();
+    }
 
     @Test
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
-        final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = this.extractor.extractService(request);
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -56,7 +64,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = this.extractor.extractService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -65,7 +73,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = this.extractor.extractService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -77,7 +85,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void testResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = this.extractor.extractService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -90,7 +98,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void testResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = this.extractor.extractService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);

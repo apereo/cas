@@ -30,12 +30,12 @@ import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAu
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -147,7 +147,7 @@ public final class TestUtils {
     public static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new CasArgumentExtractor().extractService(request);
     }
 
     public static Authentication getAuthentication() {

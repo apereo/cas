@@ -18,24 +18,27 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
-import java.util.zip.DeflaterOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
+import java.util.zip.DeflaterOutputStream;
 
 import static org.mockito.Mockito.*;
 /**
@@ -44,9 +47,9 @@ import static org.mockito.Mockito.*;
  */
 public class GoogleAccountsServiceTests {
 
-    private GoogleAccountsService googleAccountsService;
+    private WebApplicationService googleAccountsService;
 
-    public static GoogleAccountsService getGoogleAccountsService() throws Exception {
+    private WebApplicationService getGoogleAccountsService() throws Exception {
         final PublicKeyFactoryBean pubKeyFactoryBean = new PublicKeyFactoryBean();
         pubKeyFactoryBean.setAlgorithm("DSA");
         final PrivateKeyFactoryBean privKeyFactoryBean = new PrivateKeyFactoryBean();
@@ -77,8 +80,9 @@ public class GoogleAccountsServiceTests {
         
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
-        
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
+
+        return new GoogleAccountsArgumentExtractor(publicKey, privateKey, servicesManager)
+                .extractService(request);
     }
 
     @Before
@@ -101,9 +105,9 @@ public class GoogleAccountsServiceTests {
     protected static String encodeMessage(final String xmlString) throws IOException {
         final byte[] xmlBytes = xmlString.getBytes("UTF-8");
         final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
-                byteOutputStream);
+        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
+        IOUtils.closeQuietly(deflaterOutputStream);
         deflaterOutputStream.close();
 
         // next, base64 encode it

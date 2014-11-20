@@ -19,27 +19,22 @@
 package org.jasig.cas.support.openid.web.flow;
 
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
+import org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -55,6 +50,13 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -124,7 +126,7 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter("openid.identity", "fablah");
         request.setParameter("openid.return_to", "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final WebApplicationService service = new OpenIdArgumentExtractor().extractService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
 
@@ -147,7 +149,7 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter("openid.identity", "http://openid.aol.com/scootman28");
         request.setParameter("openid.return_to", "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final WebApplicationService service = new OpenIdArgumentExtractor().extractService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
 

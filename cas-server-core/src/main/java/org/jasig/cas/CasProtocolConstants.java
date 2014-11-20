@@ -49,4 +49,16 @@ public interface CasProtocolConstants {
     
     /** Constant representing an invalid ticket for validation. */
     String ERROR_CODE_INVALID_TICKET = "INVALID_TICKET";
+
+    /** Constant representing the service request. */
+    String PARAM_SERVICE = "service";
+
+    /** Constant representing the target service request. */
+    String PARAM_TARGET_SERVICE = "targetService";
+
+    /** Constant representing the artifact id. */
+    String PARAM_TICKET = "ticket";
+
+    /** Constant representing the requested http method (GET, POST). */
+    String PARAM_METHOD = "method";
 }
