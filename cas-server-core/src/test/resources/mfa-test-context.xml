@@ -86,9 +86,11 @@
         </property>
     </bean>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          c:readTimeout="5000"
-          c:connectionTimeout="5000" />
+    <bean id="httpClientBuilder" class="org.jasig.cas.util.http.SimpleHttpClientBuilder"
+        p:readTimeout="5000" p:connectionTimeout="5000" />
+
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClient"
+        c:builder-ref="httpClientBuilder" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry

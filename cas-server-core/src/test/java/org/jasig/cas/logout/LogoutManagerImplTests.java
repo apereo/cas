@@ -24,8 +24,8 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.HttpMessage;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.HttpMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,6 @@ import org.junit.runners.JUnit4;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import java.net.URL;
 
 import static org.junit.Assert.*;

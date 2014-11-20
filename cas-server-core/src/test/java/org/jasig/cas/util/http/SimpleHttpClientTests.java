@@ -16,14 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+package org.jasig.cas.util.http;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
 import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import java.security.cert.X509Certificate;
 
 import static org.junit.Assert.assertFalse;
@@ -59,8 +62,11 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClient client = new SimpleHttpClient(getFriendlyToAllSSLSocketFactory(),
-                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER, new int[] {200, 403});
+        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
+        builder.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
+        builder.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        builder.setAcceptableCodes(new int[] {200, 403});
+        final SimpleHttpClient client = new SimpleHttpClient(builder);
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 

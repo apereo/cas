@@ -25,8 +25,8 @@ import com.esotericsoftware.kryo.Kryo;
 
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
 
 /**
  * Serializer for {@link SamlService} class.

@@ -38,7 +38,7 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
