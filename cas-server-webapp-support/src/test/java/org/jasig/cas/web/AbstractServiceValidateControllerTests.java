@@ -29,7 +29,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.junit.Before;

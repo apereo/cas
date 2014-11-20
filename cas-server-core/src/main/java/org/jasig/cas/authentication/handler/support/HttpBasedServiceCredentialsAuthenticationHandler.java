@@ -23,12 +23,13 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.util.HttpClient;
+import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+
 import java.security.GeneralSecurityException;
 
 /**

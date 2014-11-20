@@ -19,6 +19,7 @@
 package org.jasig.cas.logout;
 
 import java.net.URL;
+
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
@@ -26,13 +27,14 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.HttpMessage;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
