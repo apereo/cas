@@ -130,7 +130,6 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-
     
     /**
      * Clone this service.
@@ -157,11 +156,11 @@ public interface RegisteredService extends Cloneable, Serializable {
     AttributeReleasePolicy getAttributeReleasePolicy();
 
     /**
-     * Gets the logo image associated with thi service.
+     * Gets the logo image associated with this service.
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
      * @since 4.1
-     * @return URL of the image as an absolute
+     * @return URL of the image
      */
     URL getLogo();
 }
