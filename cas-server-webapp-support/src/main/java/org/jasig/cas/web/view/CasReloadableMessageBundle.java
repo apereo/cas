@@ -40,7 +40,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * of {@link org.springframework.context.NoSuchMessageException} to be thrown.
  * 
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 

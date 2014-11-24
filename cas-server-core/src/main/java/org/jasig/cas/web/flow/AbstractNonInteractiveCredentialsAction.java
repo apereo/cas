@@ -22,8 +22,8 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
 
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
     AbstractAction {

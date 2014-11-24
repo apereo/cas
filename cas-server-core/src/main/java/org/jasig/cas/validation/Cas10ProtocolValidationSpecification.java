@@ -26,7 +26,7 @@ package org.jasig.cas.validation;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 

@@ -41,14 +41,13 @@ import java.util.List;
  * @since 3.1
  */
 public final class WebUtils {
+    /** Request attribute that contains message key describing details of authorization failure.*/
+    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
 
     /**
      * Instantiates a new web utils instance.
      */
     private WebUtils() {}
-
-    /** Request attribute that contains message key describing details of authorization failure.*/
-    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
 
     /**
      * Gets the http servlet request from the context.

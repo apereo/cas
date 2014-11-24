@@ -24,7 +24,7 @@ import javax.security.auth.login.AccountException;
  * Describes an authentication error condition where a user account has been administratively disabled.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AccountDisabledException extends AccountException {
 

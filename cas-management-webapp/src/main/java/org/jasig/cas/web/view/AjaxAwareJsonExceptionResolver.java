@@ -18,21 +18,21 @@
  */
 package org.jasig.cas.web.view;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.exception.JsonExceptionResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
-* Implementation of JsonExceptionResolver that only triages the exception occurred
-* for JSON requests.
-*
-* @author Misagh Moayyed
-* @since 4.0.0
-*/
+ * Implementation of JsonExceptionResolver that only triages the exception occurred
+ * for JSON requests.
+ *
+ * @author Misagh Moayyed
+ * @since 4.0.0
+ */
 public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

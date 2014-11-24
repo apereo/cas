@@ -28,7 +28,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * This can be used as a simple converter for any {@link Credential} that doesn't implement {@link CredentialMetaData}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
 
