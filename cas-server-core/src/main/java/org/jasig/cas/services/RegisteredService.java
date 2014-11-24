@@ -18,10 +18,11 @@
  */
 package org.jasig.cas.services;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.jasig.cas.authentication.principal.Service;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Set;
 
 /**
  * Interface for a service that can be registered by the Services Management
@@ -129,7 +130,6 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-
     
     /**
      * Clone this service.
@@ -154,4 +154,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the attribute release policy
      */
     AttributeReleasePolicy getAttributeReleasePolicy();
+
+    /**
+     * Gets the logo image associated with this service.
+     * The image mostly is served on the user interface
+     * to identify this requesting service during authentication.
+     * @since 4.1
+     * @return URL of the image
+     */
+    URL getLogo();
 }
