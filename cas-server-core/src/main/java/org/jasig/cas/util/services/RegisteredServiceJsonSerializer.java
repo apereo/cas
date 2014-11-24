@@ -41,7 +41,7 @@ import java.net.URL;
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RegisteredServiceJsonSerializer implements JsonSerializer<RegisteredService> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceJsonSerializer.class);

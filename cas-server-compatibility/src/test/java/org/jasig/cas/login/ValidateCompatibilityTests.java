@@ -29,7 +29,7 @@ import net.sourceforge.jwebunit.HttpUnitDialog;
  * @author Scott Battaglia
  * @author Andrew Petro
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  */
 public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 

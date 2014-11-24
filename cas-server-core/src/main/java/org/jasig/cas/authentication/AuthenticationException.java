@@ -28,7 +28,7 @@ import java.util.Map;
  * and failures that may be used by higher-level components to determine subsequent behavior.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AuthenticationException extends Exception {
 

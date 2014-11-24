@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author Scott Battaglia
  * @author Jerome Leleu
- * @since 3.0
+ * @since 3.0.0
  */
 public final class LogoutAction extends AbstractLogoutAction {
 

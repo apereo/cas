@@ -27,7 +27,7 @@ package org.jasig.cas.authentication;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public interface AuthenticationMetaDataPopulator {
 
@@ -44,9 +44,9 @@ public interface AuthenticationMetaDataPopulator {
      * In practice, the {@link #populateAttributes(AuthenticationBuilder, Credential)} needs to be able
      * to operate on said credentials only if the return result here is <code>true</code>.
      *
-     * @since 4.1
      * @param credential The credential to check.
      * @return True if populator supports the Credential, false otherwise.
+     * @since 4.1.0
      */
     boolean supports(Credential credential);
 }

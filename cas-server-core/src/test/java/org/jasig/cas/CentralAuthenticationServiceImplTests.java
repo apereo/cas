@@ -24,9 +24,9 @@ import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketState;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
     
@@ -376,7 +376,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
      *  
-     * @throws TicketException
+     * @throws org.jasig.cas.ticket.TicketException
      * @throws AuthenticationException
      */
     @Test
@@ -398,7 +398,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.
      *
      * @throws AuthenticationException
-     * @throws TicketException
+     * @throws org.jasig.cas.ticket.TicketException
      */
     @Test
     public void testDestroyRemoteRegistry() throws TicketException, AuthenticationException {
