@@ -35,6 +35,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,8 +82,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "proxy_policy", nullable = false)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
 
+    @Column(name = "ssoEnabled", nullable = false)
     private boolean ssoEnabled = true;
 
     @Column(name = "evaluation_order", nullable = false)
@@ -112,7 +115,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Lob
     @Column(name = "attribute_release")
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-    
+
+    @Column(name = "logo")
+    private URL logo;
+
     public long getId() {
         return this.id;
     }
@@ -173,6 +179,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
                 .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+                .append(this.logo, that.logo)
                 .isEquals();
     }
 
@@ -188,7 +195,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
                 .append(this.logoutType)
-                .append(this.attributeReleasePolicy).toHashCode();
+                .append(this.attributeReleasePolicy)
+                .append(this.logo)
+                .toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -291,6 +300,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
+        this.setLogo(source.getLogo());
     }
 
     /**
@@ -324,6 +334,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
+        toStringBuilder.append("logo", this.logo);
 
         return toStringBuilder.toString();
     }
@@ -370,5 +381,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public final AttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
+    }
+
+    @Override
+    public URL getLogo() {
+        return this.logo;
+    }
+
+    public void setLogo(final URL logo) {
+        this.logo = logo;
     }
 }
