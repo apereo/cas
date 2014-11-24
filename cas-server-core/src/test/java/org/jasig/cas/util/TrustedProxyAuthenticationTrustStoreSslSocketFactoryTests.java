@@ -20,7 +20,7 @@ package org.jasig.cas.util;
 
 import org.jasig.cas.authentication.FileTrustStoreSslSocketFactory;
 import org.jasig.cas.util.http.SimpleHttpClient;
-import org.jasig.cas.util.http.SimpleHttpClientBuilder;
+import org.jasig.cas.util.http.SimpleHttpClientConfiguration;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,9 +43,9 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
         final FileTrustStoreSslSocketFactory sslFactory = new FileTrustStoreSslSocketFactory(
                 TRUST_STORE.getFile(), TRUST_STORE_PSW);
 
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(sslFactory);
-        this.client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(sslFactory);
+        this.client = new SimpleHttpClient(configuration);
     }
 
     @Ignore
