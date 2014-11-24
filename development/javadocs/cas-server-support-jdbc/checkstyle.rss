@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImpl.java">org/jasig/cas/services/JpaServiceRegistryDaoImpl.java</a>
                 </td>
                 <td>
                   0
@@ -74,7 +74,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImpl.java">org/jasig/cas/services/JpaServiceRegistryDaoImpl.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandler.java</a>
                 </td>
                 <td>
                   0
@@ -102,7 +102,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/BindModeSearchDatabaseAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.DataSourceMonitor.java">org/jasig/cas/monitor/DataSourceMonitor.java</a>
                 </td>
                 <td>
                   0
@@ -116,7 +116,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.DataSourceMonitor.java">org/jasig/cas/monitor/DataSourceMonitor.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/BindModeSearchDatabaseAuthenticationHandler.java</a>
                 </td>
                 <td>
                   0
