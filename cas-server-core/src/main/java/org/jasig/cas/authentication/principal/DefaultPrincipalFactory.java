@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * Factory to create {@link org.jasig.cas.authentication.principal.SimplePrincipal} objects.
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public final class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
