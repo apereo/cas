@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * Defines operations to create principals.
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public interface PrincipalFactory extends Serializable {
     /**
