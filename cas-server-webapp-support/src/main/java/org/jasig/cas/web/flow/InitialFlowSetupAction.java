@@ -69,7 +69,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
     private List<ArgumentExtractor> argumentExtractors;
 
     /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated = false;
+    private boolean pathPopulated;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {

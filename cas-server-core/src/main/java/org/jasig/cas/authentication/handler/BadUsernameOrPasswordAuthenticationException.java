@@ -24,7 +24,7 @@ package org.jasig.cas.authentication.handler;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class BadUsernameOrPasswordAuthenticationException extends
     BadCredentialsAuthenticationException {

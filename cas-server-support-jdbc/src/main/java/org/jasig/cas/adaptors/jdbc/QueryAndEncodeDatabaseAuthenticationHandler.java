@@ -53,6 +53,7 @@ import java.util.Map;
  * </p>
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
+ * @since 4.1.0
  */
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
@@ -91,14 +92,14 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
     /**
-     * The number of iterations.
+     * The number of iterations. Defaults to 0.
      */
-    protected long numberOfIterations = 0;
+    protected long numberOfIterations;
 
     /**
      * The static/private salt.
      */
-    protected String staticSalt = null;
+    protected String staticSalt;
 
     /**
      * Instantiates a new Query and encode database authentication handler.

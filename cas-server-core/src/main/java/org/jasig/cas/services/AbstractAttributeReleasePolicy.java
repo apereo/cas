@@ -18,19 +18,19 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
  * Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public abstract class AbstractAttributeReleasePolicy implements AttributeReleasePolicy {
     
@@ -40,7 +40,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The attribute filter. */
-    private AttributeFilter attributeFilter = null;
+    private AttributeFilter attributeFilter;
     
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {

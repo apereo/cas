@@ -25,7 +25,7 @@ package org.jasig.cas.authentication.principal;
  *
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  * <p>
  * This is a published and supported CAS Server 3 API.
  * </p>
