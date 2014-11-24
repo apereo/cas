@@ -26,11 +26,11 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -71,40 +70,15 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
-    /**
-     * Binder that allows additional binding of form object beyond Spring
-     * defaults.
-     */
-    private CredentialsBinder credentialsBinder;
-
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
-
-    /** Ticket registry used to retrieve tickets by ID. */
-    @NotNull
-    private TicketRegistry ticketRegistry;
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Bind the request to credentials.
-     *
-     * @param context the context
-     * @param credential the credential
-     * @throws Exception the exception arising as the result of the bind op.
-     */
-    public final void doBind(final RequestContext context, final Credential credential) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-
-        if (this.credentialsBinder != null && this.credentialsBinder.supports(credential.getClass())) {
-            this.credentialsBinder.bind(request, credential);
-        }
-    }
 
     /**
      * Handle the submission of credentials from the post.
@@ -189,7 +163,7 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             putWarnCookieIfRequestParameterPresent(context);
@@ -220,10 +194,10 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            final String tgtId = this.centralAuthenticationService.createTicketGrantingTicket(credential);
-            WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
+            WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
-            if (addWarningMessagesToMessageContextIfNeeded(tgtId, messageContext)) {
+            if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(SUCCESS);
@@ -242,10 +216,9 @@ public class AuthenticationViaFormAction {
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1
      */
-    protected boolean addWarningMessagesToMessageContextIfNeeded(final String tgtId, final MessageContext messageContext) {
+    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
-        final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
-        for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
+        for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final Message message : entry.getValue().getWarnings()) {
                 addWarningToContext(messageContext, message);
                 foundAndAddedWarnings = true;
@@ -294,31 +267,20 @@ public class AuthenticationViaFormAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    /**
-     * Set a CredentialsBinder for additional binding of the HttpServletRequest
-     * to the Credential instance, beyond our default binding of the
-     * Credential as a Form Object in Spring WebMVC parlance. By the time we
-     * invoke this CredentialsBinder, we have already engaged in default binding
-     * such that for each HttpServletRequest parameter, if there was a JavaBean
-     * property of the Credential implementation of the same name, we have set
-     * that property to be the value of the corresponding request parameter.
-     * This CredentialsBinder plugin point exists to allow consideration of
-     * things other than HttpServletRequest parameters in populating the
-     * Credential (or more sophisticated consideration of the
-     * HttpServletRequest parameters).
-     *
-     * @param credentialsBinder the credential binder to set.
-     */
-    public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
-        this.credentialsBinder = credentialsBinder;
-    }
-
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
+     /**
+     * Sets ticket registry.
+     *
+     * @param ticketRegistry the ticket registry. No longer needed as the core service layer
+     *                       returns the correct object type. Will be removed in future versions.
+     * @deprecated As of 4.1
+     */
+    @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
     }
 
     /**

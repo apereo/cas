@@ -18,14 +18,20 @@
  */
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -123,14 +129,36 @@ public final class WebUtils {
     }
 
     /**
+     * Gets the registered service from the flow scope.
+     *
+     * @param context the context
+     * @return the service
+     */
+    public static RegisteredService getRegisteredService(final RequestContext context) {
+        return context != null ? (RegisteredService) context.getFlowScope().get("registeredService") : null;
+    }
+    /**
      * Put ticket granting ticket in request scope.
      *
      * @param context the context
-     * @param ticketValue the ticket value
+     * @param ticket the ticket value
      */
     public static void putTicketGrantingTicketInRequestScope(
-        final RequestContext context, final String ticketValue) {
-        context.getRequestScope().put("ticketGrantingTicketId", ticketValue);
+        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+        final String ticketValue = ticket != null ? ticket.getId() : null;
+        putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
+    }
+
+    /**
+     * Put ticket granting ticket in flow scope.
+     *
+     * @param context the context
+     * @param ticket the ticket value
+     */
+    public static void putTicketGrantingTicketInFlowScope(
+        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+        final String ticketValue = ticket != null ? ticket.getId() : null;
+        putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
 
     /**
@@ -140,8 +168,19 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInFlowScope(
-        final RequestContext context, final String ticketValue) {
-        context.getFlowScope().put("ticketGrantingTicketId", ticketValue);
+            final RequestContext context, @NotNull final String ticketValue) {
+        putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
+    }
+
+    /**
+     * Put ticket granting ticket into map that is either backed by the flow/request scope.
+     * Will override the previous value and blank out the setting if value is null or empty.
+     * @param map the map
+     * @param ticketValue the ticket value
+     */
+    private static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
+                                                       @NotNull final String ticketValue) {
+        map.put("ticketGrantingTicketId", ticketValue);
     }
 
     /**
@@ -151,7 +190,7 @@ public final class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(
-        final RequestContext context) {
+            @NotNull final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
         final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
 
@@ -166,8 +205,8 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putServiceTicketInRequestScope(
-        final RequestContext context, final String ticketValue) {
-        context.getRequestScope().put("serviceTicketId", ticketValue);
+        final RequestContext context, final ServiceTicket ticketValue) {
+        context.getRequestScope().put("serviceTicketId", ticketValue.getId());
     }
 
     /**
@@ -232,5 +271,36 @@ public final class WebUtils {
      */
     public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
         return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
+    }
+
+    /**
+     * Put service into flowscope.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putService(final RequestContext context, final Service service) {
+        context.getFlowScope().put("service", service);
+    }
+
+    /**
+     * Put warning cookie value into flowscope.
+     *
+     * @param context the context
+     * @param cookieValue the cookie value
+     */
+    public static void putWarningCookie(final RequestContext context, final Boolean cookieValue) {
+        context.getFlowScope().put("warnCookieValue", cookieValue);
+    }
+
+    /**
+     * Put registered service into flowscope.
+     *
+     * @param context the context
+     * @param registeredService the service
+     */
+    public static void putRegisteredService(final RequestContext context,
+                                            final RegisteredService registeredService) {
+        context.getFlowScope().put("registeredService", registeredService);
     }
 }

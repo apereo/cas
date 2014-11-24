@@ -18,15 +18,17 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -36,7 +38,7 @@ public abstract class AbstractRegistryCleanerTests {
 
     private RegistryCleaner registryCleaner;
 
-    private TicketRegistry ticketRegistry;
+    protected TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -50,14 +52,14 @@ public abstract class AbstractRegistryCleanerTests {
 
     @Test
     public void testCleanEmptyTicketRegistry() {
-        this.registryCleaner.clean();
+        clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         populateRegistryWithExpiredTickets();
-        this.registryCleaner.clean();
+        clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
@@ -67,13 +69,11 @@ public abstract class AbstractRegistryCleanerTests {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
-
-        this.registryCleaner.clean();
-
+        clean();
         assertEquals(this.ticketRegistry.getTickets().size(), 1);
     }
 
-    private void populateRegistryWithExpiredTickets() {
+    protected void populateRegistryWithExpiredTickets() {
         for (int i = 0; i < 10; i++) {
             final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
@@ -81,4 +81,11 @@ public abstract class AbstractRegistryCleanerTests {
             this.ticketRegistry.addTicket(ticket);
         }
     }
+
+    private void clean() {
+        beforeCleaning();
+        afterCleaning(this.registryCleaner.clean());
+    }
+    protected void beforeCleaning() {}
+    protected void afterCleaning(final Collection<Ticket> removedCol) {}
 }

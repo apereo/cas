@@ -236,9 +236,8 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:ticketRegistry-ref="ticketRegistry"
-        p:casTicketSuffix="${host.name}"
-        p:viewPath="/WEB-INF/view/jsp/monitoring/viewStatistics.jsp" />
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        p:casTicketSuffix="${host.name}"/>
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
@@ -253,15 +252,15 @@
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        p:servicesManager-ref="servicesManager"  />
 
   <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
         c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketRegistry-ref="ticketRegistry"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"/>
 
   <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
 
@@ -287,7 +286,7 @@
         p:messageInterpolator-ref="messageInterpolator"/>
 
   <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
-        c:registry-ref="ticketRegistry" />
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="terminateSessionAction" class="org.jasig.cas.web.flow.TerminateSessionAction"
         c:cas-ref="centralAuthenticationService"

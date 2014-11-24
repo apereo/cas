@@ -30,7 +30,7 @@
     </on-start>
 
 	<action-state id="ticketGrantingTicketCheck">
-        <evaluate expression="ticketGrantingTicketCheckAction.checkValidity(flowRequestContext)"/>
+        <evaluate expression="ticketGrantingTicketCheckAction"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
         <transition on="invalid" to="terminateSession"/>
         <transition on="valid" to="hasServiceCheck"/>
@@ -89,9 +89,7 @@
         <on-entry>
             <set name="viewScope.commandName" value="'credential'" />
         </on-entry>
-		<transition on="submit" bind="true" validate="true" to="realSubmit">
-            <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credential)" />
-        </transition>
+		<transition on="submit" bind="true" validate="true" to="realSubmit" />
 	</view-state>
 
   <action-state id="realSubmit">

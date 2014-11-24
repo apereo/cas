@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.proxy.support;
 
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 
 /**
@@ -32,7 +33,7 @@ public final class Cas10ProxyHandler implements ProxyHandler {
 
     @Override
     public String handle(final Credential credential,
-        final String proxyGrantingTicketId) {
+        final TicketGrantingTicket proxyGrantingTicketId) {
         return null;
     }
 
