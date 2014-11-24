@@ -37,7 +37,7 @@ import java.security.Principal;
  * it could not find any credentials.
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {

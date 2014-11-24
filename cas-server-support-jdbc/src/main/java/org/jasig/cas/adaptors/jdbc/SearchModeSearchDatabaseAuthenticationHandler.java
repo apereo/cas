@@ -38,7 +38,7 @@ import java.security.GeneralSecurityException;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler
@@ -57,7 +57,9 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     private String sql;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

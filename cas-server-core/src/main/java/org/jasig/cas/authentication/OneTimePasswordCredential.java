@@ -28,7 +28,7 @@ package org.jasig.cas.authentication;
  * been consumed and by definition is no longer useful for authentication.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class OneTimePasswordCredential extends AbstractCredential {
 

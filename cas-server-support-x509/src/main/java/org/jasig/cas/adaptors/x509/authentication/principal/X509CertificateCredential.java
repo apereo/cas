@@ -28,7 +28,7 @@ import org.jasig.cas.authentication.AbstractCredential;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 public final class X509CertificateCredential extends AbstractCredential {

@@ -39,7 +39,7 @@ import java.util.List;
  * RejectUsersAuthenticationHandler to authenticate someone.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 

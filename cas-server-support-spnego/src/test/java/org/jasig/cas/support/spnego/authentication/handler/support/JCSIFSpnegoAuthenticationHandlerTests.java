@@ -34,8 +34,9 @@ import static org.junit.Assert.*;
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public class JCSIFSpnegoAuthenticationHandlerTests {
     private JCIFSSpnegoAuthenticationHandler authenticationHandler;
 

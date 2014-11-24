@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 /**
  * Handles tests for {@link org.jasig.cas.util.HostNameBasedUniqueTicketIdGenerator}.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class HostNameBasedUniqueTicketIdGeneratorTests {
 

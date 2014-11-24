@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * message string to use if no message code can be resolved.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class Message implements Serializable {
 

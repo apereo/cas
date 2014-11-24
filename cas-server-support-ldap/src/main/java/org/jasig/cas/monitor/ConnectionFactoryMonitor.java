@@ -29,7 +29,7 @@ import org.ldaptive.pool.Validator;
  * {@link org.ldaptive.pool.PooledConnectionFactory}, the {@link PooledConnectionFactoryMonitor} class is preferable.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
 

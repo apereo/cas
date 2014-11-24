@@ -28,7 +28,7 @@ import java.io.Writer;
 /**
  * Interface to define operations needed to map objects from/to JSON clobs.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface JsonSerializer<T> extends Serializable {
     /**

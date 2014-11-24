@@ -38,11 +38,13 @@ import java.sql.SQLException;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
