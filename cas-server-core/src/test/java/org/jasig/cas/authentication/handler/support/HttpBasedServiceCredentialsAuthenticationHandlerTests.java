@@ -20,7 +20,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.http.SimpleHttpClient;
-import org.jasig.cas.util.http.SimpleHttpClientBuilder;
+import org.jasig.cas.util.http.SimpleHttpClientConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -78,9 +78,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test(expected = FailedLoginException.class)
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setAcceptableCodes(new int[] {900});
-        final SimpleHttpClient httpClient = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setAcceptableCodes(new int[] {900});
+        final SimpleHttpClient httpClient = new SimpleHttpClient(configuration);
         this.authenticationHandler.setHttpClient(httpClient);
         this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }

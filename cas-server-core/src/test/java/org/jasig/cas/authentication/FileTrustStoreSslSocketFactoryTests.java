@@ -19,7 +19,7 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.util.http.SimpleHttpClient;
-import org.jasig.cas.util.http.SimpleHttpClientBuilder;
+import org.jasig.cas.util.http.SimpleHttpClientConfiguration;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -39,9 +39,9 @@ public class FileTrustStoreSslSocketFactoryTests {
      public void testTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(factory);
-        final SimpleHttpClient client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(factory);
+        final SimpleHttpClient client = new SimpleHttpClient(configuration);
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
     }
 
@@ -49,9 +49,9 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void testTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(factory);
-        final SimpleHttpClient client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(factory);
+        final SimpleHttpClient client = new SimpleHttpClient(configuration);
         assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
     }
 
@@ -71,18 +71,18 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void testTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(factory);
-        final SimpleHttpClient client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(factory);
+        final SimpleHttpClient client = new SimpleHttpClient(configuration);
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
     @Test
     public void testTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(factory);
-        final SimpleHttpClient client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(factory);
+        final SimpleHttpClient client = new SimpleHttpClient(configuration);
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 }
