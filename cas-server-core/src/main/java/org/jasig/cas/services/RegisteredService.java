@@ -159,8 +159,8 @@ public interface RegisteredService extends Cloneable, Serializable {
      * Gets the logo image associated with this service.
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
-     * @since 4.1
      * @return URL of the image
+     * @since 4.1
      */
     URL getLogo();
 }
