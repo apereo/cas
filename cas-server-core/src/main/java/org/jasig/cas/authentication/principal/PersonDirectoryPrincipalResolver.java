@@ -38,7 +38,7 @@ import java.util.Map;
  * otherwise the credential ID is used for the principal ID.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  *
  */
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
@@ -46,7 +46,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private boolean returnNullIfNoAttributes = false;
+    private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
     @NotNull

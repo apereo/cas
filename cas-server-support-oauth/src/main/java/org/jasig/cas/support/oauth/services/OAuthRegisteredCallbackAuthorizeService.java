@@ -24,7 +24,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 /**
  * Some Javadoc I will add later.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredServiceImpl {
 

@@ -41,9 +41,10 @@ import java.util.regex.Pattern;
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  * @since 3.1
  */
+@Deprecated
 public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private Authentication authentication;
@@ -56,7 +57,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     /**
      * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
      */
-    private boolean isNTLMallowed = false;
+    private boolean isNTLMallowed;
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {

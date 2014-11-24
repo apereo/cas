@@ -37,6 +37,9 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
 
+    @NotNull
+    private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
+
     /**
      * Instantiates a new In memory service registry.
      */
@@ -45,9 +48,6 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
                 + "Changes that are made to service definitions during runtime "
                 + "will be LOST upon container restarts.");
     }
-
-    @NotNull
-    private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
 
     @Override
     public boolean delete(final RegisteredService registeredService) {

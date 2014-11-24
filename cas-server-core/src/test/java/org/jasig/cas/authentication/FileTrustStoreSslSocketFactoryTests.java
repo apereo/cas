@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * Tests for the <code>FileTrustStoreSslSocketFactory</code> class, checking for self-signed
  * and missing certificates via a local truststore.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class FileTrustStoreSslSocketFactoryTests {
 

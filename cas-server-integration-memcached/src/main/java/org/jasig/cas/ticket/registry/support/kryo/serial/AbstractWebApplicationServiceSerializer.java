@@ -30,6 +30,7 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * Serializer for classes that extend {@link org.jasig.cas.authentication.principal.AbstractWebApplicationService}.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public abstract class AbstractWebApplicationServiceSerializer<T extends AbstractWebApplicationService>
         extends SimpleSerializer<T> {

@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
+ * @since 3.0.0
  */
 public class SimplePrincipalFactoryTests {
     @Test
