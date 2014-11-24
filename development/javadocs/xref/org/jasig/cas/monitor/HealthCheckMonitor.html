@@ -26,11 +26,11 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.monitor;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedHashMap;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedHashMap;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * Simple health check monitor that reports the overall health as the greatest reported</em>
@@ -54,34 +54,38 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">this</strong>.monitors = monitors;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <em class="jxr_javadoccomment">/** {@inheritDoc} */</em>
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      @Override
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">return</strong> HealthCheckMonitor.<strong class="jxr_keyword">class</strong>.getSimpleName();
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      }
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/** {@inheritDoc} */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      @Override
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a> observe() {
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Status&gt; results = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Status&gt;(<strong class="jxr_keyword">this</strong>.monitors.size());
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code = StatusCode.UNKNOWN;
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> result;
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Monitor monitor : <strong class="jxr_keyword">this</strong>.monitors) {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  result = monitor.observe();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>                  <strong class="jxr_keyword">if</strong> (result.getCode().value() &gt; code.value()) {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>                      code = result.getCode();
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>                  }
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  code = StatusCode.ERROR;
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  result = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a>(code, e.getClass().getSimpleName() + <span class="jxr_string">": "</span> + e.getMessage());
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>              }
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              results.put(monitor.getName(), result);
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          }
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a>(code, results);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  }
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     **/</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Override
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> String getName() {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">return</strong> HealthCheckMonitor.<strong class="jxr_keyword">class</strong>.getSimpleName();
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     **/</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a> observe() {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Status&gt; results = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Status&gt;(<strong class="jxr_keyword">this</strong>.monitors.size());
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code = StatusCode.UNKNOWN;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> result;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Monitor monitor : <strong class="jxr_keyword">this</strong>.monitors) {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  result = monitor.observe();
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">if</strong> (result.getCode().value() &gt; code.value()) {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                      code = result.getCode();
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  }
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  code = StatusCode.ERROR;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>                  result = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a>(code, e.getClass().getSimpleName() + <span class="jxr_string">": "</span> + e.getMessage());
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>              }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>              results.put(monitor.getName(), result);
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a>(code, results);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      }
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

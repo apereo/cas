@@ -67,18 +67,18 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment"> * @since 3.0</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/web/ServiceValidateController.html">ServiceValidateController</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/web/DelegateController.html">DelegateController</a> {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** Constant representing the Assertion in the cas validation model. */</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String VALIDATION_CAS_MODEL_ASSERTION = <span class="jxr_string">"assertion"</span>;
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Fails. */</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_SERVICE_FAILURE_VIEW_NAME = <span class="jxr_string">"cas2ServiceFailureView"</span>;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Fails. */</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_SERVICE_FAILURE_VIEW_NAME = <span class="jxr_string">"cas2ServiceFailureView"</span>;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Succeeds. */</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = <span class="jxr_string">"cas2ServiceSuccessView"</span>;
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Succeeds. */</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = <span class="jxr_string">"cas2ServiceSuccessView"</span>;
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <em class="jxr_javadoccomment">/** Constant representing the Assertion in the cas validation model. */</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String VALIDATION_CAS_MODEL_ASSERTION = <span class="jxr_string">"assertion"</span>;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/** Implementation of Service Manager. */</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      @NotNull
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> servicesManager;

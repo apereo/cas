@@ -98,16 +98,18 @@
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.leniency;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <em class="jxr_javadoccomment">/** {@inheritDoc} */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      @Override
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">public</strong> String getMessage() {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.leniency &gt; 0) {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"CRL %s expired on %s and is beyond the leniency period of %s seconds."</span>,
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>                      <strong class="jxr_keyword">this</strong>.id, <strong class="jxr_keyword">this</strong>.expirationDate, <strong class="jxr_keyword">this</strong>.leniency);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>          }
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"CRL %s expired on %s"</span>, <strong class="jxr_keyword">this</strong>.id, <strong class="jxr_keyword">this</strong>.expirationDate);
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>     }
-<a class="jxr_linenumber" name="L102" href="#L102">102</a> }
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      @Override
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> String getMessage() {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.leniency &gt; 0) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"CRL %s expired on %s and is beyond the leniency period of %s seconds."</span>,
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>                     <strong class="jxr_keyword">this</strong>.id, <strong class="jxr_keyword">this</strong>.expirationDate, <strong class="jxr_keyword">this</strong>.leniency);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         }
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"CRL %s expired on %s"</span>, <strong class="jxr_keyword">this</strong>.id, <strong class="jxr_keyword">this</strong>.expirationDate);
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>     }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

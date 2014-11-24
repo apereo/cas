@@ -49,44 +49,46 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * @author Dmitriy Kopylenko</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * @since 3.0</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/adaptors/jdbc/QueryDatabaseAuthenticationHandler.html">QueryDatabaseAuthenticationHandler</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../org/jasig/cas/adaptors/jdbc/AbstractJdbcUsernamePasswordAuthenticationHandler.html">AbstractJdbcUsernamePasswordAuthenticationHandler</a> {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      @NotNull
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> String sql;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/** {@inheritDoc} */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Override
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> HandlerResult authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> UsernamePasswordCredential credential)
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> String encryptedPassword = <strong class="jxr_keyword">this</strong>.getPasswordEncoder().encode(credential.getPassword());
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">final</strong> String dbPassword = getJdbcTemplate().queryForObject(<strong class="jxr_keyword">this</strong>.sql, String.<strong class="jxr_keyword">class</strong>, username);
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">if</strong> (!dbPassword.equals(encryptedPassword)) {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException(<span class="jxr_string">"Password does not match value on record."</span>);
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>              }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IncorrectResultSizeDataAccessException e) {
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">if</strong> (e.getActualSize() == 0) {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> AccountNotFoundException(username + <span class="jxr_string">" not found with SQL query"</span>);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>              } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException(<span class="jxr_string">"Multiple records found for "</span> + username);
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>              }
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> DataAccessException e) {
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> PreventedException(<span class="jxr_string">"SQL exception while executing query for "</span> + username, e);
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">return</strong> createHandlerResult(credential, <strong class="jxr_keyword">new</strong> SimplePrincipal(username), <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     * @param sql The sql to set.</em>
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSql(<strong class="jxr_keyword">final</strong> String sql) {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">this</strong>.sql = sql;
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  }
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Override
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> HandlerResult authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> UsernamePasswordCredential credential)
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> String username = credential.getUsername();
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">final</strong> String encryptedPassword = <strong class="jxr_keyword">this</strong>.getPasswordEncoder().encode(credential.getPassword());
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">final</strong> String dbPassword = getJdbcTemplate().queryForObject(<strong class="jxr_keyword">this</strong>.sql, String.<strong class="jxr_keyword">class</strong>, username);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">if</strong> (!dbPassword.equals(encryptedPassword)) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException(<span class="jxr_string">"Password does not match value on record."</span>);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IncorrectResultSizeDataAccessException e) {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">if</strong> (e.getActualSize() == 0) {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> AccountNotFoundException(username + <span class="jxr_string">" not found with SQL query"</span>);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException(<span class="jxr_string">"Multiple records found for "</span> + username);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              }
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> DataAccessException e) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> PreventedException(<span class="jxr_string">"SQL exception while executing query for "</span> + username, e);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          }
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> createHandlerResult(credential, <strong class="jxr_keyword">new</strong> SimplePrincipal(username), <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     * @param sql The sql to set.</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSql(<strong class="jxr_keyword">final</strong> String sql) {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">this</strong>.sql = sql;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
