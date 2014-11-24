@@ -28,7 +28,7 @@ import org.jasig.cas.ticket.TicketState;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 

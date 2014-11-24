@@ -29,7 +29,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public interface ProxyHandler {
 

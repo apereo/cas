@@ -28,7 +28,7 @@ import net.sourceforge.jwebunit.HttpUnitDialog;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLoginCompatibilityTests {

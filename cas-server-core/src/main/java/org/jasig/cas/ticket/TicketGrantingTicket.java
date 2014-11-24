@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public interface TicketGrantingTicket extends Ticket {
 

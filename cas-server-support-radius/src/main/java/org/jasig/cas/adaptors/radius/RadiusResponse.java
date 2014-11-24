@@ -28,7 +28,7 @@ import net.jradius.packet.attribute.RadiusAttribute;
  * and provides access to the response code as well as attributes
  * which may be used as authentication attributes.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RadiusResponse {
     

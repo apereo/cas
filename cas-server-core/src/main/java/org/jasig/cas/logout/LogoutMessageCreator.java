@@ -22,7 +22,7 @@ package org.jasig.cas.logout;
  * Contract that defines the format of the logout message sent to a client to indicate
  * that an SSO session has terminated.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public interface LogoutMessageCreator {
     /**

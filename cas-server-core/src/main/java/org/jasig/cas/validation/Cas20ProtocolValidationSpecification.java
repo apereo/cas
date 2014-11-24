@@ -25,7 +25,7 @@ package org.jasig.cas.validation;
  * occurring from a new login.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 

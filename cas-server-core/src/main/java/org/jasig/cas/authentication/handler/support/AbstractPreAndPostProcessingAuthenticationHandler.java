@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled
@@ -66,7 +65,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public final HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {

@@ -209,7 +209,9 @@ public class JpaTicketRegistryTests {
             parentTgtId = tgtId;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {

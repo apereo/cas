@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author battags
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class DefaultServicesManagerImplTests  {
