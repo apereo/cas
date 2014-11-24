@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * logging messages if needed, such as removing sensitive ticket id from
  * the log message.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class CasDelegatingLogger extends MarkerIgnoringBase implements Serializable {
 

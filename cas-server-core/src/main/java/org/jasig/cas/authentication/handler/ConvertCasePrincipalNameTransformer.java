@@ -27,10 +27,10 @@ import javax.validation.constraints.NotNull;
  * to accept and work on the result of a previous transformer that might
  * have modified the uid, such that the two can be chained.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
-    private boolean toUpperCase = false;
+    private boolean toUpperCase;
     
     @NotNull
     private final PrincipalNameTransformer delegateTransformer;

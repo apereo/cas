@@ -26,7 +26,7 @@ import org.jasig.cas.authentication.Credential;
  * {@link org.jasig.cas.authentication.principal.Principal#getId()}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class BasicPrincipalResolver implements PrincipalResolver {
 
