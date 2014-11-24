@@ -40,6 +40,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpRequestFutureTask;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -58,34 +59,45 @@ import org.springframework.util.Assert;
 public final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = 8349587500643237032L;
+    private static final long serialVersionUID = 8058276943307162554L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    private final SimpleHttpClientBuilder builder;
+    /** the internal builder for this client. */
+    private final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
+
+    /** the configuration for this client. */
+    private final SimpleHttpClientConfiguration configuration;
+
+    /** the HTTP client for this client. */
+    private final CloseableHttpClient httpClient;
+
+    /** the request executor service for this client. */
+    private final FutureRequestExecutionService requestExecutorService;
 
     /**
      * Instantiates a new Simple HTTP client,
-     * based on a default {@link SimpleHttpClientBuilder}.
+     * based on a default {@link SimpleHttpClientConfiguration}.
      */
     public SimpleHttpClient() {
-        this(new SimpleHttpClientBuilder());
+        this(new SimpleHttpClientConfiguration());
     }
 
     /**
      * Instantiates a new Simple HTTP client,
-     * based on a provided {@link SimpleHttpClientBuilder}.
+     * based on a provided {@link SimpleHttpClientConfiguration}.
      *
-     * @param builder provided {@link SimpleHttpClientBuilder} for initialization.
+     * @param configuration the provided {@link SimpleHttpClientConfiguration} for initialization.
      */
-    public SimpleHttpClient(final SimpleHttpClientBuilder builder) {
-        this.builder = builder;
-        this.builder.init();
+    public SimpleHttpClient(final SimpleHttpClientConfiguration configuration) {
+        this.configuration = configuration;
+        this.httpClient = builder.buildHttpClient(this.configuration);
+        this.requestExecutorService = builder.buildRequestExecutorService(this.configuration, this.httpClient);
     }
 
     @Override
     public boolean sendMessageToEndPoint(@NotNull final HttpMessage message) {
-        Assert.notNull(this.builder.getHttpClient());
+        Assert.notNull(this.httpClient);
 
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
@@ -94,7 +106,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            final HttpRequestFutureTask<String> task = this.builder.getRequestExecutionService().execute(request,
+            final HttpRequestFutureTask<String> task = this.requestExecutorService.execute(request,
                     HttpClientContext.create(), new BasicResponseHandler());
 
             if (message.isAsynchronous()) {
@@ -124,8 +136,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        final CloseableHttpClient httpClient = this.builder.getHttpClient();
-        Assert.notNull(httpClient);
+        Assert.notNull(this.httpClient);
 
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
@@ -133,10 +144,10 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
         try {
             final HttpGet request = new HttpGet(url.toURI());
 
-            response = httpClient.execute(request);
+            response = this.httpClient.execute(request);
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            for (final int acceptableCode : this.builder.getAcceptableCodes()) {
+            for (final int acceptableCode : this.configuration.getAcceptableCodes()) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code from server matched {}.", responseCode);
                     return true;
@@ -168,7 +179,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
-        IOUtils.closeQuietly(this.builder.getRequestExecutionService());
+        IOUtils.closeQuietly(this.requestExecutorService);
     }
 
     /**
@@ -180,7 +191,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setExecutorService(@NotNull final ExecutorService executorService) {
-        LOGGER.warn("setExecutorService() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setExecutorService() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -192,7 +203,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        LOGGER.warn("setAcceptableCodes() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setAcceptableCodes() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -202,7 +213,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setConnectionTimeout(final int connectionTimeout) {
-        LOGGER.warn("setConnectionTimeout() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setConnectionTimeout() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -212,7 +223,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setReadTimeout(final int readTimeout) {
-        LOGGER.warn("setReadTimeout() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setReadTimeout() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -223,7 +234,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setFollowRedirects(final boolean follow) {
-        LOGGER.warn("setFollowRedirects() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setFollowRedirects() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -235,7 +246,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
-        LOGGER.warn("setSSLSocketFactory() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setSSLSocketFactory() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 
     /**
@@ -247,6 +258,6 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setHostnameVerifier(final HostnameVerifier verifier) {
-        LOGGER.warn("setHostnameVerifier() is deprecated and has no effect. Consider using constructors instead.");
+        LOGGER.warn("setHostnameVerifier() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
     }
 }

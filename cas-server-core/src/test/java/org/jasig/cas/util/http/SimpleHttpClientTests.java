@@ -62,11 +62,11 @@ public class SimpleHttpClientTests  {
 
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-        builder.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
-        builder.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        builder.setAcceptableCodes(new int[] {200, 403});
-        final SimpleHttpClient client = new SimpleHttpClient(builder);
+        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
+        configuration.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
+        configuration.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        configuration.setAcceptableCodes(new int[] {200, 403});
+        final SimpleHttpClient client = new SimpleHttpClient(configuration);
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
