@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.Credential;
  * a search (e.g. LDAP, database) for the final principal based on the temporary ID.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class ChainingPrincipalResolver implements PrincipalResolver {
 

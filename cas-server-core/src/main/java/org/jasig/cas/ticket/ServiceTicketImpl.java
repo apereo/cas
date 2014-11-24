@@ -36,7 +36,7 @@ import javax.persistence.Table;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="SERVICETICKET")
@@ -112,7 +112,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {

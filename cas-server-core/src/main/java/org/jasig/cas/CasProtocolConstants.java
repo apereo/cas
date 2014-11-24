@@ -25,7 +25,7 @@ package org.jasig.cas;
  * by the protocol.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface CasProtocolConstants {
 
