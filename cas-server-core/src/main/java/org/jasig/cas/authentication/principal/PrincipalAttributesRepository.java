@@ -24,8 +24,8 @@ import java.util.Map;
 /**
  * Defines operations required for retrieving principal attributes.
  * @author Misagh Moayyed
- * @since 4.1
  * @see org.jasig.cas.authentication.principal.PrincipalFactory
+ * @since 4.1
  */
 public interface PrincipalAttributesRepository extends Serializable {
 
