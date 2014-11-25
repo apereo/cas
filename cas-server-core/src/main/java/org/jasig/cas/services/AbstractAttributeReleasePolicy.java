@@ -45,15 +45,19 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     private AttributeFilter attributeFilter;
 
     /** Attribute repository that refreshes attributes for a principal. **/
-    private PrincipalAttributesRepository attributesRepository = new DefaultPrincipalAttributesRepository();
+    private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
     }
 
-    public final void setAttributesRepository(final PrincipalAttributesRepository repository) {
-        this.attributesRepository = repository;
+    public final void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
+        this.principalAttributesRepository = repository;
+    }
+
+    protected PrincipalAttributesRepository getPrincipalAttributesRepository() {
+        return principalAttributesRepository;
     }
 
     /**
@@ -67,7 +71,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
-        final Map<String, Object> principalAttributes = this.attributesRepository.getAttributes(p);
+        final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
         final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
         
         if (this.attributeFilter != null) {
