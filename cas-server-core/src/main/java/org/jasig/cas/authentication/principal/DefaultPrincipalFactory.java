@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -29,37 +29,14 @@ import java.util.Map;
 public final class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 
-    @NotNull
-    private final PrincipalAttributesRepository attributesRepository;
-
-    /**
-     * Instantiates a new Default principal factory.
-     */
-    public DefaultPrincipalFactory() {
-        this(new DefaultPrincipalAttributesRepository());
-    }
-
-    /**
-     * Instantiates a new Default principal factory.
-     *
-     * @param attributesRepository the attribute repository
-     */
-    public DefaultPrincipalFactory(final PrincipalAttributesRepository attributesRepository) {
-        this.attributesRepository = attributesRepository;
-    }
-
     @Override
     public Principal createPrincipal(final String id) {
-        return new SimplePrincipal(id, this.attributesRepository);
+        return new SimplePrincipal(id, Collections.EMPTY_MAP);
     }
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        this.attributesRepository.setAttributes(id, attributes);
-        return new SimplePrincipal(id, this.attributesRepository);
+        return new SimplePrincipal(id, attributes);
     }
 
-    public PrincipalAttributesRepository getAttributesRepository() {
-        return attributesRepository;
-    }
 }

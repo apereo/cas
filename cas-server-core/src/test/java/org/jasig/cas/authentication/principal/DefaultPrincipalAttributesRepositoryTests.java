@@ -24,33 +24,26 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 
-
 /**
  * Handles tests for {@link DefaultPrincipalAttributesRepository}.
  * @author Misagh Moayyed
  * @since 4.1
  */
 public class DefaultPrincipalAttributesRepositoryTests {
+    private final PrincipalFactory factory = new DefaultPrincipalFactory();
+
     @Test
     public void testNoAttributes() {
         final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(rep.getAttributes("uid").size(), 0);
+        assertEquals(rep.getAttributes(this.factory.createPrincipal("uid")).size(), 0);
     }
 
     @Test
     public void testInitialAttributes() {
-        final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository(
-                Collections.<String, Object>singletonMap("mail", "final@example.com")
-        );
-        assertEquals(rep.getAttributes("uid").size(), 1);
-        assertTrue(rep.getAttributes("uid").containsKey("mail"));
-    }
-
-    @Test
-    public void testAttributesOnSetter() {
+        final Principal p = this.factory.createPrincipal("uid",
+                Collections.<String, Object>singletonMap("mail", "final@example.com"));
         final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
-        rep.setAttributes("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
-        assertEquals(rep.getAttributes("uid").size(), 1);
-        assertTrue(rep.getAttributes("uid").containsKey("mail"));
+        assertEquals(rep.getAttributes(p).size(), 1);
+        assertTrue(rep.getAttributes(p).containsKey("mail"));
     }
 }

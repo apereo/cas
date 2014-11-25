@@ -29,6 +29,7 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
+import javax.validation.constraints.NotNull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
@@ -166,19 +167,27 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
         return config;
     }
 
-    @Override
-    public void setAttributes(final String id, final Map<String, Object> attributes) {
+    /**
+     * Set/add the received attributes into the cache.
+     * @param id the principal id that controls the grouping of the attributes in the cache.
+     * @param attributes principal attributes to add to the cache
+     */
+   private void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
         synchronized (this.cache) {
-            this.cache.put(id, attributes);
+            if (attributes.isEmpty()) {
+                this.cache.remove(id);
+            } else {
+                this.cache.put(id, attributes);
+            }
         }
     }
 
     @Override
-    public Map<String, Object> getAttributes(final String id) {
-        Map<String, Object> attributes = this.cache.get(id);
+    public Map<String, Object> getAttributes(@NotNull final Principal p) {
+        Map<String, Object> attributes = this.cache.get(p.getId());
         if (attributes == null) {
-            attributes = convertPersonAttributesToPrincipalAttributes(id);
-            setAttributes(id, attributes);
+            attributes = convertPersonAttributesToPrincipalAttributes(p.getId());
+            addPrincipalAttributesIntoCache(p.getId(), attributes);
             return attributes;
         }
         return attributes;
