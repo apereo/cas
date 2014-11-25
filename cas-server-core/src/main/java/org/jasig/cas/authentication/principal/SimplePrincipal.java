@@ -68,14 +68,14 @@ public final class SimplePrincipal implements Principal {
      */
     protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
         this.id = id;
-        this.attributes = Collections.unmodifiableMap(attributes);
+        this.attributes = attributes;
     }
 
     /**
      * @return An immutable map of principal attributes
      */
     public Map<String, Object> getAttributes() {
-        return this.attributes;
+        return Collections.unmodifiableMap(this.attributes);
     }
 
     @Override
