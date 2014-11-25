@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,11 +45,50 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean isEnabled();
 
     /**
+     * @deprecated As of 4.1, use {@link #getUsernameAttributeProvider()} instead.
+     * Determines whether the service is allowed anonymous or privileged access
+     * to user information. Anonymous access should not return any identifying
+     * information such as user id.
+     *
+     * @return if we should use a pseudo random identifier instead of their real id
+     */
+    @Deprecated
+    boolean isAnonymousAccess();
+
+    /**
+     * @deprecated As of 4.1, use {@link #getAttributeReleasePolicy()} instead.
+     * Sets whether we should bother to read the attribute list or not.
+     *
+     * @return true if we should read it, false otherwise.
+     */
+    @Deprecated
+    boolean isIgnoreAttributes();
+
+    /**
      * Get the proxy policy rules for this service.
      *
      * @return the proxy policy
      */
     RegisteredServiceProxyPolicy getProxyPolicy();
+
+    /**
+     * @deprecated As of 4.1, use {@link #getAttributeReleasePolicy()} instead.
+     * Returns the list of allowed attributes.
+     *
+     * @return the list of attributes
+     */
+    @Deprecated
+    List<String> getAllowedAttributes();
+
+    /**
+     * @deprecated As of 4.1, use {@link #getProxyPolicy()} instead.
+     * Is this application allowed to take part in the proxying capabilities of
+     * CAS?
+     *
+     * @return true if it can, false otherwise.
+     */
+    @Deprecated
+    boolean isAllowedToProxy();
 
     /**
      * The unique identifier for this service.
@@ -109,8 +149,22 @@ public interface RegisteredService extends Cloneable, Serializable {
     void setEvaluationOrder(final int evaluationOrder);
 
     /**
+     * @deprecated As of 4.1, use {@link #getUsernameAttributeProvider()} instead.
+     * Get the name of the attribute this service prefers to consume as username.
+     *
+     * @return Either of the following values:
+     * <ul>
+     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
+     *  <li><code>null</code> indicating the default username</li>
+     * </ul>
+     */
+    @Deprecated
+    String getUsernameAttribute();
+
+    /**
      * Get the name of the attribute this service prefers to consume as username.
      * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
+     * @since 4.1.0
      */
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
@@ -143,6 +197,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * Returns the logout type of the service.
      *
      * @return the logout type of the service.
+     * @since 4.0.0
      */
     LogoutType getLogoutType();
     
@@ -152,6 +207,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * this service.
      *
      * @return the attribute release policy
+     * @since 4.1
      */
     AttributeReleasePolicy getAttributeReleasePolicy();
 
@@ -160,7 +216,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
      * @return URL of the image
-     * @since 4.1
+     * @since 4.1.0
      */
     URL getLogo();
 }
