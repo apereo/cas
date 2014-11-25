@@ -172,9 +172,5 @@ public class AttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p);
         assertEquals(attr.size(), attributes.size());
-
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeReleasePolicy p2 = (ReturnAllAttributeReleasePolicy) SerializationUtils.deserialize(data);
-        assertNotNull(p2);
     }
 }
