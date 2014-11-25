@@ -18,19 +18,18 @@
  */
 package org.jasig.cas.adaptors.ldap.remote;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.GeneralSecurityException;
 
 /**
  * Checks if the remote address is in the range of allowed addresses.
@@ -42,15 +41,16 @@ import javax.validation.constraints.NotNull;
  */
 public final class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The network netmask. */
     @NotNull
-    private InetAddress inetNetmask = null;
+    private InetAddress inetNetmask;
 
     /** The network base address. */
     @NotNull
-    private InetAddress inetNetwork = null;
+    private InetAddress inetNetwork;
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
@@ -102,7 +102,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
 
         /* Check if the masked network and ip addresses match: */
         for(int i=0; i<netmaskBytes.length; i++) {
-            final int mask = netmaskBytes[i] & 0xff;
+            final int mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
             if((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
                 logger.debug("{} is not in {}/{}", ip, network, netmask);
                 return false;

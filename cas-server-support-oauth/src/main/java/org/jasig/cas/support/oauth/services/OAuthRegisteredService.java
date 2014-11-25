@@ -25,7 +25,7 @@ import org.jasig.cas.services.RegexRegisteredService;
  * An extension of the {@link RegexRegisteredService} that defines the
  * OAuth client id and secret for a given registered service.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public final class OAuthRegisteredService extends RegexRegisteredService {
 

@@ -26,7 +26,7 @@ import org.jasig.cas.authentication.principal.Service;
  * Simple container for holding a service principal and its corresponding registered serivce.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class ServiceContext {
 

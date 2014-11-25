@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * A proxy policy that only allows proxying to pgt urls
  * that match the specified regex pattern.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 

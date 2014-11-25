@@ -44,7 +44,7 @@ import static org.junit.Assert.fail;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 @RunWith(Parameterized.class)

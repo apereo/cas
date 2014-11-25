@@ -58,8 +58,16 @@ public final class SimpleHttpClientConfiguration {
 
     private static final int DEFAULT_THREADS_NUMBER = 200;
 
+    private static final int DEFAULT_TIMEOUT = 5000;
+    
     /** 20% of the total of threads in the pool to handle overhead. */
     private static final int DEFAULT_QUEUE_SIZE = (int) (DEFAULT_THREADS_NUMBER * 0.2);
+
+    /** The default status codes we accept. */
+    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
+        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
+        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
+        HttpURLConnection.HTTP_ACCEPTED};
 
     /** The number of threads used to build the pool of threads (if no executorService provided). */
     private int threadsNumber = DEFAULT_THREADS_NUMBER;
@@ -73,22 +81,16 @@ public final class SimpleHttpClientConfiguration {
     /** The Max connections per each route connections.  */
     private int maxConnectionsPerRoute = MAX_CONNECTIONS_PER_ROUTE;
 
-    /** The default status codes we accept. */
-    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
-        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
-        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-        HttpURLConnection.HTTP_ACCEPTED};
-
     /** List of HTTP status codes considered valid by the caller. */
     @NotNull
     @Size(min = 1)
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
 
     @Min(0)
-    private int connectionTimeout = 5000;
+    private int connectionTimeout = DEFAULT_TIMEOUT;
 
     @Min(0)
-    private int readTimeout = 5000;
+    private int readTimeout = DEFAULT_TIMEOUT;
 
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
@@ -134,12 +136,14 @@ public final class SimpleHttpClientConfiguration {
     private boolean circularRedirectsAllowed = true;
 
     /** Determines whether authentication should be handled automatically. **/
-    private boolean authenticationEnabled = false;
+    private boolean authenticationEnabled;
 
     /** Determines whether redirects should be handled automatically. **/
     private boolean redirectsEnabled = true;
 
-    /** The executor service used to create a {{@link #requestExecutionService}. */
+    /**
+     * The executor service used to create a {@link #requestExecutionService}.
+     */
     private ExecutorService executorService;
 
     public ExecutorService getExecutorService() {

@@ -27,7 +27,7 @@ import java.io.Serializable;
  * Strategy interface to define what username attribute should
  * be returned for a given registered service.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface RegisteredServiceUsernameAttributeProvider extends Serializable {
     /**

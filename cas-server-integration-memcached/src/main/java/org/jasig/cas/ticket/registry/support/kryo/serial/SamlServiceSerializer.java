@@ -32,6 +32,7 @@ import org.jasig.cas.util.http.SimpleHttpClient;
  * Serializer for {@link SamlService} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class SamlServiceSerializer extends AbstractWebApplicationServiceSerializer<SamlService> {
     private static final Constructor CONSTRUCTOR;
