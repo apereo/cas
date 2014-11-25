@@ -376,7 +376,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         }
     }
 
-
+    /**
+     * @deprecated As of 4.1.0
+     */
     @Override
     @Deprecated
     public boolean isAnonymousAccess() {
@@ -384,6 +386,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return false;
     }
 
+    /**
+     * @deprecated As of 4.1.0
+     */
     @Override
     @Deprecated
     public boolean isIgnoreAttributes() {
@@ -391,6 +396,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return false;
     }
 
+    /**
+     * @deprecated As of 4.1.0
+     */
     @Override
     @Deprecated
     public List<String> getAllowedAttributes() {
@@ -398,6 +406,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return Collections.EMPTY_LIST;
     }
 
+    /**
+     * @deprecated As of 4.1.0
+     */
     @Override
     @Deprecated
     public boolean isAllowedToProxy() {
@@ -405,6 +416,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return false;
     }
 
+    /**
+     * @deprecated As of 4.1.0
+     */
     @Override
     @Deprecated
     public String getUsernameAttribute() {
