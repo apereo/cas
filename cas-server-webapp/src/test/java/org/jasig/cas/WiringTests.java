@@ -69,7 +69,6 @@ public class WiringTests {
                 applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
         final DefaultPrincipalFactory factory2 =
                 applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
-
         assertNotEquals("principal factories should be unique instances", factory1, factory2);
     }
 }

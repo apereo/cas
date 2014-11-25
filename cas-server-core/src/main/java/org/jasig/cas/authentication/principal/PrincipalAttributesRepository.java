@@ -23,6 +23,11 @@ import java.util.Map;
 
 /**
  * Defines operations required for retrieving principal attributes.
+ * Acts as a proxy between the external attribute source and CAS,
+ * executing such as additional processing or caching on the set
+ * of retrieved attributes. Implementations may simply decide to
+ * do nothing on the set of attributes that the principal carries
+ * or they may attempt to refresh them from the source, etc.
  * @author Misagh Moayyed
  * @see org.jasig.cas.authentication.principal.PrincipalFactory
  * @since 4.1

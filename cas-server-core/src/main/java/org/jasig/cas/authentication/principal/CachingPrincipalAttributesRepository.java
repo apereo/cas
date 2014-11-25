@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,15 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private final Cache<String, Map<String, Object>> cache;
 
     private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
+
+    /**
+     * Init the caching repository, solely used for serialization purposes
+     * and nothing else.
+     */
+    private CachingPrincipalAttributesRepository() {
+        this.attributeRepository = null;
+        this.cache = null;
+    }
 
     /**
      * Instantiates a new caching attributes principal factory.
