@@ -298,7 +298,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_pt_PT.properties">messages_pt_PT.properties</a>
                 </td>
                 <td>
                   0
@@ -312,7 +312,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_pt_PT.properties">messages_pt_PT.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
                 </td>
                 <td>
                   0
