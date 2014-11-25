@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Principal;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,10 +53,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
     }
     
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal p) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(p.getAttributes().size());
-        final Map<String, Object> resolvedAttributes = p.getAttributes();
-        
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
+        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(resolvedAttributes.size());
+
         for (final String attribute : this.allowedAttributes.keySet()) {
             final Object value = resolvedAttributes.get(attribute);
 

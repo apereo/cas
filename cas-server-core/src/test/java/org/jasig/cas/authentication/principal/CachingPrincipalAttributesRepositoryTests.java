@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -43,6 +44,10 @@ public class CachingPrincipalAttributesRepositoryTests {
     private Map<String, List<Object>> attributes;
 
     private IPersonAttributeDao dao;
+
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
+    private Principal principal;
 
     @Before
     public void setup() {
@@ -58,26 +63,23 @@ public class CachingPrincipalAttributesRepositoryTests {
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
         when(dao.getPerson(any(String.class))).thenReturn(person);
+
+        this.principal = this.principalFactory.createPrincipal("uid",
+                Collections.<String, Object>singletonMap("mail", "final@example.com"));
     }
 
-    @Test
-    public void testCachedAttributes() throws Exception {
-        final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao);
-        repository.setAttributes("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
-        assertEquals(repository.getAttributes("uid").size(), 1);
-        assertTrue(repository.getAttributes("uid").containsKey("mail"));
-        ((Closeable) repository).close();
-    }
 
     @Test
     public void testExpiredCachedAttributes() throws Exception {
+        assertEquals(this.principal.getAttributes().size(), 1);
         final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
                 TimeUnit.MILLISECONDS, 100);
-        repository.setAttributes("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
-        assertEquals(repository.getAttributes("uid").size(), 1);
-        assertTrue(repository.getAttributes("uid").containsKey("mail"));
+        assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
+        assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
         Thread.sleep(200);
-        assertTrue(repository.getAttributes("uid").containsKey("a2"));
+        this.attributes.remove("mail");
+        assertTrue(repository.getAttributes(this.principal).containsKey("a2"));
+        assertFalse(repository.getAttributes(this.principal).containsKey("mail"));
         ((Closeable) repository).close();
     }
 
@@ -85,89 +87,12 @@ public class CachingPrincipalAttributesRepositoryTests {
     public void testCachedAttributesWithUpdate() throws Exception {
         final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
                 TimeUnit.SECONDS, 5);
-        repository.setAttributes("uid", Collections.<String, Object>singletonMap("mail", "final@example.com"));
-        assertEquals(repository.getAttributes("uid").size(), 1);
-        assertTrue(repository.getAttributes("uid").containsKey("mail"));
+        assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
+        assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
 
         attributes.clear();
-        assertTrue(repository.getAttributes("uid").containsKey("mail"));
+        assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
         ((Closeable) repository).close();
     }
 
-    @Test
-    public void testPrincipalFactoryWithSameCachingAttributess() throws Exception {
-        final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
-                TimeUnit.MILLISECONDS, 200);
-        repository.setAttributes("uid1", Collections.<String, Object>singletonMap("address", "final@example.com"));
-        repository.setAttributes("uid2", Collections.<String, Object>singletonMap("address", "final@example.com"));
-        final DefaultPrincipalFactory factory1 = new DefaultPrincipalFactory(repository);
-        final DefaultPrincipalFactory factory2 = new DefaultPrincipalFactory(repository);
-
-        final Principal p1 = factory1.createPrincipal("uid1");
-        final Principal p2 = factory2.createPrincipal("uid2");
-
-        assertFalse(p1.getAttributes().containsKey("mail"));
-        assertFalse(p2.getAttributes().containsKey("mail"));
-        assertTrue(p1.getAttributes().containsKey("address"));
-        assertTrue(p2.getAttributes().containsKey("address"));
-
-        Thread.sleep(400);
-
-        assertTrue(p1.getAttributes().containsKey("mail"));
-        assertTrue(p2.getAttributes().containsKey("mail"));
-        assertFalse(p1.getAttributes().containsKey("address"));
-        assertFalse(p2.getAttributes().containsKey("address"));
-        ((Closeable) repository).close();
-    }
-
-    @Test
-    public void testPrincipalFactoryWithDifferentCachingAttributesForManyPrincipals() throws Exception {
-        final PrincipalAttributesRepository repository1 = new CachingPrincipalAttributesRepository(this.dao,
-                TimeUnit.MILLISECONDS, 200);
-        repository1.setAttributes("uid1", Collections.<String, Object>singletonMap("address", "final@example.com"));
-
-        final PrincipalAttributesRepository repository2 = new CachingPrincipalAttributesRepository(this.dao,
-                TimeUnit.MILLISECONDS, 700);
-        repository2.setAttributes("uid2", Collections.<String, Object>singletonMap("address", "final@example.com"));
-
-        final DefaultPrincipalFactory factory1 = new DefaultPrincipalFactory(repository1);
-        final DefaultPrincipalFactory factory2 = new DefaultPrincipalFactory(repository2);
-
-        final Principal p1 = factory1.createPrincipal("uid1");
-        final Principal p2 = factory2.createPrincipal("uid2");
-
-        assertFalse(p1.getAttributes().containsKey("mail"));
-        assertFalse(p2.getAttributes().containsKey("mail"));
-        assertTrue(p1.getAttributes().containsKey("address"));
-        assertTrue(p2.getAttributes().containsKey("address"));
-
-        Thread.sleep(400);
-
-        assertTrue(p1.getAttributes().containsKey("mail"));
-        assertFalse(p1.getAttributes().containsKey("address"));
-
-        assertTrue(p2.getAttributes().containsKey("address"));
-        assertFalse(p2.getAttributes().containsKey("mail"));
-
-        ((Closeable) repository2).close();
-        ((Closeable) repository1).close();
-    }
-
-    @Test
-    public void testMultiplePrincipalsWithSameFactoryAndAttributeRepository() throws Exception {
-        final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
-                TimeUnit.SECONDS, 5);
-
-        final DefaultPrincipalFactory factory = new DefaultPrincipalFactory(repository);
-        final Principal p1 = factory.createPrincipal("uid1",
-                Collections.<String, Object>singletonMap("mail1", "email1@address.edu"));
-
-        final Principal p2 = factory.createPrincipal("uid2",
-                Collections.<String, Object>singletonMap("mail2", "email2@address.edu"));
-
-        assertTrue(p1.getAttributes().containsKey("mail1"));
-        assertTrue(p2.getAttributes().containsKey("mail2"));
-
-        ((Closeable) repository).close();
-    }
 }
