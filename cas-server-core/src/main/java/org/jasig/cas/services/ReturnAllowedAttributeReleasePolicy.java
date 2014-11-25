@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-
 /**
  * Return only the collection of allowed attributes out of what's resolved
  * for the principal.
