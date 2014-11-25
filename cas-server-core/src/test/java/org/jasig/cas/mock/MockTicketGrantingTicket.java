@@ -64,7 +64,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        authentication = new AuthenticationBuilder(new SimplePrincipal(principal))
+        authentication = new AuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal))
                             .addCredential(metaData)
                             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
                             new HandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))

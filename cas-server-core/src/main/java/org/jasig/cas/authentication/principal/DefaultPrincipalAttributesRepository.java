@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,34 +26,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
+public final class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
 
-    private Map<String, Object> attributes;
-
-    /**
-     * Instantiates a new Default principal attribute repository.
-     */
-    public DefaultPrincipalAttributesRepository() {
-        this(new HashMap<String, Object>());
-    }
-
-    /**
-     * Instantiates a new Default principal attribute repository.
-     *
-     * @param attributes the attributes
-     */
-    public DefaultPrincipalAttributesRepository(final Map<String, Object> attributes) {
-        setAttributes(getClass().getName(), attributes);
-    }
-
     @Override
-    public void setAttributes(final String id, @NotNull final Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes(final String id) {
-        return this.attributes;
+    public Map<String, Object> getAttributes(final Principal p) {
+        return p.getAttributes();
     }
 }
