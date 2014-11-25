@@ -25,7 +25,7 @@ import java.net.URL;
  *
  * @author Jerome Leleu
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public interface HttpClient {
 
@@ -37,7 +37,7 @@ public interface HttpClient {
      *
      * @param message The message that should be sent to the http endpoint
      * @return boolean if the message was sent, or async was used.  false if the message failed.
-     * @since 4.1
+     * @since 4.1.0
      */
     boolean sendMessageToEndPoint(HttpMessage message);
 

@@ -25,7 +25,7 @@ import java.util.Map;
  * Principal resolution necessarily happens after successful authentication for a given credential.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PrincipalException extends AuthenticationException {
 

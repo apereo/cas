@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class DefaultRegisteredServiceUsernameProviderTests {
     

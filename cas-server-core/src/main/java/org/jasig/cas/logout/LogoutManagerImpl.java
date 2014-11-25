@@ -19,6 +19,13 @@
 package org.jasig.cas.logout;
 
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
+
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
@@ -32,14 +39,6 @@ import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
-import javax.validation.constraints.NotNull;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -70,7 +69,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     private final LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
-    private boolean singleLogoutCallbacksDisabled = false;
+    private boolean singleLogoutCallbacksDisabled;
     
     /** 
      * Whether messages to endpoints would be sent in an asynchronous fashion.
@@ -95,7 +94,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Set if messages are sent in an asynchronous fashion.
      *
      * @param asyncCallbacks if message is synchronously sent
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setAsynchronous(final boolean asyncCallbacks) {
         this.asynchronous = asyncCallbacks;
@@ -248,7 +247,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * A logout http message that is accompanied by a special content type
      * and formatting.
-     * @since 4.1
+     * @since 4.1.0
      */
     private final class LogoutHttpMessage extends HttpMessage {
         

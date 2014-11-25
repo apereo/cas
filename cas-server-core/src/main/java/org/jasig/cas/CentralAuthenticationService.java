@@ -23,10 +23,10 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
 
@@ -50,7 +50,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public interface CentralAuthenticationService {
 
@@ -65,7 +65,7 @@ public interface CentralAuthenticationService {
      * @return Non-null ticket-granting ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws TicketException if ticket cannot be created
+     * @throws org.jasig.cas.ticket.TicketException if ticket cannot be created
      */
     TicketGrantingTicket createTicketGrantingTicket(Credential... credentials)
         throws AuthenticationException, TicketException;
@@ -83,7 +83,7 @@ public interface CentralAuthenticationService {
      * @param <T> the generic ticket type to return that extends {@link Ticket}
      * @return the ticket object
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
-     * @since 4.1
+     * @since 4.1.0
      */
     <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
             throws InvalidTicketException;
@@ -98,7 +98,7 @@ public interface CentralAuthenticationService {
      *
      * @param predicate the predicate
      * @return the tickets
-     * @since 4.1
+     * @since 4.1.0
      */
      Collection<Ticket> getTickets(Predicate predicate);
 
@@ -110,7 +110,7 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null service ticket identifier.
      *
-     * @throws TicketException if the ticket could not be created.
+     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
 
@@ -132,7 +132,7 @@ public interface CentralAuthenticationService {
      * @return Non-null service ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws TicketException if the ticket could not be created.
+     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
@@ -146,7 +146,7 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null ticket validation assertion.
      *
-     * @throws TicketException if there was an error validating the ticket.
+     * @throws org.jasig.cas.ticket.TicketException if there was an error validating the ticket.
      */
     Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
@@ -172,7 +172,7 @@ public interface CentralAuthenticationService {
      * that proxy authentication.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws TicketException if there was an error creating the ticket
+     * @throws org.jasig.cas.ticket.TicketException if there was an error creating the ticket
      */
     TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException;

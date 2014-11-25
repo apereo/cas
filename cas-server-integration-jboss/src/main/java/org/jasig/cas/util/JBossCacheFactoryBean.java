@@ -35,7 +35,7 @@ import org.springframework.core.io.Resource;
  * Please use other means of confguring your distributed ticket registry, such as
  * ehcache or memcached integrations with CAS.
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  *
  */
 @Deprecated

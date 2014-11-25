@@ -29,7 +29,7 @@ import java.net.URL;
  * for both options.
  * 
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface RegisteredServiceProxyPolicy extends Serializable {
 
