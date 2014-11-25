@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * with the service or the service was not found, a default theme will be used.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ServiceThemeResolver extends AbstractThemeResolver {
 

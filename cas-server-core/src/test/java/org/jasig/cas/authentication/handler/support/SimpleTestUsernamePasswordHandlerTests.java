@@ -31,7 +31,7 @@ import org.junit.Test;
  * Test of the simple username/password handler.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SimpleTestUsernamePasswordHandlerTests {
 

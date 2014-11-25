@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.6
+ * @since 3.0.0.6
  *
  */
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX509CertificateTests {

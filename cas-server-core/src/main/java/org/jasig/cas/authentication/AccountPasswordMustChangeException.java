@@ -24,7 +24,7 @@ import javax.security.auth.login.CredentialExpiredException;
  * Describes an authentication error condition where a user account's password must change before login.
  *
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class AccountPasswordMustChangeException extends CredentialExpiredException {
 

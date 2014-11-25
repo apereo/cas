@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.monitor;
 
-import java.util.Formatter;
-
 import org.apache.commons.io.IOUtils;
+
+import java.util.Formatter;
 
 /**
  * Simple implementation of cache statistics.
@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 public class SimpleCacheStatistics implements CacheStatistics {
 
     private static final double BYTES_PER_MB = 1048510.0;
+    private static final int PERCENTAGE_VALUE = 100;
 
     private final long size;
 
@@ -91,7 +92,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((this.capacity - this.size) * 100 / this.capacity);
+        return (int) ((this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity);
     }
 
     @Override

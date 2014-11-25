@@ -24,7 +24,7 @@ import java.security.cert.X509Certificate;
  * Returns a new principal based on the Sereial Number of the certificate.
  *
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public final class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
