@@ -18,19 +18,18 @@
  */
 package org.jasig.cas.validation;
 
-import java.util.List;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+
+import java.util.List;
 
 /**
  * Represents a security assertion obtained from a successfully validated ticket.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
- * @since 3.0
  * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(String, org.jasig.cas.authentication.principal.Service)
+ * @since 3.0.0
  */
 public interface Assertion {
 

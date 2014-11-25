@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author John Gasper
- * @since 4.1
+ * @since 4.1.0
  *
  */
 public class RegisteredServiceThemeBasedViewResolverTests {

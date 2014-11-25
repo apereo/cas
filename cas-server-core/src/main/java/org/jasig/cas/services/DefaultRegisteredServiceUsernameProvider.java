@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Resolves the username for the service to be the default principal id.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class DefaultRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
     private static final long serialVersionUID = 5823989148794052951L;
