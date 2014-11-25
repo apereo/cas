@@ -49,19 +49,10 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void testCreatingSimplePrincipalWithDefaultRepository() {
-        final PrincipalFactory f = new DefaultPrincipalFactory(new DefaultPrincipalAttributesRepository());
+        final PrincipalFactory f = new DefaultPrincipalFactory();
         final Principal p = f.createPrincipal("uid");
         assertEquals(p.getId(), "uid");
         assertEquals(p.getAttributes().size(), 0);
     }
 
-    @Test
-    public void testCreatingSimplePrincipalWithDefaultRepositoryInitialAttributes() {
-        final PrincipalFactory f = new DefaultPrincipalFactory(
-                new DefaultPrincipalAttributesRepository(Collections.<String, Object>singletonMap("mail", "final@example.com")));
-        final Principal p = f.createPrincipal("uid");
-        assertEquals(p.getId(), "uid");
-        assertEquals(p.getAttributes().size(), 1);
-        assertTrue(p.getAttributes().containsKey("mail"));
-    }
 }

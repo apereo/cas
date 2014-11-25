@@ -20,8 +20,6 @@ package org.jasig.cas.services;
 
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-
 /**
  * Return all attributes for the service, regardless of service settings.
  * @author Misagh Moayyed
@@ -32,7 +30,7 @@ public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeRele
     private static final long serialVersionUID = 5519257723778012771L;
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal p) {
-        return p.getAttributes();
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
+        return resolvedAttributes;
     }
 }

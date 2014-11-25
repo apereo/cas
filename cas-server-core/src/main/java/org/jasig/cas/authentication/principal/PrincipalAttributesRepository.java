@@ -30,22 +30,10 @@ import java.util.Map;
 public interface PrincipalAttributesRepository extends Serializable {
 
     /**
-     * Sets the attributes initially received.
-     * Implementations may choose to cache these attributes
-     * and return them again via {@link #getAttributes(String)}
-     * or to entirely ignore them and return a fresh copy.
-     *
-     * @param id the identifier to which the attributes may be linked in the repository.
-     *           This typically would be the principal id.
-     * @param attributes the attributes
-     */
-    void setAttributes(String id, Map<String, Object> attributes);
-
-    /**
      * Gets attributes for the given principal id.
      *
-     * @param id the id
+     * @param p the principal whose attributes need to be retrieved.
      * @return the attributes
      */
-    Map<String, Object> getAttributes(String id);
+    Map<String, Object> getAttributes(Principal p);
 }
