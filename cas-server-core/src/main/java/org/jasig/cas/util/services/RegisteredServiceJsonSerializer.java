@@ -26,7 +26,6 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.slf4j.Logger;
