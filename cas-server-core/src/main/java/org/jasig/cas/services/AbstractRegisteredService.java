@@ -23,6 +23,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -36,7 +38,9 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -119,6 +123,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Column(name = "logo")
     private URL logo;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public long getId() {
         return this.id;
@@ -369,7 +375,57 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
             getRequiredHandlers().add(handler);
         }
     }
-    
+
+    /**
+     * @deprecated As of 4.1.0
+     */
+    @Override
+    @Deprecated
+    public boolean isAnonymousAccess() {
+        logger.warn("isAnonymousAccess() is deprecated, has no effect and will be removed in the future.");
+        return false;
+    }
+
+    /**
+     * @deprecated As of 4.1.0
+     */
+    @Override
+    @Deprecated
+    public boolean isIgnoreAttributes() {
+        logger.warn("isIgnoreAttributes() is deprecated, has no effect and will be removed in the future.");
+        return false;
+    }
+
+    /**
+     * @deprecated As of 4.1.0
+     */
+    @Override
+    @Deprecated
+    public List<String> getAllowedAttributes() {
+        logger.warn("getAllowedAttributes() is deprecated, has no effect and will be removed in the future.");
+        return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * @deprecated As of 4.1.0
+     */
+    @Override
+    @Deprecated
+    public boolean isAllowedToProxy() {
+        logger.warn("isAllowedToProxy() is deprecated, has no effect and will be removed in the future.");
+        return false;
+    }
+
+    /**
+     * @deprecated As of 4.1.0
+     */
+    @Override
+    @Deprecated
+    public String getUsernameAttribute() {
+        logger.warn("getUsernameAttribute() is deprecated, has no effect and will be removed in the future.");
+        return null;
+    }
+
     /**
      * Sets the attribute filtering policy.
      *
