@@ -37,7 +37,7 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyEqualsWithNull() {
-        assertNull("Service matches null.", TestUtils.getService());
+        assertNotEquals("Service matches null.", TestUtils.getService(), null);
     }
 
     @Test
