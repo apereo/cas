@@ -31,6 +31,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.5.0
+ */
 public class TicketRegistryDecoratorTests {
 
     @Test

@@ -58,11 +58,11 @@ public final class JBossCacheTicketRegistryTests {
 
     private static final String APPLICATION_CONTEXT_CACHE_BEAN_NAME = "ticketRegistry";
 
+    private static final int TICKETS_IN_REGISTRY = 10;
+
     private JBossCacheTicketRegistry registry;
 
     private Cache<String, Ticket> treeCache;
-
-    private static final int TICKETS_IN_REGISTRY = 10;
 
     private TicketRegistry ticketRegistry;
 

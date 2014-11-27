@@ -43,6 +43,7 @@ import static org.mockito.Mockito.withSettings;
  * Unit test for MemCacheTicketRegistry class.
  *
  * @author Middleware Services
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class MemCacheTicketRegistryTests {

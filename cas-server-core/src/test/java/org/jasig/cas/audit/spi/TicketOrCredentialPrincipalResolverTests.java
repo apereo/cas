@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link TicketOrCredentialPrincipalResolver}
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTest {
 

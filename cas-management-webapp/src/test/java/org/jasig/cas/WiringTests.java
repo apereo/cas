@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
  * Unit test to verify Spring context wiring.
  *
  * @author Middleware Services
+ * @since 3.0.0
  */
 public class WiringTests {
     private XmlWebApplicationContext applicationContext;
