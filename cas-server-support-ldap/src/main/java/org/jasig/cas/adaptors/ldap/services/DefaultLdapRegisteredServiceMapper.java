@@ -46,6 +46,7 @@ import java.util.regex.PatternSyntaxException;
  * certain attributes names. This implementation also respects the object class
  * attribute of LDAP entries via {@link LdapUtils#OBJECTCLASS_ATTRIBUTE}.
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 

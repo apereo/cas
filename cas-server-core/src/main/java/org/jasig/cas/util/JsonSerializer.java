@@ -27,8 +27,8 @@ import java.io.Writer;
 
 /**
  * Interface to define operations needed to map objects from/to JSON clobs.
- * @param <T>  the type parameter
  * @author Misagh Moayyed
+ * @param <T>  the type parameter
  * @since 4.1.0
  */
 public interface JsonSerializer<T> extends Serializable {
