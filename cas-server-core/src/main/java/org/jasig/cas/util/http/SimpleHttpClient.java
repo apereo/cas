@@ -59,15 +59,12 @@ import org.springframework.util.Assert;
 public final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = 8058276943307162554L;
+    private static final long serialVersionUID = -4949380008568071855L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    /** the internal builder for this client. */
-    private final SimpleHttpClientBuilder builder = new SimpleHttpClientBuilder();
-
-    /** the configuration for this client. */
-    private final SimpleHttpClientConfiguration configuration;
+    /** the acceptable codes supported by this client. */
+    private final int[] acceptableCodes;
 
     /** the HTTP client for this client. */
     private final CloseableHttpClient httpClient;
@@ -76,23 +73,17 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private final FutureRequestExecutionService requestExecutorService;
 
     /**
-     * Instantiates a new Simple HTTP client,
-     * based on a default {@link SimpleHttpClientConfiguration}.
-     */
-    public SimpleHttpClient() {
-        this(new SimpleHttpClientConfiguration());
-    }
-
-    /**
-     * Instantiates a new Simple HTTP client,
-     * based on a provided {@link SimpleHttpClientConfiguration}.
+     * Instantiates a new Simple HTTP client, based on the provided inputs.
      *
-     * @param configuration the provided {@link SimpleHttpClientConfiguration} for initialization.
+     * @param acceptableCodes the acceptable codes of the client
+     * @param httpClient the HTTP client used by the client
+     * @param requestExecutorService the request executor service used by the client
      */
-    public SimpleHttpClient(final SimpleHttpClientConfiguration configuration) {
-        this.configuration = configuration;
-        this.httpClient = builder.buildHttpClient(this.configuration);
-        this.requestExecutorService = builder.buildRequestExecutorService(this.configuration, this.httpClient);
+    public SimpleHttpClient(final int[] acceptableCodes, final CloseableHttpClient httpClient,
+            final FutureRequestExecutionService requestExecutorService) {
+        this.acceptableCodes = acceptableCodes;
+        this.httpClient = httpClient;
+        this.requestExecutorService = requestExecutorService;
     }
 
     @Override
@@ -147,7 +138,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
             response = this.httpClient.execute(request);
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            for (final int acceptableCode : this.configuration.getAcceptableCodes()) {
+            for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code from server matched {}.", responseCode);
                     return true;
@@ -191,7 +182,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setExecutorService(@NotNull final ExecutorService executorService) {
-        LOGGER.warn("setExecutorService() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setExecutorService() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -203,7 +194,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        LOGGER.warn("setAcceptableCodes() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setAcceptableCodes() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -213,7 +204,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setConnectionTimeout(final int connectionTimeout) {
-        LOGGER.warn("setConnectionTimeout() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setConnectionTimeout() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -223,7 +214,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setReadTimeout(final int readTimeout) {
-        LOGGER.warn("setReadTimeout() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setReadTimeout() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -234,7 +225,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setFollowRedirects(final boolean follow) {
-        LOGGER.warn("setFollowRedirects() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setFollowRedirects() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -246,7 +237,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
-        LOGGER.warn("setSSLSocketFactory() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setSSLSocketFactory() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 
     /**
@@ -258,6 +249,6 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     @Deprecated
     public void setHostnameVerifier(final HostnameVerifier verifier) {
-        LOGGER.warn("setHostnameVerifier() is deprecated and has no effect. Consider using SimpleHttpClientConfiguration instead.");
+        LOGGER.warn("setHostnameVerifier() is deprecated and has no effect. Consider using SimpleHttpClientFactoryBean instead.");
     }
 }
