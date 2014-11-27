@@ -19,9 +19,13 @@
 package org.jasig.cas.util.http;
 
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -29,27 +33,45 @@ import javax.validation.constraints.Size;
 
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.client.AuthenticationStrategy;
 import org.apache.http.client.ConnectionBackoffStrategy;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultBackoffStrategy;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
+import org.apache.http.impl.client.FutureRequestExecutionService;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Configuration of a {@link SimpleHttpClient}.
+ * The factory to build a {@link SimpleHttpClient}.
  *
  * @author Jerome Leleu
  * @since 4.1.0
  */
-public final class SimpleHttpClientConfiguration {
+public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClientFactoryBean.class);
 
     /** Max connections per route. */
     public static final int MAX_CONNECTIONS_PER_ROUTE = 50;
@@ -141,6 +163,103 @@ public final class SimpleHttpClientConfiguration {
 
     /** The executor service used to create a {{@link #requestExecutionService}. */
     private ExecutorService executorService;
+
+    @Override
+    public SimpleHttpClient getObject() throws Exception {
+
+        final CloseableHttpClient httpClient = buildHttpClient();
+
+        final FutureRequestExecutionService requestExecutorService = buildRequestExecutorService(httpClient);
+
+        return new SimpleHttpClient(this.acceptableCodes, httpClient, requestExecutorService);
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return SimpleHttpClient.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
+
+    /**
+     * Build a HTTP client based on the current properties.
+     *
+     * @return the built HTTP client
+     */
+    private CloseableHttpClient buildHttpClient() {
+        try {
+
+            final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+            final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
+
+            final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", plainsf)
+                    .register("https", sslsf)
+                    .build();
+
+            final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
+            connMgmr.setMaxTotal(this.maxPooledConnections);
+            connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+
+            final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
+            final HttpRoute httpRoute = new HttpRoute(httpHost);
+            connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+    
+            final RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(this.readTimeout)
+                    .setConnectTimeout(this.connectionTimeout)
+                    .setConnectionRequestTimeout(this.connectionTimeout)
+                    .setStaleConnectionCheckEnabled(true)
+                    .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
+                    .setRedirectsEnabled(this.redirectsEnabled)
+                    .setAuthenticationEnabled(this.authenticationEnabled)
+                    .build();
+            
+            final HttpClientBuilder builder = HttpClients.custom()
+                    .setConnectionManager(connMgmr)
+                    .setDefaultRequestConfig(requestConfig)
+                    .setSSLSocketFactory(sslsf)
+                    .setHostnameVerifier(this.hostnameVerifier)
+                    .setRedirectStrategy(this.redirectionStrategy)
+                    .setDefaultCredentialsProvider(this.credentialsProvider)
+                    .setDefaultCookieStore(this.cookieStore)
+                    .setConnectionReuseStrategy(this.connectionReuseStrategy)
+                    .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
+                    .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
+                    .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
+                    .setDefaultHeaders(this.defaultHeaders)
+                    .useSystemProperties();
+
+            return builder.build();
+
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Build a {@link FutureRequestExecutionService} from the current properties and a HTTP client.
+     *
+     * @param httpClient the provided HTTP client
+     * @return the built request executor service
+     */
+    private FutureRequestExecutionService buildRequestExecutorService(final CloseableHttpClient httpClient) {
+
+        final ExecutorService definedExecutorService;
+        // no executor service provided -> create a default one
+        if (this.executorService == null) {
+            definedExecutorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
+                    0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(this.queueSize));
+        } else {
+            definedExecutorService = this.executorService;
+        }
+
+        return new FutureRequestExecutionService(httpClient, definedExecutorService);
+    }
 
     public ExecutorService getExecutorService() {
         return this.executorService;

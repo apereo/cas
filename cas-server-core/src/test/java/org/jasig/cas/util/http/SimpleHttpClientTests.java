@@ -39,34 +39,34 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleHttpClientTests  {
 
-    private SimpleHttpClient getHttpClient() {
-        final SimpleHttpClient httpClient = new SimpleHttpClient();
+    private SimpleHttpClient getHttpClient() throws Exception {
+        final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();
         return httpClient;
     }
 
     @Test
-    public void testOkayUrl() {
+    public void testOkayUrl() throws Exception {
         assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
-    public void testBadUrl() {
+    public void testBadUrl() throws Exception {
         assertFalse(this.getHttpClient().isValidEndPoint("http://www.apereo.org/scottb.html"));
     }
 
     @Test
-    public void testInvalidHttpsUrl() {
+    public void testInvalidHttpsUrl() throws Exception {
         final HttpClient client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
-        configuration.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
-        configuration.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        configuration.setAcceptableCodes(new int[] {200, 403});
-        final SimpleHttpClient client = new SimpleHttpClient(configuration);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
+        clientFactory.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        clientFactory.setAcceptableCodes(new int[] {200, 403});
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
