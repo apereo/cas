@@ -29,7 +29,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * Return only the collection of allowed attributes out of what's resolved
  * for the principal.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 

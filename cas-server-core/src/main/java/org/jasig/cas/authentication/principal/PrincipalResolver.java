@@ -30,10 +30,9 @@ import org.jasig.cas.authentication.Credential;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 4.0
-
  * @see Principal
  * @see Credential
+ * @since 4.0.0
  */
 public interface PrincipalResolver {
 

@@ -32,8 +32,10 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @author Scott Battaglia
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  * @since 3.1
  */
+@Deprecated
 public final class JCIFSConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
