@@ -65,10 +65,33 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private final SecureRandomIdentifierGenerator idGenerator;
 
+
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
-    private int skewAllowance = 0;
+    /** Defaults to 0. */
+    private int skewAllowance;
+
+    static {
+        try {
+            // Initialize OpenSAML default configuration
+            // (only needed once per classloader)
+            DefaultBootstrap.bootstrap();
+        } catch (final ConfigurationException e) {
+            throw new IllegalStateException("Error initializing OpenSAML library.", e);
+        }
+    }
+
+    /**
+     * Instantiates a new abstract saml10 response view.
+     */
+    protected AbstractSaml10ResponseView() {
+        try {
+            this.idGenerator = new SecureRandomIdentifierGenerator();
+        } catch (final NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
+        }
+    }
 
     /**
      * Sets the character encoding in the HTTP response.
@@ -104,27 +127,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     public void setSkewAllowance(final int skewAllowance) {
         logger.debug("Using {} seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
-    }
-
-    static {
-        try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
-            DefaultBootstrap.bootstrap();
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
-
-    /**
-     * Instantiates a new abstract saml10 response view.
-     */
-    protected AbstractSaml10ResponseView() {
-        try {
-            this.idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
-        }
     }
 
     @Override

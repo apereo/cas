@@ -22,7 +22,7 @@ package org.jasig.cas.authentication;
  * A stateful authentication policy that is applied using arbitrary contextual information.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public interface ContextualAuthenticationPolicy<T> extends AuthenticationPolicy {
     /**

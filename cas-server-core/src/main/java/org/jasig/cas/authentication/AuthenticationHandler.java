@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
  * comparison with data in a system of record such as LDAP directory or database.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public interface AuthenticationHandler {
 

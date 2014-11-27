@@ -26,7 +26,7 @@ import java.net.URLEncoder;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginCompatibilityTests {

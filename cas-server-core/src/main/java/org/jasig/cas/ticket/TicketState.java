@@ -23,7 +23,7 @@ import org.jasig.cas.authentication.Authentication;
 /**
  * @author Scott Battaglia
 
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public interface TicketState {
 

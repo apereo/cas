@@ -34,9 +34,11 @@ import java.util.List;
  * @since 3.5
  */
 public class DelegatingController extends AbstractController {
-    private List<DelegateController> delegates;
+
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
+
+    private List<DelegateController> delegates;
 
     /** The view to redirect if no delegate can handle the request. */
     @NotNull

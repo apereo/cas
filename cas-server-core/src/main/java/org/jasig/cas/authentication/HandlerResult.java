@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  * the {@link AuthenticationHandler} that produced it.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class HandlerResult implements Serializable {
 

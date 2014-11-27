@@ -23,7 +23,7 @@ package org.jasig.cas.ticket;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class TicketCreationException extends TicketException {
 
