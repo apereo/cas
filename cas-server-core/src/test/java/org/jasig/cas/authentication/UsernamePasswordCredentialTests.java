@@ -51,7 +51,7 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifyEquals() {
-        assertNull(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        assertNotEquals(TestUtils.getCredentialsWithDifferentUsernameAndPassword(), null);
         assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
                 TestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(

@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.validation;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link ImmutableAssertion} class.
@@ -82,7 +82,7 @@ public class ImmutableAssertionTests {
         final ImmutableAssertion assertion = new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
-        assertNull(assertion);
+        assertNotEquals(assertion, null);
     }
 
     @Test
