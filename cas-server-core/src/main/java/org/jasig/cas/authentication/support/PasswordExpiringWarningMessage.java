@@ -25,7 +25,7 @@ import org.jasig.cas.Message;
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PasswordExpiringWarningMessage extends Message {
     /** Serialization version marker. */

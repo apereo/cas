@@ -38,8 +38,6 @@ import java.util.Map;
  */
 public final class ClearPassController extends AbstractController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
-
     /** view if clearpass request fails. */
     protected static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
@@ -51,6 +49,8 @@ public final class ClearPassController extends AbstractController {
 
     /** key under which failure descriptions are placed into the model. */
     protected static final String MODEL_FAILURE_DESCRIPTION = "description";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
 
     @NotNull
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;

@@ -29,6 +29,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
  * Serializer for {@link SimpleWebApplicationServiceImpl} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class SimpleWebApplicationServiceSerializer extends SimpleSerializer<SimpleWebApplicationServiceImpl> {
     /** Kyro instance. **/

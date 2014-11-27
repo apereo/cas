@@ -23,7 +23,7 @@ package org.jasig.cas.util;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public interface LongNumericGenerator extends NumericGenerator {
 

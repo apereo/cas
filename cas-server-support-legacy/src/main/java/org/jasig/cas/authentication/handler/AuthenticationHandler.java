@@ -37,7 +37,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  *
  * @author Scott Battaglia
  * @deprecated In favor of {@link org.jasig.cas.authentication.AuthenticationHandler}.
- * @since 3.0
+ * @since 3.0.0
  * @see org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter
  * @see org.jasig.cas.authentication.AuthenticationHandler
  */

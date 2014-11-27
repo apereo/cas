@@ -28,7 +28,7 @@ import java.util.HashSet;
  *
  * @author Marvin S. Addison
  * @author Alaa Nassef
- * @since 4.0
+ * @since 4.0.0
  */
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
@@ -37,5 +37,10 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, new HashSet(builder.getSuccesses().keySet()));
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
     }
 }

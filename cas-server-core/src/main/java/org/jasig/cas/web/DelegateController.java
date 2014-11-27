@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletResponse;
  * All subclass must implement the canHandle method to say if they can handle a request or not.
  * @author Frederic Esnault
  * @since 3.5
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
+@Deprecated
 public abstract class DelegateController extends AbstractController {
     
     /** The logger. */
