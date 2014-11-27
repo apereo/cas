@@ -45,6 +45,7 @@ import static org.junit.Assert.*;
  * This is tests for {@link org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler}.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
