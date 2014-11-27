@@ -39,7 +39,7 @@ import java.util.List;
  * from the provided certificate if available as a resolved principal id.
  *
  * @author Dmitriy Kopylenko
- * @since 4.1
+ * @since 4.1.0
  */
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
 

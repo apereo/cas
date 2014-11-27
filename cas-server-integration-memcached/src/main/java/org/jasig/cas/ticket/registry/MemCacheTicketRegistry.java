@@ -21,6 +21,7 @@ package org.jasig.cas.ticket.registry;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -91,7 +92,9 @@ final int serviceTicketTimeOut) {
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
             final String[] hostnames) {
-        this(hostnames, (int) (ticketGrantingTicketTimeOut / 1000), (int) (serviceTicketTimeOut / 1000));
+        this(hostnames,
+                Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut)).intValue(),
+                Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut)).intValue());
     }
 
     /**

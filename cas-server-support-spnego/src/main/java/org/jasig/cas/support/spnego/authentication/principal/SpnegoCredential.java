@@ -40,6 +40,8 @@ public final class SpnegoCredential implements Credential, Serializable {
      */
     private static final long serialVersionUID = 84084596791289548L;
 
+    private static final int NTLM_TOKEN_MAX_LENGTH = 8;
+
     /**
      * The Spnego Init Token.
      */
@@ -112,10 +114,11 @@ public final class SpnegoCredential implements Credential, Serializable {
      * @return true, if  token ntlm
      */
     private boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < 8) {
+
+        if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
             if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
             }

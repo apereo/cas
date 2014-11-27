@@ -39,7 +39,7 @@ import org.mockito.MockitoAnnotations;
 
 /**
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 

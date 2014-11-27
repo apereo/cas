@@ -49,7 +49,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     private RevocationPolicy<X509CRL> expiredCRLPolicy = new ThresholdExpiredCRLRevocationPolicy();
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void check(final X509Certificate cert) throws GeneralSecurityException {
         if (cert == null) {

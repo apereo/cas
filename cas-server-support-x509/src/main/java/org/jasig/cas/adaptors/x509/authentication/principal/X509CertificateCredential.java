@@ -28,7 +28,7 @@ import java.security.cert.X509Certificate;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 public final class X509CertificateCredential extends AbstractCredential {

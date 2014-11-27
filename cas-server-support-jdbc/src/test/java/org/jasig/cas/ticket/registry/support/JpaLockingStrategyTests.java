@@ -263,7 +263,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             return jpaLock;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
@@ -291,7 +293,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {
@@ -312,7 +316,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {

@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link EhCacheTicketRegistry}.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:ticketRegistry.xml")

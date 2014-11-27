@@ -48,14 +48,17 @@ import java.util.HashSet;
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
  * @author Andrew Tillinghast
+ * @since 3.5
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
 
-    private Cache serviceTicketsCache = null;
+    private Cache serviceTicketsCache;
 
-    private Cache ticketGrantingTicketsCache = null;
+    private Cache ticketGrantingTicketsCache;
 
-    /** @see #setSupportRegistryState(boolean)*/
+    /**
+     * @see #setSupportRegistryState(boolean)
+     **/
     private boolean supportRegistryState = true;
 
     /**

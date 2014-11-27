@@ -61,8 +61,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final int INTEGER_LEN = 4;
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f'};
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final int DEFAULT_SALT_SIZE = 8;
+    private static final int DEFAULT_SECRET_KEY_SIZE = 32;
+    private static final int BYTE_BUFFER_CAPACITY_SIZE = 4;
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -98,7 +102,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * or if the key is invalid. Check the exception type for more details on the nature of the error.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap) throws Exception {
-        this(decoratedMap, getRandomSalt(8), getRandomSalt(32));
+        this(decoratedMap, getRandomSalt(DEFAULT_SALT_SIZE), getRandomSalt(DEFAULT_SECRET_KEY_SIZE));
     }
 
     /**
@@ -393,7 +397,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     protected static byte[] int2byte(final int i) throws UnsupportedEncodingException {
-        return ByteBuffer.allocate(4).putInt(i).array();
+        return ByteBuffer.allocate(BYTE_BUFFER_CAPACITY_SIZE).putInt(i).array();
     }
 
     /**
@@ -463,7 +467,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     }
 
     /**
-     * Takes the raw bytes from the digest and formats them correct.
+     * Takes the raw bytes from the digest and formats them.
      *
      * @param bytes the raw bytes from the digest.
      * @return the formatted bytes.
@@ -472,8 +476,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (byte b : bytes) {
-            buf.append(HEX_DIGITS[b >> 4 & 0x0f]);
-            buf.append(HEX_DIGITS[b & 0x0f]);
+            buf.append(HEX_DIGITS[b >> HEX_RIGHT_SHIFT_COEFFICIENT & HEX_HIGH_BITS_BITWISE_FLAG]);
+            buf.append(HEX_DIGITS[b & HEX_HIGH_BITS_BITWISE_FLAG]);
         }
         return buf.toString();
     }

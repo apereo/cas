@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * cannot proceed due to unsatisfied authentication security policy.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class UnsatisfiedAuthenticationPolicyException extends TicketException {
 

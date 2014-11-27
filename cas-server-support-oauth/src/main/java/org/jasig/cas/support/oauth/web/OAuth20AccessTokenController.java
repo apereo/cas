@@ -18,10 +18,8 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -33,6 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This controller returns an access token which is the CAS
@@ -82,27 +84,27 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
         final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
         if (!isVerified) {
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
         }
 
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.error("Code expired : {}", code);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, 400);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
         response.setContentType("text/plain");
-        final int expires = (int) (timeout - (System.currentTimeMillis()
-                - ticketGrantingTicket.getCreationTime()) / 1000);
+        final int expires = (int) (timeout - TimeUnit.MILLISECONDS
+                .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
                                                     OAuthConstants.EXPIRES, expires);
         LOGGER.debug("text : {}", text);
-        return OAuthUtils.writeText(response, text, 200);
+        return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
     /**

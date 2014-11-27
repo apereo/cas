@@ -20,17 +20,17 @@ package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
+import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.regex.Pattern;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -40,9 +40,10 @@ import javax.security.auth.login.FailedLoginException;
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  * @since 3.1
  */
+@Deprecated
 public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private Authentication authentication;
@@ -55,7 +56,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     /**
      * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
      */
-    private boolean isNTLMallowed = false;
+    private boolean isNTLMallowed;
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {

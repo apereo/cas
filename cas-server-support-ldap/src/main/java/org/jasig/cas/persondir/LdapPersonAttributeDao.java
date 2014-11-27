@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * with ldaptive components to populate person attributes.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
 

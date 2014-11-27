@@ -45,6 +45,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final byte CONST_SEPARATOR = (byte) '!';
 
+    private static final int CONST_DEFAULT_SALT_COUNT = 16;
+
     private byte[] salt;
 
     /**
@@ -54,7 +56,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
-        this.salt = RandomStringUtils.randomAlphanumeric(16).getBytes(Charset.defaultCharset());
+        this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT).getBytes(Charset.defaultCharset());
     }
     
     /**
