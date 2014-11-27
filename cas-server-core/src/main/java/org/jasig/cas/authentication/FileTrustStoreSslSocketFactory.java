@@ -49,7 +49,7 @@ import java.util.List;
  * The SSL socket factory that loads the SSL context from a custom
  * truststore file strictly used ssl handshakes for proxy authentication. 
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 

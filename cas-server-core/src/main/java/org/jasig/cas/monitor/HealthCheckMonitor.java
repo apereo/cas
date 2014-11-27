@@ -46,13 +46,17 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         this.monitors = monitors;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String getName() {
         return HealthCheckMonitor.class.getSimpleName();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public HealthStatus observe() {
         final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());

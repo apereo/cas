@@ -22,7 +22,7 @@ package org.jasig.cas.authentication;
  * Stategy interface for pluggable authentication security policies.
  *
  * @author Marvin S. Addison
- * @version 4.0
+ * @since 4.0.0
  */
 public interface AuthenticationPolicy {
     /**

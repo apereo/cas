@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     @Test

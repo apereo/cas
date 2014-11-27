@@ -26,7 +26,7 @@ import org.jasig.cas.validation.ValidationSpecification;
  * constructor on a ValidationSpecification.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class MockValidationSpecification implements ValidationSpecification {
 

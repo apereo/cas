@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
 

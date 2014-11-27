@@ -92,7 +92,9 @@ public class ExpiredCRLException extends GeneralSecurityException {
         return this.leniency;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         if (this.leniency > 0) {
