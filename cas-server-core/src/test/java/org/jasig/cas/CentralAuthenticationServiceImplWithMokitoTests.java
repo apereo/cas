@@ -73,6 +73,7 @@ import static org.mockito.Mockito.*;
  * Unit tests with the help of Mockito framework.
  *
  * @author Dmitriy Kopylenko
+ * @since 3.0.0
  */
 public class CentralAuthenticationServiceImplWithMokitoTests {
     private static final String TGT_ID = "tgt-id";

@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
  * Tests for {@link org.jasig.cas.extension.clearpass.ClearPassController}.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 3.5.0
  */
 public class ClearPassControllerTests {
 
