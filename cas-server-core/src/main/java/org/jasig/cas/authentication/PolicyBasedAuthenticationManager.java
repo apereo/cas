@@ -67,7 +67,7 @@ import java.util.Map;
  * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
@@ -128,7 +128,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         this.handlerResolverMap = map;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Audit(
         action="AUTHENTICATION",
@@ -153,7 +155,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             for (final Credential credential : credentials) {
-                populator.populateAttributes(builder, credential);
+                if (populator.supports(credential)) {
+                    populator.populateAttributes(builder, credential);
+                }
             }
         }
 

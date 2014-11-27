@@ -24,7 +24,7 @@ package org.jasig.cas.authentication;
  * for cases where deployers wish to fail closed for indeterminate security events.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 

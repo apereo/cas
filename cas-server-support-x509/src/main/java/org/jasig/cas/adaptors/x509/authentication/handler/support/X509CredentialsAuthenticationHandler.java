@@ -51,7 +51,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
@@ -117,7 +117,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                         .getClass());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 

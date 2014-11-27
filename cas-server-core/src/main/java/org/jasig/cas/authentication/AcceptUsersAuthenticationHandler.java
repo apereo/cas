@@ -45,7 +45,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -53,7 +53,9 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     @NotNull
     private Map<String, String> users;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

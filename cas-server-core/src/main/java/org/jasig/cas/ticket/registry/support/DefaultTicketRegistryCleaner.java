@@ -57,9 +57,9 @@ import java.util.Collections;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 3.0
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
+ * @since 3.0.0
  */
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 

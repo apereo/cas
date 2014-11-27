@@ -26,7 +26,7 @@ import java.util.Map;
  * principal is resolved during the authentication process.
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class NullPrincipal implements Principal {
 
@@ -36,9 +36,16 @@ public final class NullPrincipal implements Principal {
     private static final String NOBODY = "nobody";
 
     /** The singleton instance. **/
-    private static NullPrincipal INSTANCE = null;
+    private static NullPrincipal INSTANCE;
 
     private final Map<String, Object> attributes;
+
+    /**
+     * Instantiates a new Null principal.
+     */
+    private NullPrincipal() {
+        attributes = Collections.emptyMap();
+    }
 
     /**
      * Returns the single instance of this class. Will create
@@ -51,13 +58,6 @@ public final class NullPrincipal implements Principal {
             INSTANCE = new NullPrincipal();
         }
         return INSTANCE;
-    }
-
-    /**
-     * Instantiates a new Null principal.
-     */
-    private NullPrincipal() {
-        attributes = Collections.emptyMap();
     }
 
     @Override

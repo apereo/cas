@@ -22,17 +22,17 @@ package org.jasig.cas.authentication;
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
-    /** Flag to try all credentials before policy is satisfied. */
-    private boolean tryAll = false;
+    /** Flag to try all credentials before policy is satisfied. Defaults to <code>false</code>.*/
+    private boolean tryAll;
 
     /**
      * Sets the flag to try all credentials before the policy is satisfied.
      * This flag is disabled by default such that the policy is satisfied immediately upon the first
-     * successfully authenticated credential.
+     * successfully authenticated credential. Defaults to <code>false</code>.
      *
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */

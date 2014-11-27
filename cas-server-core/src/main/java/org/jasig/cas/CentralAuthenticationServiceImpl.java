@@ -42,11 +42,11 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
@@ -96,7 +96,7 @@ import java.util.Map;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @since 3.0
+ * @since 3.0.0
  */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
@@ -523,7 +523,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param ticket the ticket
      * @param context the context
      * @return the authentication satisfied by policy
-     * @throws TicketException the ticket exception
+     * @throws org.jasig.cas.ticket.TicketException the ticket exception
      */
     private Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {

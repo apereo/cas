@@ -29,12 +29,13 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link CacheCredentialsMetaDataPopulator}.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class CacheCredentialsMetaDataPopulatorTests {
 
@@ -64,7 +65,10 @@ public class CacheCredentialsMetaDataPopulatorTests {
             }
         };
 
-        populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+        if (populator.supports(c)) {
+            populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+        }
+
         assertEquals(map.size(), 0);
 
     }
