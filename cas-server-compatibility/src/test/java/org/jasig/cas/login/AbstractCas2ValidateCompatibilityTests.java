@@ -24,7 +24,7 @@ import java.net.URLEncoder;
 
 /**
  * Common test cases for /serviceValidate and /proxyValidate.
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
 

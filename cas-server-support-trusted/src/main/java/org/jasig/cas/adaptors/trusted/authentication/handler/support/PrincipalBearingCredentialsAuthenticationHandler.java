@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * true.
  *
  * @author Andrew Petro
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 

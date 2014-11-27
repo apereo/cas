@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  * Abstract class for database authentication handlers.
  *
  * @author Scott Battaglia
- * @since 3.0.3
+ * @since 3.0.0.3
  */
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
             AbstractUsernamePasswordAuthenticationHandler {
