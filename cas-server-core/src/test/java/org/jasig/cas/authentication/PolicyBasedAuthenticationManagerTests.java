@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class PolicyBasedAuthenticationManagerTests {
 
     @Test
-    public void testAuthenticateAnySuccess() throws Exception {
+    public void verifyAuthenticateAnySuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
@@ -46,7 +46,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateAnyButTryAllSuccess() throws Exception {
+    public void verifyAuthenticateAnyButTryAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
@@ -60,7 +60,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateAnyFailure() throws Exception {
+    public void verifyAuthenticateAnyFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
@@ -69,7 +69,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateAllSuccess() throws Exception {
+    public void verifyAuthenticateAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(true));
@@ -81,7 +81,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateAllFailure() throws Exception {
+    public void verifyAuthenticateAllFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
@@ -91,7 +91,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateRequiredHandlerSuccess() throws Exception {
+    public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
@@ -103,7 +103,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateRequiredHandlerFailure() throws Exception {
+    public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
@@ -113,7 +113,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
+    public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));

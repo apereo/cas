@@ -66,17 +66,17 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void testEmptyRegistry() {
+    public void verifyEmptyRegistry() {
         assertEquals(0, this.dao.load().size());
     }
 
     @Test
-    public void testNonExistingService() {
+    public void verifyNonExistingService() {
         assertNull(this.dao.findServiceById(9999991));
     }
 
     @Test
-    public void testSavingServices() {
+    public void verifySavingServices() {
         this.dao.save(getRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
@@ -84,7 +84,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void testUpdatingServices() {
+    public void verifyUpdatingServices() {
         this.dao.save(getRegisteredService());
         final List<RegisteredService> services = this.dao.load();
 
@@ -110,7 +110,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void testSavingServiceChangesDn() {
+    public void verifySavingServiceChangesDn() {
         this.dao.save(getRegisteredService());
         final List<RegisteredService> services = this.dao.load();
 
@@ -123,7 +123,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void testDeletingSingleService() throws Exception {
+    public void verifyDeletingSingleService() throws Exception {
         final RegisteredService rs = getRegexRegisteredService();
         final RegisteredService rs2 = getRegisteredService();
         this.dao.save(rs2);
@@ -138,7 +138,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void testDeletingServices() throws Exception {
+    public void verifyDeletingServices() throws Exception {
         this.dao.save(getRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();

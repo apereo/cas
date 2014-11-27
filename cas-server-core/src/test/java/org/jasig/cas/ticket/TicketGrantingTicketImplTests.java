@@ -45,7 +45,7 @@ public class TicketGrantingTicketImplTests {
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
@@ -55,13 +55,13 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test(expected=Exception.class)
-    public void testNullAuthentication() {
+    public void verifyNullAuthentication() {
         new TicketGrantingTicketImpl("test", null, null,
                 new NeverExpiresExpirationPolicy());
     }
 
     @Test
-    public void testGetAuthentication() {
+    public void verifyGetAuthentication() {
         final Authentication authentication = TestUtils.getAuthentication();
 
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
@@ -72,7 +72,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testIsRootTrue() {
+    public void verifyIsRootTrue() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
@@ -80,7 +80,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testIsRootFalse() {
+    public void verifyIsRootFalse() {
         final TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
@@ -90,7 +90,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testGetChainedPrincipalsWithOne() {
+    public void verifyGetChainedPrincipalsWithOne() {
         final Authentication authentication = TestUtils.getAuthentication();
         final List<Authentication> principals = new ArrayList<Authentication>();
         principals.add(authentication);
@@ -102,7 +102,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testCheckCreationTime() {
+    public void verifyCheckCreationTime() {
         final Authentication authentication = TestUtils.getAuthentication();
         final List<Authentication> principals = new ArrayList<Authentication>();
         principals.add(authentication);
@@ -115,7 +115,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testGetChainedPrincipalsWithTwo() {
+    public void verifyGetChainedPrincipalsWithTwo() {
         final Authentication authentication = TestUtils.getAuthentication();
         final Authentication authentication1 = TestUtils.getAuthentication("test1");
         final List<Authentication> principals = new ArrayList<Authentication>();
@@ -131,7 +131,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testServiceTicketAsFromInitialCredentials() {
+    public void verifyServiceTicketAsFromInitialCredentials() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
@@ -142,7 +142,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testServiceTicketAsFromNotInitialCredentials() {
+    public void verifyServiceTicketAsFromNotInitialCredentials() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
@@ -156,7 +156,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testWebApplicationServices() {
+    public void verifyWebApplicationServices() {
         final MockService testService = new MockService("test");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
@@ -173,7 +173,7 @@ public class TicketGrantingTicketImplTests {
     }
 
     @Test
-    public void testWebApplicationExpire() {
+    public void verifyWebApplicationExpire() {
         final MockService testService = new MockService("test");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());

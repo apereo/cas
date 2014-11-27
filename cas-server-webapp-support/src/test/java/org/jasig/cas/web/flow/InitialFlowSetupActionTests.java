@@ -71,7 +71,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testSettingContextPath() throws Exception {
+    public void verifySettingContextPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final String CONST_CONTEXT_PATH = "/test";
         request.setContextPath(CONST_CONTEXT_PATH);
@@ -85,7 +85,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testResettingContexPath() throws Exception {
+    public void verifyResettingContexPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final String CONST_CONTEXT_PATH = "/test";
         final String CONST_CONTEXT_PATH_2 = "/test1";
@@ -108,7 +108,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testNoServiceFound() throws Exception {
+    public void verifyNoServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
@@ -121,7 +121,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testServiceFound() throws Exception {
+    public void verifyServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");

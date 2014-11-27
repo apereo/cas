@@ -31,14 +31,14 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests {
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new BadUsernameOrPasswordAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BadUsernameOrPasswordAuthenticationException e =
                 new BadUsernameOrPasswordAuthenticationException(r);
@@ -48,7 +48,7 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
+    public void verifyCodeConstructor() {
         final String MESSAGE = "GG";
         final BadUsernameOrPasswordAuthenticationException e =
                 new BadUsernameOrPasswordAuthenticationException(MESSAGE);
@@ -56,7 +56,7 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests {
         assertEquals(MESSAGE, e.getCode());
     }
 
-    public void testThrowableConstructorWithCode() {
+    public void verifyThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final BadUsernameOrPasswordAuthenticationException e =

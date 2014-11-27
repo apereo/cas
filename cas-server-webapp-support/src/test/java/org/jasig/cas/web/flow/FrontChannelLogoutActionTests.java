@@ -91,21 +91,21 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Test
-    public void testLogoutNoRequest() throws Exception {
+    public void verifyLogoutNoRequest() throws Exception {
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutNoIndex() throws Exception {
+    public void verifyLogoutNoIndex() throws Exception {
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutOneLogoutRequestSuccess() throws Exception {
+    public void verifyLogoutOneLogoutRequestSuccess() throws Exception {
         final LogoutRequest logoutRequest = new LogoutRequest("", null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
@@ -115,7 +115,7 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Test
-    public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
+    public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
         final String FAKE_URL = "http://url";
         final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));

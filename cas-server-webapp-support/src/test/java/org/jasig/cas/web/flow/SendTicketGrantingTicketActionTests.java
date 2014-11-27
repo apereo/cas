@@ -60,7 +60,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     }
 
     @Test
-    public void testNoTgtToSet() throws Exception {
+    public void verifyNoTgtToSet() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
 
@@ -68,7 +68,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     }
 
     @Test
-    public void testTgtToSet() throws Exception {
+    public void verifyTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
@@ -82,7 +82,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     }
 
     @Test
-    public void testTgtToSetRemovingOldTgt() throws Exception {
+    public void verifyTgtToSetRemovingOldTgt() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
 

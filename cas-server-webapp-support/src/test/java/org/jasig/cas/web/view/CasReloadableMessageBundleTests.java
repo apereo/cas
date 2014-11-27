@@ -41,26 +41,26 @@ public class CasReloadableMessageBundleTests {
     }
     
     @Test
-    public void testGetMessageFromRequestedBundle() {
+    public void verifyGetMessageFromRequestedBundle() {
         final String msg = this.loader.getMessage("screen.blocked.header", null, Locale.FRENCH);
         assertNotNull(msg);
     }
 
     @Test
-    public void testGetMessageFromDefaultBundle() {
+    public void verifyGetMessageFromDefaultBundle() {
         final String msg = this.loader.getMessage("screen.other.message", null, Locale.FRENCH);
         assertEquals(msg, "another");
     }
     
     @Test
-    public void testUseCodeAsMessageItself() {
+    public void verifyUseCodeAsMessageItself() {
         this.loader.setUseCodeAsDefaultMessage(true);
         final String msg = this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
         assertEquals(msg, "does.not.exist");
     }
     
     @Test(expected=NoSuchMessageException.class)
-    public void testExpectExceptionWhenCodeNotFound() {
+    public void verifyExpectExceptionWhenCodeNotFound() {
         this.loader.setUseCodeAsDefaultMessage(false);
         this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
     }

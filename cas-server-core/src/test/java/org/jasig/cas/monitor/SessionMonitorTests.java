@@ -55,7 +55,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void testObserveOk() throws Exception {
+    public void verifyObserveOk() throws Exception {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
         final SessionStatus status = this.monitor.observe();
         assertEquals(5, status.getSessionCount());
@@ -64,7 +64,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void testObserveWarnSessionsExceeded() throws Exception {
+    public void verifyObserveWarnSessionsExceeded() throws Exception {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
         this.monitor.setSessionCountWarnThreshold(5);
         final SessionStatus status = this.monitor.observe();
@@ -73,7 +73,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void testObserveWarnServiceTicketsExceeded() throws Exception {
+    public void verifyObserveWarnServiceTicketsExceeded() throws Exception {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
         this.monitor.setServiceTicketCountWarnThreshold(5);
         final SessionStatus status = this.monitor.observe();

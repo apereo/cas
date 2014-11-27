@@ -97,7 +97,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testAuthenticationFailsToFindUser() throws Exception {
+    public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
@@ -107,7 +107,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testPasswordInvalid() throws Exception {
+    public void verifyPasswordInvalid() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
@@ -117,7 +117,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testMultipleRecords() throws Exception {
+    public void verifyMultipleRecords() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
@@ -127,7 +127,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = PreventedException.class)
-    public void testBadQuery() throws Exception {
+    public void verifyBadQuery() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
@@ -136,7 +136,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     }
 
-    public void testSuccess() throws Exception {
+    public void verifySuccess() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);

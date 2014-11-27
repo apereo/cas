@@ -61,7 +61,7 @@ public final class OAuth20ProfileControllerTests {
     private static final String CONTENT_TYPE = "application/json";
 
     @Test
-    public void testNoAccessToken() throws Exception {
+    public void verifyNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -74,7 +74,7 @@ public final class OAuth20ProfileControllerTests {
     }
 
     @Test
-    public void testNoTicketGrantingTicketImpl() throws Exception {
+    public void verifyNoTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -91,7 +91,7 @@ public final class OAuth20ProfileControllerTests {
     }
 
     @Test
-    public void testExpiredTicketGrantingTicketImpl() throws Exception {
+    public void verifyExpiredTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -110,7 +110,7 @@ public final class OAuth20ProfileControllerTests {
     }
     
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -152,7 +152,7 @@ public final class OAuth20ProfileControllerTests {
     }
     
     @Test
-    public void testOKWithAuthorizationHeader() throws Exception {
+    public void verifyOKWithAuthorizationHeader() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.addHeader("Authorization", "bearer " + TGT_ID);

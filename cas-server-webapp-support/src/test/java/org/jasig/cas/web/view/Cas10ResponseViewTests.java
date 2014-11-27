@@ -55,7 +55,7 @@ public class Cas10ResponseViewTests {
     }
 
     @Test
-    public void testSuccessView() throws Exception {
+    public void verifySuccessView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(true);
         this.view.render(this.model, new MockHttpServletRequest(), response
@@ -64,7 +64,7 @@ public class Cas10ResponseViewTests {
     }
 
     @Test
-    public void testFailureView() throws Exception {
+    public void verifyFailureView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(false);
         this.view.render(this.model, new MockHttpServletRequest(),

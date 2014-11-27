@@ -166,12 +166,12 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test(expected=InvalidTicketException.class)
-    public void testNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
+    public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket("bad-st", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
-    public void testInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
+    public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket(ST_ID, TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -197,7 +197,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test
-    public void testChainedAuthenticationsOnValidation() throws TicketException {
+    public void verifyChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);

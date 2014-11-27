@@ -118,7 +118,7 @@ public class X509SubjectPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

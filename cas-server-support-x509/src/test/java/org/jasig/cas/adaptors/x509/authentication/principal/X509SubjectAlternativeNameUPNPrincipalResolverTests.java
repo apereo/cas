@@ -79,7 +79,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

@@ -25,13 +25,13 @@ import org.junit.Test;
 public class UnauthorizedProxyingExceptionTests {
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
         assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
     }
 
     @Test
-    public void testCodeConstructor() {
+    public void verifyCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
 
@@ -39,7 +39,7 @@ public class UnauthorizedProxyingExceptionTests {
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
+    public void verifyThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);

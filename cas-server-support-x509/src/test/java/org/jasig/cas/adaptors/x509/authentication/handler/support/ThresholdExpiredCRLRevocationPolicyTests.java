@@ -122,7 +122,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * Test method for {@link ThresholdExpiredCRLRevocationPolicy#apply(java.security.cert.X509CRL)}.
      */
     @Test
-    public void testApply() {
+    public void verifyApply() {
         try {
             this.policy.apply(this.crl);
             if (this.expected != null) {

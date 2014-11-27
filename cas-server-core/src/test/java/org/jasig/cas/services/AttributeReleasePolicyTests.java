@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class AttributeReleasePolicyTests {
     @Test
-    public void testAttributeFilterMappedAttributes() {
+    public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<String, String>();
         mappedAttr.put("attr1", "newAttr1");
@@ -65,7 +65,7 @@ public class AttributeReleasePolicyTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllowedAttributes() {
+    public void verifyServiceAttributeFilterAllowedAttributes() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
@@ -90,7 +90,7 @@ public class AttributeReleasePolicyTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllowedAttributesWithARegexFilter() {
+    public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
@@ -116,7 +116,7 @@ public class AttributeReleasePolicyTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllAttributes() {
+    public void verifyServiceAttributeFilterAllAttributes() {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
         final Principal p = mock(Principal.class);
         

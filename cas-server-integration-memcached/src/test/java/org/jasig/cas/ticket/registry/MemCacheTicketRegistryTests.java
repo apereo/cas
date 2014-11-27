@@ -85,7 +85,7 @@ public class MemCacheTicketRegistryTests {
     }
 
     @Test
-    public void testWriteGetDelete() throws Exception {
+    public void verifyWriteGetDelete() throws Exception {
         final String id = "ST-1234567890ABCDEFGHIJKL-crud";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
@@ -98,7 +98,7 @@ public class MemCacheTicketRegistryTests {
     }
 
     @Test
-    public void testExpiration() throws Exception {
+    public void verifyExpiration() throws Exception {
         final String id = "ST-1234567890ABCDEFGHIJKL-exp";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
