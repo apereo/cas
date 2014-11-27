@@ -43,14 +43,14 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void testValidCredentials() {
+    public void verifyValidCredentials() {
         this.spnegoCredentials.setPrincipal(new SimplePrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));

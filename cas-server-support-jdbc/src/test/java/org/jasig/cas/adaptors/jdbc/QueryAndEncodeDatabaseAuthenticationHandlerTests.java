@@ -99,7 +99,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testAuthenticationFailsToFindUser() throws Exception {
+    public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);
@@ -108,7 +108,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = PreventedException.class)
-    public void testAuthenticationInvalidSql() throws Exception {
+    public void verifyAuthenticationInvalidSql() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql("makesNoSenseInSql"),
                         ALG_NAME);
@@ -117,7 +117,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testAuthenticationMultipleAccounts() throws Exception {
+    public void verifyAuthenticationMultipleAccounts() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);
@@ -127,7 +127,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void testAuthenticationSuccessful() throws Exception {
+    public void verifyAuthenticationSuccessful() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);
@@ -142,7 +142,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void testAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
+    public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);

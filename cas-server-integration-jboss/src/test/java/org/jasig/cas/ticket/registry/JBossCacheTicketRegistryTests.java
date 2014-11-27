@@ -93,7 +93,7 @@ public final class JBossCacheTicketRegistryTests {
      * the ticket and return. Failure upon any exception.
      */
     @Test
-    public void testAddTicketToCache() {
+    public void verifyAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -103,7 +103,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetNullTicket() {
+    public void verifyGetNullTicket() {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
         } catch (final Exception e) {
@@ -112,7 +112,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetNonExistingTicket() {
+    public void verifyGetNonExistingTicket() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL",
                     TicketGrantingTicket.class);
@@ -122,7 +122,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetExistingTicketWithProperClass() {
+    public void verifyGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -133,7 +133,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetExistingTicketWithInproperClass() {
+    public void verifyGetExistingTicketWithInproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -145,7 +145,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetNullTicketWithoutClass() {
+    public void verifyGetNullTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket(null);
         } catch (final Exception e) {
@@ -154,7 +154,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetNonExistingTicketWithoutClass() {
+    public void verifyGetNonExistingTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (final Exception e) {
@@ -163,7 +163,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetExistingTicket() {
+    public void verifyGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -175,7 +175,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testDeleteExistingTicket() {
+    public void verifyDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -187,7 +187,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testDeleteNonExistingTicket() {
+    public void verifyDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -199,7 +199,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testDeleteNullTicket() {
+    public void verifyDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
@@ -211,7 +211,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetTicketsIsZero() {
+    public void verifyGetTicketsIsZero() {
         try {
             assertEquals("The size of the empty registry is not zero.",
                     this.ticketRegistry.getTickets().size(), 0);
@@ -222,7 +222,7 @@ public final class JBossCacheTicketRegistryTests {
     }
 
     @Test
-    public void testGetTicketsFromRegistryEqualToTicketsAdded() {
+    public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "test");

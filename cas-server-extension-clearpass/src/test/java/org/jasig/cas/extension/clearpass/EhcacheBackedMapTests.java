@@ -55,13 +55,13 @@ public class EhcacheBackedMapTests {
     }
 
     @Test
-    public void testEmptyMapSize() {
+    public void verifyEmptyMapSize() {
         assertEquals(map.size(), 0);
         assertTrue(map.isEmpty());
     }
 
     @Test
-    public void testGetPutOps() {
+    public void verifyGetPutOps() {
         this.map.put("key", "value");
         assertNotNull(this.map.get("key"));
 
@@ -70,7 +70,7 @@ public class EhcacheBackedMapTests {
     }
 
     @Test
-    public void testPutClear() {
+    public void verifyPutClear() {
         final String[][] arrayItems = {{"key0", "Item0"}, {"key1", "Item1"}, {"key2", "Item2"}};
         final Map mapItems = ArrayUtils.toMap(arrayItems);
 
@@ -82,7 +82,7 @@ public class EhcacheBackedMapTests {
     }
 
     @Test
-    public void testKeysValues() {
+    public void verifyKeysValues() {
         final String[][] arrayItems = {{"key0", "Item0"}, {"key1", "Item1"}, {"key2", "Item2"}};
         final Map mapItems = ArrayUtils.toMap(arrayItems);
 
@@ -92,7 +92,7 @@ public class EhcacheBackedMapTests {
     }
 
     @Test
-    public void testContains() {
+    public void verifyContains() {
         final String[][] arrayItems = {{"key0", "Item0"}, {"key1", "Item1"}, {"key2", "Item2"}};
         final Map mapItems = ArrayUtils.toMap(arrayItems);
 

@@ -43,7 +43,7 @@ public class DataSourceMonitorTests {
     private DataSource dataSource;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
         monitor.setExecutor(Executors.newSingleThreadExecutor());
         monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");

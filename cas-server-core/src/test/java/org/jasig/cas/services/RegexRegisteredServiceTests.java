@@ -113,7 +113,7 @@ public class RegexRegisteredServiceTests {
 
 
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

@@ -51,20 +51,20 @@ public abstract class AbstractRegistryCleanerTests {
     public abstract TicketRegistry getNewTicketRegistry();
 
     @Test
-    public void testCleanEmptyTicketRegistry() {
+    public void verifyCleanEmptyTicketRegistry() {
         clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOfExpiredTicketsAllExpired() {
+    public void verifyCleanRegistryOfExpiredTicketsAllExpired() {
         populateRegistryWithExpiredTickets();
         clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOneNonExpired() {
+    public void verifyCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());

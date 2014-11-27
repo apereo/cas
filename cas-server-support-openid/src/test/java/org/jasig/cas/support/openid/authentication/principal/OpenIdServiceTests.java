@@ -66,7 +66,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testGetResponse() {
+    public void verifyGetResponse() {
         openIdService = OpenIdService.createServiceFrom(request);
         when(context.getBean("serverManager")).thenReturn(manager);
         when(context.getBean("centralAuthenticationService")).thenReturn(cas);
@@ -87,7 +87,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testSmartModeGetResponse() {
+    public void verifySmartModeGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
         Association association = null;
@@ -115,7 +115,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testExpiredAssociationGetResponse() {
+    public void verifyExpiredAssociationGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
         Association association = null;
@@ -143,7 +143,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request1.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");

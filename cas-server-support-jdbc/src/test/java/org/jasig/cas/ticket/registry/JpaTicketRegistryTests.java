@@ -109,7 +109,7 @@ public class JpaTicketRegistryTests {
 
 
     @Test
-    public void testTicketCreationAndDeletion() throws Exception {
+    public void verifyTicketCreationAndDeletion() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
@@ -126,7 +126,7 @@ public class JpaTicketRegistryTests {
 
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentServiceTicketGeneration() throws Exception {
+    public void verifyConcurrentServiceTicketGeneration() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);

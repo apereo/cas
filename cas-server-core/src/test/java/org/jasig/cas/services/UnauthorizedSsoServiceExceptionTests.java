@@ -28,13 +28,13 @@ public class UnauthorizedSsoServiceExceptionTests {
     private static final String CODE = "service.not.authorized.sso";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 
     @Test
-    public void testCodeConstructor() {
+    public void verifyCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE);
 
@@ -42,7 +42,7 @@ public class UnauthorizedSsoServiceExceptionTests {
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
+    public void verifyThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE, r);

@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testUniqueGenerationOfTicketIds() {
+    public void verifyUniqueGenerationOfTicketIds() {
         final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
             10);
 
@@ -39,7 +39,7 @@ public class DefaultUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    public void testSuffix() {
+    public void verifySuffix() {
         final String SUFFIX = "suffix";
         final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, SUFFIX);
 
