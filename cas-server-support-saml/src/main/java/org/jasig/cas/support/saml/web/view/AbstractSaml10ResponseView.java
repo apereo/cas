@@ -23,7 +23,9 @@ import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
 import org.joda.time.DateTime;
+import org.opensaml.DefaultBootstrap;
 import org.opensaml.saml1.core.Response;
+import org.opensaml.xml.ConfigurationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,16 +39,14 @@ import java.util.Map;
  * @since 3.5.1
  */
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
-
     private static final String DEFAULT_ENCODING = "UTF-8";
-
-    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
     /**
      * The Saml object builder.
      */
     protected final Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
 
+    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
     @NotNull
     private String encoding = DEFAULT_ENCODING;
@@ -56,22 +56,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     static {
         try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
             DefaultBootstrap.bootstrap();
         } catch (final ConfigurationException e) {
             throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
-
-    /**
-     * Instantiates a new abstract saml10 response view.
-     */
-    protected AbstractSaml10ResponseView() {
-        try {
-            this.idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
         }
     }
 
@@ -83,8 +70,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
     }
-
-
 
     /**
     * Sets the allowance for time skew in seconds
@@ -142,11 +127,5 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * @param model Spring MVC model map containing data needed to prepare response.
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
-
-
-
-
-
-
 
 }
