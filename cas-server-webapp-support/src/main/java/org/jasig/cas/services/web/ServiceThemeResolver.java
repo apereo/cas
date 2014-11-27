@@ -126,7 +126,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {
         @Override
-        protected ResourceBundle doGetBundle(final String basename, final Locale locale) throws MissingResourceException {
+        protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
             try {
                 final ResourceBundle bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
                 if (bundle != null && bundle.keySet().size() > 0) {

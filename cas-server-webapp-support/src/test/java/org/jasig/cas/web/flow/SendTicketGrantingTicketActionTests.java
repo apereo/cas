@@ -35,6 +35,10 @@ import javax.servlet.http.Cookie;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.4.0
+ */
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
 

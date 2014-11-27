@@ -235,14 +235,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         
-        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String origSvc = "http://www.jasig.org?param=hello+world";
         final ServiceTicket sId = getCentralAuthenticationService()
-                .grantServiceTicket(tId.getId(), TestUtils.getService(ORIG_SVC));
+                .grantServiceTicket(tId.getId(), TestUtils.getService(origSvc));
 
-        final String REQ_SVC = "http://WWW.JASIG.ORG?PARAM=hello%20world";
+        final String reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
         
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
@@ -256,14 +256,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         
-        final String ORIG_SVC = "http://www.jasig.org?param=hello+world";
+        final String origSvc = "http://www.jasig.org?param=hello+world";
         final ServiceTicket sId = getCentralAuthenticationService()
-                .grantServiceTicket(tId.getId(), TestUtils.getService(ORIG_SVC));
+                .grantServiceTicket(tId.getId(), TestUtils.getService(origSvc));
 
-        final String REQ_SVC = "http://www.jasig.org?param=hello%20world";
+        final String reqSvc = "http://www.jasig.org?param=hello%20world";
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService(REQ_SVC).getId());
+        request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
         
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,

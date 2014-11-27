@@ -138,9 +138,9 @@ public final class OAuth20ProfileControllerTests {
 
         final ObjectMapper mapper = new ObjectMapper();
 
-        final String EXPECTED = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+        final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(EXPECTED);
+        final JsonNode expectedObj = mapper.readTree(expected);
         final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
@@ -179,9 +179,9 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
-        final String EXPECTED = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+        final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(EXPECTED);
+        final JsonNode expectedObj = mapper.readTree(expected);
         final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
 
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());

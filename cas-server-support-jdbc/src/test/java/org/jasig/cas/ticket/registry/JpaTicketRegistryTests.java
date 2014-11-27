@@ -71,9 +71,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
@@ -82,6 +79,9 @@ public class JpaTicketRegistryTests {
     private static ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
     private static ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PlatformTransactionManager txManager;

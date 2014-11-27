@@ -34,6 +34,8 @@ import static org.junit.Assert.*;
  * Unit test for {@link LdapAuthenticationHandler}.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/authn-context.xml"})

@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.util.Map;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -27,6 +25,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.util.Map;
 
 /**
  * @author Marvin S. Addison
@@ -51,7 +50,7 @@ public class MockLoginModule implements LoginModule {
         final String userName = ((NameCallback) callbacks[0]).getName();
         final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
-        if (userName.equals("test") && password.equals("test")) {
+        if ("test".equals(userName) && "test".equals(password)) {
             return true;
         }
 

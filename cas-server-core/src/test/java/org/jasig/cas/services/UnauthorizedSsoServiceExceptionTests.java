@@ -29,6 +29,7 @@ import org.junit.Test;
 public class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";
+    private static final String MESSAGE = "GG";
 
     @Test
     public void verifyGetCode() {
@@ -38,7 +39,6 @@ public class UnauthorizedSsoServiceExceptionTests {
 
     @Test
     public void verifyCodeConstructor() {
-        final String MESSAGE = "GG";
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
@@ -46,7 +46,6 @@ public class UnauthorizedSsoServiceExceptionTests {
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE, r);
 
