@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
  * the X509CertificateCredential.
  *
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public final class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
 

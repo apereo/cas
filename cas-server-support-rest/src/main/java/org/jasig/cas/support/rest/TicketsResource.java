@@ -56,15 +56,14 @@ import java.util.Formatter;
  * </ul>
  *
  * @author Dmitriy Kopylenko
- * @since 4.1
+ * @since 4.1.0
  */
 @RestController("/v1")
 public class TicketsResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
 
     @Autowired
     private CentralAuthenticationService cas;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
 
     /**
      * Create new ticket granting ticket.
@@ -108,7 +107,7 @@ public class TicketsResource {
      *
      * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
-     * @return {@link }ResponseEntity} representing RESTful response
+     * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}",
             method = RequestMethod.POST,

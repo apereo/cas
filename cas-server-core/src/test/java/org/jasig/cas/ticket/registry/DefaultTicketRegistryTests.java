@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  * Ticket Registries.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 

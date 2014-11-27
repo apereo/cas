@@ -27,7 +27,7 @@ import java.util.Map;
  * map of attributes that may be released for a registered service.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface AttributeFilter extends Serializable {
     /**
