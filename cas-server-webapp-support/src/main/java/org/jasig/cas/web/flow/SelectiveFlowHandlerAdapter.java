@@ -31,7 +31,7 @@ import java.util.Set;
  * more flow IDs.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
 

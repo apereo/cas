@@ -41,7 +41,7 @@ import java.util.Date;
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 public class JpaLockingStrategy implements LockingStrategy {
 
@@ -106,8 +106,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         this.lockTimeout = seconds;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public boolean acquire() {
@@ -139,8 +140,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         return result;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public void release() {
@@ -177,7 +179,9 @@ public class JpaLockingStrategy implements LockingStrategy {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return uniqueId;

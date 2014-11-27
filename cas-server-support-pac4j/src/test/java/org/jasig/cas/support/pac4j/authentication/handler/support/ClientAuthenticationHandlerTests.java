@@ -43,7 +43,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * Tests the {@link ClientAuthenticationHandler}.
  *
  * @author Jerome Leleu
- * @since 4.1
+ * @since 4.1.0
  *
  */
 public final class ClientAuthenticationHandlerTests {

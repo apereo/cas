@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Principal;
 /**
  * Return all attributes for the service, regardless of service settings.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 

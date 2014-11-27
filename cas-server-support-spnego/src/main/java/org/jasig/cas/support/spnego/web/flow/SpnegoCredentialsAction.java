@@ -46,7 +46,7 @@ import java.nio.charset.Charset;
 public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
-    private boolean ntlm = false;
+    private boolean ntlm;
 
     private String messageBeginPrefix = constructMessagePrefix();
 

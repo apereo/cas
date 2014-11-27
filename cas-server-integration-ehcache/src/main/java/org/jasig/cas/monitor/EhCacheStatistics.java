@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Formatter;
 
+import java.util.Formatter;
+
 /**
  * Ehcache statistics wrapper.
  *
@@ -33,6 +35,8 @@ import java.util.Formatter;
  */
 public class EhCacheStatistics implements CacheStatistics {
 
+    private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
+    private static final int PERCENTAGE_VALUE = 100;
     private final Cache cache;
 
     // Flag to determine whether size units are in bytes or simple object counts
@@ -103,7 +107,7 @@ public class EhCacheStatistics implements CacheStatistics {
         if (capacity == 0) {
             return 0;
         }
-        return (int) ((capacity - getSize()) * 100 / capacity);
+        return (int) ((capacity - getSize()) * PERCENTAGE_VALUE / capacity);
     }
 
     @Override
@@ -120,15 +124,15 @@ public class EhCacheStatistics implements CacheStatistics {
         final int free = getPercentFree();
         final Formatter formatter = new Formatter(builder);
         if (useBytes) {
-            formatter.format("%.2f", heapSize / 1048510.0);
+            formatter.format("%.2f", heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             builder.append("MB heap, ");
-            formatter.format("%.2f", diskSize / 1048510.0);
+            formatter.format("%.2f", diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             builder.append("MB disk, ");
         } else {
             builder.append(heapSize).append(" items in heap, ");
             builder.append(diskSize).append(" items on disk, ");
         }
-        formatter.format("%.2f", offHeapSize / 1048510.0);
+        formatter.format("%.2f", offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
         builder.append("MB off-heap, ");
         builder.append(free).append("% free, ");
         builder.append(getEvictions()).append(" evictions");

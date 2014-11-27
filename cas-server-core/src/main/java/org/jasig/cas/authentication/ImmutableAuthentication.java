@@ -37,7 +37,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ImmutableAuthentication implements Authentication {
 

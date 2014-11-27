@@ -26,7 +26,7 @@ import java.io.Serializable;
  * Base class for CAS credentials that are safe for long-term storage.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 

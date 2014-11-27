@@ -36,11 +36,14 @@ public final class RememberMeAuthenticationMetaDataPopulator implements
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        if (credential instanceof RememberMeCredential) {
-            final RememberMeCredential r = (RememberMeCredential) credential;
-            if (r.isRememberMe()) {
-                builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
-            }
+        final RememberMeCredential r = (RememberMeCredential) credential;
+        if (r.isRememberMe()) {
+            builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         }
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof RememberMeCredential;
     }
 }

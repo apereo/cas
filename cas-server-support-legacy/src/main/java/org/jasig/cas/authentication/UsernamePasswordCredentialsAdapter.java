@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * Converts a CAS 4.0 username/password credential into a CAS 3.0 username/password credential.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class UsernamePasswordCredentialsAdapter implements CredentialsAdapter {
     @Override

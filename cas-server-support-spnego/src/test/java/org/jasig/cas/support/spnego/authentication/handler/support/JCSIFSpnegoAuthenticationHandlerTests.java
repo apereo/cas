@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
@@ -29,12 +25,17 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.security.GeneralSecurityException;
+
+import static org.junit.Assert.*;
+
 /**
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public class JCSIFSpnegoAuthenticationHandlerTests {
     private JCIFSSpnegoAuthenticationHandler authenticationHandler;
 

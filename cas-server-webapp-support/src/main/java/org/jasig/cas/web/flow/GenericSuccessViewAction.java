@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Action that should execute prior to rendering the generic-success login view.
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public final class GenericSuccessViewAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
