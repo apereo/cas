@@ -20,7 +20,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.http.SimpleHttpClient;
-import org.jasig.cas.util.http.SimpleHttpClientConfiguration;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     @Before
     public void setUp() throws Exception {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
-        this.authenticationHandler.setHttpClient(new SimpleHttpClient());
+        this.authenticationHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -65,7 +65,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     public void testAcceptsNonHttpsCredentials() throws Exception {
-        this.authenticationHandler.setHttpClient(new SimpleHttpClient());
+        this.authenticationHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
         assertNotNull(this.authenticationHandler.authenticate(
                 TestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
@@ -78,9 +78,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test(expected = FailedLoginException.class)
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
-        final SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
-        configuration.setAcceptableCodes(new int[] {900});
-        final SimpleHttpClient httpClient = new SimpleHttpClient(configuration);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setAcceptableCodes(new int[] {900});
+        final SimpleHttpClient httpClient = clientFactory.getObject();
         this.authenticationHandler.setHttpClient(httpClient);
         this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }
