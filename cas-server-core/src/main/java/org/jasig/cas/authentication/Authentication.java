@@ -44,7 +44,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public interface Authentication extends Serializable {
 

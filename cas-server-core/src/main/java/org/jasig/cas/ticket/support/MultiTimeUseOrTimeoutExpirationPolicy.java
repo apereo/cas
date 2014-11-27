@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * certain time period for a ticket to exist.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
 

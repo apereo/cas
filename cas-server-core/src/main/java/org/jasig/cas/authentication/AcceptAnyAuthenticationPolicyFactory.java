@@ -24,7 +24,7 @@ import org.jasig.cas.services.ServiceContext;
  * Produces authentication policies that passively satisfy any given {@link Authentication}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 

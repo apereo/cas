@@ -18,17 +18,6 @@
  */
 package org.jasig.cas.authentication.support;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.LoginException;
-
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
@@ -45,6 +34,16 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.AccountExpiredException;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Default account state handler.
  *
@@ -52,12 +51,11 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
+    /** Map of account state error to CAS authentication exception. */
+    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
 
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /** Map of account state error to CAS authentication exception. */
-    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
 
     /**
      * Instantiates a new account state handler, that populates

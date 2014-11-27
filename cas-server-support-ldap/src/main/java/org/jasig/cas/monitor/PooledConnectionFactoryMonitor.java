@@ -27,7 +27,7 @@ import org.ldaptive.pool.Validator;
  * Monitors an ldaptive {@link PooledConnectionFactory}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 

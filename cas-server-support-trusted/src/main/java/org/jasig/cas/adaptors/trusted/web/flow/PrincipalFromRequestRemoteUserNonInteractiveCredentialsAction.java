@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
  * could not find any credentials.
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {

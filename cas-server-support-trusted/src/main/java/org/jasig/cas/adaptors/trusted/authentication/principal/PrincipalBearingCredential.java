@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * credentials.
  *
  * @author Andrew Petro
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalBearingCredential extends AbstractCredential {
 
