@@ -18,17 +18,19 @@
  */
 package org.jasig.cas.support.spnego;
 
-import java.security.Principal;
-
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
+
+import java.security.Principal;
 
 /**
  *
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public class MockJCSIFAuthentication extends Authentication {
     private final Principal principal;
 

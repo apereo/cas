@@ -21,9 +21,9 @@ package org.jasig.cas.util;
 /**
  * This class contains a pair of objects.
  *
+ * @author Jerome Leleu
  * @param <A> the generic type, first item
  * @param <B> the generic type, second item
- * @author Jerome Leleu
  * @since 4.0.0
  */
 public class Pair<A, B> {

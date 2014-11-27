@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * Determines the username for this registered service based on a principal attribute.
  * If the attribute is not found, default principal id is returned.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class PrincipalAttributeRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
 

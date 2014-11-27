@@ -44,7 +44,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     AbstractPreAndPostProcessingAuthenticationHandler {
@@ -62,7 +62,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     protected final HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {

@@ -34,7 +34,7 @@ import javax.validation.constraints.NotNull;
  * {@link org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator}.
  * Generated ids are unique per service.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class AnonymousRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 

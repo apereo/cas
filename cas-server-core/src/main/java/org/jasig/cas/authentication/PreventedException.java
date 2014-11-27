@@ -23,7 +23,7 @@ package org.jasig.cas.authentication;
  * error with back-end authentication store.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PreventedException extends Exception {
 

@@ -79,7 +79,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class JsonServiceRegistryDao implements ServiceRegistryDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);

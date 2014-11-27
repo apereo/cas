@@ -32,7 +32,7 @@ import org.junit.Test;
  * Unit test for {@link ImmutableAssertion} class.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class ImmutableAssertionTests {
 

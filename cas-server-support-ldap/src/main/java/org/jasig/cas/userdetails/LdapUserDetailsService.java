@@ -51,7 +51,7 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapUserDetailsService implements UserDetailsService {
 
@@ -84,12 +84,14 @@ public class LdapUserDetailsService implements UserDetailsService {
     @NotNull
     private final String roleAttributeName;
 
-    /** Prefix appended to the uppercased {@link #roleAttributeName} per the normal Spring Security convention. */
+    /** Prefix appended to the uppercased
+     * {@link #roleAttributeName} per the normal Spring Security convention.
+     **/
     @NotNull
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
-    private boolean allowMultipleResults = false;
+    private boolean allowMultipleResults;
 
     /**
      * Creates a new instance with the given required parameters.

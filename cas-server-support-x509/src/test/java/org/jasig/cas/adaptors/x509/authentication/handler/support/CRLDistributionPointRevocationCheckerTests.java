@@ -18,16 +18,8 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-
 import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
 import org.junit.Before;
@@ -35,6 +27,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.core.io.ClassPathResource;
+
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509CRL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 
 /**
@@ -84,6 +83,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
+        CacheManager.getInstance().removeAllCaches();
         final Collection<Object[]> params = new ArrayList<Object[]>();
         Cache cache;
         final ThresholdExpiredCRLRevocationPolicy defaultPolicy = new ThresholdExpiredCRLRevocationPolicy();

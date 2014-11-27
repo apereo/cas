@@ -33,7 +33,9 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  *
  * @author Marvin S. Addison
  * @since 3.5.1
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
