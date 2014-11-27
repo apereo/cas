@@ -18,10 +18,13 @@
  */
 package org.jasig.cas.integration.restlet;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.util.HttpClient;
 import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -36,10 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * Implementation of a Restlet resource for creating Service Tickets from a 
+ * Implementation of a Restlet resource for creating Service Tickets from a
  * TicketGrantingTicket, as well as deleting a TicketGrantingTicket.
  * 
  * @author Scott Battaglia
@@ -48,53 +49,51 @@ import javax.validation.constraints.NotNull;
  *
  */
 public final class TicketGrantingTicketResource extends Resource {
-    
-    private final static Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
+	private final static Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
+	@Autowired
+	private CentralAuthenticationService centralAuthenticationService;
+	private String ticketGrantingTicketId;
+	@Autowired
+	@NotNull
+	private HttpClient httpClient;
 
-    @Autowired
-    private CentralAuthenticationService centralAuthenticationService;
-    
-    private String ticketGrantingTicketId;
+	public void init(final Context context, final Request request, final Response response) {
+		super.init(context, request, response);
+		this.ticketGrantingTicketId = request.getCookies().getValues("CASTGC");
+		if (StringUtils.isBlank(this.ticketGrantingTicketId)) {
+			this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
+		}
+		this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
+	}
 
-    @Autowired
-    @NotNull
-    private HttpClient httpClient;
+	public boolean allowDelete() {
+		return true;
+	}
 
-    public void init(final Context context, final Request request, final Response response) {
-        super.init(context, request, response);
-        this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
-        this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
-    }
+	public boolean allowPost() {
+		return true;
+	}
 
-    public boolean allowDelete() {
-        return true;
-    }
+	public void setHttpClient(final HttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
 
-    public boolean allowPost() {
-        return true;
-    }
+	public void removeRepresentations() throws ResourceException {
+		this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
+		getResponse().setStatus(Status.SUCCESS_OK);
+	}
 
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
-    public void removeRepresentations() throws ResourceException {
-        this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
-        getResponse().setStatus(Status.SUCCESS_OK);
-    }
-
-    public void acceptRepresentation(final Representation entity)
-        throws ResourceException {
-        final Form form = getRequest().getEntityAsForm();
-        final String serviceUrl = form.getFirstValue("service");
-        try {
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
-            getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
-        } catch (final InvalidTicketException e) {
-            getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
-        } catch (final Exception e) {
-            log.error(e.getMessage(),e);
-            getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-        }
-    }
+	public void acceptRepresentation(final Representation entity) throws ResourceException {
+		final Form form = getRequest().getEntityAsForm();
+		final String serviceUrl = form.getFirstValue("service");
+		try {
+			final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
+			getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
+		} catch (final InvalidTicketException e) {
+			getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
+		} catch (final Exception e) {
+			log.error(e.getMessage(), e);
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		}
+	}
 }
