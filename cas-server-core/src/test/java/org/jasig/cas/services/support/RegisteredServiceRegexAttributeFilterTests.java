@@ -79,7 +79,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    public void testPatternFilter() {
+    public void verifyPatternFilter() {
 
         final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), 7);
@@ -102,7 +102,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
     
     @Test
-    public void testSerialization() {
+    public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
         final AttributeFilter secondFilter = (AttributeFilter) SerializationUtils.deserialize(data);
         assertEquals(secondFilter, this.filter);

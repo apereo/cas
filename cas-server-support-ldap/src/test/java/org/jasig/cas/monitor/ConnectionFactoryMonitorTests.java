@@ -38,7 +38,7 @@ public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
     private ConnectionFactoryMonitor monitor;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 }

@@ -27,13 +27,13 @@ import org.junit.Test;
 public class InvalidTicketExceptionTests {
 
     @Test
-    public void testCodeNoThrowable() {
+    public void verifyCodeNoThrowable() {
         final TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     @Test
-    public void testCodeWithThrowable() {
+    public void verifyCodeWithThrowable() {
         final AuthenticationException a = new BadCredentialsAuthenticationException();
         final TicketException t = new InvalidTicketException(a, "InvalidTicketId");
 

@@ -42,41 +42,41 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() {
+    public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         assertFalse(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    public void testAcceptsProperCertificateCredentials() throws Exception {
+    public void verifyAcceptsProperCertificateCredentials() throws Exception {
         assertNotNull(this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testRejectsInProperCertificateCredentials() throws Exception {
+    public void verifyRejectsInProperCertificateCredentials() throws Exception {
         this.authenticationHandler.authenticate(
                 TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
     }
 
     @Test
-    public void testAcceptsNonHttpsCredentials() throws Exception {
+    public void verifyAcceptsNonHttpsCredentials() throws Exception {
         this.authenticationHandler.setHttpClient(new SimpleHttpClient());
         assertNotNull(this.authenticationHandler.authenticate(
                 TestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testNoAcceptableStatusCode() throws Exception {
+    public void verifyNoAcceptableStatusCode() throws Exception {
         this.authenticationHandler.authenticate(
                 TestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testNoAcceptableStatusCodeButOneSet() throws Exception {
+    public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
         final SimpleHttpClient httpClient = new SimpleHttpClient(new int[] {900});
         this.authenticationHandler.setHttpClient(httpClient);
         this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));

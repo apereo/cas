@@ -63,7 +63,7 @@ public class AbstractRegisteredServiceTests {
     };
 
     @Test
-    public void testAllowToProxyIsFalseByDefault() {
+    public void verifyAllowToProxyIsFalseByDefault() {
         final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
@@ -71,7 +71,7 @@ public class AbstractRegisteredServiceTests {
     }
 
     @Test
-    public void testSettersAndGetters() {
+    public void verifySettersAndGetters() {
         prepareService();
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
@@ -89,7 +89,7 @@ public class AbstractRegisteredServiceTests {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
         assertFalse(new RegisteredServiceImpl().equals(null));
         assertFalse(new RegisteredServiceImpl().equals(new Object()));
@@ -109,7 +109,7 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllAttributes() {
+    public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final Principal p = mock(Principal.class);
@@ -127,7 +127,7 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllowedAttributes() {
+    public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
@@ -149,7 +149,7 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterMappedAttributes() {
+    public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<String, String>();

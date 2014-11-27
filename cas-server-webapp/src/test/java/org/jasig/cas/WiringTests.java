@@ -58,7 +58,7 @@ public class WiringTests {
     }
 
     @Test
-    public void testWiring() throws Exception {
+    public void verifyWiring() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 }

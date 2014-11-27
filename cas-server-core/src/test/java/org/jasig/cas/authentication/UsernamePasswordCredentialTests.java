@@ -30,7 +30,7 @@ import org.junit.Test;
 public class UsernamePasswordCredentialTests {
 
     @Test
-    public void testSetGetUsername() {
+    public void verifySetGetUsername() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String userName = "test";
 
@@ -40,7 +40,7 @@ public class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void testSetGetPassword() {
+    public void verifySetGetPassword() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final String password = "test";
 
@@ -50,7 +50,7 @@ public class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(null));
         assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
                 TestUtils.getCredentialsWithSameUsernameAndPassword()));

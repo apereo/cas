@@ -31,22 +31,22 @@ import org.junit.Test;
 public class SimpleServiceTests {
 
     @Test
-    public void testProperId() {
+    public void verifyProperId() {
         assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils.getService().getId());
     }
 
     @Test
-    public void testEqualsWithNull() {
+    public void verifyEqualsWithNull() {
         assertFalse("Service matches null.", TestUtils.getService().equals(null));
     }
 
     @Test
-    public void testEqualsWithBadClass() {
+    public void verifyEqualsWithBadClass() {
         assertFalse("Services matches String class.", TestUtils.getService().equals(new Object()));
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
     }
 }

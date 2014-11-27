@@ -90,7 +90,7 @@ public class GoogleAccountsServiceTests {
 
     // XXX: re-enable when we figure out JVM requirements
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         return;
         //    final Response response = this.googleAccountsService.getResponse("ticketId");
         //  assertEquals(ResponseType.POST, response.getResponseType());

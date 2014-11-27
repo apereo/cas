@@ -27,14 +27,14 @@ import org.junit.Test;
 public class SpnegoCredentialsTests {
 
     @Test
-    public void testToStringWithNoPrincipal() {
+    public void verifyToStringWithNoPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
 
         assertTrue(credentials.toString().contains("unknown"));
     }
 
     @Test
-    public void testToStringWithPrincipal() {
+    public void verifyToStringWithPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         final Principal principal = new SimplePrincipal("test");
         credentials.setPrincipal(principal);

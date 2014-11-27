@@ -43,7 +43,7 @@ public class ImmutableAuthenticationTests {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void testImmutable() {
+    public void verifyImmutable() {
         final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());

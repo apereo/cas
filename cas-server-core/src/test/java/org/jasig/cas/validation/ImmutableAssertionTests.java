@@ -37,7 +37,7 @@ import org.junit.Test;
 public class ImmutableAssertionTests {
 
     @Test
-    public void testGettersForChainedPrincipals() {
+    public void verifyGettersForChainedPrincipals() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication("test"));
@@ -51,7 +51,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetterFalseForNewLogin() {
+    public void verifyGetterFalseForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
@@ -63,7 +63,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetterTrueForNewLogin() {
+    public void verifyGetterTrueForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
@@ -75,7 +75,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testEqualsWithNull() {
+    public void verifyEqualsWithNull() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
@@ -86,7 +86,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testEqualsWithInvalidObject() {
+    public void verifyEqualsWithInvalidObject() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
@@ -97,7 +97,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testEqualsWithValidObject() {
+    public void verifyEqualsWithValidObject() {
         final List<Authentication> list1 = new ArrayList<Authentication>();
         final List<Authentication> list2 = new ArrayList<Authentication>();
 
@@ -112,7 +112,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetService() {
+    public void verifyGetService() {
         final Service service = TestUtils.getService();
 
         final List<Authentication> list = new ArrayList<Authentication>();

@@ -78,7 +78,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     }
 
     @Test
-    public void testNoCredentialsResultsInError() throws Exception {
+    public void verifyNoCredentialsResultsInError() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -86,7 +86,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     }
 
     @Test
-    public void testCredentialsResultsInSuccess() throws Exception {
+    public void verifyCredentialsResultsInSuccess() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {VALID_CERTIFICATE});
