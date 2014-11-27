@@ -69,15 +69,20 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
+    private static final int DEFAULT_ISSUE_LENGTH = 30000;
+
     private final XSStringBuilder attrValueBuilder = new XSStringBuilder();
 
     /** The issuer, generally the hostname. */
     @NotNull
     private String issuer;
 
-    /** The amount of time in milliseconds this is valid for. */
+    /**
+     * The amount of time in milliseconds this is valid for.
+     * Defaults to {@value}.
+     **/
     @Min(1000)
-    private long issueLength = 30000;
+    private long issueLength = DEFAULT_ISSUE_LENGTH;
 
     @NotNull
     private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
@@ -116,7 +121,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      *
      * @param model the model
      * @return the final map
-     * @since 4.1
+     * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
         final Map<String, Object> authnAttributes = new HashMap<String, Object>(getAuthenticationAttributesAsMultiValuedAttributes(model));

@@ -21,8 +21,8 @@ package org.jasig.cas.monitor;
 /**
  * A monitor observes a resource and reports its status.
  *
- * @param <S> the generic type of the monitor
  * @author Marvin S. Addison
+ * @param <S> the generic type of the monitor
  * @since 3.5.0
  */
 public interface Monitor<S extends Status> {

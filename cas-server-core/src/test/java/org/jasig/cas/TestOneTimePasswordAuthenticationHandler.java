@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  * Test one-time password authentication handler that supports {@link MultifactorAuthenticationTests}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
 

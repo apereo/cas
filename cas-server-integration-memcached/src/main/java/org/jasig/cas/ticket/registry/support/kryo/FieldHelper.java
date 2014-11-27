@@ -26,6 +26,7 @@ import java.util.Map;
  * Helper class that provides convenience methods for getting and setting field values via reflection.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class FieldHelper {
     private final Map<String, Field> fieldCache = new HashMap<String, Field>();

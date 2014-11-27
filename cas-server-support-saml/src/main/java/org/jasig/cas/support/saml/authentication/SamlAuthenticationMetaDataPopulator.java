@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -86,13 +86,18 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
+
     /**
-     * Map of user-defined mappings. Note it is possible to over-ride the
+     * Map of user-defined mappings. Note it is possible to override the
      * defaults. Mapping should be of the following type:
-     * <p>(<String version of Package/Class Name> <SAML Type>)
+     * <pre>Package/Class Name as String -> Name SAML Type</pre>
      * <p>
-     * Example: (<"org.jasig.cas.authentication.HttpBasedServiceCredential">
-     * <SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client>)
+     * Example: (<code>"org.jasig.cas.authentication.HttpBasedServiceCredential"
+     * -> SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
      *
      * @param userDefinedMappings map of user defined authentication types.
      */

@@ -24,10 +24,10 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
@@ -56,7 +56,7 @@ import java.util.Set;
  * @author Scott Battaglia
    @deprecated As of 4.1. No longer required. The default implementation can be used
    to delegate calls to the service layer from WS.
- * @since 3.0
+ * @since 3.0.0
  */
 @Deprecated
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {

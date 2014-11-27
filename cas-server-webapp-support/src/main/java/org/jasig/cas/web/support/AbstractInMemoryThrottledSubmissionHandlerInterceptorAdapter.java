@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.web.support;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of a HandlerInterceptorAdapter that keeps track of a mapping
@@ -33,11 +33,12 @@ import javax.servlet.http.HttpServletRequest;
  * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
+    private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
 
     @Override
@@ -90,6 +91,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * @return  Instantaneous submission rate in submissions/sec, e.g. <code>a - b</code>.
      */
     private double submissionRate(final Date a, final Date b) {
-        return 1000.0 / (a.getTime() - b.getTime());
+        return SUBMISSION_RATE_DIVIDEND / (a.getTime() - b.getTime());
     }
 }

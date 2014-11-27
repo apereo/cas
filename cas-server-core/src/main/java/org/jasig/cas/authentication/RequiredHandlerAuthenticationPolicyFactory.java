@@ -26,7 +26,7 @@ import org.jasig.cas.services.ServiceContext;
  * {@link org.jasig.cas.services.RegisteredService#getRequiredHandlers()}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 

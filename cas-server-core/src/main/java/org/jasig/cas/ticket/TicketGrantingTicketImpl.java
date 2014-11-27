@@ -44,7 +44,7 @@ import java.util.Map;
  * specified as object creation.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
@@ -178,13 +178,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.getGrantingTicket() == null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void markTicketExpired() {
         this.expired = true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
@@ -206,13 +210,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
@@ -227,7 +235,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return Collections.unmodifiableList(list);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {
