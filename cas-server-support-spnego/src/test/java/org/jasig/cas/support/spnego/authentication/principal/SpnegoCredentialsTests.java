@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * @author Misagh Moayyed
+ * @since 3.0.0
+ */
 public class SpnegoCredentialsTests {
 
     @Test

@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class JaasAuthenticationHandlerTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

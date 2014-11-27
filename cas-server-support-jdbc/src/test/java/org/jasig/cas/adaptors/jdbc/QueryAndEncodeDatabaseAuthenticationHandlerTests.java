@@ -50,6 +50,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/jpaTestApplicationContext.xml")

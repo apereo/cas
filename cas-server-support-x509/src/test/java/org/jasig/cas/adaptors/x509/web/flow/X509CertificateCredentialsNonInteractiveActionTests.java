@@ -49,7 +49,10 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
 
     private X509CertificateCredentialsNonInteractiveAction action;

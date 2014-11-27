@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
  * The virginiaTechGroup schema MUST be installed on the target directories prior to running this test.
  *
  * @author Marvin Addison
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/ldap-userdetails-test.xml"})
