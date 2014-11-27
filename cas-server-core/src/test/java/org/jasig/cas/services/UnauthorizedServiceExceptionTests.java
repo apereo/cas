@@ -28,9 +28,10 @@ import org.junit.Test;
  */
 public class UnauthorizedServiceExceptionTests {
 
+    private static final String MESSAGE = "GG";
+
     @Test
     public void verifyCodeConstructor() {
-        final String MESSAGE = "GG";
         final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
@@ -38,7 +39,6 @@ public class UnauthorizedServiceExceptionTests {
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE, r);
 

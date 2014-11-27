@@ -44,6 +44,14 @@ public class RegexRegisteredServiceTests {
 
     private boolean expected;
 
+    public RegexRegisteredServiceTests(
+            final RegexRegisteredService service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -101,17 +109,6 @@ public class RegexRegisteredServiceTests {
                 },
         });
     }
-
-
-    public RegexRegisteredServiceTests(
-            final RegexRegisteredService service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
 
     @Test
     public void verifyMatches() throws Exception {

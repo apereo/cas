@@ -82,7 +82,7 @@ public class ImmutableAssertionTests {
         final ImmutableAssertion assertion = new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
-        assertFalse(assertion.equals(null));
+        assertNull(assertion);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ImmutableAssertionTests {
         final ImmutableAssertion assertion = new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
-        assertFalse(assertion.equals("test"));
+        assertFalse("test".equals(assertion));
     }
 
     @Test

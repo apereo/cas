@@ -39,12 +39,11 @@ import java.util.Collection;
  * @since 4.1.0
  */
 public abstract class AbstractLdapTests implements ApplicationContextAware {
-
-    private ApplicationContext context;
+    private static InMemoryTestLdapDirectoryServer DIRECTORY;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static InMemoryTestLdapDirectoryServer DIRECTORY;
+    private ApplicationContext context;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -75,7 +74,7 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) {
         this.context = applicationContext;
     }
 }

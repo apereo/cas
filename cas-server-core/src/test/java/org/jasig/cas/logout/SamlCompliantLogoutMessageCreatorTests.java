@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +25,18 @@ import org.junit.runners.JUnit4;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+/**
+ * @author Marvin S. Addison
+ * @since 4.0.0
+ */
 @RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
 

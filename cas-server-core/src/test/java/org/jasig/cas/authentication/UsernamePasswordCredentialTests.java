@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -51,7 +51,7 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifyEquals() {
-        assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(null));
+        assertNull(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
         assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
                 TestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(

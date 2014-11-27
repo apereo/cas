@@ -20,6 +20,10 @@ package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.4.0
+ */
 public class MockRegisteredService extends AbstractRegisteredService {
     private static final long serialVersionUID = 4036877894594884813L;
 

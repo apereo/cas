@@ -157,7 +157,6 @@ public class OpenIdServiceTests {
         final OpenIdService o2 = OpenIdService.createServiceFrom(request2);
 
         assertTrue(o1.equals(o2));
-        assertFalse(o1.equals(null));
         assertFalse(o1.equals(new Object()));
     }
 }
