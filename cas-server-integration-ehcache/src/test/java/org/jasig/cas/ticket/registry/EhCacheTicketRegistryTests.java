@@ -58,8 +58,8 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private ApplicationContext applicationContext = null;
-    private TicketRegistry ticketRegistry = null;
+    private ApplicationContext applicationContext;
+    private TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {

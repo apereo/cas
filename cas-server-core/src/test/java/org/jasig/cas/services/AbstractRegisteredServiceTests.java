@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link AbstractRegisteredService}.
  *
  * @author Marvin S. Addison
+ * @since 3.4.12
  */
 public class AbstractRegisteredServiceTests {
 

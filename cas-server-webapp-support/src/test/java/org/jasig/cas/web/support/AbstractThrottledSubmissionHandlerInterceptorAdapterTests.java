@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  * Base class for submission throttle tests.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 

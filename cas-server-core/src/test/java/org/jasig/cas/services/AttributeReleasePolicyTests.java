@@ -34,6 +34,7 @@ import org.junit.Test;
 /**
  * Attribute filtering policy tests.
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 public class AttributeReleasePolicyTests {
     @Test

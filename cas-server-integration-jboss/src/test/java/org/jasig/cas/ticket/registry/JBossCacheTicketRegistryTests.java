@@ -49,6 +49,7 @@ import static org.junit.Assert.*;
  * either ehcache or memcached modules.
  * @author Scott Battaglia
  * @author Marc-Antoine Garrigue
+ * @since 3.0.0
  */
 @Deprecated
 public final class JBossCacheTicketRegistryTests {

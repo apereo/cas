@@ -38,6 +38,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public class Cas10ResponseViewTests {
 
