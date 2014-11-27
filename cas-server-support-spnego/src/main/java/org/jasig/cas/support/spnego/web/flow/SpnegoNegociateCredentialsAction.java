@@ -41,19 +41,19 @@ import org.springframework.webflow.execution.RequestContext;
  * then return <code>success()</code></li>
  * </ul>
  *
- * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
  * @author John Gasper
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
 public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /** Whether this is using the NTLM protocol or not. */
-    private boolean ntlm = false;
+    private boolean ntlm;
 
-    private boolean mixedModeAuthentication = false;
+    private boolean mixedModeAuthentication;
 
     private List<String> supportedBrowser;
 

@@ -33,7 +33,7 @@ import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
  * Default to SAML 1.1 Compliance.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 

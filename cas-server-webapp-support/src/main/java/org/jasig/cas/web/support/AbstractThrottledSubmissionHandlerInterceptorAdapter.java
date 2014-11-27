@@ -19,6 +19,7 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -77,10 +78,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-
-            final String username = StringEscapeUtils.escapeHtml4(request.getParameter(usernameParameter));
-            response.sendError(403, "Access Denied for user [" + username
-                                + " from IP Address [" + request.getRemoteAddr() + "]");
+            response.sendError(HttpStatus.SC_FORBIDDEN,
+                    "Access Denied for user [" + request.getParameter(usernameParameter)
+                    + " from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
 

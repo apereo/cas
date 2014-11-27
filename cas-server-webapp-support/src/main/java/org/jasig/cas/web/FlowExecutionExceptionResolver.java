@@ -44,7 +44,7 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 

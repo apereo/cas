@@ -66,8 +66,9 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
         this.maxWait = time;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public PoolStatus observe() {
         final Future<StatusCode> result = this.executor.submit(new Validator());

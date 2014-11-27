@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author Marvin S. Addison
  * @deprecated This component has been renamed to {@link org.jasig.cas.authentication.Credential} in CAS 4.0.
- * @since 4.0
+ * @since 4.0.0
  */
 @Deprecated
 public interface Credentials extends Serializable {}

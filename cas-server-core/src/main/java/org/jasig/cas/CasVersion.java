@@ -24,7 +24,7 @@ package org.jasig.cas;
  *
  * @author Dmitriy Kopylenko
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class CasVersion {
 
@@ -37,8 +37,8 @@ public final class CasVersion {
     }
 
     /**
-     * @see java.lang.Package#getImplementationVersion
      * @return Return the full CAS version string.
+     * @see java.lang.Package#getImplementationVersion
      */
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();

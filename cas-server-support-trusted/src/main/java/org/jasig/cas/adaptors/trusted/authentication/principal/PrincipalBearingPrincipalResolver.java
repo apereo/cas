@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.Credential;
  * already bear the ready-to-go Principal.
  *
  * @author Andrew Petro
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 

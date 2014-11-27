@@ -22,7 +22,7 @@ package org.jasig.cas.adaptors.radius;
  * RADIUS protocol enumeration.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public enum RadiusProtocol {
     

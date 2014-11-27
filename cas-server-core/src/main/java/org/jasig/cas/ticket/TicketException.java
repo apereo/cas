@@ -24,8 +24,10 @@ import org.jasig.cas.authentication.RootCasException;
  * Generic ticket exception. Top of the TicketException hierarchy.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
+@Deprecated
 public abstract class TicketException extends RootCasException {
     private static final long serialVersionUID = -5128676415951733624L;
 

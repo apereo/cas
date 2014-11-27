@@ -71,10 +71,10 @@ import org.springframework.util.Assert;
  * @author Marvin S. Addison
  * @author Misagh Moayyed
  *
- * @since 3.0.5
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
+ * @since 3.0.0.5
  */
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -110,7 +110,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -159,10 +161,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
-     * @since 4.1
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
+     * @since 4.1.0
      */
     public final void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
@@ -179,10 +181,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
-     * @since 4.1
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
+     * @since 4.1.0
      */
     public final void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
