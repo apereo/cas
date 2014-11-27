@@ -24,7 +24,7 @@ package org.jasig.cas.authentication;
  * serialization and security. All implementations MUST be serializable and secure with respect to long-term storage.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public interface CredentialMetaData {
     /**

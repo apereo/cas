@@ -49,12 +49,6 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
 
     @NotNull
     private final ServicesManager servicesManager;
-    
-    @Override
-    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return GoogleAccountsService.createServiceFrom(request,
-                this.privateKey, this.publicKey, this.servicesManager);
-    }
 
     /**
      * Instantiates a new google accounts argument extractor.
@@ -64,10 +58,16 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
      * @param servicesManager the services manager
      */
     public GoogleAccountsArgumentExtractor(final PublicKey publicKey,
-            final PrivateKey privateKey, final ServicesManager servicesManager) {
+                                           final PrivateKey privateKey, final ServicesManager servicesManager) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.servicesManager = servicesManager;
+    }
+
+    @Override
+    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
+        return GoogleAccountsService.createServiceFrom(request,
+                this.privateKey, this.publicKey, this.servicesManager);
     }
 
     /**

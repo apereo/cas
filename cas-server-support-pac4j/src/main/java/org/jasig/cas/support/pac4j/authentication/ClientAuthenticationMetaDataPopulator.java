@@ -42,9 +42,12 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      */
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        if (credential instanceof ClientCredential) {
-            final ClientCredential clientCredential = (ClientCredential) credential;
-            builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
-        }
+        final ClientCredential clientCredential = (ClientCredential) credential;
+        builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof ClientCredential;
     }
 }

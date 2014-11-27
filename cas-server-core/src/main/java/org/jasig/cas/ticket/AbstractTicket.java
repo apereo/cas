@@ -41,7 +41,7 @@ import javax.persistence.MappedSuperclass;
  * subclasses should use static Logger instances.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @MappedSuperclass
 public abstract class AbstractTicket implements Ticket, TicketState {
