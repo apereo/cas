@@ -42,7 +42,7 @@ public final class HttpBasedServiceCredentialTests {
         final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
                 TestUtils.getRegisteredService("https://some.app.edu"));
 
-        assertNull(c);
+        assertNotEquals(c, null);
     }
 
     @Test
