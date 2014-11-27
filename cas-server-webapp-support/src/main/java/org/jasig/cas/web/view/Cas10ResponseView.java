@@ -28,7 +28,7 @@ import java.util.Map;
  * line feeds to be "\n".
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas10ResponseView extends AbstractCasView {
 

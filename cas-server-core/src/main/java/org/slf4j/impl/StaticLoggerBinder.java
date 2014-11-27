@@ -27,7 +27,7 @@ import org.slf4j.spi.LoggerFactoryBinder;
  * Note that this class MUST reside in the <code>org.slf4j.impl</code>
  * package so it can be loaded by the runtime dynamic lookup.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
 
@@ -35,15 +35,6 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
      * The unique instance of this class.
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
-
-    /**
-     * Return the singleton of this class.
-     *
-     * @return the StaticLoggerBinder singleton
-     */
-    public static StaticLoggerBinder getSingleton() {
-        return SINGLETON;
-    }
 
     /**
      * The {@link ILoggerFactory} instance returned by the
@@ -57,6 +48,15 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
      */
     private StaticLoggerBinder() {
         this.loggerFactory = new CasLoggerFactory();
+    }
+
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+        return SINGLETON;
     }
 
     public ILoggerFactory getLoggerFactory() {

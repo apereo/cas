@@ -26,7 +26,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
  * correct url syntax for the OAuth callback authorize url. The url must end with
  * {@link OAuthConstants#CALLBACK_AUTHORIZE_URL}.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public final class OAuthCallbackAuthorizeService extends RegexRegisteredService {
 

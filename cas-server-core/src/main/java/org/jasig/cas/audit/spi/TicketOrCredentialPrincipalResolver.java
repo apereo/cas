@@ -69,7 +69,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
      * Instantiates a new Ticket or credential principal resolver.
      *
      * @param centralAuthenticationService the central authentication service
-     * @since 4.1
+     * @since 4.1.0
      */
     public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;

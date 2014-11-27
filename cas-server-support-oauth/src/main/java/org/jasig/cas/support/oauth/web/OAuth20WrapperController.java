@@ -18,14 +18,15 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.http.HttpStatus;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This controller is the main entry point for OAuth version 2.0
@@ -76,7 +77,7 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
 
         // else error
         logger.error("Unknown method : {}", method);
-        OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+        OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_OK);
         return null;
     }
 }

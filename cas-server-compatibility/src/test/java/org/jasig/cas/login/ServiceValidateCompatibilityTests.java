@@ -25,7 +25,7 @@ import java.io.IOException;
  * Note that this extends Cas2ValidateCompatibilityTests, which provides
  * several tests that apply to both service validate and proxy validate.
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class ServiceValidateCompatibilityTests
 extends AbstractCas2ValidateCompatibilityTests {

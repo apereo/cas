@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * authentication policy.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/mfa-test-context.xml" })

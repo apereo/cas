@@ -42,7 +42,7 @@ import java.security.GeneralSecurityException;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 

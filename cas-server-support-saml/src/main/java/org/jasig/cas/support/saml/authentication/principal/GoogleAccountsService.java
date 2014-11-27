@@ -18,15 +18,21 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.util.SamlUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
+import org.jdom.Document;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.Saml20ObjectBuilder;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jdom.Document;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnContext;
@@ -35,8 +41,6 @@ import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.core.Subject;
-import org.springframework.util.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -54,6 +58,12 @@ import java.util.Map;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
+    private static final int INFLATED_BYTE_ARRAY_LENGTH = 10000;
+    private static final int DEFLATED_BYTE_ARRAY_BUFFER_LENGTH = 1024;
+    private static final int SAML_RESPONSE_RANDOM_ID_LENGTH = 20;
+    private static final int SAML_RESPONSE_ID_LENGTH = 40;
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
     private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 

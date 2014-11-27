@@ -46,7 +46,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Scott Battagliaa
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */

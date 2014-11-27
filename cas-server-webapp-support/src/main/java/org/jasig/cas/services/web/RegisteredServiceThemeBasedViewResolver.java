@@ -54,7 +54,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
  *
  * @author John Gasper
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);

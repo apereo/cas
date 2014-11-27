@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
  *
  * @author Marvin S. Addison
  * @author Misagh Moayyed
+ * @since 3.4
  */
 @Entity
 @DiscriminatorValue("regex")

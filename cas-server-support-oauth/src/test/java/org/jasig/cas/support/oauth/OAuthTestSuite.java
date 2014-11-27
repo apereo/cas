@@ -33,6 +33,6 @@ import org.junit.runners.Suite;
 /**
  * OAuth test suite that runs all test in a batch.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class OAuthTestSuite {}
