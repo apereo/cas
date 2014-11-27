@@ -28,7 +28,7 @@ import java.util.HashSet;
  *
  * @author Marvin S. Addison
  * @author Alaa Nassef
- * @since 4.0
+ * @since 4.0.0
  */
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
     /** Attribute name containing collection of handler names that successfully authenticated credential. */

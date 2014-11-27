@@ -26,17 +26,16 @@ import java.security.SecureRandom;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
-public final class DefaultRandomStringGenerator implements
-    RandomStringGenerator {
+public final class DefaultRandomStringGenerator implements RandomStringGenerator {
+
+    /** The default maximum length. */
+    protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** The array of printable characters to be used in our random string. */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
         .toCharArray();
-
-    /** The default maximum length. */
-    protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** An instance of secure random to ensure randomness is secure. */
     private SecureRandom randomizer = new SecureRandom();

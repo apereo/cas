@@ -25,14 +25,13 @@ package org.jasig.cas.services;
  * @since 3.1
  */
 public class UnauthorizedProxyingException extends UnauthorizedServiceException {
+    /** The code description. */
+    public static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";
 
     /**
      * Comment for <code>serialVersionUID</code>.
      */
     private static final long serialVersionUID = -7307803750894078575L;
-
-    /** The code description. */
-    public static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";
 
     /**
      * Instantiates a new unauthorized proxying exception.
