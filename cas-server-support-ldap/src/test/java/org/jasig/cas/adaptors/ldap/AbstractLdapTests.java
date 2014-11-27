@@ -36,6 +36,7 @@ import java.util.Collection;
  * Base class for LDAP tests that provision and deprovision DIRECTORY data as part of test setup/teardown.
  * @author Marvin S. Addison
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public abstract class AbstractLdapTests implements ApplicationContextAware {
 

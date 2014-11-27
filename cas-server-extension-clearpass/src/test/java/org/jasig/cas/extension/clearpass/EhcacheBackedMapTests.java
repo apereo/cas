@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
  * This is tests for
  * {@link org.jasig.cas.extension.clearpass.EhcacheBackedMap}.
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 3.5.0
  */
 public class EhcacheBackedMapTests {
 

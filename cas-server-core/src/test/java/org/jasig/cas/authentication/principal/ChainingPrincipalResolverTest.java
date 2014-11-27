@@ -33,11 +33,12 @@ import static org.mockito.Mockito.*;
  * Unit test for {@link ChainingPrincipalResolver}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class ChainingPrincipalResolverTest {
 
     @Test
-    public void testSupports() throws Exception {
+    public void examineSupports() throws Exception {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
@@ -53,7 +54,7 @@ public class ChainingPrincipalResolverTest {
     }
 
     @Test
-    public void testResolve() throws Exception {
+    public void examineResolve() throws Exception {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
 

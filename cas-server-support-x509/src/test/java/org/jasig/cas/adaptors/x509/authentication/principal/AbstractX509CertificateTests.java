@@ -33,6 +33,10 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public abstract class AbstractX509CertificateTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(
