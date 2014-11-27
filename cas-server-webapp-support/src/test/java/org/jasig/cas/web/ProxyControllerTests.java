@@ -52,7 +52,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNoParams() throws Exception {
+    public void verifyNoParams() throws Exception {
         assertEquals("INVALID_REQUEST", this.proxyController
                 .handleRequestInternal(new MockHttpServletRequest(),
                         new MockHttpServletResponse()).getModel()
@@ -60,7 +60,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNonExistentPGT() throws Exception {
+    public void verifyNonExistentPGT() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("pgt", "TestService");
         request.addParameter("targetService", "testDefault");
@@ -71,7 +71,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testExistingPGT() throws Exception {
+    public void verifyExistingPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
                 "ticketGrantingTicketId", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
@@ -88,7 +88,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNotAuthorizedPGT() throws Exception {
+    public void verifyNotAuthorizedPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);

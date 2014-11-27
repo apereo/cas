@@ -66,7 +66,7 @@ public final class OAuth20AccessTokenControllerTests {
     private static final int TIMEOUT = 7200;
 
     @Test
-    public void testNoClientId() throws Exception {
+    public void verifyNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
@@ -81,7 +81,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testNoRedirectUri() throws Exception {
+    public void verifyNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -96,7 +96,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testNoClientSecret() throws Exception {
+    public void verifyNoClientSecret() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -111,7 +111,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testNoCode() throws Exception {
+    public void verifyNoCode() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -126,7 +126,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testNoCasService() throws Exception {
+    public void verifyNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -145,7 +145,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
+    public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -166,7 +166,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testWrongSecret() throws Exception {
+    public void verifyWrongSecret() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -187,7 +187,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testNoServiceTicket() throws Exception {
+    public void verifyNoServiceTicket() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -211,7 +211,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testExpiredServiceTicket() throws Exception {
+    public void verifyExpiredServiceTicket() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -237,7 +237,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);

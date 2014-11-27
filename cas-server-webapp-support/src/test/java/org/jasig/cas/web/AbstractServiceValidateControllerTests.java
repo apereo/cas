@@ -84,19 +84,19 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testAfterPropertesSetTestEverything() throws Exception {
+    public void verifyAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController.setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
     }
 
     @Test
-    public void testEmptyParams() throws Exception {
+    public void verifyEmptyParams() throws Exception {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
                 new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get("code"));
     }
 
     @Test
-    public void testValidServiceTicket() throws Exception {
+    public void verifyValidServiceTicket() throws Exception {
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), TestUtils.getService());
@@ -111,13 +111,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testValidServiceTicketInvalidSpec() throws Exception {
+    public void verifyValidServiceTicketInvalidSpec() throws Exception {
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(getHttpServletRequest(), new MockHttpServletResponse()).getViewName());
     }
 
     @Test(expected=RuntimeException.class)
-    public void testValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
+    public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.class);
 
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
@@ -126,7 +126,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testInvalidServiceTicket() throws Exception {
+    public void verifyInvalidServiceTicket() throws Exception {
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), TestUtils.getService());
@@ -143,7 +143,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
+    public void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -161,7 +161,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testValidServiceTicketWithSecurePgtUrl() throws Exception {
+    public void verifyValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final ModelAndView modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
@@ -169,7 +169,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void testValidServiceTicketWithInvalidPgt() throws Exception {
+    public void verifyValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -186,7 +186,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
     
     @Test
-    public void testValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
+    public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), TestUtils.getService());
@@ -202,7 +202,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
     
     @Test
-    public void testValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
+    public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), TestUtils.getService());
@@ -230,7 +230,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
     
     @Test
-    public void testValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
+    public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -251,7 +251,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
     
     @Test
-    public void testValidServiceTicketWithDifferentEncoding() throws Exception {
+    public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -272,7 +272,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
     
     @Test
-    public void testValidServiceTicketAndPgtUrlMismatch() throws Exception {
+    public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         

@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
-    public void testGenerator() {
+    public void verifyGenerator() {
         final ShibbolethCompatiblePersistentIdGenerator generator =
                 new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 

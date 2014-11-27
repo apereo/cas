@@ -103,19 +103,19 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testNotFoundUser() throws Exception {
+    public void verifyNotFoundUser() throws Exception {
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
         this.handler.authenticateUsernamePasswordInternal(c);
     }
 
     @Test
-    public void testFoundUser() throws Exception {
+    public void verifyFoundUser() throws Exception {
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
     }
 
     @Test
-    public void testMultipleUsersFound() throws Exception {
+    public void verifyMultipleUsersFound() throws Exception {
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
     }

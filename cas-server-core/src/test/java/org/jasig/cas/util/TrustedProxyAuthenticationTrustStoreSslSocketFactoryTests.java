@@ -45,13 +45,13 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     }
 
     @Ignore
-    public void testSuccessfulConnection() {
+    public void verifySuccessfulConnection() {
         final boolean valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
-    public void testSuccessfulConnectionWithCustomSSLCert() {
+    public void verifySuccessfulConnectionWithCustomSSLCert() {
         final boolean valid = client.isValidEndPoint("https://www.cacert.org");
         assertTrue(valid);
     }

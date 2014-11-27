@@ -48,7 +48,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     private ViewResolver resolver;
 
     @Test
-    public void testView() throws Exception {
+    public void verifyView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final JstlView v = (JstlView) resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());

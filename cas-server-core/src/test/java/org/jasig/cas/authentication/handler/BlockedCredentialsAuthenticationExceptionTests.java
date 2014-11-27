@@ -31,14 +31,14 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
     private static final String CODE = "error.authentication.credentials.blocked";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new BlockedCredentialsAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(r);
 
@@ -47,7 +47,7 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
+    public void verifyCodeConstructor() {
         final String MESSAGE = "GG";
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE);
 
@@ -55,7 +55,7 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
+    public void verifyThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE, r);

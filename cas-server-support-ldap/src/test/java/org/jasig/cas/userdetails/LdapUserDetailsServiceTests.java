@@ -47,7 +47,7 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
     private LdapUserDetailsService userDetailsService;
 
     @Test
-    public void testLoadUserByUsername() throws Exception {
+    public void verifyLoadUserByUsername() throws Exception {
         for (final LdapEntry entry : getEntries()) {
 
             if (entry.getAttribute("objectclass").getStringValues().contains(CAS_SERVICE_DETAILS_OBJ_CLASS)) {

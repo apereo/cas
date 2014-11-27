@@ -49,7 +49,7 @@ public final class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void testCookieAddWithRememberMe() {
+    public void verifyCookieAddWithRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -62,7 +62,7 @@ public final class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void testCookieAddWithoutRememberMe() {
+    public void verifyCookieAddWithoutRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -74,7 +74,7 @@ public final class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void testCookieRetrieve() {
+    public void verifyCookieRetrieve() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final Cookie cookie = new Cookie("test", "test");
         cookie.setDomain("cas.org");

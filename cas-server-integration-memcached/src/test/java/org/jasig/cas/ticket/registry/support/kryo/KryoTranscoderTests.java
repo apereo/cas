@@ -93,7 +93,7 @@ public class KryoTranscoderTests {
     }
 
     @Test
-    public void testEncodeDecode() throws Exception {
+    public void verifyEncodeDecode() throws Exception {
         final ServiceTicket expectedST =
                 new MockServiceTicket(ST_ID);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));

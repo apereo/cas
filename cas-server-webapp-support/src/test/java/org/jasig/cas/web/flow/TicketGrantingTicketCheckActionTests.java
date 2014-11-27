@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTest {
 
     @Test
-         public void testNullTicket() throws Exception {
+         public void verifyNullTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
         final TicketGrantingTicketCheckAction action = new
@@ -48,7 +48,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     }
 
     @Test
-    public void testInvalidTicket() throws Exception {
+    public void verifyInvalidTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("user");
@@ -61,7 +61,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     }
 
     @Test
-    public void testValidTicket() throws Exception {
+    public void verifyValidTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()

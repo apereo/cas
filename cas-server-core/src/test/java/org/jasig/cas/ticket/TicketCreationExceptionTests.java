@@ -30,12 +30,12 @@ import org.junit.Test;
 public class TicketCreationExceptionTests {
 
     @Test
-    public void testNoParamConstructor() {
+    public void verifyNoParamConstructor() {
         new TicketCreationException();
     }
 
     @Test
-    public void testThrowableParamConstructor() {
+    public void verifyThrowableParamConstructor() {
         final Throwable THROWABLE = new Throwable();
         final TicketCreationException t = new TicketCreationException(THROWABLE);
 

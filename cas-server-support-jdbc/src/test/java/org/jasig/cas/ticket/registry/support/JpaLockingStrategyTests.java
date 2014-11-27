@@ -99,7 +99,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testAcquireAndRelease() throws Exception {
+    public void verifyAcquireAndRelease() throws Exception {
         final String appId = "basic";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -120,7 +120,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testLockExpiration() throws Exception {
+    public void verifyLockExpiration() throws Exception {
         final String appId = "expquick";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
@@ -143,7 +143,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * Verify non-reentrant behavior.
      */
     @Test
-    public void testNonReentrantBehavior() {
+    public void verifyNonReentrantBehavior() {
         final String appId = "reentrant";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -164,7 +164,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndRelease() throws Exception {
+    public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, getConcurrentLocks("concurrent-new"));
@@ -181,7 +181,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
+    public void verifyConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
         final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
         locks[0].release();

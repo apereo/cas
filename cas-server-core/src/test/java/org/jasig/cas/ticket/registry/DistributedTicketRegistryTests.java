@@ -52,7 +52,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testProxiedInstancesEqual() {
+    public void verifyProxiedInstancesEqual() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -88,7 +88,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testUpdateOfRegistry() {
+    public void verifyUpdateOfRegistry() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -110,7 +110,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testTicketDoesntExist() {
+    public void verifyTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 

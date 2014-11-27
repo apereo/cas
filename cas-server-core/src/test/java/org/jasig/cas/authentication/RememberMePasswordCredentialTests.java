@@ -32,7 +32,7 @@ import org.junit.Test;
 public final class RememberMePasswordCredentialTests {
 
     @Test
-    public void testGettersAndSetters() {
+    public void verifyGettersAndSetters() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setPassword("password");
         c.setUsername("username");

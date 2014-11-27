@@ -40,7 +40,7 @@ public class SamlCompliantLogoutMessageCreatorTests {
     private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
     @Test
-    public void testMessageBuilding() throws Exception {
+    public void verifyMessageBuilding() throws Exception {
 
         final SingleLogoutService service = mock(SingleLogoutService.class);
         final LogoutRequest request = new LogoutRequest("TICKET-ID", service);

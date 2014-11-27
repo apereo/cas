@@ -54,7 +54,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
@@ -63,7 +63,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         try {
             final RegisteredServiceImpl svc = new RegisteredServiceImpl();
             svc.setServiceId("https://some.app.edu");
@@ -76,7 +76,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected=FailedLoginException.class)
-    public void testFailsUserInMap() throws Exception {
+    public void verifyFailsUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -85,7 +85,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testPassesUserNotInMap() throws Exception {
+    public void verifyPassesUserNotInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -95,7 +95,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserName() throws Exception {
+    public void verifyPassesNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -105,7 +105,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserNameAndPassword() throws Exception {
+    public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }
 }
