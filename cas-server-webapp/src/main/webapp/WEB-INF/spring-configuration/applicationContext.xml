@@ -86,31 +86,20 @@
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
 
-    <!-- HTTP client configurations -->
-    <bean id="httpClientConfiguration" class="org.jasig.cas.util.http.SimpleHttpClientConfiguration"
+    <!-- HTTP clients -->
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" abstract="true"
         p:readTimeout="${http.client.read.timeout:5000}"
         p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="noRedirectHttpClientConfiguration" class="org.jasig.cas.util.http.SimpleHttpClientConfiguration" parent="httpClientConfiguration"
-        p:redirectsEnabled="false" p:circularRedirectsAllowed="false"  />
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
+        p:redirectsEnabled="false" p:circularRedirectsAllowed="false" />
 
-    <bean id="trustStoreSslSocketFactory"
-        class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
+    <bean id="trustStoreSslSocketFactory" class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
         c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
         c:trustStorePassword="${http.client.truststore.psw:changeit}" />
 
-    <bean id="supportsTrustStoreSslSocketFactoryHttpClientConfiguration" class="org.jasig.cas.util.http.SimpleHttpClientConfiguration" parent="httpClientConfiguration"
-        p:sslSocketFactory-ref="trustStoreSslSocketFactory" />
-
-    <!-- HTTP clients -->
-    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClient"
-        c:configuration-ref="httpClientConfiguration"/>
-
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClient"
-        c:configuration-ref="noRedirectHttpClientConfiguration" />
-
-    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClient"
-        c:configuration-ref="supportsTrustStoreSslSocketFactoryHttpClientConfiguration" />
+    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+         parent="httpClient" p:sslSocketFactory-ref="trustStoreSslSocketFactory" />
 
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
