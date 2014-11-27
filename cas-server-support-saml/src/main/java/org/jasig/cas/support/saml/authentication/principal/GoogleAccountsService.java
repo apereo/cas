@@ -18,18 +18,14 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
+
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.Saml20ObjectBuilder;
