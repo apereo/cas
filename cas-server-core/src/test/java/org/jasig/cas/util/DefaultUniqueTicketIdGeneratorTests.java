@@ -40,9 +40,9 @@ public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifySuffix() {
-        final String SUFFIX = "suffix";
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, SUFFIX);
+        final String suffix = "suffix";
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, suffix);
 
-        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+        assertTrue(generator.getNewTicketId("test").endsWith(suffix));
     }
 }

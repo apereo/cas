@@ -116,8 +116,8 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final String FAKE_URL = "http://url";
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
+        final String fakeUrl = "http://url";
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(fakeUrl));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
@@ -125,7 +125,7 @@ public class FrontChannelLogoutActionTests {
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
-        assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
+        assertTrue(url.startsWith(fakeUrl + "?SAMLRequest="));
         final byte[] samlMessage = Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url,  "?SAMLRequest="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);

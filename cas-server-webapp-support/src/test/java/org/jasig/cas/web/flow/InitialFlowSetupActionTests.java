@@ -46,6 +46,9 @@ import static org.mockito.Mockito.*;
  *
  */
 public class InitialFlowSetupActionTests {
+    private static final String CONST_CONTEXT_PATH = "/test";
+    private static final String CONST_CONTEXT_PATH_2 = "/test1";
+
     private final InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -73,7 +76,6 @@ public class InitialFlowSetupActionTests {
     @Test
     public void verifySettingContextPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -87,8 +89,6 @@ public class InitialFlowSetupActionTests {
     @Test
     public void verifyResettingContexPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
-        final String CONST_CONTEXT_PATH_2 = "/test1";
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

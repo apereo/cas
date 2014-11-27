@@ -253,8 +253,8 @@ public final class OAuth20AccessTokenControllerTests {
         final ServiceTicket serviceTicket = mock(ServiceTicket.class);
         final TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.class);
         // 10 seconds
-        final int TIME_BEFORE = 10;
-        when(ticketGrantingTicket.getCreationTime()).thenReturn(System.currentTimeMillis() - TIME_BEFORE * 1000);
+        final int timeBefore = 10;
+        when(ticketGrantingTicket.getCreationTime()).thenReturn(System.currentTimeMillis() - timeBefore * 1000);
         when(ticketGrantingTicket.getId()).thenReturn(TGT_ID);
         when(serviceTicket.isExpired()).thenReturn(false);
         when(serviceTicket.getId()).thenReturn(CODE);
@@ -272,10 +272,10 @@ public final class OAuth20AccessTokenControllerTests {
         final String body = mockResponse.getContentAsString();
         assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + "=" + TGT_ID + "&" + OAuthConstants.EXPIRES + "="));
         // delta = 2 seconds
-        final int DELTA = 2;
+        final int delta = 2;
         final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, "&" + OAuthConstants.EXPIRES + "="));
-        assertTrue(timeLeft >= TIMEOUT - TIME_BEFORE - DELTA);
-        assertTrue(timeLeft <= TIMEOUT - TIME_BEFORE + DELTA);
+        assertTrue(timeLeft >= TIMEOUT - timeBefore - delta);
+        assertTrue(timeLeft <= TIMEOUT - timeBefore + delta);
     }
 
     private RegisteredService getRegisteredService(final String serviceId, final String secret) {

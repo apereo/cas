@@ -18,15 +18,17 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Misagh Moayyed
  * @since 4.0.0
  */
 public class UnauthorizedProxyingExceptionTests {
+
+    private static final String MESSAGE = "GG";
 
     @Test
     public void verifyGetCode() {
@@ -36,7 +38,6 @@ public class UnauthorizedProxyingExceptionTests {
 
     @Test
     public void verifyCodeConstructor() {
-        final String MESSAGE = "GG";
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
@@ -44,7 +45,6 @@ public class UnauthorizedProxyingExceptionTests {
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);
 

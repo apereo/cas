@@ -29,6 +29,7 @@ import org.junit.Test;
 public final class BadPasswordAuthenticationExceptionTests  {
 
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.password";
+    private static final String MESSAGE = "GG";
 
     @Test
     public void verifyGetCode() {
@@ -48,7 +49,6 @@ public final class BadPasswordAuthenticationExceptionTests  {
 
     @Test
     public void verifyCodeConstructor() {
-        final String MESSAGE = "GG";
         final BadPasswordAuthenticationException e = new BadPasswordAuthenticationException(MESSAGE);
 
         assertEquals(MESSAGE, e.getCode());
@@ -56,7 +56,6 @@ public final class BadPasswordAuthenticationExceptionTests  {
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final BadPasswordAuthenticationException e = new BadPasswordAuthenticationException(MESSAGE, r);
 
