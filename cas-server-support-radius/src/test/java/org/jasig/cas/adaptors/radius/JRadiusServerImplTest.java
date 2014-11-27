@@ -44,7 +44,7 @@ public class JRadiusServerImplTest {
      * An external RADIUS server test fixture is required for thorough testing.
      */
     @Test
-    public void testAuthenticate() {
+    public void verifyAuthenticate() {
         assertNotNull(this.radiusServer);
     }
 }

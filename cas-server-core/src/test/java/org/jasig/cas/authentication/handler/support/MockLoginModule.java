@@ -28,6 +28,10 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
 

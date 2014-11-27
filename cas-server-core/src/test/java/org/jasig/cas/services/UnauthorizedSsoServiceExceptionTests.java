@@ -22,7 +22,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-
+/**
+ * @author Misagh Moayyed
+ * @since 4.0.0
+ */
 public class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";

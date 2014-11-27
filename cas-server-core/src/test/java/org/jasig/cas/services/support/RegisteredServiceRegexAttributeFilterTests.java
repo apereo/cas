@@ -44,7 +44,7 @@ import org.mockito.MockitoAnnotations;
 public class RegisteredServiceRegexAttributeFilterTests {
 
     private AttributeFilter filter;
-    private Map<String, Object> givenAttributesMap = null;
+    private Map<String, Object> givenAttributesMap;
 
     @Mock
     private RegisteredService registeredService;

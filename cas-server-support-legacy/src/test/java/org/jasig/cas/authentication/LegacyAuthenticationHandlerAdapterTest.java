@@ -48,24 +48,24 @@ public class LegacyAuthenticationHandlerAdapterTest {
     private AuthenticationHandler alwaysFailHandler;
 
     @Test
-    public void testAuthenticateSuccess() throws Exception {
+    public void verifyAuthenticateSuccess() throws Exception {
         final HandlerResult result = alwaysPassHandler.authenticate(new UsernamePasswordCredential("a", "b"));
         assertEquals("TestAlwaysPassAuthenticationHandler", result.getHandlerName());
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testAuthenticateFailure() throws Exception {
+    public void examineAuthenticateFailure() throws Exception {
         alwaysFailHandler.authenticate(new UsernamePasswordCredential("a", "b"));
     }
 
     @Test
-    public void testSupports() throws Exception {
+    public void verifySupports() throws Exception {
         assertTrue(alwaysPassHandler.supports(new UsernamePasswordCredential("a", "b")));
         assertTrue(alwaysFailHandler.supports(new UsernamePasswordCredential("a", "b")));
     }
 
     @Test
-    public void testGetName() throws Exception {
+    public void verifyGetName() throws Exception {
         assertEquals("TestAlwaysPassAuthenticationHandler", alwaysPassHandler.getName());
         assertEquals("TestAlwaysFailAuthenticationHandler", alwaysFailHandler.getName());
     }

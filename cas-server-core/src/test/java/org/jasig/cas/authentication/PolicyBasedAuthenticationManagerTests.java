@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
  * Unit test for {@link PolicyBasedAuthenticationManager}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManagerTests {
 
