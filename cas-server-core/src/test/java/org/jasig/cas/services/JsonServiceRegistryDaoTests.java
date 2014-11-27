@@ -39,8 +39,10 @@ import static org.junit.Assert.*;
  * @since 4.1.0
  */
 public class JsonServiceRegistryDaoTests {
-    private ServiceRegistryDao dao;
+
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
+    private ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -203,9 +204,9 @@ public class RegisteredServiceSimpleFormControllerTests {
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
         for(RegisteredService rs : this.manager.getAllServices()) {
-            if(rs.getName().equals("ant")) {
+            if(StringUtils.equals(rs.getName(), "ant")) {
                 assertTrue(rs instanceof RegisteredServiceImpl);
-            }else if (rs.getName().equals("regex")) {
+            }else if (StringUtils.equals(rs.getName(), "regex")) {
                 assertTrue(rs instanceof RegexRegisteredService);
             }
         }

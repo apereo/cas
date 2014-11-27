@@ -186,7 +186,7 @@ public class KryoTranscoderTests {
 
         private String id;
 
-        private int usageCount = 0;
+        private int usageCount;
 
         private Date creationDate = new Date();
 

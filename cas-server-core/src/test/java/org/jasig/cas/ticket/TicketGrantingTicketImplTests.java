@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.ticket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -34,6 +26,12 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -49,7 +47,7 @@ public class TicketGrantingTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
-        assertFalse(t.equals(null));
+        assertNotNull(t);
         assertFalse(t.equals(new Object()));
         assertTrue(t.equals(t));
     }

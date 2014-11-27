@@ -35,10 +35,10 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public abstract class AbstractRegistryCleanerTests {
+    protected TicketRegistry ticketRegistry;
 
     private RegistryCleaner registryCleaner;
 
-    protected TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {

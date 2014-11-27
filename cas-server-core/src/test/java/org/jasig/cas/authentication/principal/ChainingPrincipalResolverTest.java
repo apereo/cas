@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.jasig.cas.authentication.Credential;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -67,7 +67,7 @@ public class ChainingPrincipalResolverTest {
         when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
             @Override
             public boolean matches(final Object o) {
-                return ((Credential) o).getId().equals("output");
+                return "output".equals(((Credential) o).getId());
             }
         }))).thenReturn(
                 new SimplePrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));

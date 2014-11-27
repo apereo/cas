@@ -34,9 +34,9 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for {@link GenericSuccessViewAction}
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public class GenericSuccessViewActionTests {
-
 
     @Test
     public void verifyValidPrincipal() throws InvalidTicketException {

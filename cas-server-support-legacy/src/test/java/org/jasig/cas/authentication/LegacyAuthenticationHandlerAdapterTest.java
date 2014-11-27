@@ -34,6 +34,7 @@ import static org.junit.Assert.assertTrue;
  * Unit test for {@link LegacyAuthenticationHandlerAdapter}.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/test-context.xml" })
