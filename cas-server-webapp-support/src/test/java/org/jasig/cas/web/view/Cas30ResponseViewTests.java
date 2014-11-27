@@ -40,6 +40,7 @@ import static org.junit.Assert.*;
 /**
  * Unit tests for {@link org.jasig.cas.web.view.Cas20ResponseView}.
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 

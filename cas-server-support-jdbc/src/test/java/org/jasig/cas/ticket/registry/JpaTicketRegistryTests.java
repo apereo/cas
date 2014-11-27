@@ -65,7 +65,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link JpaTicketRegistry} class.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")

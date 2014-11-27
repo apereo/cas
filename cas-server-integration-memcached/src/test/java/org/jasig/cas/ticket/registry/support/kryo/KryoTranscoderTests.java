@@ -58,6 +58,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link KryoTranscoder} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {

@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
 
 /**
  * This is test cases for {@link org.jasig.cas.services.InMemoryServiceRegistryDaoImpl}.
- * @since 4.1.0
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 4.1.0
  */
 public class InMemoryServiceRegistryDaoImplTests {
 

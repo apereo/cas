@@ -24,6 +24,10 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.junit.Test;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.0.0
+ */
 public class InvalidTicketExceptionTests {
 
     @Test
