@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -62,13 +63,12 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         }
 
         try {
-            final MessageDigest messageDigest = MessageDigest
-                .getInstance(this.encodingAlgorithm);
+            final MessageDigest messageDigest = MessageDigest.getInstance(this.encodingAlgorithm);
 
             if (StringUtils.hasText(this.characterEncoding)) {
                 messageDigest.update(password.getBytes(this.characterEncoding));
             } else {
-                messageDigest.update(password.getBytes());
+                messageDigest.update(password.getBytes(Charset.defaultCharset()));
             }
 
 

@@ -63,7 +63,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
-    private Boolean expired = false;
+    private Boolean expired = Boolean.FALSE;
 
     /** The services associated to this ticket. */
     @Lob
@@ -183,7 +183,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      */
     @Override
     public void markTicketExpired() {
-        this.expired = true;
+        this.expired = Boolean.TRUE;
     }
 
     /**
