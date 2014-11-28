@@ -43,24 +43,24 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() {
+    public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
-    public void testValidUsernamePassword() throws Exception {
+    public void verifyValidUsernamePassword() throws Exception {
         final HandlerResult result = authenticationHandler.authenticate(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testInvalidUsernamePassword() throws Exception {
+    public void verifyInvalidUsernamePassword() throws Exception {
         this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 

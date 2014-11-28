@@ -52,7 +52,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFound() {
+    public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -64,7 +64,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeNotFound() {
+    public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -74,7 +74,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFoundCustom() {
+    public void verifyAuthenticationTypeFoundCustom() {
         final CustomCredential credentials = new CustomCredential();
 
         final Map<String, String> added = new HashMap<String, String>();
