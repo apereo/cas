@@ -97,7 +97,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
-            logger.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
+            logger.debug("Adding service ticket {} to the cache {}", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
             logger.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(),

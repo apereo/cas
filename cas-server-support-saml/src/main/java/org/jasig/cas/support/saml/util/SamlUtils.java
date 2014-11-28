@@ -18,15 +18,12 @@
  */
 package org.jasig.cas.support.saml.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Collections;
-import java.util.List;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.DOMBuilder;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+import org.w3c.dom.Node;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -43,14 +40,16 @@ import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.DOMBuilder;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
-import org.w3c.dom.Node;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.PublicKey;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utilities adopted from the Google sample code.
@@ -104,7 +103,7 @@ public final class SamlUtils {
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder
-                    .build(new ByteArrayInputStream(xmlString.getBytes()));
+                    .build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
             return null;
         }
@@ -232,7 +231,7 @@ public final class SamlUtils {
             final XMLOutputter xmlOutputter = new XMLOutputter();
             final StringWriter elemStrWriter = new StringWriter();
             xmlOutputter.output(doc, elemStrWriter);
-            final byte[] xmlBytes = elemStrWriter.toString().getBytes();
+            final byte[] xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
             final DocumentBuilderFactory dbf = DocumentBuilderFactory
                     .newInstance();
             dbf.setNamespaceAware(true);
