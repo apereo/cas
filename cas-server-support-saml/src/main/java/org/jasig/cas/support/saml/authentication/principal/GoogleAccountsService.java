@@ -23,12 +23,12 @@ import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.jasig.cas.support.saml.util.Saml20ObjectBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnContext;
@@ -135,7 +135,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final Document document = Saml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
+        final Document document = AbstractSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
 
         if (document == null) {
             return null;
@@ -178,7 +178,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      */
     private String constructSamlResponse() {
         final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
-        final DateTime NOT_BEFORE_ISSUE_INSTANT = DateTime.parse("2003-04-17T00:46:02Z");
+        final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
@@ -193,9 +193,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
         final Assertion assertion = BUILDER.newAssertion(authnStatement,
                 "https://www.opensaml.org/IDP",
-                NOT_BEFORE_ISSUE_INSTANT, BUILDER.generateSecureRandomId());
+                notBeforeIssueInstant, BUILDER.generateSecureRandomId());
 
-        final Conditions conditions = BUILDER.newConditions(NOT_BEFORE_ISSUE_INSTANT,
+        final Conditions conditions = BUILDER.newConditions(notBeforeIssueInstant,
                 currentDateTime, getId());
         assertion.setConditions(conditions);
 
