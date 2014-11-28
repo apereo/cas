@@ -60,16 +60,18 @@ public class OpenIdServiceTests {
         manager.setEnforceRpId(false);
         manager.setSharedAssociations(sharedAssociations);
         context = mock(ApplicationContext.class);
+        cas = mock(CentralAuthenticationService.class);
+
+        when(context.getBean("serverManager")).thenReturn(manager);
+        when(context.getBean("centralAuthenticationService", CentralAuthenticationService.class)).thenReturn(cas);
+
         final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
         contextProvider.setApplicationContext(context);
-        cas = mock(CentralAuthenticationService.class);
     }
 
     @Test
     public void testGetResponse() {
         openIdService = OpenIdService.createServiceFrom(request);
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         final Response response = this.openIdService.getResponse("test");
         try {
             verify(cas, never()).validateServiceTicket("test", openIdService);
@@ -96,8 +98,6 @@ public class OpenIdServiceTests {
         } catch (final Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         when(sharedAssociations.load("test")).thenReturn(association);
         final Response response = this.openIdService.getResponse("test");
         try {
@@ -124,8 +124,6 @@ public class OpenIdServiceTests {
         } catch (final Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         when(sharedAssociations.load("test")).thenReturn(association);
         synchronized (this) {
             try {

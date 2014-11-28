@@ -18,11 +18,9 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
@@ -34,9 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -109,9 +107,9 @@ public final class OAuth20ProfileController extends AbstractController {
             jsonGenerator.writeStringField(ID, principal.getId());
             jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
             final Map<String, Object> attributes = principal.getAttributes();
-            for (final String key : attributes.keySet()) {
+            for (final Map.Entry<String, Object> entry: attributes.entrySet()) {
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeObjectField(key, attributes.get(key));
+                jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
                 jsonGenerator.writeEndObject();
             }
             jsonGenerator.writeEndArray();

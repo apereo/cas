@@ -166,7 +166,7 @@ public final class SamlService extends AbstractWebApplicationService {
 
         try {
             final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
-            final int nextPosition = requestBody.indexOf("\"", position);
+            final int nextPosition = requestBody.indexOf('"', position);
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
