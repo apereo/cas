@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <em class="jxr_javadoccomment">/** Flag to enforce manual expiration. */</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Column(name=<span class="jxr_string">"EXPIRED"</span>, nullable=false)
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> Boolean expired = false;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> Boolean expired = Boolean.FALSE;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** The services associated to this ticket. */</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      @Lob
@@ -191,7 +191,7 @@
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>     @Override
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> markTicketExpired() {
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">this</strong>.expired = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">this</strong>.expired = Boolean.TRUE;
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>     }
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> 
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>     <em class="jxr_javadoccomment">/**</em>

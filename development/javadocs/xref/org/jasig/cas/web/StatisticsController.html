@@ -174,7 +174,7 @@
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> String currentLabel = labels.remove();
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">final</strong> String label = time == 0 || time &gt; 1 ? currentLabel + <span class="jxr_string">"s"</span> : currentLabel;
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> 
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">return</strong> Integer.toString(<strong class="jxr_keyword">new</strong> Double(time).intValue()) + <span class="jxr_string">" "</span>+ label + <span class="jxr_string">" "</span> + calculateUptime(newDifference, calculations, labels);
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">return</strong> Integer.toString((<strong class="jxr_keyword">int</strong>) time) + <span class="jxr_string">" "</span> + label + <span class="jxr_string">" "</span> + calculateUptime(newDifference, calculations, labels);
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>     }
 <a class="jxr_linenumber" name="L171" href="#L171">171</a> }
 </pre>

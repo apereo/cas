@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">return</strong> success();
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.servicesManager.getAllServices().size() == 0) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.servicesManager.getAllServices().isEmpty()) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"No service definitions are found in the service manager. "</span>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>                      + <span class="jxr_string">"Service [%s] will not be automatically authorized to request authentication."</span>, service.getId());
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              logger.warn(msg);

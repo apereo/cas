@@ -105,7 +105,7 @@
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addTicket(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/Ticket.html">Ticket</a> ticket) {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> Element element = <strong class="jxr_keyword">new</strong> Element(ticket.getId(), ticket);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">if</strong> (ticket instanceof ServiceTicket) {
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>             logger.debug(<span class="jxr_string">"Adding service ticket {} to the cache"</span>, ticket.getId(), <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getName());
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             logger.debug(<span class="jxr_string">"Adding service ticket {} to the cache {}"</span>, ticket.getId(), <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getName());
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">this</strong>.serviceTicketsCache.put(element);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (ticket instanceof TicketGrantingTicket) {
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>             logger.debug(<span class="jxr_string">"Adding ticket granting ticket {} to the cache {}"</span>, ticket.getId(),

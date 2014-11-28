@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> String requestId = kryo.readObject(buffer, String.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> String relayState = kryo.readObject(buffer, String.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/jasig/cas/support/saml/authentication/principal/GoogleAccountsService.html">GoogleAccountsService</a> service = (GoogleAccountsService) CONSTRUCTOR.newInstance(
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">return</strong> (GoogleAccountsService) CONSTRUCTOR.newInstance(
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>                     id,
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>                     originalUrl,
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>                     artifactId,
@@ -115,12 +115,11 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>                     privateKey,
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                     publicKey,
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                     alternateUsername);
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">return</strong> service;
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Error creating SamlService"</span>, e);
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         }
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     }
-<a class="jxr_linenumber" name="L115" href="#L115">115</a> }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Error creating SamlService"</span>, e);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     }
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

@@ -42,7 +42,7 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/AnonymousRegisteredServiceUsernameAttributeProviderTests.html">AnonymousRegisteredServiceUsernameAttributeProviderTests</a> {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      @Test
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPrincipalResolution() {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyPrincipalResolution() {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          <strong class="jxr_keyword">final</strong> AnonymousRegisteredServiceUsernameAttributeProvider provider =
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>                  <strong class="jxr_keyword">new</strong> AnonymousRegisteredServiceUsernameAttributeProvider(
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>                  <strong class="jxr_keyword">new</strong> ShibbolethCompatiblePersistentIdGenerator(<span class="jxr_string">"casrox"</span>));
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @Test
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEquality() {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyEquality() {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> AnonymousRegisteredServiceUsernameAttributeProvider provider =
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>                  <strong class="jxr_keyword">new</strong> AnonymousRegisteredServiceUsernameAttributeProvider(
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>                          <strong class="jxr_keyword">new</strong> ShibbolethCompatiblePersistentIdGenerator(<span class="jxr_string">"casrox"</span>));

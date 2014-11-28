@@ -38,10 +38,10 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * Test case of the Smart OpenId Controller.</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * @author Frederic Esnault</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * Test case of the Smart OpenId Controller.</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * @author Frederic Esnault</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/support/openid/web/mvc/SmartOpenIdControllerTest.html">SmartOpenIdControllerTest</a> {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCanHandle() {
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCanHandle() {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          request.addParameter(<span class="jxr_string">"openid.mode"</span>, <span class="jxr_string">"associate"</span>);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> canHandle = smartOpenIdController.canHandle(request, response);
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          request.removeParameter(<span class="jxr_string">"openid.mode"</span>);
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      }
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Test
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCannotHandle() {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCannotHandle() {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          request.addParameter(<span class="jxr_string">"openid.mode"</span>, <span class="jxr_string">"anythingElse"</span>);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> canHandle = smartOpenIdController.canHandle(request, response);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          request.removeParameter(<span class="jxr_string">"openid.mode"</span>);
@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      @Test
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetAssociationResponse() {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetAssociationResponse() {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          request.addParameter(<span class="jxr_string">"openid.mode"</span>, <span class="jxr_string">"associate"</span>);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          request.addParameter(<span class="jxr_string">"openid.session_type"</span>, <span class="jxr_string">"DH-SHA1"</span>);
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          request.addParameter(<span class="jxr_string">"openid.assoc_type"</span>, <span class="jxr_string">"HMAC-SHA1"</span>);

@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> fromNewLogin;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      @Column(name=<span class="jxr_string">"TICKET_ALREADY_GRANTED"</span>, nullable=false)
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">private</strong> Boolean grantedTicketAlready = false;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">private</strong> Boolean grantedTicketAlready = Boolean.FALSE;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * Instantiates a new service ticket impl.</em>
@@ -151,7 +151,7 @@
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>                     <span class="jxr_string">"TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket"</span>);
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>             }
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">this</strong>.grantedTicketAlready = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">this</strong>.grantedTicketAlready = Boolean.TRUE;
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>         }
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> 
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/ticket/TicketGrantingTicketImpl.html">TicketGrantingTicketImpl</a>(id, (TicketGrantingTicketImpl) <strong class="jxr_keyword">this</strong>.getGrantingTicket(),

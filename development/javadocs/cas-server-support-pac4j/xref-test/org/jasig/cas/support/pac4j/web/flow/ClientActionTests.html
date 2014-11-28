@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MY_METHOD = <span class="jxr_string">"POST"</span>;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Test
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testStartAuthentication() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyStartAuthentication() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          mockRequest.setParameter(ClientAction.THEME, MY_THEME);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          mockRequest.setParameter(ClientAction.LOCALE, MY_LOCALE);
@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      }
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      @Test
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testFinishAuthentication() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyFinishAuthentication() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, <span class="jxr_string">"FacebookClient"</span>);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a> 

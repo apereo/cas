@@ -75,13 +75,14 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      @Override
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">protected</strong> String resolvePrincipalInternal(
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">final</strong> X509Certificate certificate) {
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.serialNumberPrefix
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>                  + certificate.getSerialNumber().toString() + <strong class="jxr_keyword">this</strong>.valueDelimiter
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  + certificate.getIssuerDN().getName();
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">protected</strong> String resolvePrincipalInternal(<strong class="jxr_keyword">final</strong> X509Certificate certificate) {
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">final</strong> StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(<strong class="jxr_keyword">this</strong>.serialNumberPrefix);
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          builder.append(certificate.getSerialNumber().toString());
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          builder.append(<strong class="jxr_keyword">this</strong>.valueDelimiter);
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          builder.append(certificate.getIssuerDN().getName());
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">return</strong> builder.toString();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

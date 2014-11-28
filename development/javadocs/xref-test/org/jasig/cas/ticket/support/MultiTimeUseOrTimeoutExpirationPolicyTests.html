@@ -63,23 +63,23 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Test
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTicketIsNull() {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTicketIsNull() {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertTrue(<strong class="jxr_keyword">this</strong>.expirationPolicy.isExpired(<strong class="jxr_keyword">null</strong>));
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Test
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTicketIsNotExpired() {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTicketIsNotExpired() {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          assertFalse(<strong class="jxr_keyword">this</strong>.ticket.isExpired());
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      @Test
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTicketIsExpiredByTime() <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTicketIsExpiredByTime() <strong class="jxr_keyword">throws</strong> InterruptedException {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>              Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>              assertTrue(<strong class="jxr_keyword">this</strong>.ticket.isExpired());
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Test
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTicketIsExpiredByCount() {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTicketIsExpiredByCount() {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; NUMBER_OF_USES; i++) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">this</strong>.ticket.grantServiceTicket(<span class="jxr_string">"test"</span>, TestUtils.getService(), <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          }

@@ -221,12 +221,12 @@
 <a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L214" href="#L214">214</a>     <strong class="jxr_keyword">protected</strong> File makeFile(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">final</strong> String fileName = service.getName() + <span class="jxr_string">"-"</span> + service.getId() + <span class="jxr_string">"."</span> + FILE_EXTENSION;
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">final</strong> File svcFile = <strong class="jxr_keyword">new</strong> File(serviceRegistryDirectory, fileName);
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>             <strong class="jxr_keyword">final</strong> String path = svcFile.getCanonicalPath();
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             <strong class="jxr_keyword">final</strong> File svcFile = <strong class="jxr_keyword">new</strong> File(serviceRegistryDirectory, fileName);
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             LOGGER.debug(<span class="jxr_string">"Using [{}] as the service definition file"</span>, svcFile.getCanonicalPath());
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>             <strong class="jxr_keyword">return</strong> svcFile;
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             LOGGER.warn(<span class="jxr_string">"Service file name "</span> + fileName + <span class="jxr_string">" is invalid; Examine for illegal characters in the name."</span>, e);
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             LOGGER.warn(<span class="jxr_string">"Service file name {} is invalid; Examine for illegal characters in the name."</span>, fileName);
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(e);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>         }
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>     }

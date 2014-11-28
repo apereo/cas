@@ -26,24 +26,24 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.ticket.registry.support;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Calendar;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Column;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Entity;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> javax.persistence.EntityManager;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Id;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> javax.persistence.LockModeType;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> javax.persistence.PersistenceContext;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> javax.persistence.PersistenceException;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Table;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Temporal;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> javax.persistence.TemporalType;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.springframework.transaction.annotation.Transactional;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.springframework.transaction.annotation.Transactional;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Column;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Entity;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> javax.persistence.EntityManager;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Id;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> javax.persistence.LockModeType;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> javax.persistence.PersistenceContext;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> javax.persistence.PersistenceException;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Table;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> javax.persistence.Temporal;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> javax.persistence.TemporalType;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Calendar;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * JPA 2.0 implementation of an exclusive, non-reentrant lock.</em>
@@ -130,12 +130,12 @@
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> 
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">boolean</strong> result = false;
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">if</strong> (lock != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>             <strong class="jxr_keyword">final</strong> Date expDate = lock.getExpirationDate();
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>             <strong class="jxr_keyword">final</strong> DateTime expDate = <strong class="jxr_keyword">new</strong> DateTime(lock.getExpirationDate());
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>             <strong class="jxr_keyword">if</strong> (lock.getUniqueId() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>                 <em class="jxr_comment">// No one currently possesses lock</em>
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>                 logger.debug(<span class="jxr_string">"{} trying to acquire {} lock."</span>, uniqueId, applicationId);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>                 result = acquire(entityManager, lock);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (expDate != <strong class="jxr_keyword">null</strong> &amp;&amp; <strong class="jxr_keyword">new</strong> Date().after(expDate)) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">new</strong> DateTime().isAfter(expDate)) {
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>                 <em class="jxr_comment">// Acquire expired lock regardless of who formerly owned it</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>                 logger.debug(<span class="jxr_string">"{} trying to acquire expired {} lock."</span>, uniqueId, applicationId);
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>                 result = acquire(entityManager, lock);
@@ -287,8 +287,8 @@
 <a class="jxr_linenumber" name="L279" href="#L279">279</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">         * @return the expirationDate</em>
 <a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">public</strong> Date getExpirationDate() {
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>             <strong class="jxr_keyword">return</strong> expirationDate;
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">public</strong> DateTime getExpirationDate() {
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.expirationDate == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : <strong class="jxr_keyword">new</strong> DateTime(<strong class="jxr_keyword">this</strong>.expirationDate);
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>         }
 <a class="jxr_linenumber" name="L285" href="#L285">285</a> 
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>         <em class="jxr_javadoccomment">/**</em>

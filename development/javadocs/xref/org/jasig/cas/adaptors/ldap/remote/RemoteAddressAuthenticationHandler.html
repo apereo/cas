@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * @return A boolean value.</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> containsAddress(<strong class="jxr_keyword">final</strong> InetAddress network, <strong class="jxr_keyword">final</strong> InetAddress netmask, <strong class="jxr_keyword">final</strong> InetAddress ip) {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          logger.debug(<span class="jxr_string">"Checking IP address: {} in "</span>, ip, network, netmask);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          logger.debug(<span class="jxr_string">"Checking IP address: {} in {} by {}"</span>, ip, network, netmask);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">final</strong> byte[] networkBytes = network.getAddress();
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> byte[] netmaskBytes = netmask.getAddress();
