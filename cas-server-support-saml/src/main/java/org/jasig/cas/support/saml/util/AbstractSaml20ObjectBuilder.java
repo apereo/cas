@@ -52,12 +52,27 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**
- * This is {@link org.jasig.cas.support.saml.util.Saml20ObjectBuilder}.
+ * This is {@link AbstractSaml20ObjectBuilder}.
  * to build saml2 objects.
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
+public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+
+    /**
+     * Gets name id.
+     *
+     * @param nameIdFormat the name id format
+     * @param nameIdValue the name id value
+     * @return the name iD
+     */
+    protected NameID getNameID(final String nameIdFormat, final String nameIdValue) {
+        final NameID nameId = newSamlObject(NameID.class);
+        nameId.setFormat(nameIdFormat);
+        nameId.setValue(nameIdValue);
+        return nameId;
+    }
 
     /**
      * Create a new SAML response object.
@@ -207,41 +222,31 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
         return subject;
     }
 
-    /**
-     * Gets name id.
-     *
-     * @param nameIdFormat the name id format
-     * @param nameIdValue the name id value
-     * @return the name iD
-     */
-    protected NameID getNameID(final String nameIdFormat, final String nameIdValue) {
-        final NameID nameId = newSamlObject(NameID.class);
-        nameId.setFormat(nameIdFormat);
-        nameId.setValue(nameIdValue);
-        return nameId;
-    }
-
     @Override
     public String generateSecureRandomId() {
         final SecureRandom generator = new SecureRandom();
-        final char[] CHAR_MAPPINGS = {
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+        final char[] charMappings = {
+                'a', 'b', 'c', 'd', 'e', 'f', 'g',
+                'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
                 'p'};
 
-        final byte[] bytes = new byte[20]; // 160 bits
+        final int charsLength = 40;
+        final int generatorBytesLength = 20;
+        final int shiftLength = 4;
+
+        // 160 bits
+        final byte[] bytes = new byte[generatorBytesLength];
         generator.nextBytes(bytes);
 
-        final char[] chars = new char[40];
-
+        final char[] chars = new char[charsLength];
         for (int i = 0; i < bytes.length; i++) {
-            final int left = bytes[i] >> 4 & 0x0f;
-            final int right = bytes[i] & 0x0f;
-            chars[i * 2] = CHAR_MAPPINGS[left];
-            chars[i * 2 + 1] = CHAR_MAPPINGS[right];
+            final int left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
+            final int right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
+            chars[i * 2] = charMappings[left];
+            chars[i * 2 + 1] = charMappings[right];
         }
         return String.valueOf(chars);
     }
-
 
     /**
      * Deflate the given bytes using zlib.
@@ -250,10 +255,11 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the converted string
      */
     private static String zlibDeflate(final byte[] bytes) {
+        final int bufferLength = 1024;
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final InflaterInputStream iis = new InflaterInputStream(bais);
-        final byte[] buf = new byte[1024];
+        final byte[] buf = new byte[bufferLength];
 
         try {
             int count = iis.read(buf);
@@ -291,8 +297,9 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the string
      */
     private static String inflate(final byte[] bytes) {
+        final int bufferLength = 10000;
         final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[10000];
+        final byte[] xmlMessageBytes = new byte[bufferLength];
 
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
@@ -331,13 +338,11 @@ public abstract class Saml20ObjectBuilder extends AbstractSamlObjectBuilder {
         }
 
         final byte[] decodedBytes = base64Decode(encodedRequestXmlString);
-
         if (decodedBytes == null) {
             return null;
         }
 
         final String inflated = inflate(decodedBytes);
-
         if (inflated != null) {
             return inflated;
         }
