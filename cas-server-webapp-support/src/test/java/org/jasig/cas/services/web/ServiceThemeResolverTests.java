@@ -62,7 +62,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetServiceThemeDoesNotExist() {
+    public void verifyGetServiceThemeDoesNotExist() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
@@ -82,7 +82,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetDefaultService() {
+    public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
@@ -90,7 +90,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetDefaultServiceWithNoServicesManager() {
+    public void verifyGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");

@@ -40,7 +40,7 @@ public class SamlArgumentExtractorTests {
     }
 
     @Test
-    public void testObtainService() {
+    public void verifyObtainService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "test");
         final Service service = this.extractor.extractService(request);
@@ -48,7 +48,7 @@ public class SamlArgumentExtractorTests {
     }
 
     @Test
-    public void testServiceDoesNotExist() {
+    public void verifyServiceDoesNotExist() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         assertNull(this.extractor.extractService(request));
     }

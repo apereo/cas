@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class JaasAuthenticationHandlerTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -49,26 +53,26 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test(expected = LoginException.class)
-    public void testWithAlternativeRealm() throws Exception {
+    public void verifyWithAlternativeRealm() throws Exception {
 
         this.handler.setRealm("TEST");
         this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
     @Test
-    public void testWithAlternativeRealmAndValidCredentials() throws Exception {
+    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
         assertNotNull(this.handler.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
     }
 
     @Test
-    public void testWithValidCredenials() throws Exception {
+    public void verifyWithValidCredenials() throws Exception {
         assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test(expected = LoginException.class)
-    public void testWithInvalidCredentials() throws Exception {
+    public void verifyWithInvalidCredentials() throws Exception {
         this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 

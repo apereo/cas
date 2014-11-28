@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 public class SamlServiceTests {
 
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
         final SamlService impl = SamlService.createServiceFrom(request);
@@ -47,7 +47,7 @@ public class SamlServiceTests {
     }
 
     @Test
-    public void testResponseForJsession() {
+    public void verifyResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "http://www.cnn.com/;jsession=test");
         final SamlService impl = SamlService.createServiceFrom(request);
@@ -56,7 +56,7 @@ public class SamlServiceTests {
     }
 
     @Test
-    public void testResponseWithNoTicket() {
+    public void verifyResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
         final SamlService impl = SamlService.createServiceFrom(request);
@@ -68,7 +68,7 @@ public class SamlServiceTests {
     }
 
     @Test
-    public void testRequestBody() {
+    public void verifyRequestBody() {
         final String body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
@@ -82,7 +82,7 @@ public class SamlServiceTests {
     }
 
     @Test
-    public void testTargetMatchesingSamlService() {
+    public void verifyTargetMatchesingSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "https://some.service.edu/path/to/app");
 
@@ -94,7 +94,7 @@ public class SamlServiceTests {
     }
 
     @Test
-    public void testTargetMatchesNoSamlService() {
+    public void verifyTargetMatchesNoSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "https://some.service.edu/path/to/app");
         final SamlService impl = SamlService.createServiceFrom(request);

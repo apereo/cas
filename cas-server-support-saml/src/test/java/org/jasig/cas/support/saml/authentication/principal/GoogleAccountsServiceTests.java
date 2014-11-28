@@ -65,12 +65,12 @@ public class GoogleAccountsServiceTests {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        final String SAMLRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
               + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
               + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
               + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
               + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
-        request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
+        request.setParameter("SAMLRequest", encodeMessage(samlRequest));
 
         final RegisteredService regSvc = mock(RegisteredService.class);
         when(regSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
@@ -90,7 +90,7 @@ public class GoogleAccountsServiceTests {
 
     // XXX: re-enable when we figure out JVM requirements
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         return;
         //    final Response response = this.googleAccountsService.getResponse("ticketId");
         //  assertEquals(ResponseType.POST, response.getResponseType());
