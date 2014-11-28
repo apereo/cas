@@ -58,6 +58,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link KryoTranscoder} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
@@ -93,7 +94,7 @@ public class KryoTranscoderTests {
     }
 
     @Test
-    public void testEncodeDecode() throws Exception {
+    public void verifyEncodeDecode() throws Exception {
         final ServiceTicket expectedST =
                 new MockServiceTicket(ST_ID);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
@@ -185,7 +186,7 @@ public class KryoTranscoderTests {
 
         private String id;
 
-        private int usageCount = 0;
+        private int usageCount;
 
         private Date creationDate = new Date();
 

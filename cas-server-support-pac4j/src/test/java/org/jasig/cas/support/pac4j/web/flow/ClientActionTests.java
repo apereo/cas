@@ -61,7 +61,7 @@ public final class ClientActionTests {
     private static final String MY_METHOD = "POST";
 
     @Test
-    public void testStartAuthentication() throws Exception {
+    public void verifyStartAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(ClientAction.THEME, MY_THEME);
         mockRequest.setParameter(ClientAction.LOCALE, MY_LOCALE);
@@ -96,7 +96,7 @@ public final class ClientActionTests {
     }
 
     @Test
-    public void testFinishAuthentication() throws Exception {
+    public void verifyFinishAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 

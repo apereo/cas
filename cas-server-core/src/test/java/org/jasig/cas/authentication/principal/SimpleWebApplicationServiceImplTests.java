@@ -34,7 +34,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class SimpleWebApplicationServiceImplTests {
 
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -45,7 +45,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
+    public void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("service", "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -53,7 +53,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseForJsession() {
+    public void verifyResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -62,7 +62,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicket() {
+    public void verifyResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -74,7 +74,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicketAndNoParameterInServiceURL() {
+    public void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -87,7 +87,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicketAndOneParameterInServiceURL() {
+    public void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
