@@ -70,7 +70,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testGetResponse() {
+    public void verifyGetResponse() {
         openIdService = OpenIdService.createServiceFrom(request);
         final Response response = this.openIdService.getResponse("test");
         try {
@@ -89,7 +89,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testSmartModeGetResponse() {
+    public void verifySmartModeGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
         Association association = null;
@@ -115,7 +115,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testExpiredAssociationGetResponse() {
+    public void verifyExpiredAssociationGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
         Association association = null;
@@ -141,7 +141,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request1.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
@@ -155,7 +155,6 @@ public class OpenIdServiceTests {
         final OpenIdService o2 = OpenIdService.createServiceFrom(request2);
 
         assertTrue(o1.equals(o2));
-        assertFalse(o1.equals(null));
         assertFalse(o1.equals(new Object()));
     }
 }

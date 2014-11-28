@@ -32,6 +32,10 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+/**
+ * @author Marvin S. Addison
+ * @since 4.0.0
+ */
 @RunWith(JUnit4.class)
 public class AuthenticationExceptionHandlerTests {
  

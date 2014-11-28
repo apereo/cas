@@ -258,6 +258,7 @@
                 <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
                 <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
+                <includeTestSourceDirectory>true</includeTestSourceDirectory>
             </configuration>
             <executions>
                 <execution>

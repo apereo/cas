@@ -28,9 +28,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Handles tests for {@link JpaServiceRegistryDaoImpl}
  * @author battags
- * @since 3.1
+ * @since 3.1.0
  *
  */
 @ContextConfiguration(locations= {"classpath:jpaTestApplicationContext.xml"})
@@ -40,7 +40,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     private JpaServiceRegistryDaoImpl dao;
 
     @Test
-    public void testSaveMethodWithNonExistentServiceAndNoAttributes() {
+    public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");
@@ -55,7 +55,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     }
     
     @Test
-    public void testSaveAttributeReleasePolicy() {
+    public void verifySaveAttributeReleasePolicy() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");
@@ -73,7 +73,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     }
 
     @Test
-    public void testSaveMethodWithExistingServiceNoAttribute() {
+    public void verifySaveMethodWithExistingServiceNoAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");
