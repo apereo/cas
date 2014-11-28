@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CONTENT_TYPE = <span class="jxr_string">"application/json"</span>;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Test
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNoAccessToken() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoAccessToken() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>                  + OAuthConstants.PROFILE_URL);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNoTicketGrantingTicketImpl() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoTicketGrantingTicketImpl() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>                  + OAuthConstants.PROFILE_URL);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      @Test
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyExpiredTicketGrantingTicketImpl() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testExpiredTicketGrantingTicketImpl() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>                  + OAuthConstants.PROFILE_URL);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -118,7 +118,7 @@
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     @Test
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyOK() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOK() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                 + OAuthConstants.PROFILE_URL);
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -146,9 +146,9 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> 
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">final</strong> ObjectMapper mapper = <strong class="jxr_keyword">new</strong> ObjectMapper();
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> 
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> String expected = <span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>                 + <span class="jxr_string">"\&quot;:[\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;,\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;]}]}"</span>;
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> JsonNode expectedObj = mapper.readTree(expected);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> JsonNode expectedObj = mapper.readTree(EXPECTED);
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         assertEquals(expectedObj.get(<span class="jxr_string">"id"</span>).asText(), receivedObj.get(<span class="jxr_string">"id"</span>).asText());
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     @Test
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyOKWithAuthorizationHeader() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOKWithAuthorizationHeader() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>                 + OAuthConstants.PROFILE_URL);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         mockRequest.addHeader(<span class="jxr_string">"Authorization"</span>, <span class="jxr_string">"bearer "</span> + TGT_ID);
@@ -187,9 +187,9 @@
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> 
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">final</strong> ObjectMapper mapper = <strong class="jxr_keyword">new</strong> ObjectMapper();
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">final</strong> String expected = <span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"{\&quot;id\&quot;:\&quot;"</span> + ID + <span class="jxr_string">"\&quot;,\&quot;attributes\&quot;:[{\&quot;"</span> + NAME + <span class="jxr_string">"\&quot;:\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;},{\&quot;"</span> + NAME2
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>                 + <span class="jxr_string">"\&quot;:[\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;,\&quot;"</span> + VALUE + <span class="jxr_string">"\&quot;]}]}"</span>;
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         <strong class="jxr_keyword">final</strong> JsonNode expectedObj = mapper.readTree(expected);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         <strong class="jxr_keyword">final</strong> JsonNode expectedObj = mapper.readTree(EXPECTED);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> 
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>         assertEquals(expectedObj.get(<span class="jxr_string">"id"</span>).asText(), receivedObj.get(<span class="jxr_string">"id"</span>).asText());

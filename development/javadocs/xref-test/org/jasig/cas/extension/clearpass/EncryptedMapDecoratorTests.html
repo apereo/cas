@@ -81,15 +81,15 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      @Test
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addManyItems() {
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> totalItems = 100;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> TOTAL_ITEMS = 100;
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; totalItems; i++) {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; TOTAL_ITEMS; i++) {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">this</strong>.decorator.put(<span class="jxr_string">"key"</span> + i, <span class="jxr_string">"value"</span> + i);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          assertEquals(<strong class="jxr_keyword">this</strong>.decorator.size(), totalItems);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          assertEquals(<strong class="jxr_keyword">this</strong>.decorator.size(), TOTAL_ITEMS);
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; totalItems; i++) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; TOTAL_ITEMS; i++) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              assertNull(<strong class="jxr_keyword">this</strong>.map.get(<span class="jxr_string">"key"</span> + i));
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>              assertEquals(<span class="jxr_string">"value"</span> + i, <strong class="jxr_keyword">this</strong>.decorator.get(<span class="jxr_string">"key"</span> + i));
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          }

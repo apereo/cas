@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Test
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNoParams() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoParams() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          assertEquals(<span class="jxr_string">"INVALID_REQUEST"</span>, <strong class="jxr_keyword">this</strong>.proxyController
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>                  .handleRequestInternal(<strong class="jxr_keyword">new</strong> MockHttpServletRequest(),
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>                          <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getModel()
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Test
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNonExistentPGT() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNonExistentPGT() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          request.addParameter(<span class="jxr_string">"pgt"</span>, <span class="jxr_string">"TestService"</span>);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          request.addParameter(<span class="jxr_string">"targetService"</span>, <span class="jxr_string">"testDefault"</span>);
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Test
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyExistingPGT() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testExistingPGT() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>                  <span class="jxr_string">"ticketGrantingTicketId"</span>, TestUtils.getAuthentication(),
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>                  <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      @Test
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNotAuthorizedPGT() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotAuthorizedPGT() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"ticketGrantingTicketId"</span>, TestUtils.getAuthentication(),
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>                  <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          getTicketRegistry().addTicket(ticket);

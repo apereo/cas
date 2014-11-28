@@ -69,34 +69,34 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Test
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyIdExists() {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIdExists() {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          checkId(<strong class="jxr_keyword">true</strong>, 1, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      @Test
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyIdDoesNotExist() {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIdDoesNotExist() {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          checkId(false, 0, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Test
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyIdDoesNotExist2() {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIdDoesNotExist2() {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          checkId(<strong class="jxr_keyword">true</strong>, 0, <span class="jxr_string">"test2"</span>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      @Test
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyIdDoesNotExist3() {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIdDoesNotExist3() {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          checkId(<strong class="jxr_keyword">true</strong>, 1, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      }
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      @Test
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySupports() {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSupports() {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">final</strong> Validator validator = getValidator(false);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          assertTrue(validator.supports(RegisteredServiceImpl.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          assertFalse(validator.supports(Object.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      @Test
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyMaxLength() {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testMaxLength() {
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl impl = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          impl.setServiceId(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          impl.setDescription(<span class="jxr_string">"fasdfdsafsafsafdsa"</span>);

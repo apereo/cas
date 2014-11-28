@@ -54,49 +54,49 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/flow/InitialFlowSetupActionTests.html">InitialFlowSetupActionTests</a> {
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CONST_CONTEXT_PATH = <span class="jxr_string">"/test"</span>;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CONST_CONTEXT_PATH_2 = <span class="jxr_string">"/test1"</span>;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> InitialFlowSetupAction action = <strong class="jxr_keyword">new</strong> InitialFlowSetupAction();
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator warnCookieGenerator;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator tgtCookieGenerator;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">private</strong> ServicesManager servicesManager;
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Before
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">this</strong>.warnCookieGenerator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">this</strong>.tgtCookieGenerator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">this</strong>.action.setTicketGrantingTicketCookieGenerator(<strong class="jxr_keyword">this</strong>.tgtCookieGenerator);
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">this</strong>.action.setWarnCookieGenerator(<strong class="jxr_keyword">this</strong>.warnCookieGenerator);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> ArgumentExtractor[] argExtractors = <strong class="jxr_keyword">new</strong> ArgumentExtractor[] {<strong class="jxr_keyword">new</strong> CasArgumentExtractor()};
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">this</strong>.action.setArgumentExtractors(Arrays.asList(argExtractors));
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          when(<strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(any(Service.<strong class="jxr_keyword">class</strong>))).thenReturn(TestUtils.getRegisteredService(<span class="jxr_string">"test"</span>));
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">this</strong>.action.setServicesManager(<strong class="jxr_keyword">this</strong>.servicesManager);
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> InitialFlowSetupAction action = <strong class="jxr_keyword">new</strong> InitialFlowSetupAction();
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator warnCookieGenerator;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator tgtCookieGenerator;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">private</strong> ServicesManager servicesManager;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Before
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">this</strong>.warnCookieGenerator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">this</strong>.tgtCookieGenerator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">this</strong>.action.setTicketGrantingTicketCookieGenerator(<strong class="jxr_keyword">this</strong>.tgtCookieGenerator);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">this</strong>.action.setWarnCookieGenerator(<strong class="jxr_keyword">this</strong>.warnCookieGenerator);
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">final</strong> ArgumentExtractor[] argExtractors = <strong class="jxr_keyword">new</strong> ArgumentExtractor[] {<strong class="jxr_keyword">new</strong> CasArgumentExtractor()};
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">this</strong>.action.setArgumentExtractors(Arrays.asList(argExtractors));
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          when(<strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(any(Service.<strong class="jxr_keyword">class</strong>))).thenReturn(TestUtils.getRegisteredService(<span class="jxr_string">"test"</span>));
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.action.setServicesManager(<strong class="jxr_keyword">this</strong>.servicesManager);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">this</strong>.action.afterPropertiesSet();
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.action.afterPropertiesSet();
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySettingContextPath() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          request.setContextPath(CONST_CONTEXT_PATH);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          context.setExternalContext(<strong class="jxr_keyword">new</strong> ServletExternalContext(<strong class="jxr_keyword">new</strong> MockServletContext(), request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse()));
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Test
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSettingContextPath() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> String CONST_CONTEXT_PATH = <span class="jxr_string">"/test"</span>;
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          request.setContextPath(CONST_CONTEXT_PATH);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          context.setExternalContext(<strong class="jxr_keyword">new</strong> ServletExternalContext(<strong class="jxr_keyword">new</strong> MockServletContext(), request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse()));
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">this</strong>.action.doExecute(context);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">this</strong>.action.doExecute(context);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          assertEquals(CONST_CONTEXT_PATH + <span class="jxr_string">"/"</span>, <strong class="jxr_keyword">this</strong>.warnCookieGenerator.getCookiePath());
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          assertEquals(CONST_CONTEXT_PATH + <span class="jxr_string">"/"</span>, <strong class="jxr_keyword">this</strong>.tgtCookieGenerator.getCookiePath());
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      @Test
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResettingContexPath() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          assertEquals(CONST_CONTEXT_PATH + <span class="jxr_string">"/"</span>, <strong class="jxr_keyword">this</strong>.warnCookieGenerator.getCookiePath());
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          assertEquals(CONST_CONTEXT_PATH + <span class="jxr_string">"/"</span>, <strong class="jxr_keyword">this</strong>.tgtCookieGenerator.getCookiePath());
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      }
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      @Test
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testResettingContexPath() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> String CONST_CONTEXT_PATH = <span class="jxr_string">"/test"</span>;
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">final</strong> String CONST_CONTEXT_PATH_2 = <span class="jxr_string">"/test1"</span>;
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          request.setContextPath(CONST_CONTEXT_PATH);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          context.setExternalContext(<strong class="jxr_keyword">new</strong> ServletExternalContext(<strong class="jxr_keyword">new</strong> MockServletContext(), request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse()));
@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     @Test
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNoServiceFound() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNoServiceFound() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         context.setExternalContext(<strong class="jxr_keyword">new</strong> ServletExternalContext(<strong class="jxr_keyword">new</strong> MockServletContext(), <strong class="jxr_keyword">new</strong> MockHttpServletRequest(),
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                 <strong class="jxr_keyword">new</strong> MockHttpServletResponse()));
@@ -129,7 +129,7 @@
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>     }
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> 
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     @Test
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyServiceFound() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testServiceFound() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         request.setParameter(<span class="jxr_string">"service"</span>, <span class="jxr_string">"test"</span>);

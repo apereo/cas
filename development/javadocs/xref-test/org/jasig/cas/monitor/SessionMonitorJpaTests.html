@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Test
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Rollback(false)
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyObserveOkJpaTicketRegistry() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testObserveOkJpaTicketRegistry() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          addTicketsToRegistry(<strong class="jxr_keyword">this</strong>.jpaRegistry, 5, 5);
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          assertEquals(10, <strong class="jxr_keyword">this</strong>.jpaRegistry.getTickets().size());
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.monitor.setTicketRegistry(<strong class="jxr_keyword">this</strong>.jpaRegistry);

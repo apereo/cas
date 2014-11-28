@@ -73,12 +73,12 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> String samlRequest = <span class="jxr_string">"&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;"</span>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> String SAMLRequest = <span class="jxr_string">"&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;"</span>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                + <span class="jxr_string">"&lt;samlp:AuthnRequest xmlns:samlp=\&quot;urn:oasis:names:tc:SAML:2.0:protocol\&quot; "</span>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>                + <span class="jxr_string">"ID=\&quot;5545454455\&quot; Version=\&quot;2.0\&quot; IssueInstant=\&quot;Value\&quot; "</span>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>                + <span class="jxr_string">"ProtocolBinding=\&quot;urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\&quot; "</span>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>                + <span class="jxr_string">"ProviderName=\&quot;https://localhost:8443/myRutgers\&quot; AssertionConsumerServiceURL=\&quot;https://localhost:8443/myRutgers\&quot;/&gt;"</span>;
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          request.setParameter(<span class="jxr_string">"SAMLRequest"</span>, encodeMessage(samlRequest));
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          request.setParameter(<span class="jxr_string">"SAMLRequest"</span>, encodeMessage(SAMLRequest));
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">final</strong> RegisteredService regSvc = mock(RegisteredService.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          when(regSvc.getUsernameAttributeProvider()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultRegisteredServiceUsernameProvider());
@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      <em class="jxr_comment">// XXX: re-enable when we figure out JVM requirements</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      @Test
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResponse() {
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testResponse() {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <em class="jxr_comment">//    final Response response = this.googleAccountsService.getResponse("ticketId");</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          <em class="jxr_comment">//  assertEquals(ResponseType.POST, response.getResponseType());</em>

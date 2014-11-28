@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/services/support/RegisteredServiceRegexAttributeFilterTests.html">RegisteredServiceRegexAttributeFilterTests</a> {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">private</strong> AttributeFilter filter;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; givenAttributesMap;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; givenAttributesMap = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @Mock
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">private</strong> RegisteredService registeredService;
@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      }
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      @Test
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyPatternFilter() {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPatternFilter() {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attrs = <strong class="jxr_keyword">this</strong>.filter.filter(<strong class="jxr_keyword">this</strong>.givenAttributesMap);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          assertEquals(attrs.size(), 7);
@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     }
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>     
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     @Test
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySerialization() {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSerialization() {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">final</strong> byte[] data = SerializationUtils.serialize(<strong class="jxr_keyword">this</strong>.filter);
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">final</strong> AttributeFilter secondFilter = (AttributeFilter) SerializationUtils.deserialize(data);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         assertEquals(secondFilter, <strong class="jxr_keyword">this</strong>.filter);

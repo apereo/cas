@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      @Test
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySuccessfulAuthenticationWithNoService() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSuccessfulAuthenticationWithNoService() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      @Test
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySuccessfulAuthenticationWithNoServiceAndWarn()
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSuccessfulAuthenticationWithNoServiceAndWarn()
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     @Test
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySuccessfulAuthenticationWithServiceAndWarn()
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSuccessfulAuthenticationWithServiceAndWarn()
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>     }
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> 
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     @Test
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyFailedAuthenticationWithNoService() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testFailedAuthenticationWithNoService() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">final</strong> MockRequestContext context = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> 
@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>     }
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>     @Test
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyRenewWithServiceAndSameCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRenewWithServiceAndSameCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">final</strong> Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
@@ -187,7 +187,7 @@
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> 
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>     @Test
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyRenewWithServiceAndDifferentCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRenewWithServiceAndDifferentCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
@@ -210,7 +210,7 @@
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> 
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>     @Test
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyRenewWithServiceAndBadCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRenewWithServiceAndBadCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();

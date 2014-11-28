@@ -54,13 +54,13 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      }
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Test
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService.createTicketGrantingTicket(
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>                  TestUtils.getCredentialsWithSameUsernameAndPassword());
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Test
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyInvalidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testInvalidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService.createTicketGrantingTicket(
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>                      TestUtils.getCredentialsWithDifferentUsernameAndPassword(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>));
@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Test
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDontUseValidatorsToCheckValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDontUseValidatorsToCheckValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>              <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService.createTicketGrantingTicket(
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                      TestUtils.getCredentialsWithDifferentUsernameAndPassword());
@@ -82,13 +82,13 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDestroyTicketGrantingTicket() {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDestroyTicketGrantingTicket() {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              .destroyTicketGrantingTicket(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      @Test
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithValidTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGrantServiceTicketWithValidTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketId = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>                  .getCredentialsWithSameUsernameAndPassword());
@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      @Test
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGrantServiceTicketWithValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicketId = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>                  .getCredentialsWithSameUsernameAndPassword());
@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      }
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> 
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     @Test
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithNullCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGrantServiceTicketWithNullCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicketId = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>                 .getCredentialsWithSameUsernameAndPassword());
@@ -116,7 +116,7 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     }
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     @Test
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithEmptyCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGrantServiceTicketWithEmptyCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicketId = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>             .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                 .getCredentialsWithSameUsernameAndPassword());
@@ -131,7 +131,7 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     }
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> 
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     @Test
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketWithValidService() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidateServiceTicketWithValidService() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>             .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>                 .getCredentialsWithSameUsernameAndPassword());
@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> 
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     @Test
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDelegateTicketGrantingTicketWithValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDelegateTicketGrantingTicketWithValidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>                 .getCredentialsWithSameUsernameAndPassword());
@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> 
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     @Test(expected=IllegalArgumentException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDelegateTicketGrantingTicketWithInvalidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDelegateTicketGrantingTicketWithInvalidCredentials() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">this</strong>.remoteCentralAuthenticationService
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             .createTicketGrantingTicket(<a href="../../../../../org/jasig/cas/TestUtils.html">TestUtils</a>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>                 .getCredentialsWithSameUsernameAndPassword());

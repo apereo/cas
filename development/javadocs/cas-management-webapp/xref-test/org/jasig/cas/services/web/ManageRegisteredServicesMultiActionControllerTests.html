@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDeleteService() {
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeleteService() {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          r.setId(1200);
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          r.setName(<span class="jxr_string">"name"</span>);
@@ -75,7 +75,7 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          assertEquals(<span class="jxr_string">"name"</span>, modelAndView.getModelMap().get(<span class="jxr_string">"serviceName"</span>));
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDeleteServiceNoService() {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeleteServiceNoService() {
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">this</strong>.controller.deleteRegisteredService(1200);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          assertNotNull(modelAndView);
@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          assertEquals(<span class="jxr_string">""</span>, modelAndView.getModelMap().get(<span class="jxr_string">"serviceName"</span>));
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyManage() {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testManage() {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          r.setId(1200);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          r.setName(<span class="jxr_string">"name"</span>);

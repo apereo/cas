@@ -34,26 +34,26 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * This is test cases for {@link org.jasig.cas.services.InMemoryServiceRegistryDaoImpl}.</em>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed mmoayyed@unicon.net</em>
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * @since 4.1.0</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * @since 4.1.0</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed mmoayyed@unicon.net</em>
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/InMemoryServiceRegistryDaoImplTests.html">InMemoryServiceRegistryDaoImplTests</a> {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      @Test
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySave()  {
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSave()  {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">final</strong> InMemoryServiceRegistryDaoImpl reg = <strong class="jxr_keyword">new</strong> InMemoryServiceRegistryDaoImpl();
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>          <strong class="jxr_keyword">final</strong> RegisteredService svc = TestUtils.getRegisteredService(<span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          assertEquals(reg.save(svc), svc);
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      }
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Test
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLoadEmpty() {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLoadEmpty() {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">final</strong> InMemoryServiceRegistryDaoImpl reg = <strong class="jxr_keyword">new</strong> InMemoryServiceRegistryDaoImpl();
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          assertEquals(reg.load().size(), 0);
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      }
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      @Test
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>       <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveAndLoad()  {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>       <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveAndLoad()  {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> InMemoryServiceRegistryDaoImpl reg = <strong class="jxr_keyword">new</strong> InMemoryServiceRegistryDaoImpl();
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> RegisteredService svc = TestUtils.getRegisteredService(<span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          assertEquals(reg.save(svc), svc);
@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      }
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      @Test
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveAndFind()  {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveAndFind()  {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> InMemoryServiceRegistryDaoImpl reg = <strong class="jxr_keyword">new</strong> InMemoryServiceRegistryDaoImpl();
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> RegisteredService svc = TestUtils.getRegisteredService(<span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertEquals(reg.save(svc), svc);
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      }
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Test
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveAndDelete()  {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveAndDelete()  {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">final</strong> InMemoryServiceRegistryDaoImpl reg = <strong class="jxr_keyword">new</strong> InMemoryServiceRegistryDaoImpl();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> RegisteredService svc = TestUtils.getRegisteredService(<span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          assertEquals(reg.save(svc), svc);

@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * Handles tests for {@link JpaServiceRegistryDaoImpl}</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * @author battags</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @since 3.1.0</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @since 3.1</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  @ContextConfiguration(locations= {<span class="jxr_string">"classpath:jpaTestApplicationContext.xml"</span>})
@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> JpaServiceRegistryDaoImpl dao;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      @Test
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveMethodWithNonExistentServiceAndNoAttributes() {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveMethodWithNonExistentServiceAndNoAttributes() {
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          r.setName(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>          r.setServiceId(<span class="jxr_string">"testId"</span>);
@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Test
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveAttributeReleasePolicy() {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveAttributeReleasePolicy() {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          r.setName(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          r.setServiceId(<span class="jxr_string">"testId"</span>);
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Test
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveMethodWithExistingServiceNoAttribute() {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSaveMethodWithExistingServiceNoAttribute() {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          r.setName(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          r.setServiceId(<span class="jxr_string">"testId"</span>);

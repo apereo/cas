@@ -64,17 +64,17 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> * Unit test for {@link JpaLockingStrategy}.</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  @RunWith(SpringJUnit4ClassRunner.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  @ContextConfiguration(<span class="jxr_string">"classpath:jpaTestApplicationContext.xml"</span>)
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  @ProfileValueSourceConfiguration(SystemProfileValueSource.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">JpaLockingStrategyTests</a> <strong class="jxr_keyword">implements</strong> InitializingBean {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** Number of clients contending for lock in concurrent test. */</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> CONCURRENT_SIZE = 13;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** Logger instance. */</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** Logger instance. */</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** Number of clients contending for lock in concurrent test. */</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> CONCURRENT_SIZE = 13;
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Autowired
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> PlatformTransactionManager txManager;
@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">     * @throws Exception On errors.</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     @Test
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAcquireAndRelease() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAcquireAndRelease() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> String appId = <span class="jxr_string">"basic"</span>;
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">final</strong> String uniqueId = appId + <span class="jxr_string">"-1"</span>;
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">final</strong> LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -128,7 +128,7 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     * @throws Exception On errors.</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>     @Test
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLockExpiration() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLockExpiration() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">final</strong> String appId = <span class="jxr_string">"expquick"</span>;
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">final</strong> String uniqueId = appId + <span class="jxr_string">"-1"</span>;
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
@@ -151,7 +151,7 @@
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * Verify non-reentrant behavior.</em>
 <a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     @Test
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNonReentrantBehavior() {
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNonReentrantBehavior() {
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> String appId = <span class="jxr_string">"reentrant"</span>;
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">final</strong> String uniqueId = appId + <span class="jxr_string">"-1"</span>;
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -172,7 +172,7 @@
 <a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>     @Test
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>     @IfProfileValue(name=<span class="jxr_string">"cas.jpa.concurrent"</span>, value=<span class="jxr_string">"true"</span>)
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyConcurrentAcquireAndRelease() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testConcurrentAcquireAndRelease() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>             testConcurrency(executor, getConcurrentLocks(<span class="jxr_string">"concurrent-new"</span>));
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     @Test
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>     @IfProfileValue(name=<span class="jxr_string">"cas.jpa.concurrent"</span>, value=<span class="jxr_string">"true"</span>)
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyConcurrentAcquireAndReleaseOnExistingLock() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testConcurrentAcquireAndReleaseOnExistingLock() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> LockingStrategy[] locks = getConcurrentLocks(<span class="jxr_string">"concurrent-exists"</span>);
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>         locks[0].acquire();
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>         locks[0].release();

@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Test
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetServiceThemeDoesNotExist() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetServiceThemeDoesNotExist() {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          r.setTheme(<span class="jxr_string">"myTheme"</span>);
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          r.setId(1000);
@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      @Test
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetDefaultService() {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetDefaultService() {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          request.setParameter(<span class="jxr_string">"service"</span>, <span class="jxr_string">"myServiceId"</span>);
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          request.addHeader(<span class="jxr_string">"User-Agent"</span>, <span class="jxr_string">"Mozilla"</span>);
@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      @Test
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetDefaultServiceWithNoServicesManager() {
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetDefaultServiceWithNoServicesManager() {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">this</strong>.serviceThemeResolver.setServicesManager(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          request.setParameter(<span class="jxr_string">"service"</span>, <span class="jxr_string">"myServiceId"</span>);

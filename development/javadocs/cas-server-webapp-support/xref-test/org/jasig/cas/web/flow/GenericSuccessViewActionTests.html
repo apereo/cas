@@ -42,12 +42,12 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * Tests for {@link GenericSuccessViewAction}</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> * @since 4.1.0</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/flow/GenericSuccessViewActionTests.html">GenericSuccessViewActionTests</a> {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/flow/GenericSuccessViewActionTests.html">GenericSuccessViewActionTests</a> {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Test
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidPrincipal() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidPrincipal() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> Authentication authn = mock(Authentication.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal(<span class="jxr_string">"cas"</span>));
@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      @Test
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyPrincipalCanNotBeDetemined() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPrincipalCanNotBeDetemined() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = mock(CentralAuthenticationService.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          when(cas.getTicket(any(String.<strong class="jxr_keyword">class</strong>), any(Ticket.<strong class="jxr_keyword">class</strong>.getClass()))).thenThrow(<strong class="jxr_keyword">new</strong> InvalidTicketException(<span class="jxr_string">"TGT-1"</span>));
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> GenericSuccessViewAction action = <strong class="jxr_keyword">new</strong> GenericSuccessViewAction(cas);

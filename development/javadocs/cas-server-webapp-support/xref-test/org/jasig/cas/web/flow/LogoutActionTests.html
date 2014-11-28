@@ -104,13 +104,13 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      }
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      @Test
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutNoCookie() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutNoCookie() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     }
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     @Test
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutForServiceWithFollowRedirectsAndMatchingService() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutForServiceWithFollowRedirectsAndMatchingService() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">this</strong>.request.addParameter(<span class="jxr_string">"service"</span>, <span class="jxr_string">"TestService"</span>);
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl impl = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         impl.setServiceId(<span class="jxr_string">"TestService"</span>);
@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> 
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>     @Test
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutCookie() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutCookie() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {cookie});
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> 
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     @Test
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutRequestBack() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutRequestBack() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {cookie});
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);
@@ -166,7 +166,7 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>     @Test
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutRequestFront() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLogoutRequestFront() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {cookie});
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);

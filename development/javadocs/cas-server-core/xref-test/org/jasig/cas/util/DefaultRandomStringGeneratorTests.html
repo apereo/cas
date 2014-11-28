@@ -44,17 +44,17 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>          LENGTH);
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      @Test
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyMaxLength() {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testMaxLength() {
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          assertEquals(LENGTH, <strong class="jxr_keyword">this</strong>.randomStringGenerator.getMaxLength());
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      }
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      @Test
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyMinLength() {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testMinLength() {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          assertEquals(LENGTH, <strong class="jxr_keyword">this</strong>.randomStringGenerator.getMinLength());
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      }
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Test
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyRandomString() {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRandomString() {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          assertNotSame(<strong class="jxr_keyword">this</strong>.randomStringGenerator.getNewString(),
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>              <strong class="jxr_keyword">this</strong>.randomStringGenerator.getNewString());
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
