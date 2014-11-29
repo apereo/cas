@@ -270,13 +270,13 @@
                 <failOnError>false</failOnError>
             </configuration>
             <executions>
-            	<execution>
-            		<id>findbugs-check</id>
-		            <phase>compile</phase>
-		            <goals>
-		              <goal>check</goal>
-		            </goals>
-            	</execution>	
+				<execution>
+					<id>findbugs-check</id>
+					<phase>compile</phase>
+					<goals>
+						<goal>check</goal>
+					</goals>
+				</execution>	
             </executions>	
         </plugin>
         <plugin>
