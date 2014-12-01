@@ -269,15 +269,15 @@
                 <effort>Max</effort>
                 <failOnError>false</failOnError>
             </configuration>
-			<executions>
-				<execution>
-					<id>findbugs-check</id>
-					<phase>compile</phase>
-					<goals>
-						<goal>check</goal>
-					</goals>
-				</execution>	
-			</executions>	
+            <executions>
+                <execution>
+                    <id>findbugs-check</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>    
+            </executions>   
         </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
