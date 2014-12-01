@@ -47,10 +47,10 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../org/jasig/cas/adaptors/x509/authentication/handler/support/AbstractCRLRevocationCheckerTests.html">AbstractCRLRevocationCheckerTests</a> {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <em class="jxr_javadoccomment">/** Certificate to be tested */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <em class="jxr_javadoccomment">/** Certificate to be tested. */</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> X509Certificate[] certificates;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <em class="jxr_javadoccomment">/** Expected result of check; null for success */</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <em class="jxr_javadoccomment">/** Expected result of check; null for success. */</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> GeneralSecurityException expected;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * Test method for {@link AbstractCRLRevocationChecker#check(X509Certificate)}.</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Test
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCheck() {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkCertificate() {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              <strong class="jxr_keyword">for</strong> (X509Certificate cert : <strong class="jxr_keyword">this</strong>.certificates) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>                  getChecker().check(cert);
@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              }
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> GeneralSecurityException e) {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.expected == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  e.printStackTrace();
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>                  Assert.fail(<span class="jxr_string">"Revocation check failed unexpectedly with exception: "</span> + e);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>                  <strong class="jxr_keyword">final</strong> Class&lt;?&gt; expectedClass = <strong class="jxr_keyword">this</strong>.expected.getClass();

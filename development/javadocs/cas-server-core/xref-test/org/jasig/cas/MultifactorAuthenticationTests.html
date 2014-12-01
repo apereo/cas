@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">private</strong> CentralAuthenticationService cas;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Test
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllowsAccessToNormalSecurityServiceWithPassword() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAllowsAccessToNormalSecurityServiceWithPassword() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"alice"</span>));
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          assertNotNull(tgt);
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService(<span class="jxr_string">"https://example.com/normal/"</span>));
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Test
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllowsAccessToNormalSecurityServiceWithOTP() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAllowsAccessToNormalSecurityServiceWithOTP() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(<strong class="jxr_keyword">new</strong> OneTimePasswordCredential(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"31415"</span>));
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          assertNotNull(tgt);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService(<span class="jxr_string">"https://example.com/normal/"</span>));
@@ -76,14 +76,14 @@
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Test(expected = UnsatisfiedAuthenticationPolicyException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeniesAccessToHighSecurityServiceWithPassword() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDeniesAccessToHighSecurityServiceWithPassword() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"alice"</span>));
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          assertNotNull(tgt);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          cas.grantServiceTicket(tgt.getId(), newService(<span class="jxr_string">"https://example.com/high/"</span>));
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Test(expected = UnsatisfiedAuthenticationPolicyException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeniesAccessToHighSecurityServiceWithOTP() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDeniesAccessToHighSecurityServiceWithOTP() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(<strong class="jxr_keyword">new</strong> OneTimePasswordCredential(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"31415"</span>));
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          assertNotNull(tgt);
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">final</strong> ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService(<span class="jxr_string">"https://example.com/high/"</span>));
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      @Test
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllowsAccessToHighSecurityServiceWithPasswordAndOTP() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>                  newUserPassCredentials(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"alice"</span>),
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>                  <strong class="jxr_keyword">new</strong> OneTimePasswordCredential(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"31415"</span>));
@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      }
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      @Test
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          <em class="jxr_comment">// Note the original credential used to start SSO session does not satisfy security policy</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"alice"</span>));
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          assertNotNull(tgt);
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> 
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> 
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Test(expected = MixedPrincipalException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>         <em class="jxr_comment">// Note the original credential used to start SSO session does not satisfy security policy</em>
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials(<span class="jxr_string">"alice"</span>, <span class="jxr_string">"alice"</span>));
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         assertNotNull(tgt);

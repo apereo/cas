@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      @Test
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCookieAddWithRememberMe() {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieAddWithRememberMe() {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, <span class="jxr_string">"true"</span>);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Test
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCookieAddWithoutRememberMe() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieAddWithoutRememberMe() {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCookieRetrieve() {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieRetrieve() {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(<span class="jxr_string">"test"</span>, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          cookie.setDomain(<span class="jxr_string">"cas.org"</span>);

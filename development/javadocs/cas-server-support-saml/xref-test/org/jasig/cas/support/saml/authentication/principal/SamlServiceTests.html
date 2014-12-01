@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/support/saml/authentication/principal/SamlServiceTests.html">SamlServiceTests</a> {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      @Test
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testResponse() {
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResponse() {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">final</strong> SamlService impl = SamlService.createServiceFrom(request);
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @Test
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testResponseForJsession() {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResponseForJsession() {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"http://www.cnn.com/;jsession=test"</span>);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">final</strong> SamlService impl = SamlService.createServiceFrom(request);
@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      @Test
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testResponseWithNoTicket() {
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResponseWithNoTicket() {
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"service"</span>);
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> SamlService impl = SamlService.createServiceFrom(request);
@@ -76,7 +76,7 @@
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Test
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRequestBody() {
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyRequestBody() {
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> String body = <span class="jxr_string">"&lt;SOAP-ENV:Envelope xmlns:SOAP-ENV=\&quot;http://schemas.xmlsoap.org/soap/envelope/\&quot;&gt;"</span>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              + <span class="jxr_string">"&lt;SOAP-ENV:Header/&gt;&lt;SOAP-ENV:Body&gt;&lt;samlp:Request xmlns:samlp=\&quot;urn:oasis:names:tc:SAML:1.0:protocol\&quot; MajorVersion=\&quot;1\&quot; "</span>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              + <span class="jxr_string">"MinorVersion=\&quot;1\&quot; RequestID=\&quot;_192.168.16.51.1024506224022\&quot; IssueInstant=\&quot;2002-06-19T17:03:44.022Z\&quot;&gt;"</span>
@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      @Test
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTargetMatchesingSamlService() {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTargetMatchesingSamlService() {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"https://some.service.edu/path/to/app"</span>);
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      }
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      @Test
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTargetMatchesNoSamlService() {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTargetMatchesNoSamlService() {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          request.setParameter(<span class="jxr_string">"TARGET"</span>, <span class="jxr_string">"https://some.service.edu/path/to/app"</span>);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> SamlService impl = SamlService.createServiceFrom(request);

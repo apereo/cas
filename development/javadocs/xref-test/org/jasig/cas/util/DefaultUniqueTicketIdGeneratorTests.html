@@ -38,7 +38,7 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/util/DefaultUniqueTicketIdGeneratorTests.html">DefaultUniqueTicketIdGeneratorTests</a> {
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      @Test
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testUniqueGenerationOfTicketIds() {
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyUniqueGenerationOfTicketIds() {
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>          <strong class="jxr_keyword">final</strong> DefaultUniqueTicketIdGenerator generator = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>              10);
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
@@ -47,11 +47,11 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      }
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Test
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSuffix() {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">final</strong> String SUFFIX = <span class="jxr_string">"suffix"</span>;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> DefaultUniqueTicketIdGenerator generator = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(10, SUFFIX);
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySuffix() {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">final</strong> String suffix = <span class="jxr_string">"suffix"</span>;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> DefaultUniqueTicketIdGenerator generator = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(10, suffix);
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          assertTrue(generator.getNewTicketId(<span class="jxr_string">"test"</span>).endsWith(SUFFIX));
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          assertTrue(generator.getNewTicketId(<span class="jxr_string">"test"</span>).endsWith(suffix));
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  }
 </pre>

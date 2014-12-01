@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @Test
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetResponse() {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetResponse() {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          openIdService = OpenIdService.createServiceFrom(request);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">final</strong> Response response = <strong class="jxr_keyword">this</strong>.openIdService.getResponse(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">try</strong> {
@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      @Test
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testSmartModeGetResponse() {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySmartModeGetResponse() {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          request.addParameter(<span class="jxr_string">"openid.assoc_handle"</span>, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          openIdService = OpenIdService.createServiceFrom(request);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          Association association = <strong class="jxr_keyword">null</strong>;
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> 
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Test
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testExpiredAssociationGetResponse() {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyExpiredAssociationGetResponse() {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>         request.addParameter(<span class="jxr_string">"openid.assoc_handle"</span>, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         openIdService = OpenIdService.createServiceFrom(request);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         Association association = <strong class="jxr_keyword">null</strong>;
@@ -149,7 +149,7 @@
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> 
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>     @Test
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testEquals() {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyEquals() {
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest request1 = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>         request1.addParameter(<span class="jxr_string">"openid.identity"</span>, <span class="jxr_string">"http://openid.ja-sig.org/battags"</span>);
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>         request1.addParameter(<span class="jxr_string">"openid.return_to"</span>, <span class="jxr_string">"http://www.ja-sig.org/?service=fa"</span>);
@@ -163,10 +163,9 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> OpenIdService o2 = OpenIdService.createServiceFrom(request2);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         assertTrue(o1.equals(o2));
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         assertFalse(o1.equals(<strong class="jxr_keyword">null</strong>));
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         assertFalse(o1.equals(<strong class="jxr_keyword">new</strong> Object()));
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
-<a class="jxr_linenumber" name="L161" href="#L161">161</a> }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         assertFalse(o1.equals(<strong class="jxr_keyword">new</strong> Object()));
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
