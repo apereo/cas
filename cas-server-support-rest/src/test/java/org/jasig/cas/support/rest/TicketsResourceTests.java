@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Unit tests for {@link org.jasig.cas.support.rest.TicketsResource}.
  *
  * @author Dmitriy Kopylenko
+ * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TicketsResourceTests {

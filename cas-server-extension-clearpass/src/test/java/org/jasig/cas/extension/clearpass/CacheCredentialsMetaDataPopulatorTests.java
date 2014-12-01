@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
-    public void testAttributePopulationWithPassword() {
+    public void verifyAttributePopulationWithPassword() {
         final Authentication auth = TestUtils.getAuthentication();
         final Map<String, String> map = new HashMap<>();
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);
@@ -53,7 +53,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAttributePopulationWithPasswordWithDifferentCredentialsType() {
+    public void verifyAttributePopulationWithPasswordWithDifferentCredentialsType() {
         final Authentication auth = TestUtils.getAuthentication();
         final Map<String, String> map = new HashMap<>();
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +102,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
             return url;
         }
 
-        final int questionMarkPosition = url.indexOf("?");
+        final int questionMarkPosition = url.indexOf('?');
 
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
@@ -138,11 +139,9 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     @Override
     public int hashCode() {
-        final int prime = 41;
-        int result = 1;
-        result = prime * result
-            + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return new HashCodeBuilder()
+                .append(this.id)
+                .toHashCode();
     }
 
     protected Principal getPrincipal() {

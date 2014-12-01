@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
@@ -67,14 +68,16 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
-        final String serviceCredentialsAsString = serviceCredentials.getCallbackUrl().toExternalForm();
+
+        final URL callbackUrl = serviceCredentials.getCallbackUrl();
+        final String serviceCredentialsAsString = callbackUrl.toExternalForm();
         final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
                 + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
         final StringBuilder stringBuffer = new StringBuilder(bufferLength);
 
         stringBuffer.append(serviceCredentialsAsString);
 
-        if (serviceCredentials.getCallbackUrl().getQuery() != null) {
+        if (callbackUrl.getQuery() != null) {
             stringBuffer.append("&");
         } else {
             stringBuffer.append("?");

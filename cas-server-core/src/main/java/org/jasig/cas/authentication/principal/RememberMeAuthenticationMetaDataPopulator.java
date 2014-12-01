@@ -38,7 +38,7 @@ public final class RememberMeAuthenticationMetaDataPopulator implements
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final RememberMeCredential r = (RememberMeCredential) credential;
         if (r.isRememberMe()) {
-            builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true);
+            builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         }
     }
 
