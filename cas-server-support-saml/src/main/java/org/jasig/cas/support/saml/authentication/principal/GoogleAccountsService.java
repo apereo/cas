@@ -39,7 +39,6 @@ import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.core.Subject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
