@@ -45,7 +45,7 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
     private LdapPersonAttributeDao attributeDao;
 
     @Test
-    public void testGetPerson() throws Exception {
+    public void verifyGetPerson() throws Exception {
 
         IPersonAttributes actual;
         String username;

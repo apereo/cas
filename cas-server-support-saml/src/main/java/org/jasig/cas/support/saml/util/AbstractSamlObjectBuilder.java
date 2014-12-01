@@ -71,7 +71,6 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Collections;
 import java.util.List;
-
 /**
  * An abstract builder to serve as the template handler
  * for SAML1 and SAML2 responses.
@@ -80,7 +79,6 @@ import java.util.List;
  * @since 4.1
  */
 public abstract class AbstractSamlObjectBuilder {
-
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
      */
@@ -246,7 +244,7 @@ public abstract class AbstractSamlObjectBuilder {
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder
-                    .build(new ByteArrayInputStream(xmlString.getBytes()));
+                    .build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
             return null;
         }
@@ -373,7 +371,7 @@ public abstract class AbstractSamlObjectBuilder {
             final XMLOutputter xmlOutputter = new XMLOutputter();
             final StringWriter elemStrWriter = new StringWriter();
             xmlOutputter.output(doc, elemStrWriter);
-            final byte[] xmlBytes = elemStrWriter.toString().getBytes();
+            final byte[] xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
             final DocumentBuilderFactory dbf = DocumentBuilderFactory
                     .newInstance();
             dbf.setNamespaceAware(true);

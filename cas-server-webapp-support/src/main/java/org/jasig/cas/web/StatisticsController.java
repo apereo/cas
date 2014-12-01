@@ -166,6 +166,6 @@ public final class StatisticsController extends AbstractController {
         final String currentLabel = labels.remove();
         final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
 
-        return Integer.toString(new Double(time).intValue()) + " "+ label + " " + calculateUptime(newDifference, calculations, labels);
+        return Integer.toString((int) time) + " " + label + " " + calculateUptime(newDifference, calculations, labels);
     }
 }

@@ -27,6 +27,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * Base class for in-memory throttled submission handlers.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests
 extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {

@@ -94,8 +94,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return the modified message with tgt id removed
      */
     private String removeTicketId(final String msg) {
-        final StringBuilder builder = new StringBuilder(msg.length());
-
         String modifiedMessage = msg;
 
         final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
