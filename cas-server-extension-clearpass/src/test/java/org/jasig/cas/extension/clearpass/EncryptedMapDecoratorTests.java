@@ -73,15 +73,15 @@ public class EncryptedMapDecoratorTests {
 
     @Test
     public void addManyItems() {
-        final int TOTAL_ITEMS = 100;
+        final int totalItems = 100;
 
-        for (int i = 0; i < TOTAL_ITEMS; i++) {
+        for (int i = 0; i < totalItems; i++) {
             this.decorator.put("key" + i, "value" + i);
         }
 
-        assertEquals(this.decorator.size(), TOTAL_ITEMS);
+        assertEquals(this.decorator.size(), totalItems);
 
-        for (int i = 0; i < TOTAL_ITEMS; i++) {
+        for (int i = 0; i < totalItems; i++) {
             assertNull(this.map.get("key" + i));
             assertEquals("value" + i, this.decorator.get("key" + i));
         }

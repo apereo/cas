@@ -86,7 +86,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
-        logger.debug("Checking IP address: {} in ", ip, network, netmask);
+        logger.debug("Checking IP address: {} in {} by {}", ip, network, netmask);
 
         final byte[] networkBytes = network.getAddress();
         final byte[] netmaskBytes = netmask.getAddress();

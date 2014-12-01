@@ -46,7 +46,7 @@ import java.util.Date;
 @RunWith(Parameterized.class)
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
 
-    /** Instance under test */
+    /** Instance under test. */
     private final CRLDistributionPointRevocationChecker checker;
 
     /** Answers requests for CRLs made to localhost:8085. */

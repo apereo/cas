@@ -18,12 +18,8 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -34,6 +30,11 @@ import org.springframework.core.io.Resource;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -71,11 +72,11 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
-            if (passwordOnRecord == null) {
+            if (StringUtils.isBlank(passwordOnRecord)) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
-            if (credential.getPassword() != null
-                    && this.getPasswordEncoder().encode(credential.getPassword()).equals(passwordOnRecord)) {
+            final String password = credential.getPassword();
+            if (StringUtils.isNotBlank(password) && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
                 return createHandlerResult(credential, new SimplePrincipal(username), null);
             }
         } catch (final IOException e) {
@@ -108,7 +109,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String getPasswordOnRecord(final String username) throws IOException {
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(
+                    this.fileName.getInputStream(), Charset.defaultCharset()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);

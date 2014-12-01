@@ -31,10 +31,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.5.0
+ */
 public class TicketRegistryDecoratorTests {
 
     @Test
-    public void testDefaultTicketRegistryWithClearPass() {
+    public void verifyDefaultTicketRegistryWithClearPass() {
 
         final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
         final Map<String, String> map = new HashMap<String, String>();
@@ -45,7 +49,7 @@ public class TicketRegistryDecoratorTests {
     }
 
     @Test
-    public void testEhCacheTicketRegistryWithClearPass() {
+    public void verifyEhCacheTicketRegistryWithClearPass() {
         final Cache serviceTicketsCache = new Cache("serviceTicketsCache", 200, false, false, 100, 100);
         final Cache ticketGrantingTicketCache = new Cache("ticketGrantingTicketCache", 200, false, false, 100, 100);
 
