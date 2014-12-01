@@ -269,7 +269,7 @@
                 <effort>Max</effort>
                 <failOnError>false</failOnError>
             </configuration>
-            <executions>
+			<executions>
 				<execution>
 					<id>findbugs-check</id>
 					<phase>compile</phase>
@@ -277,7 +277,7 @@
 						<goal>check</goal>
 					</goals>
 				</execution>	
-            </executions>	
+			</executions>	
         </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
