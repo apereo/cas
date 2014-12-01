@@ -58,20 +58,20 @@ public class Cas20ProxyHandlerTests {
     }
 
     @Test
-    public void testValidProxyTicketWithoutQueryString() throws Exception {
+    public void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("http://www.rutgers.edu/"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void testValidProxyTicketWithQueryString() throws Exception {
+    public void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("http://www.rutgers.edu/?test=test"), TestUtils.getRegisteredService("https://some.app.edu")),
                 proxyGrantingTicket));
     }
 
     @Test
-    public void testNonValidProxyTicket() throws Exception {
+    public void verifyNonValidProxyTicket() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(new int[] {900});
         final SimpleHttpClient httpClient = clientFactory.getObject();

@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  * Test authentication handler that always fails.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class TestAlwaysFailAuthenticationHandler implements AuthenticationHandler {
     @Override
