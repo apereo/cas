@@ -21,7 +21,7 @@ package org.jasig.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LockedOutputStream;
-import org.jasig.cas.util.services.JsonSerializer;
+import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
