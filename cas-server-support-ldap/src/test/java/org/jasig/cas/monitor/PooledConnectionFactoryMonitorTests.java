@@ -29,6 +29,8 @@ import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link PooledConnectionFactoryMonitor} class.
+ * @author Marvin S. Addison
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
@@ -38,7 +40,7 @@ public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
     private PooledConnectionFactoryMonitor monitor;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 }

@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
-     public void testTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClient client = new SimpleHttpClient(factory);
@@ -43,7 +43,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    public void testTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClient client = new SimpleHttpClient(factory);
@@ -52,25 +52,25 @@ public class FileTrustStoreSslSocketFactoryTests {
 
 
     @Test(expected = RuntimeException.class)
-     public void testTrustStoreNotFound() throws Exception {
+     public void verifyTrustStoreNotFound() throws Exception {
         new FileTrustStoreSslSocketFactory(new File("test.jks"), "changeit");
     }
 
     @Test(expected = RuntimeException.class)
-    public void testTrustStoreBadPassword() throws Exception {
+    public void verifyTrustStoreBadPassword() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         new FileTrustStoreSslSocketFactory(resource.getFile(), "invalid");
     }
 
     @Test
-    public void testTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClient client = new SimpleHttpClient(factory);
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
     @Test
-    public void testTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClient client = new SimpleHttpClient(factory);

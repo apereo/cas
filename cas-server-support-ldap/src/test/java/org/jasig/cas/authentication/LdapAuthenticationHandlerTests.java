@@ -34,6 +34,8 @@ import static org.junit.Assert.*;
  * Unit test for {@link LdapAuthenticationHandler}.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/authn-context.xml"})
@@ -43,7 +45,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     private AuthenticationHandler handler;
 
     @Test
-    public void testAuthenticateSuccess() throws Exception {
+    public void verifyAuthenticateSuccess() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
             final String psw = entry.getAttribute("userPassword").getStringValue();
@@ -61,7 +63,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     }
 
     @Test(expected=FailedLoginException.class)
-    public void testAuthenticateFailure() throws Exception {
+    public void verifyAuthenticateFailure() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
             this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
@@ -71,7 +73,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     }
 
     @Test(expected=FailedLoginException.class)
-    public void testAuthenticateNotFound() throws Exception {
+    public void verifyAuthenticateNotFound() throws Exception {
         this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
         fail("Should have thrown FailedLoginException.");
     }

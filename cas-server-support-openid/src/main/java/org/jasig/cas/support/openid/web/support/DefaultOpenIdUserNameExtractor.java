@@ -40,7 +40,7 @@ OpenIdUserNameExtractor {
             return null;
         }
 
-        return uri.substring(uri.lastIndexOf("/") + 1);
+        return uri.substring(uri.lastIndexOf('/') + 1);
     }
 
 }

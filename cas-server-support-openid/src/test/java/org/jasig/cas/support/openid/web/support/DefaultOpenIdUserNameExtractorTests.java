@@ -32,19 +32,19 @@ public class DefaultOpenIdUserNameExtractorTests {
     private final DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     @Test
-    public void testExtractionSuccessful() {
+    public void verifyExtractionSuccessful() {
         assertEquals("scootman28", this.extractor
                 .extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
     @Test
-    public void testExtractionFailed() {
+    public void verifyExtractionFailed() {
         assertNull(this.extractor
                 .extractLocalUsernameFromUri("test.com"));
     }
 
     @Test
-    public void testNull() {
+    public void verifyNull() {
         assertNull(this.extractor
                 .extractLocalUsernameFromUri(null));
     }

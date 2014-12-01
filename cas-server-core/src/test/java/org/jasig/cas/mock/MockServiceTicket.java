@@ -32,6 +32,7 @@ import java.util.Date;
  * Mock service ticket.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public class MockServiceTicket implements ServiceTicket {
 

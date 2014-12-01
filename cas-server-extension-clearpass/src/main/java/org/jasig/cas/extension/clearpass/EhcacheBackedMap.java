@@ -138,7 +138,7 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
     }
 
-    protected final class ElementMapEntry implements Map.Entry<String, String> {
+    protected static final class ElementMapEntry implements Map.Entry<String, String> {
 
         private final Element element;
 
