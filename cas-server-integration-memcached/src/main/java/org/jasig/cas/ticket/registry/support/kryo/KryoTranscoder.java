@@ -18,13 +18,17 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.SerializationException;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.ClassSerializer;
-import com.esotericsoftware.kryo.serialize.DateSerializer;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
@@ -46,13 +50,11 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
-import java.nio.BufferOverflowException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -61,6 +63,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@SuppressWarnings("rawtypes")
 public class KryoTranscoder implements Transcoder<Object> {
 
     /** Kryo serializer. */
@@ -69,20 +72,22 @@ public class KryoTranscoder implements Transcoder<Object> {
     /** Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Maximum size of single encoded object in bytes. */
-    private final int bufferSize;
-
     /** Map of class to serializer that handles it. */
     private Map<Class<?>, Serializer> serializerMap;
 
-
+    /**
+     * Creates a Kryo-based transcoder.
+     */
+    public KryoTranscoder() {
+    }
+    
     /**
      * Creates a Kryo-based transcoder.
      *
      * @param initialBufferSize Initial size for buffer holding encoded object data.
      */
     public KryoTranscoder(final int initialBufferSize) {
-        bufferSize = initialBufferSize;
+        logger.warn("It's no longer necessary to define the initialBufferSize. Use the empty constructor.");
     }
 
 
@@ -99,12 +104,13 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Initialize and register classes with kryo.
      */
+
     public void initialize() {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
         kryo.register(BasicCredentialMetaData.class);
-        kryo.register(Class.class, new ClassSerializer(kryo));
-        kryo.register(Date.class, new DateSerializer());
+        kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
+        kryo.register(Date.class, new DefaultSerializers.DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
         kryo.register(HandlerResult.class);
@@ -113,14 +119,14 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(NeverExpiresExpirationPolicy.class);
         kryo.register(RememberMeDelegatingExpirationPolicy.class);
         kryo.register(ServiceTicketImpl.class);
-        kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(kryo));
+        kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
         kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
-        kryo.register(URL.class, new URLSerializer(kryo));
-        kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer(kryo));
-        kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer(kryo));
+        kryo.register(URL.class, new URLSerializer());
+        kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
+        kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
 
         // Register other types
         if (serializerMap != null) {
@@ -129,8 +135,12 @@ public class KryoTranscoder implements Transcoder<Object> {
             }
         }
 
+        // don't reinit the registered classes after every write or read
+        kryo.setAutoReset(false);
+        // don't replace objects by references
+        kryo.setReferences(false);
         // Catchall for any classes not explicitly registered
-        kryo.setRegistrationOptional(true);
+        kryo.setRegistrationRequired(false);
     }
 
 
@@ -145,16 +155,24 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     @Override
-    public CachedData encode(final Object o) {
-        final byte[] bytes = encodeToBytes(o);
+    public CachedData encode(final Object obj) {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        final Output output = new Output(byteStream);
+        kryo.writeClassAndObject(output, obj);
+        output.flush();
+        final byte[] bytes = byteStream.toByteArray();
+        output.close();
         return new CachedData(0, bytes, bytes.length);
     }
 
     @Override
     public Object decode(final CachedData d) {
-        return kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
+        final byte[] bytes = d.getData();
+        final Input input = new Input(new ByteArrayInputStream(bytes));
+        final Object obj =  kryo.readClassAndObject(input);
+        input.close();
+        return obj;
     }
-
 
     /**
      * Maximum size of encoded data supported by this transcoder.
@@ -173,39 +191,5 @@ public class KryoTranscoder implements Transcoder<Object> {
      */
     public Kryo getKryo() {
         return kryo;
-    }
-
-
-    /**
-     * Encodes the given object using registered Kryo serializers.  Provides explicit buffer overflow protection, but
-     * careful buffer sizing should be employed to reduce the need for this facility.
-     *
-     * @param o Object to encode.
-     *
-     * @return Encoded bytes.
-     */
-    private byte[] encodeToBytes(final Object o) {
-        int factor = 1;
-        byte[] result = null;
-        ByteBuffer buffer = Kryo.getContext().getBuffer(bufferSize * factor);
-        while (result == null) {
-            try {
-                kryo.writeClassAndObject(buffer, o);
-                result = new byte[buffer.flip().limit()];
-                buffer.get(result);
-            } catch (final SerializationException e) {
-                Throwable rootCause = e;
-                while (rootCause.getCause() != null) {
-                    rootCause = rootCause.getCause();
-                }
-                if (rootCause instanceof BufferOverflowException) {
-                    buffer = ByteBuffer.allocate(bufferSize * ++factor);
-                    logger.warn("Buffer overflow while encoding {}", o);
-                } else {
-                    throw e;
-                }
-            }
-        }
-        return result;
     }
 }

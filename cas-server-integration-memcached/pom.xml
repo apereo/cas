@@ -58,9 +58,9 @@
 		</dependency>
 
     <dependency>
-      <groupId>com.googlecode</groupId>
+      <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
-      <version>1.04</version>
+      <version>3.0.0</version>
     </dependency>
 
     <!-- Test dependencies -->
