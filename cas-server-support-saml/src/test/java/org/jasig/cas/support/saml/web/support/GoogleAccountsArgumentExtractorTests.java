@@ -66,7 +66,7 @@ public class GoogleAccountsArgumentExtractorTests {
     }
 
     @Test
-    public void testNoService() {
+    public void verifyNoService() {
         assertNull(this.extractor.extractService(new MockHttpServletRequest()));
     }
 }

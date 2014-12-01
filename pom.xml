@@ -244,11 +244,41 @@
                 <aggregate>true</aggregate>
             </configuration>
         </plugin>
-
       </plugins>
     </pluginManagement>
 
     <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${maven-findbugs-plugin.version}</version>
+            <configuration>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mebigfatguy.fb-contrib</groupId>
+                        <artifactId>fb-contrib</artifactId>
+                        <version>${maven-findbugs-contrib-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.h3xstream.findsecbugs</groupId>
+                        <artifactId>findsecbugs-plugin</artifactId>
+                        <version>${maven-findbugs-security-plugin.version}</version>
+                    </plugin>
+                </plugins>
+                <includeFilterFile>${cs.dir}/findbugs-rules.xml</includeFilterFile>
+                <effort>Max</effort>
+                <failOnError>false</failOnError>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>findbugs-check</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>    
+            </executions>   
+        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
@@ -258,6 +288,7 @@
                 <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
                 <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
+                <includeTestSourceDirectory>true</includeTestSourceDirectory>
             </configuration>
             <executions>
                 <execution>
@@ -1037,6 +1068,7 @@
         <license.skip>true</license.skip>
         <notice.skip>true</notice.skip>
         <versions.skip>true</versions.skip>
+        <findbugs.skip>true</findbugs.skip>
       </properties>
       
       <build>
@@ -1150,6 +1182,9 @@
     <maven-assembly-plugin.version>2.5</maven-assembly-plugin.version>
     <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
     <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+    <maven-findbugs-plugin.version>3.0.0</maven-findbugs-plugin.version>
+    <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
+    <maven-findbugs-security-plugin.version>1.2.1</maven-findbugs-security-plugin.version>
 
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>

@@ -29,13 +29,13 @@ import org.junit.Test;
 public final class SamlCompliantUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testSaml1Compliant() {
+    public void verifySaml1Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         assertNotNull(g.getNewTicketId("TT"));
     }
 
     @Test
-    public void testSaml2Compliant() {
+    public void verifySaml2Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         g.setSaml2compliant(true);
         assertNotNull(g.getNewTicketId("TT"));

@@ -38,6 +38,7 @@ import static org.mockito.Mockito.*;
  * Mockito based tests for @{link ServiceAuthorizationCheck}
  *
  * @author Dmitriy Kopylenko
+ * @since 3.5.0
  */
 public class ServiceAuthorizationCheckTests {
 
