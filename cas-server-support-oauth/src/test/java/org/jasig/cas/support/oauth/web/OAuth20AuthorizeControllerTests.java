@@ -70,7 +70,7 @@ public final class OAuth20AuthorizeControllerTests {
     private static final String STATE = "state";
 
     @Test
-    public void testNoClientId() throws Exception {
+    public void verifyNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
@@ -82,7 +82,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testNoRedirectUri() throws Exception {
+    public void verifyNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -94,7 +94,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testNoCasService() throws Exception {
+    public void verifyNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -110,7 +110,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
+    public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -128,7 +128,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -164,7 +164,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testOKWithState() throws Exception {
+    public void verifyOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);

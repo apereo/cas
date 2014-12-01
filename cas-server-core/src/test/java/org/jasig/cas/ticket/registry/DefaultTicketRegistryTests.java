@@ -33,7 +33,7 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
         return new DefaultTicketRegistry();
     }
 
-    public void testOtherConstructor() {
+    public void verifyOtherConstructor() {
         assertNotNull(new DefaultTicketRegistry(10, 10F, 5));
     }
 }

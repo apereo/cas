@@ -18,22 +18,22 @@
  */
 package org.jasig.cas.mock;
 
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
+
+import java.util.Map;
 
 /**
  * Simple mock implementation of a service principal.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 public class MockService implements Service {
 
     private static final long serialVersionUID = 117438127028057173L;
-    private boolean loggedOut = false;
+    private boolean loggedOut;
     private String id;
 
     public MockService(final String id) {

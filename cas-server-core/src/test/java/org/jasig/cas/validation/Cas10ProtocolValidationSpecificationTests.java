@@ -30,43 +30,43 @@ import org.junit.Test;
 public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
-    public void testRenewGettersAndSettersFalse() {
+    public void verifyRenewGettersAndSettersFalse() {
         final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     @Test
-    public void testRenewGettersAndSettersTrue() {
+    public void verifyRenewGettersAndSettersTrue() {
         final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }
 
     @Test
-    public void testRenewAsTrueAsConstructor() {
+    public void verifyRenewAsTrueAsConstructor() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isRenew());
     }
 
     @Test
-    public void testRenewAsFalseAsConstructor() {
+    public void verifyRenewAsFalseAsConstructor() {
         assertFalse(new Cas10ProtocolValidationSpecification(false).isRenew());
     }
 
     @Test
-    public void testSatisfiesSpecOfTrue() {
+    public void verifySatisfiesSpecOfTrue() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
-    public void testNotSatisfiesSpecOfTrue() {
+    public void verifyNotSatisfiesSpecOfTrue() {
         assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
-    public void testSatisfiesSpecOfFalse() {
+    public void verifySatisfiesSpecOfFalse() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
-    public void testSatisfiesSpecOfFalse2() {
+    public void verifySatisfiesSpecOfFalse2() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 

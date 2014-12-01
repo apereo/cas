@@ -26,7 +26,7 @@ public class OpenIdPostUrlHandlerMappingTests {
 
     private OpenIdPostUrlHandlerMapping handlerMapping;
 
-    public void testTest() {
+    public void verifyTest() {
     }
 
     /*
@@ -48,21 +48,21 @@ public class OpenIdPostUrlHandlerMappingTests {
     }
 
 
-    public void testNoMatch() throws Exception {
+    public void verifyNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
     }
 
-    public void testImproperMatch() throws Exception {
+    public void verifyImproperMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchWrongMethod() throws Exception {
+    public void verifyProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("GET");
@@ -70,7 +70,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchCorrectMethodNoParam() throws Exception {
+    public void verifyProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
@@ -78,7 +78,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchCorrectMethodWithParam() throws Exception {
+    public void verifyProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");

@@ -18,6 +18,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.net.URL;
+import java.security.GeneralSecurityException;
+
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -26,11 +32,6 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
-import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -64,9 +65,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
         }
 
         logger.debug("Attempting to authenticate {}", httpCredential);
-        if (!this.httpClient.isValidEndPoint(httpCredential.getCallbackUrl())) {
-            throw new FailedLoginException(
-                    httpCredential.getCallbackUrl() + " sent an unacceptable response status code");
+        final URL callbackUrl = httpCredential.getCallbackUrl();
+        if (!this.httpClient.isValidEndPoint(callbackUrl)) {
+            throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
         return new HandlerResult(this, httpCredential, new SimplePrincipal(httpCredential.getId()));
     }

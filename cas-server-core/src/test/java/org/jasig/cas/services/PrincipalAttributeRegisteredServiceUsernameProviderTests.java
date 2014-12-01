@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
  */
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     @Test
-    public void testUsernameByPrincipalAttribute() {
+    public void verifyUsernameByPrincipalAttribute() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
@@ -53,7 +53,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
     
     @Test
-    public void testUsernameByPrincipalAttributeNotFound() {
+    public void verifyUsernameByPrincipalAttributeNotFound() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
@@ -70,7 +70,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 

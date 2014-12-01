@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -32,6 +26,12 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -43,7 +43,7 @@ public class DistributedTicketRegistryTests {
 
     private TestDistributedTicketRegistry ticketRegistry;
 
-    private boolean wasTicketUpdated = false;
+    private boolean wasTicketUpdated;
 
     @Before
     public void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testProxiedInstancesEqual() {
+    public void verifyProxiedInstancesEqual() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -88,7 +88,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testUpdateOfRegistry() {
+    public void verifyUpdateOfRegistry() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -110,7 +110,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testTicketDoesntExist() {
+    public void verifyTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 

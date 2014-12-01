@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.jasig.cas.authentication.Credential;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,11 +33,12 @@ import static org.mockito.Mockito.*;
  * Unit test for {@link ChainingPrincipalResolver}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class ChainingPrincipalResolverTest {
 
     @Test
-    public void testSupports() throws Exception {
+    public void examineSupports() throws Exception {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
@@ -53,7 +54,7 @@ public class ChainingPrincipalResolverTest {
     }
 
     @Test
-    public void testResolve() throws Exception {
+    public void examineResolve() throws Exception {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
 
@@ -66,7 +67,7 @@ public class ChainingPrincipalResolverTest {
         when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
             @Override
             public boolean matches(final Object o) {
-                return ((Credential) o).getId().equals("output");
+                return "output".equals(((Credential) o).getId());
             }
         }))).thenReturn(
                 new SimplePrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
