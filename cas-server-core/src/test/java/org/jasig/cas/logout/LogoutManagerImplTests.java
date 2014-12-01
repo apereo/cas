@@ -81,21 +81,21 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutDisabled() {
+    public void verifyLogoutDisabled() {
         this.logoutManager.setSingleLogoutCallbacksDisabled(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
-    public void testLogoutAlreadyLoggedOut() {
+    public void verifyLogoutAlreadyLoggedOut() {
         this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
-    public void testLogoutTypeNotSet() {
+    public void verifyLogoutTypeNotSet() {
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         final LogoutRequest logoutRequest = logoutRequests.iterator().next();
@@ -105,7 +105,7 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeBack() {
+    public void verifyLogoutTypeBack() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
@@ -116,14 +116,14 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeNone() {
+    public void verifyLogoutTypeNone() {
         this.registeredService.setLogoutType(LogoutType.NONE);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
-    public void testLogoutTypeNull() {
+    public void verifyLogoutTypeNull() {
         this.registeredService.setLogoutType(null);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
@@ -132,7 +132,7 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeFront() {
+    public void verifyLogoutTypeFront() {
         this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
@@ -143,7 +143,7 @@ public class LogoutManagerImplTests {
     }
     
     @Test
-    public void testAsynchronousLogout() {
+    public void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         this.logoutManager.setAsynchronous(false);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
