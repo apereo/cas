@@ -122,7 +122,8 @@ interest.
 * [SPNEGO](SPNEGO-Authentication.html) (Windows)
 * [Trusted](Trusted-Authentication.html) (REMOTE_USER)
 * [X.509](X509-Authentication.html) (client SSL certificate)
-
+* [Remote Address](Remote-Address-Authentication.html)
+* 
 There are some additional handlers for small deployments and special cases:
 
 * [Whilelist](Whitelist-Authentication.html)
