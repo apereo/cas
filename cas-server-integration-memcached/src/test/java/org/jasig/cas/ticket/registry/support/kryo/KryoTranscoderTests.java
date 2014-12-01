@@ -19,7 +19,8 @@
 package org.jasig.cas.ticket.registry.support.kryo;
 
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -42,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -61,6 +63,7 @@ import static org.junit.Assert.assertEquals;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
+@SuppressWarnings("rawtypes")
 public class KryoTranscoderTests {
 
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
