@@ -153,7 +153,7 @@ A sample JSON file follows:
 
 
 ######`LdapServiceRegistryDao`
-Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `uid` attribute.
+Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
 {% highlight xml %}
 
@@ -163,34 +163,26 @@ Service registry implementation which stores the services in a LDAP Directory. U
       class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
       p:searchRequest-ref="searchRequest"
-      p:ldapServiceMapper-ref="ldapMapper" />
+      p:ldapServiceMapper-ref="ldapServiceMapper" />
 
-<bean id="ldapMapper"
-      class="org.jasig.cas.adaptors.ldap.services.DefaultLdapServiceMapper"/>
+<bean id="ldapServiceMapper"
+      class="org.jasig.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper"/>
 {% endhighlight %}
 
-Note that you will need to add the `context` namespace and schema location to the `beans` declaration of the file.
+The format and syntax of the JSON is identical to that of `JsonServiceRegistryDao`. Also note that the configuration of the mapper is optional and need not explicitly exist. 
 
 <p/>
 
-######`DefaultLdapServiceMapper`
-The default mapper has support for the following items:
+######`DefaultLdapRegisteredServiceMapper`
+The default mapper has support for the following optional items:
 
 | Field         					| Default Value 
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `objectClass`     				| casRegisteredService
-| `serviceIdAttribute`     			| casServiceUrlPattern
+| `serviceDefinitionAttribute`     	| description
 | `idAttribute`     				| uid
-| `serviceDescriptionAttribute`     | description
-| `serviceNameAttribute`     		| cn
-| `serviceEnabledAttribute`     	| casServiceEnabled
-| `serviceSsoEnabledAttribute`     	| casServiceSsoEnabled
-| `usernameAttributeProvider`       | casUsernameAttributeProvider
-| `serviceProxyPolicyAttribute`     | casServiceProxyPolicy
-| `serviceThemeAttribute`     		| casServiceTheme
-| `attributeReleasePolicyAttribute` | casAttributeReleasePolicy
-| `evaluationOrderAttribute`     	| casEvaluationOrder
-| `requiredHandlersAttribute`     	| casRequiredHandlers
+
+Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as JSON objects. 
 
 
 ######`JpaServiceRegistryDaoImpl`
