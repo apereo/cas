@@ -153,7 +153,7 @@ public class TicketResource extends ServerResource {
         }
     }
 
-    protected class RestletWebRequest implements WebRequest {
+    protected static class RestletWebRequest implements WebRequest {
         private final Form form;
         private final Request request;
 

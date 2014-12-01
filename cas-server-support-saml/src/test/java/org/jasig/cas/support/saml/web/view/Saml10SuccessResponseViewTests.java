@@ -80,7 +80,7 @@ public class Saml10SuccessResponseViewTests {
     }
 
     @Test
-    public void testResponse() throws Exception {
+    public void verifyResponse() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
 
         final Map<String, Object> attributes = new HashMap<String, Object>();
@@ -118,7 +118,7 @@ public class Saml10SuccessResponseViewTests {
     }
 
     @Test
-    public void testResponseWithNoAttributes() throws Exception {
+    public void verifyResponseWithNoAttributes() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
 
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
@@ -146,7 +146,7 @@ public class Saml10SuccessResponseViewTests {
     }
 
     @Test
-    public void testResponseWithoutAuthMethod() throws Exception {
+    public void verifyResponseWithoutAuthMethod() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
 
         final Map<String, Object> attributes = new HashMap<String, Object>();

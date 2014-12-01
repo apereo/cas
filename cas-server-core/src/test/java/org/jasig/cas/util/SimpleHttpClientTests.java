@@ -42,23 +42,23 @@ public class SimpleHttpClientTests  {
     }
 
     @Test
-    public void testOkayUrl() {
+    public void verifyOkayUrl() {
         assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
-    public void testBadUrl() {
+    public void verifyBadUrl() {
         assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
     }
 
     @Test
-    public void testInvalidHttpsUrl() {
+    public void verifyInvalidHttpsUrl() {
         final HttpClient client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
     @Test
-    public void testBypassedInvalidHttpsUrl() throws Exception {
+    public void verifyBypassedInvalidHttpsUrl() throws Exception {
         final SimpleHttpClient client = new SimpleHttpClient(getFriendlyToAllSSLSocketFactory(),
                 SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER, new int[] {200, 403});
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));

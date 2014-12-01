@@ -37,18 +37,19 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link TicketOrCredentialPrincipalResolver}
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTest {
 
     @Test
-    public void testResolverByUnknownUser() {
+    public void verifyResolverByUnknownUser() {
         final TicketOrCredentialPrincipalResolver res =
                 new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         assertEquals(res.resolve(), PrincipalResolver.UNKNOWN_USER);
     }
 
     @Test
-    public void testResolverCredential() {
+    public void verifyResolverCredential() {
         final TicketOrCredentialPrincipalResolver res =
                 new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
@@ -62,7 +63,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     }
 
     @Test
-    public void testResolverServiceTicket() throws Exception {
+    public void verifyResolverServiceTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(c);
@@ -81,7 +82,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     }
 
     @Test
-    public void testResolverTicketGrantingTicket() throws Exception {
+    public void verifyResolverTicketGrantingTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(c);
@@ -98,7 +99,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     }
 
     @Test
-    public void testResolverSecurityContext() throws Exception {
+    public void verifyResolverSecurityContext() throws Exception {
         final UserDetails ud = mock(UserDetails.class);
         when(ud.getUsername()).thenReturn("pid");
         final Authentication authn = mock(Authentication.class);

@@ -30,10 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
-
 /**
  * Test case of the Smart OpenId Controller.
  * @author Frederic Esnault
+ * @since 3.0.0
  */
 public class SmartOpenIdControllerTest {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -50,7 +50,7 @@ public class SmartOpenIdControllerTest {
     }
 
     @Test
-    public void testCanHandle() {
+    public void verifyCanHandle() {
         request.addParameter("openid.mode", "associate");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
@@ -58,7 +58,7 @@ public class SmartOpenIdControllerTest {
     }
 
     @Test
-    public void testCannotHandle() {
+    public void verifyCannotHandle() {
         request.addParameter("openid.mode", "anythingElse");
         final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
@@ -66,7 +66,7 @@ public class SmartOpenIdControllerTest {
     }
 
     @Test
-    public void testGetAssociationResponse() {
+    public void verifyGetAssociationResponse() {
         request.addParameter("openid.mode", "associate");
         request.addParameter("openid.session_type", "DH-SHA1");
         request.addParameter("openid.assoc_type", "HMAC-SHA1");

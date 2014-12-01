@@ -45,7 +45,7 @@ public class EhCacheMonitorTests {
     private EhCacheMonitor monitor;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         CacheStatus status = monitor.observe();
         CacheStatistics stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());

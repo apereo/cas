@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
  * Unit test for {@link JRadiusServerImpl}.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-context.xml")
@@ -43,7 +44,7 @@ public class JRadiusServerImplTest {
      * An external RADIUS server test fixture is required for thorough testing.
      */
     @Test
-    public void testAuthenticate() {
+    public void verifyAuthenticate() {
         assertNotNull(this.radiusServer);
     }
 }

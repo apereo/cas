@@ -29,16 +29,17 @@ import org.junit.Test;
 public final class BadUsernameOrPasswordAuthenticationExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword";
+    private static final String MESSAGE = "GG";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new BadUsernameOrPasswordAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BadUsernameOrPasswordAuthenticationException e =
                 new BadUsernameOrPasswordAuthenticationException(r);
@@ -48,16 +49,14 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
+    public void verifyCodeConstructor() {
         final BadUsernameOrPasswordAuthenticationException e =
                 new BadUsernameOrPasswordAuthenticationException(MESSAGE);
 
         assertEquals(MESSAGE, e.getCode());
     }
 
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
+    public void verifyThrowableConstructorWithCode() {
         final RuntimeException r = new RuntimeException();
         final BadUsernameOrPasswordAuthenticationException e =
                 new BadUsernameOrPasswordAuthenticationException(MESSAGE, r);
