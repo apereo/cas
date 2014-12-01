@@ -39,7 +39,7 @@ public class Saml10FailureResponseViewTests {
     private final Saml10FailureResponseView view = new Saml10FailureResponseView();
 
     @Test
-    public void testResponse() throws Exception {
+    public void verifyResponse() throws Exception {
         final MockHttpServletRequest request =  new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");

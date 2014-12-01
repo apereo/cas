@@ -78,7 +78,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     }
 
     @Test
-    public void testRemoteUserExists() throws Exception {
+    public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setUserPrincipal(new Principal() {
             @Override
@@ -95,7 +95,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     }
 
     @Test
-    public void testRemoteUserDoesntExists() throws Exception {
+    public void verifyRemoteUserDoesntExists() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));

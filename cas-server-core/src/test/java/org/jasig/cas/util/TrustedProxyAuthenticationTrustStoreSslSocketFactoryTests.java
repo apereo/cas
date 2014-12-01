@@ -31,10 +31,10 @@ import static org.junit.Assert.assertTrue;
  * @since 4.1.0
  */
 public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
-    private SimpleHttpClient client;
-
     private static final ClassPathResource TRUST_STORE = new ClassPathResource("truststore.jks");
     private static final String TRUST_STORE_PSW = "changeit";
+
+    private SimpleHttpClient client;
 
     @Before
     public void prepareHttpClient() throws Exception {
@@ -45,13 +45,13 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     }
 
     @Ignore
-    public void testSuccessfulConnection() {
+    public void verifySuccessfulConnection() {
         final boolean valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
-    public void testSuccessfulConnectionWithCustomSSLCert() {
+    public void verifySuccessfulConnectionWithCustomSSLCert() {
         final boolean valid = client.isValidEndPoint("https://www.cacert.org");
         assertTrue(valid);
     }

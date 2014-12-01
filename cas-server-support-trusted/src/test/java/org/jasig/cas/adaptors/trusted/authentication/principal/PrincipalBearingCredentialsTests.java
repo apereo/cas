@@ -38,7 +38,7 @@ public class PrincipalBearingCredentialsTests {
     }
 
     @Test
-    public void testGetOfPrincipal() {
+    public void verifyGetOfPrincipal() {
         assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
     }
 }
