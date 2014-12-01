@@ -56,7 +56,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private boolean fromNewLogin;
 
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
-    private Boolean grantedTicketAlready = false;
+    private Boolean grantedTicketAlready = Boolean.FALSE;
 
     /**
      * Instantiates a new service ticket impl.
@@ -143,7 +143,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 throw new IllegalStateException(
                     "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
             }
-            this.grantedTicketAlready = true;
+            this.grantedTicketAlready = Boolean.TRUE;
         }
 
         return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
