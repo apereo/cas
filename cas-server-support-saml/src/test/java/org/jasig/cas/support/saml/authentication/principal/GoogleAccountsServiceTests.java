@@ -73,7 +73,7 @@ public class GoogleAccountsServiceTests {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        final String SAMLRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
               + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
               + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
               + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
@@ -97,7 +97,7 @@ public class GoogleAccountsServiceTests {
     }
 
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         final Response resp = this.googleAccountsService.getResponse("ticketId");
         assertEquals(resp.getResponseType(), Response.ResponseType.POST);
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));

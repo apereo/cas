@@ -39,10 +39,10 @@ import edu.vt.middleware.crypt.util.CryptReader;
  */
 public abstract class AbstractCRLRevocationCheckerTests {
 
-    /** Certificate to be tested */
+    /** Certificate to be tested. */
     private final X509Certificate[] certificates;
 
-    /** Expected result of check; null for success */
+    /** Expected result of check; null for success. */
     private final GeneralSecurityException expected;
 
 
@@ -69,7 +69,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
      * Test method for {@link AbstractCRLRevocationChecker#check(X509Certificate)}.
      */
     @Test
-    public void testCheck() {
+    public void checkCertificate() {
         try {
             for (X509Certificate cert : this.certificates) {
                 getChecker().check(cert);
@@ -79,7 +79,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
             }
         } catch (final GeneralSecurityException e) {
             if (this.expected == null) {
-                e.printStackTrace();
+
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
                 final Class<?> expectedClass = this.expected.getClass();

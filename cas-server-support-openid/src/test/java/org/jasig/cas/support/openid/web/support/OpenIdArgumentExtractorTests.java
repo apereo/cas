@@ -38,7 +38,7 @@ public class OpenIdArgumentExtractorTests {
     }
 
     @Test
-    public void testNoOpenIdServiceExists() {
+    public void verifyNoOpenIdServiceExists() {
         assertNull(this.extractor.extractService(new MockHttpServletRequest()));
     }
 }

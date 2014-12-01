@@ -195,7 +195,8 @@ public class ServiceValidateController extends DelegateController {
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou);
         } catch (final TicketValidationException e) {
-            return generateErrorView(e.getCode(), e.getCode(),
+            final String code = e.getCode();
+            return generateErrorView(code, code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
