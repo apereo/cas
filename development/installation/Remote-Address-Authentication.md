@@ -8,7 +8,7 @@ This handler uses the request's remote address to transparently authenticate a u
 
 The benefit of this approach is that transparent authentication is achieved within a large corporate network without the need to manage certificates. 
 
-<div class="alert alert-danger"><strong>Be Careful</strong><p>Keep in mind that this authentication mechanism should only be enabled for internal network clients with relatively static I.P. addresses.</p></div>
+<div class="alert alert-danger"><strong>Be Careful</strong><p>Keep in mind that this authentication mechanism should only be enabled for internal network clients with relatively static IP addresses.</p></div>
 
 
 ## Caveats
@@ -29,19 +29,19 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ### Configuring Authentication
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.RemoteAddressAuthenticationHandler">
+<bean class="org.jasig.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler">
 	<property name="ipNetworkRange" value="{network_range_goes_here}"/>
 </bean>
 {% endhighlight %}
 
-This authentication handler checks the inbound client I.P. address to see if it falls within the internal network. The `RemoteAddressAuthenticationHandler` bean has one property:
+This authentication handler checks the inbound client IP address to see if it falls within the internal network. The `RemoteAddressAuthenticationHandler` bean has one property:
 
 - `ipNetworkRange` - This defines the internal network parameters in the form of a subnet and netmask. e.g. `192.168.1.0/255.255.255.0` or `10.0.0.0/255.255.0.0`.
 
-Also declare the following bean, which extracts the client's I.P. address from the request.
+Also declare the following bean, which extracts the client's IP address from the request.
 
 {% highlight xml %}
-<bean id="remoteAddressCheck" class="org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction">
+<bean id="remoteAddressCheck" class="org.jasig.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction">
     <property name="centralAuthenticationService" ref="centralAuthenticationService"/>
 </bean>
 {% endhighlight %}
