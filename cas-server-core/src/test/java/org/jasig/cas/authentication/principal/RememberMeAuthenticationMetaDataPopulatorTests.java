@@ -46,7 +46,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     @Test
-    public void testWithTrueRememberMeCredentials() {
+    public void verifyWithTrueRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         final AuthenticationBuilder builder = newBuilder(c);
@@ -56,7 +56,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testWithFalseRememberMeCredentials() {
+    public void verifyWithFalseRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         final AuthenticationBuilder builder = newBuilder(c);
@@ -66,7 +66,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testWithoutRememberMeCredentials() {
+    public void verifyWithoutRememberMeCredentials() {
         final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 

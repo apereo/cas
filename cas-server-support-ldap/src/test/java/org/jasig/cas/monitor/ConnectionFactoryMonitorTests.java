@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link ConnectionFactoryMonitor} class.
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/ldap-monitor-test.xml"})
@@ -38,7 +39,7 @@ public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
     private ConnectionFactoryMonitor monitor;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 }
