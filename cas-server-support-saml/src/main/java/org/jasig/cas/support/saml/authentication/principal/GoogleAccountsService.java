@@ -39,11 +39,13 @@ import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.core.Subject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jdom.Element;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -141,9 +143,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final String assertionConsumerServiceUrl =
-                document.getRootElement().getAttributeValue("AssertionConsumerServiceURL");
-        final String requestId = document.getRootElement().getAttributeValue("ID");
+        final Element root = document.getRootElement();
+        final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
+        final String requestId = root.getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
                 relayState, requestId, privateKey, publicKey, servicesManager);

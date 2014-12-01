@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -31,22 +31,22 @@ import org.junit.Test;
 public class SimpleServiceTests {
 
     @Test
-    public void testProperId() {
+    public void verifyProperId() {
         assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils.getService().getId());
     }
 
     @Test
-    public void testEqualsWithNull() {
-        assertFalse("Service matches null.", TestUtils.getService().equals(null));
+    public void verifyEqualsWithNull() {
+        assertNotEquals("Service matches null.", TestUtils.getService(), null);
     }
 
     @Test
-    public void testEqualsWithBadClass() {
+    public void verifyEqualsWithBadClass() {
         assertFalse("Services matches String class.", TestUtils.getService().equals(new Object()));
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
     }
 }

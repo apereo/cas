@@ -51,13 +51,13 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
         assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void testTGTWithSameId() throws Exception {
+    public void verifyTGTWithSameId() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -66,7 +66,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testTGTThatIsExpired() throws Exception {
+    public void verifyTGTThatIsExpired() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -76,7 +76,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testTGTWithDifferentId() throws Exception {
+    public void verifyTGTWithDifferentId() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);

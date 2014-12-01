@@ -34,12 +34,12 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for {@link GenericSuccessViewAction}
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public class GenericSuccessViewActionTests {
 
-
     @Test
-    public void testValidPrincipal() throws InvalidTicketException {
+    public void verifyValidPrincipal() throws InvalidTicketException {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
         final Authentication authn = mock(Authentication.class);
         when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal("cas"));
@@ -56,7 +56,7 @@ public class GenericSuccessViewActionTests {
     }
 
     @Test
-    public void testPrincipalCanNotBeDetemined() throws InvalidTicketException {
+    public void verifyPrincipalCanNotBeDetemined() throws InvalidTicketException {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
         when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenThrow(new InvalidTicketException("TGT-1"));
         final GenericSuccessViewAction action = new GenericSuccessViewAction(cas);
