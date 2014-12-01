@@ -55,7 +55,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
+    public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
@@ -70,7 +70,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveMethodWithDefaultUsernameAttribute() {
+    public void execSaveMethodWithDefaultUsernameAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");
         r.setServiceId("testId");
@@ -82,7 +82,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveMethodWithDefaultPrincipalAttribute() {
+    public void ensureSaveMethodWithDefaultPrincipalAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithDefaultPrincipalAttribute");
         r.setServiceId("testId");
@@ -93,7 +93,7 @@ public class JsonServiceRegistryDaoTests {
         assertEquals(r2, r);
     }
     @Test
-    public void testSaveMethodWithDefaultAnonymousAttribute() {
+    public void verifySaveMethodWithDefaultAnonymousAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithDefaultAnonymousAttribute");
         r.setServiceId("testId");
