@@ -13,11 +13,11 @@ To get a better understanding of the OAuth/OpenID protocol support in CAS, [see 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-oauth</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-oauth</artifactId>
+  <version>${cas.version}</version>
+</dependency>
 {% endhighlight %}
 
 #Configuration
