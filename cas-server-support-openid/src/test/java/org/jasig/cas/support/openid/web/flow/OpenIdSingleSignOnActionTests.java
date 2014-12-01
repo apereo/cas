@@ -95,7 +95,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoTgt() throws Exception {
+    public void verifyNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(),
@@ -104,7 +104,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoService() throws Exception {
+    public void verifyNoService() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -118,7 +118,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testBadUsername() throws Exception {
+    public void verifyBadUsername() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("openid.identity", "fablah");
@@ -135,7 +135,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testSuccessfulServiceTicket() throws Exception {
+    public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final Authentication authentication = TestUtils.getAuthentication("scootman28");

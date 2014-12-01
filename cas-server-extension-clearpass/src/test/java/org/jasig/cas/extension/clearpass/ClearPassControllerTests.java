@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
  * Tests for {@link org.jasig.cas.extension.clearpass.ClearPassController}.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 3.5.0
  */
 public class ClearPassControllerTests {
 
@@ -56,7 +57,7 @@ public class ClearPassControllerTests {
     }
 
     @Test
-    public void testClearPassWithNoUsername() throws Exception {
+    public void verifyClearPassWithNoUsername() throws Exception {
         final ClearPassController controller = new ClearPassController(this.map);
         final ModelAndView mv = controller.handleRequestInternal(new MockHttpServletRequest(),
                 new MockHttpServletResponse());
@@ -65,7 +66,7 @@ public class ClearPassControllerTests {
     }
 
     @Test
-    public void testClearPassWithUsernameMissingInCache() throws Exception {
+    public void verifyClearPassWithUsernameMissingInCache() throws Exception {
         final ClearPassController controller = new ClearPassController(this.map);
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteUser("casuser");
@@ -76,7 +77,7 @@ public class ClearPassControllerTests {
     }
 
     @Test
-    public void testClearPassSuccess() throws Exception {
+    public void verifyClearPassSuccess() throws Exception {
         final ClearPassController controller = new ClearPassController(this.map);
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteUser("casuser");

@@ -37,7 +37,7 @@ extends AbstractX509CertificateTests {
     private final X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
@@ -45,13 +45,13 @@ extends AbstractX509CertificateTests {
     }
 
     @Test
-    public void testSupport() {
+    public void verifySupport() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    public void testSupportFalse() {
+    public void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
