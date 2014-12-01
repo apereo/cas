@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String CONTEXT = <span class="jxr_string">"/oauth2.0/"</span>;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      @Test
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testWrongMethod() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyWrongMethod() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT + <span class="jxr_string">"wrongmethod"</span>);
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">final</strong> OAuth20WrapperController oauth20WrapperController = <strong class="jxr_keyword">new</strong> OAuth20WrapperController();

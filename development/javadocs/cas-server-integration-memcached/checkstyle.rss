@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>
-      <title>File: 10,
+      <title>File: 12,
              Errors: 0,
              Warnings: 0,
              Infos: 0
@@ -46,20 +46,6 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer.java">org/jasig/cas/ticket/registry/support/kryo/serial/SimpleWebApplicationServiceSerializer.java</a>
                 </td>
                 <td>
@@ -74,7 +60,35 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.FieldHelper.java">org/jasig/cas/ticket/registry/support/kryo/FieldHelper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistry.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistry.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.support.kryo.KryoTranscoderTests.java">org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.java</a>
                 </td>
                 <td>
                   0
@@ -145,6 +159,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.monitor.MemcachedMonitor.java">org/jasig/cas/monitor/MemcachedMonitor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-integration-memcached//checkstyle.html#org.jasig.cas.ticket.registry.MemCacheTicketRegistryTests.java">org/jasig/cas/ticket/registry/MemCacheTicketRegistryTests.java</a>
                 </td>
                 <td>
                   0

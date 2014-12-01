@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>
-      <title>File: 5,
+      <title>File: 10,
              Errors: 0,
              Warnings: 0,
              Infos: 0
@@ -44,6 +44,34 @@ under the License.
             </tr>
           </thead>
           <tbody>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential.java">org/jasig/cas/adaptors/trusted/authentication/principal/PrincipalBearingCredential.java</a>
@@ -89,6 +117,48 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver.java">org/jasig/cas/adaptors/trusted/authentication/principal/PrincipalBearingPrincipalResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandlerTests.java">org/jasig/cas/adaptors/trusted/authentication/handler/support/PrincipalBearingCredentialsAuthenticationHandlerTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentialsToPrincipalResolverTests.java">org/jasig/cas/adaptors/trusted/authentication/principal/PrincipalBearingCredentialsToPrincipalResolverTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentialsTests.java">org/jasig/cas/adaptors/trusted/authentication/principal/PrincipalBearingCredentialsTests.java</a>
                 </td>
                 <td>
                   0

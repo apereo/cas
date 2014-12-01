@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Test
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTgtIsExpiredByHardTimeOut() <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTgtIsExpiredByHardTimeOut() <strong class="jxr_keyword">throws</strong> InterruptedException {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>           <em class="jxr_comment">// keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>           <strong class="jxr_keyword">while</strong> (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>                   &lt; (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      }
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Test
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTgtIsExpiredBySlidingWindow() <strong class="jxr_keyword">throws</strong> InterruptedException {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyTgtIsExpiredBySlidingWindow() <strong class="jxr_keyword">throws</strong> InterruptedException {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          ticketGrantingTicket.grantServiceTicket(<span class="jxr_string">"test"</span>, TestUtils.getService(), expirationPolicy, false);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          assertFalse(ticketGrantingTicket.isExpired());
