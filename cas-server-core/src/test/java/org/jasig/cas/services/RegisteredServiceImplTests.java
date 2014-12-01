@@ -46,6 +46,14 @@ public class RegisteredServiceImplTests {
 
     private boolean expected;
 
+    public RegisteredServiceImplTests(
+            final RegisteredServiceImpl service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -71,19 +79,8 @@ public class RegisteredServiceImplTests {
         });
     }
 
-
-    public RegisteredServiceImplTests(
-            final RegisteredServiceImpl service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
-
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

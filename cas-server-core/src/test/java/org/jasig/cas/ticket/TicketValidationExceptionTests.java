@@ -37,7 +37,7 @@ public class TicketValidationExceptionTests {
     private Service service = TestUtils.getService();
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final TicketValidationException t = new TicketValidationException(this.service);
 
         assertSame(CODE, t.getCode());

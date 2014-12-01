@@ -38,14 +38,14 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertTrue(this.resolver.supports(new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"))));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
     }
 
     @Test
-    public void testReturnedPrincipal() {
+    public void verifyReturnedPrincipal() {
         assertEquals("test", this.resolver.resolve(
                 new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"))).getId());
     }

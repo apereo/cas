@@ -37,14 +37,14 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
-    public void testNonNullPrincipal() throws Exception {
+    public void verifyNonNullPrincipal() throws Exception {
         final PrincipalBearingCredential credentials = new PrincipalBearingCredential(
                 new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         final PrincipalBearingCredential credentials =
                 new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));

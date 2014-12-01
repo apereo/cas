@@ -36,7 +36,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class WebUtilTests {
 
     @Test
-    public void testFindService() {
+    public void verifyFindService() {
         final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
@@ -51,7 +51,7 @@ public class WebUtilTests {
     }
 
     @Test
-    public void testFoundNoService() {
+    public void verifyFoundNoService() {
         final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
                 openIdArgumentExtractor};

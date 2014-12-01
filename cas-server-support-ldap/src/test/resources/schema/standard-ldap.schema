@@ -1634,76 +1634,12 @@ objectClasses: ( 1.3.6.1.4.1.4203.1.4.7
 ##############################
 # Registered Service Schema
 ##############################
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casServiceUrlPattern'
-    EQUALITY caseIgnoreMatch
-    SUBSTR caseIgnoreSubstringsMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    SINGLE-VALUE
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casServiceEnabled'
-    EQUALITY booleanMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    SINGLE-VALUE
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casServiceSsoEnabled'
-    EQUALITY booleanMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    SINGLE-VALUE
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 1.3.6.1.4.1.854.115.121.1.5
-    NAME 'casServiceProxyPolicy'
-    EQUALITY octetStringMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.5
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casServiceTheme'
-    EQUALITY caseIgnoreMatch
-    SUBSTR caseIgnoreSubstringsMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    SINGLE-VALUE
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 1.3.6.1.4.1.1466.51.121.1.5
-    NAME 'casUsernameAttributeProvider'
-    EQUALITY octetStringMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.5
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 1.3.6.1.4.1.1466.50.121.1.5
-    NAME 'casAttributeReleasePolicy'
-    EQUALITY octetStringMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.5
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casEvaluationOrder'
-    EQUALITY integerMatch
-    SUBSTR integerOrderingMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    SINGLE-VALUE
-    X-ORIGIN 'RFC 2798' )
-attributeTypes: ( 2.16.840.1.8745.3.1.241
-    NAME 'casRequiredHandlers'
-    EQUALITY caseIgnoreMatch
-    SUBSTR caseIgnoreSubstringsMatch
-    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-    X-ORIGIN 'RFC 2798' )
 objectClasses: ( 1.6.7.9.0.1.4563.1.4.7
   NAME 'casRegisteredService'
   SUP top
   STRUCTURAL
   MUST ( uid $
-         casServiceUrlPattern $
-         cn $
-         description $
-         casServiceEnabled $
-         casServiceSsoEnabled $
-         casUsernameAttributeProvider $
-         casServiceTheme $
-         casEvaluationOrder $
-         casRequiredHandlers $
-         casAttributeReleasePolicy $
-         casServiceProxyPolicy )
+         description )
   X-ORIGIN 'RFC 3112' )
 ##############################
 # User Service Details Schema

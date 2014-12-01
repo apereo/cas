@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
-    public void testPrincipalResolution() {
+    public void verifyPrincipalResolution() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator("casrox"));
@@ -47,7 +47,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator("casrox"));
