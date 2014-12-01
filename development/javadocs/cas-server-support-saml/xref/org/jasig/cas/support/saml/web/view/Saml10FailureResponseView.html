@@ -26,10 +26,10 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.support.saml.web.view;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml1.core.Response;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml1.core.StatusCode;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml1.core.Response;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml1.core.StatusCode;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * Represents a failed attempt at validating a ticket, responding via a SAML SOAP message.</em>
@@ -42,7 +42,7 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      @Override
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> prepareResponse(<strong class="jxr_keyword">final</strong> Response response, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>          response.setStatus(<strong class="jxr_keyword">this</strong>.samlObjectBuilder.newStatus(StatusCode.REQUEST_DENIED, (String) model.get(<span class="jxr_string">"description"</span>)));
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>          response.setStatus(newStatus(StatusCode.REQUEST_DENIED, (String) model.get(<span class="jxr_string">"description"</span>)));
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      }
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  }
 </pre>

@@ -158,20 +158,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.util.LdapUtils.java">org/jasig/cas/util/LdapUtils.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
                 </td>
                 <td>
@@ -186,7 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.util.LdapUtils.java">org/jasig/cas/util/LdapUtils.java</a>
                 </td>
                 <td>
                   0
@@ -201,6 +187,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapRegisteredServiceMapper.java">org/jasig/cas/adaptors/ldap/services/LdapRegisteredServiceMapper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
                 </td>
                 <td>
                   0

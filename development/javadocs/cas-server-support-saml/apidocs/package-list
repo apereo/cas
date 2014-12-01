@@ -1,4 +1,3 @@
-org.jasig.cas.support.saml
 org.jasig.cas.support.saml.authentication
 org.jasig.cas.support.saml.authentication.principal
 org.jasig.cas.support.saml.util
