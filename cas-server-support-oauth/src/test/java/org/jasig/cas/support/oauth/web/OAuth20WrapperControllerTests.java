@@ -36,7 +36,7 @@ public class OAuth20WrapperControllerTests {
     private static final String CONTEXT = "/oauth2.0/";
 
     @Test
-    public void testWrongMethod() throws Exception {
+    public void verifyWrongMethod() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + "wrongmethod");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();

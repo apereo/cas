@@ -121,10 +121,10 @@ public final class OAuthUtils {
     public static String addParameter(final String url, final String name, final String value) {
         final StringBuilder sb = new StringBuilder();
         sb.append(url);
-        if (url.indexOf("?") >= 0) {
-            sb.append("&");
+        if (url.indexOf('?') >= 0) {
+            sb.append('&');
         } else {
-            sb.append("?");
+            sb.append('?');
         }
         sb.append(name);
         sb.append("=");

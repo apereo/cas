@@ -40,6 +40,7 @@ import java.util.Collection;
  * Utility class used by all tests that provision and deprovision LDAP test data.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public final class LdapTestUtils {
     /** Placeholder for base DN in LDIF files. */

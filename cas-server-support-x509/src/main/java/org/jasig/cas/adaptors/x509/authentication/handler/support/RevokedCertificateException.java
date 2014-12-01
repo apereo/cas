@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +86,11 @@ public final class RevokedCertificateException extends GeneralSecurityException 
          * @return the reason
          */
         public static Reason fromCode(final int code) {
-            for (int i = 0; i < Reason.values().length; i++) {
+            final Reason[] reasons = Reason.values();
+
+            for (int i = 0; i < reasons.length; i++) {
                 if (i == code) {
-                    return Reason.values()[i];
+                    return reasons[i];
                 }
             }
             throw new IllegalArgumentException("Unknown CRL reason code.");
@@ -95,7 +98,7 @@ public final class RevokedCertificateException extends GeneralSecurityException 
     }
 
     /** The revocation date. */
-    private final Date revocationDate;
+    private final DateTime revocationDate;
 
     /** The serial. */
     private final BigInteger serial;
@@ -121,7 +124,7 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      * @param reason the reason
      */
     public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
-        this.revocationDate = revoked;
+        this.revocationDate = new DateTime(revoked);
         this.serial = serial;
         this.reason = reason;
     }
@@ -160,8 +163,8 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      *
      * @return Returns the revocationDate.
      */
-    public Date getRevocationDate() {
-        return this.revocationDate;
+    public DateTime getRevocationDate() {
+        return this.revocationDate == null ? null : new DateTime(this.revocationDate);
     }
 
     /**
