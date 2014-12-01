@@ -44,12 +44,12 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testObserveUnknown() throws Exception {
+    public void verifyObserveUnknown() throws Exception {
         assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
     }
 
     @Test
-    public void testObserveOk() throws Exception {
+    public void verifyObserveOk() throws Exception {
         final Set<Monitor> monitors = new HashSet<Monitor>();
         monitors.add(new MemoryMonitor());
         monitors.add(newSessionMonitor());
@@ -58,7 +58,7 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testObserveWarn() throws Exception {
+    public void verifyObserveWarn() throws Exception {
         final Set<Monitor> monitors = new HashSet<Monitor>();
         final MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.setFreeMemoryWarnThreshold(100);
@@ -69,7 +69,7 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testThrowsUncheckedException() throws Exception {
+    public void verifyThrowsUncheckedException() throws Exception {
         final Monitor throwsUnchecked = new Monitor() {
             @Override
             public String getName() {

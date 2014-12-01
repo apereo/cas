@@ -34,6 +34,7 @@ import java.util.Collection;
  * Unit test for {@link org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver}.
  *
  * @author Dmitriy Kopylenko
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
@@ -79,7 +80,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

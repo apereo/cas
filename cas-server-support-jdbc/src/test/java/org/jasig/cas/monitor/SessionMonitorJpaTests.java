@@ -63,7 +63,7 @@ public class SessionMonitorJpaTests {
 
     @Test
     @Rollback(false)
-    public void testObserveOkJpaTicketRegistry() throws Exception {
+    public void verifyObserveOkJpaTicketRegistry() throws Exception {
         addTicketsToRegistry(this.jpaRegistry, 5, 5);
         assertEquals(10, this.jpaRegistry.getTickets().size());
         this.monitor.setTicketRegistry(this.jpaRegistry);

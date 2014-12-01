@@ -30,23 +30,23 @@ import org.junit.Test;
 public final class SimplePrincipalTests  {
 
     @Test
-    public void testProperId() {
+    public void verifyProperId() {
         final String id = "test";
         assertEquals(id, new SimplePrincipal(id).getId());
     }
 
     @Test
-    public void testEqualsWithNull() {
+    public void verifyEqualsWithNull() {
         assertFalse(new SimplePrincipal("test").equals(null));
     }
 
     @Test
-    public void testEqualsWithBadClass() {
+    public void verifyEqualsWithBadClass() {
         assertFalse(new SimplePrincipal("test").equals("test"));
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         assertTrue(new SimplePrincipal("test").equals(new SimplePrincipal(
             "test")));
     }

@@ -68,7 +68,7 @@ public final class ClientAuthenticationHandlerTests {
     }
     
     @Test
-    public void testOk() throws GeneralSecurityException, PreventedException {
+    public void verifyOk() throws GeneralSecurityException, PreventedException {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);
@@ -78,7 +78,7 @@ public final class ClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void testOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
+    public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
         this.handler.setTypedIdUsed(false);
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
@@ -89,7 +89,7 @@ public final class ClientAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testNoProfile() throws GeneralSecurityException, PreventedException {
+    public void verifyNoProfile() throws GeneralSecurityException, PreventedException {
         this.handler.authenticate(this.clientCredential);
     }
 }

@@ -25,7 +25,6 @@ import org.junit.BeforeClass;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
@@ -36,14 +35,14 @@ import java.util.Collection;
  * Base class for LDAP tests that provision and deprovision DIRECTORY data as part of test setup/teardown.
  * @author Marvin S. Addison
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public abstract class AbstractLdapTests implements ApplicationContextAware {
-
-    private ApplicationContext context;
+    private static InMemoryTestLdapDirectoryServer DIRECTORY;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static InMemoryTestLdapDirectoryServer DIRECTORY;
+    private ApplicationContext context;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -74,7 +73,7 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) {
         this.context = applicationContext;
     }
 }

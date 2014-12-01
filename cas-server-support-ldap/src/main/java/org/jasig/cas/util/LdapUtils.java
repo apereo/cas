@@ -73,7 +73,7 @@ public final class LdapUtils {
      * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute) {
-        return getBoolean(ctx, attribute, false);
+        return getBoolean(ctx, attribute, Boolean.FALSE);
     }
 
     /**
