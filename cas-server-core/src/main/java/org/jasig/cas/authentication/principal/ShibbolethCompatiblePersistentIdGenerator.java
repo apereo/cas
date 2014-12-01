@@ -80,6 +80,10 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
         LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
     }
 
+    public byte[] getSalt() {
+        return salt;
+    }
+
     @Override
     public String generate(final Principal principal, final Service service) {
         try {

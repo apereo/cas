@@ -34,7 +34,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -105,7 +104,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * The logout type of the service. 
      * The default logout type is the back channel one.
      */
-    @Transient
+    @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
