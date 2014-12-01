@@ -78,7 +78,7 @@ public class GoogleAccountsServiceTests {
               + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
               + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
               + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
-        request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(SAMLRequest));
+        request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "RelayStateAddedHere");
 
         final RegisteredService regSvc = mock(RegisteredService.class);
