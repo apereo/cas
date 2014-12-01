@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link RegexRegisteredService}.
  *
  * @author Marvin S. Addison
+ * @since 3.4.0
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
@@ -43,6 +44,14 @@ public class RegexRegisteredServiceTests {
 
     private boolean expected;
 
+    public RegexRegisteredServiceTests(
+            final RegexRegisteredService service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -101,19 +110,8 @@ public class RegexRegisteredServiceTests {
         });
     }
 
-
-    public RegexRegisteredServiceTests(
-            final RegexRegisteredService service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
-
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

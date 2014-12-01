@@ -42,12 +42,12 @@ import java.util.Map;
  * Mock ticket-granting ticket.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
+    public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private static final long serialVersionUID = 6546995681334670659L;
-
-    public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private final String id;
 

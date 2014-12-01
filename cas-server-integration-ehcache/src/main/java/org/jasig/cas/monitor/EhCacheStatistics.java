@@ -21,7 +21,7 @@ package org.jasig.cas.monitor;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.statistics.StatisticsGateway;
-
+import org.apache.commons.lang3.StringUtils;
 import java.util.Formatter;
 
 /**
@@ -114,8 +114,9 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public void toString(final StringBuilder builder) {
-        if (getName() != null) {
-            builder.append(getName()).append(':');
+        final String name = this.getName();
+        if (StringUtils.isNotBlank(name)) {
+            builder.append(name).append(':');
         }
         final int free = getPercentFree();
         final Formatter formatter = new Formatter(builder);

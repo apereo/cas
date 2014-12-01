@@ -19,14 +19,14 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class ImmutableAuthenticationTests {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void testImmutable() {
+    public void verifyImmutable() {
         final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());
@@ -56,7 +56,7 @@ public class ImmutableAuthenticationTests {
         final Map<String, Class<? extends Exception>> failures = new HashMap<String, Class<? extends Exception>>();
         failures.put("handler2", FailedLoginException.class);
         final ImmutableAuthentication auth = new ImmutableAuthentication(
-                new Date(),
+                new DateTime(),
                 credentials,
                 new DefaultPrincipalFactory().createPrincipal("test"),
                 attributes,

@@ -50,7 +50,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     @Test
-    public void testDeleteService() {
+    public void verifyDeleteService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
@@ -67,7 +67,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertEquals("name", modelAndView.getModelMap().get("serviceName"));
     }
 
-    public void testDeleteServiceNoService() {
+    public void verifyDeleteServiceNoService() {
 
         final ModelAndView modelAndView = this.controller.deleteRegisteredService(1200);
         assertNotNull(modelAndView);
@@ -76,7 +76,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertEquals("", modelAndView.getModelMap().get("serviceName"));
     }
 
-    public void testManage() {
+    public void verifyManage() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");

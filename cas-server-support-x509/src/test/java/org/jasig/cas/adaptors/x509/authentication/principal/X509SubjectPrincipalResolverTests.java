@@ -34,6 +34,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link X509SubjectPrincipalResolver}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 @RunWith(Parameterized.class)
 public class X509SubjectPrincipalResolverTests {
@@ -118,7 +119,7 @@ public class X509SubjectPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

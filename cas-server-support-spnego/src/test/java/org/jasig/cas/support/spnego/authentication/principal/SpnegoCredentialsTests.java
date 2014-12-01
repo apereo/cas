@@ -24,17 +24,22 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+
+/**
+ * @author Misagh Moayyed
+ * @since 3.0.0
+ */
 public class SpnegoCredentialsTests {
 
     @Test
-    public void testToStringWithNoPrincipal() {
+    public void verifyToStringWithNoPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
 
         assertTrue(credentials.toString().contains("unknown"));
     }
 
     @Test
-    public void testToStringWithPrincipal() {
+    public void verifyToStringWithPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);

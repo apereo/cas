@@ -24,16 +24,20 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.junit.Test;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.0.0
+ */
 public class InvalidTicketExceptionTests {
 
     @Test
-    public void testCodeNoThrowable() {
+    public void verifyCodeNoThrowable() {
         final TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     @Test
-    public void testCodeWithThrowable() {
+    public void verifyCodeWithThrowable() {
         final AuthenticationException a = new BadCredentialsAuthenticationException();
         final TicketException t = new InvalidTicketException(a, "InvalidTicketId");
 

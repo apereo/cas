@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  * Base class for submission throttle tests.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
@@ -57,7 +58,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     }
 
     @Test
-    public void testThrottle() throws Exception {
+    public void verifyThrottle() throws Exception {
         final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
         getThrottle().setFailureRangeInSeconds(FAILURE_RANGE);
         getThrottle().setFailureThreshold(FAILURE_THRESHOLD);
