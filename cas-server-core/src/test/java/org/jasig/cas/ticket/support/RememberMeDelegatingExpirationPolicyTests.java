@@ -56,7 +56,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketExpirationWithRememberMe() {
+    public void verifyTicketExpirationWithRememberMe() {
         final Authentication authentication = TestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.<String, Object>singletonMap(
@@ -69,7 +69,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketExpirationWithoutRememberMe() {
+    public void verifyTicketExpirationWithoutRememberMe() {
         final Authentication authentication = TestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());

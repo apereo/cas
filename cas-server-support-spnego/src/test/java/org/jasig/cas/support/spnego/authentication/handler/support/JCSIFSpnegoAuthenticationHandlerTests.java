@@ -46,7 +46,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithDomainName() throws Exception {
+    public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(true);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
@@ -56,7 +56,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithoutDomainName() throws Exception {
+    public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(false);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
@@ -66,7 +66,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testUnsuccessfulAuthentication() throws Exception {
+    public void verifyUnsuccessfulAuthentication() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
         try {
@@ -79,14 +79,14 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertFalse(this.authenticationHandler.supports(null));
         assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
         assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void testGetSimpleCredentials() {
+    public void verifyGetSimpleCredentials() {
         final String myNtlmUser = "DOMAIN\\Username";
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";

@@ -51,7 +51,7 @@ public class AutowiringSchedulerFactoryBeanTests {
     }
 
     @Test
-    public void testAfterPropertiesSet() throws Exception {
+    public void verifyAfterPropertiesSet() throws Exception {
         assertEquals(1, this.scheduler.getTriggerGroupNames().size());
     }
 }

@@ -65,7 +65,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private ConnectionFactory connectionFactory;
 
     @NotNull
-    private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapServiceMapper();
+    private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
 
     @NotNull
     private String searchFilter;

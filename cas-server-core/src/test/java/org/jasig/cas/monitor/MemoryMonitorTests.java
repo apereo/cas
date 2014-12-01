@@ -31,12 +31,12 @@ import static org.junit.Assert.assertEquals;
 public class MemoryMonitorTests {
 
     @Test
-    public void testObserveOk() throws Exception {
+    public void verifyObserveOk() throws Exception {
         assertEquals(StatusCode.OK, new MemoryMonitor().observe().getCode());
     }
 
     @Test
-    public void testObserveWarn() throws Exception {
+    public void verifyObserveWarn() throws Exception {
         final MemoryMonitor monitor = new MemoryMonitor();
         monitor.setFreeMemoryWarnThreshold(100);
         assertEquals(StatusCode.WARN, monitor.observe().getCode());

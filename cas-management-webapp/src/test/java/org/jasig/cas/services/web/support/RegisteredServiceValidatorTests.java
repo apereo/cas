@@ -61,34 +61,34 @@ public class RegisteredServiceValidatorTests {
     }
     
     @Test
-    public void testIdExists() {
+    public void verifyIdExists() {
         checkId(true, 1, "test");
     }
 
     @Test
-    public void testIdDoesNotExist() {
+    public void verifyIdDoesNotExist() {
         checkId(false, 0, "test");
     }
 
     @Test
-    public void testIdDoesNotExist2() {
+    public void verifyIdDoesNotExist2() {
         checkId(true, 0, "test2");
     }
 
     @Test
-    public void testIdDoesNotExist3() {
+    public void verifyIdDoesNotExist3() {
         checkId(true, 1, "test");
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         final Validator validator = getValidator(false);
         assertTrue(validator.supports(RegisteredServiceImpl.class));
         assertFalse(validator.supports(Object.class));
     }
 
     @Test
-    public void testMaxLength() {
+    public void verifyMaxLength() {
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("test");
         impl.setDescription("fasdfdsafsafsafdsa");
