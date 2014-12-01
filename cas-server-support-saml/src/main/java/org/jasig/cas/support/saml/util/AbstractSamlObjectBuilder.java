@@ -64,6 +64,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
