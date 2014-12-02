@@ -70,7 +70,7 @@ public class CachingPrincipalAttributesRepositoryTests {
 
 
     @Test
-    public void testExpiredCachedAttributes() throws Exception {
+    public void checkExpiredCachedAttributes() throws Exception {
         assertEquals(this.principal.getAttributes().size(), 1);
         final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
                 TimeUnit.MILLISECONDS, 100);
@@ -84,7 +84,7 @@ public class CachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void testCachedAttributesWithUpdate() throws Exception {
+    public void ensureCachedAttributesWithUpdate() throws Exception {
         final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
                 TimeUnit.SECONDS, 5);
         assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());

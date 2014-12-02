@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
+import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -239,14 +240,15 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testLoadingOfJsonServiceFiles() throws Exception {
+    public void checkLoadingOfJsonServiceFiles() throws Exception {
         prepTests();
-        testSaveAttributeReleasePolicyAllowedAttrRulesWithCaching();
-        testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
+        verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching();
+        verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
         assertEquals(this.dao.load().size(), 2);
     }
+
     @Test
-    public void testSaveAttributeReleasePolicyAllowedAttrRulesWithCaching() {
+    public void verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesWithCaching");
         r.setServiceId("testId");
