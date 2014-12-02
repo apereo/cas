@@ -205,22 +205,23 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         PrincipalResolver resolver;
         for (final Credential credential : credentials) {
             found = false;
-            for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
-                if (handler.supports(credential)) {
+            for (final Map.Entry<AuthenticationHandler, PrincipalResolver> entry : this.handlerResolverMap.entrySet()) {
+                final AuthenticationHandler theHandler = entry.getKey();
+                if (theHandler.supports(credential)) {
                     found = true;
                     try {
-                        final HandlerResult result = handler.authenticate(credential);
-                        builder.addSuccess(handler.getName(), result);
-                        logger.info("{} successfully authenticated {}", handler.getName(), credential);
-                        resolver = this.handlerResolverMap.get(handler);
+                        final HandlerResult result = theHandler.authenticate(credential);
+                        builder.addSuccess(theHandler.getName(), result);
+                        logger.info("{} successfully authenticated {}", theHandler.getName(), credential);
+                        resolver = entry.getValue();
                         if (resolver == null) {
                             principal = result.getPrincipal();
                             logger.debug(
                                     "No resolver configured for {}. Falling back to handler principal {}",
-                                    handler.getName(),
+                                    theHandler.getName(),
                                     principal);
                         } else {
-                            principal = resolvePrincipal(handler.getName(), resolver, credential);
+                            principal = resolvePrincipal(theHandler.getName(), resolver, credential);
                         }
                         // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
                         // require principal to be non-null
@@ -231,12 +232,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             return builder;
                         }
                     } catch (final GeneralSecurityException e) {
-                        logger.info("{} failed authenticating {}", handler.getName(), credential);
-                        logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
-                        builder.addFailure(handler.getName(), e.getClass());
+                        logger.info("{} failed authenticating {}", theHandler.getName(), credential);
+                        logger.debug("{} exception details: {}", theHandler.getName(), e.getMessage());
+                        builder.addFailure(theHandler.getName(), e.getClass());
                     } catch (final PreventedException e) {
-                        logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
-                        builder.addFailure(handler.getName(), e.getClass());
+                        logger.error("{}: {}  (Details: {})", theHandler.getName(), e.getMessage(), e.getCause().getMessage());
+                        builder.addFailure(theHandler.getName(), e.getClass());
                     }
                 }
             }
