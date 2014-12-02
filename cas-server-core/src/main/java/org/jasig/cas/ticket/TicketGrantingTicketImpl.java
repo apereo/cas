@@ -153,11 +153,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        final Map<String, Service> map = new HashMap<String, Service>(services.size());
-        for (final String ticket : services.keySet()) {
-            map.put(ticket, services.get(ticket));
-        }
-        return Collections.unmodifiableMap(map);
+        return Collections.unmodifiableMap(this.services);
     }
 
     /**
