@@ -48,7 +48,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** The logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
+    /**
+     * The Principal factory.
+     */
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */

@@ -65,7 +65,7 @@ public class WiringTests {
     }
 
     @Test
-    public void testPrincipalFactory() throws Exception {
+    public void checkPrincipalFactory() throws Exception {
         final DefaultPrincipalFactory factory1 =
                 applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
         final DefaultPrincipalFactory factory2 =
