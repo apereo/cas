@@ -134,8 +134,9 @@ public final class LogoutManagerImpl implements LogoutManager {
             // through all services
             for (final Map.Entry<String, Service> entry : services.entrySet()) {
                 // it's a SingleLogoutService, else ignore
-                if (entry.getValue() instanceof SingleLogoutService) {
-                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) entry.getValue(), entry.getKey());
+                final Service service = entry.getValue();
+                if (service instanceof SingleLogoutService) {
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
                     if (logoutRequest != null) {
                         logoutRequests.add(logoutRequest);
                     }
