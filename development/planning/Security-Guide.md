@@ -168,7 +168,7 @@ single sign-out shortcomings:
 
 SLO can happen in two ways: from the CAS server (back-channel logout) and/or from the browser (front-channel logout).  
 For back-channel logout, the SLO process relies on the `SimpleHttpClient` class which has a threads pool: its size must be defined to properly treat all the logout requests.  
-Additional not-already-processed logout requests are temporarly stored in a queue before being sent: its size is defined to 20% of the global capacity of the threads pool and can be adjusted.  
+Additional not-already-processed logout requests are temporarily stored in a queue before being sent: its size is defined to 20% of the global capacity of the threads pool and can be adjusted.  
 Both sizes are critical settings of the CAS system and their values should never exceed the real capacity of the CAS server.
 
 
