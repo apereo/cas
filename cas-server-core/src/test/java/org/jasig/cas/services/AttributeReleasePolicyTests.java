@@ -23,12 +23,10 @@ import org.jasig.cas.authentication.principal.CachingPrincipalAttributesReposito
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -39,9 +37,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Attribute filtering policy tests.
@@ -150,7 +146,7 @@ public class AttributeReleasePolicyTests {
     }
 
     @Test
-    public void testServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
+    public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
 
         final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();

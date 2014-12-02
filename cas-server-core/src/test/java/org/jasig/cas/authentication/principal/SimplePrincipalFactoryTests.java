@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class SimplePrincipalFactoryTests {
     @Test
-    public void testPrincipalCreation() {
+    public void checkPrincipalCreation() {
         final PrincipalFactory fact = new DefaultPrincipalFactory();
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("a1", "v1");
