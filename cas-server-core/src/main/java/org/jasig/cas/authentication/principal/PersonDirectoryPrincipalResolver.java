@@ -93,7 +93,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final List<Object> values = entry.getValue();
-            if (entry.getKey().equalsIgnoreCase(this.principalAttributeName)) {
+            final String key = entry.getKey();
+            if (key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
                 } else {
@@ -104,7 +105,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                             this.principalAttributeName);
                 }
             } else {
-                convertedAttributes.put(entry.getKey(), values.size() == 1 ? values.get(0) : values);
+                convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         }
         return new SimplePrincipal(principalId, convertedAttributes);
