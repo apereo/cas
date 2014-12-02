@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2004 - 2014 Jasig</copyright>
     <item>
-      <title>File: 27,
+      <title>File: 24,
              Errors: 0,
              Warnings: 0,
              Infos: 0
@@ -46,7 +46,21 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressAuthenticationHandler.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration.java">org/jasig/cas/authentication/support/LdapPasswordPolicyConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.PooledConnectionFactoryMonitor.java">org/jasig/cas/monitor/PooledConnectionFactoryMonitor.java</a>
                 </td>
                 <td>
                   0
@@ -74,7 +88,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.AllTestsSuite.java">org/jasig/cas/AllTestsSuite.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.UpnSearchEntryResolver.java">org/jasig/cas/authentication/support/UpnSearchEntryResolver.java</a>
                 </td>
                 <td>
                   0
@@ -88,7 +102,21 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper.java">org/jasig/cas/adaptors/ldap/services/DefaultLdapRegisteredServiceMapper.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.userdetails.LdapUserDetailsServiceTests.java">org/jasig/cas/userdetails/LdapUserDetailsServiceTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.AllTestsSuite.java">org/jasig/cas/AllTestsSuite.java</a>
                 </td>
                 <td>
                   0
@@ -116,6 +144,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDaoTests.java">org/jasig/cas/persondir/LdapPersonAttributeDaoTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.AbstractLdapTests.java">org/jasig/cas/adaptors/ldap/AbstractLdapTests.java</a>
                 </td>
                 <td>
@@ -130,7 +172,35 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper.java">org/jasig/cas/adaptors/ldap/services/DefaultLdapRegisteredServiceMapper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.LdapAuthenticationHandler.java">org/jasig/cas/authentication/LdapAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDao.java">org/jasig/cas/persondir/LdapPersonAttributeDao.java</a>
                 </td>
                 <td>
                   0
@@ -186,7 +256,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressCredential.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressCredential.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
                 </td>
                 <td>
                   0
@@ -214,35 +284,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDao.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.LdapAuthenticationHandlerTests.java">org/jasig/cas/authentication/LdapAuthenticationHandlerTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.remote.RemoteAddressNonInteractiveCredentialsAction.java">org/jasig/cas/adaptors/ldap/remote/RemoteAddressNonInteractiveCredentialsAction.java</a>
                 </td>
                 <td>
                   0
@@ -298,90 +340,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration.java">org/jasig/cas/authentication/support/LdapPasswordPolicyConfiguration.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.PooledConnectionFactoryMonitor.java">org/jasig/cas/monitor/PooledConnectionFactoryMonitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.UpnSearchEntryResolver.java">org/jasig/cas/authentication/support/UpnSearchEntryResolver.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.userdetails.LdapUserDetailsServiceTests.java">org/jasig/cas/userdetails/LdapUserDetailsServiceTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDaoTests.java">org/jasig/cas/persondir/LdapPersonAttributeDaoTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDao.java">org/jasig/cas/persondir/LdapPersonAttributeDao.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDaoTests.java">org/jasig/cas/adaptors/ldap/services/LdapServiceRegistryDaoTests.java</a>
                 </td>
                 <td>
@@ -396,7 +354,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler.java">org/jasig/cas/authentication/support/OptionalWarningAccountStateHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.ConnectionFactoryMonitorTests.java">org/jasig/cas/monitor/ConnectionFactoryMonitorTests.java</a>
                 </td>
                 <td>
                   0
@@ -410,7 +368,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.ConnectionFactoryMonitorTests.java">org/jasig/cas/monitor/ConnectionFactoryMonitorTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler.java">org/jasig/cas/authentication/support/OptionalWarningAccountStateHandler.java</a>
                 </td>
                 <td>
                   0
