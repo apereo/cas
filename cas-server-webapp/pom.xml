@@ -42,7 +42,6 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
@@ -51,6 +50,11 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
       <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-security-filter</artifactId>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
