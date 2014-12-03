@@ -18,19 +18,26 @@
  */
 package org.jasig.cas.authentication;
 
-import javax.security.auth.login.FailedLoginException;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
+
+
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.junit.Test;
+
+import javax.security.auth.login.FailedLoginException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Unit test for {@link PolicyBasedAuthenticationManager}.
  *
  * @author Marvin S. Addison
+ * @author Martin Baumgartner
  * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManagerTests {
@@ -126,6 +133,41 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
     }
+    
+    @Test
+    public void verifyAuthenticateMergeAttributesFalse() throws Exception {
+    	Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
+    	handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
+        final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
+        policy.setTryAll(true);
+        manager.setAuthenticationPolicy(policy);
+        final Authentication auth = manager.authenticate(mock(Credential.class));
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(0, auth.getFailures().size());
+        assertEquals(1, auth.getCredentials().size());
+        assertEquals(1, auth.getPrincipal().getAttributes().size());
+        assertEquals(false, auth.getPrincipal().getAttributes().keySet().contains("attr1"));
+        assertEquals(true, auth.getPrincipal().getAttributes().keySet().contains("attr2"));
+    }
+    
+    @Test
+    public void verifyAuthenticateMergeAttributesTrue() throws Exception {
+    	Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
+    	handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
+        manager.setMergePrincipalAttributes(true);
+        final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
+        policy.setTryAll(true);
+        manager.setAuthenticationPolicy(policy);
+        final Authentication auth = manager.authenticate(mock(Credential.class));
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(0, auth.getFailures().size());
+        assertEquals(1, auth.getCredentials().size());
+        assertEquals(2, auth.getPrincipal().getAttributes().size());
+        assertEquals(true, auth.getPrincipal().getAttributes().keySet().contains("attr1"));
+        assertEquals(true, auth.getPrincipal().getAttributes().keySet().contains("attr2"));
+    }
 
     /**
      * Creates a new mock authentication handler that either successfully validates all credentials or fails to
@@ -157,15 +199,31 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
+        	Map<String, Object> attributes = new HashMap<>();
+            attributes.put("attr1", "value1");
             final HandlerResult result = new HandlerResult(
                     mock,
                     mock(CredentialMetaData.class),
-                    new SimplePrincipal("nobody"));
+                    new SimplePrincipal("nobody", attributes));
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
         }
         return mock;
     }
-
+    
+    /**
+     * Creates a new mock principalResolver 
+     *
+     * @return New mock principal resolver instance.
+     */
+    private static PrincipalResolver newPrincipalResolver(){
+    	final PrincipalResolver mock = mock(PrincipalResolver.class);
+    	when(mock.supports(any(Credential.class))).thenReturn(true);
+		Map<String, Object> attributes = new HashMap<>();
+        attributes.put("attr2", "value2");
+    	Principal principal = new SimplePrincipal("nobody", attributes);
+    	when(mock.resolve(any(Credential.class))).thenReturn(principal);
+    	return mock; 
+    }
 }
