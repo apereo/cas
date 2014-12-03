@@ -55,6 +55,7 @@ import java.util.Map;
  * This is the response builder for Saml1 Protocol.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Martin Baumgartner
  * @since 4.1
  */
 public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
@@ -224,6 +225,10 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }
+            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).size() == 1 && ((Collection<?>) e.getValue()).contains(null) ) {
+                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                continue;
+            }          
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
             attribute.setAttributeNamespace(attributeNamespace);
