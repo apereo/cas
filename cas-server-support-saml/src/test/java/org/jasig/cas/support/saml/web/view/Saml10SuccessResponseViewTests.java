@@ -41,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @auther Martin Baumgartner
  * @since 3.1
  *
  */
@@ -63,6 +64,7 @@ public class Saml10SuccessResponseViewTests {
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
+        attributes.put("testEmptyAttribute", null);
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();
@@ -91,6 +93,7 @@ public class Saml10SuccessResponseViewTests {
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
         assertTrue(written.contains("AuthenticationMethod"));
         assertTrue(written.contains("AssertionID"));
+        assertFalse(written.contains("testEmptyAttribute"));
     }
 
     @Test

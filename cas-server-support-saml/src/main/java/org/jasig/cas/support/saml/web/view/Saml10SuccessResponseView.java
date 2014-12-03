@@ -61,6 +61,7 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @auther Martin Baumgartner
  * @since 3.1
  */
 public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
@@ -157,6 +158,10 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
         for (final Entry<String, Object> e : attributes.entrySet()) {
+            if (e.getValue() == null){
+            	logger.info("Skipping attribute {} because it does not have any value.", e.getKey());
+            	continue;
+            }
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
