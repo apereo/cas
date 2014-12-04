@@ -85,20 +85,22 @@
           p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"  abstract="true"
-          c:readTimeout="${http.client.read.timeout:5000}"
-          c:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
-          c:redirectsEnabled="false" c:circularRedirectsAllowed="false"  />
+    <!-- HTTP clients -->
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" abstract="true"
+        p:readTimeout="${http.client.read.timeout:5000}"
+        p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="trustStoreSslSocketFactory"
-          class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
-          c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
-          c:trustStorePassword="${http.client.truststore.psw:changeit}" />
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
+        p:redirectsEnabled="false" p:circularRedirectsAllowed="false" />
 
-    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" parent="httpClient"
-          c:sslSocketFactory-ref="trustStoreSslSocketFactory" />
+    <bean id="trustStoreSslSocketFactory" class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
+        c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
+        c:trustStorePassword="${http.client.truststore.psw:changeit}" />
+
+    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+         parent="httpClient" p:sslSocketFactory-ref="trustStoreSslSocketFactory" />
+
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
