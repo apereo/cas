@@ -37,7 +37,7 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.proxy.ProxyHandler;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.SimpleHttpClient;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.CasArgumentExtractor;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController = <strong class="jxr_keyword">new</strong> ServiceValidateController();
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> Cas20ProxyHandler proxyHandler = <strong class="jxr_keyword">new</strong> Cas20ProxyHandler();
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          proxyHandler.setHttpClient(<strong class="jxr_keyword">new</strong> SimpleHttpClient());
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          proxyHandler.setHttpClient(<strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean().getObject());
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setProxyHandler(proxyHandler);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setApplicationContext(context);
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setArgumentExtractor(<strong class="jxr_keyword">new</strong> CasArgumentExtractor());

@@ -53,6 +53,7 @@ org.jasig.cas.ticket.registry.support.kryo
 org.jasig.cas.ticket.support
 org.jasig.cas.userdetails
 org.jasig.cas.util
+org.jasig.cas.util.http
 org.jasig.cas.util.ldap.uboundid
 org.jasig.cas.validation
 org.jasig.cas.web
