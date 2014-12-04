@@ -159,8 +159,8 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         attrStatement.setSubject(subject);
         for (final Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() == null){
-            	logger.info("Skipping attribute {} because it does not have any value.", e.getKey());
-            	continue;
+                logger.info("Skipping attribute {} because it does not have any value.", e.getKey());
+                continue;
             }
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
