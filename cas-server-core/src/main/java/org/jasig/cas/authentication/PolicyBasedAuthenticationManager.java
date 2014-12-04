@@ -241,7 +241,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                     principal);
                         } else {
                             principal = resolvePrincipal(handler.getName(), resolver, credential);
-                            Principal handlerPrincipal = result.getPrincipal();
+                            final Principal handlerPrincipal = result.getPrincipal();
                             if (mergePrincipalAttributes && principal != null && handlerPrincipal != null) {
                                 final Map<String, Object> attributes = new HashMap<String, Object>();
                                 attributes.putAll(handlerPrincipal.getAttributes());
