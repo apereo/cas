@@ -241,11 +241,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                     principal);
                         } else {
                             principal = resolvePrincipal(handler.getName(), resolver, credential);
-                            if(mergePrincipalAttributes && principal != null && result.getPrincipal() != null){
+                            Principal handlerPrincipal = result.getPrincipal();
+                            if (mergePrincipalAttributes && principal != null && handlerPrincipal != null) {
                                 final Map<String, Object> attributes = new HashMap<String, Object>();
-                                attributes.putAll(result.getPrincipal().getAttributes());
+                                attributes.putAll(handlerPrincipal.getAttributes());
                                 attributes.putAll(principal.getAttributes());
-                                principal = new SimplePrincipal(result.getPrincipal().getId(), attributes);
+                                principal = new SimplePrincipal(handlerPrincipal.getId(), attributes);
                             }
                         }
                         // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
