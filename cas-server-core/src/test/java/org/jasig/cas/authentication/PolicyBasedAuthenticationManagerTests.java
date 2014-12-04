@@ -136,8 +136,8 @@ public class PolicyBasedAuthenticationManagerTests {
     
     @Test
     public void verifyAuthenticateMergeAttributesFalse() throws Exception {
-    	Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
-    	handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
+        final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
         policy.setTryAll(true);
@@ -153,8 +153,8 @@ public class PolicyBasedAuthenticationManagerTests {
     
     @Test
     public void verifyAuthenticateMergeAttributesTrue() throws Exception {
-    	Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
-    	handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
+        final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
         manager.setMergePrincipalAttributes(true);
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
@@ -199,7 +199,7 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
-        	Map<String, Object> attributes = new HashMap<>();
+            final Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("attr1", "value1");
             final HandlerResult result = new HandlerResult(
                     mock,
@@ -213,17 +213,17 @@ public class PolicyBasedAuthenticationManagerTests {
     }
     
     /**
-     * Creates a new mock principalResolver 
+     * Creates a new mock principalResolver
      *
      * @return New mock principal resolver instance.
      */
     private static PrincipalResolver newPrincipalResolver(){
-    	final PrincipalResolver mock = mock(PrincipalResolver.class);
-    	when(mock.supports(any(Credential.class))).thenReturn(true);
-		Map<String, Object> attributes = new HashMap<>();
+        final PrincipalResolver mock = mock(PrincipalResolver.class);
+        when(mock.supports(any(Credential.class))).thenReturn(true);
+        final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("attr2", "value2");
-    	Principal principal = new SimplePrincipal("nobody", attributes);
-    	when(mock.resolve(any(Credential.class))).thenReturn(principal);
-    	return mock; 
+        final Principal principal = new SimplePrincipal("nobody", attributes);
+        when(mock.resolve(any(Credential.class))).thenReturn(principal);
+        return mock; 
     }
 }

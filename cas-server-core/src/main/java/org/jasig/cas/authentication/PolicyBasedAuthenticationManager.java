@@ -93,13 +93,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
     /**
-     * Merge principal attributes from handler and resolver
+     * Merge principal attributes from handler and resolver.
      * resolver-Attributes will override existing handler-attributes
-     * default is false for backward-compatibility 
+     * default is false for backward-compatibility
      */ 
-    private boolean mergePrincipalAttributes = false; 
+    private boolean mergePrincipalAttributes; 
 
-	/**
+    /**
      * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
      * listed order for supported credentials. This form may only be used by authentication handlers that
      * resolve principals during the authentication process.
@@ -196,11 +196,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /**
      * Sets the mergePrincipalAttributes flag.
      *
-     * @param boolean.
+     * @param mergePrincipalAttributes boolean.
      */
-	public void setMergePrincipalAttributes(boolean mergePrincipalAttributes) {
-		this.mergePrincipalAttributes = mergePrincipalAttributes;
-	}
+    public void setMergePrincipalAttributes(final boolean mergePrincipalAttributes) {
+        this.mergePrincipalAttributes = mergePrincipalAttributes;
+    }
 
     /**
      * Follows the same contract as {@link AuthenticationManager#authenticate(Credential...)}.
@@ -242,10 +242,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                         } else {
                             principal = resolvePrincipal(handler.getName(), resolver, credential);
                             if(mergePrincipalAttributes){
-    							Map<String, Object> attributes = new HashMap<>();
-    							attributes.putAll(result.getPrincipal().getAttributes());
-    							attributes.putAll(principal.getAttributes());
-    							principal = new SimplePrincipal(result.getPrincipal().getId(), attributes);
+                                final Map<String, Object> attributes = new HashMap<String, Object>();
+                                attributes.putAll(result.getPrincipal().getAttributes());
+                                attributes.putAll(principal.getAttributes());
+                                principal = new SimplePrincipal(result.getPrincipal().getId(), attributes);
                             }
                         }
                         // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
