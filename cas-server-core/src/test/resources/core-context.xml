@@ -52,9 +52,8 @@
             value-ref="uniqueTicketIdGenerator"/>
     </util:map>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          c:readTimeout="5000"
-          c:connectionTimeout="5000" />
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+        p:readTimeout="5000" p:connectionTimeout="5000" />
           
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
