@@ -95,9 +95,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /**
      * Merge principal attributes from handler and resolver.
      * resolver-Attributes will override existing handler-attributes
-     * default is false for backward-compatibility
+     * default is true
      */ 
-    private boolean mergePrincipalAttributes; 
+    private boolean mergePrincipalAttributes = true;
 
     /**
      * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
@@ -196,7 +196,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /**
      * Sets the mergePrincipalAttributes flag.
      *
-     * @param mergePrincipalAttributes boolean.
+     * @param mergePrincipalAttributes Set to false to ignore {@link AuthenticationHandler} attributes. 
      */
     public void setMergePrincipalAttributes(final boolean mergePrincipalAttributes) {
         this.mergePrincipalAttributes = mergePrincipalAttributes;
@@ -241,7 +241,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                     principal);
                         } else {
                             principal = resolvePrincipal(handler.getName(), resolver, credential);
-                            if(mergePrincipalAttributes){
+                            if(mergePrincipalAttributes && principal != null && result.getPrincipal() != null){
                                 final Map<String, Object> attributes = new HashMap<String, Object>();
                                 attributes.putAll(result.getPrincipal().getAttributes());
                                 attributes.putAll(principal.getAttributes());

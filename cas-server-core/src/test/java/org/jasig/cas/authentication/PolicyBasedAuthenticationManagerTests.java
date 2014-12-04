@@ -139,6 +139,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
         handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
+        manager.setMergePrincipalAttributes(false);
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
         policy.setTryAll(true);
         manager.setAuthenticationPolicy(policy);
@@ -156,7 +157,6 @@ public class PolicyBasedAuthenticationManagerTests {
         final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap = new HashMap<AuthenticationHandler, PrincipalResolver>();
         handlerResolverMap.put(newMockHandler("HandlerA", true), newPrincipalResolver());
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(handlerResolverMap);
-        manager.setMergePrincipalAttributes(true);
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
         policy.setTryAll(true);
         manager.setAuthenticationPolicy(policy);
