@@ -220,23 +220,25 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
-            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
-                continue;
-            }
-            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).size() == 1
-                    && ((Collection<?>) e.getValue()).contains(null)) {
-                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
-                continue;
-            }
+            //            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
+            //                // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
+            //                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+            //                continue;
+            //            }
+            //            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).size() == 1
+            //                    && ((Collection<?>) e.getValue()).contains(null)) {
+            //                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+            //                continue;
+            //            }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
             attribute.setAttributeNamespace(attributeNamespace);
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
                 for (final Object value : c) {
-                    attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
+                    if (value != null) {
+                        attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
+                    }
                 }
             } else {
                 attribute.getAttributeValues().add(newAttributeValue(e.getValue(), AttributeValue.DEFAULT_ELEMENT_NAME));

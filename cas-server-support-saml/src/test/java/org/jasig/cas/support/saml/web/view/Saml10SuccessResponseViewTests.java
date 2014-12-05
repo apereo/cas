@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.support.saml.web.view;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
@@ -34,18 +37,33 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensaml.Configuration;
+import org.opensaml.saml1.core.Attribute;
+import org.opensaml.saml1.core.AttributeStatement;
+import org.opensaml.saml1.core.AuthenticationStatement;
+import org.opensaml.saml1.core.Response;
+import org.opensaml.saml1.core.Subject;
+import org.opensaml.ws.soap.soap11.Envelope;
+import org.opensaml.xml.io.Unmarshaller;
+import org.opensaml.xml.io.UnmarshallerFactory;
+import org.opensaml.xml.io.UnmarshallingException;
+import org.opensaml.xml.parse.BasicParserPool;
+import org.opensaml.xml.parse.XMLParserException;
+import org.opensaml.xml.schema.XSAny;
+import org.opensaml.xml.schema.XSString;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -111,14 +129,21 @@ public class Saml10SuccessResponseViewTests {
         assertTrue(written.contains("testPrincipal"));
         assertTrue(written.contains("testAttribute"));
         assertTrue(written.contains("testValue"));
-        assertFalse(written.contains("testEmptyCollection"));
+        //        assertFalse(written.contains("testEmptyCollection")); // would fail
         assertTrue(written.contains("testAttributeCollection"));
         assertTrue(written.contains("tac1"));
         assertTrue(written.contains("tac2"));
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
         assertTrue(written.contains("AuthenticationMethod"));
         assertTrue(written.contains("AssertionID"));
-        assertFalse(written.contains("testEmptyAttribute"));
+
+        final Map<String, Object> validatedAttributes = validateSamlResponse(written);
+
+        assertEquals("testValue", validatedAttributes.get("testAttribute"));
+        assertTrue(((Collection<?>) validatedAttributes.get("testEmptyCollection")).size() == 0);
+        assertTrue(((Collection<?>) validatedAttributes.get("testEmptyAttribute")).size() == 0);
+        assertTrue(((Collection<?>) validatedAttributes.get("testAttributeCollection")).contains("tac1"));
+        assertTrue(((Collection<?>) validatedAttributes.get("testAttributeCollection")).contains("tac2"));
     }
 
     @Test
@@ -180,5 +205,80 @@ public class Saml10SuccessResponseViewTests {
         assertTrue(written.contains("authnAttribute2"));
         assertTrue(written.contains(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
         assertTrue(written.contains("urn:oasis:names:tc:SAML:1.0:am:unspecified"));
+    }
+
+    private Map<String, Object> validateSamlResponse(final String response) throws XMLParserException, UnmarshallingException {
+        final BasicParserPool basicParserPool = new BasicParserPool();
+        basicParserPool.setNamespaceAware(true);
+        Document responseDocument;
+        responseDocument = basicParserPool.parse(new ByteArrayInputStream(response.getBytes()));
+        final Element responseRoot = responseDocument.getDocumentElement();
+        final UnmarshallerFactory unmarshallerFactory = Configuration.getUnmarshallerFactory();
+        final Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(responseRoot);
+        final Envelope envelope = (Envelope) unmarshaller.unmarshall(responseRoot);
+        final Response samlResponse = (Response) envelope.getBody().getOrderedChildren().get(0);
+
+        final List<org.opensaml.saml1.core.Assertion> assertions = samlResponse.getAssertions();
+        if (assertions.isEmpty()) {
+            throw new RuntimeException("No assertions found.");
+        }
+        final Map<String, Object> personAttributes = new HashMap<String, Object>();
+
+        for (final org.opensaml.saml1.core.Assertion assertion : assertions) {
+
+            final AuthenticationStatement authenticationStatement = getSamlAuthenticationStatement(assertion);
+
+            if (authenticationStatement == null) {
+                throw new RuntimeException("No AuthentiationStatement found in SAML Assertion.");
+            }
+            final Subject subject = authenticationStatement.getSubject();
+
+            if (subject == null) {
+                throw new RuntimeException("No Subject found in SAML Assertion.");
+            }
+
+            final List<Attribute> attributes = getAttributesFor(assertion, subject);
+            for (final Attribute samlAttribute : attributes) {
+                final List<?> values = getValuesFrom(samlAttribute);
+                personAttributes.put(samlAttribute.getAttributeName(), values.size() == 1 ? values.get(0) : values);
+            }
+        }
+        return personAttributes;
+    }
+
+    private AuthenticationStatement getSamlAuthenticationStatement(final org.opensaml.saml1.core.Assertion assertion) {
+        final List<AuthenticationStatement> statements = assertion.getAuthenticationStatements();
+
+        if (statements.isEmpty()) {
+            return null;
+        }
+
+        return statements.get(0);
+    }
+
+    private List<?> getValuesFrom(final Attribute attribute) {
+        final List<Object> list = new ArrayList<Object>();
+        for (final Object o : attribute.getAttributeValues()) {
+            if (o instanceof XSAny) {
+                list.add(((XSAny) o).getTextContent());
+            } else if (o instanceof XSString) {
+                list.add(((XSString) o).getValue());
+            } else {
+                list.add(o.toString());
+            }
+        }
+        return list;
+    }
+
+    private List<Attribute> getAttributesFor(final org.opensaml.saml1.core.Assertion assertion, final Subject subject) {
+        final List<Attribute> attributes = new ArrayList<Attribute>();
+        for (final AttributeStatement attribute : assertion.getAttributeStatements()) {
+            if (subject.getNameIdentifier().getNameIdentifier()
+                    .equals(attribute.getSubject().getNameIdentifier().getNameIdentifier())) {
+                attributes.addAll(attribute.getAttributes());
+            }
+        }
+
+        return attributes;
     }
 }
