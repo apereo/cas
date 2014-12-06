@@ -149,6 +149,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
+     * Unlike {@link Collections#unmodifiableMap(java.util.Map<? extends K, ? extends V>)},
+     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
+     * contains its own data and will never change.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
