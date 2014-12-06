@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -153,7 +154,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        return Collections.unmodifiableMap(this.services);
+        return ImmutableMap.copyOf(this.services);
     }
 
     /**
