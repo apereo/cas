@@ -312,6 +312,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      */
     private byte[] consumeByteSourceOrNull(final ByteSource source) {
         try {
+            if (source == null || source.isEmpty()) {
+                return null;
+            }
             return source.read();
         } catch (final IOException e) {
             logger.warn("Could not consume the byte array source", e);
