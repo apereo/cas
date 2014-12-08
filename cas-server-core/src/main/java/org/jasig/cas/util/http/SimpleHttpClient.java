@@ -18,16 +18,8 @@
  */
 package org.jasig.cas.util.http;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -48,6 +40,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+
 /**
  * The type Simple http client.
  *
@@ -64,7 +66,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
     /** the acceptable codes supported by this client. */
-    private final int[] acceptableCodes;
+    private final List<Integer> acceptableCodes;
 
     /** the HTTP client for this client. */
     private final CloseableHttpClient httpClient;
@@ -81,7 +83,7 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      */
     public SimpleHttpClient(final int[] acceptableCodes, final CloseableHttpClient httpClient,
             final FutureRequestExecutionService requestExecutorService) {
-        this.acceptableCodes = acceptableCodes;
+        this.acceptableCodes = ImmutableList.copyOf(Ints.asList(acceptableCodes));
         this.httpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
     }
