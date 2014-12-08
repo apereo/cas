@@ -252,11 +252,11 @@
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>             id = username;
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>         }
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributeMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Object&gt;(<strong class="jxr_keyword">this</strong>.principalAttributeMap.size());
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">for</strong> (String ldapAttrName : <strong class="jxr_keyword">this</strong>.principalAttributeMap.keySet()) {
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">final</strong> LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; ldapAttr : <strong class="jxr_keyword">this</strong>.principalAttributeMap.entrySet()) {
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">final</strong> LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">if</strong> (attr != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>                 logger.debug(<span class="jxr_string">"Found principal attribute: {}"</span>, attr);
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>                 <strong class="jxr_keyword">final</strong> String principalAttrName = <strong class="jxr_keyword">this</strong>.principalAttributeMap.get(ldapAttrName);
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>                 <strong class="jxr_keyword">final</strong> String principalAttrName = ldapAttr.getValue();
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>                 <strong class="jxr_keyword">if</strong> (attr.size() &gt; 1) {
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>                     attributeMap.put(principalAttrName, attr.getStringValues());
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>                 } <strong class="jxr_keyword">else</strong> {

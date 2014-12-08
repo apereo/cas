@@ -67,19 +67,20 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToRelease = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;(p.getAttributes().size());
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; resolvedAttributes = p.getAttributes();
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String attribute : <strong class="jxr_keyword">this</strong>.allowedAttributes.keySet()) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">final</strong> Object value = resolvedAttributes.get(attribute);
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>              <strong class="jxr_keyword">if</strong> (value != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>                  <strong class="jxr_keyword">final</strong> String mappedAttributeName = <strong class="jxr_keyword">this</strong>.allowedAttributes.get(attribute);
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  logger.debug(<span class="jxr_string">"Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]"</span>,
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                          attribute, mappedAttributeName);
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  attributesToRelease.put(mappedAttributeName, value);
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>              }
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">return</strong> attributesToRelease;
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      }
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry : <strong class="jxr_keyword">this</strong>.allowedAttributes.entrySet()) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">final</strong> String key = entry.getKey();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">final</strong> Object value = resolvedAttributes.get(key);
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">if</strong> (value != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  <strong class="jxr_keyword">final</strong> String mappedAttributeName = entry.getValue();
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  logger.debug(<span class="jxr_string">"Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]"</span>,
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                          key, mappedAttributeName);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  attributesToRelease.put(mappedAttributeName, value);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          }
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">return</strong> attributesToRelease;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
