@@ -245,8 +245,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         /** Database column name that holds expiration date. */
         @Temporal(TemporalType.TIMESTAMP)
         @Column(name="expiration_date")
-        private Date expirationDate;
-
+        private DateTime expirationDate;
 
         /**
          * @return the applicationId
@@ -287,7 +286,7 @@ public class JpaLockingStrategy implements LockingStrategy {
          * @param expirationDate the expirationDate to set
          */
         public void setExpirationDate(final Date expirationDate) {
-            this.expirationDate = expirationDate;
+            this.expirationDate = new DateTime(expirationDate.getTime());
         }
     }
 }
