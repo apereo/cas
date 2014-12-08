@@ -18,11 +18,12 @@
  */
 package org.jasig.cas;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default
@@ -75,7 +76,7 @@ public class Message implements Serializable {
     }
 
     public Serializable[] getParams() {
-        return this.params;
+        return ImmutableList.copyOf(this.params).toArray(new Serializable[this.params.length]);
     }
 
     @Override
