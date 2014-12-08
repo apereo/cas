@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import com.google.common.collect.ImmutableList;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.authentication.AbstractCredential;
 
@@ -52,7 +53,7 @@ public final class X509CertificateCredential extends AbstractCredential {
     }
 
     public X509Certificate[] getCertificates() {
-        return this.certificates;
+        return ImmutableList.copyOf(this.certificates).toArray(new X509Certificate[this.certificates.length]);
     }
 
     public void setCertificate(final X509Certificate certificate) {
