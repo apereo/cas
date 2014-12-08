@@ -49,7 +49,7 @@ public final class X509CertificateCredential extends AbstractCredential {
      * @param certificates the certificates
      */
     public X509CertificateCredential(final X509Certificate[] certificates) {
-        this.certificates = certificates;
+        this.certificates = ImmutableList.copyOf(certificates).toArray(new X509Certificate[certificates.length]);
     }
 
     public X509Certificate[] getCertificates() {
@@ -69,7 +69,7 @@ public final class X509CertificateCredential extends AbstractCredential {
         X509Certificate cert = null;
         if (this.certificate != null) {
             cert = this.certificate;
-        } else if (this.certificates != null && this.certificates.length > 0) {
+        } else if (this.certificates.length > 0) {
             cert = this.certificates[0];
         }
 
