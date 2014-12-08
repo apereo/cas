@@ -58,7 +58,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Misagh Moayyed
  * @since 3.1
  */
-public final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
+final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4949380008568071855L;
@@ -81,9 +81,9 @@ public final class SimpleHttpClient implements HttpClient, Serializable, Disposa
      * @param httpClient the HTTP client used by the client
      * @param requestExecutorService the request executor service used by the client
      */
-    public SimpleHttpClient(final int[] acceptableCodes, final CloseableHttpClient httpClient,
+    public SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
             final FutureRequestExecutionService requestExecutorService) {
-        this.acceptableCodes = ImmutableList.copyOf(Ints.asList(acceptableCodes));
+        this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
         this.httpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
     }

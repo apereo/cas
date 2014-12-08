@@ -110,7 +110,7 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     /** List of HTTP status codes considered valid by the caller. */
     @NotNull
     @Size(min = 1)
-    private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
+    private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
     @Min(0)
     private int connectionTimeout = DEFAULT_TIMEOUT;
@@ -168,7 +168,7 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     private boolean redirectsEnabled = true;
 
     /**
-     * The executor service used to create a {@link #requestExecutionService}.
+     * The executor service used to create a {@link #buildRequestExecutorService}.
      */
     private ExecutorService executorService;
 
@@ -310,11 +310,11 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     }
 
     public List<Integer> getAcceptableCodes() {
-        return ImmutableList.copyOf(Ints.asList(this.acceptableCodes));
+        return ImmutableList.copyOf(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = acceptableCodes;
+        this.acceptableCodes = Ints.asList(acceptableCodes);
     }
 
     public int getConnectionTimeout() {
