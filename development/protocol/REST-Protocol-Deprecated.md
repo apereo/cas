@@ -6,7 +6,7 @@ title: CAS - CAS REST Protocol (Deprecated)
 #REST Protocol
 The REST protocol allows one to model applications as users, programmatically acquiring service tickets to authenticate to other applications. This means that other applications would be able to use a CAS client  to accept Service Tickets rather than to rely upon another technology such as client SSL certificates for application-to-application authentication of requests. This is achieved by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
-<div class="alert alert-danger"><strong>Deprecated Module!</strong><p>Note that the instructions in this document refer to a deprecated REST module. Please <a href='Rest-Protocol.html'>use this document instead</a> if you plan to turn on the CAS server's REST API.</p></div>
+<div class="alert alert-danger"><strong>Deprecated Module!</strong><p>Note that the instructions in this document refer to a deprecated REST module. Please <a href='REST-Protocol.html'>use this document instead</a> if you plan to turn on the CAS server's REST API.</p></div>
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support only soberly and with due consideration of security aspects.</p></div>
 
