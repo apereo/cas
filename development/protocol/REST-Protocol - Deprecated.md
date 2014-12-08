@@ -1,62 +1,51 @@
 ---
 layout: default
-title: CAS - CAS REST Protocol
+title: CAS - CAS REST Protocol (Deprecated)
 ---
 
-# REST Protocol
+#REST Protocol
 The REST protocol allows one to model applications as users, programmatically acquiring service tickets to authenticate to other applications. This means that other applications would be able to use a CAS client  to accept Service Tickets rather than to rely upon another technology such as client SSL certificates for application-to-application authentication of requests. This is achieved by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
+
+<div class="alert alert-danger"><strong>Deprecated Module!</strong><p>Note that the instructions in this document refer to a deprecated REST module. Please [use this document instead](Rest-Protocol.html) if you plan to turn on the CAS server's REST API.</p></div>
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support only soberly and with due consideration of security aspects.</p></div>
 
-# Components
+#Components
 By default the CAS RESTful API is configured in the `restlet-servlet.xml`, which contains the routing for the tickets. It also defines the resources that will resolve the URLs. The `TicketResource` defined by default (which can be extended) accepts username/password.
 
 Support is enabled by including the following in your `pom.xml` file:
 
-
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-rest</artifactId>
+    <artifactId>cas-server-integration-restlet</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
 {% endhighlight %}
 
-REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/‎).
+REST support is currently provided internally by the [Restlet framework](http://restlet.org/‎).
 
 
 #Configuration
 To turn on the protocol, add the following to the `web.xml`:
 
 {% highlight xml %}
-    <servlet-mapping>
-        <servlet-name>cas</servlet-name>
-        <url-pattern>/v1/*</url-pattern>
-    </servlet-mapping>
-{% endhighlight %}
+<servlet>
+    <servlet-name>restlet</servlet-name>
+    <servlet-class>org.restlet.ext.spring.RestletFrameworkServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+ 
+<servlet-mapping>
+    <servlet-name>restlet</servlet-name>
+    <url-pattern>/v1/*</url-pattern>
+</servlet-mapping>
 
-
-...or delete the `web.xml` in the overlay altogether if there are no other customizations there as this mapping is provided by CAS' webapp module's `web.xml` out of the box.
-
-Please note that if there are local customizations in overlay's `web.xml`, the following `contextConfigLocation` `<context-param>` must also be added in order to enable the new REST module: `classpath*:/META-INF/spring/*.xml`. So the entire context-param block would look like this:
-
-{% highlight xml %}
-<context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>
-      /WEB-INF/spring-configuration/*.xml
-      /WEB-INF/deployerConfigContext.xml
-      classpath*:/META-INF/spring/*.xml
-    </param-value>
-</context-param>
 {% endhighlight %}
 
 #Protocol
 
-
 ##Request a Ticket Granting Ticket
-
 
 ###Sample Request
 {% highlight bash %}
