@@ -19,7 +19,6 @@
 package org.jasig.cas.util.http;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;

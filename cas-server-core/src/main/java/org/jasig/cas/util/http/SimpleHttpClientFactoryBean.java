@@ -20,7 +20,6 @@ package org.jasig.cas.util.http;
 
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
