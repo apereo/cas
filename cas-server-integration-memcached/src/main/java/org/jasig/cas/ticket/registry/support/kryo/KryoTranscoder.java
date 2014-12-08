@@ -124,8 +124,8 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // Register other types
         if (serializerMap != null) {
-            for (final Class<?> clazz : serializerMap.keySet()) {
-                kryo.register(clazz, serializerMap.get(clazz));
+            for (final Map.Entry<Class<?>, Serializer> clazz : serializerMap.entrySet()) {
+                kryo.register(clazz.getKey(), clazz.getValue());
             }
         }
 
