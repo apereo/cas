@@ -8,7 +8,7 @@ The REST protocol allows one to model applications as users, programmatically ac
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support only soberly and with due consideration of security aspects.</p></div>
 
-<div class="alert alert-info"><strong>Restlet Module</strong><p>If you are looking for the Restlet implementation of the CAS REST API, you will find the instructions [here in this document](Rest-Protocol - Deprecated.html).</p></div>
+<div class="alert alert-info"><strong>Restlet Module</strong><p>If you are looking for the Restlet implementation of the CAS REST API, you will find the instructions <a href="Rest-Protocol - Deprecated.html">here in this document</a>.</p></div>
 
 # Components
 By default the CAS RESTful API is configured in the `restlet-servlet.xml`, which contains the routing for the tickets. It also defines the resources that will resolve the URLs. The `TicketResource` defined by default (which can be extended) accepts username/password.
@@ -32,10 +32,10 @@ REST support is currently provided internally by the [Spring framework](http://s
 To turn on the protocol, add the following to the `web.xml`:
 
 {% highlight xml %}
-    <servlet-mapping>
-        <servlet-name>cas</servlet-name>
-        <url-pattern>/v1/*</url-pattern>
-    </servlet-mapping>
+<servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/v1/*</url-pattern>
+</servlet-mapping>
 {% endhighlight %}
 
 
