@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.monitor;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Describes meaningful health metrics on the status of a cache.
  *
@@ -59,7 +61,7 @@ public class CacheStatus extends Status {
      * @return Cache statistics.
      */
     public CacheStatistics[] getStatistics() {
-        return this.statistics;
+        return ImmutableList.copyOf(this.statistics).toArray(new CacheStatistics[this.statistics.length]);
     }
 
 
