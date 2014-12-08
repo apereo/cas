@@ -20,8 +20,10 @@ package org.jasig.cas.util.http;
 
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,6 +33,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -305,8 +309,8 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
     }
 
-    public int[] getAcceptableCodes() {
-        return this.acceptableCodes;
+    public List<Integer> getAcceptableCodes() {
+        return ImmutableList.copyOf(Ints.asList(this.acceptableCodes));
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
