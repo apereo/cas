@@ -21,6 +21,7 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -67,15 +68,14 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * This class relies on an external configuration to clean it up. It ignores the threshold data in the parent class.
      */
     public final void decrementCounts() {
-        final Set<String> keys = this.ipMap.keySet();
+        final Set<Map.Entry<String, Date>> keys = this.ipMap.entrySet();
         logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final Date now = new Date();
-        String key;
-        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-            key = iter.next();
-            if (submissionRate(now, this.ipMap.get(key)) < getThresholdRate()) {
-                logger.trace("Removing entry for key {}", key);
+        for (final Iterator<Map.Entry<String, Date>> iter = keys.iterator(); iter.hasNext();) {
+            final Map.Entry<String, Date> entry = iter.next();
+            if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
+                logger.trace("Removing entry for key {}", entry.getKey());
                 iter.remove();
             }
         }

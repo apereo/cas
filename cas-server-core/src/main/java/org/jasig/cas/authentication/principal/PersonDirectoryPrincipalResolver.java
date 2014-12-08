@@ -91,8 +91,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
 
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
-        for (final String key : attributes.keySet()) {
-            final List<Object> values = attributes.get(key);
+        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+            final String key = entry.getKey();
+            final List<Object> values = entry.getValue();
             if (key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);

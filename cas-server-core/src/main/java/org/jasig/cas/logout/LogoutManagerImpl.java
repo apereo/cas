@@ -133,11 +133,11 @@ public final class LogoutManagerImpl implements LogoutManager {
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
             // through all services
-            for (final String ticketId : services.keySet()) {
-                final Service service = services.get(ticketId);
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
                 // it's a SingleLogoutService, else ignore
+                final Service service = entry.getValue();
                 if (service instanceof SingleLogoutService) {
-                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, ticketId);
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
                     if (logoutRequest != null) {
                         logoutRequests.add(logoutRequest);
                     }
