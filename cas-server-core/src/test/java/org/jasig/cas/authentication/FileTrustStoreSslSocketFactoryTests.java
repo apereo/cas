@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.util.http.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -41,7 +41,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
-        final SimpleHttpClient client = clientFactory.getObject();
+        final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
     }
 
@@ -51,7 +51,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
-        final SimpleHttpClient client = clientFactory.getObject();
+        final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
     }
 
@@ -73,7 +73,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
-        final SimpleHttpClient client = clientFactory.getObject();
+        final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
     @Test
@@ -82,7 +82,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
-        final SimpleHttpClient client = clientFactory.getObject();
+        final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 }
