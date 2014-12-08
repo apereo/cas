@@ -79,23 +79,24 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      * @return Statistics for all available hosts.
      */
     protected CacheStatistics[] getStatistics() {
-        long evictions;
-        long size;
-        long capacity;
-        String name;
-        Map<String, String> statsMap;
+
+
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
         final List<CacheStatistics> statsList = new ArrayList<CacheStatistics>();
-        for (final SocketAddress address : allStats.keySet()) {
-            statsMap = allStats.get(address);
+        for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
+            final SocketAddress key = entry.getKey();
+            final Map<String, String> statsMap = entry.getValue();
+
             if (statsMap.size() > 0) {
-                size = Long.parseLong(statsMap.get("bytes"));
-                capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                evictions = Long.parseLong(statsMap.get("evictions"));
-                if (address instanceof InetSocketAddress) {
-                    name = ((InetSocketAddress) address).getHostName();
+                final long size = Long.parseLong(statsMap.get("bytes"));
+                final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                final long evictions = Long.parseLong(statsMap.get("evictions"));
+
+                String name;
+                if (key instanceof InetSocketAddress) {
+                    name = ((InetSocketAddress) key).getHostName();
                 } else {
-                    name = address.toString();
+                    name = key.toString();
                 }
                 statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
             }
