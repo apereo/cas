@@ -267,7 +267,7 @@
                 </plugins>
                 <includeFilterFile>${cs.dir}/findbugs-rules.xml</includeFilterFile>
                 <effort>Max</effort>
-                <failOnError>false</failOnError>
+                <failOnError>true</failOnError>
             </configuration>
             <executions>
                 <execution>
