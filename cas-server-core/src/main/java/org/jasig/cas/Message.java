@@ -76,6 +76,9 @@ public class Message implements Serializable {
     }
 
     public Serializable[] getParams() {
+        if (this.params == null) {
+            return null;
+        }
         return ImmutableList.copyOf(this.params).toArray(new Serializable[this.params.length]);
     }
 

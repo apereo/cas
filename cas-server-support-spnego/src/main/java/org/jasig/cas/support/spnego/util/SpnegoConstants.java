@@ -19,10 +19,7 @@
 package org.jasig.cas.support.spnego.util;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.ByteSource;
 import com.google.common.primitives.Bytes;
-
-import java.util.Collection;
 
 /**
  * Spnego Constants.
