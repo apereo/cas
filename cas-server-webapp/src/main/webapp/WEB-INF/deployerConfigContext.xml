@@ -173,7 +173,7 @@
             </property>
             -->
 
-            <!-- 
+            <!--
             <property name="attributeReleasePolicy">
                 <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
                     <property name="allowedAttributes">
@@ -185,6 +185,11 @@
                     </property>
                     <property name="attributeFilter">
                         <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
+                    </property>
+                    <property name="principalAttributesRepository">
+                        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+                              c:attributeRepository-ref="attributeRepository"
+                              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
                     </property>
                 </bean>
             </property>
