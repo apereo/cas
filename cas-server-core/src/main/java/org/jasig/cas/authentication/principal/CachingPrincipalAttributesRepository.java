@@ -237,9 +237,9 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
         }
 
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
-        for (final String key : attributes.keySet()) {
-            final List<Object> values = attributes.get(key);
-            convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
+        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+            final List<Object> values = entry.getValue();
+            convertedAttributes.put(entry.getKey(), values.size() == 1 ? values.get(0) : values);
         }
         return convertedAttributes;
     }
