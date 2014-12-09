@@ -11,7 +11,7 @@ The REST protocol allows one to model applications as users, programmatically ac
 <div class="alert alert-info"><strong>Restlet Module</strong><p>If you are looking for the Restlet implementation of the CAS REST API, you will find the instructions <a href="REST-Protocol-Deprecated.html">here in this document</a>.</p></div>
 
 # Components
-By default the CAS RESTful API is configured in the `restlet-servlet.xml`, which contains the routing for the tickets. It also defines the resources that will resolve the URLs. The `TicketResource` defined by default (which can be extended) accepts username/password.
+By default the CAS REST API is configured to add routing for the tickets. It also defines the resources that will resolve the URLs. The `TicketResource` defined by default (which can be extended) accepts username/password.
 
 Support is enabled by including the following in your `pom.xml` file:
 
