@@ -243,11 +243,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             id = username;
         }
         final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
-        for (String ldapAttrName : this.principalAttributeMap.keySet()) {
-            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
+        for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
+            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
                 logger.debug("Found principal attribute: {}", attr);
-                final String principalAttrName = this.principalAttributeMap.get(ldapAttrName);
+                final String principalAttrName = ldapAttr.getValue();
                 if (attr.size() > 1) {
                     attributeMap.put(principalAttrName, attr.getStringValues());
                 } else {

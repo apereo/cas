@@ -56,13 +56,14 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>(resolvedAttributes.size());
 
-        for (final String attribute : this.allowedAttributes.keySet()) {
-            final Object value = resolvedAttributes.get(attribute);
+        for (final Map.Entry<String, String> entry : this.allowedAttributes.entrySet()) {
+            final String key = entry.getKey();
+            final Object value = resolvedAttributes.get(key);
 
             if (value != null) {
-                final String mappedAttributeName = this.allowedAttributes.get(attribute);
+                final String mappedAttributeName = entry.getValue();
                 logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                        attribute, mappedAttributeName);
+                        key, mappedAttributeName);
                 attributesToRelease.put(mappedAttributeName, value);
             }
         }
