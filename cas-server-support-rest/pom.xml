@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-rest</artifactId>
 	<packaging>jar</packaging>
-	<name>Apereo CAS REST implementation</name>
+	<name>Apereo CAS REST Implementation</name>
 
 	<dependencies>
 		<dependency>

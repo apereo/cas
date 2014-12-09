@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -148,16 +149,15 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
+     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},
+     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
+     * contains its own data and will never change.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        final Map<String, Service> map = new HashMap<String, Service>(services.size());
-        for (final String ticket : services.keySet()) {
-            map.put(ticket, services.get(ticket));
-        }
-        return Collections.unmodifiableMap(map);
+        return ImmutableMap.copyOf(this.services);
     }
 
     /**
