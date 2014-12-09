@@ -19,7 +19,6 @@
 package org.jasig.cas.util.http;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.ByteSource;
 import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;

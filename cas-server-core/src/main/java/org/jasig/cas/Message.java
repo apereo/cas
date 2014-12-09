@@ -75,6 +75,11 @@ public class Message implements Serializable {
         return this.defaultMessage;
     }
 
+    /**
+     * Get parameters for the message.
+     *
+     * @return the serializable [ ]
+     */
     public Serializable[] getParams() {
         if (this.params == null) {
             return null;
