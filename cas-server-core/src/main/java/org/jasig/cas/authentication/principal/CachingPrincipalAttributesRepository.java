@@ -81,6 +81,19 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     /**
      * Instantiates a new caching attributes principal factory.
+     * Caches the attributes based on duration units of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
+     * and the given time.
+     * @param attributeRepository the attribute repository
+     * @param expiryDuration the expiry duration based on the unit of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
+     */
+    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository, final long expiryDuration) {
+        this(attributeRepository, createCacheConfiguration(
+                new Duration(DEFAULT_CACHE_EXPIRATION_UNIT, expiryDuration)));
+
+    }
+
+    /**
+     * Instantiates a new caching attributes principal factory.
      *
      * @param attributeRepository the attribute repository
      * @param timeUnit the time unit
