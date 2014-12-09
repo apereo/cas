@@ -35,11 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-import java.util.zip.DeflaterOutputStream;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
