@@ -84,7 +84,7 @@ Assume also the following beans are defined in `applicationContext.xml`:
       class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory" />
 {% endhighlight %}
 
-With the above configuration in mind, the [service management facility](../Service-Management.html)
+With the above configuration in mind, the [service management facility](Service-Management.html)
 may now be leveraged to register services that require specific kinds of credentials be used to access the service.
 The kinds of required credentials are specified by naming the authentication handlers that accept them, for example,
 `ldapHandler` and `oneTimePasswordHandler`. Thus a service could be registered that imposes security constraints like
