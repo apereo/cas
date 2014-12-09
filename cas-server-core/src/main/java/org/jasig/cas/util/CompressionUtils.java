@@ -147,6 +147,7 @@ public final class CompressionUtils {
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
     }
+
     /**
      * Base64 decode operation, which retrieves the equivalent
      * byte[] of the data in <code>UTF-8</code> encoding
@@ -157,8 +158,23 @@ public final class CompressionUtils {
      */
     public static byte[] decodeBase64(final String data) {
         try {
-            final byte[] xmlBytes = data.getBytes(UTF8_ENCODING);
-            return Base64.decodeBase64(xmlBytes);
+            final byte[] bytes = data.getBytes(UTF8_ENCODING);
+            return decodeBase64(bytes);
+        } catch (final Exception e) {
+            LOGGER.error("Base64 decoding failed", e);
+            return null;
+        }
+    }
+
+    /**
+     * Decode the byte[] in base64.
+     *
+     * @param data the data to encode
+     * @return the base64 decoded byte[] or null
+     */
+    public static byte[] decodeBase64(final byte[] data) {
+        try {
+            return Base64.decodeBase64(data);
         } catch (final Exception e) {
             LOGGER.error("Base64 decoding failed", e);
             return null;

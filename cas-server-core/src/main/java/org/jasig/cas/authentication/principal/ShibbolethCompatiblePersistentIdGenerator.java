@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +93,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
             md.update(principal.getId().getBytes(Charset.defaultCharset()));
             md.update(CONST_SEPARATOR);
 
-            return Base64.encodeBase64String(md.digest(this.salt)).replaceAll(
-                System.getProperty("line.separator"), "");
+            final String result = CompressionUtils.encodeBase64(md.digest(this.salt));
+            return result.replaceAll(System.getProperty("line.separator"), "");
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
