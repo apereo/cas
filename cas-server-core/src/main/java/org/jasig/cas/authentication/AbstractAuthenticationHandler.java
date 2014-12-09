@@ -22,7 +22,7 @@ package org.jasig.cas.authentication;
  * Base class for all authentication handlers that support configurable naming.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 

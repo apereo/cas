@@ -26,7 +26,7 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public class PrincipalBearingCredentialsTests {
 
@@ -38,7 +38,7 @@ public class PrincipalBearingCredentialsTests {
     }
 
     @Test
-    public void testGetOfPrincipal() {
+    public void verifyGetOfPrincipal() {
         assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
     }
 }

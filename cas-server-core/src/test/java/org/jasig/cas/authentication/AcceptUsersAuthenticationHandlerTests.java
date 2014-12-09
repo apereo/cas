@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
+ * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandlerTests  {
 
@@ -54,7 +55,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test
-    public void testSupportsSpecialCharacters() throws Exception {
+    public void verifySupportsSpecialCharacters() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
@@ -63,7 +64,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -72,7 +73,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
                     .supports(new HttpBasedServiceCredential(new URL(
@@ -83,7 +84,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test
-    public void testAuthenticatesUserInMap() throws Exception {
+    public void verifyAuthenticatesUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -97,7 +98,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testFailsUserNotInMap() throws Exception {
+    public void verifyFailsUserNotInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -107,7 +108,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testFailsNullUserName() throws Exception {
+    public void verifyFailsNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -117,7 +118,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testFailsNullUserNameAndPassword() throws Exception {
+    public void verifyFailsNullUserNameAndPassword() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -127,7 +128,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testFailsNullPassword() throws Exception{
+    public void verifyFailsNullPassword() throws Exception{
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");

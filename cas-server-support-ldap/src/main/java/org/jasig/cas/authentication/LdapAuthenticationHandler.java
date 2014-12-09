@@ -57,9 +57,17 @@ import java.util.Set;
  * </ul>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+
+    /** Mapping of LDAP attribute name to principal attribute name. */
+    @NotNull
+    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
+
+    /** List of additional attributes to be fetched but are not principal attributes. */
+    @NotNull
+    protected List<String> additionalAttributes = Collections.emptyList();
 
     /** Performs LDAP authentication given username/password. */
     @NotNull
@@ -73,15 +81,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String principalIdAttribute;
 
     /** Flag indicating whether multiple values are allowed fo principalIdAttribute. */
-    private boolean allowMultiplePrincipalAttributeValues = false;
-
-    /** Mapping of LDAP attribute name to principal attribute name. */
-    @NotNull
-    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
-
-    /** List of additional attributes to be fetched but are not principal attributes. */
-    @NotNull
-    protected List<String> additionalAttributes = Collections.emptyList();
+    private boolean allowMultiplePrincipalAttributeValues;
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
@@ -244,11 +244,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             id = username;
         }
         final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
-        for (String ldapAttrName : this.principalAttributeMap.keySet()) {
-            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
+        for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
+            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
                 logger.debug("Found principal attribute: {}", attr);
-                final String principalAttrName = this.principalAttributeMap.get(ldapAttrName);
+                final String principalAttrName = ldapAttr.getValue();
                 if (attr.size() > 1) {
                     attributeMap.put(principalAttrName, attr.getStringValues());
                 } else {

@@ -244,11 +244,41 @@
                 <aggregate>true</aggregate>
             </configuration>
         </plugin>
-
       </plugins>
     </pluginManagement>
 
     <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${maven-findbugs-plugin.version}</version>
+            <configuration>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mebigfatguy.fb-contrib</groupId>
+                        <artifactId>fb-contrib</artifactId>
+                        <version>${maven-findbugs-contrib-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.h3xstream.findsecbugs</groupId>
+                        <artifactId>findsecbugs-plugin</artifactId>
+                        <version>${maven-findbugs-security-plugin.version}</version>
+                    </plugin>
+                </plugins>
+                <includeFilterFile>${cs.dir}/findbugs-rules.xml</includeFilterFile>
+                <effort>Max</effort>
+                <failOnError>true</failOnError>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>findbugs-check</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>    
+            </executions>   
+        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
@@ -258,6 +288,7 @@
                 <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
                 <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
+                <includeTestSourceDirectory>true</includeTestSourceDirectory>
             </configuration>
             <executions>
                 <execution>
@@ -976,6 +1007,12 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-security-filter</artifactId>
+        <version>${cas-server-security-filter.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -1085,6 +1122,7 @@
         <license.skip>true</license.skip>
         <notice.skip>true</notice.skip>
         <versions.skip>true</versions.skip>
+        <findbugs.skip>true</findbugs.skip>
       </properties>
       
       <build>
@@ -1162,7 +1200,7 @@
     <commons.codec.version>1.9</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
-    <checkstyle.version>5.7</checkstyle.version>
+    <checkstyle.version>6.1</checkstyle.version>
     <commons.lang.version>3.3.2</commons.lang.version>
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
@@ -1181,6 +1219,7 @@
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
+    <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
@@ -1199,6 +1238,9 @@
     <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
     <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
     <maven-clean-plugin.version>2.6</maven-clean-plugin.version>
+    <maven-findbugs-plugin.version>3.0.0</maven-findbugs-plugin.version>
+    <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
+    <maven-findbugs-security-plugin.version>1.2.1</maven-findbugs-security-plugin.version>
     
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>

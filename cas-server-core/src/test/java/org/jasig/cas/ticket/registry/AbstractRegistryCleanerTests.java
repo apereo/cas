@@ -32,13 +32,13 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractRegistryCleanerTests {
+    protected TicketRegistry ticketRegistry;
 
     private RegistryCleaner registryCleaner;
 
-    protected TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -51,20 +51,20 @@ public abstract class AbstractRegistryCleanerTests {
     public abstract TicketRegistry getNewTicketRegistry();
 
     @Test
-    public void testCleanEmptyTicketRegistry() {
+    public void verifyCleanEmptyTicketRegistry() {
         clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOfExpiredTicketsAllExpired() {
+    public void verifyCleanRegistryOfExpiredTicketsAllExpired() {
         populateRegistryWithExpiredTickets();
         clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOneNonExpired() {
+    public void verifyCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());

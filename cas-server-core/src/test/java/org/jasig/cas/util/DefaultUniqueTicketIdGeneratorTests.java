@@ -25,12 +25,12 @@ import static org.junit.Assert.*;
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testUniqueGenerationOfTicketIds() {
+    public void verifyUniqueGenerationOfTicketIds() {
         final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
             10);
 
@@ -39,10 +39,10 @@ public class DefaultUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    public void testSuffix() {
-        final String SUFFIX = "suffix";
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, SUFFIX);
+    public void verifySuffix() {
+        final String suffix = "suffix";
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, suffix);
 
-        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+        assertTrue(generator.getNewTicketId("test").endsWith(suffix));
     }
 }

@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class FlowExecutionExceptionResolverTests {
 
@@ -45,13 +45,13 @@ public class FlowExecutionExceptionResolverTests {
     }
 
     @Test
-    public void testNullPointerException() {
+    public void verifyNullPointerException() {
         assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
                 new MockHttpServletResponse(), null, new NullPointerException()));
     }
 
     @Test
-    public void testNoSuchFlowExecutionException() {
+    public void verifyNoSuchFlowExecutionException() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         ModelAndView model = this.resolver.resolveException(request,
@@ -81,14 +81,14 @@ public class FlowExecutionExceptionResolverTests {
     }
 
     @Test
-    public void testBadlyFormattedExecutionException() {
+    public void verifyBadlyFormattedExecutionException() {
         assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
                 new MockHttpServletResponse(), null,
                 new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
     }
 
     @Test
-    public void testNoSuchFlowExecutionExeptionWithQueryString() {
+    public void verifyNoSuchFlowExecutionExeptionWithQueryString() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         request.setQueryString("test=test");

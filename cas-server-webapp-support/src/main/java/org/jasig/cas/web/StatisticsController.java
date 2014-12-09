@@ -43,8 +43,6 @@ import java.util.Queue;
  */
 public final class StatisticsController extends AbstractController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
     private static final int NUMBER_OF_MILLISECONDS_IN_AN_HOUR = 3600000;
@@ -52,6 +50,10 @@ public final class StatisticsController extends AbstractController {
     private static final int NUMBER_OF_MILLISECONDS_IN_A_MINUTE = 60000;
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
+
+    private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 
@@ -89,9 +91,10 @@ public final class StatisticsController extends AbstractController {
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
                         NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
                         new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
-        modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / 1024 / 1024);
-        modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
-        modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
+
+        modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
+        modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
+        modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
         modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
@@ -137,6 +140,14 @@ public final class StatisticsController extends AbstractController {
     }
 
     /**
+     * Convert to megabytes from bytes.
+     * @param bytes the total number of bytes
+     * @return value converted to MB
+     */
+    private double convertToMegaBytes(final double bytes) {
+        return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
+    }
+    /**
      * Calculates the up time.
      *
      * @param difference the difference
@@ -155,6 +166,6 @@ public final class StatisticsController extends AbstractController {
         final String currentLabel = labels.remove();
         final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
 
-        return Integer.toString(new Double(time).intValue()) + " "+ label + " " + calculateUptime(newDifference, calculations, labels);
+        return Integer.toString((int) time) + " " + label + " " + calculateUptime(newDifference, calculations, labels);
     }
 }

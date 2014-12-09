@@ -26,8 +26,8 @@
     <suppress checks="JavadocMethod" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocType" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="MagicNumber" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="DesignForExtension" files="(.*Tests*|Mock.*|Test.*)\.java"/>
-    <suppress checks="LocalFinalVariableName" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>

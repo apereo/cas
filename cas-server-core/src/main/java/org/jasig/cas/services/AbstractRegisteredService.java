@@ -34,7 +34,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,6 +44,7 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @author Scott Battaglia
  * @author Misagh Moayyed
+ * @since 3.0.0
  */
 @Entity
 @Inheritance
@@ -54,13 +54,6 @@ import java.util.Set;
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
     private static final long serialVersionUID = 7645279151115635245L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
-
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
-    private String description;
 
     /**
      * The unique identifier for this service.
@@ -73,6 +66,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private String description;
 
     /**
      * Proxy policy for the service.
@@ -104,7 +104,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * The logout type of the service. 
      * The default logout type is the back channel one.
      */
-    @Transient
+    @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
@@ -276,7 +276,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredService clone() throws CloneNotSupportedException {
+    public RegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;

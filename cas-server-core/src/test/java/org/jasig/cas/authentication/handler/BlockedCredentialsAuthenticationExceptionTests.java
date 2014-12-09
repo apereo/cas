@@ -29,16 +29,17 @@ import org.junit.Test;
 public final class BlockedCredentialsAuthenticationExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.blocked";
+    private static final String MESSAGE = "GG";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new BlockedCredentialsAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(r);
 
@@ -47,16 +48,14 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
+    public void verifyCodeConstructor() {
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE);
 
         assertEquals(MESSAGE, e.getCode());
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
+    public void verifyThrowableConstructorWithCode() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE, r);
 

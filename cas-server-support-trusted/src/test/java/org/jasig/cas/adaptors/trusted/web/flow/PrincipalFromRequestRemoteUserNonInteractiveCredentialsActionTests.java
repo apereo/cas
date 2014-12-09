@@ -49,7 +49,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  *
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests {
@@ -76,7 +76,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     }
 
     @Test
-    public void testRemoteUserExists() throws Exception {
+    public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("test");
 
@@ -88,7 +88,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     }
 
     @Test
-    public void testRemoteUserDoesntExists() throws Exception {
+    public void verifyRemoteUserDoesntExists() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));

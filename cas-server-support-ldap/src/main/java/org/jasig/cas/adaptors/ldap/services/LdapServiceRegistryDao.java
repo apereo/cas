@@ -55,6 +55,7 @@ import java.util.List;
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
@@ -64,7 +65,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private ConnectionFactory connectionFactory;
 
     @NotNull
-    private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapServiceMapper();
+    private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
 
     @NotNull
     private String searchFilter;

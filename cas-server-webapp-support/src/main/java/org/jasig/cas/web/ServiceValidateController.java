@@ -59,18 +59,18 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public class ServiceValidateController extends DelegateController {
-    /** Constant representing the Assertion in the cas validation model. */
-    private static final String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
-    
     /** View if Service Ticket Validation Fails. */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
-    
+
+    /** Constant representing the Assertion in the cas validation model. */
+    private static final String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
+
     /** Implementation of Service Manager. */
     @NotNull
     private ServicesManager servicesManager;
@@ -195,7 +195,8 @@ public class ServiceValidateController extends DelegateController {
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou);
         } catch (final TicketValidationException e) {
-            return generateErrorView(e.getCode(), e.getCode(),
+            final String code = e.getCode();
+            return generateErrorView(code, code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),

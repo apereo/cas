@@ -19,8 +19,8 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -39,17 +39,23 @@ import javax.validation.constraints.NotNull;
  * </ol>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
-    /** TGT does not exist event ID={@value}. */
+    /**
+     * TGT does not exist event ID={@value}.
+     **/
     public static final String NOT_EXISTS = "notExists";
 
-    /** TGT invalid event ID={@value}. */
+    /**
+     * TGT invalid event ID={@value}.
+     **/
     public static final String INVALID = "invalid";
 
-    /** TGT valid event ID={@value}. */
+    /**
+     * TGT valid event ID={@value}.
+     **/
     public static final String VALID = "valid";
 
     /**

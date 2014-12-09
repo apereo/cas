@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * authentication policy.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/mfa-test-context.xml" })
@@ -52,7 +52,7 @@ public class MultifactorAuthenticationTests {
     private CentralAuthenticationService cas;
 
     @Test
-    public void testAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
+    public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
@@ -60,7 +60,7 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void testAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
+    public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"));
@@ -68,14 +68,14 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
-    public void testDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
+    public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);
         cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
     }
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
-    public void testDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
+    public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"));
@@ -83,7 +83,7 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
+    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(
                 newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
@@ -93,7 +93,7 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
+    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);
@@ -115,7 +115,7 @@ public class MultifactorAuthenticationTests {
 
 
     @Test(expected = MixedPrincipalException.class)
-    public void testThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
+    public void verifyThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
         assertNotNull(tgt);

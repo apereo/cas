@@ -27,7 +27,7 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
@@ -38,14 +38,14 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertTrue(this.resolver.supports(new PrincipalBearingCredential(new SimplePrincipal("test"))));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
     }
 
     @Test
-    public void testReturnedPrincipal() {
+    public void verifyReturnedPrincipal() {
         assertEquals("test", this.resolver.resolve(
                 new PrincipalBearingCredential(new SimplePrincipal("test"))).getId());
     }

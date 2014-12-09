@@ -23,12 +23,13 @@ import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
@@ -38,13 +39,9 @@ import javax.validation.constraints.NotNull;
  * </p>
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas20ProxyHandler implements ProxyHandler {
-
-    /** The Commons Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
     /** The PGTIOU ticket prefix. */
@@ -52,10 +49,13 @@ public final class Cas20ProxyHandler implements ProxyHandler {
 
     /** The proxy granting ticket identifier parameter. */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
-    
+
     /** The Constant proxy granting ticket parameter. */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
-    
+
+    /** The Commons Logging instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     /** Generate unique ids. */
     @NotNull
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
@@ -68,14 +68,16 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
-        final String serviceCredentialsAsString = serviceCredentials.getCallbackUrl().toExternalForm();
+
+        final URL callbackUrl = serviceCredentials.getCallbackUrl();
+        final String serviceCredentialsAsString = callbackUrl.toExternalForm();
         final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
                 + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
         final StringBuilder stringBuffer = new StringBuilder(bufferLength);
 
         stringBuffer.append(serviceCredentialsAsString);
 
-        if (serviceCredentials.getCallbackUrl().getQuery() != null) {
+        if (callbackUrl.getQuery() != null) {
             stringBuffer.append("&");
         } else {
             stringBuffer.append("?");

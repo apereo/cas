@@ -25,13 +25,14 @@ import com.esotericsoftware.kryo.Kryo;
 
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 
 /**
  * Serializer for {@link SamlService} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class SamlServiceSerializer extends AbstractWebApplicationServiceSerializer<SamlService> {
     private static final Constructor CONSTRUCTOR;
@@ -71,7 +72,8 @@ public final class SamlServiceSerializer extends AbstractWebApplicationServiceSe
 
         final String requestId = kryo.readObject(buffer, String.class);
         try {
-            return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new SimpleHttpClient(), requestId);
+            return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new SimpleHttpClientFactoryBean().getObject(),
+                    requestId);
         } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }

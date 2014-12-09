@@ -48,7 +48,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
     private static final String STATE = "state";
 
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
                 "GET",
                 CONTEXT
@@ -69,7 +69,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
     }
 
     @Test
-    public void testOKWithState() throws Exception {
+    public void verifyOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
                 "GET",
                 CONTEXT

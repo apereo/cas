@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.support.oauth;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
@@ -35,6 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Iterator;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -122,10 +121,10 @@ public final class OAuthUtils {
     public static String addParameter(final String url, final String name, final String value) {
         final StringBuilder sb = new StringBuilder();
         sb.append(url);
-        if (url.indexOf("?") >= 0) {
-            sb.append("&");
+        if (url.indexOf('?') >= 0) {
+            sb.append('&');
         } else {
-            sb.append("?");
+            sb.append('?');
         }
         sb.append(name);
         sb.append("=");

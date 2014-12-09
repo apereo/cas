@@ -47,7 +47,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest {
 
@@ -96,13 +96,13 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     }
 
     @Test
-    public void testLogoutNoCookie() throws Exception {
+    public void verifyLogoutNoCookie() throws Exception {
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
+    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         this.request.addParameter("service", "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("TestService");
@@ -138,7 +138,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     }
 
     @Test
-    public void testLogoutCookie() throws Exception {
+    public void verifyLogoutCookie() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -146,7 +146,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     }
 
     @Test
-    public void testLogoutRequestBack() throws Exception {
+    public void verifyLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
         final LogoutRequest logoutRequest = new LogoutRequest("", null);
@@ -158,7 +158,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testLogoutRequestFront() throws Exception {
+    public void verifyLogoutRequestFront() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
         final LogoutRequest logoutRequest = new LogoutRequest("", null);

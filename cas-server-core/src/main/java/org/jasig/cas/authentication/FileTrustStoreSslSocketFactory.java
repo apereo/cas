@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ import java.util.List;
  * The SSL socket factory that loads the SSL context from a custom
  * truststore file strictly used ssl handshakes for proxy authentication. 
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
@@ -63,23 +63,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * @param trustStorePassword the trust store password
      */
     public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword) {
-        this(trustStoreFile, trustStorePassword,
-                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER,
-                KeyStore.getDefaultType());
-    }
-
-    /**
-     * Instantiates a new trusted proxy authentication trust store ssl socket factory.
-     * Uses the {@link DoesNotTrustStrategy} trust strategy.
-     *
-     * @param trustStoreFile the trust store file
-     * @param trustStorePassword the trust store password
-     * @param hostnameVerifier the hostname verifier
-     * @param trustStoreType the trust store type
-     */
-    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
-                                          final X509HostnameVerifier hostnameVerifier, final String trustStoreType) {
-        this(trustStoreFile, trustStorePassword, hostnameVerifier, trustStoreType, new DoesNotTrustStrategy());
+        this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
 
 
@@ -87,16 +71,11 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
-     * @param hostnameVerifier the hostname verifier
      * @param trustStoreType the trust store type
-     * @param trustStrategy the trust strategy
      */
     public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
-                                          final X509HostnameVerifier hostnameVerifier,
-                                          final String trustStoreType,
-                                          final TrustStrategy trustStrategy) {
-        super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType,
-               trustStrategy), hostnameVerifier);
+                                          final String trustStoreType) {
+        super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
     }
 
     /**
@@ -105,11 +84,10 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      * @param trustStoreType the trust store type
-     * @param trustStrategy the trust strategy. Could use {@link org.apache.http.conn.ssl.TrustSelfSignedStrategy}
      * @return the trusted ssl context
      */
     private static SSLContext getTrustedSslContext(final File trustStoreFile, final String trustStorePassword,
-                                            final String trustStoreType, final TrustStrategy trustStrategy) {
+                                            final String trustStoreType) {
         try {
 
             if (!trustStoreFile.exists() || !trustStoreFile.canRead()) {
@@ -117,10 +95,13 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             }
             final FileInputStream casStream = new FileInputStream(trustStoreFile);
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
-            casTrustStore.load(casStream, trustStorePassword.toCharArray());
+            final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
+
+            casTrustStore.load(casStream, trustStorePasswordCharArray);
+            IOUtils.closeQuietly(casStream);
 
             final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-            final X509KeyManager customKeyManager = getKeyManager("PKIX", casTrustStore, trustStorePassword.toCharArray());
+            final X509KeyManager customKeyManager = getKeyManager("PKIX", casTrustStore, trustStorePasswordCharArray);
             final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
             final X509TrustManager customTrustManager = getTrustManager("PKIX", casTrustStore);
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
@@ -295,7 +276,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            for (X509TrustManager trustManager : trustManagers) {
+            for (final X509TrustManager trustManager : trustManagers) {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return;
@@ -309,7 +290,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            for (X509TrustManager trustManager : trustManagers) {
+            for (final X509TrustManager trustManager : trustManagers) {
                 final List<X509Certificate> list = Arrays.asList(trustManager.getAcceptedIssuers());
                 certificates.addAll(list);
             }

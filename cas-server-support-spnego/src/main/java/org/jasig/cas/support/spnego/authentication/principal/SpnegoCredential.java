@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Credential that are a holder for Spnego init token.
@@ -39,6 +39,8 @@ public final class SpnegoCredential implements Credential, Serializable {
      * Unique id for serialization.
      */
     private static final long serialVersionUID = 84084596791289548L;
+
+    private static final int NTLM_TOKEN_MAX_LENGTH = 8;
 
     /**
      * The Spnego Init Token.
@@ -112,10 +114,11 @@ public final class SpnegoCredential implements Credential, Serializable {
      * @return true, if  token ntlm
      */
     private boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < 8) {
+
+        if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
             if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
             }
@@ -137,7 +140,7 @@ public final class SpnegoCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
+        return Arrays.hashCode(this.initToken) ^ Arrays.hashCode(this.nextToken) ^ this.principal.hashCode();
     }
 
 }

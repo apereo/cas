@@ -36,7 +36,7 @@ import javax.persistence.Table;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="SERVICETICKET")
@@ -56,7 +56,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private boolean fromNewLogin;
 
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
-    private Boolean grantedTicketAlready = false;
+    private Boolean grantedTicketAlready = Boolean.FALSE;
 
     /**
      * Instantiates a new service ticket impl.
@@ -112,7 +112,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == null) {
@@ -141,7 +143,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 throw new IllegalStateException(
                     "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
             }
-            this.grantedTicketAlready = true;
+            this.grantedTicketAlready = Boolean.TRUE;
         }
 
         return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),

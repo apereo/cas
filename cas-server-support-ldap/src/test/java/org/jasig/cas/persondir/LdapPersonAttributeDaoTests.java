@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link LdapPersonAttributeDao}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/ldap-persondir-test.xml"})
@@ -45,7 +45,7 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
     private LdapPersonAttributeDao attributeDao;
 
     @Test
-    public void testGetPerson() throws Exception {
+    public void verifyGetPerson() throws Exception {
 
         IPersonAttributes actual;
         String username;

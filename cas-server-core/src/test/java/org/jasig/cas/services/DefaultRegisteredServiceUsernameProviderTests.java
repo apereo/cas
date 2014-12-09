@@ -27,12 +27,12 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class DefaultRegisteredServiceUsernameProviderTests {
     
     @Test
-    public void testRegServiceUsername() {
+    public void verifyRegServiceUsername() {
         final DefaultRegisteredServiceUsernameProvider provider = 
                 new DefaultRegisteredServiceUsernameProvider();
         
@@ -43,7 +43,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final DefaultRegisteredServiceUsernameProvider provider =
                 new DefaultRegisteredServiceUsernameProvider();
 

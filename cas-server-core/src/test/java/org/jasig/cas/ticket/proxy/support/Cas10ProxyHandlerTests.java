@@ -27,19 +27,19 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas10ProxyHandlerTests {
 
     private ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
-    public void testNoCredentialsOrProxy() {
+    public void verifyNoCredentialsOrProxy() {
         assertNull(this.proxyHandler.handle(null, null));
     }
 
     @Test
-    public void testCredentialsAndProxy() {
+    public void verifyCredentialsAndProxy() {
         final TicketGrantingTicket proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));

@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class PlainTextPasswordEncoderTests {
 
@@ -33,12 +33,12 @@ public final class PlainTextPasswordEncoderTests {
     private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     @Test
-    public void testNullValueToTranslate() {
+    public void verifyNullValueToTranslate() {
         assertEquals(null, this.passwordEncoder.encode(null));
     }
 
     @Test
-    public void testValueToTranslate() {
+    public void verifyValueToTranslate() {
         assertEquals(CONST_TO_ENCODE, this.passwordEncoder.encode(CONST_TO_ENCODE));
     }
 }

@@ -18,27 +18,27 @@
  */
 package org.jasig.cas.ticket;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class TicketCreationExceptionTests {
 
     @Test
-    public void testNoParamConstructor() {
+    public void verifyNoParamConstructor() {
         new TicketCreationException();
     }
 
     @Test
-    public void testThrowableParamConstructor() {
-        final Throwable THROWABLE = new Throwable();
-        final TicketCreationException t = new TicketCreationException(THROWABLE);
+    public void verifyThrowableParamConstructor() {
+        final Throwable throwable = new Throwable();
+        final TicketCreationException t = new TicketCreationException(throwable);
 
-        assertEquals(THROWABLE, t.getCause());
+        assertEquals(throwable, t.getCause());
     }
 }

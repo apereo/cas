@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
  * Authentication Handler to authenticate a user against a RADIUS server.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 

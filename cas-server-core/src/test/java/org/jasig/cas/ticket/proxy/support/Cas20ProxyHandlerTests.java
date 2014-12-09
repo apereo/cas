@@ -22,7 +22,8 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas20ProxyHandlerTests {
 
@@ -51,27 +52,29 @@ public class Cas20ProxyHandlerTests {
     @Before
     public void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
-        this.handler.setHttpClient(new SimpleHttpClient());
+        this.handler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
         this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         when(this.proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
     }
 
     @Test
-    public void testValidProxyTicketWithoutQueryString() throws Exception {
+    public void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("http://www.rutgers.edu/"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void testValidProxyTicketWithQueryString() throws Exception {
+    public void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("http://www.rutgers.edu/?test=test"), TestUtils.getRegisteredService("https://some.app.edu")),
                 proxyGrantingTicket));
     }
 
     @Test
-    public void testNonValidProxyTicket() throws Exception {
-        final SimpleHttpClient httpClient = new SimpleHttpClient(new int[] {900});
+    public void verifyNonValidProxyTicket() throws Exception {
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setAcceptableCodes(new int[] {900});
+        final SimpleHttpClient httpClient = clientFactory.getObject();
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
             "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));

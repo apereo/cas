@@ -53,11 +53,17 @@ import java.util.Random;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.2
+ * @since 3.0.0.2
  */
 public final class TestUtils {
 
     public static final String CONST_USERNAME = "test";
+
+    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
+
+    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
+
+    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private static final String CONST_PASSWORD = "test1";
 
@@ -67,12 +73,6 @@ public final class TestUtils {
             "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
-
-    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
-
-    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
-
-    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
         // do not instantiate

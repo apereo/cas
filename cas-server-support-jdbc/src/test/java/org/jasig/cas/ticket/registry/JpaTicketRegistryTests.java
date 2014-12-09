@@ -65,15 +65,12 @@ import static org.junit.Assert.*;
  * Unit test for {@link JpaTicketRegistry} class.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
@@ -82,6 +79,9 @@ public class JpaTicketRegistryTests {
     private static ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
     private static ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -109,7 +109,7 @@ public class JpaTicketRegistryTests {
 
 
     @Test
-    public void testTicketCreationAndDeletion() throws Exception {
+    public void verifyTicketCreationAndDeletion() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
@@ -126,7 +126,7 @@ public class JpaTicketRegistryTests {
 
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentServiceTicketGeneration() throws Exception {
+    public void verifyConcurrentServiceTicketGeneration() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
@@ -209,7 +209,9 @@ public class JpaTicketRegistryTests {
             parentTgtId = tgtId;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {

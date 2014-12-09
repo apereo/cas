@@ -27,7 +27,7 @@ import org.junit.Test;
 
 /**
  * @author Andrew Petro
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
@@ -37,13 +37,13 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
-    public void testNonNullPrincipal() throws Exception {
+    public void verifyNonNullPrincipal() throws Exception {
         final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));

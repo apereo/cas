@@ -42,6 +42,11 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
 
+    /**
+     * Unique Id for serialization.
+     */
+    private static final long serialVersionUID = -6867572626767140223L;
+
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
 
@@ -56,12 +61,9 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
-    private String requestId;
+    private static final int CONST_REQUEST_ID_LENGTH = 11;
 
-    /**
-     * Unique Id for serialization.
-     */
-    private static final long serialVersionUID = -6867572626767140223L;
+    private String requestId;
 
     /**
      * Instantiates a new SAML service.
@@ -163,8 +165,8 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         try {
-            final int position = requestBody.indexOf("RequestID=\"") + 11;
-            final int nextPosition = requestBody.indexOf("\"", position);
+            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
+            final int nextPosition = requestBody.indexOf('"', position);
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {

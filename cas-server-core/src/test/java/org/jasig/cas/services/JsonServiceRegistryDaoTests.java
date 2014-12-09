@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,11 +37,13 @@ import static org.junit.Assert.*;
 /**
  * Handles test cases for {@link JsonServiceRegistryDao}.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class JsonServiceRegistryDaoTests {
-    private ServiceRegistryDao dao;
+
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
+    private ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
@@ -52,7 +55,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveMethodWithNonExistentServiceAndNoAttributes() {
+    public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
@@ -67,7 +70,45 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveAttributeReleasePolicy() {
+    public void execSaveMethodWithDefaultUsernameAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultUsernameAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void ensureSaveMethodWithDefaultPrincipalAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultPrincipalAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn"));
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+    @Test
+    public void verifySaveMethodWithDefaultAnonymousAttribute() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveMethodWithDefaultAnonymousAttribute");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
+                new ShibbolethCompatiblePersistentIdGenerator("helloworld")
+        ));
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicy() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveAttributeReleasePolicy");
         r.setServiceId("testId");
@@ -85,7 +126,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveMethodWithExistingServiceNoAttribute() {
+    public void verifySaveMethodWithExistingServiceNoAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
@@ -101,7 +142,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveAttributeReleasePolicyMappingRules() {
+    public void verifySaveAttributeReleasePolicyMappingRules() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId("testId");
@@ -126,7 +167,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveAttributeReleasePolicyAllowedAttrRules() {
+    public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
         r.setServiceId("testId");
@@ -145,7 +186,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
+    public void verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
         r.setServiceId("testId");
@@ -171,7 +212,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testServiceType() {
+    public void verifyServiceType() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("testServiceType");
@@ -184,7 +225,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test(expected=RuntimeException.class)
-    public void testServiceWithInvalidFileName() {
+    public void verifyServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("hell/o@world:*");
@@ -195,7 +236,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void testServiceRemovals() {
+    public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         for (int i = 1; i < 5; i++) {
             final RegexRegisteredService r = new RegexRegisteredService();

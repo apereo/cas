@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 /**
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
@@ -46,14 +46,14 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
      * support for this behavior is recommended but not required.
      * @throws UnsupportedEncodingException
      */
-    public void testUrlParameter() throws UnsupportedEncodingException {
+    public void verifyUrlParameter() throws UnsupportedEncodingException {
         final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/logout?url=" + URLEncoder.encode(service, "UTF-8"));
 
         assertTextPresent(service);
     }
 
-    public void testShowLoggedOutPage() {
+    public void verifyShowLoggedOutPage() {
         beginAt("/logout");
 
         assertTextPresent("logged out");
@@ -66,7 +66,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
      * service ticket invalid.
      * @throws IOException
      */
-    public void testLogoutEndsSso() throws IOException {
+    public void verifyLogoutEndsSso() throws IOException {
         // demonstrate lack of SSO session
         final String serviceUrl = getServiceUrl();
         final String encodedService = URLEncoder.encode(serviceUrl, "UTF-8");

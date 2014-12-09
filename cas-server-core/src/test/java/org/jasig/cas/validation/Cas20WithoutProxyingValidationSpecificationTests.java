@@ -26,7 +26,7 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas20WithoutProxyingValidationSpecificationTests {
 
@@ -38,28 +38,28 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
     }
 
     @Test
-    public void testSatisfiesSpecOfTrue() {
+    public void verifySatisfiesSpecOfTrue() {
         assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     @Test
-    public void testNotSatisfiesSpecOfTrue() {
+    public void verifyNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
         assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     @Test
-    public void testSatisfiesSpecOfFalse() {
+    public void verifySatisfiesSpecOfFalse() {
         assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     @Test
-    public void testDoesNotSatisfiesSpecOfFalse() {
+    public void verifyDoesNotSatisfiesSpecOfFalse() {
         assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
     }
 
     @Test
-    public void testSettingRenew() {
+    public void verifySettingRenew() {
         final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
                 true);
         assertTrue(validation.isRenew());

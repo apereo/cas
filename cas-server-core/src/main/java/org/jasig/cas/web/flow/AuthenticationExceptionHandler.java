@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -42,7 +41,7 @@ import org.springframework.binding.message.MessageContext;
  * </ol>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AuthenticationExceptionHandler {
 
@@ -112,12 +111,14 @@ public class AuthenticationExceptionHandler {
      */
     public String handle(final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {
+            final MessageBuilder builder = new MessageBuilder();
             for (final Class<? extends Exception> kind : this.errors) {
                 for (final Class<? extends Exception> handlerError : e.getHandlerErrors().values()) {
                     if (handlerError != null && handlerError.equals(kind)) {
-                        final String messageCode = this.messageBundlePrefix + handlerError.getSimpleName();
-                        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-                        return handlerError.getSimpleName();
+                        final String handlerErrorName = handlerError.getSimpleName();
+                        final String messageCode = this.messageBundlePrefix + handlerErrorName;
+                        messageContext.addMessage(builder.error().code(messageCode).build());
+                        return handlerErrorName;
                     }
                 }
 

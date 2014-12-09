@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
@@ -55,23 +55,23 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketIsNull() {
+    public void verifyTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    public void testTicketIsNotExpired() {
+    public void verifyTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketIsExpiredByTime() throws InterruptedException {
+    public void verifyTicketIsExpiredByTime() throws InterruptedException {
             Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketIsExpiredByCount() {
+    public void verifyTicketIsExpiredByCount() {
         for (int i = 0; i < NUMBER_OF_USES; i++) {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
         }

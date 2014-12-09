@@ -36,11 +36,11 @@ import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -73,6 +73,7 @@ import static org.mockito.Mockito.*;
  * Unit tests with the help of Mockito framework.
  *
  * @author Dmitriy Kopylenko
+ * @since 3.0.0
  */
 public class CentralAuthenticationServiceImplWithMokitoTests {
     private static final String TGT_ID = "tgt-id";
@@ -166,12 +167,12 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test(expected=InvalidTicketException.class)
-    public void testNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
+    public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket("bad-st", TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
-    public void testInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
+    public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.delegateTicketGrantingTicket(ST_ID, TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -197,7 +198,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test
-    public void testChainedAuthenticationsOnValidation() throws TicketException {
+    public void verifyChainedAuthenticationsOnValidation() throws TicketException {
         final Service svc = TestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);

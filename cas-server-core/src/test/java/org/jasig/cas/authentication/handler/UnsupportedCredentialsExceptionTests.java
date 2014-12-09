@@ -25,25 +25,25 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class UnsupportedCredentialsExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.unsupported";
 
     @Test
-    public void testNoParamConstructor() {
+    public void verifyNoParamConstructor() {
         new UnsupportedCredentialsException();
     }
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         assertEquals(CODE,
             new UnsupportedCredentialsException().getCode());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final UnsupportedCredentialsException e = new UnsupportedCredentialsException(r);
         assertEquals(CODE, e.getCode());

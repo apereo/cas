@@ -36,7 +36,7 @@ import java.net.UnknownHostException;
  * the actual node name, rather than relying on the configuration, only if one isn't specified in
  * the <code>cas.properties</code> file. </p>
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
     /**
@@ -58,15 +58,15 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
      * <li>If the CAS node name is <code>cas-01</code> then, the suffix
      * determined would just be <code>cas-01</code></li>
      * </ul>
-     * @since 4.1
      * @return the shortened ticket suffix based on the hostname
+     * @since 4.1.0
      */
     private static String determineTicketSuffixByHostName() {
         try {
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
 
-            if (hostName.indexOf(".") > 0) {
-                return (hostName.substring(0, hostName.indexOf(".")));
+            if (hostName.indexOf('.') > 0) {
+                return hostName.substring(0, hostName.indexOf('.'));
             }
             return hostName;
         } catch (final UnknownHostException e) {

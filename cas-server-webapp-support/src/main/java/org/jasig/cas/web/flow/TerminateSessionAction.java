@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Terminates the CAS SSO session by destroying all SSO state data (i.e. TGT, cookies).
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class TerminateSessionAction {
 

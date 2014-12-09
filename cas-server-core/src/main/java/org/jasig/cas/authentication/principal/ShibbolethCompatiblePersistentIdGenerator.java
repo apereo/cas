@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -44,6 +45,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final byte CONST_SEPARATOR = (byte) '!';
 
+    private static final int CONST_DEFAULT_SALT_COUNT = 16;
+
     private byte[] salt;
 
     /**
@@ -53,7 +56,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
-        this.salt = RandomStringUtils.randomAlphanumeric(16).getBytes();
+        this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT).getBytes(Charset.defaultCharset());
     }
     
     /**
@@ -62,7 +65,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      * @param salt the the salt
      */
     public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {
-        this.salt = salt.getBytes();
+        this.salt = salt.getBytes(Charset.defaultCharset());
     }
 
     /**
@@ -73,17 +76,21 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      */
     @Deprecated
     public void setSalt(final String salt) {
-        this.salt = salt.getBytes();
+        this.salt = salt.getBytes(Charset.defaultCharset());
         LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
+    }
+
+    public byte[] getSalt() {
+        return salt;
     }
 
     @Override
     public String generate(final Principal principal, final Service service) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(service.getId().getBytes());
+            md.update(service.getId().getBytes(Charset.defaultCharset()));
             md.update(CONST_SEPARATOR);
-            md.update(principal.getId().getBytes());
+            md.update(principal.getId().getBytes(Charset.defaultCharset()));
             md.update(CONST_SEPARATOR);
 
             return Base64.encodeBase64String(md.digest(this.salt)).replaceAll(

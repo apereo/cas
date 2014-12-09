@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+package org.jasig.cas.util.http;
 
 import java.net.URL;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ import java.net.URLEncoder;
 /**
  * Abstraction for a message that is sent to an http endpoint.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class HttpMessage {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);

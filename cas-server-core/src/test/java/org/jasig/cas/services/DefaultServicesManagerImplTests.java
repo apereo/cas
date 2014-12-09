@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author battags
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class DefaultServicesManagerImplTests  {
@@ -57,7 +57,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testSaveAndGet() {
+    public void verifySaveAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -68,7 +68,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testMultiServicesBySameName() {
+    public void verifyMultiServicesBySameName() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(666);
         r.setName("testServiceName");
@@ -88,7 +88,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testSaveWithReturnedPersistedInstance() {
+    public void verifySaveWithReturnedPersistedInstance() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000L);
         r.setName("test");
@@ -100,7 +100,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testDeleteAndGet() {
+    public void verifyDeleteAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -114,12 +114,12 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testDeleteNotExistentService() {
+    public void verifyDeleteNotExistentService() {
         assertNull(this.defaultServicesManagerImpl.delete(1500));
     }
 
     @Test
-    public void testMatchesExistingService() {
+    public void verifyMatchesExistingService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -136,7 +136,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testAllService() {
+    public void verifyAllService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -150,7 +150,7 @@ public class DefaultServicesManagerImplTests  {
     }
     
     @Test
-    public void testRegexService() {
+    public void verifyRegexService() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(10000);
         r.setName("regex test");
@@ -164,7 +164,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testEmptyServicesRegistry() {
+    public void verifyEmptyServicesRegistry() {
         final SimpleService s = new SimpleService("http://www.google.com");
         
         for (final RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
@@ -176,7 +176,7 @@ public class DefaultServicesManagerImplTests  {
     }
     
     @Test
-    public void testEvaluationOrderOfServices() {
+    public void verifyEvaluationOrderOfServices() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(100);
         r.setName("test");

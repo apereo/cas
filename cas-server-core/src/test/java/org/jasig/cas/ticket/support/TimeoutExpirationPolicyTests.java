@@ -30,7 +30,7 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class TimeoutExpirationPolicyTests {
 
@@ -50,17 +50,17 @@ public class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketIsNull() {
+    public void verifyTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    public void testTicketIsNotExpired() {
+    public void verifyTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketIsExpired() throws InterruptedException {
+    public void verifyTicketIsExpired() throws InterruptedException {
         Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
         // accurate??
         assertTrue(this.ticket.isExpired());

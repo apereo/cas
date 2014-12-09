@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,16 +34,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 public class JpaLockingStrategy implements LockingStrategy {
 
@@ -106,8 +106,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         this.lockTimeout = seconds;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public boolean acquire() {
@@ -121,12 +122,12 @@ public class JpaLockingStrategy implements LockingStrategy {
 
         boolean result = false;
         if (lock != null) {
-            final Date expDate = lock.getExpirationDate();
+            final DateTime expDate = new DateTime(lock.getExpirationDate());
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 logger.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
-            } else if (expDate != null && new Date().after(expDate)) {
+            } else if (new DateTime().isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
                 logger.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
@@ -139,8 +140,9 @@ public class JpaLockingStrategy implements LockingStrategy {
         return result;
     }
 
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @Transactional(readOnly = false)
     public void release() {
@@ -177,7 +179,9 @@ public class JpaLockingStrategy implements LockingStrategy {
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return uniqueId;
@@ -275,8 +279,8 @@ public class JpaLockingStrategy implements LockingStrategy {
         /**
          * @return the expirationDate
          */
-        public Date getExpirationDate() {
-            return expirationDate;
+        public DateTime getExpirationDate() {
+            return this.expirationDate == null ? null : new DateTime(this.expirationDate);
         }
 
         /**

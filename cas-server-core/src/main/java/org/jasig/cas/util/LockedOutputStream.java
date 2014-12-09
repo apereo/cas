@@ -28,7 +28,7 @@ import java.nio.channels.FileLock;
  * lifetime of the stream.
  * @author Misagh Moayyed
  * @author Marvin S. Addison
- * @since 4.1
+ * @since 4.1.0
  */
 public final class LockedOutputStream extends BufferedOutputStream {
 

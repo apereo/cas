@@ -18,26 +18,26 @@
  */
 package org.jasig.cas.validation;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
  * Unit test for {@link ImmutableAssertion} class.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class ImmutableAssertionTests {
 
     @Test
-    public void testGettersForChainedPrincipals() {
+    public void verifyGettersForChainedPrincipals() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication("test"));
@@ -51,7 +51,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetterFalseForNewLogin() {
+    public void verifyGetterFalseForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
@@ -63,7 +63,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetterTrueForNewLogin() {
+    public void verifyGetterTrueForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
@@ -75,29 +75,29 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testEqualsWithNull() {
+    public void verifyEqualsWithNull() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
-        assertFalse(assertion.equals(null));
+        assertNotEquals(assertion, null);
     }
 
     @Test
-    public void testEqualsWithInvalidObject() {
+    public void verifyEqualsWithInvalidObject() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService(), true);
 
-        assertFalse(assertion.equals("test"));
+        assertFalse("test".equals(assertion));
     }
 
     @Test
-    public void testEqualsWithValidObject() {
+    public void verifyEqualsWithValidObject() {
         final List<Authentication> list1 = new ArrayList<Authentication>();
         final List<Authentication> list2 = new ArrayList<Authentication>();
 
@@ -112,7 +112,7 @@ public class ImmutableAssertionTests {
     }
 
     @Test
-    public void testGetService() {
+    public void verifyGetService() {
         final Service service = TestUtils.getService();
 
         final List<Authentication> list = new ArrayList<Authentication>();

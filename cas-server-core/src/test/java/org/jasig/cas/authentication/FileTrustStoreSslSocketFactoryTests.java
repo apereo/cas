@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClient;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -30,50 +31,58 @@ import static org.junit.Assert.*;
  * Tests for the <code>FileTrustStoreSslSocketFactory</code> class, checking for self-signed
  * and missing certificates via a local truststore.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
-     public void testTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(factory);
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
     }
 
     @Test
-    public void testTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(factory);
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
     }
 
 
     @Test(expected = RuntimeException.class)
-     public void testTrustStoreNotFound() throws Exception {
+     public void verifyTrustStoreNotFound() throws Exception {
         new FileTrustStoreSslSocketFactory(new File("test.jks"), "changeit");
     }
 
     @Test(expected = RuntimeException.class)
-    public void testTrustStoreBadPassword() throws Exception {
+    public void verifyTrustStoreBadPassword() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         new FileTrustStoreSslSocketFactory(resource.getFile(), "invalid");
     }
 
     @Test
-    public void testTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(factory);
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
     @Test
-    public void testTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
-        final SimpleHttpClient client = new SimpleHttpClient(factory);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(factory);
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 }

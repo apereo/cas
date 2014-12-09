@@ -44,7 +44,7 @@ import static org.junit.Assert.fail;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 @RunWith(Parameterized.class)
@@ -242,7 +242,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Tests the {@link X509CredentialsAuthenticationHandler#authenticate(org.jasig.cas.authentication.Credential)} method.
      */
     @Test
-    public void testAuthenticate() {
+    public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
                 final HandlerResult result = this.handler.authenticate(this.credential);
@@ -265,7 +265,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Tests the {@link X509CredentialsAuthenticationHandler#supports(org.jasig.cas.authentication.Credential)} method.
      */
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertEquals(this.expectedSupports, this.handler.supports(this.credential));
     }
 

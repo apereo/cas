@@ -56,17 +56,17 @@ import static org.junit.Assert.*;
  * Unit test for {@link JpaLockingStrategy}.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -99,7 +99,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testAcquireAndRelease() throws Exception {
+    public void verifyAcquireAndRelease() throws Exception {
         final String appId = "basic";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -120,7 +120,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testLockExpiration() throws Exception {
+    public void verifyLockExpiration() throws Exception {
         final String appId = "expquick";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
@@ -143,7 +143,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * Verify non-reentrant behavior.
      */
     @Test
-    public void testNonReentrantBehavior() {
+    public void verifyNonReentrantBehavior() {
         final String appId = "reentrant";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -164,7 +164,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndRelease() throws Exception {
+    public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, getConcurrentLocks("concurrent-new"));
@@ -181,7 +181,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
+    public void verifyConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
         final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
         locks[0].release();
@@ -263,7 +263,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             return jpaLock;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
@@ -291,7 +293,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {
@@ -312,7 +316,9 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {

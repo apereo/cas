@@ -24,21 +24,22 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class UnknownUsernameAuthenticationExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.username";
+    private static final String MESSAGE = "GG";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new UnknownUsernameAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(r);
 
@@ -47,16 +48,14 @@ public final class UnknownUsernameAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
+    public void verifyCodeConstructor() {
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(MESSAGE);
 
         assertEquals(MESSAGE, e.getCode());
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
+    public void verifyThrowableConstructorWithCode() {
         final RuntimeException r = new RuntimeException();
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(MESSAGE, r);
 

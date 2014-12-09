@@ -25,12 +25,12 @@ import static org.junit.Assert.*;
  * Tests for the switch-case transformer.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class ConvertCasePrincipalNameTransformerTests {
 
     @Test
-    public void testUpperCaseTranformerWithTrimAndDelegate() {
+    public void verifyUpperCaseTranformerWithTrimAndDelegate() {
         final PrefixSuffixPrincipalNameTransformer suffixTrans = new PrefixSuffixPrincipalNameTransformer();
         suffixTrans.setPrefix("a");
         suffixTrans.setSuffix("z");
@@ -41,7 +41,7 @@ public class ConvertCasePrincipalNameTransformerTests {
     }
     
     @Test
-    public void testUpperCaseTranformerWithTrim() {
+    public void verifyUpperCaseTranformerWithTrim() {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
         final String result = transformer.transform("   uid  ");
@@ -49,7 +49,7 @@ public class ConvertCasePrincipalNameTransformerTests {
     }
     
     @Test
-    public void testLowerCaseTranformerWithTrim() {
+    public void verifyLowerCaseTranformerWithTrim() {
         final String result = new ConvertCasePrincipalNameTransformer().transform("   UID  ");
         assertEquals(result, "uid");
     }

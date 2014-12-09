@@ -18,17 +18,9 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import java.nio.ByteBuffer;
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.KeySpec;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.Arrays;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -38,10 +30,18 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Decorator for a map that will hash the key and encrypt the value.
@@ -61,8 +61,12 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final int INTEGER_LEN = 4;
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f'};
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final int DEFAULT_SALT_SIZE = 8;
+    private static final int DEFAULT_SECRET_KEY_SIZE = 32;
+    private static final int BYTE_BUFFER_CAPACITY_SIZE = 4;
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -98,7 +102,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * or if the key is invalid. Check the exception type for more details on the nature of the error.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap) throws Exception {
-        this(decoratedMap, getRandomSalt(8), getRandomSalt(32));
+        this(decoratedMap, getRandomSalt(DEFAULT_SALT_SIZE), getRandomSalt(DEFAULT_SECRET_KEY_SIZE));
     }
 
     /**
@@ -131,7 +135,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final String salt,
             final String secretKeyAlgorithm, final String secretKey) throws Exception {
-        this(decoratedMap, hashAlgorithm, salt.getBytes(), secretKeyAlgorithm,
+        this(decoratedMap, hashAlgorithm, salt.getBytes(Charset.defaultCharset()), secretKeyAlgorithm,
                 getSecretKey(secretKeyAlgorithm, secretKey, salt));
     }
 
@@ -144,17 +148,16 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
      * @param secretKeyAlgorithm the encryption algorithm. CANNOT BE NULL.
      * @param secretKey the secret to use.  CANNOT be NULL.
-     * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
+     * @throws RuntimeException if the algorithm cannot be found or the iv size cant be determined.
      */
     public EncryptedMapDecorator(final Map<String, String> decoratedMap, final String hashAlgorithm, final byte[] salt,
-            final String secretKeyAlgorithm, final Key secretKey) throws NoSuchAlgorithmException {
-        this.decoratedMap = decoratedMap;
-        this.key = secretKey;
-        this.salt = salt;
-        this.secretKeyAlgorithm = secretKeyAlgorithm;
-        this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
-
+            final String secretKeyAlgorithm, final Key secretKey) {
         try {
+            this.decoratedMap = decoratedMap;
+            this.key = secretKey;
+            this.salt = salt;
+            this.secretKeyAlgorithm = secretKeyAlgorithm;
+            this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
             this.ivSize = getIvSize();
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -263,7 +266,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(this.salt);
-        messageDigest.update(key.toLowerCase().getBytes());
+        messageDigest.update(key.toLowerCase().getBytes(Charset.defaultCharset()));
         final String hash = getFormattedText(messageDigest.digest());
 
         logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
@@ -284,7 +287,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            final byte[] ivCiphertext = decode(value.getBytes());
+            final byte[] ivCiphertext = decode(value.getBytes(Charset.defaultCharset()));
             final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
             final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
             final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
@@ -294,7 +297,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
             final byte[] plaintext = cipher.doFinal(ciphertext);
 
-            return new String(plaintext);
+            return new String(plaintext, Charset.defaultCharset());
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -373,14 +376,14 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
             cipher.init(Cipher.ENCRYPT_MODE, this.key, ivSpec);
             
-            final byte[] ciphertext = cipher.doFinal(value.getBytes());
+            final byte[] ciphertext = cipher.doFinal(value.getBytes(Charset.defaultCharset()));
             final byte[] ivCiphertext = new byte[INTEGER_LEN + this.ivSize + ciphertext.length];
 
             System.arraycopy(int2byte(this.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return new String(encode(ivCiphertext));
+            return new String(encode(ivCiphertext), Charset.defaultCharset());
         } catch(final Exception e) {
             throw new RuntimeException(e);
         }
@@ -394,7 +397,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     protected static byte[] int2byte(final int i) throws UnsupportedEncodingException {
-        return ByteBuffer.allocate(4).putInt(i).array();
+        return ByteBuffer.allocate(BYTE_BUFFER_CAPACITY_SIZE).putInt(i).array();
     }
 
     /**
@@ -464,7 +467,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     }
 
     /**
-     * Takes the raw bytes from the digest and formats them correct.
+     * Takes the raw bytes from the digest and formats them.
      *
      * @param bytes the raw bytes from the digest.
      * @return the formatted bytes.
@@ -473,8 +476,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (byte b : bytes) {
-            buf.append(HEX_DIGITS[b >> 4 & 0x0f]);
-            buf.append(HEX_DIGITS[b & 0x0f]);
+            buf.append(HEX_DIGITS[b >> HEX_RIGHT_SHIFT_COEFFICIENT & HEX_HIGH_BITS_BITWISE_FLAG]);
+            buf.append(HEX_DIGITS[b & HEX_HIGH_BITS_BITWISE_FLAG]);
         }
         return buf.toString();
     }
@@ -507,9 +510,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
         final KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
         final SecretKey tmp = factory.generateSecret(spec);
-        final SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
-
-        return secret;
+        return new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
     }
 
     public String getSecretKeyAlgorithm() {

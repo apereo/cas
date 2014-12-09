@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
@@ -42,10 +43,10 @@ import javax.servlet.http.HttpServletResponse;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
-public final class SpnegoCredentialsAction extends
-AbstractNonInteractiveCredentialsAction {
+public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private boolean ntlm = false;
+
+    private boolean ntlm;
 
     private String messageBeginPrefix = constructMessagePrefix();
 
@@ -69,16 +70,14 @@ AbstractNonInteractiveCredentialsAction {
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SPNEGO Authorization header found with "
-                        + (authorizationHeader.length() - this.messageBeginPrefix
-                                .length()) + " bytes");
-            }
+
+            logger.debug("SPNEGO Authorization header found with {} bytes",
+                    authorizationHeader.length() - this.messageBeginPrefix.length());
+
             final byte[] token = Base64.decode(authorizationHeader
                     .substring(this.messageBeginPrefix.length()));
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained token: " + new String(token));
-            }
+
+            logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
@@ -124,9 +123,7 @@ AbstractNonInteractiveCredentialsAction {
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained output token: " + new String(nextToken));
-            }
+            logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                     + " " + Base64.encode(nextToken));

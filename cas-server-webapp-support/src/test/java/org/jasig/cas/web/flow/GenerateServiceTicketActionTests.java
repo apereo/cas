@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTest {
 
@@ -56,7 +56,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     }
 
     @Test
-    public void testServiceTicketFromCookie() throws Exception {
+    public void verifyServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
@@ -73,7 +73,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     }
 
     @Test
-    public void testTicketGrantingTicketFromRequest() throws Exception {
+    public void verifyTicketGrantingTicketFromRequest() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -89,7 +89,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     }
 
     @Test
-    public void testTicketGrantingTicketNoTgt() throws Exception {
+    public void verifyTicketGrantingTicketNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         
@@ -106,7 +106,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     }
 
     @Test
-    public void testTicketGrantingTicketExpiredTgt() throws Exception {
+    public void verifyTicketGrantingTicketExpiredTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -120,7 +120,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     }
     
     @Test
-    public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
+    public void verifyTicketGrantingTicketNotTgtButGateway() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();

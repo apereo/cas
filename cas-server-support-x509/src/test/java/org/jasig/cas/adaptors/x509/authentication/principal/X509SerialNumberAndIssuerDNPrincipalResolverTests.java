@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.6
+ * @since 3.0.0.6
  *
  */
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX509CertificateTests {
@@ -37,7 +37,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
         resolver = new X509SerialNumberAndIssuerDNPrincipalResolver();
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
@@ -50,13 +50,13 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
     }
 
     @Test
-    public void testSupport() {
+    public void verifySupport() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    public void testSupportFalse() {
+    public void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 

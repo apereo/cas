@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTest {
 
@@ -65,7 +65,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithNoService() throws Exception {
+    public void verifySuccessfulAuthenticationWithNoService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
@@ -84,7 +84,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithNoServiceAndWarn()
+    public void verifySuccessfulAuthenticationWithNoServiceAndWarn()
         throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -109,7 +109,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithServiceAndWarn()
+    public void verifySuccessfulAuthenticationWithServiceAndWarn()
         throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -133,7 +133,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testFailedAuthenticationWithNoService() throws Exception {
+    public void verifyFailedAuthenticationWithNoService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
@@ -155,7 +155,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testRenewWithServiceAndSameCredentials() throws Exception {
+    public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -179,7 +179,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testRenewWithServiceAndDifferentCredentials() throws Exception {
+    public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -202,7 +202,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void testRenewWithServiceAndBadCredentials() throws Exception {
+    public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(c);
         final MockHttpServletRequest request = new MockHttpServletRequest();

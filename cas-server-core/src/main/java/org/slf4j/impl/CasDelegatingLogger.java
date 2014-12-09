@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * logging messages if needed, such as removing sensitive ticket id from
  * the log message.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class CasDelegatingLogger extends MarkerIgnoringBase implements Serializable {
 
@@ -94,8 +94,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return the modified message with tgt id removed
      */
     private String removeTicketId(final String msg) {
-        final StringBuilder builder = new StringBuilder(msg.length());
-
         String modifiedMessage = msg;
 
         final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);

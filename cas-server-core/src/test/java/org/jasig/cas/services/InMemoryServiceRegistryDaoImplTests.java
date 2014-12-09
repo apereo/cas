@@ -26,26 +26,26 @@ import static org.junit.Assert.*;
 
 /**
  * This is test cases for {@link org.jasig.cas.services.InMemoryServiceRegistryDaoImpl}.
- * @since 4.1
  * @author Misagh Moayyed mmoayyed@unicon.net
+ * @since 4.1.0
  */
 public class InMemoryServiceRegistryDaoImplTests {
 
     @Test
-    public void testSave()  {
+    public void verifySave()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
     }
 
     @Test
-    public void testLoadEmpty() {
+    public void verifyLoadEmpty() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         assertEquals(reg.load().size(), 0);
     }
 
     @Test
-     public void testSaveAndLoad()  {
+     public void verifySaveAndLoad()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -53,7 +53,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void testSaveAndFind()  {
+    public void verifySaveAndFind()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -61,7 +61,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void testSaveAndDelete()  {
+    public void verifySaveAndDelete()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);

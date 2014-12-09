@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+package org.jasig.cas.util.http;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.junit.Test;
 
 /**
  *
@@ -36,31 +37,34 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleHttpClientTests  {
 
-    private SimpleHttpClient getHttpClient() {
-        final SimpleHttpClient httpClient = new SimpleHttpClient();
+    private SimpleHttpClient getHttpClient() throws Exception {
+        final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();
         return httpClient;
     }
 
     @Test
-    public void testOkayUrl() {
+    public void verifyOkayUrl() throws Exception {
         assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
-    public void testBadUrl() {
-        assertFalse(this.getHttpClient().isValidEndPoint("http://www.apereo.org/scottb.html"));
+    public void verifyBadUrl() throws Exception {
+        assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
     }
 
     @Test
-    public void testInvalidHttpsUrl() {
+    public void verifyInvalidHttpsUrl() throws Exception {
         final HttpClient client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 
     @Test
-    public void testBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClient client = new SimpleHttpClient(getFriendlyToAllSSLSocketFactory(),
-                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER, new int[] {200, 403});
+    public void verifyBypassedInvalidHttpsUrl() throws Exception {
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
+        clientFactory.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        clientFactory.setAcceptableCodes(new int[] {200, 403});
+        final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 

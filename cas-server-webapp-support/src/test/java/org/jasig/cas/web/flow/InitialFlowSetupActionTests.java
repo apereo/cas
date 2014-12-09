@@ -42,10 +42,13 @@ import static org.mockito.Mockito.*;
 /**
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  *
  */
 public class InitialFlowSetupActionTests {
+    private static final String CONST_CONTEXT_PATH = "/test";
+    private static final String CONST_CONTEXT_PATH_2 = "/test1";
+
     private final InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -71,9 +74,8 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testSettingContextPath() throws Exception {
+    public void verifySettingContextPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -85,10 +87,8 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testResettingContexPath() throws Exception {
+    public void verifyResettingContexPath() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
-        final String CONST_CONTEXT_PATH_2 = "/test1";
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -108,7 +108,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testNoServiceFound() throws Exception {
+    public void verifyNoServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
@@ -121,7 +121,7 @@ public class InitialFlowSetupActionTests {
     }
 
     @Test
-    public void testServiceFound() throws Exception {
+    public void verifyServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");

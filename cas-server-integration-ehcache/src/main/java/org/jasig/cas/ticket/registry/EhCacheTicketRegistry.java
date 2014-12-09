@@ -18,12 +18,9 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.Collection;
-import java.util.HashSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -32,6 +29,9 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * <p>
@@ -48,14 +48,17 @@ import org.springframework.core.style.ToStringCreator;
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
  * @author Andrew Tillinghast
+ * @since 3.5
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
 
-    private Cache serviceTicketsCache = null;
+    private Cache serviceTicketsCache;
 
-    private Cache ticketGrantingTicketsCache = null;
+    private Cache ticketGrantingTicketsCache;
 
-    /** @see #setSupportRegistryState(boolean)*/
+    /**
+     * @see #setSupportRegistryState(boolean)
+     **/
     private boolean supportRegistryState = true;
 
     /**
@@ -94,7 +97,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
-            logger.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
+            logger.debug("Adding service ticket {} to the cache {}", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
             logger.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(),

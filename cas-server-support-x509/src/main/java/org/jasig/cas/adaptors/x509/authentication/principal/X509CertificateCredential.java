@@ -18,17 +18,17 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
-import java.security.cert.X509Certificate;
-
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.authentication.AbstractCredential;
+
+import java.security.cert.X509Certificate;
 
 /**
  * An X.509 certificate credential.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 public final class X509CertificateCredential extends AbstractCredential {

@@ -21,7 +21,7 @@ package org.jasig.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LockedOutputStream;
-import org.jasig.cas.util.services.JsonSerializer;
+import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class JsonServiceRegistryDao implements ServiceRegistryDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
@@ -213,12 +213,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
      */
     protected File makeFile(final RegisteredService service) {
         final String fileName = service.getName() + "-" + service.getId() + "." + FILE_EXTENSION;
-        final File svcFile = new File(serviceRegistryDirectory, fileName);
         try {
-            final String path = svcFile.getCanonicalPath();
+            final File svcFile = new File(serviceRegistryDirectory, fileName);
+            LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {
-            LOGGER.warn("Service file name " + fileName + " is invalid; Examine for illegal characters in the name.", e);
+            LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
     }

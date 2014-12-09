@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class DefaultRandomStringGeneratorTests {
 
@@ -36,17 +36,17 @@ public class DefaultRandomStringGeneratorTests {
         LENGTH);
 
     @Test
-    public void testMaxLength() {
+    public void verifyMaxLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getMaxLength());
     }
 
     @Test
-    public void testMinLength() {
+    public void verifyMinLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getMinLength());
     }
 
     @Test
-    public void testRandomString() {
+    public void verifyRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(),
             this.randomStringGenerator.getNewString());
     }

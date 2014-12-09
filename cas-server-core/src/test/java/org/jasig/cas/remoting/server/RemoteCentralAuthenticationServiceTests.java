@@ -32,7 +32,7 @@ import static org.junit.Assert.fail;
 /**
  * @author Scott Battaglia
    @deprecated As of 4.1
- * @since 3.0
+ * @since 3.0.0
  */
 @Deprecated
 public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTest {
@@ -46,13 +46,13 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testValidCredentials() throws Exception {
+    public void verifyValidCredentials() throws Exception {
         this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
-    public void testInvalidCredentials() throws Exception {
+    public void verifyInvalidCredentials() throws Exception {
         try {
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                     TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
@@ -63,7 +63,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testDontUseValidatorsToCheckValidCredentials() throws Exception {
+    public void verifyDontUseValidatorsToCheckValidCredentials() throws Exception {
         try {
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(
                     TestUtils.getCredentialsWithDifferentUsernameAndPassword());
@@ -74,13 +74,13 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testDestroyTicketGrantingTicket() {
+    public void verifyDestroyTicketGrantingTicket() {
         this.remoteCentralAuthenticationService
             .destroyTicketGrantingTicket("test");
     }
 
     @Test
-    public void testGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
+    public void verifyGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -89,7 +89,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testGrantServiceTicketWithValidCredentials() throws Exception {
+    public void verifyGrantServiceTicketWithValidCredentials() throws Exception {
         final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -99,7 +99,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testGrantServiceTicketWithNullCredentials() throws Exception {
+    public void verifyGrantServiceTicketWithNullCredentials() throws Exception {
         final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -108,7 +108,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testGrantServiceTicketWithEmptyCredentials() throws Exception {
+    public void verifyGrantServiceTicketWithEmptyCredentials() throws Exception {
         final TicketGrantingTicket ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -123,7 +123,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testValidateServiceTicketWithValidService() throws Exception {
+    public void verifyValidateServiceTicketWithValidService() throws Exception {
         final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -135,7 +135,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test
-    public void testDelegateTicketGrantingTicketWithValidCredentials() throws Exception {
+    public void verifyDelegateTicketGrantingTicketWithValidCredentials() throws Exception {
         final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
@@ -146,7 +146,7 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void testDelegateTicketGrantingTicketWithInvalidCredentials() throws Exception {
+    public void verifyDelegateTicketGrantingTicketWithInvalidCredentials() throws Exception {
         final TicketGrantingTicket ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());

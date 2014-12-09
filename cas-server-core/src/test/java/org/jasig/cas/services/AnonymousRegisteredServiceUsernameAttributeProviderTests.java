@@ -29,12 +29,12 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
-    public void testPrincipalResolution() {
+    public void verifyPrincipalResolution() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator("casrox"));
@@ -47,7 +47,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator("casrox"));
