@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-integration-restlet</artifactId>
 	<packaging>jar</packaging>
-	<name>Apereo CAS Restlet Integration</name>
+	<name>Apereo CAS Restlet Integration - DEPRECATED</name>
 	
 	<dependencies>
 		<dependency>
