@@ -54,6 +54,11 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-security-filter</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
