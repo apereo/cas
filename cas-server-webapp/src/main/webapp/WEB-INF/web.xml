@@ -46,6 +46,27 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>requestParameterSecurityFilter</filter-name>
+    <filter-class>org.jasig.cas.security.RequestParameterPolicyEnforcementFilter</filter-class>
+    <init-param>
+      <param-name>parametersToCheck</param-name>
+      <param-value>ticket service renew gateway warn target SAMLart pgtUrl pgt pgtId pgtIou targetService</param-value>
+    </init-param>
+    <init-param>
+      <param-name>charactersToForbid</param-name>
+      <param-value>none</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowMultiValuedParameters</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>requestParameterSecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
