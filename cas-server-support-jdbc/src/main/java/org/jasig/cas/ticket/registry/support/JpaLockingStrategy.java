@@ -116,7 +116,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         try {
             lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
         } catch (final PersistenceException e) {
-            logger.debug("{} failed querying for {} lock.", new Object[] {uniqueId, applicationId, e});
+            logger.debug("{} failed querying for {} lock.", uniqueId, applicationId, e);
             return false;
         }
 
@@ -215,7 +215,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         } catch (final PersistenceException e) {
             success = false;
             if (logger.isDebugEnabled()) {
-                logger.debug("{} could not obtain {} lock.", new Object[] {uniqueId, applicationId, e});
+                logger.debug("{} could not obtain {} lock.", uniqueId, applicationId, e);
             } else {
                 logger.info("{} could not obtain {} lock.", uniqueId, applicationId);
             }
