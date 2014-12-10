@@ -20,13 +20,18 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link CompressionUtils}
@@ -88,7 +93,8 @@ public final class CompressionUtils {
      * @return the converted string
      */
     public static String deflate(final byte[] bytes) {
-        return deflate(bytes);
+        final String data = new String(bytes, Charset.forName(UTF8_ENCODING));
+        return deflate(data);
     }
 
     /**
@@ -131,10 +137,10 @@ public final class CompressionUtils {
      * @param data the data to encode
      * @return the base64 decoded byte[] or null
      */
-    public static byte[] decodeBase64(final String data) {
+    public static byte[] decodeBase64ToByteArray(final String data) {
         try {
             final byte[] bytes = data.getBytes(UTF8_ENCODING);
-            return decodeBase64(bytes);
+            return decodeBase64ToByteArray(bytes);
         } catch (final Exception e) {
             LOGGER.error("Base64 decoding failed", e);
             return null;
@@ -147,12 +153,39 @@ public final class CompressionUtils {
      * @param data the data to encode
      * @return the base64 decoded byte[] or null
      */
-    public static byte[] decodeBase64(final byte[] data) {
+    public static byte[] decodeBase64ToByteArray(final byte[] data) {
         try {
             return Base64.decodeBase64(data);
         } catch (final Exception e) {
             LOGGER.error("Base64 decoding failed", e);
             return null;
+        }
+    }
+
+    /**
+     * Decode the byte[] in base64 to a string.
+     *
+     * @param bytes the data to encode
+     * @return the new string in {@link #UTF8_ENCODING}.
+     */
+    public static String decodeByteArrayToString(final byte[] bytes) {
+        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final InflaterInputStream iis = new InflaterInputStream(bais);
+        final byte[] buf = new byte[bytes.length];
+
+        try {
+            int count = iis.read(buf);
+            while (count != -1) {
+                baos.write(buf, 0, count);
+                count = iis.read(buf);
+            }
+            return new String(baos.toByteArray(), Charset.forName(UTF8_ENCODING));
+        } catch (final Exception e) {
+            LOGGER.error("Base64 decoding failed", e);
+            return null;
+        } finally {
+            IOUtils.closeQuietly(iis);
         }
     }
 }
