@@ -20,18 +20,13 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link CompressionUtils}
@@ -93,25 +88,7 @@ public final class CompressionUtils {
      * @return the converted string
      */
     public static String deflate(final byte[] bytes) {
-        final int bufferLength = 1024;
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final InflaterInputStream iis = new InflaterInputStream(bais);
-        final byte[] buf = new byte[bufferLength];
-
-        try {
-            int count = iis.read(buf);
-            while (count != -1) {
-                baos.write(buf, 0, count);
-                count = iis.read(buf);
-            }
-            return new String(baos.toByteArray(), Charset.forName(UTF8_ENCODING));
-        } catch (final Exception e) {
-            LOGGER.error("An error has occurred while deflating the array", e);
-            return null;
-        } finally {
-            IOUtils.closeQuietly(iis);
-        }
+        return deflate(bytes);
     }
 
     /**
