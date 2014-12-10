@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -80,8 +82,19 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
         LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
     }
 
+
+    /**
+     * Get salt.
+     *
+     * @return the byte[] for the salt or null
+     */
     public byte[] getSalt() {
-        return salt;
+        try {
+            return ByteSource.wrap(this.salt).read();
+        } catch (final IOException e) {
+            LOGGER.warn("Salt cannot be read because the byte array from source could not be consumed");
+        }
+        return null;
     }
 
     @Override
@@ -121,7 +134,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(salt)
+                .append(this.salt)
                 .toHashCode();
     }
 }
