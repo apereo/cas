@@ -349,7 +349,13 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
     <property name="severity" value="error"/>
     <property name="format" value="\s+(private|public)*\s+(abstract\s)*class\s+\w+"/>
-    <property name="message" value="Non-static inner classes are a security compromise. Consider statics instead"/>
+    <property name="message" value="Non-static inner classes are a security compromise. Consider static instead"/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Usage of java.util.Random"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="(java.util.Random)|(new Random\()"/>
+    <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
