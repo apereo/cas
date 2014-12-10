@@ -24,6 +24,6 @@
      <Match>
      	<Confidence value="2" />
         <Rank value="15" />
-        <Bug category="SECURITY,PERFORMANCE" />
+        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE" />
      </Match>
 </FindBugsFilter>
