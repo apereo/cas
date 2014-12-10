@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import org.jasig.cas.ticket.registry.JpaTicketRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
