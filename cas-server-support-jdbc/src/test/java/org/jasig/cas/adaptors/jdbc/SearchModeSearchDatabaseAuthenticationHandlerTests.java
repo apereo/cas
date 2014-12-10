@@ -94,7 +94,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     }
 
     @Entity(name="cassearchusers")
-    public class UsersTable {
+    public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
