@@ -22,7 +22,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.http.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +74,7 @@ public class Cas20ProxyHandlerTests {
     public void verifyNonValidProxyTicket() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(new int[] {900});
-        final SimpleHttpClient httpClient = clientFactory.getObject();
+        final HttpClient httpClient = clientFactory.getObject();
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
             "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
