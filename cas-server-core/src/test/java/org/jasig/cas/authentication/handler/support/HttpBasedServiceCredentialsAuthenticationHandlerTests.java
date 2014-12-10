@@ -19,7 +19,7 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.util.http.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(new int[] {900});
-        final SimpleHttpClient httpClient = clientFactory.getObject();
+        final HttpClient httpClient = clientFactory.getObject();
         this.authenticationHandler.setHttpClient(httpClient);
         this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }
