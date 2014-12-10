@@ -232,7 +232,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      */
     @Entity
     @Table(name = "locks")
-    public static class Lock {
+    private static class Lock {
         /** column name that holds application identifier. */
         @Id
         @Column(name="application_id")
@@ -246,7 +246,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         @Temporal(TemporalType.TIMESTAMP)
         @Column(name="expiration_date")
         private Date expirationDate;
-
 
         /**
          * @return the applicationId
