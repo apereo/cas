@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -77,7 +79,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private final MessageDigest messageDigest;
 
     @NotNull
-    private final byte[] salt;
+    private final ByteSource salt;
 
     @NotNull
     private final Key key;
@@ -155,7 +157,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         try {
             this.decoratedMap = decoratedMap;
             this.key = secretKey;
-            this.salt = salt;
+            this.salt = ByteSource.wrap(salt);
             this.secretKeyAlgorithm = secretKeyAlgorithm;
             this.messageDigest = MessageDigest.getInstance(hashAlgorithm);
             this.ivSize = getIvSize();
@@ -265,11 +267,11 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         }
 
         final MessageDigest messageDigest = getMessageDigest();
-        messageDigest.update(this.salt);
+        messageDigest.update(consumeByteSourceOrNull(this.salt));
         messageDigest.update(key.toLowerCase().getBytes(Charset.defaultCharset()));
         final String hash = getFormattedText(messageDigest.digest());
 
-        logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
+        logger.debug("Generated hash of value [{}] for key [{}].", hash, key);
         return hash;
     }
 
@@ -300,6 +302,23 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             return new String(plaintext, Charset.defaultCharset());
         } catch (final Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Read the contents of the source into a byte array.
+     * @param source  the byte array source
+     * @return the byte[] read from the source or null
+     */
+    private byte[] consumeByteSourceOrNull(final ByteSource source) {
+        try {
+            if (source == null || source.isEmpty()) {
+                return null;
+            }
+            return source.read();
+        } catch (final IOException e) {
+            logger.warn("Could not consume the byte array source", e);
+            return null;
         }
     }
 
