@@ -127,7 +127,7 @@ public class FrontChannelLogoutActionTests {
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
         assertTrue(url.startsWith(fakeUrl + "?SAMLRequest="));
-        final byte[] samlMessage = CompressionUtils.decodeBase64(
+        final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
                 URLDecoder.decode(StringUtils.substringAfter(url, "?SAMLRequest="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
