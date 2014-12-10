@@ -346,6 +346,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="message" value="There are no spaces after cast."/>
   </module>
   <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="\s+(private|public)*\s+(abstract\s)*class\s+\w+"/>
+    <property name="message" value="Non-static inner classes are a security compromise. Consider statics instead"/>
+  </module>
+  <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
     <property name="severity" value="error"/>
     <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>
