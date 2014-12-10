@@ -37,7 +37,13 @@ public class FooClass {
 
 
 ##Indentations
-Code indentation should be set to use 4 spaces. Tabs should never be used for indentation.
+Code indentation should be set to use 4 spaces. Tabs should **never** be used for indentation.
+
+##Arrays vs. Lists
+Where it's possible, instances of `ImmutableCollection` should be used instead of their `Collection` counterpart
+or equivalent array definition. Returning or passing an argument as a native java `Collection` or array exposes
+internal implementations to the caller/client and would allow in theory for malicious
+modifications to the program state. 
 
 
 ##Static Members
