@@ -26,7 +26,7 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.authentication;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.http.SimpleHttpClient;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.http.HttpClient;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.springframework.core.io.ClassPathResource;
@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">final</strong> FileTrustStoreSslSocketFactory factory = <strong class="jxr_keyword">new</strong> FileTrustStoreSslSocketFactory(resource.getFile(), <span class="jxr_string">"changeit"</span>);
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClientFactoryBean clientFactory = <strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean();
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          clientFactory.setSslSocketFactory(factory);
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClient client = clientFactory.getObject();
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> HttpClient client = clientFactory.getObject();
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"https://www.cacert.org"</span>));
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      }
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> FileTrustStoreSslSocketFactory factory = <strong class="jxr_keyword">new</strong> FileTrustStoreSslSocketFactory(resource.getFile(), <span class="jxr_string">"changeit"</span>);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClientFactoryBean clientFactory = <strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean();
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          clientFactory.setSslSocketFactory(factory);
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClient client = clientFactory.getObject();
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> HttpClient client = clientFactory.getObject();
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"https://test.scaldingspoon.org/idp/shibboleth"</span>));
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">final</strong> FileTrustStoreSslSocketFactory factory = <strong class="jxr_keyword">new</strong> FileTrustStoreSslSocketFactory(resource.getFile(), <span class="jxr_string">"changeit"</span>);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClientFactoryBean clientFactory = <strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean();
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          clientFactory.setSslSocketFactory(factory);
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClient client = clientFactory.getObject();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">final</strong> HttpClient client = clientFactory.getObject();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"https://www.google.com"</span>));
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      @Test
@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> FileTrustStoreSslSocketFactory factory = <strong class="jxr_keyword">new</strong> FileTrustStoreSslSocketFactory(resource.getFile(), <span class="jxr_string">"changeit"</span>);
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClientFactoryBean clientFactory = <strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean();
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          clientFactory.setSslSocketFactory(factory);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">final</strong> SimpleHttpClient client = clientFactory.getObject();
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">final</strong> HttpClient client = clientFactory.getObject();
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          assertTrue(client.isValidEndPoint(<span class="jxr_string">"http://wikipedia.org"</span>));
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  }
