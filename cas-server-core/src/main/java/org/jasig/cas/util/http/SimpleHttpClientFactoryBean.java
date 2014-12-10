@@ -18,19 +18,8 @@
  */
 package org.jasig.cas.util.http;
 
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -62,6 +51,19 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The factory to build a {@link SimpleHttpClient}.
@@ -106,7 +108,7 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     /** List of HTTP status codes considered valid by the caller. */
     @NotNull
     @Size(min = 1)
-    private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
+    private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
     @Min(0)
     private int connectionTimeout = DEFAULT_TIMEOUT;
@@ -164,7 +166,7 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     private boolean redirectsEnabled = true;
 
     /**
-     * The executor service used to create a {@link #requestExecutionService}.
+     * The executor service used to create a {@link #buildRequestExecutorService}.
      */
     private ExecutorService executorService;
 
@@ -305,12 +307,12 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
     }
 
-    public int[] getAcceptableCodes() {
-        return this.acceptableCodes;
+    public List<Integer> getAcceptableCodes() {
+        return ImmutableList.copyOf(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = acceptableCodes;
+        this.acceptableCodes = Ints.asList(acceptableCodes);
     }
 
     public int getConnectionTimeout() {

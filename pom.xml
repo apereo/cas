@@ -578,6 +578,12 @@
       </dependency>
 
       <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${google.guava.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
         <version>${xml.apis.version}</version>
@@ -1172,6 +1178,7 @@
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
     <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
+    <google.guava.version>18.0</google.guava.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
