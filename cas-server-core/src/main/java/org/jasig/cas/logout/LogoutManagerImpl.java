@@ -162,15 +162,13 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Handle logout for slo service.
      *
-     * @param service the service
+     * @param singleLogoutService the service
      * @param ticketId the ticket id
      * @return the logout request
      */
-    private LogoutRequest handleLogoutForSloService(final SingleLogoutService service, final String ticketId) {
-        final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
+    private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
-
-            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
 
             if (serviceSupportsSingleLogout(registeredService)) {
                 final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
