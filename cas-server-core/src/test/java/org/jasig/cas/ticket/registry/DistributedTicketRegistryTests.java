@@ -39,15 +39,19 @@ import static org.junit.Assert.*;
  * @since 3.1
  *
  */
-public class DistributedTicketRegistryTests {
+public final class DistributedTicketRegistryTests {
 
     private TestDistributedTicketRegistry ticketRegistry;
 
     private boolean wasTicketUpdated;
 
+    public void setWasTicketUpdated(final boolean wasTicketUpdated) {
+        this.wasTicketUpdated = wasTicketUpdated;
+    }
+
     @Before
     public void setUp() throws Exception {
-        this.ticketRegistry = new TestDistributedTicketRegistry();
+        this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;
     }
 
@@ -114,12 +118,16 @@ public class DistributedTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 
-    protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
-
+    private static class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+        private final DistributedTicketRegistryTests parent;
         private Map<String, Ticket> tickets = new HashMap<String, Ticket>();
 
+        public TestDistributedTicketRegistry(final DistributedTicketRegistryTests parent) {
+            this.parent = parent;
+        }
+
         protected void updateTicket(final Ticket ticket) {
-            DistributedTicketRegistryTests.this.wasTicketUpdated = true;
+            this.parent.setWasTicketUpdated(true);
         }
 
         public void addTicket(final Ticket ticket) {

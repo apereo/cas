@@ -348,8 +348,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
     <property name="severity" value="error"/>
-    <property name="format" value="\s+(private|public)*\s+(abstract\s)*class\s+\w+"/>
-    <property name="message" value="Non-static inner classes are a security compromise. Consider static instead"/>
+    <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
+    <property name="message" value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Usage of java.util.Random"/>

@@ -18,16 +18,6 @@
  */
 package org.jasig.cas.services.web.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -37,6 +27,14 @@ import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -117,7 +115,7 @@ public class RegisteredServiceValidatorTests {
 
     }
 
-    protected class TestServicesManager implements ServicesManager {
+    private static class TestServicesManager implements ServicesManager {
 
         private final boolean returnValue;
 
