@@ -64,8 +64,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        request.setCookies(new Cookie[] {new Cookie("TGT",
-                this.ticketGrantingTicket.getId())});
+        request.setCookies(new Cookie("TGT", this.ticketGrantingTicket.getId()));
 
         this.action.execute(context);
 
