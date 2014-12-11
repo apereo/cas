@@ -19,6 +19,7 @@
 #
 
 invokeJavadoc=false
+invokeDoc=false
 
 # Only invoke the javadoc deployment process
 # for the first job in the build matrix, so as
@@ -27,20 +28,34 @@ invokeJavadoc=false
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
-  		echo -e "Invoking Javadoc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-  		invokeJavadoc=true;;
+  		echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
+  		invokeJavadoc=true;
+  		invokeDoc=true;;
   esac
 fi 
 
+invokeJavadoc=false
+
+if [ "$invokeDoc" == true ]; then
+
+  echo -e "Copying project documentation over ...\n"
+  cp -R cas-server-documentation $HOME\docs-latest
+
+fi
+
 if [ "$invokeJavadoc" == true ]; then
 
-  echo -e "Start to publish lastest Javadoc to gh-pages...\n"
-  
-  echo -e "Invoking Maven to generate the site documentation...\n"
-  mvn site site:stage -q -ff -B -P nocheck
+  echo -e "Started to publish latest Javadoc to gh-pages...\n"
+
+  echo -e "Invoking Maven to generate the project site...\n"
+  mvn site site:stage -q -ff -B -P nocheck -Dversions.skip=false
   
   echo -e "Copying the generated docs over...\n"
   cp -R target/staging $HOME/javadoc-latest
+
+fi
+
+if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
@@ -49,19 +64,32 @@ if [ "$invokeJavadoc" == true ]; then
   git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
 
   cd gh-pages
-  echo -e "Removing javadocs...\n"
-  git rm -rf ./current/javadocs > /dev/null
-  git rm -rf ./development/javadocs > /dev/null
 
-  echo -e "Copying new javadocs to current...\n"
-  cp -Rf $HOME/javadoc-latest ./development/javadocs
+  if [ "$invokeDoc" == true ]; then
+    echo -e "Removing previous documentation...\n"
+    git rm -rf ./development > /dev/null
+
+    echo -e "Copying new docs...\n"
+    cp -Rf $HOME/docs-latest ./development
+  fi
+
+  if [ "$invokeJavadoc" == true ]; then
+    echo -e "Removing previous Javadocs...\n"
+    git rm -rf ./development/javadocs > /dev/null
+
+    echo -e "Copying new Javadocs...\n"
+    cp -Rf $HOME/javadoc-latest ./development/javadocs
+  fi
+
   echo -e "Adding changes to the index...\n"
   git add -f . > /dev/null
-  echo -e "Committing changes...\n" 
-  git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages" > /dev/null
+
+  echo -e "Committing changes...\n"
+  git commit -m "Published documentation to [gh-pages]. Build $TRAVIS_BUILD_NUMBER" > /dev/null
+
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Successfully published Javadocs to [gh-pages] branch.\n"
-  
+  echo -e "Successfully published documenetation to [gh-pages] branch.\n"
+
 fi
