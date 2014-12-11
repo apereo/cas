@@ -63,6 +63,12 @@
       <version>3.0.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>de.javakaffee</groupId>
+      <artifactId>kryo-serializers</artifactId>
+      <version>0.27</version>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.mockito</groupId>

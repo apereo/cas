@@ -56,6 +56,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
+import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
  * suited for efficient serialization of tickets.
@@ -80,7 +82,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      */
     public KryoTranscoder() {
     }
-    
+
     /**
      * Creates a Kryo-based transcoder.
      *
@@ -89,7 +91,6 @@ public class KryoTranscoder implements Transcoder<Object> {
     public KryoTranscoder(final int initialBufferSize) {
         logger.warn("It's no longer necessary to define the initialBufferSize. Use the empty constructor.");
     }
-
 
     /**
      * Sets a map of additional types that should be regisetered with Kryo,
@@ -104,7 +105,6 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Initialize and register classes with kryo.
      */
-
     public void initialize() {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
@@ -127,6 +127,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(URL.class, new URLSerializer());
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
+        // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
+        UnmodifiableCollectionsSerializer.registerSerializers(kryo);
 
         // Register other types
         if (serializerMap != null) {
@@ -143,7 +145,6 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.setRegistrationRequired(false);
     }
 
-
     /**
      * Asynchronous decoding is not supported.
      *
@@ -157,21 +158,21 @@ public class KryoTranscoder implements Transcoder<Object> {
     @Override
     public CachedData encode(final Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        final Output output = new Output(byteStream);
-        kryo.writeClassAndObject(output, obj);
-        output.flush();
-        final byte[] bytes = byteStream.toByteArray();
-        output.close();
-        return new CachedData(0, bytes, bytes.length);
+        try (final Output output = new Output(byteStream)) {
+            kryo.writeClassAndObject(output, obj);
+            output.flush();
+            final byte[] bytes = byteStream.toByteArray();
+            return new CachedData(0, bytes, bytes.length);
+        }
     }
 
     @Override
     public Object decode(final CachedData d) {
         final byte[] bytes = d.getData();
-        final Input input = new Input(new ByteArrayInputStream(bytes));
-        final Object obj =  kryo.readClassAndObject(input);
-        input.close();
-        return obj;
+        try (final Input input = new Input(new ByteArrayInputStream(bytes))) {
+            final Object obj =  kryo.readClassAndObject(input);
+            return obj;
+        }
     }
 
     /**
@@ -182,7 +183,6 @@ public class KryoTranscoder implements Transcoder<Object> {
     public int getMaxSize() {
         return CachedData.MAX_SIZE;
     }
-
 
     /**
      * Gets the kryo object that provides encoding and decoding services for this instance.
