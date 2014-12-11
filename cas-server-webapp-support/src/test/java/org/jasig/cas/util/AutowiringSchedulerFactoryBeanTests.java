@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link org.jasig.cas.util.AutowiringSchedulerFactoryBean} class.
@@ -41,9 +41,9 @@ public class AutowiringSchedulerFactoryBeanTests {
 
     @Before
     public void setUp() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[] {
+        context = new ClassPathXmlApplicationContext(
         "core-context.xml",
-        "applicationContext.xml"});
+        "applicationContext.xml");
 
         this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");
         this.scheduler.start();
