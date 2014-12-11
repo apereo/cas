@@ -18,7 +18,6 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -113,7 +112,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
 
         final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(),
-                TestUtils.getService(), (Credential[]) ArrayUtils.EMPTY_OBJECT_ARRAY);
+                TestUtils.getService(), new Credential[] {});
         assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
     }
 
