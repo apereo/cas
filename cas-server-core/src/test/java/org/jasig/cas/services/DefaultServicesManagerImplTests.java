@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -211,7 +211,7 @@ public class DefaultServicesManagerImplTests  {
 
     }
 
-    protected class SimpleService implements Service {
+    private static class SimpleService implements Service {
 
         /**
          * Comment for <code>serialVersionUID</code>.
