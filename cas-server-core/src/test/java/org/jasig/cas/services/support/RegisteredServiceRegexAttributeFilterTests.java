@@ -18,17 +18,6 @@
  */
 package org.jasig.cas.services.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.services.AttributeFilter;
 import org.jasig.cas.services.RegisteredService;
@@ -36,6 +25,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
@@ -104,7 +102,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
-        final AttributeFilter secondFilter = (AttributeFilter) SerializationUtils.deserialize(data);
+        final AttributeFilter secondFilter = SerializationUtils.deserialize(data);
         assertEquals(secondFilter, this.filter);
     }
 }
