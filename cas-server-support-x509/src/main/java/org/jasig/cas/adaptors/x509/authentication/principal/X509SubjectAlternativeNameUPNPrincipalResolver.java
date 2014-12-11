@@ -56,8 +56,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
      *
      * @see AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
-     *     X509Certificate#getSubjectAlternativeNames</a>
+     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
