@@ -29,7 +29,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link ImmutableAssertion} class.
+ * Unit test for {@link org.jasig.cas.validation.ImmutableAssertion} class.
  *
  * @author Scott Battaglia
  * @since 3.0.0

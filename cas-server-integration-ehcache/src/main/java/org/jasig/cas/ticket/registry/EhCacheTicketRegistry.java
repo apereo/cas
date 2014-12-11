@@ -37,13 +37,13 @@ import java.util.HashSet;
  * <p>
  * <a href="http://ehcache.org/">Ehcache</a> based distributed ticket registry.
  * </p>
+ *
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * <ul>
- * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Monitoring : follow separately the number of TGT and ST.</li>
+ *   <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
+ *   <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
- * </p>
  *
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
