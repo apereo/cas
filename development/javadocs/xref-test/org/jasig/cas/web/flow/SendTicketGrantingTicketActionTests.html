@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgt = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          when(tgt.getId()).thenReturn(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          request.setCookies(<strong class="jxr_keyword">new</strong> Cookie[] {<strong class="jxr_keyword">new</strong> Cookie(<span class="jxr_string">"TGT"</span>, <span class="jxr_string">"test5"</span>)});
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          request.setCookies(<strong class="jxr_keyword">new</strong> Cookie(<span class="jxr_string">"TGT"</span>, <span class="jxr_string">"test5"</span>));
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          WebUtils.putTicketGrantingTicketInRequestScope(<strong class="jxr_keyword">this</strong>.context, tgt);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">this</strong>.context.setExternalContext(<strong class="jxr_keyword">new</strong> ServletExternalContext(<strong class="jxr_keyword">new</strong> MockServletContext(), request, response));
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  

@@ -151,7 +151,7 @@
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> recordThrottle(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         logger.warn(<span class="jxr_string">"Throttling submission from {}.  More than {} failed login attempts within {} seconds."</span>,
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 <strong class="jxr_keyword">new</strong> Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 request.getRemoteAddr(), failureThreshold, failureRangeInSeconds);
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>     }
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> 
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     <em class="jxr_javadoccomment">/**</em>
