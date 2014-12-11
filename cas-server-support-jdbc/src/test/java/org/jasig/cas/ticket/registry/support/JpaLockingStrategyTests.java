@@ -253,7 +253,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
 
     class TransactionalLockInvocationHandler implements InvocationHandler {
-        private JpaLockingStrategy jpaLock;
+        private final JpaLockingStrategy jpaLock;
 
         public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
             jpaLock = lock;
@@ -287,7 +287,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     class Locker implements Callable<Boolean> {
 
-        private LockingStrategy lock;
+        private final LockingStrategy lock;
 
         public Locker(final LockingStrategy l) {
             lock = l;
@@ -310,7 +310,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     class Releaser implements Callable<Boolean> {
 
-        private LockingStrategy lock;
+        private final LockingStrategy lock;
 
         public Releaser(final LockingStrategy l) {
             lock = l;

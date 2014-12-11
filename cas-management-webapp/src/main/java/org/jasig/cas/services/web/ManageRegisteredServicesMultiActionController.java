@@ -53,7 +53,7 @@ public final class ManageRegisteredServicesMultiActionController {
     private final ServicesManager servicesManager;
 
     @NotNull
-    private String defaultServiceUrl;
+    private final String defaultServiceUrl;
 
     /**
      * Instantiates a new manage registered services multi action controller.
