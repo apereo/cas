@@ -111,8 +111,7 @@ public final class ManageRegisteredServicesMultiActionController {
      *
      * @param id the id
      * @param evaluationOrder the evaluation order
-     * @return a {@link ModelAndView} object back to the <code>jsonView</code>
-     * @returns {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
+     * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
      * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccessful.
      * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
      * was successful.
