@@ -29,7 +29,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link org.jasig.cas.extension.clearpass.ClearPassController}.
