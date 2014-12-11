@@ -74,7 +74,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     @Override
     public final boolean isSatisfiedBy(final Assertion assertion) {
         return isSatisfiedByInternal(assertion)
-            && ((!this.renew) || (assertion.isFromNewLogin() && this.renew));
+            && (this.renew || assertion.isFromNewLogin());
     }
 
     /**
