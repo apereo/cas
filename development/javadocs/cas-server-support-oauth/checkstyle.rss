@@ -46,7 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenControllerTests.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenControllerTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20WrapperController.java">org/jasig/cas/support/oauth/web/OAuth20WrapperController.java</a>
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20WrapperController.java">org/jasig/cas/support/oauth/web/OAuth20WrapperController.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenControllerTests.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenControllerTests.java</a>
                 </td>
                 <td>
                   0
@@ -116,7 +116,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenController.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenController.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService.java">org/jasig/cas/support/oauth/services/OAuthCallbackAuthorizeService.java</a>
                 </td>
                 <td>
                   0
@@ -130,7 +130,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService.java">org/jasig/cas/support/oauth/services/OAuthCallbackAuthorizeService.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-oauth//checkstyle.html#org.jasig.cas.support.oauth.web.OAuth20AccessTokenController.java">org/jasig/cas/support/oauth/web/OAuth20AccessTokenController.java</a>
                 </td>
                 <td>
                   0
