@@ -18,8 +18,10 @@
  */
 package org.jasig.cas;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -110,7 +112,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
                 serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
 
-        final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(), TestUtils.getService(), null);
+        final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(),
+                TestUtils.getService(), (Credential[]) ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
     }
 
