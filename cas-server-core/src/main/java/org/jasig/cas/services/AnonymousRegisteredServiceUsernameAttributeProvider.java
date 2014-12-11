@@ -62,7 +62,11 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     public AnonymousRegisteredServiceUsernameAttributeProvider(@NotNull final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
     }
-    
+
+    public PersistentIdGenerator getPersistentIdGenerator() {
+        return this.persistentIdGenerator;
+    }
+
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
         final String id = this.persistentIdGenerator.generate(principal, service);

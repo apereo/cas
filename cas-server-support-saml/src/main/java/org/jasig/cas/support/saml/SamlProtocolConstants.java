@@ -16,24 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.saml.web.view;
 
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.StatusCode;
-
-import java.util.Map;
+package org.jasig.cas.support.saml;
 
 /**
- * Represents a failed attempt at validating a ticket, responding via a SAML SOAP message.
+ * Class that exposes relevant constants and parameters to
+ * the SAML protocol. These include attribute names, pre-defined
+ * values and expected request parameter names as is specified
+ * by the protocol.
  *
- * @author Scott Battaglia
- * @author Marvin S. Addison
- * @since 3.1
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public final class Saml10FailureResponseView extends AbstractSaml10ResponseView {
+public interface SamlProtocolConstants {
+    /** Constant representing the saml request. */
+    String PARAMETER_SAML_REQUEST = "SAMLRequest";
 
-    @Override
-    protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.REQUEST_DENIED, (String) model.get("description")));
-    }
+    /** Constant representing the saml response. */
+    String PARAMETER_SAML_RESPONSE = "SAMLResponse";
+
+    /** Constant representing the saml relay state. */
+    String PARAMETER_SAML_RELAY_STATE = "RelayState";
+
 }

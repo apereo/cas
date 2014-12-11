@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import com.google.common.collect.ImmutableList;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.authentication.AbstractCredential;
 
+import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
 
 /**
@@ -47,12 +49,12 @@ public final class X509CertificateCredential extends AbstractCredential {
      *
      * @param certificates the certificates
      */
-    public X509CertificateCredential(final X509Certificate[] certificates) {
-        this.certificates = certificates;
+    public X509CertificateCredential(@NotNull final X509Certificate[] certificates) {
+        this.certificates = ImmutableList.copyOf(certificates).toArray(new X509Certificate[certificates.length]);
     }
 
     public X509Certificate[] getCertificates() {
-        return this.certificates;
+        return ImmutableList.copyOf(this.certificates).toArray(new X509Certificate[this.certificates.length]);
     }
 
     public void setCertificate(final X509Certificate certificate) {
@@ -68,7 +70,7 @@ public final class X509CertificateCredential extends AbstractCredential {
         X509Certificate cert = null;
         if (this.certificate != null) {
             cert = this.certificate;
-        } else if (this.certificates != null && this.certificates.length > 0) {
+        } else if (this.certificates.length > 0) {
             cert = this.certificates[0];
         }
 

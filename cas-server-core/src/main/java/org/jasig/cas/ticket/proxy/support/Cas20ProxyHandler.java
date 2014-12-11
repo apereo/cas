@@ -23,8 +23,8 @@ import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

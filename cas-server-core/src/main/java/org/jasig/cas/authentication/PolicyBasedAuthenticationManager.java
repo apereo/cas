@@ -205,14 +205,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         PrincipalResolver resolver;
         for (final Credential credential : credentials) {
             found = false;
-            for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
+            for (final Map.Entry<AuthenticationHandler, PrincipalResolver> entry : this.handlerResolverMap.entrySet()) {
+                final AuthenticationHandler handler = entry.getKey();
                 if (handler.supports(credential)) {
                     found = true;
                     try {
                         final HandlerResult result = handler.authenticate(credential);
                         builder.addSuccess(handler.getName(), result);
                         logger.info("{} successfully authenticated {}", handler.getName(), credential);
-                        resolver = this.handlerResolverMap.get(handler);
+                        resolver = entry.getValue();
                         if (resolver == null) {
                             principal = result.getPrincipal();
                             logger.debug(
