@@ -46,8 +46,8 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath
-     * @param expectedResult
+     * @param certPath path to the cert
+     * @param expectedResult the result expected from the test
      */
     public X509SubjectAlternativeNameUPNPrincipalResolverTests(
             final String certPath,
