@@ -46,9 +46,9 @@ public class X509SubjectPrincipalResolverTests {
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath
-     * @param descriptor
-     * @param expectedResult
+     * @param certPath path to the cert
+     * @param descriptor the descriptor
+     * @param expectedResult the expected result
      */
     public X509SubjectPrincipalResolverTests(
             final String certPath,
