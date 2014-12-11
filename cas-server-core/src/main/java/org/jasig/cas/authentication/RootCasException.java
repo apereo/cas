@@ -74,7 +74,7 @@ public abstract class RootCasException extends Exception {
 
   /**
    * @return Returns the code. If there is a chained exception it recursively
-   * calls {@link #getCode()} of the chained exception rather than the returning
+   * calls <code>getCode()</code> on the cause of the chained exception rather than the returning
    * the code itself.
    */
   public final String getCode() {
