@@ -16,24 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.saml.web.view;
+package org.jasig.cas.adaptors.generic.remote;
 
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.StatusCode;
-
-import java.util.Map;
+import org.jasig.cas.authentication.AbstractCredential;
 
 /**
- * Represents a failed attempt at validating a ticket, responding via a SAML SOAP message.
  *
  * @author Scott Battaglia
- * @author Marvin S. Addison
- * @since 3.1
+ * @since 3.2.1
+ *
  */
-public final class Saml10FailureResponseView extends AbstractSaml10ResponseView {
+public final class RemoteAddressCredential extends AbstractCredential {
+
+    /** Serialization version marker. */
+    private static final long serialVersionUID = -3638145328441211073L;
+
+    private final String remoteAddress;
+
+    /**
+     * Instantiates a new remote address credential.
+     *
+     * @param remoteAddress the remote address
+     */
+    public RemoteAddressCredential(final String remoteAddress) {
+        this.remoteAddress = remoteAddress;
+    }
+
+    public String getRemoteAddress() {
+        return this.remoteAddress;
+    }
 
     @Override
-    protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.REQUEST_DENIED, (String) model.get("description")));
+    public String getId() {
+        return this.remoteAddress;
     }
 }
