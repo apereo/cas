@@ -40,22 +40,25 @@ import java.util.Map;
  * security policy via the {@link AuthenticationPolicy} component. The authentication process is as follows:
  *
  * <ul>
- *   <li>For each given credential do the following:</li>
- *   <ul>
- *     <li>Iterate over all configured authentication handlers.</li>
- *     <li>Attempt to authenticate a credential if a handler supports it.</li>
- *     <li>On success attempt to resolve a principal by doing the following:</li>
+ *   <li>For each given credential do the following:
  *     <ul>
- *       <li>Check whether a resolver is configured for the handler that authenticated the credential.</li>
- *       <li>If a suitable resolver is found, attempt to resolve the principal.</li>
- *       <li>If a suitable resolver is not found, use the principal resolved by the authentication handler.</li>
+ *       <li>Iterate over all configured authentication handlers.</li>
+ *       <li>Attempt to authenticate a credential if a handler supports it.</li>
+ *       <li>On success attempt to resolve a principal by doing the following:
+ *         <ul>
+ *           <li>Check whether a resolver is configured for the handler that authenticated the credential.</li>
+ *           <li>If a suitable resolver is found, attempt to resolve the principal.</li>
+ *           <li>If a suitable resolver is not found, use the principal resolved by the authentication handler.</li>
+ *         </ul>
+ *       </li>
+ *       <li>Check whether the security policy (e.g. any, all) is satisfied.
+ *         <ul>
+ *           <li>If security policy is met return immediately.</li>
+ *           <li>Continue if security policy is not met.</li>
+ *         </ul>
+ *       </li>
  *     </ul>
- *     <li>Check whether the security policy (e.g. any, all) is satisfied.</li>
- *     <ul>
- *       <li>If security policy is met return immediately.</li>
- *       <li>Continue if security policy is not met.</li>
- *     </ul>
- *   </ul>
+ *   </li>
  *   <li>
  *     After all credentials have been attempted check security policy again.
  *     Note there is an implicit security policy that requires at least one credential to be authenticated.
