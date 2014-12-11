@@ -42,7 +42,7 @@ import javax.servlet.http.HttpSession;
  */
 public final class OAuth20AuthorizeController extends AbstractController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
 
     private final String loginUrl;
 
