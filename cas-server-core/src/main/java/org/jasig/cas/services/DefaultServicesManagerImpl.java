@@ -45,7 +45,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();

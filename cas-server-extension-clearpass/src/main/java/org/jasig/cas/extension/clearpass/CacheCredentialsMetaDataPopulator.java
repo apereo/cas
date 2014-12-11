@@ -38,7 +38,7 @@ import java.util.Map;
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @NotNull
-    private Map<String, String> credentialCache;
+    private final Map<String, String> credentialCache;
 
     /**
      * Instantiates a new cache credentials meta data populator.
