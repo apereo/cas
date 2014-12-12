@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.junit.Assert;
@@ -35,9 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -104,10 +102,10 @@ public class MemCacheTicketRegistryTests {
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
-        Assert.assertNotNull((ServiceTicket) registry.getTicket(id));
+        Assert.assertNotNull(registry.getTicket(id, ServiceTicket.class));
         // Sleep a little longer than service ticket expiry defined in Spring context
         Thread.sleep(2100);
-        Assert.assertNull((ServiceTicket) registry.getTicket(id));
+        Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
     private boolean isMemcachedListening() {

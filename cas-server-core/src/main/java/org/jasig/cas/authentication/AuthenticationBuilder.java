@@ -39,16 +39,16 @@ public class AuthenticationBuilder {
     private Principal principal;
 
     /** Credential metadata. */
-    private List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
+    private final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
 
     /** Authentication metadata attributes. */
-    private Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
 
     /** Map of handler names to authentication successes. */
-    private Map<String, HandlerResult> successes = new LinkedHashMap<String, HandlerResult>();
+    private final Map<String, HandlerResult> successes = new LinkedHashMap<String, HandlerResult>();
 
     /** Map of handler names to authentication failures. */
-    private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<String, Class<? extends Exception>>();
+    private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<String, Class<? extends Exception>>();
 
     /** Authentication date. */
     private DateTime authenticationDate;
