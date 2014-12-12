@@ -69,6 +69,9 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
     echo -e "Removing previous documentation...\n"
     git rm -rf ./development > /dev/null
 
+    echo -e "Creating development directory...\n"
+    test -d "./development" || mkdir -m777 -v ./development
+
     echo -e "Copying new docs...\n"
     cp -Rf $HOME/docs-latest ./development
   fi
@@ -76,6 +79,12 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   if [ "$invokeJavadoc" == true ]; then
     echo -e "Removing previous Javadocs...\n"
     git rm -rf ./development/javadocs > /dev/null
+
+    echo -e "Creating development directory...\n"
+    test -d "./development" || mkdir -m777 -v ./development
+
+    echo -e "Creating javadocs directory...\n"
+    test -d "./development/javadocs" || mkdir -m777 -v ./development/javadocs
 
     echo -e "Copying new Javadocs...\n"
     cp -Rf $HOME/javadoc-latest ./development/javadocs
