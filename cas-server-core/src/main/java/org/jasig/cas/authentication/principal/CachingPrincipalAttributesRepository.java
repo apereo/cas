@@ -40,7 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Factory to create principal object with attributes cached for a configurable period.
+ * Wrapper around an attribute repository where attributes cached for a configurable period.
  * @author Misagh Moayyed
  * @since 4.1
  */
