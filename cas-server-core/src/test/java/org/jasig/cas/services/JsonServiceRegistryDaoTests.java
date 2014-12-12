@@ -21,9 +21,9 @@ package org.jasig.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -259,10 +259,12 @@ public class JsonServiceRegistryDaoTests {
         final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
         attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
 
-        final PrincipalAttributesRepository repository =
+        final CachingPrincipalAttributesRepository repository =
                 new CachingPrincipalAttributesRepository(
                         new StubPersonAttributeDao(attributes),
                         TimeUnit.MILLISECONDS, 100);
+        repository.setMergingStrategy(new ReplacingAttributeAdder());
+
         policy.setPrincipalAttributesRepository(repository);
         r.setAttributeReleasePolicy(policy);
 
