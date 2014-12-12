@@ -46,7 +46,7 @@ import java.util.Map;
  */
 public final class OAuth20ProfileController extends AbstractController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
 
     private static final String ID = "id";
 
