@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
 
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Search base DN. */
     @NotNull
