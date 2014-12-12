@@ -184,11 +184,11 @@ public class KryoTranscoderTests {
 
         private static final long serialVersionUID = 4829406617873497061L;
 
-        private String id;
+        private final String id;
 
         private int usageCount;
 
-        private Date creationDate = new Date();
+        private final Date creationDate = new Date();
 
         private final Authentication authentication;
 
