@@ -20,10 +20,14 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +36,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,11 +55,11 @@ public class CachingPrincipalAttributesRepositoryTests {
     @Before
     public void setup() {
         attributes = new HashMap<String, List<Object>>();
-        attributes.put("a1", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
-        attributes.put("mail", Arrays.asList(new Object[]{"final@example.com"}));
-        attributes.put("a6", Arrays.asList(new Object[]{"v16", "v26", "v63"}));
-        attributes.put("a2", Arrays.asList(new Object[]{"v4"}));
-        attributes.put("username", Arrays.asList(new Object[]{"uid"}));
+        attributes.put("a1", new ArrayList(Arrays.asList(new Object[]{"v1", "v2", "v3"})));
+        attributes.put("mail", new ArrayList(Arrays.asList(new Object[]{"final@example.com"})));
+        attributes.put("a6", new ArrayList(Arrays.asList(new Object[]{"v16", "v26", "v63"})));
+        attributes.put("a2", new ArrayList(Arrays.asList(new Object[]{"v4"})));
+        attributes.put("username", new ArrayList(Arrays.asList(new Object[]{"uid"})));
 
         this.dao = mock(IPersonAttributeDao.class);
         final IPersonAttributes person = mock(IPersonAttributes.class);
@@ -65,9 +68,9 @@ public class CachingPrincipalAttributesRepositoryTests {
         when(dao.getPerson(any(String.class))).thenReturn(person);
 
         this.principal = this.principalFactory.createPrincipal("uid",
-                Collections.<String, Object>singletonMap("mail", "final@example.com"));
+                Collections.<String, Object>singletonMap("mail",
+                        new ArrayList(Arrays.asList(new Object[]{"final@school.com"}))));
     }
-
 
     @Test
     public void checkExpiredCachedAttributes() throws Exception {
@@ -95,4 +98,39 @@ public class CachingPrincipalAttributesRepositoryTests {
         ((Closeable) repository).close();
     }
 
+    @Test
+    public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+                TimeUnit.SECONDS, 5);
+        repository.setMergingStrategy(new NoncollidingAttributeAdder());
+
+        assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
+        assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@school.com");
+        ((Closeable) repository).close();
+    }
+
+    @Test
+    public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+                TimeUnit.SECONDS, 5);
+        repository.setMergingStrategy(new ReplacingAttributeAdder());
+
+        assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
+        assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@example.com");
+        ((Closeable) repository).close();
+    }
+
+    @Test
+    public void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Exception {
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+                TimeUnit.SECONDS, 5);
+        repository.setMergingStrategy(new MultivaluedAttributeMerger());
+
+        assertTrue(repository.getAttributes(this.principal).get("mail") instanceof List);
+
+        final List<?> values = (List) repository.getAttributes(this.principal).get("mail");
+        assertTrue(values.contains("final@example.com"));
+        assertTrue(values.contains("final@school.com"));
+        ((Closeable) repository).close();
+    }
 }

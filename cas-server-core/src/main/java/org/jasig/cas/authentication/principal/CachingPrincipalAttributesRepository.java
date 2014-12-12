@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,8 @@ import javax.cache.expiry.Duration;
 import javax.validation.constraints.NotNull;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +60,13 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private final Cache<String, Map<String, Object>> cache;
 
     private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
+
+    /**
+     * The merging strategy that deals with existing principal attributes
+     * and those that are retrieved from the source. By default, existing attributes
+     * are ignored and the source is always consulted.
+     */
+    private IAttributeMerger mergingStrategy;
 
     /**
      * Init the caching repository, solely used for serialization purposes
@@ -175,6 +185,20 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     /**
+     * The merging strategy that deals with existing principal attributes
+     * and those that are retrieved from the source. By default, existing attributes
+     * are ignored and the source is always consulted.
+     * @param mergingStrategy the strategy to use for conflicts
+     */
+    public void setMergingStrategy(final IAttributeMerger mergingStrategy) {
+        this.mergingStrategy = mergingStrategy;
+    }
+
+    public IAttributeMerger getMergingStrategy() {
+        return mergingStrategy;
+    }
+
+    /**
      * Prep cache configuration.
      *
      * @param expiryDuration the expiry duration
@@ -197,51 +221,104 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
    private void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
         synchronized (this.cache) {
             if (attributes.isEmpty()) {
+
                 this.cache.remove(id);
+                LOGGER.debug("No attributes are provided, so removed principal id [{}] from the cache", id);
             } else {
                 this.cache.put(id, attributes);
+                LOGGER.debug("Cached [{}] attributes for the principal id [{}]", attributes.size(), id);
             }
         }
     }
 
     @Override
     public Map<String, Object> getAttributes(@NotNull final Principal p) {
-        Map<String, Object> attributes = this.cache.get(p.getId());
-        if (attributes == null) {
-            attributes = convertPersonAttributesToPrincipalAttributes(p.getId());
-            addPrincipalAttributesIntoCache(p.getId(), attributes);
-            return attributes;
+        final Map<String, Object> cachedAttributes = this.cache.get(p.getId());
+        if (cachedAttributes != null) {
+            LOGGER.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
+            return cachedAttributes;
         }
-        return attributes;
+
+        final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
+        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
+                sourceAttributes.size(), p.getId());
+
+        if (this.mergingStrategy == null) {
+            LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
+            final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
+            addPrincipalAttributesIntoCache(p.getId(), finalAttributes);
+            return finalAttributes;
+        }
+
+        final Map<String, List<Object>> principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
+
+        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]",
+                this.mergingStrategy.getClass().getSimpleName());
+        final Map<String, List<Object>> mergedAttributes =
+                this.mergingStrategy.mergeAttributes(principalAttributes, sourceAttributes);
+
+        final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(mergedAttributes);
+        addPrincipalAttributesIntoCache(p.getId(), finalAttributes);
+        return finalAttributes;
+
+    }
+
+    /***
+     * Convert principal attributes to person attributes.
+     * @param p  the principal carrying attributes
+     * @return person attributes
+     */
+    private Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
+        final Map<String, List<Object>> convertedAttributes = new HashMap<>(p.getAttributes().size());
+        final Map<String, Object> principalAttributes = p.getAttributes();
+
+        for (final Map.Entry<String, Object> entry : principalAttributes.entrySet()) {
+            final Object values = entry.getValue();
+            final String key = entry.getKey();
+            if (values instanceof List) {
+                convertedAttributes.put(key, (List) values);
+            } else {
+                convertedAttributes.put(key, Collections.singletonList(values));
+            }
+        }
+        return convertedAttributes;
     }
 
     /**
      * Convert person attributes to principal attributes.
-     * Obtains attributes first from the repository by calling
-     * {@link org.jasig.services.persondir.IPersonAttributeDao#getPerson(String)}
-     * and converts the results into a map of attributes that CAS can understand.
-     *
-     * @param id the person id to locate in the attribute repository
-     * @return the map of principal attributes
+     * @param attributes person attributes
+     * @return principal attributes
      */
-    private Map<String, Object> convertPersonAttributesToPrincipalAttributes(final String id) {
-
-        final IPersonAttributes attrs = this.attributeRepository.getPerson(id);
-        if (attrs == null) {
-            return Collections.emptyMap();
-        }
-
-        final Map<String, List<Object>> attributes = attrs.getAttributes();
-        if (attributes == null) {
-            return Collections.emptyMap();
-        }
-
-        final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
+    private Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
+        final Map<String, Object> convertedAttributes = new HashMap<>();
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final List<Object> values = entry.getValue();
             convertedAttributes.put(entry.getKey(), values.size() == 1 ? values.get(0) : values);
         }
         return convertedAttributes;
+    }
+
+    /**
+     * Obtains attributes first from the repository by calling
+     * {@link org.jasig.services.persondir.IPersonAttributeDao#getPerson(String)}.
+     *
+     * @param id the person id to locate in the attribute repository
+     * @return the map of attributes
+     */
+    private Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
+
+        final IPersonAttributes attrs = this.attributeRepository.getPerson(id);
+        if (attrs == null) {
+            LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
+            return Collections.emptyMap();
+        }
+
+        final Map<String, List<Object>> attributes = attrs.getAttributes();
+        if (attributes == null) {
+            LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
+            return Collections.emptyMap();
+        }
+        return attributes;
     }
 
     @Override
