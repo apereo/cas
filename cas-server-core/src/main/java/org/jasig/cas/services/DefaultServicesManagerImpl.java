@@ -45,7 +45,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
@@ -62,13 +62,14 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
-     * <p>
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
-     * @deprecated As of 4.1. Use {@link org.jasig.cas.services.DefaultServicesManagerImpl(ServiceRegistryDao)}
+     *
+     * @deprecated
+     * <p>As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
      * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
      * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
-     * for more details.
+     * for more details.</p>
      *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.

@@ -74,11 +74,11 @@ public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
-    private static UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
+    private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
 
-    private static ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
+    private static final ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static final ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -203,7 +203,7 @@ public class JpaTicketRegistryTests {
 
     class ServiceTicketGenerator implements Callable<String> {
 
-        private String parentTgtId;
+        private final String parentTgtId;
 
         public ServiceTicketGenerator(final String tgtId) {
             parentTgtId = tgtId;

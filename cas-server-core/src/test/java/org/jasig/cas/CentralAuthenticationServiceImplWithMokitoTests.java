@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -89,7 +88,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     private TicketRegistry ticketRegMock;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
-        private String id;
+        private final String id;
 
         public VerifyServiceByIdMatcher(final String id) {
             this.id = id;
