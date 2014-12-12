@@ -59,7 +59,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
 
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         final Integer startIndex = getLogoutIndex(context);
-        if (logoutRequests != null && startIndex != null) {
+        if (logoutRequests != null) {
             for (int i = startIndex; i < logoutRequests.size(); i++) {
                 final LogoutRequest logoutRequest = logoutRequests.get(i);
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
