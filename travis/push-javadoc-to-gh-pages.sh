@@ -32,16 +32,20 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   		invokeJavadoc=true;
   		invokeDoc=true;;
   esac
-fi 
+fi
 
-invokeJavadoc=false
+echo -e "Starting with project documentation...\n"
 
 if [ "$invokeDoc" == true ]; then
 
-  echo -e "Copying project documentation over ...\n"
+  echo -e "Copying project documentation over...\n"
   cp -R cas-server-documentation $HOME/docs-latest
 
 fi
+
+echo -e "Finished with project documentation...\n"
+
+echo -e "Staring with project Javadocs...\n"
 
 if [ "$invokeJavadoc" == true ]; then
 
@@ -55,6 +59,8 @@ if [ "$invokeJavadoc" == true ]; then
 
 fi
 
+echo -e "Finished with project Javadocs...\n"
+
 if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   cd $HOME
@@ -65,6 +71,8 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   cd gh-pages
 
+  echo -e "Staring to move project documentation over...\n"
+
   if [ "$invokeDoc" == true ]; then
     echo -e "Removing previous documentation...\n"
     git rm -rf ./development > /dev/null
@@ -74,7 +82,10 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
     echo -e "Copying new docs...\n"
     cp -Rf $HOME/docs-latest/* ./development
+    echo -e "Copied project documentation...\n"
   fi
+
+  echo -e "Staring to move project Javadocs over...\n"
 
   if [ "$invokeJavadoc" == true ]; then
     echo -e "Removing previous Javadocs...\n"
@@ -88,9 +99,11 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
     echo -e "Copying new Javadocs...\n"
     cp -Rf $HOME/javadoc-latest ./development/javadocs
+    echo -e "Copied project Javadocs...\n"
+
   fi
 
-  echo -e "Adding changes to the index...\n"
+  echo -e "Adding changes to the git index...\n"
   git add -f . > /dev/null
 
   echo -e "Committing changes...\n"
