@@ -261,7 +261,7 @@
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>     }
 <a class="jxr_linenumber" name="L254" href="#L254">254</a> 
 <a class="jxr_linenumber" name="L255" href="#L255">255</a>     <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">TransactionalLockInvocationHandler</a> <strong class="jxr_keyword">implements</strong> InvocationHandler {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">private</strong> JpaLockingStrategy jpaLock;
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> JpaLockingStrategy jpaLock;
 <a class="jxr_linenumber" name="L257" href="#L257">257</a> 
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">TransactionalLockInvocationHandler</a>(<strong class="jxr_keyword">final</strong> JpaLockingStrategy lock) {
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>             jpaLock = lock;
@@ -295,7 +295,7 @@
 <a class="jxr_linenumber" name="L287" href="#L287">287</a> 
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>     <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
 <a class="jxr_linenumber" name="L289" href="#L289">289</a> 
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">private</strong> LockingStrategy lock;
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
 <a class="jxr_linenumber" name="L291" href="#L291">291</a> 
 <a class="jxr_linenumber" name="L292" href="#L292">292</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>             lock = l;
@@ -318,7 +318,7 @@
 <a class="jxr_linenumber" name="L310" href="#L310">310</a> 
 <a class="jxr_linenumber" name="L311" href="#L311">311</a>     <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
 <a class="jxr_linenumber" name="L312" href="#L312">312</a> 
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">private</strong> LockingStrategy lock;
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
 <a class="jxr_linenumber" name="L314" href="#L314">314</a> 
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>             lock = l;

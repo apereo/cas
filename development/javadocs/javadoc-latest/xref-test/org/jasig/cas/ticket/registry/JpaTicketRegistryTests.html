@@ -82,11 +82,11 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/** Number of clients contending for operations in concurrent test. */</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> CONCURRENT_SIZE = 20;
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> UniqueTicketIdGenerator ID_GENERATOR = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(64);
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> UniqueTicketIdGenerator ID_GENERATOR = <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator(64);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ExpirationPolicy EXP_POLICY_TGT = <strong class="jxr_keyword">new</strong> HardTimeoutExpirationPolicy(1000);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ExpirationPolicy EXP_POLICY_TGT = <strong class="jxr_keyword">new</strong> HardTimeoutExpirationPolicy(1000);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> ExpirationPolicy EXP_POLICY_ST = <strong class="jxr_keyword">new</strong> MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ExpirationPolicy EXP_POLICY_ST = <strong class="jxr_keyword">new</strong> MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      <em class="jxr_javadoccomment">/** Logger instance. */</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
@@ -211,7 +211,7 @@
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> 
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/ticket/registry/JpaTicketRegistryTests.html">ServiceTicketGenerator</a> <strong class="jxr_keyword">implements</strong> Callable&lt;String&gt; {
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> 
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">private</strong> String parentTgtId;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String parentTgtId;
 <a class="jxr_linenumber" name="L207" href="#L207">207</a> 
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/registry/JpaTicketRegistryTests.html">ServiceTicketGenerator</a>(<strong class="jxr_keyword">final</strong> String tgtId) {
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>             parentTgtId = tgtId;
