@@ -39,7 +39,7 @@ invokeJavadoc=false
 if [ "$invokeDoc" == true ]; then
 
   echo -e "Copying project documentation over ...\n"
-  cp -R cas-server-documentation $HOME\docs-latest
+  cp -R cas-server-documentation $HOME/docs-latest
 
 fi
 
