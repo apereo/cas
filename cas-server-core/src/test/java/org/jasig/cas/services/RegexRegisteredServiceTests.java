@@ -38,11 +38,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
-    private RegexRegisteredService service;
+    private final RegexRegisteredService service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
     public RegexRegisteredServiceTests(
             final RegexRegisteredService service,
