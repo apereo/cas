@@ -93,7 +93,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
             final DERObjectIdentifier id = DERObjectIdentifier.getInstance(seq.getObjectAt(0));
-            if (UPN_OBJECTID.equals(id.getId())) {
+            if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 final DERUTF8String str = DERUTF8String.getInstance(obj.getObject());
                 return str.getString();
