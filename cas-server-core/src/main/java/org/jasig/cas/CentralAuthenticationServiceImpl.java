@@ -244,7 +244,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         verifyRegisteredServiceProperties(registeredService, service);
 
         Authentication currentAuthentication = null;
-        if (credentials != null) {
+        if (credentials != null && credentials.length > 0) {
             currentAuthentication = this.authenticationManager.authenticate(credentials);
             final Authentication original = ticketGrantingTicket.getAuthentication();
             if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {

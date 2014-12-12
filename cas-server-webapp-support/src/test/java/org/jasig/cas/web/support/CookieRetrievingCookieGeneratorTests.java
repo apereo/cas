@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.web.support;
 
-import static org.junit.Assert.*;
-
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.Cookie;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -79,7 +79,7 @@ public final class CookieRetrievingCookieGeneratorTests {
         final Cookie cookie = new Cookie("test", "test");
         cookie.setDomain("cas.org");
         cookie.setMaxAge(5);
-        request.setCookies(new Cookie[] {cookie});
+        request.setCookies(cookie);
 
         assertEquals("test", this.g.retrieveCookieValue(request));
     }

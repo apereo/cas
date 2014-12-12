@@ -68,7 +68,7 @@ public class AttributeReleasePolicyTests {
         assertTrue(attr.containsKey("newAttr1"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeReleasePolicy p2 = (ReturnMappedAttributeReleasePolicy) SerializationUtils.deserialize(data);
+        final ReturnMappedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -93,7 +93,7 @@ public class AttributeReleasePolicyTests {
         assertTrue(attr.containsKey("attr3"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 = (ReturnAllowedAttributeReleasePolicy) SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -118,7 +118,7 @@ public class AttributeReleasePolicyTests {
         assertTrue(attr.containsKey("attr3"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 = (ReturnAllowedAttributeReleasePolicy) SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -141,7 +141,7 @@ public class AttributeReleasePolicyTests {
         assertEquals(attr.size(), map.size());
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeReleasePolicy p2 = (ReturnAllAttributeReleasePolicy) SerializationUtils.deserialize(data);
+        final ReturnAllAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
         assertNotNull(p2);
     }
 

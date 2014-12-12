@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class OAuth20AccessTokenController extends AbstractController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
 
     private final ServicesManager servicesManager;
 

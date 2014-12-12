@@ -1058,9 +1058,25 @@
   <reporting>
     <plugins>
       <plugin>
+        <!-- Excluding test javadpcs from the report set until this bug is fixed:
+        see https://jira.codehaus.org/browse/MJAVADOC-418 -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven-javadoc-plugin.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+      </reportSets>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

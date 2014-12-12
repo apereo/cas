@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
@@ -26,6 +25,7 @@ import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
@@ -35,11 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-import java.util.zip.DeflaterOutputStream;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -102,21 +100,9 @@ public class GoogleAccountsServiceTests {
         assertEquals(resp.getResponseType(), Response.ResponseType.POST);
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
-
     }
 
-
     private static String encodeMessage(final String xmlString) throws IOException {
-        final byte[] xmlBytes = xmlString.getBytes("UTF-8");
-        final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteOutputStream);
-        deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
-        deflaterOutputStream.close();
-
-        // next, base64 encode it
-        final Base64 base64Encoder = new Base64();
-        final byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
-                .toByteArray());
-        return new String(base64EncodedByteArray);
+        return CompressionUtils.deflate(xmlString);
     }
 }
