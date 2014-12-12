@@ -38,7 +38,7 @@ public final class DefaultRandomStringGenerator implements RandomStringGenerator
         .toCharArray();
 
     /** An instance of secure random to ensure randomness is secure. */
-    private SecureRandom randomizer = new SecureRandom();
+    private final SecureRandom randomizer = new SecureRandom();
 
     /** The maximum length the random string can be. */
     private final int maximumRandomLength;

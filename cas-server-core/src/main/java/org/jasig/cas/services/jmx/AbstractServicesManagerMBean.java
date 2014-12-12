@@ -42,7 +42,7 @@ import java.util.List;
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
 
     @NotNull
-    private T servicesManager;
+    private final T servicesManager;
 
     /**
      * Instantiates a new abstract services manager m bean.

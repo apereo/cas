@@ -23,17 +23,16 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Deflater;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
@@ -162,15 +161,13 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Handle logout for slo service.
      *
-     * @param service the service
+     * @param singleLogoutService the service
      * @param ticketId the ticket id
      * @return the logout request
      */
-    private LogoutRequest handleLogoutForSloService(final SingleLogoutService service, final String ticketId) {
-        final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
+    private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
-
-            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
 
             if (serviceSupportsSingleLogout(registeredService)) {
                 final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
@@ -225,14 +222,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
-        final Deflater deflater = new Deflater();
-        deflater.setInput(logoutMessage.getBytes(ASCII));
-        deflater.finish();
-        final byte[] buffer = new byte[logoutMessage.length()];
-        final int resultSize = deflater.deflate(buffer);
-        final byte[] output = new byte[resultSize];
-        System.arraycopy(buffer, 0, output, 0, resultSize);
-        return Base64.encodeBase64String(output);
+        LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
+        return CompressionUtils.deflate(logoutMessage);
     }
 
     /**

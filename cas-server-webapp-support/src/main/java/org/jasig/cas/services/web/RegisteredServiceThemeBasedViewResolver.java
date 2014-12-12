@@ -91,7 +91,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
     @Override
     protected AbstractUrlBasedView buildView(final String viewName) throws Exception {
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        final WebApplicationService service = (WebApplicationService) WebUtils.getService(requestContext);
+        final WebApplicationService service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         final String themeId = service != null && registeredService != null && registeredService.isEnabled()
