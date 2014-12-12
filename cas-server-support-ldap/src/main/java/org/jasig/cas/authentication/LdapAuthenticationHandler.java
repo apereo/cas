@@ -51,8 +51,8 @@ import java.util.Set;
  * Principal resolution is controlled by the following properties:
  *
  * <ul>
- *     <ol>{@link #setPrincipalIdAttribute(String)}</ol>
- *     <ol>{@link #setPrincipalAttributeMap(java.util.Map)}</ol>
+ *     <li>{@link #setPrincipalIdAttribute(String)}</li>
+ *     <li>{@link #setPrincipalAttributeMap(java.util.Map)}</li>
  * </ul>
  *
  * @author Marvin S. Addison

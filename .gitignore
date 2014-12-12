@@ -8,11 +8,13 @@ bin/
 *.ipr
 *.iml
 *.iws
+*.orig
 .idea/
 .DS_Store
 .idea
 overlays/
 pom.xml.versionsBackup
+build.xml
 *.log
 rebel.xml
 **/.checkstyle

@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.Inflater;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
@@ -39,6 +38,7 @@ import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.jasig.cas.services.ServicesManager;
 
+import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -127,7 +127,8 @@ public class FrontChannelLogoutActionTests {
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
         assertTrue(url.startsWith(fakeUrl + "?SAMLRequest="));
-        final byte[] samlMessage = Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url,  "?SAMLRequest="), "UTF-8"));
+        final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
+                URLDecoder.decode(StringUtils.substringAfter(url, "?SAMLRequest="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
         final byte[] result = new byte[1000];

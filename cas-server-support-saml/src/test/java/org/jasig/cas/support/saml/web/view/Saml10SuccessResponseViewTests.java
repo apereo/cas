@@ -86,7 +86,7 @@ public class Saml10SuccessResponseViewTests {
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
-        attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
+        attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<String, Object>();

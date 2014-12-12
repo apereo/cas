@@ -92,7 +92,7 @@ public final class LdapTestUtils {
      * @param connection Open LDAP connection used to connect to directory.
      * @param entries Collection of LDAP entries.
      *
-     * @throws LdapException On LDAP errors.
+     * @throws Exception On LDAP errors.
      */
     public static void createLdapEntries(
             final LDAPConnection connection, final Collection<LdapEntry> entries)

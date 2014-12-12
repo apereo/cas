@@ -69,7 +69,7 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
     }
 
     protected <T> T getBean(final String id, final Class<T> clazz) {
-        return (T) this.context.getBean(id, clazz);
+        return this.context.getBean(id, clazz);
     }
 
     @Override

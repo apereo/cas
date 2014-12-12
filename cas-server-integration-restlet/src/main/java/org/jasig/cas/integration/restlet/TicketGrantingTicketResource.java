@@ -44,7 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Scott Battaglia
  * @since 3.3
- * @deprecated As of 4.1. Use the {@link TicketsResource} implementation from cas-server-support-rest module
+ * @deprecated As of 4.1. Use the {@link TicketResource} implementation from cas-server-support-rest module
  */
 @Deprecated
 public final class TicketGrantingTicketResource extends ServerResource {
