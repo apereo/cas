@@ -19,10 +19,10 @@
 
 package org.jasig.cas.support.saml.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
+
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
+import org.jasig.cas.util.CompressionUtils;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.saml2.core.Assertion;
@@ -43,13 +43,8 @@ import org.opensaml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml2.core.SubjectConfirmationData;
 import org.springframework.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
+
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -249,104 +244,26 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * Deflate the given bytes using zlib.
-     *
-     * @param bytes the bytes
-     * @return the converted string
-     */
-    private static String zlibDeflate(final byte[] bytes) {
-        final int bufferLength = 1024;
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final InflaterInputStream iis = new InflaterInputStream(bais);
-        final byte[] buf = new byte[bufferLength];
-
-        try {
-            int count = iis.read(buf);
-            while (count != -1) {
-                baos.write(buf, 0, count);
-                count = iis.read(buf);
-            }
-            return new String(baos.toByteArray());
-        } catch (final Exception e) {
-            return null;
-        } finally {
-            IOUtils.closeQuietly(iis);
-        }
-    }
-
-    /**
-     * Base64 decode.
-     *
-     * @param xml the xml
-     * @return the byte[]
-     */
-    private static byte[] base64Decode(final String xml) {
-        try {
-            final byte[] xmlBytes = xml.getBytes("UTF-8");
-            return Base64.decodeBase64(xmlBytes);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Inflate the given byte array.
-     *
-     * @param bytes the bytes
-     * @return the string
-     */
-    private static String inflate(final byte[] bytes) {
-        final int bufferLength = 10000;
-        final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[bufferLength];
-
-        final byte[] extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-
-        inflater.setInput(extendedBytes);
-
-        try {
-            final int resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-
-            if (!inflater.finished()) {
-                throw new RuntimeException("buffer not large enough.");
-            }
-
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, "UTF-8");
-        } catch (final DataFormatException e) {
-            return null;
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("Cannot find encoding: UTF-8", e);
-        }
-    }
-
-
-
-    /**
      * Decode authn request xml.
      *
      * @param encodedRequestXmlString the encoded request xml string
      * @return the request
      */
     public String decodeSamlAuthnRequest(final String encodedRequestXmlString) {
-        if (encodedRequestXmlString == null) {
+        if (StringUtils.isEmpty(encodedRequestXmlString)) {
             return null;
         }
 
-        final byte[] decodedBytes = base64Decode(encodedRequestXmlString);
+        final byte[] decodedBytes = CompressionUtils.decodeBase64ToByteArray(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }
 
-        final String inflated = inflate(decodedBytes);
-        if (inflated != null) {
+        final String inflated = CompressionUtils.inflate(decodedBytes);
+        if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
 
-        return zlibDeflate(decodedBytes);
+        return CompressionUtils.decodeByteArrayToString(decodedBytes);
     }
 }
