@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">if</strong> (seq != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              <em class="jxr_comment">// First in sequence is the object identifier, that we must check</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> DERObjectIdentifier id = DERObjectIdentifier.getInstance(seq.getObjectAt(0));
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">if</strong> (UPN_OBJECTID.equals(id.getId())) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">if</strong> (id != <strong class="jxr_keyword">null</strong> &amp;&amp; UPN_OBJECTID.equals(id.getId())) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">final</strong> ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                  <strong class="jxr_keyword">final</strong> DERUTF8String str = DERUTF8String.getInstance(obj.getObject());
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>                  <strong class="jxr_keyword">return</strong> str.getString();

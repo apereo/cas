@@ -148,7 +148,7 @@
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> String serviceTicketId = service != <strong class="jxr_keyword">null</strong> ? service.getArtifactId() : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">if</strong> (service == <strong class="jxr_keyword">null</strong> || serviceTicketId == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>             logger.debug(<span class="jxr_string">"Could not identify service and/or service ticket. Service: {}, Service ticket id: {}"</span>, service, serviceTicketId);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>             logger.debug(<span class="jxr_string">"Could not identify service and/or service ticket for service: [{}]"</span>, service);
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>             <strong class="jxr_keyword">return</strong> generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>                     CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>         }
@@ -190,7 +190,7 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>             }
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> 
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>             String proxyIou = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>             <strong class="jxr_keyword">if</strong> (serviceCredential != <strong class="jxr_keyword">null</strong> &amp;&amp; proxyGrantingTicketId != <strong class="jxr_keyword">null</strong> &amp;&amp; <strong class="jxr_keyword">this</strong>.proxyHandler.canHandle(serviceCredential)) {
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>             <strong class="jxr_keyword">if</strong> (serviceCredential != <strong class="jxr_keyword">null</strong> &amp;&amp; <strong class="jxr_keyword">this</strong>.proxyHandler.canHandle(serviceCredential)) {
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>                 proxyIou = <strong class="jxr_keyword">this</strong>.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>                 <strong class="jxr_keyword">if</strong> (StringUtils.isEmpty(proxyIou)) {
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>                     <strong class="jxr_keyword">return</strong> generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,

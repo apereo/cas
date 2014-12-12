@@ -247,7 +247,7 @@
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>         verifyRegisteredServiceProperties(registeredService, service);
 <a class="jxr_linenumber" name="L240" href="#L240">240</a> 
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>         <a href="../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> currentAuthentication = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>         <strong class="jxr_keyword">if</strong> (credentials != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>         <strong class="jxr_keyword">if</strong> (credentials != <strong class="jxr_keyword">null</strong> &amp;&amp; credentials.length &gt; 0) {
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>             currentAuthentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> original = ticketGrantingTicket.getAuthentication();
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>             <strong class="jxr_keyword">if</strong> (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
