@@ -19,18 +19,22 @@
 package org.jasig.cas.authentication;
 
 import com.github.inspektr.audit.annotation.Audit;
+
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +74,7 @@ import java.util.Map;
  * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
+ * @author Martin Baumgartner
  * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
@@ -90,6 +95,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @NotNull
     private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
+    /**
+     * Merge principal attributes from handler and resolver.
+     * resolver-Attributes will override existing handler-attributes
+     * default is true
+     */ 
+    private boolean mergePrincipalAttributes = true;
 
     /**
      * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
@@ -184,6 +195,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
         this.authenticationPolicy = policy;
     }
+    
+    /**
+     * Sets the mergePrincipalAttributes flag.
+     *
+     * @param mergePrincipalAttributes Set to false to ignore {@link AuthenticationHandler} attributes. 
+     */
+    public void setMergePrincipalAttributes(final boolean mergePrincipalAttributes) {
+        this.mergePrincipalAttributes = mergePrincipalAttributes;
+    }
 
     /**
      * Follows the same contract as {@link AuthenticationManager#authenticate(Credential...)}.
@@ -225,6 +245,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                     principal);
                         } else {
                             principal = resolvePrincipal(handler.getName(), resolver, credential);
+                            final Principal handlerPrincipal = result.getPrincipal();
+                            if (mergePrincipalAttributes && principal != null && handlerPrincipal != null) {
+                                final Map<String, Object> attributes = new HashMap<String, Object>();
+                                attributes.putAll(handlerPrincipal.getAttributes());
+                                attributes.putAll(principal.getAttributes());
+                                principal = new SimplePrincipal(handlerPrincipal.getId(), attributes);
+                            }
                         }
                         // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
                         // require principal to be non-null
