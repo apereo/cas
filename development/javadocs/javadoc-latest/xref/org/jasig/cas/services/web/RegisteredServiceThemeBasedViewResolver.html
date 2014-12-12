@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      @Override
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">protected</strong> AbstractUrlBasedView buildView(<strong class="jxr_keyword">final</strong> String viewName) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">final</strong> RequestContext requestContext = RequestContextHolder.getRequestContext();
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = (WebApplicationService) WebUtils.getService(requestContext);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = WebUtils.getService(requestContext);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> String themeId = service != <strong class="jxr_keyword">null</strong> &amp;&amp; registeredService != <strong class="jxr_keyword">null</strong> &amp;&amp; registeredService.isEnabled()
