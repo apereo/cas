@@ -34,7 +34,7 @@ public class TicketValidationExceptionTests {
 
     private static final String CODE = "INVALID_SERVICE";
 
-    private Service service = TestUtils.getService();
+    private final Service service = TestUtils.getService();
 
     @Test
     public void verifyThrowableConstructor() {
