@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import org.jasig.cas.util.CompressionUtils;
 import com.google.common.io.ByteSource;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -289,7 +289,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            final byte[] ivCiphertext = decode(value.getBytes(Charset.defaultCharset()));
+            final byte[] ivCiphertext = CompressionUtils.decodeBase64ToByteArray(value);
             final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
             final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
             final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
@@ -346,25 +346,6 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         return ivValue;
     }
 
-    /**
-     * Encode.
-     *
-     * @param bytes the bytes
-     * @return the byte[]
-     */
-    private static byte[] encode(final byte[] bytes) {
-        return new Base64().encode(bytes);
-    }
-
-    /**
-     * Decode.
-     *
-     * @param bytes the bytes
-     * @return the byte[]
-     */
-    private static byte[] decode(final byte[] bytes) {
-        return new Base64().decode(bytes);
-    }
 
     /**
      * Encrypt.
@@ -402,7 +383,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return new String(encode(ivCiphertext), Charset.defaultCharset());
+            return CompressionUtils.encodeBase64(ivCiphertext);
         } catch(final Exception e) {
             throw new RuntimeException(e);
         }
