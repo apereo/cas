@@ -73,7 +73,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
     test -d "./development" || mkdir -m777 -v ./development
 
     echo -e "Copying new docs...\n"
-    cp -Rf $HOME/docs-latest ./development
+    cp -Rf $HOME/docs-latest/* ./development
   fi
 
   if [ "$invokeJavadoc" == true ]; then
