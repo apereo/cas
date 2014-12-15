@@ -100,18 +100,23 @@ function generateTableOfContentsForPage() {
   $('#tableOfContents').append("</ul>");
 }
 
-$(function() {
-  loadSidebarForActiveVersion();
-    generateTableOfContentsForPage();
-    generateToolbarIcons();
+function collapseCodeBlocks() {
+	$('.highlight').collapse()
+}
 
-  var formattedVersion = getActiveDocumentationVersionInView();
-  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-    formattedVersion = " (" + formattedVersion + ")"
-  } else {
-    formattedVersion = "";
-  }
-  document.title = $("h1").first().text() + formattedVersion;
+$(function() {
+	loadSidebarForActiveVersion();
+	generateTableOfContentsForPage();
+    generateToolbarIcons();
+	collapseCodeBlocks();
+	
+	var formattedVersion = getActiveDocumentationVersionInView();
+	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+	formattedVersion = " (" + formattedVersion + ")"
+	} else {
+	formattedVersion = "";
+	}
+	document.title = $("h1").first().text() + formattedVersion;
   
 });
 
