@@ -87,8 +87,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
     protected abstract RevocationChecker getChecker();
 
     private X509Certificate readCertificate(final String file) {
-        try (InputStream in = null) {
-            in = new ClassPathResource(file).getInputStream();
+        try (InputStream in = new ClassPathResource(file).getInputStream()) {
             return (X509Certificate) CryptReader.readCertificate(in);
         } catch (final Exception e) {
             throw new RuntimeException("Error reading certificate " + file, e);
