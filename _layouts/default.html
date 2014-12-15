@@ -7,12 +7,18 @@
     <meta name="description" content="CAS - Single Sign-On for the Web" />
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+	
+	<link rel="stylesheet" 
+		  href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+	
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ relative }}stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="print"
           href="{{ relative }}stylesheets/print.css">
+		  
     <title>{{ page.title }}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <script src="{{ relative }}javascripts/URI.js"></script>
     <script src="{{ relative }}javascripts/main.js"></script>
   </head>
