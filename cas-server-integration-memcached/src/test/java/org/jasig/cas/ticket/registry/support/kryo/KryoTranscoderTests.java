@@ -31,8 +31,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -42,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -192,6 +194,10 @@ public class KryoTranscoderTests {
 
         private final Authentication authentication;
 
+        /** Factory to create the principal type. **/
+        @NotNull
+        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
             this.id = null;
@@ -204,7 +210,7 @@ public class KryoTranscoderTests {
             final AuthenticationBuilder builder = new AuthenticationBuilder();
             final Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("nickname", "bob");
-            builder.setPrincipal(new SimplePrincipal("handymanbob", attributes));
+            builder.setPrincipal(this.principalFactory.createPrincipal("handymanbob", attributes));
             builder.setAuthenticationDate(new Date());
             builder.addCredential(credentialMetaData);
             final AuthenticationHandler handler = new MockAuthenticationHandler();

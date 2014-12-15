@@ -46,7 +46,6 @@
     -->
     <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
 
-
     <!-- 
         Message source for this context, loaded from localized "messages_xx" files.]
         
@@ -110,7 +109,10 @@
           p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
-    
+
+    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.DefaultPrincipalFactory"
+            scope="prototype"/>
+
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
           c:ticketRegistry-ref="ticketRegistry"
@@ -121,7 +123,8 @@
           c:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
           c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
           c:servicesManager-ref="servicesManager"
-          c:logoutManager-ref="logoutManager" />
+          c:logoutManager-ref="logoutManager"
+          p:principalFactory-ref="principalFactory"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 

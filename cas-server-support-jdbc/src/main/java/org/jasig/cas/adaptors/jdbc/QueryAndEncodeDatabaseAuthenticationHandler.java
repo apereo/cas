@@ -26,7 +26,6 @@ import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -132,7 +131,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            return createHandlerResult(transformedCredential, new SimplePrincipal(username), null);
+            return createHandlerResult(transformedCredential,
+                    this.principalFactory.createPrincipal(username), null);
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
