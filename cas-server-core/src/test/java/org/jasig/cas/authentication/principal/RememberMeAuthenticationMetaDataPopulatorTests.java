@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNull;
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
-    private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
+    private final RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     @Test
     public void verifyWithTrueRememberMeCredentials() {
