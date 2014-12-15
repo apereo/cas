@@ -100,8 +100,24 @@ function generateTableOfContentsForPage() {
   $('#tableOfContents').append("</ul>");
 }
 
+function guidGenerator() {
+    var S4 = function() {
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+}
+
 function collapseCodeBlocks() {
-	$('.highlight').collapse()
+	$(".highlight").each(function() {
+		var id = guidGenerator();
+		var showCodeButton = "<button type='button' class='btn btn-default' data-toggle='collapse' " +
+							 "data-target='#" + id + "' aria-expanded='true'>" +
+							 "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span>" +
+							 "&nbsp;Show Code</button>";
+		$(this).attr("id", id);
+		$(this).before(showCodeButton);
+		$(this).addClass('collapse');
+	});
 }
 
 $(function() {
