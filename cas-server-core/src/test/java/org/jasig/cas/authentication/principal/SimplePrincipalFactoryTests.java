@@ -16,21 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
 
+package org.jasig.cas.authentication.principal;
+
+import org.junit.Test;
+
+import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.*;
+
 /**
- * Return all attributes for the service, regardless of service settings.
  * @author Misagh Moayyed
- * @since 4.1.0
+ * @since 3.0.0
  */
-public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
+public class SimplePrincipalFactoryTests {
+    @Test
+    public void checkPrincipalCreation() {
+        final PrincipalFactory fact = new DefaultPrincipalFactory();
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("a1", "v1");
+        map.put("a2", "v3");
 
-    private static final long serialVersionUID = 5519257723778012771L;
-
-    @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        return resolvedAttributes;
+        final Principal p = fact.createPrincipal("user", map);
+        assertTrue(p instanceof SimplePrincipal);
+        assertEquals(p.getAttributes(), map);
     }
 }

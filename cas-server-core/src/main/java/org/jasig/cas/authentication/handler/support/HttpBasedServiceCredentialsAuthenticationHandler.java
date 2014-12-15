@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        return new HandlerResult(this, httpCredential, new SimplePrincipal(httpCredential.getId()));
+        return new HandlerResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
     }
 
     /**
