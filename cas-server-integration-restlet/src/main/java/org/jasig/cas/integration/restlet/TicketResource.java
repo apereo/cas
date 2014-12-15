@@ -80,16 +80,13 @@ public class TicketResource extends ServerResource {
         LOGGER.debug("Obtaining credentials...");
         final Credential c = obtainCredentials();
 
-        Formatter fmt = null;
-        try {
+        try (final Formatter fmt = new Formatter()) {
             final TicketGrantingTicket ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
             final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId.getId());
             getResponse().setLocationRef(ticketReference);
 
-            fmt = new Formatter();
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-
             fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription())
                .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference)
                .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
@@ -99,8 +96,6 @@ public class TicketResource extends ServerResource {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fmt);
         }
     }
     /**
