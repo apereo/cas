@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Andrew Petro
@@ -38,13 +38,15 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
      */
     @Test
     public void verifyNonNullPrincipal() throws Exception {
-        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(
+                new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
     public void verifySupports() {
-        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials =
+                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

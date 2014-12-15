@@ -19,8 +19,8 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -149,7 +149,7 @@ public class JpaTicketRegistryTests {
 
 
     static TicketGrantingTicket newTGT() {
-        final Principal principal = new SimplePrincipal(
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId("TGT"),

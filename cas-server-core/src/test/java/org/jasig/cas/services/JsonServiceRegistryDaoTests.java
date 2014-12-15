@@ -19,8 +19,11 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
+import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -233,6 +237,44 @@ public class JsonServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
 
         final RegisteredService r2 = this.dao.save(r);
+    }
+
+    @Test
+    public void checkLoadingOfJsonServiceFiles() throws Exception {
+        prepTests();
+        verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching();
+        verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
+        assertEquals(this.dao.load().size(), 2);
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesWithCaching");
+        r.setServiceId("testId");
+
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+
+        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
+
+        final CachingPrincipalAttributesRepository repository =
+                new CachingPrincipalAttributesRepository(
+                        new StubPersonAttributeDao(attributes),
+                        TimeUnit.MILLISECONDS, 100);
+        repository.setMergingStrategy(new ReplacingAttributeAdder());
+
+        policy.setPrincipalAttributesRepository(repository);
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
     }
 
     @Test

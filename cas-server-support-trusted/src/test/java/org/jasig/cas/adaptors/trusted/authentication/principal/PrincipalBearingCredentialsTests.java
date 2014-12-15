@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import static org.junit.Assert.*;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -34,7 +34,7 @@ public class PrincipalBearingCredentialsTests {
 
     @Before
     public void setUp() throws Exception {
-        this.principalBearingCredentials = new PrincipalBearingCredential(new SimplePrincipal("test"));
+        this.principalBearingCredentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"));
     }
 
     @Test

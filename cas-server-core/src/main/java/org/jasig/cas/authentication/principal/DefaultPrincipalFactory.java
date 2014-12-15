@@ -16,21 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
+package org.jasig.cas.authentication.principal;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
- * Return all attributes for the service, regardless of service settings.
+ * Factory to create {@link org.jasig.cas.authentication.principal.SimplePrincipal} objects.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
-
-    private static final long serialVersionUID = 5519257723778012771L;
+public final class DefaultPrincipalFactory implements PrincipalFactory {
+    private static final long serialVersionUID = -3999695695604948495L;
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        return resolvedAttributes;
+    public Principal createPrincipal(final String id) {
+        return new SimplePrincipal(id, Collections.EMPTY_MAP);
     }
+
+    @Override
+    public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
+        return new SimplePrincipal(id, attributes);
+    }
+
 }

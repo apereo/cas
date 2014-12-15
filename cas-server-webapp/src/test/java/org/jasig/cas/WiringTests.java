@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -26,7 +27,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test to verify Spring context wiring.
@@ -61,5 +62,14 @@ public class WiringTests {
     @Test
     public void verifyWiring() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
+    }
+
+    @Test
+    public void checkPrincipalFactory() throws Exception {
+        final DefaultPrincipalFactory factory1 =
+                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
+        final DefaultPrincipalFactory factory2 =
+                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
+        assertNotEquals("principal factories should be unique instances", factory1, factory2);
     }
 }
