@@ -18,36 +18,19 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
+import java.util.Map;
 
 /**
- * @author Scott Battaglia
- * @since 3.0.0
+ * Default implementation of {@link PrincipalAttributesRepository}
+ * that just returns the attributes as it receives them.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public final class SimplePrincipalTests  {
+public final class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
+    private static final long serialVersionUID = -4535358847021241725L;
 
-    @Test
-    public void verifyProperId() {
-        final String id = "test";
-        assertEquals(id, new SimplePrincipal(id).getId());
-    }
-
-    @Test
-    public void verifyEqualsWithNull() {
-        assertFalse(new SimplePrincipal("test").equals(null));
-    }
-
-    @Test
-    public void verifyEqualsWithBadClass() {
-        assertFalse(new SimplePrincipal("test").equals("test"));
-    }
-
-    @Test
-    public void verifyEquals() {
-        assertTrue(new SimplePrincipal("test").equals(new SimplePrincipal(
-            "test")));
+    @Override
+    public Map<String, Object> getAttributes(final Principal p) {
+        return p.getAttributes();
     }
 }

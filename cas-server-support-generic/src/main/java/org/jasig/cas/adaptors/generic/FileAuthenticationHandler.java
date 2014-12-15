@@ -24,7 +24,6 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -77,7 +76,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             }
             final String password = credential.getPassword();
             if (StringUtils.isNotBlank(password) && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
-                return createHandlerResult(credential, new SimplePrincipal(username), null);
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
