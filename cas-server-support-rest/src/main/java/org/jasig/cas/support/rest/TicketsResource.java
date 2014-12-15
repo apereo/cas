@@ -72,7 +72,8 @@ public class TicketsResource {
      * @return ResponseEntity representing RESTful response
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody, final HttpServletRequest request) {
+    public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                                   final HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
@@ -82,8 +83,8 @@ public class TicketsResource {
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             //IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s",
-                            ticketReference.toString()).format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
+                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
         } catch (final Throwable e) {
@@ -100,9 +101,11 @@ public class TicketsResource {
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody, @PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                            @PathVariable("tgtId") final String tgtId) {
         try {
-            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId, new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
+            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
+                    new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
             return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);

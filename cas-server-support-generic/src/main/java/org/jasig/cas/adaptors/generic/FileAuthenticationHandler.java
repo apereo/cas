@@ -63,7 +63,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * {@inheritDoc}
      */
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential) throws GeneralSecurityException, PreventedException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+            throws GeneralSecurityException, PreventedException {
         try {
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
