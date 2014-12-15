@@ -222,16 +222,16 @@ Sample configuration follows:
       p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
     <property name="attributeReleasePolicy">
         <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-            <property name="allowedAttributes">
-                <list>
-                    <value>mail</value>
-                </list>
-            </property>
-			<property name="principalAttributesRepository">
-                <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-                      c:attributeRepository-ref="attributeRepository"
-                      c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-            </property>
+		<property name="allowedAttributes">
+	        	<list>
+	                    <value>mail</value>
+	                </list>
+            	</property>
+		<property name="principalAttributesRepository">
+                	<bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+	                      	c:attributeRepository-ref="attributeRepository"
+        	              	c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
+            	</property>
         </bean>
     </property>
 </bean>
@@ -252,7 +252,7 @@ For example:
 
 
 {% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
+<bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
 	<property name="principalAttributesRepository">
 	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
@@ -277,7 +277,7 @@ For example:
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=123-456-7890, office=3233}`
 
 {% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
+<bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
 	<property name="principalAttributesRepository">
 	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
@@ -303,7 +303,7 @@ For example:
 
 
 {% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
+<bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
 	<property name="principalAttributesRepository">
 	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
