@@ -35,16 +35,16 @@ public class HttpMessage {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
     
     /** The default asynchronous callbacks enabled. */
-    private static boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
+    private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private URL url;
-    private String message;
+    private final URL url;
+    private final String message;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private boolean asynchronous = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
+    private final boolean asynchronous = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
     
     /**
      * The content type for this message once submitted.

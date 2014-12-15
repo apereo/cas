@@ -93,7 +93,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("test");
 
-        request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
+        request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInRequestScope(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
