@@ -71,8 +71,7 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        try (PrintWriter printWriter = null) {
-            printWriter = response.getWriter();
+        try (PrintWriter printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {

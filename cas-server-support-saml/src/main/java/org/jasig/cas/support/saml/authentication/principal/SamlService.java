@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.slf4j.Logger;
