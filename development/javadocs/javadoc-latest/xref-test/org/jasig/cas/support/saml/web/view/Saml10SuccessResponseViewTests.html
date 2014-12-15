@@ -30,30 +30,30 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.TestUtils;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.RememberMeCredential;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimplePrincipal;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultServicesManagerImpl;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredService;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredServiceImpl;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.ImmutableAssertion;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletRequest;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletResponse;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertFalse;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertTrue;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultServicesManagerImpl;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredService;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredServiceImpl;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.ImmutableAssertion;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletRequest;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletResponse;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> * Unit test for {@link Saml10SuccessResponseView} class.</em>
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          attributes.put(<span class="jxr_string">"testAttribute"</span>, <span class="jxr_string">"testValue"</span>);
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          attributes.put(<span class="jxr_string">"testEmptyCollection"</span>, Collections.emptyList());
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          attributes.put(<span class="jxr_string">"testAttributeCollection"</span>, Arrays.asList(<span class="jxr_string">"tac1"</span>, <span class="jxr_string">"tac2"</span>));
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> SimplePrincipal principal = <strong class="jxr_keyword">new</strong> SimplePrincipal(<span class="jxr_string">"testPrincipal"</span>, attributes);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> Principal principal = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(<span class="jxr_string">"testPrincipal"</span>, attributes);
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; authAttributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          authAttributes.put(
@@ -129,7 +129,7 @@
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyResponseWithNoAttributes() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="L123" href="#L123">123</a> 
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">final</strong> SimplePrincipal principal = <strong class="jxr_keyword">new</strong> SimplePrincipal(<span class="jxr_string">"testPrincipal"</span>);
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">final</strong> Principal principal = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(<span class="jxr_string">"testPrincipal"</span>);
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> 
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; authAttributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         authAttributes.put(
@@ -159,7 +159,7 @@
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         attributes.put(<span class="jxr_string">"testAttribute"</span>, <span class="jxr_string">"testValue"</span>);
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> SimplePrincipal principal = <strong class="jxr_keyword">new</strong> SimplePrincipal(<span class="jxr_string">"testPrincipal"</span>, attributes);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Principal principal = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(<span class="jxr_string">"testPrincipal"</span>, attributes);
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; authnAttributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         authnAttributes.put(<span class="jxr_string">"authnAttribute1"</span>, <span class="jxr_string">"authnAttrbuteV1"</span>);

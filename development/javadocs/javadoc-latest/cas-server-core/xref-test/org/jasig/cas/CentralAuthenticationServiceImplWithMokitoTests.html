@@ -33,8 +33,8 @@
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.BasicCredentialMetaData;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.CredentialMetaData;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HandlerResult;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimplePrincipal;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.logout.LogoutManager;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -119,7 +119,7 @@
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         successes.put(<span class="jxr_string">"handler1"</span>, <strong class="jxr_keyword">new</strong> HandlerResult(mock(AuthenticationHandler.<strong class="jxr_keyword">class</strong>), metadata));
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getSuccesses()).thenReturn(successes);
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getPrincipal()).thenReturn(<strong class="jxr_keyword">new</strong> SimplePrincipal(PRINCIPAL));
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getPrincipal()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>          
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">final</strong> Service service1 = TestUtils.getService(SVC1_ID);
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         <strong class="jxr_keyword">final</strong> ServiceTicket stMock = createMockServiceTicket(ST_ID, service1); 

@@ -26,13 +26,13 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.authentication;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> javax.security.auth.login.FailedLoginException;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimplePrincipal;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.fail;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> javax.security.auth.login.FailedLoginException;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.*;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.mockito.Mockito.*;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">/**</em>
@@ -165,18 +165,20 @@
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         when(mock.getName()).thenReturn(name);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         when(mock.supports(any(Credential.<strong class="jxr_keyword">class</strong>))).thenReturn(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">if</strong> (success) {
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">final</strong> HandlerResult result = <strong class="jxr_keyword">new</strong> HandlerResult(
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                     mock,
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                     mock(CredentialMetaData.<strong class="jxr_keyword">class</strong>),
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>                     <strong class="jxr_keyword">new</strong> SimplePrincipal(<span class="jxr_string">"nobody"</span>));
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             when(mock.authenticate(any(Credential.<strong class="jxr_keyword">class</strong>))).thenReturn(result);
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>             when(mock.authenticate(any(Credential.<strong class="jxr_keyword">class</strong>))).thenThrow(<strong class="jxr_keyword">new</strong> FailedLoginException());
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">return</strong> mock;
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
-<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
-<a class="jxr_linenumber" name="L171" href="#L171">171</a> }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">final</strong> Principal p = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(<span class="jxr_string">"nobody"</span>);
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">final</strong> HandlerResult result = <strong class="jxr_keyword">new</strong> HandlerResult(
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>                     mock,
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                     mock(CredentialMetaData.<strong class="jxr_keyword">class</strong>),
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>                     p);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>             when(mock.authenticate(any(Credential.<strong class="jxr_keyword">class</strong>))).thenReturn(result);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>             when(mock.authenticate(any(Credential.<strong class="jxr_keyword">class</strong>))).thenThrow(<strong class="jxr_keyword">new</strong> FailedLoginException());
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         }
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">return</strong> mock;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

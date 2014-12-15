@@ -27,8 +27,8 @@
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.ticket.registry;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.TestUtils;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimplePrincipal;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.mock.MockService;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ExpirationPolicy;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a> 
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> 
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>     <strong class="jxr_keyword">static</strong> TicketGrantingTicket newTGT() {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> Principal principal = <strong class="jxr_keyword">new</strong> SimplePrincipal(
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> Principal principal = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>                 <span class="jxr_string">"bob"</span>, Collections.singletonMap(<span class="jxr_string">"displayName"</span>, (Object) <span class="jxr_string">"Bob"</span>));
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>                 ID_GENERATOR.getNewTicketId(<span class="jxr_string">"TGT"</span>),

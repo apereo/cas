@@ -26,8 +26,8 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.extension.clearpass;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.ByteSource;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.codec.binary.Base64;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.CompressionUtils;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.ByteSource;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
@@ -297,7 +297,7 @@
 <a class="jxr_linenumber" name="L289" href="#L289">289</a> 
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>             <strong class="jxr_keyword">final</strong> Cipher cipher = getCipherObject();
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             <strong class="jxr_keyword">final</strong> byte[] ivCiphertext = decode(value.getBytes(Charset.defaultCharset()));
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>             <strong class="jxr_keyword">final</strong> byte[] ivCiphertext = CompressionUtils.decodeBase64ToByteArray(value);
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> ivSize = byte2<strong class="jxr_keyword">int</strong>(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
 <a class="jxr_linenumber" name="L294" href="#L294">294</a>             <strong class="jxr_keyword">final</strong> byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>             <strong class="jxr_keyword">final</strong> byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
@@ -354,196 +354,177 @@
 <a class="jxr_linenumber" name="L346" href="#L346">346</a>         <strong class="jxr_keyword">return</strong> ivValue;
 <a class="jxr_linenumber" name="L347" href="#L347">347</a>     }
 <a class="jxr_linenumber" name="L348" href="#L348">348</a> 
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">     * Encode.</em>
-<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] encode(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Base64().encode(bytes);
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     }
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">     * Decode.</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> byte[] decode(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Base64().decode(bytes);
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>     }
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> 
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     * Encrypt.</em>
-<a class="jxr_linenumber" name="L371" href="#L371">371</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L372" href="#L372">372</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> <em class="jxr_javadoccomment">     * @return the string</em>
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     <strong class="jxr_keyword">protected</strong> String encrypt(<strong class="jxr_keyword">final</strong> String value) {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">return</strong> encrypt(value, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>     }
-<a class="jxr_linenumber" name="L378" href="#L378">378</a> 
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">     * Encrypt.</em>
-<a class="jxr_linenumber" name="L381" href="#L381">381</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="L383" href="#L383">383</a> <em class="jxr_javadoccomment">     * @param hashedKey the hashed key</em>
-<a class="jxr_linenumber" name="L384" href="#L384">384</a> <em class="jxr_javadoccomment">     * @return the string</em>
-<a class="jxr_linenumber" name="L385" href="#L385">385</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>     <strong class="jxr_keyword">protected</strong> String encrypt(<strong class="jxr_keyword">final</strong> String value, <strong class="jxr_keyword">final</strong> String hashedKey) {
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> 
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L351" href="#L351">351</a> <em class="jxr_javadoccomment">     * Encrypt.</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     * @return the string</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>     <strong class="jxr_keyword">protected</strong> String encrypt(<strong class="jxr_keyword">final</strong> String value) {
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <strong class="jxr_keyword">return</strong> encrypt(value, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>     }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     * Encrypt.</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">     * @param hashedKey the hashed key</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">     * @return the string</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>     <strong class="jxr_keyword">protected</strong> String encrypt(<strong class="jxr_keyword">final</strong> String value, <strong class="jxr_keyword">final</strong> String hashedKey) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>         }
+<a class="jxr_linenumber" name="L371" href="#L371">371</a> 
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>             <strong class="jxr_keyword">final</strong> Cipher cipher = getCipherObject();
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>             <strong class="jxr_keyword">final</strong> byte[] ivValue = generateIV(<strong class="jxr_keyword">this</strong>.ivSize);
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>             <strong class="jxr_keyword">final</strong> IvParameterSpec ivSpec = <strong class="jxr_keyword">new</strong> IvParameterSpec(ivValue);
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>             cipher.init(Cipher.ENCRYPT_MODE, <strong class="jxr_keyword">this</strong>.key, ivSpec);
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>             
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>             <strong class="jxr_keyword">final</strong> byte[] ciphertext = cipher.doFinal(value.getBytes(Charset.defaultCharset()));
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>             <strong class="jxr_keyword">final</strong> byte[] ivCiphertext = <strong class="jxr_keyword">new</strong> byte[INTEGER_LEN + <strong class="jxr_keyword">this</strong>.ivSize + ciphertext.length];
+<a class="jxr_linenumber" name="L381" href="#L381">381</a> 
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             System.arraycopy(<strong class="jxr_keyword">int</strong>2byte(<strong class="jxr_keyword">this</strong>.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, <strong class="jxr_keyword">this</strong>.ivSize);
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + <strong class="jxr_keyword">this</strong>.ivSize, ciphertext.length);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> 
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>             <strong class="jxr_keyword">return</strong> CompressionUtils.encodeBase64(ivCiphertext);
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>         } <strong class="jxr_keyword">catch</strong>(<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(e);
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>         }
-<a class="jxr_linenumber" name="L390" href="#L390">390</a> 
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">final</strong> Cipher cipher = getCipherObject();
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>             <strong class="jxr_keyword">final</strong> byte[] ivValue = generateIV(<strong class="jxr_keyword">this</strong>.ivSize);
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>             <strong class="jxr_keyword">final</strong> IvParameterSpec ivSpec = <strong class="jxr_keyword">new</strong> IvParameterSpec(ivValue);
-<a class="jxr_linenumber" name="L395" href="#L395">395</a> 
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>             cipher.init(Cipher.ENCRYPT_MODE, <strong class="jxr_keyword">this</strong>.key, ivSpec);
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>             
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">final</strong> byte[] ciphertext = cipher.doFinal(value.getBytes(Charset.defaultCharset()));
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>             <strong class="jxr_keyword">final</strong> byte[] ivCiphertext = <strong class="jxr_keyword">new</strong> byte[INTEGER_LEN + <strong class="jxr_keyword">this</strong>.ivSize + ciphertext.length];
-<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             System.arraycopy(<strong class="jxr_keyword">int</strong>2byte(<strong class="jxr_keyword">this</strong>.ivSize), 0, ivCiphertext, 0, INTEGER_LEN);
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, <strong class="jxr_keyword">this</strong>.ivSize);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + <strong class="jxr_keyword">this</strong>.ivSize, ciphertext.length);
-<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(encode(ivCiphertext), Charset.defaultCharset());
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>         } <strong class="jxr_keyword">catch</strong>(<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(e);
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         }
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>     }
-<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L412" href="#L412">412</a> <em class="jxr_javadoccomment">     * Int to byte.</em>
-<a class="jxr_linenumber" name="L413" href="#L413">413</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L414" href="#L414">414</a> <em class="jxr_javadoccomment">     * @param i the i</em>
-<a class="jxr_linenumber" name="L415" href="#L415">415</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
-<a class="jxr_linenumber" name="L416" href="#L416">416</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
-<a class="jxr_linenumber" name="L417" href="#L417">417</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> byte[] <strong class="jxr_keyword">int</strong>2byte(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>         <strong class="jxr_keyword">return</strong> ByteBuffer.allocate(BYTE_BUFFER_CAPACITY_SIZE).putInt(i).array();
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>     }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> 
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">     * Byte to int.</em>
-<a class="jxr_linenumber" name="L424" href="#L424">424</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L425" href="#L425">425</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="L426" href="#L426">426</a> <em class="jxr_javadoccomment">     * @return the int</em>
-<a class="jxr_linenumber" name="L427" href="#L427">427</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
-<a class="jxr_linenumber" name="L428" href="#L428">428</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> byte2<strong class="jxr_keyword">int</strong>(<strong class="jxr_keyword">final</strong> byte[] bytes) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">return</strong> ByteBuffer.wrap(bytes).getInt();
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>     }
-<a class="jxr_linenumber" name="L432" href="#L432">432</a> 
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">     * Byte to char.</em>
-<a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
-<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     * @return the string</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
-<a class="jxr_linenumber" name="L439" href="#L439">439</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String byte2<strong class="jxr_keyword">char</strong>(<strong class="jxr_keyword">final</strong> byte[] bytes) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(bytes, <span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>     }
-<a class="jxr_linenumber" name="L443" href="#L443">443</a> 
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> <em class="jxr_javadoccomment">     * Char to byte.</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L447" href="#L447">447</a> <em class="jxr_javadoccomment">     * @param chars the chars</em>
-<a class="jxr_linenumber" name="L448" href="#L448">448</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
-<a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
-<a class="jxr_linenumber" name="L450" href="#L450">450</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> byte[] <strong class="jxr_keyword">char</strong>2byte(<strong class="jxr_keyword">final</strong> String chars) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">return</strong> chars.getBytes(<span class="jxr_string">"UTF-8"</span>);
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>     }
-<a class="jxr_linenumber" name="L454" href="#L454">454</a> 
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">     * Tries to clone the {@link MessageDigest} that was created during construction. If the clone fails</em>
-<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">     * that is remembered and from that point on new {@link MessageDigest} instances will be created on</em>
-<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">     * every call.</em>
-<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="L460" href="#L460">460</a> <em class="jxr_javadoccomment">     * Adopted from the Spring EhCache Annotations project.</em>
-<a class="jxr_linenumber" name="L461" href="#L461">461</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L462" href="#L462">462</a> <em class="jxr_javadoccomment">     * @return Generates a {@link MessageDigest} to use</em>
-<a class="jxr_linenumber" name="L463" href="#L463">463</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>     <strong class="jxr_keyword">protected</strong> MessageDigest getMessageDigest() {
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.cloneNotSupported) {
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>             <strong class="jxr_keyword">final</strong> String algorithm = <strong class="jxr_keyword">this</strong>.messageDigest.getAlgorithm();
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>                 <strong class="jxr_keyword">return</strong> MessageDigest.getInstance(algorithm);
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"MessageDigest algorithm '"</span> + algorithm + <span class="jxr_string">"' was supported when "</span>
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                         + <strong class="jxr_keyword">this</strong>.getClass().getSimpleName()
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>                         + <span class="jxr_string">" was created but is not now. This should not be possible."</span>, e);
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>             }
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>         }
-<a class="jxr_linenumber" name="L475" href="#L475">475</a> 
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>             <strong class="jxr_keyword">return</strong> (MessageDigest) <strong class="jxr_keyword">this</strong>.messageDigest.clone();
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> CloneNotSupportedException e) {
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>             <strong class="jxr_keyword">this</strong>.cloneNotSupported = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Could not clone MessageDigest using algorithm '%s'. "</span>
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                         + <span class="jxr_string">"MessageDigest.getInstance will be used from now on which will be much more expensive."</span>,
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>                         <strong class="jxr_keyword">this</strong>.messageDigest.getAlgorithm());
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>             logger.warn(msg, e);
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.getMessageDigest();
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>         }
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>     }
-<a class="jxr_linenumber" name="L487" href="#L487">487</a> 
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L489" href="#L489">489</a> <em class="jxr_javadoccomment">     * Takes the raw bytes from the digest and formats them.</em>
-<a class="jxr_linenumber" name="L490" href="#L490">490</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L491" href="#L491">491</a> <em class="jxr_javadoccomment">     * @param bytes the raw bytes from the digest.</em>
-<a class="jxr_linenumber" name="L492" href="#L492">492</a> <em class="jxr_javadoccomment">     * @return the formatted bytes.</em>
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>     }
+<a class="jxr_linenumber" name="L391" href="#L391">391</a> 
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L393" href="#L393">393</a> <em class="jxr_javadoccomment">     * Int to byte.</em>
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L395" href="#L395">395</a> <em class="jxr_javadoccomment">     * @param i the i</em>
+<a class="jxr_linenumber" name="L396" href="#L396">396</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
+<a class="jxr_linenumber" name="L397" href="#L397">397</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> byte[] <strong class="jxr_keyword">int</strong>2byte(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> i) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>         <strong class="jxr_keyword">return</strong> ByteBuffer.allocate(BYTE_BUFFER_CAPACITY_SIZE).putInt(i).array();
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>     }
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> 
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> <em class="jxr_javadoccomment">     * Byte to int.</em>
+<a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
+<a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     * @return the int</em>
+<a class="jxr_linenumber" name="L408" href="#L408">408</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
+<a class="jxr_linenumber" name="L409" href="#L409">409</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> byte2<strong class="jxr_keyword">int</strong>(<strong class="jxr_keyword">final</strong> byte[] bytes) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">return</strong> ByteBuffer.wrap(bytes).getInt();
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>     }
+<a class="jxr_linenumber" name="L413" href="#L413">413</a> 
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> <em class="jxr_javadoccomment">     * Byte to char.</em>
+<a class="jxr_linenumber" name="L416" href="#L416">416</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> <em class="jxr_javadoccomment">     * @param bytes the bytes</em>
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     * @return the string</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String byte2<strong class="jxr_keyword">char</strong>(<strong class="jxr_keyword">final</strong> byte[] bytes) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(bytes, <span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>     }
+<a class="jxr_linenumber" name="L424" href="#L424">424</a> 
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L426" href="#L426">426</a> <em class="jxr_javadoccomment">     * Char to byte.</em>
+<a class="jxr_linenumber" name="L427" href="#L427">427</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L428" href="#L428">428</a> <em class="jxr_javadoccomment">     * @param chars the chars</em>
+<a class="jxr_linenumber" name="L429" href="#L429">429</a> <em class="jxr_javadoccomment">     * @return the byte[]</em>
+<a class="jxr_linenumber" name="L430" href="#L430">430</a> <em class="jxr_javadoccomment">     * @throws UnsupportedEncodingException the unsupported encoding exception</em>
+<a class="jxr_linenumber" name="L431" href="#L431">431</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> byte[] <strong class="jxr_keyword">char</strong>2byte(<strong class="jxr_keyword">final</strong> String chars) <strong class="jxr_keyword">throws</strong> UnsupportedEncodingException {
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>         <strong class="jxr_keyword">return</strong> chars.getBytes(<span class="jxr_string">"UTF-8"</span>);
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>     }
+<a class="jxr_linenumber" name="L435" href="#L435">435</a> 
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     * Tries to clone the {@link MessageDigest} that was created during construction. If the clone fails</em>
+<a class="jxr_linenumber" name="L438" href="#L438">438</a> <em class="jxr_javadoccomment">     * that is remembered and from that point on new {@link MessageDigest} instances will be created on</em>
+<a class="jxr_linenumber" name="L439" href="#L439">439</a> <em class="jxr_javadoccomment">     * every call.</em>
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> <em class="jxr_javadoccomment">     * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">     * Adopted from the Spring EhCache Annotations project.</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> <em class="jxr_javadoccomment">     * @return Generates a {@link MessageDigest} to use</em>
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <strong class="jxr_keyword">protected</strong> MessageDigest getMessageDigest() {
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.cloneNotSupported) {
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>             <strong class="jxr_keyword">final</strong> String algorithm = <strong class="jxr_keyword">this</strong>.messageDigest.getAlgorithm();
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>                 <strong class="jxr_keyword">return</strong> MessageDigest.getInstance(algorithm);
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"MessageDigest algorithm '"</span> + algorithm + <span class="jxr_string">"' was supported when "</span>
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                         + <strong class="jxr_keyword">this</strong>.getClass().getSimpleName()
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>                         + <span class="jxr_string">" was created but is not now. This should not be possible."</span>, e);
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>             }
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>         }
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> 
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>             <strong class="jxr_keyword">return</strong> (MessageDigest) <strong class="jxr_keyword">this</strong>.messageDigest.clone();
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> CloneNotSupportedException e) {
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>             <strong class="jxr_keyword">this</strong>.cloneNotSupported = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Could not clone MessageDigest using algorithm '%s'. "</span>
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>                         + <span class="jxr_string">"MessageDigest.getInstance will be used from now on which will be much more expensive."</span>,
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>                         <strong class="jxr_keyword">this</strong>.messageDigest.getAlgorithm());
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>             logger.warn(msg, e);
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.getMessageDigest();
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         }
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>     }
+<a class="jxr_linenumber" name="L468" href="#L468">468</a> 
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> <em class="jxr_javadoccomment">     * Takes the raw bytes from the digest and formats them.</em>
+<a class="jxr_linenumber" name="L471" href="#L471">471</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L472" href="#L472">472</a> <em class="jxr_javadoccomment">     * @param bytes the raw bytes from the digest.</em>
+<a class="jxr_linenumber" name="L473" href="#L473">473</a> <em class="jxr_javadoccomment">     * @return the formatted bytes.</em>
+<a class="jxr_linenumber" name="L474" href="#L474">474</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String getFormattedText(<strong class="jxr_keyword">final</strong> byte[] bytes) {
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>         <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder(bytes.length * 2);
+<a class="jxr_linenumber" name="L477" href="#L477">477</a> 
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>         <strong class="jxr_keyword">for</strong> (byte b : bytes) {
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>             buf.append(HEX_DIGITS[b &gt;&gt; HEX_RIGHT_SHIFT_COEFFICIENT &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>             buf.append(HEX_DIGITS[b &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>         }
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>         <strong class="jxr_keyword">return</strong> buf.toString();
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>     }
+<a class="jxr_linenumber" name="L484" href="#L484">484</a> 
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L486" href="#L486">486</a> <em class="jxr_javadoccomment">     * Gets the cipher object for the {@link #CIPHER_ALGORITHM}.</em>
+<a class="jxr_linenumber" name="L487" href="#L487">487</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L488" href="#L488">488</a> <em class="jxr_javadoccomment">     * @return the cipher object</em>
+<a class="jxr_linenumber" name="L489" href="#L489">489</a> <em class="jxr_javadoccomment">     * @throws NoSuchAlgorithmException - if transformation is null, empty, in an invalid format, or if no Provider</em>
+<a class="jxr_linenumber" name="L490" href="#L490">490</a> <em class="jxr_javadoccomment">     * supports a CipherSpi implementation for the specified algorithm. </em>
+<a class="jxr_linenumber" name="L491" href="#L491">491</a> <em class="jxr_javadoccomment">     * @throws NoSuchPaddingException - if transformation contains a padding scheme that is not available.</em>
+<a class="jxr_linenumber" name="L492" href="#L492">492</a> <em class="jxr_javadoccomment">     * @see Cipher#getInstance(String)</em>
 <a class="jxr_linenumber" name="L493" href="#L493">493</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String getFormattedText(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>         <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder(bytes.length * 2);
-<a class="jxr_linenumber" name="L496" href="#L496">496</a> 
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>         <strong class="jxr_keyword">for</strong> (byte b : bytes) {
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>             buf.append(HEX_DIGITS[b &gt;&gt; HEX_RIGHT_SHIFT_COEFFICIENT &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>             buf.append(HEX_DIGITS[b &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>         }
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>         <strong class="jxr_keyword">return</strong> buf.toString();
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>     }
-<a class="jxr_linenumber" name="L503" href="#L503">503</a> 
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L505" href="#L505">505</a> <em class="jxr_javadoccomment">     * Gets the cipher object for the {@link #CIPHER_ALGORITHM}.</em>
-<a class="jxr_linenumber" name="L506" href="#L506">506</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L507" href="#L507">507</a> <em class="jxr_javadoccomment">     * @return the cipher object</em>
-<a class="jxr_linenumber" name="L508" href="#L508">508</a> <em class="jxr_javadoccomment">     * @throws NoSuchAlgorithmException - if transformation is null, empty, in an invalid format, or if no Provider</em>
-<a class="jxr_linenumber" name="L509" href="#L509">509</a> <em class="jxr_javadoccomment">     * supports a CipherSpi implementation for the specified algorithm. </em>
-<a class="jxr_linenumber" name="L510" href="#L510">510</a> <em class="jxr_javadoccomment">     * @throws NoSuchPaddingException - if transformation contains a padding scheme that is not available.</em>
-<a class="jxr_linenumber" name="L511" href="#L511">511</a> <em class="jxr_javadoccomment">     * @see Cipher#getInstance(String)</em>
-<a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>     <strong class="jxr_keyword">private</strong> Cipher getCipherObject() <strong class="jxr_keyword">throws</strong> NoSuchAlgorithmException, NoSuchPaddingException {
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>         <strong class="jxr_keyword">return</strong> Cipher.getInstance(CIPHER_ALGORITHM);
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>     }
-<a class="jxr_linenumber" name="L516" href="#L516">516</a> 
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L518" href="#L518">518</a> <em class="jxr_javadoccomment">     * Gets the secret key.</em>
-<a class="jxr_linenumber" name="L519" href="#L519">519</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L520" href="#L520">520</a> <em class="jxr_javadoccomment">     * @param secretKeyAlgorithm the secret key algorithm</em>
-<a class="jxr_linenumber" name="L521" href="#L521">521</a> <em class="jxr_javadoccomment">     * @param secretKey the secret key</em>
-<a class="jxr_linenumber" name="L522" href="#L522">522</a> <em class="jxr_javadoccomment">     * @param salt the salt</em>
-<a class="jxr_linenumber" name="L523" href="#L523">523</a> <em class="jxr_javadoccomment">     * @return the secret key</em>
-<a class="jxr_linenumber" name="L524" href="#L524">524</a> <em class="jxr_javadoccomment">     * @throws Exception the exception</em>
-<a class="jxr_linenumber" name="L525" href="#L525">525</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Key getSecretKey(<strong class="jxr_keyword">final</strong> String secretKeyAlgorithm, <strong class="jxr_keyword">final</strong> String secretKey,
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>             <strong class="jxr_keyword">final</strong> String salt) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L528" href="#L528">528</a> 
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>         <strong class="jxr_keyword">final</strong> SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>         <strong class="jxr_keyword">final</strong> KeySpec spec = <strong class="jxr_keyword">new</strong> PBEKeySpec(secretKey.toCharArray(), <strong class="jxr_keyword">char</strong>2byte(salt), 65536, 128);
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>         <strong class="jxr_keyword">final</strong> SecretKey tmp = factory.generateSecret(spec);
-<a class="jxr_linenumber" name="L532" href="#L532">532</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>     }
-<a class="jxr_linenumber" name="L534" href="#L534">534</a> 
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>     <strong class="jxr_keyword">public</strong> String getSecretKeyAlgorithm() {
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>         <strong class="jxr_keyword">return</strong> secretKeyAlgorithm;
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>     }
-<a class="jxr_linenumber" name="L538" href="#L538">538</a> }
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>     <strong class="jxr_keyword">private</strong> Cipher getCipherObject() <strong class="jxr_keyword">throws</strong> NoSuchAlgorithmException, NoSuchPaddingException {
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>         <strong class="jxr_keyword">return</strong> Cipher.getInstance(CIPHER_ALGORITHM);
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>     }
+<a class="jxr_linenumber" name="L497" href="#L497">497</a> 
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L499" href="#L499">499</a> <em class="jxr_javadoccomment">     * Gets the secret key.</em>
+<a class="jxr_linenumber" name="L500" href="#L500">500</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L501" href="#L501">501</a> <em class="jxr_javadoccomment">     * @param secretKeyAlgorithm the secret key algorithm</em>
+<a class="jxr_linenumber" name="L502" href="#L502">502</a> <em class="jxr_javadoccomment">     * @param secretKey the secret key</em>
+<a class="jxr_linenumber" name="L503" href="#L503">503</a> <em class="jxr_javadoccomment">     * @param salt the salt</em>
+<a class="jxr_linenumber" name="L504" href="#L504">504</a> <em class="jxr_javadoccomment">     * @return the secret key</em>
+<a class="jxr_linenumber" name="L505" href="#L505">505</a> <em class="jxr_javadoccomment">     * @throws Exception the exception</em>
+<a class="jxr_linenumber" name="L506" href="#L506">506</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Key getSecretKey(<strong class="jxr_keyword">final</strong> String secretKeyAlgorithm, <strong class="jxr_keyword">final</strong> String secretKey,
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>             <strong class="jxr_keyword">final</strong> String salt) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L509" href="#L509">509</a> 
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>         <strong class="jxr_keyword">final</strong> SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>         <strong class="jxr_keyword">final</strong> KeySpec spec = <strong class="jxr_keyword">new</strong> PBEKeySpec(secretKey.toCharArray(), <strong class="jxr_keyword">char</strong>2byte(salt), 65536, 128);
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>         <strong class="jxr_keyword">final</strong> SecretKey tmp = factory.generateSecret(spec);
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>     }
+<a class="jxr_linenumber" name="L515" href="#L515">515</a> 
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>     <strong class="jxr_keyword">public</strong> String getSecretKeyAlgorithm() {
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">return</strong> secretKeyAlgorithm;
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>     }
+<a class="jxr_linenumber" name="L519" href="#L519">519</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

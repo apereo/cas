@@ -30,11 +30,11 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationBuilder;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.BasicCredentialMetaData;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.CredentialMetaData;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HandlerResult;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimplePrincipal;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.CredentialMetaData;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HandlerResult;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ExpirationPolicy;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          id = ID_GENERATOR.getNewTicketId(<span class="jxr_string">"TGT"</span>);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">final</strong> CredentialMetaData metaData = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>                  TestUtils.getCredentialsWithSameUsernameAndPassword());
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          authentication = <strong class="jxr_keyword">new</strong> AuthenticationBuilder(<strong class="jxr_keyword">new</strong> SimplePrincipal(principal))
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          authentication = <strong class="jxr_keyword">new</strong> AuthenticationBuilder(<strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(principal))
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>                              .addCredential(metaData)
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                              .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.<strong class="jxr_keyword">class</strong>.getName(),
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>                              <strong class="jxr_keyword">new</strong> HandlerResult(<strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/handler/support/SimpleTestUsernamePasswordAuthenticationHandler.html">SimpleTestUsernamePasswordAuthenticationHandler</a>(), metaData))

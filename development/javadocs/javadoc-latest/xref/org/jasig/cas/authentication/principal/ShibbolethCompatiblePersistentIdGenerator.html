@@ -27,10 +27,10 @@
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.authentication.principal;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.ByteSource;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.codec.binary.Base64;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.RandomStringUtils;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.builder.EqualsBuilder;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.builder.HashCodeBuilder;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.RandomStringUtils;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.builder.EqualsBuilder;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.builder.HashCodeBuilder;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.CompressionUtils;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
@@ -114,8 +114,8 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>             md.update(principal.getId().getBytes(Charset.defaultCharset()));
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>             md.update(CONST_SEPARATOR);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> 
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>             <strong class="jxr_keyword">return</strong> Base64.encodeBase64String(md.digest(<strong class="jxr_keyword">this</strong>.salt)).replaceAll(
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 System.getProperty(<span class="jxr_string">"line.separator"</span>), <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             <strong class="jxr_keyword">final</strong> String result = CompressionUtils.encodeBase64(md.digest(<strong class="jxr_keyword">this</strong>.salt));
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">return</strong> result.replaceAll(System.getProperty(<span class="jxr_string">"line.separator"</span>), <span class="jxr_string">""</span>);
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchAlgorithmException e) {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(e);
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         }
