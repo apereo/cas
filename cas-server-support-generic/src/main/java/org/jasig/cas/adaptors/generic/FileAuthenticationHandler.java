@@ -18,14 +18,12 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.core.io.Resource;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -65,10 +63,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * {@inheritDoc}
      */
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
-            throws GeneralSecurityException, PreventedException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential) throws GeneralSecurityException, PreventedException {
         try {
-            
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
@@ -106,10 +102,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                    this.fileName.getInputStream(), Charset.defaultCharset()));
+        try (BufferedReader bufferedReader = null) {
+            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -120,8 +114,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
                 line = bufferedReader.readLine();
             }
-        } finally {
-            IOUtils.closeQuietly(bufferedReader);
         }
         return null;
     }
