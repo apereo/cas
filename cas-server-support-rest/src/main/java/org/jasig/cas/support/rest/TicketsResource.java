@@ -73,16 +73,18 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody, final HttpServletRequest request) {
-        try (Formatter fmt = null) {
+        try (Formatter fmt = new Formatter()) {
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-            fmt = new Formatter();
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             //IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase()).format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString()).format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">").format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
+                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s",
+                            ticketReference.toString()).format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
