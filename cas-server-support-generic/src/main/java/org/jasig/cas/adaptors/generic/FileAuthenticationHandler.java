@@ -102,8 +102,9 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        try (BufferedReader bufferedReader = null) {
-            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()));
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(
+                     new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);

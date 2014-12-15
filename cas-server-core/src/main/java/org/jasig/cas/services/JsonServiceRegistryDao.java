@@ -133,9 +133,8 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
-        try (LockedOutputStream out = null) {
-            final File f = makeFile(service);
-            out = new LockedOutputStream(new FileOutputStream(f));
+        final File f = makeFile(service);
+        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
             this.registeredServiceJsonSerializer.toJson(out, service);
             this.serviceMap.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
@@ -166,17 +165,16 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public final synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<Long, RegisteredService>();
         int errorCount = 0;
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[] { FILE_EXTENSION }, true);
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[] {FILE_EXTENSION}, true);
         for (final File file : c) {
-            try (BufferedInputStream in = null) {
-                if (file.length() > 0) {
-                    in = new BufferedInputStream(new FileInputStream(file));
+            if (file.length() > 0) {
+                try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     final RegisteredService service = this.registeredServiceJsonSerializer.fromJson(in);
                     temp.put(service.getId(), service);
+                } catch (final Exception e) {
+                    errorCount++;
+                    LOGGER.error("Error reading configuration file", e);
                 }
-            } catch (final Exception e) {
-                errorCount++;
-                LOGGER.error("Error reading configuration file", e);
             }
         }
         if (errorCount == 0) {
