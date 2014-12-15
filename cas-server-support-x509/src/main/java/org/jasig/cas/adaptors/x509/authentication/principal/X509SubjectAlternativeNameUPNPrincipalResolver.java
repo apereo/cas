@@ -147,6 +147,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         } catch (final IOException e) {
             logger.error("An error has occurred while reading the subject alternative name value", e);
         }
-        return  null;
+        return null;
     }
 }
