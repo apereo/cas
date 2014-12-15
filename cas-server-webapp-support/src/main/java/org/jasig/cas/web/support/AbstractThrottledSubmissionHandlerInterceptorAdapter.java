@@ -143,7 +143,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     protected void recordThrottle(final HttpServletRequest request) {
         logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
-                new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+                request.getRemoteAddr(), failureThreshold, failureRangeInSeconds);
     }
 
     /**

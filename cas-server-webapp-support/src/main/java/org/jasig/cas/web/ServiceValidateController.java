@@ -140,7 +140,7 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            logger.debug("Could not identify service and/or service ticket. Service: {}, Service ticket id: {}", service, serviceTicketId);
+            logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                     CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null);
         }
@@ -182,7 +182,7 @@ public class ServiceValidateController extends DelegateController {
             }
 
             String proxyIou = null;
-            if (serviceCredential != null && proxyGrantingTicketId != null && this.proxyHandler.canHandle(serviceCredential)) {
+            if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
                 proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
                 if (StringUtils.isEmpty(proxyIou)) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,

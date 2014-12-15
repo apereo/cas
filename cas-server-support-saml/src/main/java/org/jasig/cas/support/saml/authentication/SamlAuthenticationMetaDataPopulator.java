@@ -94,10 +94,10 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     /**
      * Map of user-defined mappings. Note it is possible to override the
      * defaults. Mapping should be of the following type:
-     * <pre>Package/Class Name as String -> Name SAML Type</pre>
+     * <pre>Package/Class Name as String -&gt; Name SAML Type</pre>
      * <p>
      * Example: (<code>"org.jasig.cas.authentication.HttpBasedServiceCredential"
-     * -> SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
+     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
      *
      * @param userDefinedMappings map of user defined authentication types.
      */
