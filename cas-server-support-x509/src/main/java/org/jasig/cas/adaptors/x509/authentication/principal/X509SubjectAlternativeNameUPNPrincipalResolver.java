@@ -18,15 +18,12 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
-
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERUTF8String;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
@@ -140,19 +137,16 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         DERObject oct = null;
-        ASN1InputStream input = null;
-        ByteArrayInputStream bInput = null;
-        try {
-            bInput = new ByteArrayInputStream(sanValue);
-            input = new ASN1InputStream(bInput);
-            oct = input.readObject();
+        try (final ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
+            try (final ASN1InputStream input = new ASN1InputStream(bInput)) {
+                oct = input.readObject();
+            } catch (final IOException e) {
+                logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
+            }
+            return ASN1Sequence.getInstance(oct);
         } catch (final IOException e) {
-            logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(bInput);
-            IOUtils.closeQuietly(input);
+            logger.error("An error has occurred while reading the subject alternative name value", e);
         }
-        //It is OK to pass null DERObject to this method (in case of handled IOException). null will be returned
-        return ASN1Sequence.getInstance(oct);
+        return  null;
     }
 }
