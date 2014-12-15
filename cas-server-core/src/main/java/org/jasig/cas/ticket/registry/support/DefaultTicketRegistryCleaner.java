@@ -43,10 +43,11 @@ import java.util.Collections;
  * In a clustered CAS environment with several CAS nodes executing ticket
  * cleanup, it is desirable to execute cleanup from only one CAS node at a time.
  * This dramatically reduces the potential for deadlocks in
- * {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}, for example.
+ * JPA-backed ticket registries, for example.
+ *
  * By default this implementation uses {@link NoOpLockingStrategy} to preserve
- * the same semantics as previous versions, but {@link JpaLockingStrategy}
- * should be used with {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}
+ * the same semantics as previous versions, but specific locking strategies
+ * for JPA should be used with a JPA-backed ticket registry
  * in a clustered CAS environment.
  * </p>
  * <p>The following property is required.</p>
@@ -57,7 +58,6 @@ import java.util.Collections;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
  * @since 3.0.0
  */
@@ -132,8 +132,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.  Use {@link JpaLockingStrategy}
-     * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
+     * such as JPA, in a clustered CAS environment.  Use JPA locking strategies
+     * for JPA-backed ticket registries in a clustered
      * CAS environment.
      * @deprecated As of 4.1. Consider using constructors instead.
      */

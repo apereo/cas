@@ -40,11 +40,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class RegisteredServiceImplTests {
 
-    private RegisteredServiceImpl service;
+    private final RegisteredServiceImpl service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
     public RegisteredServiceImplTests(
             final RegisteredServiceImpl service,

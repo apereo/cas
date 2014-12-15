@@ -146,7 +146,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
             this.grantedTicketAlready = Boolean.TRUE;
         }
 
-        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
+        return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);
     }
 

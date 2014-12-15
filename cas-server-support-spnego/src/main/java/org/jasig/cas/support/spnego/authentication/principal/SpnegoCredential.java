@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Credential that are a holder for Spnego init token.
+ * Credential that are a holder for SPNEGO init token.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -49,12 +49,12 @@ public final class SpnegoCredential implements Credential, Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * The Spnego Init Token.
+     * The SPNEGO Init Token.
      */
     private final ByteSource initToken;
 
     /**
-     * The Spnego Next Token.
+     * The SPNEGO Next Token.
      */
     private ByteSource nextToken;
 
@@ -69,7 +69,7 @@ public final class SpnegoCredential implements Credential, Serializable {
     private final boolean isNtlm;
 
     /**
-     * Instantiates a new spnego credential.
+     * Instantiates a new SPNEGO credential.
      *
      * @param initToken the init token
      */
