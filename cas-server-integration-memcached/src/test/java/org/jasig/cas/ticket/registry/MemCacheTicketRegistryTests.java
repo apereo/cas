@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -30,11 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -63,22 +60,17 @@ public class MemCacheTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        return Arrays.asList(
-          new Object[] {"testCase1", false},
-          new Object[] {"testCase2", true}
-        );
+        return Arrays.asList(new Object[] { "testCase1", false }, new Object[] { "testCase2", true });
     }
 
     @Before
     public void setUp() {
-        // Memcached is a required external test fixture.
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
             logger.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
-
         context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
         registry = context.getBean(registryBean, MemCacheTicketRegistry.class);
     }
@@ -109,14 +101,11 @@ public class MemCacheTicketRegistryTests {
     }
 
     private boolean isMemcachedListening() {
-        Socket socket = null;
-        try {
+        try (Socket socket = null) {
             socket = new Socket("127.0.0.1", 11211);
             return true;
         } catch (final Exception e) {
             return false;
-        } finally {
-            IOUtils.closeQuietly(socket);
         }
     }
 }
