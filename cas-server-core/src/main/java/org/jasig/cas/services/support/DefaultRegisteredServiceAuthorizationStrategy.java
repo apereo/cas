@@ -19,6 +19,7 @@
 
 package org.jasig.cas.services.support;
 
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -27,6 +28,7 @@ import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -126,17 +128,9 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         this.requiredAttributes = requiredAttributes;
     }
 
-    @Override
-    public void verifyAuthorizationPolicy(final Map<String, Object> principalAttributes,
-                                          final Service service) throws UnauthorizedServiceException {
-        verifyIfServiceIsEnabled(service);
-        verifyIfServiceIsSsoEnabled(service);
-        verifyPresenceOfServiceRequiredAttributes(principalAttributes, service);
-
-        logger.debug("Authorization granted to service [{}]", service.getId());
-    }
-
     /**
+     * {@inheritDoc}
+     *
      * Verify presence of service required attributes.
      * <ul>
      *     <li>If no required attributes are specified, authz is granted.</li>
@@ -146,55 +140,58 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      *     one principal attribute present whose value matches the required, authz is granted.</li>
      *     <li>Otherwise, access is denied and an exception thrown</li>
      * </ul>
-     * @param principalAttributes the principal attributes
-     * @param service the service
      */
-    protected void verifyPresenceOfServiceRequiredAttributes(final Map<String, Object> principalAttributes, final Service service) {
-        if (!this.requiredAttributes.isEmpty()) {
-            logger.debug("These attributes [{}] are examined against [{}] before service [{}] can proceed.",
-                    this.requiredAttributes, principalAttributes, service.getId());
+    @Override
+    public void assertServiceAuthorizedAccessForPrincipal(final Principal principal, final Service service) {
+        if (this.requiredAttributes.isEmpty()) {
+            logger.debug("No required attributes are specified");
+            return;
+        }
+        final Map<String, Object> principalAttributes = principal.getAttributes();
+        if (principalAttributes.isEmpty()) {
+            throw new UnauthorizedServiceMissingAttributeException("No principal attributes are found to satisfy requirements");
+        }
 
-            final Set<Map.Entry<String, List<String>>> entrySetOfRequiredAttributes = requiredAttributes.entrySet();
+        logger.debug("These attributes [{}] are examined against [{}] before service [{}] can proceed.",
+                this.requiredAttributes, principalAttributes, service.getId());
 
-            for (final Map.Entry<String, List<String>> entry : entrySetOfRequiredAttributes) {
-                final String requiredAttributeName = entry.getKey();
-                final List<String> requiredAttributeValues = entry.getValue();
+        final Set<Map.Entry<String, List<String>>> entrySetOfRequiredAttributes = requiredAttributes.entrySet();
 
-                final Object principalAttributeValue = principalAttributes.get(requiredAttributeName);
+        for (final Map.Entry<String, List<String>> entry : entrySetOfRequiredAttributes) {
+            final String requiredAttributeName = entry.getKey();
+            final List<String> requiredAttributeValues = entry.getValue();
 
-                if (principalAttributeValue == null && this.requireAllAttributes) {
-                    throw new UnauthorizedServiceMissingAttributeException("Principal is missing the required attribute "
-                            + requiredAttributeName);
-                }
-                boolean foundMatchingAttributeValue = false;
+            final Object principalAttributeValue = principalAttributes.get(requiredAttributeName);
 
-                if (principalAttributeValue != null) {
-                    final Iterator<String> it = requiredAttributeValues.iterator();
-                    while (!foundMatchingAttributeValue && it.hasNext()) {
-                        final String value = it.next();
-                        if (principalAttributeValue instanceof Collection) {
-                            final Collection principalAttributeValueAsCol = (Collection) principalAttributes;
-                            foundMatchingAttributeValue = principalAttributeValueAsCol.contains(value);
-                        } else {
-                            foundMatchingAttributeValue = value.equals(principalAttributeValue);
-                        }
+            if (principalAttributeValue == null && this.requireAllAttributes) {
+                throw new UnauthorizedServiceMissingAttributeException("Principal is missing the required attribute "
+                        + requiredAttributeName);
+            }
+            boolean foundMatchingAttributeValue = false;
+
+            if (principalAttributeValue != null) {
+                final Iterator<String> it = requiredAttributeValues.iterator();
+                while (!foundMatchingAttributeValue && it.hasNext()) {
+                    final String value = it.next();
+                    if (principalAttributeValue instanceof Collection) {
+                        final Collection principalAttributeValueAsCol = (Collection) principalAttributes;
+                        foundMatchingAttributeValue = principalAttributeValueAsCol.contains(value);
+                    } else {
+                        foundMatchingAttributeValue = value.equals(principalAttributeValue);
                     }
                 }
+            }
 
-                if (!foundMatchingAttributeValue) {
-                    throw new UnauthorizedServiceMissingAttributeException("None of the required attributes match "
-                            + principalAttributeValue);
-                }
+            if (!foundMatchingAttributeValue) {
+                throw new UnauthorizedServiceMissingAttributeException("None of the required attributes match "
+                        + principalAttributeValue);
             }
         }
+
     }
 
-    /**
-     * Verify if service is sso enabled.
-     *
-     * @param service the service
-     */
-    protected void verifyIfServiceIsSsoEnabled(final Service service) {
+    @Override
+    public void assertServiceSsoParticipation(@NotNull final Service service) {
         if (!isSsoEnabled()) {
             final String msg = String.format("Service [%s] is not allowed to participate in SSO.", service.getId());
             logger.warn(msg);
@@ -202,12 +199,8 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         }
     }
 
-    /**
-     * Verify if service is enabled.
-     *
-     * @param service the service
-     */
-    protected void verifyIfServiceIsEnabled(final Service service) {
+    @Override
+    public void assertServiceQualification(final Service service) {
         if (!isEnabled()) {
             final String msg = String.format("Service [%s] is not enabled in service registry.", service.getId());
             logger.warn(msg);

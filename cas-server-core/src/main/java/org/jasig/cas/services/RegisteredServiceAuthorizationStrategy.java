@@ -19,6 +19,7 @@
 
 package org.jasig.cas.services;
 
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.util.Map;
@@ -34,12 +35,28 @@ import java.util.Map;
 public interface RegisteredServiceAuthorizationStrategy {
 
     /**
+     * Verify is the service is enabled and recognized by CAS.
+     *
+     * @param service the service
+     * @throws UnauthorizedServiceException the unauthorized service exception
+     */
+    void assertServiceQualification(Service service) throws UnauthorizedServiceException;
+
+    /**
+     * Assert that the service can participate in sso.
+     *
+     * @param service the service
+     * @throws UnauthorizedServiceException the unauthorized service exception
+     */
+    void assertServiceSsoParticipation(Service service) throws UnauthorizedServiceException;
+
+    /**
      * Verify authorization policy by checking the pre-configured rules
      * that may depend on what the principal might be carrying.
      *
-     * @param principalAttributes the principal attributes
+     * @param principal the principal
      * @param service the service that requests authentication or has asked for tickets.
      * @throws UnauthorizedServiceException if the service is not allowed to proceed.
      */
-    void verifyAuthorizationPolicy(Map<String, Object> principalAttributes, Service service) throws UnauthorizedServiceException;
+    void assertServiceAuthorizedAccessForPrincipal(Principal principal, Service service) throws UnauthorizedServiceException;
 }
