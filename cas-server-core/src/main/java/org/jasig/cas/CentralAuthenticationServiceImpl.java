@@ -571,7 +571,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
         if (!registeredService.isEnabled()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service %s] is not enabled in service registry.", service.getId());
+                    + "Service [%s] is not enabled in service registry.", service.getId());
             
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
