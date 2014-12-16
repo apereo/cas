@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.authentication.principal;
 
 
@@ -34,7 +33,7 @@ import org.junit.Test;
 public class ResponseTests {
 
     @Test
-    public void testConstructionWithoutFragmentAndNoQueryString() {
+    public void verifyConstructionWithoutFragmentAndNoQueryString() {
         final String url = "http://localhost:8080/foo";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "foobar");
@@ -43,7 +42,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void testConstructionWithoutFragmentButHasQueryString() {
+    public void verifyConstructionWithoutFragmentButHasQueryString() {
         final String url = "http://localhost:8080/foo?test=boo";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "foobar");
@@ -52,7 +51,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void testConstructionWithFragmentAndQueryString() {
+    public void verifyConstructionWithFragmentAndQueryString() {
         final String url = "http://localhost:8080/foo?test=boo#hello";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "foobar");
@@ -61,7 +60,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void testConstructionWithFragmentAndNoQueryString() {
+    public void verifyConstructionWithFragmentAndNoQueryString() {
         final String url = "http://localhost:8080/foo#hello";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "foobar");
@@ -71,7 +70,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void testUrlSanitization() {
+    public void verifyUrlSanitization() {
         final String url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "ST-12345");
@@ -81,7 +80,7 @@ public class ResponseTests {
     }
 
     @Test
-    public void testUrlWithUnicode() {
+    public void verifyUrlWithUnicode() {
         final String url = "https://www.example.com/πολιτικῶν";
         final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("ticket", "ST-12345");

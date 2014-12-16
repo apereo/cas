@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,23 @@
  */
 package org.jasig.cas.adaptors.radius;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import net.jradius.client.RadiusClient;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import net.jradius.client.RadiusClient;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Factory for creating RADIUS client instances.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class RadiusClientFactory {
+
+    private static final int DEFAULT_SOCKET_TIMEOUT = 60;
 
     /** The port to do accounting on. */
     @Min(1)
@@ -45,7 +46,7 @@ public class RadiusClientFactory {
 
     /** Socket timeout in seconds. */
     @Min(0)
-    private int socketTimeout = 60;
+    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
 
     /** RADIUS server network address. */
     @NotNull

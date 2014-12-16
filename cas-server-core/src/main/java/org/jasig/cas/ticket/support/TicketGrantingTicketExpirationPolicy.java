@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -47,18 +47,56 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     /** Time to kill in milliseconds. */
     private long timeToKillInMilliSeconds;
 
+    /**
+     * @deprecated As of 4.1.
+     * Instantiates a new Ticket granting ticket expiration policy.
+     */
+    @Deprecated
+    public TicketGrantingTicketExpirationPolicy() {
+        this.maxTimeToLiveInMilliSeconds = 0;
+        this.timeToKillInMilliSeconds = 0;
+    }
+
+    /**
+     * Instantiates a new Ticket granting ticket expiration policy.
+     *
+     * @param maxTimeToLive the max time to live
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
+    public TicketGrantingTicketExpirationPolicy(final long maxTimeToLive, final long timeToKill, final TimeUnit timeUnit) {
+        this.maxTimeToLiveInMilliSeconds = timeUnit.toMillis(maxTimeToLive);
+        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    }
+
+    /**
+     * @deprecated As of 4.1.
+     * Set max time to live in milli seconds.
+     *
+     * @param maxTimeToLiveInMilliSeconds the max time to live in milli seconds
+     */
+    @Deprecated
     public void setMaxTimeToLiveInMilliSeconds(final long maxTimeToLiveInMilliSeconds){
         this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
     }
 
+    /**
+     * @deprecated As of 4.1.
+     * Sets time to kill in milli seconds.
+     *
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
+    @Deprecated
     public void setTimeToKillInMilliSeconds(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
     /**
+     * @deprecated As of 4.1.
      * Convenient virtual property setter to set time in seconds.
      * @param maxTimeToLiveInSeconds max number of seconds for the tickets to stay alive
      **/
+    @Deprecated
     public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds){
         if(this.maxTimeToLiveInMilliSeconds == 0L) {
             this.maxTimeToLiveInMilliSeconds = TimeUnit.SECONDS.toMillis(maxTimeToLiveInSeconds);
@@ -66,9 +104,11 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     }
 
     /**
+     * @deprecated As of 4.1.
      * @param timeToKillInSeconds time for the ticket to stay active in seconds
      * Convenient virtual property setter to set time in seconds.
      **/
+    @Deprecated
     public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
         if(this.timeToKillInMilliSeconds == 0L) {
             this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(timeToKillInSeconds);

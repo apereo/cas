@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,29 +18,33 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+/**
+ * @author Misagh Moayyed
+ * @since 4.0.0
+ */
 public class UnauthorizedProxyingExceptionTests {
 
+    private static final String MESSAGE = "GG";
+
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
         assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
     }
 
     @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
+    public void verifyCodeConstructor() {
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
+    public void verifyThrowableConstructorWithCode() {
         final RuntimeException r = new RuntimeException();
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);
 

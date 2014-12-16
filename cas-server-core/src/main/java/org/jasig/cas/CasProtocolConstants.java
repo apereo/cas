@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,7 +25,7 @@ package org.jasig.cas;
  * by the protocol.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public interface CasProtocolConstants {
 
@@ -37,7 +37,10 @@ public interface CasProtocolConstants {
     
     /** Constant representing the proxy callback url parameter in the request. */
     String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
-    
+
+    /** Constant representing the renew parameter in the request. */
+    String PARAMETER_RENEW = "renew";
+
     /** Constant representing an invalid request for validation. */
     String ERROR_CODE_INVALID_REQUEST = "INVALID_REQUEST";
     

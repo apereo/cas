@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.monitor;
 
 import org.junit.Test;
@@ -30,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractCacheMonitorTests {
     @Test
-    public void testObserveOk() throws Exception {
+    public void verifyObserveOk() throws Exception {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
@@ -40,7 +39,7 @@ public class AbstractCacheMonitorTests {
     }
 
     @Test
-    public void testObserveWarn() throws Exception {
+    public void verifyObserveWarn() throws Exception {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 0));
@@ -50,7 +49,7 @@ public class AbstractCacheMonitorTests {
     }
 
     @Test
-    public void testObserveError() throws Exception {
+    public void verifyObserveError() throws Exception {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 1));
@@ -61,7 +60,7 @@ public class AbstractCacheMonitorTests {
 
 
     @Test
-    public void testObserveError2() throws Exception {
+    public void verifyObserveError2() throws Exception {
         // When cache has exceeded both thresholds, should report ERROR status
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
             protected SimpleCacheStatistics[] getStatistics() {

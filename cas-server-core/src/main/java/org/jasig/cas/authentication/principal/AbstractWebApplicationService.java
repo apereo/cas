@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -36,10 +37,11 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private static final long serialVersionUID = 610105280927740076L;
 
+    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
     /** The id of the service. */
     private final String id;
 
@@ -50,7 +52,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private Principal principal;
 
-    private boolean loggedOutAlready = false;
+    private boolean loggedOutAlready;
 
     /**
      * Instantiates a new abstract web application service.
@@ -100,7 +102,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
             return url;
         }
 
-        final int questionMarkPosition = url.indexOf("?");
+        final int questionMarkPosition = url.indexOf('?');
 
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
@@ -137,11 +139,9 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     @Override
     public int hashCode() {
-        final int prime = 41;
-        int result = 1;
-        result = prime * result
-            + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return new HashCodeBuilder()
+                .append(this.id)
+                .toHashCode();
     }
 
     protected Principal getPrincipal() {

@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-management-webapp</artifactId>
   <packaging>war</packaging>
-  <name>Jasig CAS Management Web Application</name>
+  <name>Apereo CAS Management Web Application</name>
   <dependencies>
 
     <dependency>
@@ -90,13 +90,6 @@
     <dependency>
       <groupId>org.jasig.cas.client</groupId>
       <artifactId>cas-client-core</artifactId>
-      <version>3.2.1</version>
-      <exclusions>
-        <exclusion>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-      </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -123,15 +116,19 @@
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
+                <artifactId>spring</artifactId>
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring-mock</artifactId>
+                <artifactId>spring-mock</artifactId>
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-          <artifactId>spring-webmvc</artifactId>
+                <artifactId>spring-webmvc</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    	  <artifactId>servlet-api</artifactId>
+	    	  <groupId>javax.servlet</groupId>
 	    	</exclusion>
 	    </exclusions>
 	</dependency>
