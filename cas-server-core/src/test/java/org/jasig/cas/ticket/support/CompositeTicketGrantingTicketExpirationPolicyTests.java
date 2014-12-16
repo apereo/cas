@@ -38,6 +38,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public class CompositeTicketGrantingTicketExpirationPolicyTests {
 
@@ -49,14 +50,14 @@ public class CompositeTicketGrantingTicketExpirationPolicyTests {
     }
     
     @Test
-    public void testNoEvaluatorSatisfiesPolicy() {
+    public void noEvaluatorSatisfiesPolicy() {
         final Map<TicketExpirationPolicyEvaluator, ExpirationPolicy> evaluators = Collections.emptyMap();
         final ExpirationPolicy policy = new CompositeTicketGrantingTicketExpirationPolicy(evaluators);
         assertTrue(policy.isExpired(getTicketState()));
     }
     
     @Test
-    public void testEvaluatorSatisfiesPolicy() {
+    public void evaluatorSatisfiesPolicy() {
         final Map<TicketExpirationPolicyEvaluator, ExpirationPolicy> evaluators =
                 new HashMap<TicketExpirationPolicyEvaluator, ExpirationPolicy>();
         
