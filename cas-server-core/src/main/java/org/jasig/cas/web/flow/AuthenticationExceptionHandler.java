@@ -53,7 +53,7 @@ public class AuthenticationExceptionHandler {
 
     /** Default list of errors this class knows how to handle. */
     private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
-            new ArrayList<Class<? extends Exception>>();
+            new ArrayList<>();
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     

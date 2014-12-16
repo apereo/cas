@@ -116,7 +116,7 @@ public class DistributedTicketRegistryTests {
 
     protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
 
-        private final Map<String, Ticket> tickets = new HashMap<String, Ticket>();
+        private final Map<String, Ticket> tickets = new HashMap<>();
 
         protected void updateTicket(final Ticket ticket) {
             DistributedTicketRegistryTests.this.wasTicketUpdated = true;

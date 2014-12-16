@@ -109,7 +109,7 @@ public final class EhcacheBackedMap implements Map<String, String> {
     @Override
     public Collection<String> values() {
         final Set<String> keys = keySet();
-        final Collection<String> values = new ArrayList<String>();
+        final Collection<String> values = new ArrayList<>();
 
         for (final String key : keys) {
             final String value = get(key);
@@ -124,7 +124,7 @@ public final class EhcacheBackedMap implements Map<String, String> {
     @Override
     public Set<Entry<String, String>> entrySet() {
         final Set<String> keys = keySet();
-        final Set<Entry<String, String>> entries = new HashSet<Entry<String, String>>();
+        final Set<Entry<String, String>> entries = new HashSet<>();
 
         for (final String key : keys) {
             final Element element = this.cache.get(key);

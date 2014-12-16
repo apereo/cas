@@ -137,7 +137,7 @@ public class TicketResource extends ServerResource {
      */
     private void logFormRequest(final Form form) {
         if (LOGGER.isDebugEnabled()) {
-            final Set<String> pairs = new HashSet<String>();
+            final Set<String> pairs = new HashSet<>();
             for (final String name : form.getNames()) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(name);
@@ -199,7 +199,7 @@ public class TicketResource extends ServerResource {
 
         @Override
         public Map<String, String[]> getParameterMap() {
-            final Map<String, String[]> conversion = new HashMap<String, String[]>();
+            final Map<String, String[]> conversion = new HashMap<>();
 
             for (final Map.Entry<String, String> entry : this.form.getValuesMap().entrySet()) {
                 conversion.put(entry.getKey(), new String[] {entry.getValue()});

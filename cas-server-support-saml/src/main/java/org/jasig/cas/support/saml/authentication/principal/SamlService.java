@@ -145,7 +145,7 @@ public final class SamlService extends AbstractWebApplicationService {
 
     @Override
     public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
 
         parameters.put(CONST_PARAM_TICKET, ticketId);
         parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());

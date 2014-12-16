@@ -60,7 +60,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     @Before
     public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 

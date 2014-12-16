@@ -48,14 +48,14 @@ public class AttributeReleasePolicyTests {
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<String, String>();
+        final Map<String, String> mappedAttr = new HashMap<>();
         mappedAttr.put("attr1", "newAttr1");
         
         policy.setAllowedAttributes(mappedAttr);
                 
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -79,7 +79,7 @@ public class AttributeReleasePolicyTests {
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -105,7 +105,7 @@ public class AttributeReleasePolicyTests {
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -129,7 +129,7 @@ public class AttributeReleasePolicyTests {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
         final Principal p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -149,7 +149,7 @@ public class AttributeReleasePolicyTests {
     public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
 
-        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
         attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));

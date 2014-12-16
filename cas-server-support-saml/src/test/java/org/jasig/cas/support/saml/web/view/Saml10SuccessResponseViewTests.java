@@ -62,7 +62,7 @@ public class Saml10SuccessResponseViewTests {
     @Before
     public void setUp() throws Exception {
 
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
 
         final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
         regSvc.setServiceId(TestUtils.getService().getId());
@@ -81,15 +81,15 @@ public class Saml10SuccessResponseViewTests {
 
     @Test
     public void verifyResponse() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
-        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
-        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -119,11 +119,11 @@ public class Saml10SuccessResponseViewTests {
 
     @Test
     public void verifyResponseWithNoAttributes() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal");
 
-        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -147,13 +147,13 @@ public class Saml10SuccessResponseViewTests {
 
     @Test
     public void verifyResponseWithoutAuthMethod() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
-        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
-        final Map<String, Object> authnAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authnAttributes = new HashMap<>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);

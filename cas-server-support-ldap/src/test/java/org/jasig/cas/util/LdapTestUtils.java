@@ -100,7 +100,7 @@ public final class LdapTestUtils {
 
         for (final LdapEntry entry : entries) {
 
-            final Collection<Attribute> attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
+            final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
             for (final LdapAttribute a : entry.getAttributes()) {
                 attrs.add(new Attribute(a.getName(), a.getStringValues()));
             }
