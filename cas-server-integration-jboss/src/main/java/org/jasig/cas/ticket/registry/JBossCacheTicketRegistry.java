@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
- * Please use other means of confguring your distributed ticket registry, such as
+ * Please use other means of configuring your distributed ticket registry, such as
  * ehcache or memcached integrations with CAS.
  *
  * <p>Implementation of TicketRegistry that is backed by a JBoss TreeCache.
@@ -48,8 +48,6 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     /** Instance of JBoss TreeCache. */
     @NotNull
     private Cache<String, Ticket> cache;
-
-
 
     @Override
     protected void updateTicket(final Ticket ticket) {
