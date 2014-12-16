@@ -43,15 +43,14 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * which considers all tickets as expired.
 
  * @author Misagh Moayyed
- * @since 4.1
  * @see TicketExpirationPolicyEvaluator
  * @see ExpirationPolicy
+ * @since 4.1
  */
 public final class CompositeTicketGrantingTicketExpirationPolicy implements ExpirationPolicy {
+    private static final long serialVersionUID = 3021175146846182330L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private static final long serialVersionUID = 3021175146846182330L;
 
     private final Map<TicketExpirationPolicyEvaluator, ExpirationPolicy> evaluators;
 
