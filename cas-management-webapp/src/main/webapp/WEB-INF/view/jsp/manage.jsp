@@ -1,9 +1,9 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -23,7 +23,7 @@
 <h1><spring:message code="${pageTitle}" /></h1>
 <c:if test="${fn:length(services) eq 0}">
        <div id="msg" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
-   </c:if>
+</c:if>
 
 <c:if test="${not empty param.status}">
 	<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
@@ -38,7 +38,7 @@
 		<th class="th1"><spring:message code="management.services.manage.label.name" /></th>
 		<th class="th2"><spring:message code="management.services.manage.label.serviceUrl" /></th>
 		<th class="th3 ac"><spring:message code="management.services.manage.label.enabled" /></th>
-		<th class="th4 ac"><spring:message code="management.services.manage.label.allowedToProxy" /></th>
+		<th class="th4 ac"></th>
 		<th class="th5 ac"><spring:message code="management.services.manage.label.ssoParticipant" /></th>
 		<th class="th6 ac"><spring:message code="management.services.manage.label.anonymous" /></th>
   		<th class="th7 ac"><spring:message code="management.services.manage.label.usernameAttribute" /></th>
@@ -56,7 +56,7 @@
 	         <td id="${service.id}" class="td1">${service.name}</td>
 	         <td class="td2">${fn:length(service.serviceId) < 100 ? service.serviceId : fn:substring(service.serviceId, 0, 100)}</td>
 	         <td class="ac td3"><img src="images/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
-	         <td class="ac td4"><img src="images/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
+	         <td class="ac td4"></td>
 	         <td class="ac td5"><img src="images/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
 	         <td class="ac td6"><img src="images/${service.anonymousAccess}.gif" alt="${service.anonymousAccess ? 'Anonyous Access Enabled' : 'Anonyous Access Disabled'}" /></td>
 	         <td class="ac td7">${service.usernameAttribute}</td>

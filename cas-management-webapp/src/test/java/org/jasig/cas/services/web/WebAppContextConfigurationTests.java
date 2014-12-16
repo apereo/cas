@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -42,6 +42,7 @@ import org.springframework.web.util.NestedServletException;
 /**
  * Integration tests for the management webapp.
  * @author Misagh Moayyed
+ * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:*Context.xml")
@@ -60,7 +61,7 @@ public class WebAppContextConfigurationTests {
     }
     
     @Test
-    public void testUpdateServiceSuccessfully() throws Exception {
+    public void verifyUpdateServiceSuccessfully() throws Exception {
         final ModelAndView mv = this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
                 .param("id", "0").param("evaluationOrder", "200"))
                 .andExpect(status().isOk())
@@ -70,14 +71,14 @@ public class WebAppContextConfigurationTests {
     }
     
     @Test(expected = NestedServletException.class)
-    public void testUpdateNonExistingService() throws Exception {
+    public void verifyUpdateNonExistingService() throws Exception {
         this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
                 .param("id", "100").param("evaluationOrder", "200"))
                 .andExpect(status().isBadRequest());
     }
     
     @Test
-    public void testDeleteServiceSuccessfully() throws Exception {
+    public void verifyDeleteServiceSuccessfully() throws Exception {
         final ModelAndView mv = this.mvc.perform(get("/deleteRegisteredService.html").param("id", "0"))
                 .andExpect(status().isFound())
                 .andReturn().getModelAndView();
@@ -87,7 +88,7 @@ public class WebAppContextConfigurationTests {
     }
     
     @Test
-    public void testDeleteNonExistingService() throws Exception {
+    public void verifyDeleteNonExistingService() throws Exception {
         final ModelAndView mv = this.mvc.perform(get("/deleteRegisteredService.html").param("id", "100"))
                 .andExpect(status().isFound())
                 .andReturn().getModelAndView();
@@ -97,13 +98,13 @@ public class WebAppContextConfigurationTests {
     }
     
     @Test
-    public void testDeleteServiceByInvalidId() throws Exception {
+    public void verifyDeleteServiceByInvalidId() throws Exception {
         this.mvc.perform(get("/deleteRegisteredService.html").param("id", "invalid"))
                 .andExpect(status().isBadRequest());
     }
     
     @Test
-    public void testDeleteServiceByLargeId() throws Exception {
+    public void verifyDeleteServiceByLargeId() throws Exception {
         this.mvc.perform(get("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
                 .andExpect(status().isBadRequest());
     }

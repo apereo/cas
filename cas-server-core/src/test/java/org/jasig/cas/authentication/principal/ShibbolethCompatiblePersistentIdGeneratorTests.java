@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Scott Battaglia
@@ -30,14 +30,12 @@ import org.junit.Test;
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
-    public void testGenerator() {
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator();
-        generator.setSalt("scottssalt");
+    public void verifyGenerator() {
+        final ShibbolethCompatiblePersistentIdGenerator generator =
+                new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
         final Principal p = TestUtils.getPrincipal();
-        final Service s = TestUtils.getService();
-
-        final String value = generator.generate(p, s);
+        final String value = generator.generate(p, TestUtils.getService());
 
         assertNotNull(value);
     }

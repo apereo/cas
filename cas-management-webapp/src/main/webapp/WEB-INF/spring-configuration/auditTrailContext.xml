@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -45,19 +45,19 @@
     
     <util:map id="auditActionResolverMap">
         <entry key="DELETE_SERVICE_ACTION_RESOLVER">
-            <ref local="deleteServiceActionResolver" />
+            <ref bean="deleteServiceActionResolver" />
         </entry>
         <entry key="SAVE_SERVICE_ACTION_RESOLVER">
-          <ref local="saveServiceActionResolver" />
+          <ref bean="saveServiceActionResolver" />
         </entry>
     </util:map>
   
     <util:map id="auditResourceResolverMap">
         <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
-            <ref local="deleteServiceResourceResolver" />
+            <ref bean="deleteServiceResourceResolver" />
         </entry>
         <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
-            <ref local="saveServiceResourceResolver" />
+            <ref bean="saveServiceResourceResolver" />
         </entry>
     </util:map>
    

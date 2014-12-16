@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
 import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,16 +35,16 @@ import org.slf4j.LoggerFactory;
  * @since 3.4.6
  *
  */
-public class RevokedCertificateException extends GeneralSecurityException {
+public final class RevokedCertificateException extends GeneralSecurityException {
 
-    /** The logger. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    /** OID for reasonCode CRL extension. */
+    public static final String CRL_REASON_OID = "2.5.29.21";
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8827788431199129708L;
 
-    /** OID for reasonCode CRL extension. */
-    public static final String CRL_REASON_OID = "2.5.29.21";
+    /** The logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RevokedCertificateException.class);
 
     /** CRL revocation reason codes per RFC 3280. */
     public enum Reason {
@@ -85,9 +86,11 @@ public class RevokedCertificateException extends GeneralSecurityException {
          * @return the reason
          */
         public static Reason fromCode(final int code) {
-            for (int i = 0; i < Reason.values().length; i++) {
+            final Reason[] reasons = Reason.values();
+
+            for (int i = 0; i < reasons.length; i++) {
                 if (i == code) {
-                    return Reason.values()[i];
+                    return reasons[i];
                 }
             }
             throw new IllegalArgumentException("Unknown CRL reason code.");
@@ -95,13 +98,13 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /** The revocation date. */
-    private final Date revocationDate;
+    private final DateTime revocationDate;
 
     /** The serial. */
     private final BigInteger serial;
 
     /** The reason. */
-    private Reason reason;
+    private final Reason reason;
 
     /**
      * Instantiates a new revoked certificate exception.
@@ -121,7 +124,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
      * @param reason the reason
      */
     public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
-        this.revocationDate = revoked;
+        this.revocationDate = new DateTime(revoked);
         this.serial = serial;
         this.reason = reason;
     }
@@ -132,19 +135,27 @@ public class RevokedCertificateException extends GeneralSecurityException {
      * @param entry the entry
      */
     public RevokedCertificateException(final X509CRLEntry entry) {
-        this.revocationDate = entry.getRevocationDate();
-        this.serial = entry.getSerialNumber();
+        this(entry.getRevocationDate(), entry.getSerialNumber(), getReasonFromX509Entry(entry));
+    }
+
+    /**
+     * Get reason from the x509 entry.
+     * @param entry  the entry
+     * @return reason or null
+     */
+    private static Reason getReasonFromX509Entry(final X509CRLEntry entry) {
         if (entry.hasExtensions()) {
             try {
                 final int code = Integer.parseInt(
                         new String(entry.getExtensionValue(CRL_REASON_OID), "ASCII"));
                 if (code < Reason.values().length) {
-                    this.reason = Reason.fromCode(code);
+                    return Reason.fromCode(code);
                 }
             } catch (final Exception e) {
-                logger.trace("An exception occurred when resolving extension value: {}", e.getMessage());
+                LOGGER.trace("An exception occurred when resolving extension value: {}", e.getMessage());
             }
         }
+        return null;
     }
 
     /**
@@ -152,8 +163,8 @@ public class RevokedCertificateException extends GeneralSecurityException {
      *
      * @return Returns the revocationDate.
      */
-    public Date getRevocationDate() {
-        return this.revocationDate;
+    public DateTime getRevocationDate() {
+        return this.revocationDate == null ? null : new DateTime(this.revocationDate);
     }
 
     /**
@@ -174,7 +185,9 @@ public class RevokedCertificateException extends GeneralSecurityException {
         return this.reason;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         if (this.reason != null) {

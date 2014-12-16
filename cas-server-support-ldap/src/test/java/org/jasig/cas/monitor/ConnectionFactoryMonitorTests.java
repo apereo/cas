@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,30 +18,28 @@
  */
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link ConnectionFactoryMonitor} class.
- *
- * @author Middleware Services
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/openldap-monitor-test.xml"})
-@IfProfileValue(name = "enableLdapTests", value = "true")
-public class ConnectionFactoryMonitorTests {
+@ContextConfiguration({"/ldap-context.xml", "/ldap-monitor-test.xml"})
+public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired
     private ConnectionFactoryMonitor monitor;
 
     @Test
-    public void testObserve() throws Exception {
+    public void verifyObserve() throws Exception {
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 }
