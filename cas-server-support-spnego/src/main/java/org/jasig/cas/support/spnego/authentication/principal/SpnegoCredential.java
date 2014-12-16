@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,20 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
+import com.google.common.io.ByteSource;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Arrays;
+
 /**
- * Credential that are a holder for Spnego init token.
+ * Credential that are a holder for SPNEGO init token.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -40,15 +44,19 @@ public final class SpnegoCredential implements Credential, Serializable {
      */
     private static final long serialVersionUID = 84084596791289548L;
 
-    /**
-     * The Spnego Init Token.
-     */
-    private final byte[] initToken;
+    private static final int NTLM_TOKEN_MAX_LENGTH = 8;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * The Spnego Next Token.
+     * The SPNEGO Init Token.
      */
-    private byte[] nextToken;
+    private final ByteSource initToken;
+
+    /**
+     * The SPNEGO Next Token.
+     */
+    private ByteSource nextToken;
 
     /**
      * The Principal.
@@ -61,26 +69,31 @@ public final class SpnegoCredential implements Credential, Serializable {
     private final boolean isNtlm;
 
     /**
-     * Instantiates a new spnego credential.
+     * Instantiates a new SPNEGO credential.
      *
      * @param initToken the init token
      */
     public SpnegoCredential(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");
-        this.initToken = initToken;
+        this.initToken = ByteSource.wrap(initToken);
         this.isNtlm = isTokenNtlm(this.initToken);
     }
 
     public byte[] getInitToken() {
-        return this.initToken;
+        return consumeByteSourceOrNull(this.initToken);
     }
 
     public byte[] getNextToken() {
-        return this.nextToken;
+        return consumeByteSourceOrNull(this.nextToken);
     }
 
+    /**
+     * Sets next token.
+     *
+     * @param nextToken the next token
+     */
     public void setNextToken(final byte[] nextToken) {
-        this.nextToken = nextToken;
+        this.nextToken = ByteSource.wrap(nextToken);
     }
 
     public Principal getPrincipal() {
@@ -108,14 +121,15 @@ public final class SpnegoCredential implements Credential, Serializable {
     /**
      * Checks if is token ntlm.
      *
-     * @param token the token
+     * @param tokenSource the token
      * @return true, if  token ntlm
      */
-    private boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < 8) {
+    private boolean isTokenNtlm(final ByteSource tokenSource) {
+        final byte[] token = consumeByteSourceOrNull(tokenSource);
+        if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
             return false;
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
             if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
             }
@@ -131,13 +145,30 @@ public final class SpnegoCredential implements Credential, Serializable {
 
         final SpnegoCredential c = (SpnegoCredential) obj;
 
-        return Arrays.equals(this.initToken, c.getInitToken()) && this.principal.equals(c.getPrincipal())
-                && Arrays.equals(this.nextToken, c.getNextToken());
+        return Arrays.equals(this.getInitToken(), c.getInitToken())
+                && this.principal.equals(c.getPrincipal())
+                && Arrays.equals(this.getNextToken(), c.getNextToken());
     }
 
     @Override
     public int hashCode() {
-        return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
+        return Arrays.hashCode(this.getInitToken()) ^ Arrays.hashCode(this.getNextToken()) ^ this.principal.hashCode();
     }
 
+    /**
+     * Read the contents of the source into a byte array.
+     * @param source  the byte array source
+     * @return the byte[] read from the source or null
+     */
+    private byte[] consumeByteSourceOrNull(final ByteSource source) {
+        try {
+            if (source == null || source.isEmpty()) {
+                return null;
+            }
+            return source.read();
+        } catch (final IOException e) {
+            logger.warn("Could not consume the byte array source", e);
+            return null;
+        }
+    }
 }

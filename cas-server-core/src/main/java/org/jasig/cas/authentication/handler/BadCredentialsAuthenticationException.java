@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,10 +26,14 @@ package org.jasig.cas.authentication.handler;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
-public class BadCredentialsAuthenticationException extends
-    AuthenticationException {
+public class BadCredentialsAuthenticationException extends AuthenticationException {
+    /**
+     * Default constructor that does not allow the chaining of exceptions and
+     * uses the default code as the error code for this exception.
+     */
+    public static final String CODE = "error.authentication.credentials.bad";
 
     /**
      * Static instance of class to prevent cost incurred by creating new
@@ -39,12 +43,6 @@ public class BadCredentialsAuthenticationException extends
 
     /** UID for serializable objects. */
     private static final long serialVersionUID = 3256719585087797044L;
-
-    /**
-     * Default constructor that does not allow the chaining of exceptions and
-     * uses the default code as the error code for this exception.
-     */
-    public static final String CODE = "error.authentication.credentials.bad";
 
     /**
      * Default constructor that does not allow the chaining of exceptions and

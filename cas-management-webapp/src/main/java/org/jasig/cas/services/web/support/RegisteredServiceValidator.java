@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.services.web.support;
 
-import java.util.Set;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -29,9 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * RegisteredServiceValidator ensures that a new RegisteredService does not have
@@ -47,7 +44,9 @@ public final class RegisteredServiceValidator implements Validator {
     /** Default length, which matches what is in the view. */
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
-    /** {@link ServicesManager} to look up services. */
+    /**
+     * {@link ServicesManager} to look up services.
+     **/
     @NotNull
     private final ServicesManager servicesManager;
 
@@ -55,7 +54,9 @@ public final class RegisteredServiceValidator implements Validator {
     @Min(0)
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
-    /** {@link IPersonAttributeDao} to manage person attributes. */
+    /**
+     * {@link IPersonAttributeDao} to manage person attributes.
+     **/
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 
@@ -101,21 +102,6 @@ public final class RegisteredServiceValidator implements Validator {
                 && r.getDescription().length() > this.maxDescriptionLength) {
             errors.rejectValue("description",
                     "registeredService.description.length", null);
-        }
-
-        if (!StringUtils.isBlank(r.getUsernameAttribute()) && !r.isAnonymousAccess()) {
-            if (!r.isIgnoreAttributes() && !r.getAllowedAttributes().contains(r.getUsernameAttribute())) {
-                errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
-                        "This attribute is not available for this service.");
-            } else {
-                final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
-                if (availableAttributes != null) {
-                    if (!availableAttributes.contains(r.getUsernameAttribute())) {
-                        errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
-                                "This attribute is not available from configured user attribute sources.");
-                    }
-                }
-            }
         }
     }
 

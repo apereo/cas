@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,19 @@
  */
 package org.jasig.cas.support.spnego;
 
-import java.security.Principal;
-
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
+
+import java.security.Principal;
 
 /**
  *
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public class MockJCSIFAuthentication extends Authentication {
     private final Principal principal;
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,17 @@
  */
 package org.jasig.cas.web.support;
 
-import java.lang.reflect.Method;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -45,11 +44,13 @@ import org.springframework.web.util.CookieGenerator;
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
+    private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /** The maximum age the cookie should be remembered for.
-     * The default is three months (7889231 in seconds, according to Google) */
-    private int rememberMeMaxAge = 7889231;
+     * The default is three months ({@value} in seconds, according to Google) */
+    private int rememberMeMaxAge = DEFAULT_REMEMBER_ME_MAX_AGE;
 
     /**
      * Instantiates a new cookie retrieving cookie generator.

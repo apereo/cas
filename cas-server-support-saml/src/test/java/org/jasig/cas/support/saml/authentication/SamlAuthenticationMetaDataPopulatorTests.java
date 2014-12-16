@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -52,7 +52,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFound() {
+    public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -64,7 +64,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeNotFound() {
+    public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -74,7 +74,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFoundCustom() {
+    public void verifyAuthenticationTypeFoundCustom() {
         final CustomCredential credentials = new CustomCredential();
 
         final Map<String, String> added = new HashMap<String, String>();

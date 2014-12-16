@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,8 +22,17 @@ import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class MockAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {}
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
 
 }

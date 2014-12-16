@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,9 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.FailedLoginException;
-
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -43,8 +31,10 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -52,13 +42,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
@@ -94,7 +96,7 @@ public class KryoTranscoderTests {
     }
 
     @Test
-    public void testEncodeDecode() throws Exception {
+    public void verifyEncodeDecode() throws Exception {
         final ServiceTicket expectedST =
                 new MockServiceTicket(ST_ID);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
@@ -110,7 +112,9 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl));
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setServiceId("https://some.app.edu");
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), svc);
         final TicketGrantingTicket expectedTGT =
                 new MockTicketGrantingTicket(TGT_ID, proxyCredential);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false);
@@ -182,13 +186,17 @@ public class KryoTranscoderTests {
 
         private static final long serialVersionUID = 4829406617873497061L;
 
-        private String id;
+        private final String id;
 
-        private int usageCount = 0;
+        private int usageCount;
 
-        private Date creationDate = new Date();
+        private final Date creationDate = new Date();
 
         private final Authentication authentication;
+
+        /** Factory to create the principal type. **/
+        @NotNull
+        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
@@ -202,7 +210,7 @@ public class KryoTranscoderTests {
             final AuthenticationBuilder builder = new AuthenticationBuilder();
             final Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("nickname", "bob");
-            builder.setPrincipal(new SimplePrincipal("handymanbob", attributes));
+            builder.setPrincipal(this.principalFactory.createPrincipal("handymanbob", attributes));
             builder.setAuthenticationDate(new Date());
             builder.addCredential(credentialMetaData);
             final AuthenticationHandler handler = new MockAuthenticationHandler();
