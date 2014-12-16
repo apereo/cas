@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -93,12 +92,13 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             if (!trustStoreFile.exists() || !trustStoreFile.canRead()) {
                 throw new FileNotFoundException("Truststore file cannot be located at " + trustStoreFile.getCanonicalPath());
             }
-            final FileInputStream casStream = new FileInputStream(trustStoreFile);
+
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
             final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-            casTrustStore.load(casStream, trustStorePasswordCharArray);
-            IOUtils.closeQuietly(casStream);
+            try (final FileInputStream casStream = new FileInputStream(trustStoreFile)) {
+                casTrustStore.load(casStream, trustStorePasswordCharArray);
+            }
 
             final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
             final X509KeyManager customKeyManager = getKeyManager("PKIX", casTrustStore, trustStorePasswordCharArray);
