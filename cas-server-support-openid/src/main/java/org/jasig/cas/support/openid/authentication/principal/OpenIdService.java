@@ -88,7 +88,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
      */
     @Override
     public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
         if (ticketId != null) {
 
             final ServerManager manager = (ServerManager) ApplicationContextProvider.getApplicationContext().getBean("serverManager");
