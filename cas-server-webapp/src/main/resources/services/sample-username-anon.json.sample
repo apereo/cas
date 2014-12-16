@@ -2,7 +2,7 @@
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
-  "id" : 256453996493699,
+  "id" : 500,
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
