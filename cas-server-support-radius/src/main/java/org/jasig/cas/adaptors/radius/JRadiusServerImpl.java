@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,9 +19,6 @@
 package org.jasig.cas.adaptors.radius;
 
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.jradius.client.RadiusClient;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
@@ -37,11 +34,13 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -54,7 +53,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class JRadiusServerImpl implements RadiusServer {
 
-    /** Default retry count, {@value}. */
+    /**
+     * Default retry count, {@value}.
+     **/
     public static final int DEFAULT_RETRY_COUNT = 3;
 
     /** Logger instance. */
@@ -72,9 +73,9 @@ public final class JRadiusServerImpl implements RadiusServer {
     @Min(0)
     private int retries = DEFAULT_RETRY_COUNT;
 
-    private String nasIpAddress = null;
+    private String nasIpAddress;
     
-    private String nasIpv6Address = null;
+    private String nasIpv6Address;
     
     private long nasPort = -1;
     
@@ -168,64 +169,80 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     
     /**
-     * @param nasIpAddress the NAS IP Address
-     * @since 4.1
+     * Sets the nas ip address.
+     *
+     * @param nasIpAddress the new nas ip address
+     * @since 4.1.0
      */
     public void setNasIpAddress(final String nasIpAddress) {
         this.nasIpAddress = nasIpAddress;
     }
 
     /**
-     * @param nasIpv6Address the NAS IP Address v6
-     * @since 4.1
+     * Sets the nas ipv6 address.
+     *
+     * @param nasIpv6Address the new nas ipv6 address
+     * @since 4.1.0
      */
     public void setNasIpv6Address(final String nasIpv6Address) {
         this.nasIpv6Address = nasIpv6Address;
     }
 
     /**
-     * @param nasPort the NAS port
-     * @since 4.1
+     * Sets the nas port.
+     *
+     * @param nasPort the new nas port
+     * @since 4.1.0
      */
     public void setNasPort(final long nasPort) {
         this.nasPort = nasPort;
     }
 
     /**
-     * @param nasPortId the NAS port identifier
-     * @since 4.1
+     * Sets the nas port id.
+     *
+     * @param nasPortId the new nas port id
+     * @since 4.1.0
      */
     public void setNasPortId(final long nasPortId) {
         this.nasPortId = nasPortId;
     }
 
     /**
-     * @param nasIdentifier the NAS identifier
-     * @since 4.1
+     * Sets the nas identifier.
+     *
+     * @param nasIdentifier the new nas identifier
+     * @since 4.1.0
      */
     public void setNasIdentifier(final long nasIdentifier) {
         this.nasIdentifier = nasIdentifier;
     }
 
     /**
-     * @param nasRealPort the NAS real port
-     * @since 4.1
+     * Sets the nas real port.
+     *
+     * @param nasRealPort the new nas real port
+     * @since 4.1.0
      */
     public void setNasRealPort(final long nasRealPort) {
         this.nasRealPort = nasRealPort;
     }
 
     /**
-     * @param nasPortType the NAS port type
-     * @since 4.1
+     * Sets the nas port type.
+     *
+     * @param nasPortType the new nas port type
+     * @since 4.1.0
      */
     public void setNasPortType(final long nasPortType) {
         this.nasPortType = nasPortType;
     }
 
     /**
-     * @param retries the number of retries
-     * @since 4.1
+     * Sets the retries.
+     *
+     * @param retries the new retries
+     * @since 4.1.0
      */
     public void setRetries(final int retries) {
         this.retries = retries;

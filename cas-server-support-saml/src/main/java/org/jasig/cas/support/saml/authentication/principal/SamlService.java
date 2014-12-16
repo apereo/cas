@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,19 +18,16 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import java.io.BufferedReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -43,6 +40,11 @@ import org.springframework.util.StringUtils;
 public final class SamlService extends AbstractWebApplicationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
+
+    /**
+     * Unique Id for serialization.
+     */
+    private static final long serialVersionUID = -6867572626767140223L;
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -58,12 +60,9 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
-    private String requestId;
+    private static final int CONST_REQUEST_ID_LENGTH = 11;
 
-    /**
-     * Unique Id for serialization.
-     */
-    private static final long serialVersionUID = -6867572626767140223L;
+    private String requestId;
 
     /**
      * Instantiates a new SAML service.
@@ -86,15 +85,6 @@ public final class SamlService extends AbstractWebApplicationService {
             final String artifactId, final String requestId) {
         super(id, originalUrl, artifactId);
         this.requestId = requestId;
-    }
-
-    /**
-     * {@inheritDoc}
-     * This always returns true because a SAML Service does not receive the TARGET value on validation.
-     */
-    @Override
-    public boolean matches(final Service service) {
-        return true;
     }
 
     public String getRequestID() {
@@ -145,9 +135,9 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
-        LOGGER.debug(String.format("Request Body: %s", requestBody));
-        LOGGER.debug(String.format("Extracted ArtifactId: %s", artifactId));
-        LOGGER.debug(String.format("Extracted Request Id: %s", requestId));
+        LOGGER.debug("Request Body: {}", requestBody);
+        LOGGER.debug("Extracted ArtifactId: {}", artifactId);
+        LOGGER.debug("Extracted Request Id: {}", requestId);
 
         return new SamlService(id, service, artifactId, requestId);
     }
@@ -174,8 +164,8 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         try {
-            final int position = requestBody.indexOf("RequestID=\"") + 11;
-            final int nextPosition = requestBody.indexOf("\"", position);
+            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
+            final int nextPosition = requestBody.indexOf('"', position);
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
@@ -192,19 +182,15 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = request.getReader();
-
+        try (final BufferedReader reader = request.getReader()) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
             return builder.toString();
         } catch (final Exception e) {
+            LOGGER.error("Could not obtain the saml request body from the http request", e);
             return null;
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
     }
 }

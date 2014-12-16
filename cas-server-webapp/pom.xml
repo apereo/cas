@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
-  <name>Jasig CAS Web Application</name>
+  <name>Apereo CAS Web Application</name>
   <dependencies>
     <dependency>
       <groupId>org.jasig.cas</groupId>
@@ -42,7 +42,6 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
@@ -51,6 +50,11 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
       <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-security-filter</artifactId>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

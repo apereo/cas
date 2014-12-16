@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,25 +18,27 @@
  */
 package org.jasig.cas.logout;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.SimpleHttpClient;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.HttpMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.net.URL;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 
 /**
  * @author Jerome Leleu
@@ -47,7 +49,7 @@ public class LogoutManagerImplTests {
 
     private static final String ID = "id";
 
-    private static final String URL = "http://url";
+    private static final String URL = "http://www.github.com";
 
     private LogoutManagerImpl logoutManager;
 
@@ -61,8 +63,14 @@ public class LogoutManagerImplTests {
 
     @Before
     public void setUp() {
+
+        final HttpClient client = mock(HttpClient.class);
+        when(client.isValidEndPoint(any(String.class))).thenReturn(true);
+        when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
+        when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
+
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
+        this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
         this.tgt = mock(TicketGrantingTicket.class);
         this.services = new HashMap<String, Service>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
@@ -73,32 +81,31 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutDisabled() {
+    public void verifyLogoutDisabled() {
         this.logoutManager.setSingleLogoutCallbacksDisabled(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
-    public void testLogoutAlreadyLoggedOut() {
+    public void verifyLogoutAlreadyLoggedOut() {
         this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
-    public void testLogoutTypeNull() {
+    public void verifyLogoutTypeNotSet() {
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
-        
     }
 
     @Test
-    public void testLogoutTypeBack() {
+    public void verifyLogoutTypeBack() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
@@ -109,7 +116,23 @@ public class LogoutManagerImplTests {
     }
 
     @Test
-    public void testLogoutTypeFront() {
+    public void verifyLogoutTypeNone() {
+        this.registeredService.setLogoutType(LogoutType.NONE);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(0, logoutRequests.size());
+    }
+
+    @Test
+    public void verifyLogoutTypeNull() {
+        this.registeredService.setLogoutType(null);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        assertEquals(1, logoutRequests.size());
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        assertEquals(ID, logoutRequest.getTicketId());
+    }
+
+    @Test
+    public void verifyLogoutTypeFront() {
         this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
@@ -120,9 +143,9 @@ public class LogoutManagerImplTests {
     }
     
     @Test
-    public void testAsynchronousLogout() {
+    public void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        this.logoutManager.setIssueAsynchronousCallbacks(false);
+        this.logoutManager.setAsynchronous(false);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }

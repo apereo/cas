@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,24 @@
  */
 package org.jasig.cas.ticket;
 
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -43,7 +45,7 @@ import org.springframework.util.Assert;
  * specified as object creation.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
@@ -62,7 +64,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
-    private Boolean expired = false;
+    private Boolean expired = Boolean.FALSE;
 
     /** The services associated to this ticket. */
     @Lob
@@ -147,16 +149,15 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
+     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},
+     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
+     * contains its own data and will never change.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        final Map<String, Service> map = new HashMap<String, Service>(services.size());
-        for (final String ticket : services.keySet()) {
-            map.put(ticket, services.get(ticket));
-        }
-        return Collections.unmodifiableMap(map);
+        return ImmutableMap.copyOf(this.services);
     }
 
     /**
@@ -177,13 +178,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.getGrantingTicket() == null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void markTicketExpired() {
-        this.expired = true;
+        this.expired = Boolean.TRUE;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
@@ -205,13 +210,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<Authentication>();
@@ -226,16 +235,26 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return Collections.unmodifiableList(list);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof TicketGrantingTicket)) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TicketGrantingTicket)) {
             return false;
         }
 
         final Ticket ticket = (Ticket) object;
 
-        return ticket.getId().equals(this.getId());
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
     }
+
 }

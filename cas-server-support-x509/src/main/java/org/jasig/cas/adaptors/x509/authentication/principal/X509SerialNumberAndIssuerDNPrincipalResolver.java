@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -67,10 +67,11 @@ public final class X509SerialNumberAndIssuerDNPrincipalResolver extends Abstract
     }
 
     @Override
-    protected String resolvePrincipalInternal(
-            final X509Certificate certificate) {
-        return this.serialNumberPrefix
-                + certificate.getSerialNumber().toString() + this.valueDelimiter
-                + certificate.getIssuerDN().getName();
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
+        final StringBuilder builder = new StringBuilder(this.serialNumberPrefix);
+        builder.append(certificate.getSerialNumber().toString());
+        builder.append(this.valueDelimiter);
+        builder.append(certificate.getIssuerDN().getName());
+        return builder.toString();
     }
 }
