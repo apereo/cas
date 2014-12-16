@@ -21,14 +21,12 @@ package org.jasig.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,6 +41,7 @@ import java.util.Collection;
  * @since 4.0.0
  */
 public final class LdapTestUtils {
+
     /** Placeholder for base DN in LDIF files. */
     private static final String BASE_DN_PLACEHOLDER = "${ldapBaseDn}";
 
@@ -52,8 +51,8 @@ public final class LdapTestUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapTestUtils.class);
 
     /** Private constructor of utility class. */
-    private LdapTestUtils() {}
-
+    private LdapTestUtils() {
+    }
 
     /**
      * Reads an LDIF into a collection of LDAP entries. The components performs a simple property
@@ -69,8 +68,7 @@ public final class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final Resource ldif, final String baseDn) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif.getInputStream()));
-        try {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(BASE_DN_PLACEHOLDER)) {
@@ -80,8 +78,6 @@ public final class LdapTestUtils {
                 }
                 builder.append(NEWLINE);
             }
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
         return new LdifReader(new StringReader(builder.toString())).read().getEntries();
     }
@@ -94,19 +90,13 @@ public final class LdapTestUtils {
      *
      * @throws Exception On LDAP errors.
      */
-    public static void createLdapEntries(
-            final LDAPConnection connection, final Collection<LdapEntry> entries)
-            throws Exception {
-
+    public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) throws Exception {
         for (final LdapEntry entry : entries) {
-
             final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
             for (final LdapAttribute a : entry.getAttributes()) {
                 attrs.add(new Attribute(a.getName(), a.getStringValues()));
             }
             connection.add(new AddRequest(entry.getDn(), attrs));
-
         }
-
     }
 }
