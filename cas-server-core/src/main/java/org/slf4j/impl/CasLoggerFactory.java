@@ -53,7 +53,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
      * in order to find other avaliable factories.
      */
     public CasLoggerFactory() {
-        this.loggerMap = new ConcurrentHashMap<String, CasDelegatingLogger>();
+        this.loggerMap = new ConcurrentHashMap<>();
         final Set<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
         final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
 

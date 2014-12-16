@@ -80,7 +80,7 @@ public class OpenIdSingleSignOnActionTests {
                         handler,
                         new OpenIdPrincipalResolver()));
 
-        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
         impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,

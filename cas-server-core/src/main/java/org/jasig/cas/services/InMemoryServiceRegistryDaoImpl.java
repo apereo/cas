@@ -38,7 +38,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
 
     @NotNull
-    private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
+    private List<RegisteredService> registeredServices = new ArrayList<>();
 
     /**
      * Instantiates a new In memory service registry.

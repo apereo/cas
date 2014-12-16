@@ -109,7 +109,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             }
 
             final Set<String> keys = node.getKeys();
-            final List<Ticket> list = new ArrayList<Ticket>();
+            final List<Ticket> list = new ArrayList<>();
 
             for (final String key : keys) {
 
