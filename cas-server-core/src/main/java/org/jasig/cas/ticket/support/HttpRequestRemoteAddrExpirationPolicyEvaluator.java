@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
  * add the <code>-Djava.net.preferIPv4Stack=true</code> flag to your <code>JAVA_OPTS</code>
  * environment variable prior to restarting the container.
  * @author Misagh Moayyed
- * @since 4.1
  * @see CompositeTicketGrantingTicketExpirationPolicy
+ * @since 4.1
  */
 public final class HttpRequestRemoteAddrExpirationPolicyEvaluator implements TicketExpirationPolicyEvaluator {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

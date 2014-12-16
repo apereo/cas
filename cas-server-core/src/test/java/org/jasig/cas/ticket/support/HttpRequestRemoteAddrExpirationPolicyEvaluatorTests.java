@@ -31,11 +31,12 @@ import org.junit.Test;
 
 /**
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public class HttpRequestRemoteAddrExpirationPolicyEvaluatorTests {
 
     @Test
-    public void testEvaluatorMatches() {
+    public void evaluatorMatches() {
         final HttpRequestRemoteAddrExpirationPolicyEvaluator evaluator =
                 new HttpRequestRemoteAddrExpirationPolicyEvaluator("1\\.2.+");
         
@@ -45,7 +46,7 @@ public class HttpRequestRemoteAddrExpirationPolicyEvaluatorTests {
     }
     
     @Test
-    public void testEvaluatorDoesNotMatch() {
+    public void evaluatorDoesNotMatch() {
         final HttpRequestRemoteAddrExpirationPolicyEvaluator evaluator =
                 new HttpRequestRemoteAddrExpirationPolicyEvaluator("111\\.2.+");
         
