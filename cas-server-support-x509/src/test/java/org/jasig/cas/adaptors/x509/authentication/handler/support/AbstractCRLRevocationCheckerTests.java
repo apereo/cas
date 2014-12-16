@@ -21,14 +21,10 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-
 import edu.vt.middleware.crypt.util.CryptReader;
-
 
 /**
  * Base class for {@link RevocationChecker} unit tests.
@@ -44,7 +40,6 @@ public abstract class AbstractCRLRevocationCheckerTests {
 
     /** Expected result of check; null for success. */
     private final GeneralSecurityException expected;
-
 
     /**
      * Creates a new test instance with given parameters.
@@ -62,7 +57,6 @@ public abstract class AbstractCRLRevocationCheckerTests {
         for (String file : certFiles) {
             this.certificates[i++] = readCertificate(file);
         }
-
     }
 
     /**
@@ -79,7 +73,6 @@ public abstract class AbstractCRLRevocationCheckerTests {
             }
         } catch (final GeneralSecurityException e) {
             if (this.expected == null) {
-
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
                 final Class<?> expectedClass = this.expected.getClass();
@@ -94,14 +87,10 @@ public abstract class AbstractCRLRevocationCheckerTests {
     protected abstract RevocationChecker getChecker();
 
     private X509Certificate readCertificate(final String file) {
-        InputStream in = null;
-        try {
-            in = new ClassPathResource(file).getInputStream();
+        try (InputStream in = new ClassPathResource(file).getInputStream()) {
             return (X509Certificate) CryptReader.readCertificate(in);
         } catch (final Exception e) {
             throw new RuntimeException("Error reading certificate " + file, e);
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 }
