@@ -59,7 +59,7 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
      **/
     @Override
     public HealthStatus observe() {
-        final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());
+        final Map<String, Status> results = new LinkedHashMap<>(this.monitors.size());
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
         for (final Monitor monitor : this.monitors) {

@@ -72,7 +72,7 @@ public class KryoTranscoderTests {
 
     public KryoTranscoderTests(final int bufferSize) {
         transcoder = new KryoTranscoder(bufferSize);
-        final Map<Class<?>, Serializer> serializerMap = new HashMap<Class<?>, Serializer>();
+        final Map<Class<?>, Serializer> serializerMap = new HashMap<>();
         serializerMap.put(
                 MockServiceTicket.class,
                 new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class));
@@ -85,7 +85,7 @@ public class KryoTranscoderTests {
 
     @Parameterized.Parameters
     public static List<Object[]> getTestParms() {
-        final List<Object[]> params = new ArrayList<Object[]>(6);
+        final List<Object[]> params = new ArrayList<>(6);
 
         // Test case #1 - Buffer is bigger than encoded data
         params.add(new Object[] {1024});
@@ -208,7 +208,7 @@ public class KryoTranscoderTests {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final AuthenticationBuilder builder = new AuthenticationBuilder();
-            final Map<String, Object> attributes = new HashMap<String, Object>();
+            final Map<String, Object> attributes = new HashMap<>();
             attributes.put("nickname", "bob");
             builder.setPrincipal(this.principalFactory.createPrincipal("handymanbob", attributes));
             builder.setAuthenticationDate(new Date());

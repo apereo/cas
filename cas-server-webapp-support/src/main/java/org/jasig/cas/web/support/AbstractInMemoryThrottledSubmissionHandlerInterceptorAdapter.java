@@ -40,7 +40,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
-    private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
+    private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<>();
 
     @Override
     protected final boolean exceedsThreshold(final HttpServletRequest request) {

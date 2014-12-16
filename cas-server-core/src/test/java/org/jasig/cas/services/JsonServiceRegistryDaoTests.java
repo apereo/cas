@@ -151,7 +151,7 @@ public class JsonServiceRegistryDaoTests {
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId("testId");
 
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("attr1", "newattr1");
         map.put("attr2", "newattr2");
         map.put("attr2", "newattr3");
@@ -256,7 +256,7 @@ public class JsonServiceRegistryDaoTests {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
 
-        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
 
         final CachingPrincipalAttributesRepository repository =

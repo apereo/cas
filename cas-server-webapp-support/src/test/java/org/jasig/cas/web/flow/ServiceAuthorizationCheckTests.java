@@ -59,7 +59,7 @@ public class ServiceAuthorizationCheckTests {
         final RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
         unauthorizedRegisteredService.setEnabled(false);
 
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
         list.add(authorizedRegisteredService);
         list.add(unauthorizedRegisteredService);
         
