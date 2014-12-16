@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.monitor;
 
-import org.apache.commons.io.IOUtils;
-
 import java.util.Formatter;
 
 /**
@@ -100,12 +98,12 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
-        final Formatter formatter = new Formatter(builder);
-        formatter.format("%.2f", this.size / BYTES_PER_MB);
-        builder.append("MB used, ");
-        builder.append(getPercentFree()).append("% free, ");
-        builder.append(this.evictions).append(" evictions");
-        IOUtils.closeQuietly(formatter);
+        try (final Formatter formatter = new Formatter(builder)) {
+            formatter.format("%.2f", this.size / BYTES_PER_MB);
+            builder.append("MB used, ");
+            builder.append(getPercentFree()).append("% free, ");
+            builder.append(this.evictions).append(" evictions");
+        }
     }
 
 
