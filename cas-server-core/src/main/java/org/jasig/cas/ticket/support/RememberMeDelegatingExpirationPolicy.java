@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.2.1
  *
  */
-public final class RememberMeDelegatingExpirationPolicy implements ExpirationPolicy {
+public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -2735975347698196127L;

@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
 /**
@@ -27,10 +26,9 @@ import org.jasig.cas.ticket.TicketState;
  * as long as the particular CAS Universe exists.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
-public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {
+public final class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3833747698242303540L;
