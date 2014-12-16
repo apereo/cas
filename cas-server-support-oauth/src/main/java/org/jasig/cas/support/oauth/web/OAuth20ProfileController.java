@@ -21,7 +21,6 @@ package org.jasig.cas.support.oauth.web;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -31,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -66,9 +64,7 @@ public final class OAuth20ProfileController extends AbstractController {
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader("Authorization");
@@ -78,11 +74,8 @@ public final class OAuth20ProfileController extends AbstractController {
         }
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
-
-        try {
+        try (final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter())) {
             response.setContentType("application/json");
-
             // accessToken is required
             if (StringUtils.isBlank(accessToken)) {
                 LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
@@ -92,8 +85,7 @@ public final class OAuth20ProfileController extends AbstractController {
                 return null;
             }
             // get ticket granting ticket
-            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-                    .getTicket(accessToken);
+            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(accessToken);
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
                 LOGGER.error("expired accessToken : {}", accessToken);
                 jsonGenerator.writeStartObject();
@@ -107,7 +99,7 @@ public final class OAuth20ProfileController extends AbstractController {
             jsonGenerator.writeStringField(ID, principal.getId());
             jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
             final Map<String, Object> attributes = principal.getAttributes();
-            for (final Map.Entry<String, Object> entry: attributes.entrySet()) {
+            for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
                 jsonGenerator.writeEndObject();
@@ -116,7 +108,6 @@ public final class OAuth20ProfileController extends AbstractController {
             jsonGenerator.writeEndObject();
             return null;
         } finally {
-            IOUtils.closeQuietly(jsonGenerator);
             response.flushBuffer();
         }
     }

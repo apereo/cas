@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.slf4j.Logger;
@@ -183,19 +182,15 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = request.getReader();
-
+        try (final BufferedReader reader = request.getReader()) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
             return builder.toString();
         } catch (final Exception e) {
+            LOGGER.error("Could not obtain the saml request body from the http request", e);
             return null;
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
     }
 }
