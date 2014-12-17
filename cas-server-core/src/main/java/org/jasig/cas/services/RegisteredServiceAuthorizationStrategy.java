@@ -22,8 +22,6 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
-import java.util.Map;
-
 /**
  * This is {@link org.jasig.cas.services.RegisteredServiceAuthorizationStrategy}
  * that can decide if a service is recognized and authorized to participate
@@ -38,17 +36,17 @@ public interface RegisteredServiceAuthorizationStrategy {
      * Verify is the service is enabled and recognized by CAS.
      *
      * @param service the service
-     * @throws UnauthorizedServiceException the unauthorized service exception
+     * @return true/false if service is enabled
      */
-    void assertServiceQualification(Service service) throws UnauthorizedServiceException;
+    boolean isServiceAuthorized(Service service);
 
     /**
      * Assert that the service can participate in sso.
      *
      * @param service the service
-     * @throws UnauthorizedServiceException the unauthorized service exception
+     * @return true/false if service can participate in sso
      */
-    void assertServiceSsoParticipation(Service service) throws UnauthorizedServiceException;
+    boolean isServiceAuthorizedForSso(Service service);
 
     /**
      * Verify authorization policy by checking the pre-configured rules
@@ -56,7 +54,6 @@ public interface RegisteredServiceAuthorizationStrategy {
      *
      * @param principal the principal
      * @param service the service that requests authentication or has asked for tickets.
-     * @throws UnauthorizedServiceException if the service is not allowed to proceed.
      */
-    void assertServiceAuthorizedAccessForPrincipal(Principal principal, Service service) throws UnauthorizedServiceException;
+    boolean isServiceAccessAuthorizedForPrincipal(Principal principal, Service service);
 }

@@ -22,9 +22,6 @@ package org.jasig.cas.services.support;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
-import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.services.UnauthorizedServiceMissingAttributeException;
-import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +85,10 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         this.enabled = enabled;
     }
 
+    /**
+     * Set to enable/authorize this service.
+     * @param ssoEnabled true to enable service
+     */
     public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
@@ -140,14 +141,15 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * </ul>
      */
     @Override
-    public void assertServiceAuthorizedAccessForPrincipal(final Principal principal, final Service service) {
+    public boolean isServiceAccessAuthorizedForPrincipal(final Principal principal, final Service service) {
         if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
-            return;
+            return true;
         }
         final Map<String, Object> principalAttributes = principal.getAttributes();
         if (principalAttributes.isEmpty()) {
-            throw new UnauthorizedServiceMissingAttributeException("No principal attributes are found to satisfy requirements");
+            logger.warn("No principal attributes are found to satisfy requirements");
+            return false;
         }
 
         logger.debug("These attributes [{}] are examined against [{}] before service [{}] can proceed.",
@@ -157,17 +159,17 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
 
         for (final Map.Entry<String, List<String>> entry : entrySetOfRequiredAttributes) {
             final String requiredAttributeName = entry.getKey();
-            final List<String> requiredAttributeValues = entry.getValue();
-
             final Object principalAttributeValue = principalAttributes.get(requiredAttributeName);
 
             if (principalAttributeValue == null && this.requireAllAttributes) {
-                throw new UnauthorizedServiceMissingAttributeException("Principal is missing the required attribute "
-                        + requiredAttributeName);
+                logger.warn("Principal is missing the required attribute [{}]", requiredAttributeName);
+                return false;
             }
-            boolean foundMatchingAttributeValue = false;
 
+            boolean foundMatchingAttributeValue = false;
             if (principalAttributeValue != null) {
+
+                final List<String> requiredAttributeValues = entry.getValue();
                 final Iterator<String> it = requiredAttributeValues.iterator();
                 while (!foundMatchingAttributeValue && it.hasNext()) {
                     final String value = it.next();
@@ -181,29 +183,28 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             }
 
             if (!foundMatchingAttributeValue) {
-                throw new UnauthorizedServiceMissingAttributeException("None of the required attributes match "
-                        + principalAttributeValue);
+                logger.debug("None of the required attributes match [{}]", principalAttributeValue);
+                return false;
             }
         }
 
+        return true;
     }
 
     @Override
-    public void assertServiceSsoParticipation(@NotNull final Service service) {
+    public boolean isServiceAuthorizedForSso(@NotNull final Service service) {
         if (!isSsoEnabled()) {
-            final String msg = String.format("Service [%s] is not allowed to participate in SSO.", service.getId());
-            logger.warn(msg);
-            throw new UnauthorizedSsoServiceException(msg);
+            logger.warn("Service [{}] is not allowed to participate in SSO.", service.getId());
         }
+        return isSsoEnabled();
     }
 
     @Override
-    public void assertServiceQualification(final Service service) {
+    public boolean isServiceAuthorized(final Service service) {
         if (!isEnabled()) {
-            final String msg = String.format("Service [%s] is not enabled in service registry.", service.getId());
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+            logger.warn("Service [{}] is not enabled in service registry.", service.getId());
         }
+        return isEnabled();
     }
 
 
