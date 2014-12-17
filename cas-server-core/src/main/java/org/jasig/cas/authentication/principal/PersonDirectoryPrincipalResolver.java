@@ -94,7 +94,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
 
-        final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
+        final Map<String, Object> convertedAttributes = new HashMap<>();
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final String key = entry.getKey();
             final List<Object> values = entry.getValue();

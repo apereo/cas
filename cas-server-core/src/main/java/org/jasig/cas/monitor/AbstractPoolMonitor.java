@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.validation.constraints.NotNull;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Describes a monitor that observes a pool of resources.
@@ -71,7 +70,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      **/
     @Override
     public PoolStatus observe() {
-        final Future<StatusCode> result = this.executor.submit(new Validator());
+        final Future<StatusCode> result = this.executor.submit(new Validator(this));
         StatusCode code;
         String description = null;
         try {
@@ -116,11 +115,21 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      */
     protected abstract int getActiveCount();
 
+    private static class Validator implements Callable<StatusCode> {
+        private final AbstractPoolMonitor monitor;
 
-    private class Validator implements Callable<StatusCode> {
+        /**
+         * Instantiates a new Validator.
+         *
+         * @param monitor the monitor
+         */
+        public Validator(final AbstractPoolMonitor monitor) {
+            this.monitor = monitor;
+        }
+
         @Override
         public StatusCode call() throws Exception {
-            return checkPool();
+            return this.monitor.checkPool();
         }
     }
 }

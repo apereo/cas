@@ -79,7 +79,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
                 + request.getQueryString() : "");
 
         logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);

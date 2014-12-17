@@ -38,7 +38,7 @@ public class OpenIdPostUrlHandlerMappingTests {
 
         context.start();
 
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("/login", new Object());
 
         this.handlerMapping = new OpenIdPostUrlHandlerMapping();

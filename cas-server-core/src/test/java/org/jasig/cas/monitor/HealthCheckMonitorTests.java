@@ -50,7 +50,7 @@ public class HealthCheckMonitorTests {
 
     @Test
     public void verifyObserveOk() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
+        final Set<Monitor> monitors = new HashSet<>();
         monitors.add(new MemoryMonitor());
         monitors.add(newSessionMonitor());
         this.monitor.setMonitors(monitors);
@@ -59,7 +59,7 @@ public class HealthCheckMonitorTests {
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
+        final Set<Monitor> monitors = new HashSet<>();
         final MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.setFreeMemoryWarnThreshold(100);
         monitors.add(memoryMonitor);

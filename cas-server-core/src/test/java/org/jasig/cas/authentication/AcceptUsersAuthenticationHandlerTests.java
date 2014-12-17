@@ -42,7 +42,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new HashMap<String, String>();
+        this.users = new HashMap<>();
 
         this.users.put("scott", "rutgers");
         this.users.put("dima", "javarules");

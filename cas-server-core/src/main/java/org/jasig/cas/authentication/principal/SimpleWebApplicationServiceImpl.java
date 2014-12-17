@@ -104,7 +104,7 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
 
     @Override
     public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
 
         if (StringUtils.hasText(ticketId)) {
             parameters.put(CONST_PARAM_TICKET, ticketId);

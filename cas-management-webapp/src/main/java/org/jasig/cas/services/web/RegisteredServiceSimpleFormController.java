@@ -193,12 +193,12 @@ public final class RegisteredServiceSimpleFormController {
      * @param request the request
      */
     private void updateModelMap(final ModelMap model, final HttpServletRequest request) {
-        final List<String> possibleAttributeNames = new ArrayList<String>();
+        final List<String> possibleAttributeNames = new ArrayList<>();
         possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
         Collections.sort(possibleAttributeNames);
         model.addAttribute("availableAttributes", possibleAttributeNames);
 
-        final List<String> possibleUsernameAttributeNames = new ArrayList<String>();
+        final List<String> possibleUsernameAttributeNames = new ArrayList<>();
         possibleUsernameAttributeNames.addAll(possibleAttributeNames);
         possibleUsernameAttributeNames.add(0, "");
         model.addAttribute("availableUsernameAttributes", possibleUsernameAttributeNames);

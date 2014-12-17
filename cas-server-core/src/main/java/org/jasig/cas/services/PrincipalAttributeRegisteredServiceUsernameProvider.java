@@ -45,6 +45,13 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     private final String usernameAttribute;
 
     /**
+     * Private constructor to get around serialization issues.
+     */
+    private PrincipalAttributeRegisteredServiceUsernameProvider() {
+        this.usernameAttribute = null;
+    }
+
+    /**
      * Instantiates a new default registered service username provider.
      *
      * @param usernameAttribute the username attribute
