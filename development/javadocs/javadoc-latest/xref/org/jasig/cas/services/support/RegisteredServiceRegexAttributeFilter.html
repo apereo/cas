@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      @Override
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; filter(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; givenAttributes) {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToRelease = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToRelease = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Object&gt; entry: givenAttributes.entrySet()) {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">final</strong> String attributeName = entry.getKey();
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">final</strong> Object attributeValue = entry.getValue();
@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * @return the map</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, String&gt; filterMapAttributes(<strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; valuesToFilter) {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; attributesToFilter = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;(valuesToFilter.size());
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; attributesToFilter = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(valuesToFilter.size());
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry: valuesToFilter.entrySet()) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">final</strong> String attributeName = entry.getKey();
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">final</strong> String attributeValue = entry.getValue();
@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     * @return the string[]</em>
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>     <strong class="jxr_keyword">private</strong> String[] filterArrayAttributes(<strong class="jxr_keyword">final</strong> String[] valuesToFilter, <strong class="jxr_keyword">final</strong> String attributeName) {
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; vector = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(valuesToFilter.length);
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; vector = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(valuesToFilter.length);
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String attributeValue : valuesToFilter) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">if</strong> (patternMatchesAttributeValue(attributeValue)) {
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>                 logReleasedAttributeEntry(attributeName, attributeValue);

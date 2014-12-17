@@ -53,72 +53,79 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String usernameAttribute;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     * Instantiates a new default registered service username provider.</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     * @param usernameAttribute the username attribute</em>
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a>(@NotNull <strong class="jxr_keyword">final</strong> String usernameAttribute) {
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">this</strong>.usernameAttribute = usernameAttribute;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      }
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> String getUsernameAttribute() {
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.usernameAttribute;
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      }
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> String resolveUsername(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          String principalId = principal.getId();
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">if</strong> (principal.getAttributes().containsKey(<strong class="jxr_keyword">this</strong>.usernameAttribute)) {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>              principalId = principal.getAttributes().get(<strong class="jxr_keyword">this</strong>.usernameAttribute).toString();
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>              logger.warn(<span class="jxr_string">"Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "</span>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                      + <span class="jxr_string">"provide the user attribute the service expects. "</span>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>                      + <span class="jxr_string">"CAS will instead return the default principal id [{}]"</span>,
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>                      principalId,
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>                      <strong class="jxr_keyword">this</strong>.usernameAttribute,
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>                      principal.getAttributes(),
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>                      principalId);
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          logger.debug(<span class="jxr_string">"Principal id to return is [{}]. The default principal id is [{}]."</span>,
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>                  principalId, principal.getId());
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">return</strong> principalId;
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      }
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>      
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      @Override
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> ToStringBuilder toStringBuilder = <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">null</strong>, ToStringStyle.SHORT_PREFIX_STYLE);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          toStringBuilder.append(<span class="jxr_string">"usernameAttribute"</span>, <strong class="jxr_keyword">this</strong>.usernameAttribute);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">return</strong> toStringBuilder.toString();
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     * Private constructor to get around serialization issues.</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a>() {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">this</strong>.usernameAttribute = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      }
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * Instantiates a new default registered service username provider.</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     * @param usernameAttribute the username attribute</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a>(@NotNull <strong class="jxr_keyword">final</strong> String usernameAttribute) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">this</strong>.usernameAttribute = usernameAttribute;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> String getUsernameAttribute() {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.usernameAttribute;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      @Override
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> String resolveUsername(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          String principalId = principal.getId();
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">if</strong> (principal.getAttributes().containsKey(<strong class="jxr_keyword">this</strong>.usernameAttribute)) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              principalId = principal.getAttributes().get(<strong class="jxr_keyword">this</strong>.usernameAttribute).toString();
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>              logger.warn(<span class="jxr_string">"Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "</span>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                      + <span class="jxr_string">"provide the user attribute the service expects. "</span>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                      + <span class="jxr_string">"CAS will instead return the default principal id [{}]"</span>,
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>                      principalId,
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                      <strong class="jxr_keyword">this</strong>.usernameAttribute,
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                      principal.getAttributes(),
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>                      principalId);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          logger.debug(<span class="jxr_string">"Principal id to return is [{}]. The default principal id is [{}]."</span>,
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  principalId, principal.getId());
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">return</strong> principalId;
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      @Override
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object obj) {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>          }
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">this</strong>) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          }
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">if</strong> (obj.getClass() != getClass()) {
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>          }
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a> rhs =
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>                 (<a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a>) obj;
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> EqualsBuilder()
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>                 .append(<strong class="jxr_keyword">this</strong>.usernameAttribute, rhs.usernameAttribute)
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 .isEquals();
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>     }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     @Override
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HashCodeBuilder()
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 .append(usernameAttribute)
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 .toHashCode();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      @Override
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> ToStringBuilder toStringBuilder = <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">null</strong>, ToStringStyle.SHORT_PREFIX_STYLE);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          toStringBuilder.append(<span class="jxr_string">"usernameAttribute"</span>, <strong class="jxr_keyword">this</strong>.usernameAttribute);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">return</strong> toStringBuilder.toString();
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      @Override
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object obj) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         }
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">if</strong> (obj.getClass() != getClass()) {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a> rhs =
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                 (<a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a>) obj;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> EqualsBuilder()
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 .append(<strong class="jxr_keyword">this</strong>.usernameAttribute, rhs.usernameAttribute)
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>                 .isEquals();
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     }
-<a class="jxr_linenumber" name="L113" href="#L113">113</a> }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> 
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     @Override
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HashCodeBuilder()
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>                 .append(usernameAttribute)
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>                 .toHashCode();
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>     }
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2014 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

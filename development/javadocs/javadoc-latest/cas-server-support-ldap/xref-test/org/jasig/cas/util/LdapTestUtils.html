@@ -100,7 +100,7 @@
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createLdapEntries(<strong class="jxr_keyword">final</strong> LDAPConnection connection, <strong class="jxr_keyword">final</strong> Collection&lt;LdapEntry&gt; entries) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LdapEntry entry : entries) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> Collection&lt;Attribute&gt; attrs = <strong class="jxr_keyword">new</strong> ArrayList&lt;Attribute&gt;(entry.getAttributeNames().length);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> Collection&lt;Attribute&gt; attrs = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(entry.getAttributeNames().length);
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LdapAttribute a : entry.getAttributes()) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  attrs.add(<strong class="jxr_keyword">new</strong> Attribute(a.getName(), a.getStringValues()));
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>              }

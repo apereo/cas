@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * in order to find other avaliable factories.</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/slf4j/impl/CasLoggerFactory.html">CasLoggerFactory</a>() {
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">this</strong>.loggerMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, CasDelegatingLogger&gt;();
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">this</strong>.loggerMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">final</strong> Set&lt;URL&gt; set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Reflections reflections = <strong class="jxr_keyword">new</strong> Reflections(<strong class="jxr_keyword">new</strong> ConfigurationBuilder().addUrls(set).setScanners(<strong class="jxr_keyword">new</strong> SubTypesScanner()));
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  

@@ -159,7 +159,7 @@
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         r.setName(<span class="jxr_string">"testSaveAttributeReleasePolicyMappingRules"</span>);
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         r.setServiceId(<span class="jxr_string">"testId"</span>);
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> 
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         map.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"newattr1"</span>);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"newattr2"</span>);
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"newattr3"</span>);
@@ -264,7 +264,7 @@
 <a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">final</strong> ReturnAllowedAttributeReleasePolicy policy = <strong class="jxr_keyword">new</strong> ReturnAllowedAttributeReleasePolicy();
 <a class="jxr_linenumber" name="L257" href="#L257">257</a>         policy.setAllowedAttributes(Arrays.asList(<span class="jxr_string">"1"</span>, <span class="jxr_string">"2"</span>, <span class="jxr_string">"3"</span>));
 <a class="jxr_linenumber" name="L258" href="#L258">258</a> 
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, List&lt;Object&gt;&gt;();
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L260" href="#L260">260</a>         attributes.put(<span class="jxr_string">"values"</span>, Arrays.asList(<strong class="jxr_keyword">new</strong> Object[]{<span class="jxr_string">"v1"</span>, <span class="jxr_string">"v2"</span>, <span class="jxr_string">"v3"</span>}));
 <a class="jxr_linenumber" name="L261" href="#L261">261</a> 
 <a class="jxr_linenumber" name="L262" href="#L262">262</a>         <strong class="jxr_keyword">final</strong> CachingPrincipalAttributesRepository repository =

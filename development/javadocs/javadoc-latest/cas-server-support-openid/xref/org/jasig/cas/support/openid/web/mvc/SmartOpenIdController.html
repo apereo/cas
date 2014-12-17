@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">if</strong> (StringUtils.equals(mode, ASSOCIATE)) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              response = serverManager.associationResponse(parameters);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; responseParams = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; responseParams = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">if</strong> (response != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>              responseParams.putAll(response.getParameterMap());
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          }
@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      @Override
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">protected</strong> ModelAndView handleRequestInternal(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response)
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; parameters = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; parameters = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         parameters.putAll(getAssociationResponse(request));
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ModelAndView(successView, <span class="jxr_string">"parameters"</span>, parameters);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     }

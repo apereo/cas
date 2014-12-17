@@ -162,7 +162,7 @@
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         mockRequest.setParameter(OAuthConstants.CODE, CODE);
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_SECRET));
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         when(servicesManager.getAllServices()).thenReturn(services);
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">final</strong> OAuth20WrapperController oauth20WrapperController = <strong class="jxr_keyword">new</strong> OAuth20WrapperController();
@@ -183,7 +183,7 @@
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>         mockRequest.setParameter(OAuthConstants.CODE, CODE);
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>         services.add(getRegisteredService(REDIRECT_URI, WRONG_CLIENT_SECRET));
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>         when(servicesManager.getAllServices()).thenReturn(services);
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">final</strong> OAuth20WrapperController oauth20WrapperController = <strong class="jxr_keyword">new</strong> OAuth20WrapperController();
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>         mockRequest.setParameter(OAuthConstants.CODE, CODE);
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         when(servicesManager.getAllServices()).thenReturn(services);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>         <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
@@ -228,7 +228,7 @@
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>         mockRequest.setParameter(OAuthConstants.CODE, CODE);
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>         when(servicesManager.getAllServices()).thenReturn(services);
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
@@ -254,7 +254,7 @@
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         mockRequest.setParameter(OAuthConstants.CODE, CODE);
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>         when(servicesManager.getAllServices()).thenReturn(services);
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>         <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);

@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>                  + request.getQueryString() : <span class="jxr_string">""</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          logger.debug(<span class="jxr_string">"Error getting flow information for URL [{}]"</span>, urlToRedirectTo, exception);
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          model.put(<strong class="jxr_keyword">this</strong>.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ModelAndView(<strong class="jxr_keyword">new</strong> RedirectView(urlToRedirectTo), model);

@@ -85,7 +85,7 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAuthenticationTypeFoundCustom() {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulatorTests.html">CustomCredential</a> credentials = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulatorTests.html">CustomCredential</a>();
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; added = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; added = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          added.put(CustomCredential.<strong class="jxr_keyword">class</strong>.getName(), <span class="jxr_string">"FF"</span>);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">this</strong>.populator.setUserDefinedMappings(added);

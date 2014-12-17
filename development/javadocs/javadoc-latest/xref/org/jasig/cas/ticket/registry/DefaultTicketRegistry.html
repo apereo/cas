@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     * Instantiates a new default ticket registry.</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/registry/DefaultTicketRegistry.html">DefaultTicketRegistry</a>() {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">this</strong>.cache = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, Ticket&gt;();
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">this</strong>.cache = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <em class="jxr_javadoccomment">/**</em>
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * accommodate this many threads.</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/registry/DefaultTicketRegistry.html">DefaultTicketRegistry</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> initialCapacity, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> loadFactor, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> concurrencyLevel) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">this</strong>.cache = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;String, Ticket&gt;(initialCapacity, loadFactor, concurrencyLevel);
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">this</strong>.cache = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;(initialCapacity, loadFactor, concurrencyLevel);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/**</em>

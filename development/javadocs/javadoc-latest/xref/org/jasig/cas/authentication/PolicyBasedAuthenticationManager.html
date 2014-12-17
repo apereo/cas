@@ -88,7 +88,7 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      <em class="jxr_javadoccomment">/** An array of AuthenticationAttributesPopulators. */</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      @NotNull
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">private</strong> List&lt;AuthenticationMetaDataPopulator&gt; authenticationMetaDataPopulators =
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">new</strong> ArrayList&lt;AuthenticationMetaDataPopulator&gt;();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      <em class="jxr_javadoccomment">/** Authentication security policy. */</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      @NotNull
@@ -119,7 +119,7 @@
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/authentication/PolicyBasedAuthenticationManager.html">PolicyBasedAuthenticationManager</a>(<strong class="jxr_keyword">final</strong> List&lt;AuthenticationHandler&gt; handlers) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         Assert.notEmpty(handlers, <span class="jxr_string">"At least one authentication handler is required"</span>);
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">this</strong>.handlerResolverMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;AuthenticationHandler, PrincipalResolver&gt;(
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">this</strong>.handlerResolverMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                 handlers.size());
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> AuthenticationHandler handler : handlers) {
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>             <strong class="jxr_keyword">this</strong>.handlerResolverMap.put(handler, <strong class="jxr_keyword">null</strong>);

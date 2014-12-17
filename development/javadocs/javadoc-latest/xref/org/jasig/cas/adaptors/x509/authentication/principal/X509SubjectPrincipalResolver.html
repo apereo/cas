@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         logger.debug(<span class="jxr_string">"Resolving principal for {}"</span>, certificate);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> StringBuffer sb = <strong class="jxr_keyword">new</strong> StringBuffer();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">final</strong> Matcher m = ATTR_PATTERN.matcher(<strong class="jxr_keyword">this</strong>.descriptor);
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, AttributeContext&gt; attrMap = <strong class="jxr_keyword">new</strong> HashMap&lt;String, AttributeContext&gt;();
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, AttributeContext&gt; attrMap = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         String name;
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         String[] values;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         <a href="../../../../../../../org/jasig/cas/adaptors/x509/authentication/principal/X509SubjectPrincipalResolver.html">AttributeContext</a> context;

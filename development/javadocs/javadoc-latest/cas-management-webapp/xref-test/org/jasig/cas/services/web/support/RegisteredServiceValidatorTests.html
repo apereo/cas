@@ -54,8 +54,8 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/services/web/support/RegisteredServiceValidatorTests.html">RegisteredServiceValidatorTests</a> {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">private</strong> RegisteredServiceValidator getValidator(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> returnValue) {
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attrs = <strong class="jxr_keyword">new</strong> HashMap&lt;String, List&lt;Object&gt;&gt;();
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> List&lt;Object&gt; values = <strong class="jxr_keyword">new</strong> ArrayList&lt;Object&gt;();
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attrs = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> List&lt;Object&gt; values = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          values.add(<span class="jxr_string">"value"</span>);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          attrs.put(<span class="jxr_string">"k1"</span>, values);
@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>             r.setServiceId(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>             r.setId(1000);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> ArrayList&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> ArrayList&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>             list.add(r);
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">return</strong> list;

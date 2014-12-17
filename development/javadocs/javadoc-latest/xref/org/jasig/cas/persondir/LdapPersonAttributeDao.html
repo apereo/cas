@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Failed executing LDAP query "</span> + filter, e);
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>             }
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">final</strong> SearchResult result = response.getResult();
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> List&lt;IPersonAttributes&gt; peopleAttributes = <strong class="jxr_keyword">new</strong> ArrayList&lt;IPersonAttributes&gt;(result.size());
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> List&lt;IPersonAttributes&gt; peopleAttributes = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(result.size());
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LdapEntry entry : result.getEntries()) {
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <strong class="jxr_keyword">final</strong> IPersonAttributes person;
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>                 <strong class="jxr_keyword">final</strong> String userNameAttribute = <strong class="jxr_keyword">this</strong>.getConfiguredUserNameAttribute();
@@ -217,7 +217,7 @@
 <a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">     * @return Attribute map.</em>
 <a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, List&lt;Object&gt;&gt; convertLdapEntryToMap(<strong class="jxr_keyword">final</strong> LdapEntry entry) {
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributeMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, List&lt;Object&gt;&gt;(entry.size());
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributeMap = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(entry.size());
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LdapAttribute attr : entry.getAttributes()) {
 <a class="jxr_linenumber" name="L214" href="#L214">214</a>             attributeMap.put(attr.getName(), <strong class="jxr_keyword">new</strong> ArrayList&lt;Object&gt;(attr.getStringValues()));
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>         }

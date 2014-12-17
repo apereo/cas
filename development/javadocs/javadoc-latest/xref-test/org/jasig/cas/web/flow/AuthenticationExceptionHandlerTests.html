@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">final</strong> AuthenticationExceptionHandler handler = <strong class="jxr_keyword">new</strong> AuthenticationExceptionHandler();
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">final</strong> MessageContext ctx = mock(MessageContext.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>          
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt;();
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          map.put(<span class="jxr_string">"notFound"</span>, AccountNotFoundException.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> String id = handler.handle(<strong class="jxr_keyword">new</strong> AuthenticationException(map), ctx);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          assertEquals(id, AccountNotFoundException.<strong class="jxr_keyword">class</strong>.getSimpleName());
@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> AuthenticationExceptionHandler handler = <strong class="jxr_keyword">new</strong> AuthenticationExceptionHandler();
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">final</strong> MessageContext ctx = mock(MessageContext.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt;();
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          map.put(<span class="jxr_string">"unknown"</span>, GeneralSecurityException.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> String id = handler.handle(<strong class="jxr_keyword">new</strong> AuthenticationException(map), ctx);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          assertEquals(id, <span class="jxr_string">"UNKNOWN"</span>);

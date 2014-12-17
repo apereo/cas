@@ -88,7 +88,7 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>                          handler,
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>                          <strong class="jxr_keyword">new</strong> OpenIdPrincipalResolver()));
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, UniqueTicketIdGenerator&gt; generator = <strong class="jxr_keyword">new</strong> HashMap&lt;String, UniqueTicketIdGenerator&gt;();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, UniqueTicketIdGenerator&gt; generator = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          generator.put(OpenIdService.<strong class="jxr_keyword">class</strong>.getName(), <strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator());
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          impl = <strong class="jxr_keyword">new</strong> CentralAuthenticationServiceImpl(<strong class="jxr_keyword">this</strong>.ticketRegistry, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">this</strong>.authenticationManager,

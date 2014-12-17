@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">final</strong> String newDn = getDnForRegisteredService(dn, svc);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              LOGGER.debug(<span class="jxr_string">"Creating entry {}"</span>, newDn);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">final</strong> Collection&lt;LdapAttribute&gt; attrs = <strong class="jxr_keyword">new</strong> ArrayList&lt;LdapAttribute&gt;();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">final</strong> Collection&lt;LdapAttribute&gt; attrs = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>              attrs.add(<strong class="jxr_keyword">new</strong> LdapAttribute(<strong class="jxr_keyword">this</strong>.idAttribute, String.valueOf(svc.getId())));
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">final</strong> StringWriter writer = <strong class="jxr_keyword">new</strong> StringWriter();

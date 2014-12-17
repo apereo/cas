@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/** The ServiceRegistry to look up the service. */</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">private</strong> ServicesManager servicesManager;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">private</strong> Map&lt;Pattern, String&gt; overrides = <strong class="jxr_keyword">new</strong> HashMap&lt;Pattern, String&gt;();
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">private</strong> Map&lt;Pattern, String&gt; overrides = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> String resolveThemeName(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
@@ -124,7 +124,7 @@
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setMobileBrowsers(<strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; mobileOverrides) {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <em class="jxr_comment">// initialize the overrides variable to an empty map</em>
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">this</strong>.overrides = <strong class="jxr_keyword">new</strong> HashMap&lt;Pattern, String&gt;();
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">this</strong>.overrides = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> 
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry : mobileOverrides.entrySet()) {
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>             <strong class="jxr_keyword">this</strong>.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());

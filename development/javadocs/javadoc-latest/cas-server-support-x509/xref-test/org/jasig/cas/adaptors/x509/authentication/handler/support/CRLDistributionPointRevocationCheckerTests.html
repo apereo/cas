@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      @Parameters
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Collection&lt;Object[]&gt; getTestParameters() {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          CacheManager.getInstance().removeAllCaches();
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> Collection&lt;Object[]&gt; params = <strong class="jxr_keyword">new</strong> ArrayList&lt;Object[]&gt;();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">final</strong> Collection&lt;Object[]&gt; params = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          Cache cache;
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> ThresholdExpiredCRLRevocationPolicy defaultPolicy = <strong class="jxr_keyword">new</strong> ThresholdExpiredCRLRevocationPolicy();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = <strong class="jxr_keyword">new</strong> ThresholdExpiredCRLRevocationPolicy();

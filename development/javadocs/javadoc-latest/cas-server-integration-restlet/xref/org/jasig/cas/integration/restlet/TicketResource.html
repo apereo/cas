@@ -139,7 +139,7 @@
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> logFormRequest(<strong class="jxr_keyword">final</strong> Form form) {
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">if</strong> (LOGGER.isDebugEnabled()) {
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>             <strong class="jxr_keyword">final</strong> Set&lt;String&gt; pairs = <strong class="jxr_keyword">new</strong> HashSet&lt;String&gt;();
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>             <strong class="jxr_keyword">final</strong> Set&lt;String&gt; pairs = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String name : form.getNames()) {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <strong class="jxr_keyword">final</strong> StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                 builder.append(name);
@@ -201,7 +201,7 @@
 <a class="jxr_linenumber" name="L193" href="#L193">193</a> 
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>         @Override
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">public</strong> Map&lt;String, String[]&gt; getParameterMap() {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, String[]&gt; conversion = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String[]&gt;();
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, String[]&gt; conversion = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> 
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, String&gt; entry : <strong class="jxr_keyword">this</strong>.form.getValuesMap().entrySet()) {
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>                 conversion.put(entry.getKey(), <strong class="jxr_keyword">new</strong> String[] {entry.getValue()});

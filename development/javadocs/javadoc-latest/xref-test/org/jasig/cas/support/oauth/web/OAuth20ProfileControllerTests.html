@@ -131,7 +131,7 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">final</strong> Authentication authentication = mock(Authentication.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">final</strong> Principal principal = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         when(principal.getId()).thenReturn(ID);
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>         map.put(NAME, VALUE);
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(VALUE, VALUE);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         map.put(NAME2, list);
@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>         <strong class="jxr_keyword">final</strong> Authentication authentication = mock(Authentication.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> Principal principal = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         when(principal.getId()).thenReturn(ID);
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         map.put(NAME, VALUE);
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(VALUE, VALUE);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         map.put(NAME2, list);

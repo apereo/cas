@@ -124,7 +124,7 @@
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> 
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/ticket/registry/DistributedTicketRegistryTests.html">TestDistributedTicketRegistry</a> <strong class="jxr_keyword">extends</strong> AbstractDistributedTicketRegistry {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> 
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, Ticket&gt; tickets = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Ticket&gt;();
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, Ticket&gt; tickets = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> 
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> updateTicket(<strong class="jxr_keyword">final</strong> Ticket ticket) {
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>             DistributedTicketRegistryTests.<strong class="jxr_keyword">this</strong>.wasTicketUpdated = <strong class="jxr_keyword">true</strong>;

@@ -211,7 +211,7 @@
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     * @return the mutable configuration</em>
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> MutableConfiguration&lt;String, Map&lt;String, Object&gt;&gt; createCacheConfiguration(<strong class="jxr_keyword">final</strong> Duration expiryDuration) {
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> MutableConfiguration&lt;String, Map&lt;String, Object&gt;&gt; config = <strong class="jxr_keyword">new</strong> MutableConfiguration&lt;String, Map&lt;String, Object&gt;&gt;();
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> MutableConfiguration&lt;String, Map&lt;String, Object&gt;&gt; config = <strong class="jxr_keyword">new</strong> MutableConfiguration&lt;&gt;();
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>         config.setStatisticsEnabled(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         config.setManagementEnabled(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         config.setStoreByValue(<strong class="jxr_keyword">true</strong>);

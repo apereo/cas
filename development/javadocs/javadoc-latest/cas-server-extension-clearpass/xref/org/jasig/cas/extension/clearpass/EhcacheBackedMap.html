@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     @Override
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">public</strong> Collection&lt;String&gt; values() {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; keys = keySet();
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">final</strong> Collection&lt;String&gt; values = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">final</strong> Collection&lt;String&gt; values = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String key : keys) {
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>             <strong class="jxr_keyword">final</strong> String value = get(key);
@@ -132,7 +132,7 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>     @Override
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">public</strong> Set&lt;Entry&lt;String, String&gt;&gt; entrySet() {
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; keys = keySet();
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">final</strong> Set&lt;Entry&lt;String, String&gt;&gt; entries = <strong class="jxr_keyword">new</strong> HashSet&lt;Entry&lt;String, String&gt;&gt;();
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">final</strong> Set&lt;Entry&lt;String, String&gt;&gt; entries = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> 
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String key : keys) {
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>             <strong class="jxr_keyword">final</strong> Element element = <strong class="jxr_keyword">this</strong>.cache.get(key);

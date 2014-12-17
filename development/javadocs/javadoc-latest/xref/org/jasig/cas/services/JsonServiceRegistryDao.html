@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * Map of service ID to registered service.</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">private</strong> Map&lt;Long, RegisteredService&gt; serviceMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;Long, RegisteredService&gt;();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">private</strong> Map&lt;Long, RegisteredService&gt; serviceMap = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     * The Service registry directory.</em>
@@ -171,7 +171,7 @@
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> 
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>     @Override
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">synchronized</strong> List&lt;RegisteredService&gt; load() {
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> Map&lt;Long, RegisteredService&gt; temp = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;Long, RegisteredService&gt;();
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> Map&lt;Long, RegisteredService&gt; temp = <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">int</strong> errorCount = 0;
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> Collection&lt;File&gt; c = FileUtils.listFiles(<strong class="jxr_keyword">this</strong>.serviceRegistryDirectory, <strong class="jxr_keyword">new</strong> String[] {FILE_EXTENSION}, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> File file : c) {

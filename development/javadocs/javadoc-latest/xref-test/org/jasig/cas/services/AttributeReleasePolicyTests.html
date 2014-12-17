@@ -56,14 +56,14 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Test
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyAttributeFilterMappedAttributes() {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> ReturnMappedAttributeReleasePolicy policy = <strong class="jxr_keyword">new</strong> ReturnMappedAttributeReleasePolicy();
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; mappedAttr = <strong class="jxr_keyword">new</strong> HashMap&lt;String, String&gt;();
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; mappedAttr = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          mappedAttr.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"newAttr1"</span>);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          policy.setAllowedAttributes(mappedAttr);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>                  
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">final</strong> Principal p = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          map.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"value1"</span>);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"value2"</span>);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          map.put(<span class="jxr_string">"attr3"</span>, Arrays.asList(<span class="jxr_string">"v3"</span>, <span class="jxr_string">"v4"</span>));
@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          policy.setAllowedAttributes(Arrays.asList(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"attr3"</span>));
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> Principal p = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          map.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"value1"</span>);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"value2"</span>);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          map.put(<span class="jxr_string">"attr3"</span>, Arrays.asList(<span class="jxr_string">"v3"</span>, <span class="jxr_string">"v4"</span>));
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         policy.setAttributeFilter(<strong class="jxr_keyword">new</strong> RegisteredServiceRegexAttributeFilter(<span class="jxr_string">"v3"</span>));
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">final</strong> Principal p = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         map.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"value1"</span>);
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"value2"</span>);
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         map.put(<span class="jxr_string">"attr3"</span>, Arrays.asList(<span class="jxr_string">"v3"</span>, <span class="jxr_string">"v4"</span>));
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">final</strong> ReturnAllAttributeReleasePolicy policy = <strong class="jxr_keyword">new</strong> ReturnAllAttributeReleasePolicy();
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         <strong class="jxr_keyword">final</strong> Principal p = mock(Principal.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> 
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Object&gt;();
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         map.put(<span class="jxr_string">"attr1"</span>, <span class="jxr_string">"value1"</span>);
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         map.put(<span class="jxr_string">"attr2"</span>, <span class="jxr_string">"value2"</span>);
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         map.put(<span class="jxr_string">"attr3"</span>, Arrays.asList(<span class="jxr_string">"v3"</span>, <span class="jxr_string">"v4"</span>));
@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> ReturnAllAttributeReleasePolicy policy = <strong class="jxr_keyword">new</strong> ReturnAllAttributeReleasePolicy();
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;String, List&lt;Object&gt;&gt;();
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         attributes.put(<span class="jxr_string">"values"</span>, Arrays.asList(<strong class="jxr_keyword">new</strong> Object[]{<span class="jxr_string">"v1"</span>, <span class="jxr_string">"v2"</span>, <span class="jxr_string">"v3"</span>}));
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         attributes.put(<span class="jxr_string">"cn"</span>, Arrays.asList(<strong class="jxr_keyword">new</strong> Object[]{<span class="jxr_string">"commonName"</span>}));
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         attributes.put(<span class="jxr_string">"username"</span>, Arrays.asList(<strong class="jxr_keyword">new</strong> Object[]{<span class="jxr_string">"uid"</span>}));

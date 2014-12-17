@@ -77,11 +77,11 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <em class="jxr_javadoccomment">/** The services associated to this ticket. */</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Lob
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Column(name=<span class="jxr_string">"SERVICES_GRANTED_ACCESS_TO"</span>, nullable=false)
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> HashMap&lt;String, Service&gt; services = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Service&gt;();
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> HashMap&lt;String, Service&gt; services = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      @Lob
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Column(name=<span class="jxr_string">"SUPPLEMENTAL_AUTHENTICATIONS"</span>, nullable=false)
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ArrayList&lt;Authentication&gt; supplementalAuthentications = <strong class="jxr_keyword">new</strong> ArrayList&lt;Authentication&gt;();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ArrayList&lt;Authentication&gt; supplementalAuthentications = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * Instantiates a new ticket granting ticket impl.</em>
@@ -231,7 +231,7 @@
 <a class="jxr_linenumber" name="L223" href="#L223">223</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>     @Override
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>     <strong class="jxr_keyword">public</strong> List&lt;Authentication&gt; getChainedAuthentications() {
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;Authentication&gt;();
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L227" href="#L227">227</a> 
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>         list.add(getAuthentication());
 <a class="jxr_linenumber" name="L229" href="#L229">229</a> 

@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> ServicesManager servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.logoutManager = <strong class="jxr_keyword">new</strong> LogoutManagerImpl(servicesManager, client, <strong class="jxr_keyword">new</strong> SamlCompliantLogoutMessageCreator());
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">this</strong>.tgt = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">this</strong>.services = <strong class="jxr_keyword">new</strong> HashMap&lt;String, Service&gt;();
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">this</strong>.services = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">this</strong>.simpleWebApplicationServiceImpl = <strong class="jxr_keyword">new</strong> SimpleWebApplicationServiceImpl(URL);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">this</strong>.services.put(ID, <strong class="jxr_keyword">this</strong>.simpleWebApplicationServiceImpl);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          when(<strong class="jxr_keyword">this</strong>.tgt.getServices()).thenReturn(<strong class="jxr_keyword">this</strong>.services);

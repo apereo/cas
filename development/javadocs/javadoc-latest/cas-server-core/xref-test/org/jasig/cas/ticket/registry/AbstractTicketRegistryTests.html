@@ -195,7 +195,7 @@
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>     @Test
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGetTicketsFromRegistryEqualToTicketsAdded() {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">new</strong> ArrayList&lt;Ticket&gt;();
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L191" href="#L191">191</a> 
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; TICKETS_IN_REGISTRY; i++) {
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"TEST"</span> + i,

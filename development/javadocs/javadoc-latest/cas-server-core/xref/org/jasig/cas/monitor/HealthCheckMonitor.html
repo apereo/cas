@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     **/</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a> observe() {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Status&gt; results = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Status&gt;(<strong class="jxr_keyword">this</strong>.monitors.size());
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Status&gt; results = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(<strong class="jxr_keyword">this</strong>.monitors.size());
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code = StatusCode.UNKNOWN;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> result;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Monitor monitor : <strong class="jxr_keyword">this</strong>.monitors) {

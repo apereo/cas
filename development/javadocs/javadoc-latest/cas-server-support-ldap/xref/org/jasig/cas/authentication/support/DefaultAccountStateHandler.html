@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * the error map with LDAP error codes and corresponding exceptions.</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">static</strong> {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          ERROR_MAP = <strong class="jxr_keyword">new</strong> HashMap&lt;AccountState.Error, LoginException&gt;();
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          ERROR_MAP = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, <strong class="jxr_keyword">new</strong> AccountDisabledException());
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, <strong class="jxr_keyword">new</strong> AccountLockedException());
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, <strong class="jxr_keyword">new</strong> InvalidLoginTimeException());
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              error = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              warning = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          }
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> List&lt;Message&gt; messages = <strong class="jxr_keyword">new</strong> ArrayList&lt;Message&gt;();
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> List&lt;Message&gt; messages = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          handleError(error, response, configuration, messages);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          handleWarning(warning, response, configuration, messages);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">return</strong> messages;

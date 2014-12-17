@@ -134,7 +134,7 @@
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>                     modifyConnection = getConnection();
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>                     <strong class="jxr_keyword">final</strong> ModifyOperation operation = <strong class="jxr_keyword">new</strong> ModifyOperation(searchConnection);
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> 
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>                     <strong class="jxr_keyword">final</strong> List&lt;AttributeModification&gt; mods = <strong class="jxr_keyword">new</strong> ArrayList&lt;AttributeModification&gt;();
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>                     <strong class="jxr_keyword">final</strong> List&lt;AttributeModification&gt; mods = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>                     <strong class="jxr_keyword">final</strong> LdapEntry entry = <strong class="jxr_keyword">this</strong>.ldapServiceMapper.mapFromRegisteredService(<strong class="jxr_keyword">this</strong>.searchRequest.getBaseDn(), rs);
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LdapAttribute attr : entry.getAttributes()) {
@@ -184,7 +184,7 @@
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     @Override
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">public</strong> List&lt;RegisteredService&gt; load() {
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         Connection connection = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> LinkedList&lt;RegisteredService&gt;();
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>             connection = getConnection();
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>             <strong class="jxr_keyword">final</strong> Response&lt;SearchResult&gt; response =
