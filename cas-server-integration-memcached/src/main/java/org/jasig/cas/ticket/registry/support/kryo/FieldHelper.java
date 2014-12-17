@@ -29,7 +29,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 public final class FieldHelper {
-    private final Map<String, Field> fieldCache = new HashMap<String, Field>();
+    private final Map<String, Field> fieldCache = new HashMap<>();
 
     /**
      * Gets the field value.

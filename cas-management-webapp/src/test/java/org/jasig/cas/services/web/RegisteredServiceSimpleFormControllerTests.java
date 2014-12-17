@@ -63,7 +63,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Before
     public void setUp() throws Exception {
-        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("test", Arrays.asList(new Object[] {"test"}));
 
         this.repository = new StubPersonAttributeDao();

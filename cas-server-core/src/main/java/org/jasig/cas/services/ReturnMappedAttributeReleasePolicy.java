@@ -32,7 +32,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
 
     private static final long serialVersionUID = -6249488544306639050L;
     
-    private Map<String, String> allowedAttributes = new TreeMap<String, String>();
+    private Map<String, String> allowedAttributes = new TreeMap<>();
     
     /**
      * Sets the allowed attributes.
@@ -54,7 +54,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
     
     @Override
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(resolvedAttributes.size());
+        final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
         for (final Map.Entry<String, String> entry : this.allowedAttributes.entrySet()) {
             final String key = entry.getKey();

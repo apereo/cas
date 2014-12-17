@@ -111,7 +111,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Lob
     @Column(name = "required_handlers")
-    private HashSet<String> requiredHandlers = new HashSet<String>();
+    private HashSet<String> requiredHandlers = new HashSet<>();
 
     /** The attribute filtering policy. */
     @Lob
@@ -273,7 +273,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredService clone() {
+    public final RegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;
@@ -344,7 +344,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public Set<String> getRequiredHandlers() {
         if (this.requiredHandlers == null) {
-            this.requiredHandlers = new HashSet<String>();
+            this.requiredHandlers = new HashSet<>();
         }
         return this.requiredHandlers;
     }
