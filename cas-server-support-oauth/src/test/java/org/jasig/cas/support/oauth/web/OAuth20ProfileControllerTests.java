@@ -123,7 +123,7 @@ public final class OAuth20ProfileControllerTests {
         final Authentication authentication = mock(Authentication.class);
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn(ID);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
@@ -165,7 +165,7 @@ public final class OAuth20ProfileControllerTests {
         final Authentication authentication = mock(Authentication.class);
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn(ID);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);

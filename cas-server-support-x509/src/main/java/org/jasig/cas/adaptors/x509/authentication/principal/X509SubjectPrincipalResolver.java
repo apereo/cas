@@ -102,7 +102,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         logger.debug("Resolving principal for {}", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
-        final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
+        final Map<String, AttributeContext> attrMap = new HashMap<>();
         String name;
         String[] values;
         AttributeContext context;

@@ -44,8 +44,8 @@ import static org.junit.Assert.*;
 public class RegisteredServiceValidatorTests {
 
     private RegisteredServiceValidator getValidator(final boolean returnValue) {
-        final Map<String, List<Object>> attrs = new HashMap<String, List<Object>>();
-        final List<Object> values = new ArrayList<Object>();
+        final Map<String, List<Object>> attrs = new HashMap<>();
+        final List<Object> values = new ArrayList<>();
         values.add("value");
         
         attrs.put("k1", values);
@@ -147,7 +147,7 @@ public class RegisteredServiceValidatorTests {
             r.setServiceId("test");
             r.setId(1000);
 
-            final ArrayList<RegisteredService> list = new ArrayList<RegisteredService>();
+            final ArrayList<RegisteredService> list = new ArrayList<>();
             list.add(r);
 
             return list;

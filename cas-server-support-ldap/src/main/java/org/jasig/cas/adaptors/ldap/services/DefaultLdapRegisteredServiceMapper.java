@@ -73,7 +73,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
             final String newDn = getDnForRegisteredService(dn, svc);
             LOGGER.debug("Creating entry {}", newDn);
 
-            final Collection<LdapAttribute> attrs = new ArrayList<LdapAttribute>();
+            final Collection<LdapAttribute> attrs = new ArrayList<>();
             attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
 
             final StringWriter writer = new StringWriter();

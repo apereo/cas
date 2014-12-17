@@ -82,7 +82,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
 
 
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
-        final List<CacheStatistics> statsList = new ArrayList<CacheStatistics>();
+        final List<CacheStatistics> statsList = new ArrayList<>();
         for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
             final SocketAddress key = entry.getKey();
             final Map<String, String> statsMap = entry.getValue();
