@@ -21,6 +21,7 @@ package org.jasig.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
@@ -194,10 +195,9 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
         r.setServiceId("testId");
-        r.setEnabled(true);
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
-        r.setSsoEnabled(false);
+        r.setAuthorizationStrategy(new DefaultRegisteredServiceAuthorizationStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
         r.setRequiredHandlers(new HashSet<String>(Arrays.asList("h1", "h2")));
 
@@ -220,7 +220,6 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("testServiceType");
-        r.setEnabled(true);
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
 
@@ -233,7 +232,6 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("hell/o@world:*");
-        r.setEnabled(true);
         r.setEvaluationOrder(1000);
 
         final RegisteredService r2 = this.dao.save(r);
@@ -284,7 +282,6 @@ public class JsonServiceRegistryDaoTests {
             final RegexRegisteredService r = new RegexRegisteredService();
             r.setServiceId("^https://.+");
             r.setName("testServiceType");
-            r.setEnabled(true);
             r.setTheme("testtheme");
             r.setEvaluationOrder(1000);
             r.setId(i * 100);
