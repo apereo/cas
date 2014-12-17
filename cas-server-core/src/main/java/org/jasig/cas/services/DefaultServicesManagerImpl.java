@@ -48,7 +48,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     private final ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
+    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     /**
      * Instantiates a new default services manager impl.
@@ -99,9 +99,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /**
      * {@inheritDoc}
-     * Note, if the repository is empty, this implementation will return a default service to grant all access.
-     * <p>
-     * This preserves default CAS behavior.
      */
     @Override
     public RegisteredService findServiceBy(final Service service) {
@@ -166,7 +163,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      */
     private void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<Long, RegisteredService>();
+                new ConcurrentHashMap<>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
             LOGGER.debug("Adding registered service {}", r.getServiceId());

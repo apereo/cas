@@ -42,7 +42,7 @@ public class DefaultServicesManagerImplTests  {
     @Before
     public void setUp() throws Exception {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
 
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(2500);
@@ -199,7 +199,7 @@ public class DefaultServicesManagerImplTests  {
         this.defaultServicesManagerImpl.save(r3);
         this.defaultServicesManagerImpl.save(r2);
 
-        final List<RegisteredService> allServices = new ArrayList<RegisteredService>(
+        final List<RegisteredService> allServices = new ArrayList<>(
                 this.defaultServicesManagerImpl.getAllServices());
 
         //We expect the 3 newly added services, plus the one added in setUp()

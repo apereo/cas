@@ -72,7 +72,7 @@ public class LogoutManagerImplTests {
         final ServicesManager servicesManager = mock(ServicesManager.class);
         this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
         this.tgt = mock(TicketGrantingTicket.class);
-        this.services = new HashMap<String, Service>();
+        this.services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);

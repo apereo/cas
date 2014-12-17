@@ -128,7 +128,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         ticket.markTicketExpired();
 
-        final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
+        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
             // through all services

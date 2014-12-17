@@ -167,7 +167,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
             .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
             .getResultList();
 
-        final List<Ticket> tickets = new ArrayList<Ticket>();
+        final List<Ticket> tickets = new ArrayList<>();
         tickets.addAll(tgts);
         tickets.addAll(sts);
 
