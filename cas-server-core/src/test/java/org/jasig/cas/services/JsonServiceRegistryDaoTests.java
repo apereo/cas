@@ -295,4 +295,25 @@ public class JsonServiceRegistryDaoTests {
 
     }
 
+    @Test
+    public void checkForAuthorizationStrategy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("checkForAuthorizationStrategy");
+        r.setId(42);
+
+        final DefaultRegisteredServiceAuthorizationStrategy authz =
+                new DefaultRegisteredServiceAuthorizationStrategy(false, false);
+        authz.setRequireAllAttributes(true);
+
+        final Map<String, List<String>> attrs = new HashMap<>();
+        attrs.put("cn", new ArrayList<String>(Arrays.asList("v1, v2, v3")));
+        attrs.put("memberOf", new ArrayList<String>(Arrays.asList("v4, v5, v6")));
+        authz.setRequiredAttributes(attrs);
+        r.setAuthorizationStrategy(authz);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertEquals(list.size(), 1);
+    }
 }
