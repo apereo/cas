@@ -133,7 +133,7 @@ public class JpaTicketRegistryTests {
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
             for (int i = 0; i < CONCURRENT_SIZE; i++) {
-                generators.add(new ServiceTicketGenerator(newTgt.getId()));
+                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.jpaTicketRegistry, this.txManager));
             }
             final List<Future<String>> results = executor.invokeAll(generators);
             for (Future<String> result : results) {
@@ -201,12 +201,16 @@ public class JpaTicketRegistryTests {
         });
     }
 
-    class ServiceTicketGenerator implements Callable<String> {
-
+    private static class ServiceTicketGenerator implements Callable<String> {
+        private PlatformTransactionManager txManager;
         private final String parentTgtId;
+        private final JpaTicketRegistry jpaTicketRegistry;
 
-        public ServiceTicketGenerator(final String tgtId) {
+        public ServiceTicketGenerator(final String tgtId, final JpaTicketRegistry jpaTicketRegistry,
+                                      final PlatformTransactionManager txManager) {
             parentTgtId = tgtId;
+            this.jpaTicketRegistry = jpaTicketRegistry;
+            this.txManager = txManager;
         }
 
         /**
