@@ -88,6 +88,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     /**
+     * @deprecated
      * Creates a Kryo-based transcoder.
      *
      * @param initialBufferSize Initial size for buffer holding encoded object data.
@@ -166,7 +167,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     @Override
-    public CachedData encode(final @NotNull Object obj) {
+    public CachedData encode(@NotNull final Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (final Output output = new Output(byteStream)) {
             kryo.writeClassAndObject(output, obj);

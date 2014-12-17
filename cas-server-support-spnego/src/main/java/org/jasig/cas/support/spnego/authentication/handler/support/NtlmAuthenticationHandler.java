@@ -32,7 +32,6 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import javax.security.auth.login.FailedLoginException;
@@ -110,7 +109,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     logger.debug("Trying to authenticate {} with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
-                        ntlmCredential.setPrincipal(new SimplePrincipal(type3.getUser()));
+                        ntlmCredential.setPrincipal(this.principalFactory.createPrincipal(type3.getUser()));
                         success = true;
                     } catch (final SmbAuthException sae) {
                         throw new FailedLoginException(sae.getMessage());
