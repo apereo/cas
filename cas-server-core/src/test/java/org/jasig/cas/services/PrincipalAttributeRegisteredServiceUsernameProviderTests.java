@@ -39,7 +39,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
-        final Map<String, Object> attrs = new HashMap<String, Object>();
+        final Map<String, Object> attrs = new HashMap<>();
         attrs.put("userid", "u1");
         attrs.put("cn", "TheName");
         
@@ -57,7 +57,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
-        final Map<String, Object> attrs = new HashMap<String, Object>();
+        final Map<String, Object> attrs = new HashMap<>();
         attrs.put("userid", "u1");
                 
         final Principal p = mock(Principal.class);

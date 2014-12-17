@@ -203,7 +203,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @return the mutable configuration
      */
     protected static MutableConfiguration<String, Map<String, Object>> createCacheConfiguration(final Duration expiryDuration) {
-        final MutableConfiguration<String, Map<String, Object>> config = new MutableConfiguration<String, Map<String, Object>>();
+        final MutableConfiguration<String, Map<String, Object>> config = new MutableConfiguration<>();
         config.setStatisticsEnabled(true);
         config.setManagementEnabled(true);
         config.setStoreByValue(true);

@@ -192,7 +192,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         }
     }
     @Entity(name="users")
-    public class UsersTable {
+    public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;

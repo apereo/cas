@@ -62,7 +62,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * the error map with LDAP error codes and corresponding exceptions.
      */
     static {
-        ERROR_MAP = new HashMap<AccountState.Error, LoginException>();
+        ERROR_MAP = new HashMap<>();
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
@@ -94,7 +94,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             error = null;
             warning = null;
         }
-        final List<Message> messages = new ArrayList<Message>();
+        final List<Message> messages = new ArrayList<>();
         handleError(error, response, configuration, messages);
         handleWarning(warning, response, configuration, messages);
         return messages;

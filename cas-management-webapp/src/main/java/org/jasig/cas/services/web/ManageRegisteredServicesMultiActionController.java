@@ -93,9 +93,9 @@ public final class ManageRegisteredServicesMultiActionController {
      */
     @RequestMapping("manage.html")
     public ModelAndView manage() {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
-        final List<RegisteredService> services = new ArrayList<RegisteredService>(this.servicesManager.getAllServices());
+        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
 
         model.put("services", services);
         model.put("pageTitle", VIEW_NAME);

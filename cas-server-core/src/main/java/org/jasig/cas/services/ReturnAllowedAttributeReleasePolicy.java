@@ -55,7 +55,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
     
     @Override
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(resolvedAttributes.size());
+        final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
         for (final String attribute : this.allowedAttributes) {
             final Object value = resolvedAttributes.get(attribute);

@@ -60,7 +60,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
 
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 

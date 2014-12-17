@@ -41,7 +41,7 @@ public class TicketRegistryDecoratorTests {
     public void verifyDefaultTicketRegistryWithClearPass() {
 
         final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
         assertNotNull(decorator);
         assertEquals(decorator.serviceTicketCount(), 0);
@@ -57,7 +57,7 @@ public class TicketRegistryDecoratorTests {
         manager.addCache(serviceTicketsCache);
         manager.addCache(ticketGrantingTicketCache);
 
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
 
         final TicketRegistry ticketRegistry = new EhCacheTicketRegistry(serviceTicketsCache, ticketGrantingTicketCache);
         final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
