@@ -56,7 +56,7 @@ public class ServiceThemeResolverTests {
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
         this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        final Map<String, String> mobileBrowsers = new HashMap<String, String>();
+        final Map<String, String> mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
         this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
     }

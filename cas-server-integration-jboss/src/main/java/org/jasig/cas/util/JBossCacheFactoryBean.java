@@ -64,7 +64,7 @@ public final class JBossCacheFactoryBean implements FactoryBean, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<String, Ticket>();
+        final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<>();
         this.cache = cf.createCache(this.configLocation.getInputStream());
     }
 

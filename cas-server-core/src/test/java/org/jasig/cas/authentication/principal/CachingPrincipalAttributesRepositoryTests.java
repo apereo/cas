@@ -54,7 +54,7 @@ public class CachingPrincipalAttributesRepositoryTests {
 
     @Before
     public void setup() {
-        attributes = new HashMap<String, List<Object>>();
+        attributes = new HashMap<>();
         attributes.put("a1", new ArrayList(Arrays.asList(new Object[]{"v1", "v2", "v3"})));
         attributes.put("mail", new ArrayList(Arrays.asList(new Object[]{"final@example.com"})));
         attributes.put("a6", new ArrayList(Arrays.asList(new Object[]{"v16", "v26", "v63"})));

@@ -120,7 +120,7 @@ public final class DistributedTicketRegistryTests {
 
     private static class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
         private final DistributedTicketRegistryTests parent;
-        private final Map<String, Ticket> tickets = new HashMap<String, Ticket>();
+        private final Map<String, Ticket> tickets = new HashMap<>();
 
         public TestDistributedTicketRegistry(final DistributedTicketRegistryTests parent) {
             this.parent = parent;

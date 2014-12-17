@@ -73,7 +73,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         }
         logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
 
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("callbackUrl", callbackUrl);
 
         final Boolean bypassApprovalPrompt = (Boolean) session.getAttribute(OAuthConstants.BYPASS_APPROVAL_PROMPT);
