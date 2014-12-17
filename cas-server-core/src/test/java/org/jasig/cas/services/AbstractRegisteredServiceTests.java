@@ -26,7 +26,6 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
