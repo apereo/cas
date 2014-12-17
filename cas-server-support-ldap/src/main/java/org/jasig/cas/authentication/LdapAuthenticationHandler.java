@@ -242,7 +242,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         } else {
             id = username;
         }
-        final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
+        final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
         for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
             final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
@@ -266,7 +266,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         /**
          * Use a set to ensure we ignore duplicates.
          */
-        final Set<String> attributes = new HashSet<String>();
+        final Set<String> attributes = new HashSet<>();
 
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);

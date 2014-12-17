@@ -80,7 +80,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
-            new ArrayList<AuthenticationMetaDataPopulator>();
+            new ArrayList<>();
 
     /** Authentication security policy. */
     @NotNull
@@ -111,7 +111,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     public PolicyBasedAuthenticationManager(final List<AuthenticationHandler> handlers) {
         Assert.notEmpty(handlers, "At least one authentication handler is required");
-        this.handlerResolverMap = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>(
+        this.handlerResolverMap = new LinkedHashMap<>(
                 handlers.size());
         for (final AuthenticationHandler handler : handlers) {
             this.handlerResolverMap.put(handler, null);

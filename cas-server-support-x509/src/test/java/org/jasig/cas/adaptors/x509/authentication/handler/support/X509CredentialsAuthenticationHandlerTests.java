@@ -91,7 +91,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         X509CredentialsAuthenticationHandler handler;
         X509CertificateCredential credential;

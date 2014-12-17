@@ -154,7 +154,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -175,7 +175,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, WRONG_CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -196,7 +196,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
@@ -220,7 +220,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
@@ -246,7 +246,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
         when(servicesManager.getAllServices()).thenReturn(services);
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);

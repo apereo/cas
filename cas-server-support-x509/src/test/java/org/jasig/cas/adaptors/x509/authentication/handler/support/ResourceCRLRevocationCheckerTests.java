@@ -75,7 +75,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();
         zeroThresholdPolicy.setThreshold(0);

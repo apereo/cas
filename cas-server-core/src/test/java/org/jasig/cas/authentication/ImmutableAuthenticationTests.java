@@ -46,14 +46,14 @@ public class ImmutableAuthenticationTests {
         final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
+        final List<CredentialMetaData> credentials = new ArrayList<>();
         credentials.add(credential1);
         credentials.add(credential2);
-        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put("authenticationMethod", "password");
-        final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
+        final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new HandlerResult(authenticationHandler, credential1));
-        final Map<String, Class<? extends Exception>> failures = new HashMap<String, Class<? extends Exception>>();
+        final Map<String, Class<? extends Exception>> failures = new HashMap<>();
         failures.put("handler2", FailedLoginException.class);
         final ImmutableAuthentication auth = new ImmutableAuthentication(
                 new DateTime(),

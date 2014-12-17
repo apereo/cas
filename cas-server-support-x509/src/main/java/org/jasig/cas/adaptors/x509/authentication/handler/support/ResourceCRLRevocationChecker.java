@@ -170,7 +170,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             if (crls == null) {
                 throw new IllegalArgumentException("CRL resources cannot be null.");
             }
-            this.resources = new ArrayList<Resource>();
+            this.resources = new ArrayList<>();
             for (Resource r : crls) {
                 if (r != null) {
                     this.resources.add(r);

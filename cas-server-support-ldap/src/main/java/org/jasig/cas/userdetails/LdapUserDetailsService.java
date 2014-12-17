@@ -180,7 +180,7 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
         LdapAttribute roleAttribute;
-        final Collection<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>(roleResult.size());
+        final Collection<SimpleGrantedAuthority> roles = new ArrayList<>(roleResult.size());
         for (final LdapEntry entry : roleResult.getEntries()) {
             roleAttribute = entry.getAttribute(this.roleAttributeName);
             if (roleAttribute == null) {

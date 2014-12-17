@@ -187,7 +187,7 @@ public abstract class AbstractTicketRegistryTests {
 
     @Test
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
-        final Collection<Ticket> tickets = new ArrayList<Ticket>();
+        final Collection<Ticket> tickets = new ArrayList<>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
