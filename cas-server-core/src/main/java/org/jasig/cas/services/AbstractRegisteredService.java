@@ -276,7 +276,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredService clone() {
+    public final RegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;

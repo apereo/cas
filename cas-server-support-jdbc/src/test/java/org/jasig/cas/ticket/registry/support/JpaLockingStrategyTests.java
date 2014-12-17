@@ -213,7 +213,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         return (LockingStrategy) Proxy.newProxyInstance(
                JpaLockingStrategy.class.getClassLoader(),
                new Class[] {LockingStrategy.class},
-               new TransactionalLockInvocationHandler(lock));
+               new TransactionalLockInvocationHandler(lock, this.txManager));
     }
 
     private String getOwner(final String appId) {
@@ -252,11 +252,15 @@ public class JpaLockingStrategyTests implements InitializingBean {
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
     }
 
-    class TransactionalLockInvocationHandler implements InvocationHandler {
+    private static class TransactionalLockInvocationHandler implements InvocationHandler {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final JpaLockingStrategy jpaLock;
+        private final PlatformTransactionManager txManager;
 
-        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
+        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
+                                      final PlatformTransactionManager txManager) {
             jpaLock = lock;
+            this.txManager = txManager;
         }
 
         public JpaLockingStrategy getLock() {
@@ -285,8 +289,8 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     }
 
-    class Locker implements Callable<Boolean> {
-
+    private static class Locker implements Callable<Boolean> {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
         public Locker(final LockingStrategy l) {
@@ -307,9 +311,8 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
     }
 
-
-    class Releaser implements Callable<Boolean> {
-
+    private static class Releaser implements Callable<Boolean> {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
         public Releaser(final LockingStrategy l) {
