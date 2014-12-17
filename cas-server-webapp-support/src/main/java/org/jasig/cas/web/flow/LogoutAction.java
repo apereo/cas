@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
@@ -74,9 +75,10 @@ public final class LogoutAction extends AbstractLogoutAction {
 
         final String service = request.getParameter("service");
         if (this.followServiceRedirects && service != null) {
-            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+            final Service webAppService = new SimpleWebApplicationServiceImpl(service);
+            final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
-            if (rService != null && rService.isEnabled()) {
+            if (rService != null && rService.getAuthorizationStrategy().isServiceAuthorized(webAppService)) {
                 context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }

@@ -151,11 +151,14 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Service supports back channel single logout?
      * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
-     * @param registeredService the service
+     * @param registeredService the registered service
+     * @param service the service itself
      * @return true, if support is available.
      */
-    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null && registeredService.getLogoutType() != LogoutType.NONE;
+    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService, final Service service) {
+        return registeredService != null
+                && registeredService.getAuthorizationStrategy().isServiceAuthorized(service)
+                && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
     /**
@@ -167,33 +170,29 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
-            try {
-                final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
-                if (serviceSupportsSingleLogout(registeredService)) {
-                    registeredService.getAuthorizationStrategy().assertServiceQualification(singleLogoutService);
 
-                    final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
-                    final LogoutType type = registeredService.getLogoutType() == null
-                            ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
+            if (serviceSupportsSingleLogout(registeredService, singleLogoutService)) {
+                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
+                final LogoutType type = registeredService.getLogoutType() == null
+                        ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 
-                    switch (type) {
-                        case BACK_CHANNEL:
-                            if (performBackChannelLogout(logoutRequest)) {
-                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                            } else {
-                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...", singleLogoutService.getId());
-                            }
-                            break;
-                        default:
-                            logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
-                            break;
-                    }
-                    return logoutRequest;
+                switch (type) {
+                    case BACK_CHANNEL:
+                        if (performBackChannelLogout(logoutRequest)) {
+                            logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                        } else {
+                            logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                            LOGGER.warn("Logout message not sent to [{}]; Continuing processing...", singleLogoutService.getId());
+                        }
+                        break;
+                    default:
+                        logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
+                        break;
                 }
-            } catch (final UnauthorizedServiceException e) {
-                LOGGER.trace("Service [{}] not able to handle logout request because it's not enabled", singleLogoutService.getId());
+                return logoutRequest;
             }
+
         }
         return null;
     }
