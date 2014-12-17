@@ -21,7 +21,6 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -256,7 +255,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
             }
         }
-        return new SimplePrincipal(id, attributeMap);
+        return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
     /**
