@@ -21,7 +21,6 @@ package org.jasig.cas.adaptors.jdbc;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 
@@ -76,8 +75,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         if (count == 0) {
             throw new FailedLoginException(username + " not found with SQL query.");
         }
-
-        return createHandlerResult(credential, new SimplePrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     @Override

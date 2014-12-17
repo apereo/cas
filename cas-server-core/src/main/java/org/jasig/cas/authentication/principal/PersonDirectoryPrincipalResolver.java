@@ -52,6 +52,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
     /** Optional principal attribute name. */
     private String principalAttributeName;
 
@@ -83,7 +87,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
 
         if (attributes == null & !this.returnNullIfNoAttributes) {
-            return new SimplePrincipal(principalId);
+            return this.principalFactory.createPrincipal(principalId);
         }
 
         if (attributes == null) {
@@ -108,7 +112,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         }
-        return new SimplePrincipal(principalId, convertedAttributes);
+        return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
@@ -126,6 +130,15 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**

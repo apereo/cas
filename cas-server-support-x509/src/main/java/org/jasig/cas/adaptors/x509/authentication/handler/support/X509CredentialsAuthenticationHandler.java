@@ -30,7 +30,6 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +149,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new HandlerResult(this, x509Credential, new SimplePrincipal(x509Credential.getId()));
+            return new HandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         throw new FailedLoginException();
     }
