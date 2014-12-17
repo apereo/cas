@@ -126,7 +126,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
                     modifyConnection = getConnection();
                     final ModifyOperation operation = new ModifyOperation(searchConnection);
 
-                    final List<AttributeModification> mods = new ArrayList<AttributeModification>();
+                    final List<AttributeModification> mods = new ArrayList<>();
 
                     final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
                     for (final LdapAttribute attr : entry.getAttributes()) {
@@ -176,7 +176,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         Connection connection = null;
-        final List<RegisteredService> list = new LinkedList<RegisteredService>();
+        final List<RegisteredService> list = new LinkedList<>();
         try {
             connection = getConnection();
             final Response<SearchResult> response =

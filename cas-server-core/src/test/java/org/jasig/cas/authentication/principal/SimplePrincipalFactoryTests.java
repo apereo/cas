@@ -34,7 +34,7 @@ public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {
         final PrincipalFactory fact = new DefaultPrincipalFactory();
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("a1", "v1");
         map.put("a2", "v3");
 

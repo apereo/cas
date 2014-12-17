@@ -65,7 +65,7 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
      */
     @ManagedAttribute(description = "Retrieves the list of Registered Services in a slightly friendlier output.")
     public final List<String> getRegisteredServicesAsStrings() {
-        final List<String> services = new ArrayList<String>();
+        final List<String> services = new ArrayList<>();
 
         for (final RegisteredService r : this.servicesManager.getAllServices()) {
         services.add(new StringBuilder().append("id: ").append(r.getId())

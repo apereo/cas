@@ -45,11 +45,11 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @author Scott Battaglia
@@ -136,7 +136,7 @@ public final class TestUtils {
         s.setDescription("Registered service description");
         s.setEnabled(true);
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(new Random().nextInt(32));
+        s.setId(new SecureRandom().nextInt(32));
         return s;
     }
 
@@ -182,7 +182,7 @@ public final class TestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
         final String[] extraPrincipals) {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {
