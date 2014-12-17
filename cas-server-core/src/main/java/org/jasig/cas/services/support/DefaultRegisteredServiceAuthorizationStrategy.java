@@ -19,6 +19,8 @@
 
 package org.jasig.cas.services.support;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
@@ -50,6 +52,8 @@ import java.util.TreeMap;
  * @since 4.1
  */
 public class DefaultRegisteredServiceAuthorizationStrategy implements RegisteredServiceAuthorizationStrategy {
+
+    private static final long serialVersionUID = 1245279151345635245L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -217,4 +221,33 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     }
 
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DefaultRegisteredServiceAuthorizationStrategy rhs = (DefaultRegisteredServiceAuthorizationStrategy) obj;
+        return new EqualsBuilder()
+                .append(this.enabled, rhs.enabled)
+                .append(this.ssoEnabled, rhs.ssoEnabled)
+                .append(this.requireAllAttributes, rhs.requireAllAttributes)
+                .append(this.requiredAttributes, rhs.requiredAttributes)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(this.enabled)
+                .append(this.ssoEnabled)
+                .append(this.requireAllAttributes)
+                .append(this.requiredAttributes)
+                .toHashCode();
+    }
 }

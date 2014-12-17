@@ -22,6 +22,8 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
+import java.io.Serializable;
+
 /**
  * This is {@link org.jasig.cas.services.RegisteredServiceAuthorizationStrategy}
  * that can decide if a service is recognized and authorized to participate
@@ -30,7 +32,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public interface RegisteredServiceAuthorizationStrategy {
+public interface RegisteredServiceAuthorizationStrategy extends Serializable {
 
     /**
      * Verify is the service is enabled and recognized by CAS.
