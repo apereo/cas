@@ -31,6 +31,7 @@ import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.HttpClient;
@@ -154,8 +155,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return true, if support is available.
      */
     private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null && registeredService.isEnabled()
-                                         && registeredService.getLogoutType() != LogoutType.NONE;
+        return registeredService != null && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
     /**
@@ -167,27 +167,32 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
-            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
+            try {
+                final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
+                if (serviceSupportsSingleLogout(registeredService)) {
+                    registeredService.getAuthorizationStrategy().assertServiceQualification(singleLogoutService);
 
-            if (serviceSupportsSingleLogout(registeredService)) {
-                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
-                final LogoutType type = registeredService.getLogoutType() == null
-                        ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+                    final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
+                    final LogoutType type = registeredService.getLogoutType() == null
+                            ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 
-                switch (type) {
-                    case BACK_CHANNEL:
-                        if (performBackChannelLogout(logoutRequest)) {
-                            logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                        } else {
-                            logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                            LOGGER.warn("Logout message not sent to [{}]; Continuing processing...", singleLogoutService.getId());
-                        }
-                        break;
-                    default:
-                        logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
-                        break;
+                    switch (type) {
+                        case BACK_CHANNEL:
+                            if (performBackChannelLogout(logoutRequest)) {
+                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                            } else {
+                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...", singleLogoutService.getId());
+                            }
+                            break;
+                        default:
+                            logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
+                            break;
+                    }
+                    return logoutRequest;
                 }
-                return logoutRequest;
+            } catch (final UnauthorizedServiceException e) {
+                LOGGER.trace("Service [{}] not able to handle logout request because it's not enabled", singleLogoutService.getId());
             }
         }
         return null;
