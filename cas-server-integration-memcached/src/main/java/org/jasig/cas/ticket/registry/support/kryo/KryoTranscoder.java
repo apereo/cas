@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 
@@ -47,6 +49,7 @@ import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -88,6 +92,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      *
      * @param initialBufferSize Initial size for buffer holding encoded object data.
      */
+    @Deprecated
     public KryoTranscoder(final int initialBufferSize) {
         logger.warn("It's no longer necessary to define the initialBufferSize. Use the empty constructor.");
     }
@@ -125,8 +130,13 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
         kryo.register(URL.class, new URLSerializer());
+
+        // we add these ones for tests only
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
+
+        // new serializers to manage Joda dates and immutable collections
+        kryo.register(DateTime.class, new JodaDateTimeSerializer());
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
 
@@ -156,7 +166,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     @Override
-    public CachedData encode(final Object obj) {
+    public CachedData encode(final @NotNull Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (final Output output = new Output(byteStream)) {
             kryo.writeClassAndObject(output, obj);
