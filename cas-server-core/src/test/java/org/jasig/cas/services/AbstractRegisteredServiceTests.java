@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
@@ -77,11 +79,13 @@ public class AbstractRegisteredServiceTests {
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.isEnabled());
+        assertEquals(ENABLED, this.r.getAuthorizationStrategy()
+                .isServiceAuthorized(TestUtils.getService()));
         assertEquals(ID, this.r.getId());
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
+        assertEquals(SSO_ENABLED, this.r.getAuthorizationStrategy()
+                .isServiceAuthorizedForSso(TestUtils.getService()));
         assertEquals(THEME, this.r.getTheme());
 
         assertFalse(this.r.equals(null));
@@ -99,14 +103,13 @@ public class AbstractRegisteredServiceTests {
     private void prepareService() {
         this.r.setUsernameAttributeProvider(
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
-                new ShibbolethCompatiblePersistentIdGenerator("casrox")));
+                        new ShibbolethCompatiblePersistentIdGenerator("casrox")));
         this.r.setDescription(DESCRIPTION);
-        this.r.setEnabled(ENABLED);
         this.r.setId(ID);
         this.r.setName(NAME);
         this.r.setServiceId(SERVICEID);
-        this.r.setSsoEnabled(SSO_ENABLED);
         this.r.setTheme(THEME);
+        this.r.setAuthorizationStrategy(new DefaultRegisteredServiceAuthorizationStrategy(ENABLED, SSO_ENABLED));
     }
     
     @Test

@@ -77,11 +77,21 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * and can participate in SSO.
      */
     public DefaultRegisteredServiceAuthorizationStrategy() {
-        this.enabled = true;
-        this.ssoEnabled = true;
+        this(true, true);
     }
 
-    public void setEnabled(final boolean enabled) {
+    /**
+     * Instantiates a new Default registered service authorization strategy.
+     *
+     * @param enabled the enabled
+     * @param ssoEnabled the sso enabled
+     */
+    public DefaultRegisteredServiceAuthorizationStrategy(final boolean enabled, final boolean ssoEnabled) {
+        this.enabled = enabled;
+        this.ssoEnabled = ssoEnabled;
+    }
+
+    public final void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -89,7 +99,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * Set to enable/authorize this service.
      * @param ssoEnabled true to enable service
      */
-    public void setSsoEnabled(final boolean ssoEnabled) {
+    public final void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
 
@@ -101,18 +111,17 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         return this.ssoEnabled;
     }
 
-
-    public Map<String, List<String>> getRequiredAttributes() {
-        return requiredAttributes;
-    }
-
     /**
      * Defines the attribute aggregation when checking for required attributes.
      * Default requires that all attributes be present and match the principal's.
      * @param requireAllAttributes the require all attributes
      */
-    public void setRequireAllAttributes(final boolean requireAllAttributes) {
+    public final void setRequireAllAttributes(final boolean requireAllAttributes) {
         this.requireAllAttributes = requireAllAttributes;
+    }
+
+    public Map<String, List<String>> getRequiredAttributes() {
+        return requiredAttributes;
     }
 
     /**
@@ -123,7 +132,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      *
      * @param requiredAttributes the required attributes
      */
-    public void setRequiredAttributes(final Map<String, List<String>> requiredAttributes) {
+    public final void setRequiredAttributes(final Map<String, List<String>> requiredAttributes) {
         this.requiredAttributes = requiredAttributes;
     }
 
