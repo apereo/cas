@@ -90,7 +90,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyGetChainedPrincipalsWithOne() {
         final Authentication authentication = TestUtils.getAuthentication();
-        final List<Authentication> principals = new ArrayList<Authentication>();
+        final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
 
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
@@ -102,7 +102,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyCheckCreationTime() {
         final Authentication authentication = TestUtils.getAuthentication();
-        final List<Authentication> principals = new ArrayList<Authentication>();
+        final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
 
         final long startTime = System.currentTimeMillis();
@@ -116,7 +116,7 @@ public class TicketGrantingTicketImplTests {
     public void verifyGetChainedPrincipalsWithTwo() {
         final Authentication authentication = TestUtils.getAuthentication();
         final Authentication authentication1 = TestUtils.getAuthentication("test1");
-        final List<Authentication> principals = new ArrayList<Authentication>();
+        final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
         principals.add(authentication1);
 

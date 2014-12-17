@@ -152,7 +152,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     @Override
     public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
         final String samlResponse = constructSamlResponse();
         final String signedResponse = BUILDER.signSamlResponse(samlResponse,
                 this.privateKey, this.publicKey);

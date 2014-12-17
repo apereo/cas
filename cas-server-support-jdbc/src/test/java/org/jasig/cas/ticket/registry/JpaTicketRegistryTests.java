@@ -131,7 +131,7 @@ public class JpaTicketRegistryTests {
         addTicketInTransaction(newTgt);
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            final List<ServiceTicketGenerator> generators = new ArrayList<ServiceTicketGenerator>(CONCURRENT_SIZE);
+            final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
             for (int i = 0; i < CONCURRENT_SIZE; i++) {
                 generators.add(new ServiceTicketGenerator(newTgt.getId(), this.jpaTicketRegistry, this.txManager));
             }

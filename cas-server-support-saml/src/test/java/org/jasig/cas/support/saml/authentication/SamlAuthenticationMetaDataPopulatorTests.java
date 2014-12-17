@@ -78,7 +78,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFoundCustom() {
         final CustomCredential credentials = new CustomCredential();
 
-        final Map<String, String> added = new HashMap<String, String>();
+        final Map<String, String> added = new HashMap<>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
