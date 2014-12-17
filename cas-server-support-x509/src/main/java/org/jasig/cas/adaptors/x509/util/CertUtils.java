@@ -26,8 +26,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 
 /**
@@ -38,12 +36,13 @@ import org.springframework.core.io.Resource;
  *
  */
 public final class CertUtils {
+
     /** X509 certificate type. */
     public static final String X509_CERTIFICATE_TYPE = "X509";
 
     /** Suppressed constructor of utility class. */
-    private CertUtils() { /*No initialization required*/ }
-
+    private CertUtils() {
+    }
 
     /**
      * Determines whether the given CRL is expired by examining the nextUpdate field.
@@ -80,12 +79,8 @@ public final class CertUtils {
      * @throws CRLException On CRL parse errors.
      */
     public static X509CRL fetchCRL(final Resource resource) throws CRLException, IOException {
-        // Always attempt to open a new stream on the URL underlying the resource
-        final InputStream in = resource.getURL().openStream();
-        try {
+        try (final InputStream in = resource.getURL().openStream()) {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 

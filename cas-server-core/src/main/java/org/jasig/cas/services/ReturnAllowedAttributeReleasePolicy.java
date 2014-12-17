@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-
 /**
  * Return only the collection of allowed attributes out of what's resolved
  * for the principal.
@@ -56,10 +54,9 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
     }
     
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal p) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(p.getAttributes().size());
-        final Map<String, Object> resolvedAttributes = p.getAttributes();
-        
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
+        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(resolvedAttributes.size());
+
         for (final String attribute : this.allowedAttributes) {
             final Object value = resolvedAttributes.get(attribute);
 

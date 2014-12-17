@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.oauth;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -27,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,7 +47,8 @@ public final class OAuthUtils {
     /**
      * Instantiates a new OAuth utils.
      */
-    private OAuthUtils() {}
+    private OAuthUtils() {
+    }
 
     /**
      * Write to the output this error text and return a null view.
@@ -72,15 +71,11 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        PrintWriter printWriter = null;
-        try {
-            printWriter = response.getWriter();
+        try (PrintWriter printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
             LOGGER.error("Failed to write to response", e);
-        } finally {
-            IOUtils.closeQuietly(printWriter);
         }
         return null;
     }
@@ -144,13 +139,12 @@ public final class OAuthUtils {
      * @param clientId the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
-    public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager,
-                                                                   final String clientId) {
+    public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
         final Iterator<RegisteredService> it = servicesManager.getAllServices().iterator();
         while (it.hasNext()) {
             final RegisteredService aService = it.next();
             if (aService instanceof OAuthRegisteredService) {
-                final OAuthRegisteredService service  = (OAuthRegisteredService) aService;
+                final OAuthRegisteredService service = (OAuthRegisteredService) aService;
                 if (service.getClientId().equals(clientId)) {
                     return service;
                 }

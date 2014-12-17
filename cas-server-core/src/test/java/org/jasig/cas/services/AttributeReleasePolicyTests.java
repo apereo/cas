@@ -19,17 +19,25 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Attribute filtering policy tests.
@@ -120,20 +128,46 @@ public class AttributeReleasePolicyTests {
     public void verifyServiceAttributeFilterAllAttributes() {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = policy.getAttributes(p);
         assertEquals(attr.size(), map.size());
-        
+
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnAllAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
         assertNotNull(p2);
+    }
+
+    @Test
+    public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+
+        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
+        attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
+        attributes.put("username", Arrays.asList(new Object[]{"uid"}));
+
+        final IPersonAttributeDao dao = new StubPersonAttributeDao(attributes);
+        final IPersonAttributes person = mock(IPersonAttributes.class);
+        when(person.getName()).thenReturn("uid");
+        when(person.getAttributes()).thenReturn(attributes);
+
+        final PrincipalAttributesRepository repository =
+                new CachingPrincipalAttributesRepository(dao, TimeUnit.MILLISECONDS, 100);
+
+        final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
+                    Collections.<String, Object>singletonMap("mail", "final@example.com"));
+
+        policy.setPrincipalAttributesRepository(repository);
+
+        final Map<String, Object> attr = policy.getAttributes(p);
+        assertEquals(attr.size(), attributes.size());
     }
 }

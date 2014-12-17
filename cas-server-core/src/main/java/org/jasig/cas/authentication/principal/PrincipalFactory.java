@@ -16,21 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
+package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Return all attributes for the service, regardless of service settings.
+ * Defines operations to create principals.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
+public interface PrincipalFactory extends Serializable {
+    /**
+     * Create principal.
+     *
+     * @param id the id
+     * @return the principal
+     */
+    Principal createPrincipal(String id);
 
-    private static final long serialVersionUID = 5519257723778012771L;
+    /**
+     * Create principal along with its attributes.
+     *
+     * @param id the id
+     * @param attributes the attributes
+     * @return the principal
+     */
+    Principal createPrincipal(String id, Map<String, Object> attributes);
 
-    @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        return resolvedAttributes;
-    }
 }
