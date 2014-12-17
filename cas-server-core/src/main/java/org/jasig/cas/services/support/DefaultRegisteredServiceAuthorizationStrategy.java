@@ -54,10 +54,10 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
-    private boolean enabled;
+    private boolean enabled = true;
 
     /** Is the service allowed to use SSO? **/
-    private boolean ssoEnabled;
+    private boolean ssoEnabled = true;
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
