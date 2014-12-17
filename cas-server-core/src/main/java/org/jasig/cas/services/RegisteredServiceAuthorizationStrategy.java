@@ -54,6 +54,7 @@ public interface RegisteredServiceAuthorizationStrategy {
      *
      * @param principal the principal
      * @param service the service that requests authentication or has asked for tickets.
+     * @return true/false if service access can be granted to principal
      */
     boolean isServiceAccessAuthorizedForPrincipal(Principal principal, Service service);
 }
