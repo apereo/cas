@@ -20,7 +20,9 @@ package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +43,21 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
 
     /** The attribute filter. */
     private AttributeFilter attributeFilter;
-    
+
+    /** Attribute repository that refreshes attributes for a principal. **/
+    private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
+    }
+
+    public final void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
+        this.principalAttributesRepository = repository;
+    }
+
+    protected PrincipalAttributesRepository getPrincipalAttributesRepository() {
+        return principalAttributesRepository;
     }
 
     /**
@@ -58,21 +71,22 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
-        final Map<String, Object> attributes = getAttributesInternal(p);
+        final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
+        final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
         
         if (this.attributeFilter != null) {
-            return this.attributeFilter.filter(attributes);
+            return this.attributeFilter.filter(attributesToRelease);
         }
-        return attributes;
+        return attributesToRelease;
     }
     
     /**
      * Gets the attributes internally from the implementation.
      *
-     * @param p the principal
+     * @param attributes the principal attributes
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(final Principal p);
+    protected abstract Map<String, Object> getAttributesInternal(final Map<String, Object> attributes);
 
     @Override
     public int hashCode() {

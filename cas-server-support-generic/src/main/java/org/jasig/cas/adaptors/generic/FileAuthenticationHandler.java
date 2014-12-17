@@ -18,15 +18,12 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.core.io.Resource;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -69,7 +66,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
         try {
-            
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
@@ -77,7 +73,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             }
             final String password = credential.getPassword();
             if (StringUtils.isNotBlank(password) && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
-                return createHandlerResult(credential, new SimplePrincipal(username), null);
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);
@@ -107,10 +103,9 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                    this.fileName.getInputStream(), Charset.defaultCharset()));
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(
+                     new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -121,8 +116,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
                 line = bufferedReader.readLine();
             }
-        } finally {
-            IOUtils.closeQuietly(bufferedReader);
         }
         return null;
     }

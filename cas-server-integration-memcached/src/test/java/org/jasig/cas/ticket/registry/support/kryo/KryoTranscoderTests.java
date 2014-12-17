@@ -18,33 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
-
-import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.AuthenticationHandler;
-import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import javax.security.auth.login.FailedLoginException;
+import static org.junit.Assert.assertEquals;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,7 +33,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.junit.Test;
+
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -67,7 +67,6 @@ import static org.junit.Assert.assertEquals;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
 @SuppressWarnings("rawtypes")
 public class KryoTranscoderTests {
 
@@ -83,8 +82,8 @@ public class KryoTranscoderTests {
 
     private final Map<String, Object> principalAttributes;
 
-    public KryoTranscoderTests(final int bufferSize) {
-        transcoder = new KryoTranscoder(bufferSize);
+    public KryoTranscoderTests() {
+        transcoder = new KryoTranscoder();
         final Map<Class<?>, Serializer> serializerMap = new HashMap<Class<?>, Serializer>();
         serializerMap.put(
                 MockServiceTicket.class,
@@ -97,18 +96,6 @@ public class KryoTranscoderTests {
 
         this.principalAttributes = new HashMap<String, Object>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
-    }
-
-    @Parameterized.Parameters
-    public static List<Object[]> getTestParms() {
-        final List<Object[]> params = new ArrayList<Object[]>(6);
-
-        // Test case #1 - Buffer is bigger than encoded data
-        params.add(new Object[] {1024});
-
-        // Test case #2 - Buffer overflow case
-        params.add(new Object[] {10});
-        return params;
     }
 
     @Test
@@ -279,6 +266,10 @@ public class KryoTranscoderTests {
 
         private final Authentication authentication;
 
+        /** Factory to create the principal type. **/
+        @NotNull
+        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
             this.id = null;
@@ -289,7 +280,7 @@ public class KryoTranscoderTests {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final AuthenticationBuilder builder = new AuthenticationBuilder();
-            builder.setPrincipal(new SimplePrincipal(USERNAME, principalAttributes));
+            builder.setPrincipal(this.principalFactory.createPrincipal(USERNAME, principalAttributes));
             builder.setAuthenticationDate(new Date());
             builder.addCredential(credentialMetaData);
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);

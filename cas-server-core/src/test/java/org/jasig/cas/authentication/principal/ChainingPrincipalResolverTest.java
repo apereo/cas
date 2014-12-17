@@ -25,8 +25,7 @@ import org.mockito.ArgumentMatcher;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,6 +35,8 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 public class ChainingPrincipalResolverTest {
+
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Test
     public void examineSupports() throws Exception {
@@ -60,7 +61,7 @@ public class ChainingPrincipalResolverTest {
 
         final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve((eq(credential)))).thenReturn(new SimplePrincipal("output"));
+        when(resolver1.resolve((eq(credential)))).thenReturn(principalFactory.createPrincipal("output"));
 
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(false);
@@ -69,8 +70,7 @@ public class ChainingPrincipalResolverTest {
             public boolean matches(final Object o) {
                 return "output".equals(((Credential) o).getId());
             }
-        }))).thenReturn(
-                new SimplePrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+        }))).thenReturn(principalFactory.createPrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));
