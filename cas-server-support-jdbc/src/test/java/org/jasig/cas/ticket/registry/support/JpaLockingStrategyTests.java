@@ -226,7 +226,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
 
     private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<Locker>(locks.length);
+        final List<Locker> lockers = new ArrayList<>(locks.length);
         for (int i = 0; i < locks.length; i++) {
             lockers.add(new Locker(locks[i]));
         }
@@ -239,7 +239,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<Releaser>(locks.length);
+        final List<Releaser> releasers = new ArrayList<>(locks.length);
         for (int i = 0; i < locks.length; i++) {
             releasers.add(new Releaser(locks[i]));
         }

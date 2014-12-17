@@ -79,7 +79,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         final Date now = new Date();
         final Date twoHoursAgo = new Date(now.getTime() - 7200000);

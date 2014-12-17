@@ -182,7 +182,7 @@ public final class TestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
         final String[] extraPrincipals) {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {

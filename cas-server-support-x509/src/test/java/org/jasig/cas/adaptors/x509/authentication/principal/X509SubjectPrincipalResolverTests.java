@@ -73,7 +73,7 @@ public class X509SubjectPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         // Test case #1
         // Use CN for principal ID

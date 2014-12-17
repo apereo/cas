@@ -222,7 +222,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<String>();
+            final List<String> aliases = new ArrayList<>();
             for (X509KeyManager keyManager : keyManagers) {
                 final List<String> list = Arrays.asList(keyManager.getClientAliases(keyType, issuers));
                 aliases.addAll(list);
@@ -232,7 +232,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public  String[] getServerAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<String>();
+            final List<String> aliases = new ArrayList<>();
             for (X509KeyManager keyManager : keyManagers) {
                 final List<String> list = Arrays.asList(keyManager.getServerAliases(keyType, issuers));
                 aliases.addAll(list);
