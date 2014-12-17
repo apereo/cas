@@ -84,12 +84,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "proxy_policy", nullable = false)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled = true;
-
-    @Column(name = "ssoEnabled", nullable = false)
-    private boolean ssoEnabled = true;
-
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
