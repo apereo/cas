@@ -121,6 +121,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "logo")
     private URL logo;
 
+    @Lob
+    @Column(name = "authz_strategy")
     private RegisteredServiceAuthorizationStrategy authorizationStrategy =
             new DefaultRegisteredServiceAuthorizationStrategy();
 
