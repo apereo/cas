@@ -88,7 +88,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @Entity(name="casusers")
-    public class UsersTable {
+    public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
