@@ -19,7 +19,6 @@
 package org.jasig.cas.services.jmx;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
