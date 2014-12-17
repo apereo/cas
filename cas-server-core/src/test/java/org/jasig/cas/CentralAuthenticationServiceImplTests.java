@@ -135,6 +135,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             public boolean isExpired(final TicketState ticket) {
                 return true;
             }});
+
     final TicketGrantingTicket ticketId = getCentralAuthenticationService()
         .createTicketGrantingTicket(
             TestUtils.getCredentialsWithSameUsernameAndPassword());

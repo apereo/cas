@@ -254,7 +254,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
 
-        if (currentAuthentication == null && registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso(service)) {
+        if (currentAuthentication == null && !registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso(service)) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
