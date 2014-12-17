@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Marc-Antoine Garrigue
@@ -44,7 +44,7 @@ public class SpnegoCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifyValidCredentials() {
-        this.spnegoCredentials.setPrincipal(new SimplePrincipal("test"));
+        this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }

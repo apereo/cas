@@ -19,7 +19,7 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class ImmutableAuthenticationTests {
         final ImmutableAuthentication auth = new ImmutableAuthentication(
                 new DateTime(),
                 credentials,
-                new SimplePrincipal("test"),
+                new DefaultPrincipalFactory().createPrincipal("test"),
                 attributes,
                 successes,
                 failures);
