@@ -17,13 +17,12 @@
  * under the License.
  */
 
-package org.jasig.cas.services.support;
+package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy}
+ * This is {@link DefaultRegisteredServiceAuthorizationStrategy}
  * that allows the following rules:
  *
  * <ul>

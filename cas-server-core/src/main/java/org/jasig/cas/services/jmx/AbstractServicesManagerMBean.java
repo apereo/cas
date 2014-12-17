@@ -20,7 +20,7 @@ package org.jasig.cas.services.jmx;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
+import org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
