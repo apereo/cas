@@ -23,7 +23,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
