@@ -66,7 +66,6 @@ public class Saml10SuccessResponseViewTests {
 
         final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
         regSvc.setServiceId(TestUtils.getService().getId());
-        regSvc.setEnabled(true);
         regSvc.setName("Test Service");
         regSvc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
