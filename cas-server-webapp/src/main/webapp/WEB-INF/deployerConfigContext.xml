@@ -147,55 +147,8 @@
         </entry>
     </util:map>
 
-    <!-- 
-    Sample, in-memory data store for the ServiceRegistry. A real implementation
-    would probably want to replace this with the JPA-backed ServiceRegistry DAO
-    The name of this bean should remain "serviceRegistryDao".
-    +-->
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
-          p:registeredServices-ref="registeredServicesList" />
-
-    <util:list id="registeredServicesList">
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="0" p:name="Apereo" p:description="Apereo foundation sample service"
-              p:serviceId="^https://www.apereo.org" p:evaluationOrder="0"
-              p:theme="apereo" />
-
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
-              p:id="10000001" p:name="HTTPS and IMAPS"
-              p:description="This service definition authorized all application urls that support HTTPS and IMAPS protocols."
-              p:serviceId="^(https|imaps)://.*" p:evaluationOrder="10000001">
-
-            <!--
-            <property name="proxyPolicy">
-                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                      c:pgtUrlPattern="^https://.*" />
-            </property>
-            -->
-
-            <!--
-            <property name="attributeReleasePolicy">
-                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-                    <property name="allowedAttributes">
-                        <list>
-                            <value>uid</value>
-                            <value>groupMembership</value>
-                            <value>memberOf</value>
-                        </list>
-                    </property>
-                    <property name="attributeFilter">
-                        <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
-                    </property>
-                    <property name="principalAttributesRepository">
-                        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-                              c:attributeRepository-ref="attributeRepository"
-                              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-                    </property>
-                </bean>
-            </property>
-            -->
-        </bean>
-    </util:list>
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
+          c:configDirectory="${service.registry.config.location:classpath:services}" />
 
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 
