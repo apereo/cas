@@ -121,7 +121,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             return new URL[0];
         }
 
-        final List<URL> urls = new ArrayList<URL>();
+        final List<URL> urls = new ArrayList<>();
         for (DistributionPoint point : points.getItems()) {
             final Object location = point.getDistributionPoint();
             if (location instanceof String) {

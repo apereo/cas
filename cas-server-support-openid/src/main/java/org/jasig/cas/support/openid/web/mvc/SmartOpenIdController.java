@@ -84,7 +84,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
         if (StringUtils.equals(mode, ASSOCIATE)) {
             response = serverManager.associationResponse(parameters);
         }
-        final Map<String, String> responseParams = new HashMap<String, String>();
+        final Map<String, String> responseParams = new HashMap<>();
         if (response != null) {
             responseParams.putAll(response.getParameterMap());
         }
@@ -96,7 +96,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(successView, "parameters", parameters);
     }
