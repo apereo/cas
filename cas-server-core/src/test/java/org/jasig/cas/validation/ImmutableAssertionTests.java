@@ -38,7 +38,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGettersForChainedPrincipals() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
 
         list.add(TestUtils.getAuthentication("test"));
         list.add(TestUtils.getAuthentication("test1"));
@@ -52,7 +52,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGetterFalseForNewLogin() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
 
         list.add(TestUtils.getAuthentication());
 
@@ -64,7 +64,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGetterTrueForNewLogin() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
 
         list.add(TestUtils.getAuthentication());
 
@@ -76,7 +76,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithNull() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
@@ -87,7 +87,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithInvalidObject() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
@@ -98,8 +98,8 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithValidObject() {
-        final List<Authentication> list1 = new ArrayList<Authentication>();
-        final List<Authentication> list2 = new ArrayList<Authentication>();
+        final List<Authentication> list1 = new ArrayList<>();
+        final List<Authentication> list2 = new ArrayList<>();
 
         final Authentication auth = TestUtils.getAuthentication();
         list1.add(auth);
@@ -115,7 +115,7 @@ public class ImmutableAssertionTests {
     public void verifyGetService() {
         final Service service = TestUtils.getService();
 
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         final Assertion assertion = new ImmutableAssertion(TestUtils.getAuthentication(), list, service, false);
