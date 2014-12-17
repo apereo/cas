@@ -57,10 +57,10 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
-    private final boolean enabled;
+    private boolean enabled;
 
     /** Is the service allowed to use SSO? **/
-    private final boolean ssoEnabled;
+    private boolean ssoEnabled;
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
@@ -84,14 +84,11 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         this.ssoEnabled = true;
     }
 
-    /**
-     * Instantiates a new Default registered service authorization strategy.
-     *
-     * @param enabled enable the service to use CAS
-     * @param ssoEnabled enable the service to participate in SSO
-     */
-    public DefaultRegisteredServiceAuthorizationStrategy(final boolean enabled, final boolean ssoEnabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
 
@@ -102,6 +99,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     public boolean isSsoEnabled() {
         return this.ssoEnabled;
     }
+
 
     public Map<String, List<String>> getRequiredAttributes() {
         return requiredAttributes;
