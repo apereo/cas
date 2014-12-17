@@ -31,7 +31,6 @@ import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.HttpClient;
