@@ -19,6 +19,12 @@
 
 package org.jasig.cas.services;
 
+import org.jasig.cas.authentication.principal.Service;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 /**
  * This is test cases for
  * {@link org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy}.
@@ -27,4 +33,27 @@ package org.jasig.cas.services;
  * @since 4.1
  */
 public class DefaultRegisteredServiceAuthorizationStrategyTests {
+    @Test
+     public void checkDefaultAuthzStrategyConfig() {
+        final RegisteredServiceAuthorizationStrategy authz =
+                new DefaultRegisteredServiceAuthorizationStrategy();
+        assertTrue(authz.isServiceAuthorized(mock(Service.class)));
+        assertTrue(authz.isServiceAuthorizedForSso(mock(Service.class)));
+    }
+
+    @Test
+    public void checkDisabledAuthzStrategyConfig() {
+        final RegisteredServiceAuthorizationStrategy authz =
+                new DefaultRegisteredServiceAuthorizationStrategy(false, true);
+        assertFalse(authz.isServiceAuthorized(mock(Service.class)));
+        assertTrue(authz.isServiceAuthorizedForSso(mock(Service.class)));
+    }
+
+    @Test
+    public void checkDisabledSsoAuthzStrategyConfig() {
+        final RegisteredServiceAuthorizationStrategy authz =
+                new DefaultRegisteredServiceAuthorizationStrategy(true, false);
+        assertTrue(authz.isServiceAuthorized(mock(Service.class)));
+        assertFalse(authz.isServiceAuthorizedForSso(mock(Service.class)));
+    }
 }
