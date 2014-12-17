@@ -69,11 +69,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
-    private final HashMap<String, Service> services = new HashMap<String, Service>();
+    private final HashMap<String, Service> services = new HashMap<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
-    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
+    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
     /**
      * Instantiates a new ticket granting ticket impl.
@@ -223,7 +223,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      */
     @Override
     public List<Authentication> getChainedAuthentications() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
 
         list.add(getAuthentication());
 

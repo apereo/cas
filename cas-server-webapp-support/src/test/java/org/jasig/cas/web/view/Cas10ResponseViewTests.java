@@ -48,8 +48,8 @@ public class Cas10ResponseViewTests {
 
     @Before
     public void setUp() throws Exception {
-        this.model = new HashMap<String, Object>();
-        final List<Authentication> list = new ArrayList<Authentication>();
+        this.model = new HashMap<>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService("TestService"), true));
