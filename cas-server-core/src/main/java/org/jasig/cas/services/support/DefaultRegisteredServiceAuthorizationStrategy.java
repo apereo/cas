@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * This is {@link org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy}
@@ -73,7 +73,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * Collection of required attributes
      * for this service to proceed.
      */
-    private Map<String, List<String>> requiredAttributes = new TreeMap<>();
+    private Map<String, List<String>> requiredAttributes = new HashMap<>();
 
     /**
      * Instantiates a new Default registered service authorization strategy.
@@ -124,8 +124,12 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         this.requireAllAttributes = requireAllAttributes;
     }
 
+    public final boolean isRequireAllAttributes() {
+        return this.requireAllAttributes;
+    }
+
     public Map<String, List<String>> getRequiredAttributes() {
-        return requiredAttributes;
+        return this.requiredAttributes;
     }
 
     /**
