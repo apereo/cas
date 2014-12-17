@@ -21,7 +21,6 @@ package org.jasig.cas.adaptors.generic.remote;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
         try {
             final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
             if (containsAddress(this.inetNetwork, this.inetNetmask, inetAddress)) {
-                return new HandlerResult(this, c, new SimplePrincipal(c.getId()));
+                return new HandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
             }
         } catch (final UnknownHostException e) {
             logger.debug("Unknown host {}", c.getRemoteAddress());

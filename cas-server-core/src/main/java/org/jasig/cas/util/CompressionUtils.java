@@ -16,14 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,14 +39,18 @@ import java.util.zip.InflaterInputStream;
  * @since 4.1
  */
 public final class CompressionUtils {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
+
     private static final int INFLATED_ARRAY_LENGTH = 10000;
+
     private static final String UTF8_ENCODING = "UTF-8";
 
     /**
      * Private ctor for a utility class.
      */
-    private CompressionUtils() {}
+    private CompressionUtils() {
+    }
 
     /**
      * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
@@ -60,21 +61,16 @@ public final class CompressionUtils {
     public static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
         final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
-
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
         extendedBytes[bytes.length] = 0;
-
         inflater.setInput(extendedBytes);
-
         try {
             final int resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
-
             if (!inflater.finished()) {
                 throw new RuntimeException("Buffer not large enough.");
             }
-
             inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, UTF8_ENCODING);
         } catch (final DataFormatException e) {
@@ -171,10 +167,8 @@ public final class CompressionUtils {
     public static String decodeByteArrayToString(final byte[] bytes) {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final InflaterInputStream iis = new InflaterInputStream(bais);
         final byte[] buf = new byte[bytes.length];
-
-        try {
+        try (final InflaterInputStream iis = new InflaterInputStream(bais)) {
             int count = iis.read(buf);
             while (count != -1) {
                 baos.write(buf, 0, count);
@@ -184,8 +178,6 @@ public final class CompressionUtils {
         } catch (final Exception e) {
             LOGGER.error("Base64 decoding failed", e);
             return null;
-        } finally {
-            IOUtils.closeQuietly(iis);
         }
     }
 }
