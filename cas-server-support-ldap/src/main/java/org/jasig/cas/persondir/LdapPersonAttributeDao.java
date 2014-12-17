@@ -149,7 +149,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
                 throw new RuntimeException("Failed executing LDAP query " + filter, e);
             }
             final SearchResult result = response.getResult();
-            final List<IPersonAttributes> peopleAttributes = new ArrayList<IPersonAttributes>(result.size());
+            final List<IPersonAttributes> peopleAttributes = new ArrayList<>(result.size());
             for (final LdapEntry entry : result.getEntries()) {
                 final IPersonAttributes person;
                 final String userNameAttribute = this.getConfiguredUserNameAttribute();
@@ -209,7 +209,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
      * @return Attribute map.
      */
     private Map<String, List<Object>> convertLdapEntryToMap(final LdapEntry entry) {
-        final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>(entry.size());
+        final Map<String, List<Object>> attributeMap = new LinkedHashMap<>(entry.size());
         for (final LdapAttribute attr : entry.getAttributes()) {
             attributeMap.put(attr.getName(), new ArrayList<Object>(attr.getStringValues()));
         }

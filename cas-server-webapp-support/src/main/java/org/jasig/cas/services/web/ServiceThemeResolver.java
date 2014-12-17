@@ -55,7 +55,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     /** The ServiceRegistry to look up the service. */
     private ServicesManager servicesManager;
 
-    private Map<Pattern, String> overrides = new HashMap<Pattern, String>();
+    private Map<Pattern, String> overrides = new HashMap<>();
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
@@ -116,7 +116,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      */
     public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
         // initialize the overrides variable to an empty map
-        this.overrides = new HashMap<Pattern, String>();
+        this.overrides = new HashMap<>();
 
         for (final Map.Entry<String, String> entry : mobileOverrides.entrySet()) {
             this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());

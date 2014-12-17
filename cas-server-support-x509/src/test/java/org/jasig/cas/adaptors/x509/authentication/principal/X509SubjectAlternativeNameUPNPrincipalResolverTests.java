@@ -70,7 +70,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         params.add(new Object[] {
                 "/x509-san-upn-resolver.crt",
