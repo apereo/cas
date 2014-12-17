@@ -51,7 +51,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
-        this.givenAttributesMap = new HashMap<String, Object>();
+        this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("uid", "loggedInTestUid");
         this.givenAttributesMap.put("phone", "1290");
         this.givenAttributesMap.put("familyName", "Smith");
@@ -61,7 +61,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
 
-        final Map<String, String> mapAttributes = new HashMap<String, String>();
+        final Map<String, String> mapAttributes = new HashMap<>();
         mapAttributes.put("uid", "loggedInTestUid");
         mapAttributes.put("phone", "890");
         mapAttributes.put("familyName", "Smith");

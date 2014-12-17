@@ -18,24 +18,25 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import static org.junit.Assert.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Scott Battaglia
@@ -77,7 +78,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFoundCustom() {
         final CustomCredential credentials = new CustomCredential();
 
-        final Map<String, String> added = new HashMap<String, String>();
+        final Map<String, String> added = new HashMap<>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
@@ -91,7 +92,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
                 auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
-    protected class CustomCredential implements Credential {
+    private static class CustomCredential implements Credential {
 
         public String getId() {
             return "nobody";
