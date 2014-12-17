@@ -253,10 +253,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
-        
-        if (!registeredService.isSsoEnabled() && currentAuthentication == null) {
-            logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
-            throw new UnauthorizedSsoServiceException();
+
+        if (currentAuthentication == null) {
+            registeredService.getAuthorizationStrategy().assertServiceSsoParticipation(service);
         }
 
         //CAS-1019
@@ -569,12 +568,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not enabled in service registry.", service.getId());
-            
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
+        registeredService.getAuthorizationStrategy().assertServiceQualification(service);
     }
 }
