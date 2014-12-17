@@ -1,0 +1,18 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 666,
+  "description" : "sample",
+  "authorizationStrategy" : {
+    "@class" : "org.jasig.cas.services.support.DefaultRegisteredServiceAuthorizationStrategy",
+    "enabled" : false,
+    "ssoEnabled" : false,
+    "requireAllAttributes" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.ArrayList", [ "first, second, third" ] ],
+      "memberOf" : [ "java.util.ArrayList", [ "student, staff, admins" ] ]
+    }
+  }
+}
