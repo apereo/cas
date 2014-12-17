@@ -32,6 +32,7 @@ import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -252,13 +253,16 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     private RegisteredService createMockRegisteredService(final String svcId,
             final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
+        final RegisteredServiceAuthorizationStrategy authz = mock(RegisteredServiceAuthorizationStrategy.class);
+
+        when(authz.isServiceAuthorized(any(Service.class))).thenReturn(enabled);
+
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
-        when(mockRegSvc.isEnabled()).thenReturn(enabled);
-        when(mockRegSvc.isSsoEnabled()).thenReturn(true);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
+        when(mockRegSvc.getAuthorizationStrategy()).thenReturn(authz);
         return mockRegSvc;
     }
 }
