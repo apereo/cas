@@ -19,14 +19,12 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,6 +80,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.1.0
  */
 public class JsonServiceRegistryDao implements ServiceRegistryDao {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
 
     /**
@@ -134,20 +133,14 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
-        LockedOutputStream out = null;
-        try {
-            final File f = makeFile(service);
-            out = new LockedOutputStream(new FileOutputStream(f));
+        final File f = makeFile(service);
+        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
             this.registeredServiceJsonSerializer.toJson(out, service);
-
             this.serviceMap.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
         } catch (final IOException e) {
             throw new RuntimeException("IO error opening file stream.", e);
-        } finally {
-            IOUtils.closeQuietly(out);
         }
-
         return findServiceById(service.getId());
     }
 
@@ -171,30 +164,22 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public final synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<Long, RegisteredService>();
-
         int errorCount = 0;
-
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[]{FILE_EXTENSION}, true);
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[] {FILE_EXTENSION}, true);
         for (final File file : c) {
-            BufferedInputStream in = null;
-            try {
-                if (file.length() > 0) {
-                    in = new BufferedInputStream(new FileInputStream(file));
+            if (file.length() > 0) {
+                try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     final RegisteredService service = this.registeredServiceJsonSerializer.fromJson(in);
-
                     temp.put(service.getId(), service);
+                } catch (final Exception e) {
+                    errorCount++;
+                    LOGGER.error("Error reading configuration file", e);
                 }
-            } catch (final Exception e) {
-                errorCount++;
-                LOGGER.error("Error reading configuration file", e);
-            } finally {
-                IOUtils.closeQuietly(in);
             }
         }
         if (errorCount == 0) {
             this.serviceMap = temp;
         }
-
         return new ArrayList<RegisteredService>(this.serviceMap.values());
     }
 

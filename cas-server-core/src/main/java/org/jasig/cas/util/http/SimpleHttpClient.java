@@ -130,13 +130,9 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
     public boolean isValidEndPoint(final URL url) {
         Assert.notNull(this.httpClient);
 
-        CloseableHttpResponse response = null;
         HttpEntity entity = null;
 
-        try {
-            final HttpGet request = new HttpGet(url.toURI());
-
-            response = this.httpClient.execute(request);
+        try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
@@ -160,8 +156,6 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
             LOGGER.error(e.getMessage(), e);
         } finally {
             EntityUtils.consumeQuietly(entity);
-            IOUtils.closeQuietly(response);
-           
         }
         return false;
     }

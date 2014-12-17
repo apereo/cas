@@ -21,6 +21,8 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -46,6 +48,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** The logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The Principal factory.
+     */
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -108,6 +115,15 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**

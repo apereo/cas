@@ -16,21 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services;
+package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Return all attributes for the service, regardless of service settings.
+ * Defines operations required for retrieving principal attributes.
+ * Acts as a proxy between the external attribute source and CAS,
+ * executing such as additional processing or caching on the set
+ * of retrieved attributes. Implementations may simply decide to
+ * do nothing on the set of attributes that the principal carries
+ * or they may attempt to refresh them from the source, etc.
  * @author Misagh Moayyed
- * @since 4.1.0
+ * @see org.jasig.cas.authentication.principal.PrincipalFactory
+ * @since 4.1
  */
-public final class ReturnAllAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
+public interface PrincipalAttributesRepository extends Serializable {
 
-    private static final long serialVersionUID = 5519257723778012771L;
-
-    @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
-        return resolvedAttributes;
-    }
+    /**
+     * Gets attributes for the given principal id.
+     *
+     * @param p the principal whose attributes need to be retrieved.
+     * @return the attributes
+     */
+    Map<String, Object> getAttributes(Principal p);
 }
