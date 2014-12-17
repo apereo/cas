@@ -211,7 +211,7 @@ public class DefaultServicesManagerImplTests  {
 
     }
 
-    protected class SimpleService implements Service {
+    private static class SimpleService implements Service {
 
         /**
          * Comment for <code>serialVersionUID</code>.

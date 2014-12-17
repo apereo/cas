@@ -346,6 +346,24 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="message" value="There are no spaces after cast."/>
   </module>
   <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
+    <property name="message" value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Usage of java.util.Random"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="(java.util.Random)|(new Random\()"/>
+    <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="final clone() method"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="public\s+\w+\s+clone\(\)"/>
+    <property name="message" value="Consider marking the clone() method as final to reduce chances of data corruption"/>
+  </module>
+  <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
     <property name="severity" value="error"/>
     <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>
