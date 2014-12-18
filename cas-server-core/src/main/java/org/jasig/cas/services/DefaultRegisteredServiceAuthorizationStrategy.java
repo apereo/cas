@@ -170,7 +170,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         }
 
         if (principalAttributes.size() < this.requiredAttributes.size()) {
-            logger.warn("The size of the principal attributes, that are [{}] does not match requirements, "
+            logger.warn("The size of the principal attributes that are [{}] does not match requirements, "
                     + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
@@ -180,6 +180,8 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
                 this.requiredAttributes, principalAttributes, service.getId());
 
         final Iterator<Map.Entry<String, List<String>>> itt = requiredAttributes.entrySet().iterator();
+        boolean atLeastOneAttributeFound = false;
+        boolean atLeastOnceAttributeValueFound = false;
 
         while (itt.hasNext()) {
             final Map.Entry<String, List<String>> entry = itt.next();
@@ -193,6 +195,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
 
             boolean foundMatchingAttributeValue = false;
             if (principalAttributeValue != null) {
+                atLeastOneAttributeFound = true;
 
                 final List<String> requiredAttributeValues = entry.getValue();
                 logger.debug("Checking required attribute values [{}] against [{}]", requiredAttributeValues, principalAttributeValue);
@@ -207,6 +210,9 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
                     } else {
                         foundMatchingAttributeValue = requiredAttributeValue.equals(principalAttributeValue);
                     }
+                    if (foundMatchingAttributeValue) {
+                        atLeastOnceAttributeValueFound = true;
+                    }
                 }
             }
 
@@ -217,6 +223,11 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
                 logger.warn("Principal is missing the required value for attribute [{}]", requiredAttributeName);
                 return false;
             }
+        }
+
+        if (!isRequireAllAttributes() && (!atLeastOneAttributeFound || !atLeastOnceAttributeValueFound)) {
+            logger.warn("Principal is missing the required attribute");
+            return false;
         }
         logger.info("Principal is granted access to service [{}]", service.getId());
         return true;

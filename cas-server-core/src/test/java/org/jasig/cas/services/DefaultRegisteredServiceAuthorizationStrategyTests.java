@@ -131,6 +131,20 @@ public class DefaultRegisteredServiceAuthorizationStrategyTests {
     }
 
     @Test
+    public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
+        final DefaultRegisteredServiceAuthorizationStrategy authz =
+                new DefaultRegisteredServiceAuthorizationStrategy();
+        authz.setRequiredAttributes(this.getRequiredAttributes());
+        authz.setRequireAllAttributes(false);
+        final Map<String, Object> pAttrs = this.getPrincipalAttributes();
+        pAttrs.remove("cn");
+        pAttrs.put("givenName", "theName");
+        assertFalse(authz.isServiceAccessAuthorizedForPrincipal(
+                pAttrs,
+                TestUtils.getService()));
+    }
+
+    @Test
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
         final DefaultRegisteredServiceAuthorizationStrategy authz =
                 new DefaultRegisteredServiceAuthorizationStrategy();
