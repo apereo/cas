@@ -163,6 +163,45 @@
                             c:pgtUrlPattern="^https://.+" />
                     </property>
                 </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestServiceAttributeForAuthzFails"/>
+                    <property name="serviceId" value="TestServiceAttributeForAuthzFails"/>
+                    <property name="evaluationOrder" value="600"/>
+                    <property name="authorizationStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy">
+                             <property name="requiredAttributes">
+                                 <map>
+                                     <entry key="cn"
+                                            value="cnValue" />
+                                     <entry key="givenName"
+                                            value="gnameValue" />
+                                 </map>
+                             </property>
+                        </bean>
+                    </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestServiceAttributeForAuthzPasses"/>
+                    <property name="serviceId" value="TestServiceAttributeForAuthzPasses"/>
+                    <property name="evaluationOrder" value="610"/>
+                    <property name="authorizationStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy">
+                            <property name="requiredAttributes">
+                                <map>
+                                    <entry key="groupMembership"
+                                           value="adopters" />
+                                </map>
+                            </property>
+                        </bean>
+                    </property>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

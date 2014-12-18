@@ -11,8 +11,8 @@
     "requireAllAttributes" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.ArrayList", [ "first, second, third" ] ],
-      "memberOf" : [ "java.util.ArrayList", [ "student, staff, admins" ] ]
+      "cn" : [ "java.util.HashSet", [ "v1, v2, v3" ] ],
+      "memberOf" : [ "java.util.HashSet", [ "v4, v5, v6" ] ]
     }
   }
 }
