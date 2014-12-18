@@ -42,6 +42,7 @@ import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -257,6 +258,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if (currentAuthentication == null && !registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso(service)) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
+        }
+        if (currentAuthentication != null) {
+            final Principal principal = currentAuthentication.getPrincipal();
+            final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+            if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs, service)) {
+                logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
+                        service.getId(), principal);
+                throw new UnauthorizedServiceForPrincipalException();
+            }
         }
 
         //CAS-1019

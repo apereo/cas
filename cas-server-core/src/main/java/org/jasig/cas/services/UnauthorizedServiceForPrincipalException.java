@@ -20,7 +20,7 @@
 package org.jasig.cas.services;
 
 /**
- * This is {@link UnauthorizedServiceMissingAttributeException}
+ * This is {@link UnauthorizedServiceForPrincipalException}
  * thrown when an attribute is missing from principal
  * attribute release policy that would otherwise grant access
  * to the service that is requesting authentication.
@@ -28,7 +28,7 @@ package org.jasig.cas.services;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public class UnauthorizedServiceMissingAttributeException extends UnauthorizedServiceException {
+public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
 
     private static final long serialVersionUID = 8909291297815558561L;
 
@@ -38,7 +38,7 @@ public class UnauthorizedServiceMissingAttributeException extends UnauthorizedSe
     /**
      * Instantiates a new unauthorized sso service exception.
      */
-    public UnauthorizedServiceMissingAttributeException() {
+    public UnauthorizedServiceForPrincipalException() {
         this(CODE);
     }
 
@@ -48,8 +48,8 @@ public class UnauthorizedServiceMissingAttributeException extends UnauthorizedSe
      * @param message the message
      * @param cause the cause
      */
-    public UnauthorizedServiceMissingAttributeException(final String message,
-                                           final Throwable cause) {
+    public UnauthorizedServiceForPrincipalException(final String message,
+                                                    final Throwable cause) {
         super(message, cause);
     }
 
@@ -58,7 +58,7 @@ public class UnauthorizedServiceMissingAttributeException extends UnauthorizedSe
      *
      * @param message the message
      */
-    public UnauthorizedServiceMissingAttributeException(final String message) {
+    public UnauthorizedServiceForPrincipalException(final String message) {
         super(message);
     }
 }
