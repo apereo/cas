@@ -43,7 +43,7 @@ public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new ArrayList<String>();
+        this.users = new ArrayList<>();
 
         this.users.add("scott");
         this.users.add("dima");

@@ -93,7 +93,7 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
+        final Map<String, Object> attributesToRelease = new HashMap<>();
         for (final Map.Entry<String, Object> entry: givenAttributes.entrySet()) {
             final String attributeName = entry.getKey();
             final Object attributeValue = entry.getValue();
@@ -135,7 +135,7 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
      * @return the map
      */
     private Map<String, String> filterMapAttributes(final Map<String, String> valuesToFilter) {
-        final Map<String, String> attributesToFilter = new HashMap<String, String>(valuesToFilter.size());
+        final Map<String, String> attributesToFilter = new HashMap<>(valuesToFilter.size());
         for (final Map.Entry<String, String> entry: valuesToFilter.entrySet()) {
             final String attributeName = entry.getKey();
             final String attributeValue = entry.getValue();
@@ -165,7 +165,7 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
      * @return the string[]
      */
     private String[] filterArrayAttributes(final String[] valuesToFilter, final String attributeName) {
-        final List<String> vector = new ArrayList<String>(valuesToFilter.length);
+        final List<String> vector = new ArrayList<>(valuesToFilter.length);
         for (final String attributeValue : valuesToFilter) {
             if (patternMatchesAttributeValue(attributeValue)) {
                 logReleasedAttributeEntry(attributeName, attributeValue);

@@ -224,7 +224,7 @@ public final class JBossCacheTicketRegistryTests {
 
     @Test
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
-        final Collection<Ticket> tickets = new ArrayList<Ticket>();
+        final Collection<Ticket> tickets = new ArrayList<>();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "test");
 

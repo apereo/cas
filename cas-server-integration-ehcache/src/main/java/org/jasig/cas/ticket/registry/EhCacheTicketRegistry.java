@@ -136,7 +136,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         final Collection<Element> tgtTicketsTickets = this.ticketGrantingTicketsCache.getAll(
                 this.ticketGrantingTicketsCache.getKeysWithExpiryCheck()).values();
 
-        final Collection<Ticket> allTickets = new HashSet<Ticket>(serviceTickets.size() + tgtTicketsTickets.size());
+        final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
         for (final Element ticket : serviceTickets) {
             allTickets.add((Ticket) ticket.getObjectValue());
