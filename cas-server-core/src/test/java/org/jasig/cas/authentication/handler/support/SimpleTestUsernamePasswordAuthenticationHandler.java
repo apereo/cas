@@ -50,7 +50,7 @@ import org.springframework.util.StringUtils;
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
-    private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<String, Exception>();
+    private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
     /** Instance of logging for subclasses. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

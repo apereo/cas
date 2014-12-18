@@ -128,7 +128,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (this.supportedBrowser == null) {
-            this.supportedBrowser = new ArrayList<String>();
+            this.supportedBrowser = new ArrayList<>();
             this.supportedBrowser.add("MSIE");
             this.supportedBrowser.add("Firefox");
             this.supportedBrowser.add("AppleWebKit");
