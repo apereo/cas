@@ -135,7 +135,6 @@ public class DefaultRegisteredServiceAuthorizationStrategyTests {
         final DefaultRegisteredServiceAuthorizationStrategy authz =
                 new DefaultRegisteredServiceAuthorizationStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        authz.setRequireAllAttributes(true);
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         assertFalse(authz.isServiceAccessAuthorizedForPrincipal(
