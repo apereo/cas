@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This is {@link org.jasig.cas.services.RegisteredServiceAuthorizationStrategy}
@@ -54,9 +55,12 @@ public interface RegisteredServiceAuthorizationStrategy extends Serializable {
      * Verify authorization policy by checking the pre-configured rules
      * that may depend on what the principal might be carrying.
      *
-     * @param principal the principal
+     * @param principalAttributes the principal attributes. Rather than passing the principal
+     *                            directly, we are only allowing principal attributes
+     *                            given they may be coming from a source external to the principal
+     *                            itself. (Cached principal attributes, etc)
      * @param service the service that requests authentication or has asked for tickets.
      * @return true/false if service access can be granted to principal
      */
-    boolean isServiceAccessAuthorizedForPrincipal(Principal principal, Service service);
+    boolean isServiceAccessAuthorizedForPrincipal(Map<String, Object> principalAttributes, Service service);
 }

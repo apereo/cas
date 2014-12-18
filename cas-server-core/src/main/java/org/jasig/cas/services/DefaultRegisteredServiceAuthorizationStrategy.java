@@ -157,23 +157,30 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * </ul>
      */
     @Override
-    public boolean isServiceAccessAuthorizedForPrincipal(final Principal principal, final Service service) {
+    public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes, final Service service) {
         if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;
         }
-        final Map<String, Object> principalAttributes = principal.getAttributes();
         if (principalAttributes.isEmpty()) {
             logger.warn("No principal attributes are found to satisfy requirements");
             return false;
         }
 
-        logger.debug("These attributes [{}] are examined against [{}] before service [{}] can proceed.",
+        if (principalAttributes.size() < this.requiredAttributes.size()) {
+            logger.warn("The size of the principal attributes, that are [{}] does not match requirements, "
+                    + "which means the principal is not carrying enough data to grant authorization",
+                    principalAttributes);
+            return false;
+        }
+
+        logger.debug("These required attributes [{}] are examined against [{}] before service [{}] can proceed.",
                 this.requiredAttributes, principalAttributes, service.getId());
 
-        final Set<Map.Entry<String, List<String>>> entrySetOfRequiredAttributes = requiredAttributes.entrySet();
+        final Iterator<Map.Entry<String, List<String>>> itt = requiredAttributes.entrySet().iterator();
 
-        for (final Map.Entry<String, List<String>> entry : entrySetOfRequiredAttributes) {
+        while (itt.hasNext()) {
+            final Map.Entry<String, List<String>> entry = itt.next();
             final String requiredAttributeName = entry.getKey();
             final Object principalAttributeValue = principalAttributes.get(requiredAttributeName);
 
@@ -186,24 +193,30 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             if (principalAttributeValue != null) {
 
                 final List<String> requiredAttributeValues = entry.getValue();
+                logger.debug("Checking required attribute values [{}] against [{}]", requiredAttributeValues, principalAttributeValue);
+
                 final Iterator<String> it = requiredAttributeValues.iterator();
                 while (!foundMatchingAttributeValue && it.hasNext()) {
-                    final String value = it.next();
+                    final String requiredAttributeValue = it.next();
+
                     if (principalAttributeValue instanceof Collection) {
-                        final Collection principalAttributeValueAsCol = (Collection) principalAttributes;
-                        foundMatchingAttributeValue = principalAttributeValueAsCol.contains(value);
+                        final Collection principalAttributeValueAsCol = (Collection) principalAttributeValue;
+                        foundMatchingAttributeValue = principalAttributeValueAsCol.contains(requiredAttributeValue);
                     } else {
-                        foundMatchingAttributeValue = value.equals(principalAttributeValue);
+                        foundMatchingAttributeValue = requiredAttributeValue.equals(principalAttributeValue);
                     }
                 }
             }
 
-            if (!foundMatchingAttributeValue) {
-                logger.debug("None of the required attributes match [{}]", principalAttributeValue);
+            if (foundMatchingAttributeValue && !isRequireAllAttributes()) {
+                logger.info("Principal is granted access to service [{}]", service.getId());
+                return true;
+            } else if (!foundMatchingAttributeValue && isRequireAllAttributes()) {
+                logger.warn("Principal is missing the required value for attribute [{}]", requiredAttributeName);
                 return false;
             }
         }
-
+        logger.info("Principal is granted access to service [{}]", service.getId());
         return true;
     }
 
