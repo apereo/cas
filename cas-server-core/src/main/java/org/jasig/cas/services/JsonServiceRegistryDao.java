@@ -91,7 +91,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     /**
      * Map of service ID to registered service.
      */
-    private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<Long, RegisteredService>();
+    private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
 
     /**
      * The Service registry directory.
@@ -163,7 +163,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public final synchronized List<RegisteredService> load() {
-        final Map<Long, RegisteredService> temp = new ConcurrentHashMap<Long, RegisteredService>();
+        final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
         int errorCount = 0;
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[] {FILE_EXTENSION}, true);
         for (final File file : c) {

@@ -43,7 +43,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * Instantiates a new default ticket registry.
      */
     public DefaultTicketRegistry() {
-        this.cache = new ConcurrentHashMap<String, Ticket>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     /**
@@ -60,7 +60,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * accommodate this many threads.
      */
     public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
-        this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
+        this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**

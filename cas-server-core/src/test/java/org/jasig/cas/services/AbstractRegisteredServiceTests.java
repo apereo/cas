@@ -115,7 +115,7 @@ public class AbstractRegisteredServiceTests {
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -135,7 +135,7 @@ public class AbstractRegisteredServiceTests {
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -153,7 +153,7 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<String, String>();
+        final Map<String, String> mappedAttr = new HashMap<>();
         mappedAttr.put("attr1", "newAttr1");
         
         policy.setAllowedAttributes(mappedAttr);
@@ -161,7 +161,7 @@ public class AbstractRegisteredServiceTests {
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
