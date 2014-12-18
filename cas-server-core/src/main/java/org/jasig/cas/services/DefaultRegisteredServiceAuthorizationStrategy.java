@@ -155,6 +155,8 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      *     one principal attribute present whose value matches the required, authz is granted.</li>
      *     <li>Otherwise, access is denied and an exception thrown</li>
      * </ul>
+     * Note that comparison of principal/required attributes is case-sensitive. Exact matches are required
+     * for any individual attribute value.
      */
     @Override
     public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes, final Service service) {
