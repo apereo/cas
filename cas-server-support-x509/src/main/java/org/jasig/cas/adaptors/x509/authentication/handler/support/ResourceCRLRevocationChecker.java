@@ -81,7 +81,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      * at least one non-null element.
      */
     public ResourceCRLRevocationChecker(final Resource[] crls) {
-        this.fetcher = new CRLFetcher(crls);
+        this.fetcher = new CRLFetcher(crls, this);
     }
 
     /**
@@ -153,7 +153,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     /**
      * Handles details of fetching CRL data from resources.
      */
-    protected class CRLFetcher {
+    private static class CRLFetcher {
+        private final ResourceCRLRevocationChecker crlRevocationChecker;
         /** Logger instance. */
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -165,12 +166,13 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          *
          * @param crls Resources containing CRL data.  MUST NOT be null and MUST have
          * at least one non-null element.
+         * @param crlRevocationChecker the crl revocation checker
          */
-        public CRLFetcher(final Resource[] crls) {
+        public CRLFetcher(final Resource[] crls, final ResourceCRLRevocationChecker crlRevocationChecker) {
             if (crls == null) {
                 throw new IllegalArgumentException("CRL resources cannot be null.");
             }
-            this.resources = new ArrayList<Resource>();
+            this.resources = new ArrayList<>();
             for (Resource r : crls) {
                 if (r != null) {
                     this.resources.add(r);
@@ -179,6 +181,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             if (this.resources.isEmpty()) {
                 throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
             }
+            this.crlRevocationChecker = crlRevocationChecker;
         }
 
         /**
@@ -191,7 +194,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             for (Resource r : this.resources) {
                 logger.debug("Fetching CRL data from {}", r);
                 try {
-                    addCrl(CertUtils.fetchCRL(r));
+                    this.crlRevocationChecker.addCrl(CertUtils.fetchCRL(r));
                 } catch (final Exception e) {
                     if (throwOnError) {
                         throw new RuntimeException("Error fetching CRL from " + r, e);
