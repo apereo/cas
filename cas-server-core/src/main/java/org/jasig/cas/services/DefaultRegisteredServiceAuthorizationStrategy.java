@@ -164,7 +164,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             return true;
         }
         if (principalAttributes.isEmpty()) {
-            logger.warn("No principal attributes are found to satisfy requirements");
+            logger.warn("No principal attributes are found to satisfy attribute requirements for [{}]", service.getId());
             return false;
         }
 

@@ -259,15 +259,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
-        if (currentAuthentication != null) {
-            final Principal principal = currentAuthentication.getPrincipal();
-            final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-            if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs, service)) {
-                logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
-                        service.getId(), principal);
-                throw new UnauthorizedServiceForPrincipalException();
-            }
-        }
 
         //CAS-1019
         final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
@@ -291,11 +282,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     uniqueTicketIdGenKey, service.getId());
             throw new UnauthorizedSsoServiceException();
         }
-        
+
+        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
+        final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
+
+        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+        if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs, service)) {
+            logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
+                    service.getId(), principal);
+            throw new UnauthorizedServiceForPrincipalException();
+        }
+
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
 
-        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
+
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
         final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
         final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
@@ -306,9 +307,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
-        final String principalId = authentications.get(authentications.size() - 1).getPrincipal().getId();
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
-                serviceTicket.getId(), service.getId(), principalId);
+                serviceTicket.getId(), service.getId(), principal.getId());
 
         return serviceTicket;
     }
