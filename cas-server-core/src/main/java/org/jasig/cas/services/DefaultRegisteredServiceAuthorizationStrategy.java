@@ -19,18 +19,18 @@
 
 package org.jasig.cas.services;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,7 +72,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * Collection of required attributes
      * for this service to proceed.
      */
-    private Map<String, List<String>> requiredAttributes = new HashMap<>();
+    private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
      * Instantiates a new Default registered service authorization strategy.
@@ -126,8 +126,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     public final boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
-
-    public Map<String, List<String>> getRequiredAttributes() {
+    public Map<String, Set<String>> getRequiredAttributes() {
         return this.requiredAttributes;
     }
 
@@ -139,7 +138,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      *
      * @param requiredAttributes the required attributes
      */
-    public final void setRequiredAttributes(final Map<String, List<String>> requiredAttributes) {
+    public final void setRequiredAttributes(final Map<String, Set<String>> requiredAttributes) {
         this.requiredAttributes = requiredAttributes;
     }
 
@@ -153,14 +152,14 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      *     at least one attribute value that matches the required, authz is granted.</li>
      *     <li>If ALL required attributes don't have to be present, and there is at least
      *     one principal attribute present whose value matches the required, authz is granted.</li>
-     *     <li>Otherwise, access is denied and an exception thrown</li>
+     *     <li>Otherwise, access is denied</li>
      * </ul>
      * Note that comparison of principal/required attributes is case-sensitive. Exact matches are required
      * for any individual attribute value.
      */
     @Override
     public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes, final Service service) {
-        if (this.requiredAttributes.isEmpty()) {
+        if (getRequiredAttributes().isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;
         }
@@ -169,7 +168,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             return false;
         }
 
-        if (principalAttributes.size() < this.requiredAttributes.size()) {
+        if (principalAttributes.size() < getRequiredAttributes().size()) {
             logger.warn("The size of the principal attributes that are [{}] does not match requirements, "
                     + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
@@ -177,60 +176,36 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         }
 
         logger.debug("These required attributes [{}] are examined against [{}] before service [{}] can proceed.",
-                this.requiredAttributes, principalAttributes, service.getId());
+                getRequiredAttributes(), principalAttributes, service.getId());
 
-        final Iterator<Map.Entry<String, List<String>>> itt = requiredAttributes.entrySet().iterator();
-        boolean atLeastOneAttributeFound = false;
-        boolean atLeastOnceAttributeValueFound = false;
+        final Sets.SetView<String> difference = Sets.intersection(getRequiredAttributes().keySet(), principalAttributes.keySet());
+        final Set<String> copy = difference.immutableCopy();
 
-        while (itt.hasNext()) {
-            final Map.Entry<String, List<String>> entry = itt.next();
-            final String requiredAttributeName = entry.getKey();
-            final Object principalAttributeValue = principalAttributes.get(requiredAttributeName);
-
-            if (principalAttributeValue == null && this.requireAllAttributes) {
-                logger.warn("Principal is missing the required attribute [{}]", requiredAttributeName);
-                return false;
-            }
-
-            boolean foundMatchingAttributeValue = false;
-            if (principalAttributeValue != null) {
-                atLeastOneAttributeFound = true;
-
-                final List<String> requiredAttributeValues = entry.getValue();
-                logger.debug("Checking required attribute values [{}] against [{}]", requiredAttributeValues, principalAttributeValue);
-
-                final Iterator<String> it = requiredAttributeValues.iterator();
-                while (!foundMatchingAttributeValue && it.hasNext()) {
-                    final String requiredAttributeValue = it.next();
-
-                    if (principalAttributeValue instanceof Collection) {
-                        final Collection principalAttributeValueAsCol = (Collection) principalAttributeValue;
-                        foundMatchingAttributeValue = principalAttributeValueAsCol.contains(requiredAttributeValue);
-                    } else {
-                        foundMatchingAttributeValue = requiredAttributeValue.equals(principalAttributeValue);
-                    }
-                    if (foundMatchingAttributeValue) {
-                        atLeastOnceAttributeValueFound = true;
-                    }
-                }
-            }
-
-            if (foundMatchingAttributeValue && !isRequireAllAttributes()) {
-                logger.info("Principal is granted access to service [{}]", service.getId());
-                return true;
-            } else if (!foundMatchingAttributeValue && isRequireAllAttributes()) {
-                logger.warn("Principal is missing the required value for attribute [{}]", requiredAttributeName);
-                return false;
-            }
-        }
-
-        if (!isRequireAllAttributes() && (!atLeastOneAttributeFound || !atLeastOnceAttributeValueFound)) {
-            logger.warn("Principal is missing the required attribute");
+        if (isRequireAllAttributes() && copy.size() < getRequiredAttributes().size()) {
+            logger.warn("Not all required attributes are available to the principal");
             return false;
         }
-        logger.info("Principal is granted access to service [{}]", service.getId());
-        return true;
+
+        for (final String key : copy) {
+            final Set<?> requiredValues = getRequiredAttributes().get(key);
+            Set<?> availableValues = null;
+
+            final Object objVal = principalAttributes.get(key);
+            if (objVal instanceof Collection) {
+                final Collection valCol = (Collection) objVal;
+                availableValues = Sets.newHashSet(valCol.toArray());
+            } else {
+                availableValues = Collections.singleton(objVal);
+            }
+
+            final Sets.SetView<?> differenceInValues = Sets.intersection(availableValues, requiredValues);
+            if (differenceInValues.size() > 0) {
+                logger.info("Principal is authorized to access service [{}]", service.getId());
+                return true;
+            }
+        }
+        logger.info("Principal is denied access to service [{}]", service.getId());
+        return false;
     }
 
     @Override
