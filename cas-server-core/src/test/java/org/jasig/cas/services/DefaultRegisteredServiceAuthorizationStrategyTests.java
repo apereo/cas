@@ -19,18 +19,16 @@
 
 package org.jasig.cas.services;
 
+import com.google.common.collect.Sets;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is test cases for
@@ -151,16 +149,17 @@ public class DefaultRegisteredServiceAuthorizationStrategyTests {
         authz.setRequiredAttributes(this.getRequiredAttributes());
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
+        pAttrs.put("givenName", "kaz");
         assertFalse(authz.isServiceAccessAuthorizedForPrincipal(
                 pAttrs,
                 TestUtils.getService()));
     }
 
 
-    private Map<String, List<String>> getRequiredAttributes() {
-        final Map<String, List<String>> map = new HashMap<>();
-        map.put("cn", Arrays.asList("cas", "SSO"));
-        map.put("givenName", Arrays.asList("CAS", "KAZ"));
+    private Map<String, Set<String>> getRequiredAttributes() {
+        final Map<String, Set<String>> map = new HashMap<>();
+        map.put("cn", Sets.newHashSet("cas", "SSO"));
+        map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
         return map;
     }
 

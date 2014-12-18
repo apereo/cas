@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -303,11 +305,10 @@ public class JsonServiceRegistryDaoTests {
 
         final DefaultRegisteredServiceAuthorizationStrategy authz =
                 new DefaultRegisteredServiceAuthorizationStrategy(false, false);
-        authz.setRequireAllAttributes(true);
 
-        final Map<String, List<String>> attrs = new HashMap<>();
-        attrs.put("cn", new ArrayList<String>(Arrays.asList("v1, v2, v3")));
-        attrs.put("memberOf", new ArrayList<String>(Arrays.asList("v4, v5, v6")));
+        final Map<String, Set<String>> attrs = new HashMap<>();
+        attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
+        attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
         authz.setRequiredAttributes(attrs);
         r.setAuthorizationStrategy(authz);
 
