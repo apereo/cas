@@ -24,6 +24,14 @@ function getActiveDocumentationVersionInView() {
   return currentVersion;
 }
 
+function getActiveDocumentationVersionInViewOrBlank() {
+	var version = getActiveDocumentationVersionInView();
+	if (version == CONST_CURRENT_VER) {
+		return "";
+	}
+	return version;
+}
+
 function loadSidebarForActiveVersion() {
   $("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
 }
@@ -50,15 +58,15 @@ function generateToolbarIcons() {
   }
   page = page.replace(".html", ".md");
   page = page.replace(CONST_CURRENT_VER, "")
-  
+
   var imagesPath = isDocumentationSiteViewedLocally() ? "../images/" : "/cas/images/";
 
-  var activeVersion = getActiveDocumentationVersionInView();
+  var activeVersion = getActiveDocumentationVersionInViewOrBlank();
   if (activeVersion != CONST_CURRENT_VER) {
     var linkToDev = page.replace(activeVersion, CONST_CURRENT_VER);
      
     $('#toolbarIcons').append("<a href='" + linkToDev +
-      "'><img src='/cas/images/indev.png' alt='See the in-development version of this page' title='See the in-development version of this page'></a>");
+      "'><img src='/cas/images/indev.png' alt='See the latest version of this page' title='See the latest version of this page'></a>");
   }
 
   var baseLink = CAS_REPO_URL_GITHUB;
@@ -66,7 +74,7 @@ function generateToolbarIcons() {
   var historyLink = "";
   var deleteLink = "";
 
-  if (activeVersion == "" || activeVersion != CONST_CURRENT_VER) {
+  if (activeVersion != CONST_CURRENT_VER) {
   	editLink = baseLink + "/edit/gh-pages/";
   	historyLink = baseLink + "/commits/gh-pages/";
   	deleteLink = baseLink + "/delete/gh-pages/";
@@ -75,7 +83,8 @@ function generateToolbarIcons() {
   	historyLink = baseLink + "/edit/master/cas-server-documentation/";
   	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
   }
-
+  alert(activeVersion)
+  
   editLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
