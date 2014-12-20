@@ -5,7 +5,7 @@ function isDocumentationSiteViewedLocally() {
   return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
 }
 
-function getActiveDocumentationVersionInView() {
+function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
   var currentVersion = CONST_CURRENT_VER;
   var href = location.href;
   var index = isDocumentationSiteViewedLocally() ? href.indexOf(CONST_SITE_TARGET_DIR) : -1;
@@ -15,6 +15,8 @@ function getActiveDocumentationVersionInView() {
 
     if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
         currentVersion = uri.segment(1);
+    } else if (returnBlankIfNoVersion) {
+    	return "";
     }
   } else {
     href = href.substring(index + 7);
@@ -24,13 +26,6 @@ function getActiveDocumentationVersionInView() {
   return currentVersion;
 }
 
-function getActiveDocumentationVersionInViewOrBlank() {
-	var version = getActiveDocumentationVersionInView();
-	if (version == CONST_CURRENT_VER) {
-		return "";
-	}
-	return version;
-}
 
 function loadSidebarForActiveVersion() {
   $("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
@@ -61,8 +56,8 @@ function generateToolbarIcons() {
 
   var imagesPath = isDocumentationSiteViewedLocally() ? "../images/" : "/cas/images/";
 
-  var activeVersion = getActiveDocumentationVersionInViewOrBlank();
-  if (activeVersion != CONST_CURRENT_VER) {
+  var activeVersion = getActiveDocumentationVersionInView(true);
+  if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
     var linkToDev = page.replace(activeVersion, CONST_CURRENT_VER);
      
     $('#toolbarIcons').append("<a href='" + linkToDev +
@@ -74,17 +69,22 @@ function generateToolbarIcons() {
   var historyLink = "";
   var deleteLink = "";
 
-  if (activeVersion != CONST_CURRENT_VER) {
+  if (activeVersion == "") {
   	editLink = baseLink + "/edit/gh-pages/";
   	historyLink = baseLink + "/commits/gh-pages/";
   	deleteLink = baseLink + "/delete/gh-pages/";
+  } else if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
+  	editLink = baseLink + "/edit/gh-pages/" + activeVersion + "/";
+  	historyLink = baseLink + "/commits/gh-pages/" + activeVersion + "/";
+  	deleteLink = baseLink + "/delete/gh-pages/" + activeVersion + "/";
   } else if (activeVersion == CONST_CURRENT_VER) {
   	editLink = baseLink + "/edit/master/cas-server-documentation/";
   	historyLink = baseLink + "/edit/master/cas-server-documentation/";
   	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
   }
-  alert(activeVersion)
-  
+
+  alert(activeVersion + " | " + editLink);
+
   editLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
