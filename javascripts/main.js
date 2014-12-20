@@ -74,7 +74,8 @@ function generateToolbarIcons() {
   	historyLink = baseLink + "/edit/master/cas-server-documentation/";
   	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
   }
-
+  alert(page)
+  alert(activeVersion)
   editLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
