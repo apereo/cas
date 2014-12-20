@@ -60,15 +60,30 @@ function generateToolbarIcons() {
       "'><img src='/cas/images/indev.png' alt='See the in-development version of this page' title='See the in-development version of this page'></a>");
   }
 
-  var editLink = CAS_REPO_URL_GITHUB + "/edit/gh-pages/" + page;
+  var baseLink = CAS_REPO_URL_GITHUB;
+  var editLink = "";
+  var historyLink = "";
+  var deleteLink = "";
+
+  if (activeVersion == "" || activeVersion != CONST_CURRENT_VER) {
+  	editLink = baseLink + "/edit/gh-pages/";
+  	historyLink = baseLink + "/commits/gh-pages/";
+  	deleteLink = baseLink + "/delete/gh-pages/";
+  } else if (activeVersion == CONST_CURRENT_VER) {
+  	editLink = baseLink + "/edit/master/cas-server-documentation/";
+  	historyLink = baseLink + "/edit/master/cas-server-documentation/";
+  	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
+  }
+
+  editLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
-  var historyLink = CAS_REPO_URL_GITHUB + "/commits/gh-pages/" + page;
+  historyLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
     "'><img src='" + imagesPath + "history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
-  var deleteLink = CAS_REPO_URL_GITHUB + "/delete/gh-pages/" + page;
+  deleteLink += page;
   $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
     "'><img src='" + imagesPath + "delete.png' alt='Delete with Github' title='Delete with Github'>");
 }
@@ -128,9 +143,9 @@ $(function() {
 	
 	var formattedVersion = getActiveDocumentationVersionInView();
 	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-	formattedVersion = " (" + formattedVersion + ")"
+		formattedVersion = " (" + formattedVersion + ")"
 	} else {
-	formattedVersion = "";
+		formattedVersion = "";
 	}
 	document.title = $("h1").first().text() + formattedVersion;
   
