@@ -155,7 +155,7 @@ function collapseCodeBlocks() {
 function ensureBootrapIsLoaded() {
   if(typeof($.fn.modal) === 'undefined') {
     // require a minimum version of bootstrap
-    $('head').append("<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
+    $('head').prepend("<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
     $('head').append("<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>");
 
     alert("loaded bootstrap")
