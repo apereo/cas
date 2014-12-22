@@ -315,10 +315,10 @@ public final class WebUtils {
         final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
         final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
 
-        final Credential res = cFromRequest != null ? cFromRequest : cFromFlow;
-        if (res != null && StringUtils.isBlank(res.getId())) {
+        final Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+        if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
         }
-        return res;
+        return credential;
     }
 }
