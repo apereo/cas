@@ -58,9 +58,15 @@
 		</dependency>
 
     <dependency>
-      <groupId>com.googlecode</groupId>
+      <groupId>com.esotericsoftware</groupId>
       <artifactId>kryo</artifactId>
-      <version>1.04</version>
+      <version>3.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.javakaffee</groupId>
+      <artifactId>kryo-serializers</artifactId>
+      <version>0.27</version>
     </dependency>
 
     <!-- Test dependencies -->
