@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
 import java.util.concurrent.TimeUnit;
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Feller
  * @since 3.1.2
  */
-public final class HardTimeoutExpirationPolicy implements ExpirationPolicy {
+public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
