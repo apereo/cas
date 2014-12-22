@@ -19,14 +19,15 @@
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
 import java.lang.reflect.Constructor;
-import java.nio.ByteBuffer;
-
-import com.esotericsoftware.kryo.Kryo;
 
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * Serializer for {@link SamlService} class.
@@ -50,27 +51,23 @@ public final class SamlServiceSerializer extends AbstractWebApplicationServiceSe
     /**
      * Instantiates a new SAML service serializer.
      *
-     * @param kryo the kryo
      * @param helper the helper
      */
-    public SamlServiceSerializer(final Kryo kryo, final FieldHelper helper) {
-        super(kryo, helper);
+    public SamlServiceSerializer(final FieldHelper helper) {
+        super(helper);
     }
 
     @Override
-    public void write(final ByteBuffer buffer, final SamlService service) {
-        super.write(buffer, service);
-        kryo.writeObject(buffer, service.getRequestID());
+    public void write(final Kryo kryo, final Output output, final SamlService service) {
+        super.write(kryo, output, service);
+        kryo.writeObject(output, service.getRequestID());
     }
 
     @Override
-    protected SamlService createService(
-            final ByteBuffer buffer,
-            final String id,
-            final String originalUrl,
-            final String artifactId) {
+    protected SamlService createService(final Kryo kryo, final Input input, final String id,
+            final String originalUrl, final String artifactId) {
 
-        final String requestId = kryo.readObject(buffer, String.class);
+        final String requestId = kryo.readObject(input, String.class);
         try {
             return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new SimpleHttpClientFactoryBean().getObject(),
                     requestId);
