@@ -95,6 +95,9 @@
     <listener-class>
         org.springframework.web.context.ContextLoaderListener
     </listener-class>
+    <listener-class>
+        org.jasig.cas.CasEnvironmentContextListener
+    </listener-class>
   </listener>
 
     <!--
