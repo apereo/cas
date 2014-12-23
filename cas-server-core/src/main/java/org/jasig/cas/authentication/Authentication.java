@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Principal;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * <p>
@@ -33,17 +33,14 @@ import org.jasig.cas.authentication.principal.Principal;
  * of attributes.
  * </p>
  * <p>
- * An Authentication object must be serializable to permit persistance and
+ * An Authentication object must be serializable to permit persistence and
  * clustering.
- * </p>
- * <p>
- * Implementing classes must take care to ensure that the Map returned by
- * getAttributes is serializable by using a Serializable map such as HashMap.
  * </p>
  *
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.0.0
  */
 public interface Authentication extends Serializable {
@@ -56,16 +53,24 @@ public interface Authentication extends Serializable {
     Principal getPrincipal();
 
     /**
+     * @deprecated As of 4.1, returning a mutable {@link java.util.Date}
+     * instance is discouraged. Future CAS versions will replace this
+     * method with one that returns an immutable date object, such as
+     * {@link org.joda.time.DateTime}.
      * Method to retrieve the timestamp of when this Authentication object was
      * created.
      *
      * @return the date/time the authentication occurred.
      */
+    @Deprecated
     Date getAuthenticationDate();
 
     /**
      * Attributes of the authentication (not the Principal).
-     *
+     * <p>
+     * Implementing classes must take care to ensure that the {@link java.util.Map} returned
+     * is serializable by using a {@link java.io.Serializable} map such as HashMap.
+     * </p>
      * @return the map of attributes.
      */
     Map<String, Object> getAttributes();

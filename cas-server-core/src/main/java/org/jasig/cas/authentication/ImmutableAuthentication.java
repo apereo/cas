@@ -110,6 +110,7 @@ public final class ImmutableAuthentication implements Authentication {
         return this.principal;
     }
 
+    @Override
     public Date getAuthenticationDate() {
         return new ImmutableDate(this.authenticationDate);
     }
@@ -182,7 +183,8 @@ public final class ImmutableAuthentication implements Authentication {
     }
 
     /**
-     * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
+     * Immutable date implementation that throws
+     * {@link UnsupportedOperationException} for setter methods.
      */
     private static final class ImmutableDate extends Date {
 
