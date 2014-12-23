@@ -145,10 +145,11 @@ function collapseCodeBlocks() {
 		var showCodeButton = "<button type='button' class='btn btn-default' data-toggle='collapse' " +
 							 "data-target='#" + id + "' aria-expanded='true'>" +
 							 "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span>" +
-							 "&nbsp;Show Code</button><br>";
+							 "&nbsp;Show Code</button>";
 		$(this).attr("id", id);
 		$(this).before(showCodeButton);
 		$(this).addClass('collapse');
+		$(this).prepend('<br>');
 	});
 }
 
