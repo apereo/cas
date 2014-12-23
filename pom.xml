@@ -350,6 +350,25 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>${maven-buildhelper-plugin-version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>create-timestamp</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <timestampFormat>EEE, d MMM yyyy HH:mm:ss Z</timestampFormat>
+          <timestampPropertyName>timestamp</timestampPropertyName>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -357,6 +376,9 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Date>${timestamp}</Implementation-Date>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -1260,6 +1282,7 @@
     <maven-findbugs-plugin.version>3.0.0</maven-findbugs-plugin.version>
     <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
     <maven-findbugs-security-plugin.version>1.2.1</maven-findbugs-security-plugin.version>
+    <maven-buildhelper-plugin-version>1.3</maven-buildhelper-plugin-version>
 
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>
