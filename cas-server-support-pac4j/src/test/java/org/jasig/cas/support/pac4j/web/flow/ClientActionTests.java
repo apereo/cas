@@ -22,11 +22,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
@@ -44,7 +50,11 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@SuppressWarnings("rawtypes")
 public final class ClientActionTests {
+
+    private static final String TGT_NAME = "ticketGrantingTicketId";
+    private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
 
     private static final String MY_KEY = "my_key";
 
@@ -117,7 +127,10 @@ public final class ClientActionTests {
         final FacebookClient facebookClient = new MockFacebookClient();
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
 
-        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
+        final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
+        when(casImpl.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
+        final ClientAction action = new ClientAction(casImpl, clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ClientAction.THEME));
@@ -125,6 +138,9 @@ public final class ClientActionTests {
         assertEquals(MY_METHOD, mockRequest.getAttribute(ClientAction.METHOD));
         assertEquals(MY_SERVICE, mockRequest.getAttribute(ClientAction.SERVICE));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
+        final MutableAttributeMap requestScope = mockRequestContext.getRequestScope();
         assertEquals(service, flowScope.get(ClientAction.SERVICE));
+        assertEquals(TGT_ID, flowScope.get(TGT_NAME));
+        assertEquals(TGT_ID, requestScope.get(TGT_NAME));
     }
 }

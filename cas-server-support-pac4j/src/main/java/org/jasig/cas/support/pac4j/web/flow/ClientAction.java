@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
@@ -160,8 +161,10 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                WebUtils.putTicketGrantingTicketInRequestScope(context,
-                        this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials)));
+                final TicketGrantingTicket tgt = 
+                        this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials));
+                WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
+                WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
                 return success();
             }
         }
