@@ -22,6 +22,7 @@ package org.jasig.cas;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContextEvent;
@@ -36,6 +37,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component
 public final class CasEnvironmentContextListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEnvironmentContextListener.class);
 
