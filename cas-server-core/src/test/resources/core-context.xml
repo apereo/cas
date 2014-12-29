@@ -163,6 +163,14 @@
                             c:pgtUrlPattern="^https://.+" />
                     </property>
                 </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="666"/>
+                    <property name="name" value="TestSsoFalse"/>
+                    <property name="serviceId" value="TestSsoFalse"/>
+                    <property name="evaluationOrder" value="100"/>
+                    <property name="ssoEnabled" value="false" />
+                </bean>
             </list>
         </property>
     </bean>

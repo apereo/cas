@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
@@ -301,5 +303,22 @@ public final class WebUtils {
     public static void putRegisteredService(final RequestContext context,
                                             final RegisteredService registeredService) {
         context.getFlowScope().put("registeredService", registeredService);
+    }
+
+    /**
+     * Gets credential from the context.
+     *
+     * @param context the context
+     * @return the credential, or null if it cant be found in the context or if it has no id.
+     */
+    public static Credential getCredential(@NotNull final RequestContext context) {
+        final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
+        final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
+
+        final Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+        if (credential != null && StringUtils.isBlank(credential.getId())) {
+            return null;
+        }
+        return credential;
     }
 }
