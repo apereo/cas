@@ -97,14 +97,14 @@ public final class OAuth20ProfileController extends AbstractController {
             final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField(ID, principal.getId());
-            jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+            jsonGenerator.writeStartObject(ATTRIBUTES);
             final Map<String, Object> attributes = principal.getAttributes();
             for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
                 jsonGenerator.writeEndObject();
             }
-            jsonGenerator.writeEndArray();
+            jsonGenerator.writeEndObject();
             jsonGenerator.writeEndObject();
             return null;
         } finally {
