@@ -19,6 +19,8 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -50,10 +52,14 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
+            final Credential credential = WebUtils.getCredential(context);
+
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket, service);
+                .grantServiceTicket(ticketGrantingTicket, service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
+        } catch (final AuthenticationException e) {
+            logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final TicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);

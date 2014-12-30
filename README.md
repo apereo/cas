@@ -34,10 +34,10 @@ git clone git@github.com:Jasig/cas.git
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
-
-## Documentation
+## Documentation 
 - [Official Documentation][wiki]
 - [Release Notes][releasenotes]
+- [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Addons
 - [CAS Addons][casaddons] is an open source collection of useful CAS server extensions.
