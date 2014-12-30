@@ -91,7 +91,7 @@ public final class CasEnvironmentContextListener implements ServletContextListen
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        LOGGER.info("[{}] has loaded the CAS application context",
+        LOGGER.debug("[{}] has loaded the CAS application context",
                 event.getServletContext().getServerInfo());
     }
 
