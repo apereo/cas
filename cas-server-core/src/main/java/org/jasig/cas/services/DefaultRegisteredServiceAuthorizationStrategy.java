@@ -19,7 +19,7 @@
 
 package org.jasig.cas.services;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -126,8 +126,9 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     public final boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
+
     public Map<String, Set<String>> getRequiredAttributes() {
-        return this.requiredAttributes;
+        return ImmutableMap.copyOf(this.requiredAttributes);
     }
 
     /**
