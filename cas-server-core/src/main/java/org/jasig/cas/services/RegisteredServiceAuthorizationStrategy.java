@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
