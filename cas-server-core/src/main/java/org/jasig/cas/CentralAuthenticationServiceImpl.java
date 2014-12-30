@@ -64,12 +64,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -234,19 +236,20 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(
-            final String ticketGrantingTicketId, final Service service, final Credential... credentials)
+            @NotNull final String ticketGrantingTicketId,
+            @NotNull final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
-
-        Assert.notNull(service, "service cannot be null");
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
+        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
 
         Authentication currentAuthentication = null;
-        if (credentials != null && credentials.length > 0) {
-            currentAuthentication = this.authenticationManager.authenticate(credentials);
+        if (sanitizedCredentials.size() > 0) {
+            currentAuthentication = this.authenticationManager.authenticate(
+                    sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
             if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
                 throw new MixedPrincipalException(
@@ -311,6 +314,26 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 serviceTicket.getId(), service.getId(), principal.getId());
 
         return serviceTicket;
+    }
+
+    /**
+     * Attempts to sanitize the array of credentials by removing
+     * all null elements from the collection.
+     * @param credentials credentials to sanitize
+     * @return a set of credentials with no null values
+     */
+    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
+        if (credentials != null && credentials.length > 0) {
+            final Set<Credential> set = new HashSet<>(Arrays.asList(credentials));
+            final Iterator<Credential> it = set.iterator();
+            while (it.hasNext()) {
+                if (it.next() == null) {
+                    it.remove();
+                }
+            }
+            return set;
+        }
+        return Collections.emptySet();
     }
 
     @Audit(

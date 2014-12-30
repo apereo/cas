@@ -42,7 +42,7 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -84,7 +84,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void verifyDestroyTicketGrantingTicketWithInvalidTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                    TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), TestUtils.getService());
 
@@ -97,7 +97,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void verifyGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                    TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
             TestUtils.getService());
     }
@@ -310,6 +310,25 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
         assertEquals("developer", assertion.getPrimaryAuthentication().getPrincipal().getId());
+    }
+
+    @Test
+    public void verifyGrantServiceTicketWithCredsAndSsoFalse() throws Exception {
+        final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+
+        final Service svc = TestUtils.getService("TestSsoFalse");
+        final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, cred);
+        assertNotNull(serviceTicket);
+    }
+
+    @Test(expected= UnauthorizedSsoServiceException.class)
+    public void verifyGrantServiceTicketWithNoCredsAndSsoFalse() throws Exception {
+        final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+
+        final Service svc = TestUtils.getService("TestSsoFalse");
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
     }
 
     @Test

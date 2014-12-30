@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuring Authentication Components
 ---
 
-# Configuring Authentication Components
+# Authentication
 The CAS authentication process is performed by several related components:
 
 ######`PrincipalNameTransformer`
