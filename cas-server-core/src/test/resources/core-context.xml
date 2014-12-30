@@ -165,9 +165,21 @@
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
-                    <property name="id" value="100"/>
+                    <property name="id" value="222"/>
+                    <property name="name" value="TestSsoFalse"/>
+                    <property name="serviceId" value="^TestSsoFalse"/>
+                    <property name="evaluationOrder" value="555"/>
+                    <property name="authorizationStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy"
+                                c:ssoEnabled="false"
+                                c:enabled="true"/>
+                    </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="111"/>
                     <property name="name" value="TestServiceAttributeForAuthzFails"/>
-                    <property name="serviceId" value="TestServiceAttributeForAuthzFails"/>
+                    <property name="serviceId" value="^TestServiceAttributeForAuthzFails"/>
                     <property name="evaluationOrder" value="600"/>
                     <property name="authorizationStrategy">
                         <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy">
