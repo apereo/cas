@@ -81,8 +81,6 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     private static final String SVC2_ID = "test2";
     
     private static final String PRINCIPAL = "principal";
-    
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private CentralAuthenticationService cas;
     private Authentication authentication;
@@ -257,6 +255,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
+        when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(new ReturnAllAttributeReleasePolicy());
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
         when(mockRegSvc.getAuthorizationStrategy()).thenReturn(new DefaultRegisteredServiceAuthorizationStrategy(enabled, true));
         return mockRegSvc;
