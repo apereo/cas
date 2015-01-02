@@ -133,6 +133,13 @@
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="333"/>
+                    <property name="name" value="proxyService"/>
+                    <property name="serviceId" value="proxyService"/>
+                    <property name="evaluationOrder" value="333"/>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="4"/>
                     <property name="name" value="Test Service anonymous"/>
                     <property name="serviceId" value="testAnonymous"/>
