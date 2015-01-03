@@ -865,13 +865,13 @@ Response on request failure:
 
 ### **2.7.3. error codes**
 
-The following values MAY be used as the "code" attribute of authentication
+The following values MAY be used as the `code` attribute of authentication
 failure responses. The following is the minimum set of error codes that all CAS
 servers MUST implement. Implementations MAY include others.
 
 -   `INVALID_REQUEST` - not all of the required request parameters were present
 
--   `BAD_PGT` - the pgt provided was invalid
+-   `UNAUTHORIZED_SERVICE` - service is unauthorized to perform the proxy request
 
 -   `INTERNAL_ERROR` - an internal error occurred during ticket validation
 
