@@ -27,7 +27,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.Protocol;
+import org.pac4j.core.client.Mechanism;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -121,7 +121,7 @@ public final class ClientAction extends AbstractAction {
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
-        logger.debug("clientName : {}", clientName);
+        logger.debug("clientName: {}", clientName);
 
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
@@ -129,20 +129,22 @@ public final class ClientAction extends AbstractAction {
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
                     .findClient(clientName);
-            logger.debug("client : {}", client);
+            logger.debug("client: {}", client);
 
-            // HTTP protocol not allowed
-            if (client.getProtocol() == Protocol.HTTP) {
-                throw new TechnicalException("HTTP protocol client not supported : " + client);
+            // Allow CAS, OAuth, OpenID and SAML protocols
+            final Mechanism mechanism = client.getMechanism();
+            if (mechanism != Mechanism.CAS_PROTOCOL && mechanism != Mechanism.OAUTH_PROTOCOL
+                    && mechanism != Mechanism.OPENID_PROTOCOL && mechanism != Mechanism.SAML_PROTOCOL) {
+                throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are allowed: " + client);
             }
 
             // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                logger.debug("credentials : {}", credentials);
+                logger.debug("credentials: {}", credentials);
             } catch (final RequiresHttpAction e) {
-                logger.info("requires http action : {}", e);
+                logger.debug("requires http action: {}", e);
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
@@ -152,6 +154,7 @@ public final class ClientAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(SERVICE);
             context.getFlowScope().put(SERVICE, service);
+            logger.debug("retrieve service: {}", service);
             if (service != null) {
                 request.setAttribute(SERVICE, service.getId());
             }
@@ -189,9 +192,8 @@ public final class ClientAction extends AbstractAction {
 
         // save parameters in web session
         final Service service = (Service) context.getFlowScope().get(SERVICE);
-        if (service != null) {
-            session.setAttribute(SERVICE, service);
-        }
+        logger.debug("save service: {}", service);
+        session.setAttribute(SERVICE, service);
         saveRequestParameter(request, session, THEME);
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);

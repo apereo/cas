@@ -20,6 +20,7 @@ package org.jasig.cas.support.pac4j.web.flow;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
@@ -35,6 +36,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.exception.TechnicalException;
+import org.pac4j.http.client.BasicAuthClient;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -142,5 +145,28 @@ public final class ClientActionTests {
         assertEquals(service, flowScope.get(ClientAction.SERVICE));
         assertEquals(TGT_ID, flowScope.get(TGT_NAME));
         assertEquals(TGT_ID, requestScope.get(TGT_NAME));
+    }
+
+    @Test
+    public void checkUnautorizedProtocol() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "BasicAuthClient");
+
+        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+        when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
+
+        final MockRequestContext mockRequestContext = new MockRequestContext();
+        mockRequestContext.setExternalContext(servletExternalContext);
+
+        final BasicAuthClient basicAuthClient = new BasicAuthClient();
+        final Clients clients = new Clients(MY_LOGIN_URL, basicAuthClient);
+        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+
+        try {
+            action.execute(mockRequestContext);
+            fail("Should fail as the HTTP protocol is not authorized");
+        } catch (final TechnicalException e) {
+            assertEquals("Only CAS, OAuth, OpenID and SAML protocols are allowed: " + basicAuthClient, e.getMessage());
+        }
     }
 }
