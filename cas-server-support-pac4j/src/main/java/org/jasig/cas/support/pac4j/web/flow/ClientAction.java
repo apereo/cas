@@ -163,8 +163,7 @@ public final class ClientAction extends AbstractAction {
             if (credentials != null) {
                 final TicketGrantingTicket tgt = 
                         this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials));
-                WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
-                WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
+                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
         }
