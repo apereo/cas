@@ -60,10 +60,17 @@
 			<scope>test</scope>
 			<version>${pac4j.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-http</artifactId>
+            <scope>test</scope>
+            <version>${pac4j.version}</version>
+        </dependency>
 	</dependencies>
 
 	<properties>
-		<pac4j.version>1.5.1</pac4j.version>
+		<pac4j.version>1.6.0</pac4j.version>
     <cs.dir>${project.parent.basedir}</cs.dir>
   </properties>
 </project>
