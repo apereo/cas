@@ -83,7 +83,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
             this.pathPopulated = true;
         }
 
-        WebUtils.putTicketGrantingTicketInFlowScope(context,
+        WebUtils.putTicketGrantingTicketInScopes(context,
                 this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
 
         WebUtils.putWarningCookie(context,
