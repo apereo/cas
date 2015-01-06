@@ -102,6 +102,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                         TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
                 .grantServiceTicket(ticketId.getId(), mockService);
+        assertNotNull(serviceTicketId);
     }
 
     @Test
