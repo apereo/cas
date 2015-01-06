@@ -279,14 +279,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
         final String uniqueTicketIdGenKey = service.getClass().getName();
-        if (!this.uniqueTicketIdGeneratorsForService.containsKey(uniqueTicketIdGenKey)) {
-            logger.warn("Cannot create service ticket because the key [{}] for service [{}] is not linked to a ticket id generator",
-                    uniqueTicketIdGenKey, service.getId());
-            throw new UnauthorizedSsoServiceException();
-        }
-        
-        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
+        logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
+        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+        if (serviceTicketUniqueTicketIdGenerator == null) {
+            serviceTicketUniqueTicketIdGenerator = UniqueTicketIdGenerator.DEFAULT;
+            logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
+                    uniqueTicketIdGenKey);
+        }
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
