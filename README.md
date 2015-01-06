@@ -23,7 +23,7 @@ This approach does not require the adopter to *explicitly* download any version 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](http://mvnrepository.com/artifact/org.jasig.cas/cas-server)
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server)
 - Binary releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published through the [Maven Central Repository][casmavencentral].
 - A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
