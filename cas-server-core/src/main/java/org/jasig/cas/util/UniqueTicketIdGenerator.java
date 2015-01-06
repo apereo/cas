@@ -22,14 +22,13 @@ package org.jasig.cas.util;
  * Interface that enables for pluggable unique ticket Ids strategies.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface UniqueTicketIdGenerator {
-
+    /**
+     * Default instance for the ticket id generator.
+     */
+    UniqueTicketIdGenerator DEFAULT = new DefaultUniqueTicketIdGenerator();
     /**
      * Return a new unique ticket id beginning with the prefix.
      *
