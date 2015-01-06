@@ -94,6 +94,17 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     @Test
+    public void checkGrantingOfServiceTicketUsingDefaultTicketIdGen() throws Exception {
+        final Service mockService = mock(Service.class);
+        when(mockService.getId()).thenReturn("testDefault");
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+                .grantServiceTicket(ticketId.getId(), mockService);
+    }
+
+    @Test
     public void verifyGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
