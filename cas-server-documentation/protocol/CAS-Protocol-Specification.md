@@ -1142,9 +1142,11 @@ and [2.5.1](<#head2.5.1>).
 -   The value of ticket-granting cookies SHALL contain adequate secure random data
     so that a ticket-granting cookie is not guessable in a reasonable period of time.
 
--   The value of ticket-granting cookies SHOULD begin with the characters `TGC-`.
+-   The name of ticket-granting cookies SHOULD begin with the characters `TGC-`.
 
-
+-   The value of ticket-granting cookies SHOULD follow the same rules as the ticket-granting
+    ticket. Typically, the value of the ticket-granting cookies MAY contain the ticket-granting
+    ticket itself as the representation of the authenticated single sign-on session.
 
 <a name="head3.7"/>
 
