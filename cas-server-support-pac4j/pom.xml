@@ -61,12 +61,12 @@
 			<version>${pac4j.version}</version>
 		</dependency>
 
-        <dependency>
-            <groupId>org.pac4j</groupId>
-            <artifactId>pac4j-http</artifactId>
-            <scope>test</scope>
-            <version>${pac4j.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.pac4j</groupId>
+			<artifactId>pac4j-http</artifactId>
+			<scope>test</scope>
+			<version>${pac4j.version}</version>
+		</dependency>
 	</dependencies>
 
 	<properties>

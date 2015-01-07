@@ -166,7 +166,7 @@ public final class ClientActionTests {
             action.execute(mockRequestContext);
             fail("Should fail as the HTTP protocol is not authorized");
         } catch (final TechnicalException e) {
-            assertEquals("Only CAS, OAuth, OpenID and SAML protocols are allowed: " + basicAuthClient, e.getMessage());
+            assertEquals("Only CAS, OAuth, OpenID and SAML protocols are supported: " + basicAuthClient, e.getMessage());
         }
     }
 }
