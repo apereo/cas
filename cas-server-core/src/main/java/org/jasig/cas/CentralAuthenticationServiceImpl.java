@@ -53,6 +53,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
@@ -160,6 +161,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
+    /** Default instance for the ticket id generator. */
+    @NotNull
+    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
+            = new DefaultUniqueTicketIdGenerator();
     /**
      * Build the central authentication service implementation.
      *
@@ -283,7 +288,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = UniqueTicketIdGenerator.DEFAULT;
+            serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
             logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
                     uniqueTicketIdGenKey);
         }
