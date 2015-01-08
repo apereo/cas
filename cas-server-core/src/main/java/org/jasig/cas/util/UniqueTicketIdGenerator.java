@@ -26,10 +26,6 @@ package org.jasig.cas.util;
  */
 public interface UniqueTicketIdGenerator {
     /**
-     * Default instance for the ticket id generator.
-     */
-    UniqueTicketIdGenerator DEFAULT = new DefaultUniqueTicketIdGenerator();
-    /**
      * Return a new unique ticket id beginning with the prefix.
      *
      * @param prefix The prefix we want attached to the ticket.
