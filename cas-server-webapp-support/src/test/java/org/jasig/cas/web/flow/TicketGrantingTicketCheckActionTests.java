@@ -54,7 +54,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         final MockRequestContext ctx = new MockRequestContext();
         final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("user");
 
-        WebUtils.putTicketGrantingTicketInFlowScope(ctx, tgt);
+        WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
         final TicketGrantingTicketCheckAction action = new
                 TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         final Event event = action.doExecute(ctx);
@@ -68,7 +68,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()
                 .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        WebUtils.putTicketGrantingTicketInFlowScope(ctx, tgt);
+        WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
         final TicketGrantingTicketCheckAction action = new
                 TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         final Event event = action.doExecute(ctx);
