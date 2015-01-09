@@ -195,7 +195,7 @@ public class AuthenticationViaFormAction {
                                                final MessageContext messageContext) {
         try {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
-            WebUtils.putTicketGrantingTicketInFlowScope(context, tgt);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
