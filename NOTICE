@@ -1,17 +1,17 @@
-Copyright 2010, JA-SIG, Inc.
-This project includes software developed by Jasig.
-http://www.jasig.org/
+Licensed to Apereo under one or more contributor license
+agreements. See the NOTICE file distributed with this work
+for additional information regarding copyright ownership.
+Apereo licenses this file to you under the Apache License,
+Version 2.0 (the "License"); you may not use this file
+except in compliance with the License.  You may obtain a
+copy of the License at the following location:
 
-Licensed under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on
-an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied. See the License for the
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 
@@ -36,9 +36,6 @@ This project includes:
   cglib under Apache License, Version 2.0
   Code Generation Library under ASF 2.0
   Collections under The Apache Software License, Version 2.0
-  com.noelios.restlet:com.noelios.restlet under LGPL, v2.1
-  com.noelios.restlet:com.noelios.restlet.ext.servlet under LGPL, v2.1
-  com.noelios.restlet:com.noelios.restlet.ext.spring under LGPL, v2.1
   Commons Chain under The Apache Software License, Version 2.0
   Commons CLI under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
@@ -62,6 +59,7 @@ This project includes:
   Enterprise JavaBeans (EJB) 3.0 under Sun Binary Code License
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   ezmorph under The Apache Software License, Version 2.0
+  gnu-crypto under GNU General Public License, with the "library exception"
   Groovy under Apache License, Version 2.0
   groovy-engine under BSD License
   guice under Apache License, Version 2.0
@@ -72,6 +70,7 @@ This project includes:
   Hibernate Validator under Apache License, Version 2.0
   HSQLDB under HSQLDB License
   HSQLDB Database under HSQLDB License, a BSD open source license
+  HTTP server connector under CDDL license or LGPL license
   HttpClient under Apache License
   HttpCore under Apache License
   ICU4J under ICU License
@@ -106,7 +105,7 @@ This project includes:
   Jasig Central Authentication Service under Apache 2
   JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
   Java Persistence API under LGPL, v2.1
-  Java Transaction API under Commons Development and Distribution License, Version 1.0
+  java-getopt under GNU General Public License, with the "library exception"
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API under Sun Binary Code License
   Javassist under MPL 1.1
@@ -126,6 +125,8 @@ This project includes:
   JLine under BSD
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
+  jradius-core-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
+  jradius-dictionary-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   js-engine under BSD License
   json-lib under Apache License, Version 2.0
   Json-lib4Spring under The Apache Software License, Version 2.0
@@ -142,8 +143,6 @@ This project includes:
   Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Neko HTML under The Apache Software License, Version 2.0
-  net.jradius:jradius-core under LGPL, v3.0
-  net.jradius:jradius-dictionary under LGPL, v3.0
   Not Yet Commons SSL under Apache License v2
   Objenesis under MIT License
   OGNL - Object Graph Navigation Library under The OpenSymphony Software License, Version 1.1
@@ -151,10 +150,6 @@ This project includes:
   OpenSAML-J under Apache 2
   OpenWS under Apache 2
   org.apache.tools.ant under Apache License, Version 2.0
-  org.gnu:gnu-crypto under GNU General Public License, with the "library exception"
-  org.gnu:java-getopt under GNU General Public License, with the "library exception"
-  org.restlet:org.restlet under LGPL, v2.1
-  org.restlet:org.restlet.ext.spring under LGPL, v2.1
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   oro under Apache License, Version 2.0
   Perf4J under Apache 2
@@ -162,10 +157,12 @@ This project includes:
   Person Directory Implementations under The BSD License
   quartz under The Apache Software License, Version 2.0
   quartz-all under The Apache Software License, Version 2.0
+  Reference Implementation under CDDL license or LGPL license
   reflectasm under BSD style
   Resource Aggregator API under Apache License Version 2.0
   Resource Aggregator Utilities under Apache License Version 2.0
   Resource Server Utilities under Apache License Version 2.0
+  Restlet API under CDDL license or LGPL license
   Rhino under Mozilla Public License version 1.1
   ROME, RSS and atOM utilitiEs for Java under The Apache Software License, Version 2.0
   Scribe OAuth Library under MIT
@@ -182,6 +179,7 @@ This project includes:
   Spring Json View under The Apache Software License, Version 2.0
   Spring LDAP Core under The Apache Software License, Version 2.0
   Spring LDAP Java 5 support under Apache License, Version 2.0
+  Spring support under CDDL license or LGPL license
   Spring Web Flow under Apache License, Version 2.0
   spring-aop under The Apache Software License, Version 2.0
   spring-asm under The Apache Software License, Version 2.0
@@ -206,7 +204,7 @@ This project includes:
   spymemcached under The MIT License
   standard under Apache License, Version 2.0
   StAX API under The Apache Software License, Version 2.0
-  Streaming API for XML under Sun Binary Code License
+  stax-api under Sun Binary Code License
   TagSoup under Apache License 2.0
   Transaction 1.1 API under lgpl
   tyrex under BSD Style License
