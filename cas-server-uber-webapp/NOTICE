@@ -1,17 +1,17 @@
-Copyright 2010, JA-SIG, Inc.
-This project includes software developed by Jasig.
-http://www.jasig.org/
+Licensed to Apereo under one or more contributor license
+agreements. See the NOTICE file distributed with this work
+for additional information regarding copyright ownership.
+Apereo licenses this file to you under the Apache License,
+Version 2.0 (the "License"); you may not use this file
+except in compliance with the License.  You may obtain a
+copy of the License at the following location:
 
-Licensed under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on
-an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied. See the License for the
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 
@@ -43,6 +43,7 @@ This project includes:
   dom4j under BSD License
   Ehcache Core under The Apache Software License, Version 2.0
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
+  gnu-crypto under GNU General Public License, with the "library exception"
   Hamcrest Core under BSD style
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   HttpClient under Apache License
@@ -58,7 +59,7 @@ This project includes:
   Jasig CAS SPNEGO/NTLM Support under Apache 2
   Jasig CAS Web Application under Apache 2
   Jasig CAS X.509 Client Certificate Support under Apache 2
-  Java Transaction API under Commons Development and Distribution License, Version 1.0
+  java-getopt under GNU General Public License, with the "library exception"
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   jaxb-api under Commons Development and Distribution License, Version 1.0
@@ -73,21 +74,20 @@ This project includes:
   JGroups under Library (or Lesser) GNU Public License 2.1
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
+  jradius-core-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
+  jradius-dictionary-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   JSR 105 - Java(TM) XML Digital Signature API under JDL license
   jsr107cache under Apache License, Version 2.0
+  jta under Commons Development and Distribution License, Version 1.0
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
   kryo under BSD style
   minlog under BSD style
   Mockito under The MIT License
-  net.jradius:jradius-core under LGPL, v3.0
-  net.jradius:jradius-dictionary under LGPL, v3.0
   Not Yet Commons SSL under Apache License v2
   Objenesis under MIT License
   OpenSAML-J under Apache 2
   OpenWS under Apache 2
-  org.gnu:gnu-crypto under GNU General Public License, with the "library exception"
-  org.gnu:java-getopt under GNU General Public License, with the "library exception"
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
@@ -118,7 +118,7 @@ This project includes:
   spring-web under The Apache Software License, Version 2.0
   spring-webmvc under The Apache Software License, Version 2.0
   spymemcached under The MIT License
-  Streaming API for XML under Sun Binary Code License
+  stax-api under Sun Binary Code License
   Transaction 1.1 API under lgpl
   VT Crypt Library under Apache 2 or GNU Lesser General Public License
   Xalan Java under The Apache Software License, Version 2.0
