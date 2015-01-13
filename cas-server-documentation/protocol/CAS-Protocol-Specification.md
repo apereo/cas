@@ -20,14 +20,15 @@ Contributors:
 -   Andy Newman
 -   Andrew Petro
 -   Robert Oschwald [CAS 3.0]
+-   Misagh Moayyed
 
-Version: 3.0
+Version: 3.0.1
 
-Release Date: 2014-05-05
+Release Date: 2015-01-13
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2014, Apereo, Inc.
+Copyright &copy; 2015, Apereo, Inc.
 
 <a name="head1"/>
 
