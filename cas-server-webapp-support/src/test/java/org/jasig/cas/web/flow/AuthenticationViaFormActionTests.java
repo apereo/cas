@@ -161,7 +161,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        WebUtils.putTicketGrantingTicketInFlowScope(context, ticketGrantingTicket);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         WebUtils.putLoginTicket(context, "LOGIN");
         request.addParameter("lt", "LOGIN");
 
@@ -188,7 +188,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         WebUtils.putLoginTicket(context, "LOGIN");
         request.addParameter("lt", "LOGIN");
 
-        WebUtils.putTicketGrantingTicketInFlowScope(context, ticketGrantingTicket);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");
         request.addParameter("service", "test");
         request.addParameter("username", "test2");
@@ -208,7 +208,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        WebUtils.putTicketGrantingTicketInFlowScope(context, ticketGrantingTicket);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");
         request.addParameter("service", "test");
 
