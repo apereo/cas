@@ -138,38 +138,28 @@ public final class WebUtils {
     public static RegisteredService getRegisteredService(final RequestContext context) {
         return context != null ? (RegisteredService) context.getFlowScope().get("registeredService") : null;
     }
+
     /**
-     * Put ticket granting ticket in request scope.
+     * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
      * @param ticket the ticket value
      */
-    public static void putTicketGrantingTicketInRequestScope(
+    public static void putTicketGrantingTicketInScopes(
         final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
-        putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
+        putTicketGrantingTicketInScopes(context, ticketValue);
     }
 
     /**
-     * Put ticket granting ticket in flow scope.
-     *
-     * @param context the context
-     * @param ticket the ticket value
-     */
-    public static void putTicketGrantingTicketInFlowScope(
-        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
-        final String ticketValue = ticket != null ? ticket.getId() : null;
-        putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
-    }
-
-    /**
-     * Put ticket granting ticket in flow scope.
+     * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketInFlowScope(
+    public static void putTicketGrantingTicketInScopes(
             final RequestContext context, @NotNull final String ticketValue) {
+        putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
 

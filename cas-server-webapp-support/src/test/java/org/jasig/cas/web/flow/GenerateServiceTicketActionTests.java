@@ -79,7 +79,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        WebUtils.putTicketGrantingTicketInRequestScope(context,
+        WebUtils.putTicketGrantingTicketInScopes(context,
                 this.ticketGrantingTicket);
 
         this.action.execute(context);
@@ -99,7 +99,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
-        WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
         assertEquals("error", this.action.execute(context).getId());
     }
@@ -112,7 +112,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        WebUtils.putTicketGrantingTicketInRequestScope(context, this.ticketGrantingTicket);
+        WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
 
         this.ticketGrantingTicket.markTicketExpired();
         assertEquals("error", this.action.execute(context).getId());
@@ -129,7 +129,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         request.addParameter("gateway", "true");
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
-        WebUtils.putTicketGrantingTicketInRequestScope(context, tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
 
         assertEquals("gateway", this.action.execute(context).getId());
