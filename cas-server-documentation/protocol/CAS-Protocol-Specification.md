@@ -20,14 +20,15 @@ Contributors:
 -   Andy Newman
 -   Andrew Petro
 -   Robert Oschwald [CAS 3.0]
+-   Misagh Moayyed
 
-Version: 3.0
+Version: 3.0.1
 
-Release Date: 2014-05-05
+Release Date: 2015-01-13
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2014, JASIG, Inc.
+Copyright &copy; 2015, Apereo, Inc.
 
 <a name="head1"/>
 
@@ -74,10 +75,10 @@ interpreted as described in RFC 2119[1](<#1>).
 
 **1.2 Reference Implementation**
 --------------------------------
-The JASIG CAS-Server [8](<#8>) is the official reference implementation of the
+The Apereo CAS-Server [8](<#8>) is the official reference implementation of the
 CAS Protocol Specification.
 
-JASIG CAS Server 4.x supports the CAS Protocol 3.0 Specification.
+Apereo CAS Server 4.x supports the CAS Protocol 3.0 Specification.
 
 
 <a name="head2"/>
@@ -89,21 +90,23 @@ CAS is an HTTP[2](<#2>),[3](<#3>)-based protocol that requires each of its
 components to be accessible through specific URIs. This section will discuss
 each of the URIs:
 
-URI              Description
-------           ------
-/login           credential requestor / acceptor
-/logout          destroy CAS session (logout)
-/validate        service ticket validation
-/serviceValidate service ticket validation [CAS 2.0]
-/proxyValidate   service- / proxy ticket validation [CAS 2.0]
-/proxy           proxy ticket service [CAS 2.0]
+| URI                               | Description
+|-----------------------------------+------------------------------------------+
+| `/login`                          | credential requestor / acceptor
+| `/logout`                         | destroy CAS session (logout)
+| `/validate`                       | service ticket validation
+| `/serviceValidate`                | service ticket validation [CAS 2.0]
+| `/proxyValidate`                  | service/proxy ticket validation [CAS 2.0]
+| `/proxy`                          | proxy ticket service [CAS 2.0]
+| `/p3/serviceValidate`             | service ticket validation [CAS 3.0]
+| `/p3/proxyValidate`               | service/proxy ticket validation [CAS 3.0]
 
 <a name="head2.1"/>
 
 **2.1. /login as credential requestor**
 ---------------------------------------
 
-The /login URI operates with two behaviors: as a credential requestor, and as
+The `/login` URI operates with two behaviors: as a credential requestor, and as
 a credential acceptor. It responds to credentials by acting as a credential
 acceptor and otherwise acts as a credential requestor.
 
@@ -119,48 +122,57 @@ See Section [3.6](<#head3.6>) for more information on ticket-granting cookies.
 
 ### **2.1.1. parameters**
 
-The following HTTP request parameters may be passed to /login while it is
+The following HTTP request parameters may be passed to `/login` while it is
 acting as a credential requestor. They are all case-sensitive, and they all
-MUST be handled by /login.
+MUST be handled by `/login`.
 
--   service [OPTIONAL] - the identifier of the application the client is
+-   `service` [OPTIONAL] - the identifier of the application the client is
     trying to access. In almost all cases, this will be the URL of the
     application. As a HTTP request parameter, this URL value MUST be
     URL-encoded as described in section 2.2 of RFC 3986 [[4](<#4>)].
-    If a service is not specified and a single sign-on session does not yet
+    If a `service` is not specified and a single sign-on session does not yet
     exist, CAS SHOULD request credentials from the user to initiate a single
-    sign-on session. If a service is not specified and a single sign-on
+    sign-on session. If a `service` is not specified and a single sign-on
     session already exists, CAS SHOULD display a message notifying the client
     that it is already logged in.
 
--   renew [OPTIONAL] - if this parameter is set, single sign-on will be
+    > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
+    > the service management tool, such that only authorized and known
+    > client applications would be able to use the CAS server.
+    > Leaving the service management tool open to allow lenient access to
+    > all applications will potentially increase the risk of service attacks
+    > and other security vulnerabilities. Furthermore, it is RECOMMENDED that
+    > only secure protocols such as `https` be allowed for client applications
+    > for further strengthen the authenticating client.
+
+-   `renew` [OPTIONAL] - if this parameter is set, single sign-on will be
     bypassed. In this case, CAS will require the client to present credentials
     regardless of the existence of a single sign-on session with CAS. This
-    parameter is not compatible with the "gateway" parameter. Services
-    redirecting to the /login URI and login form views posting to the /login
-    URI SHOULD NOT set both the "renew" and "gateway" request parameters.
+    parameter is not compatible with the `gateway` parameter. Services
+    redirecting to the `/login` URI and login form views posting to the `/login`
+    URI SHOULD NOT set both the `renew` and `gateway` request parameters.
     Behavior is undefined if both are set. It is RECOMMENDED that CAS
-    implementations ignore the "gateway" parameter if "renew" is set.
-    It is RECOMMENDED that when the renew parameter is set its value be "true".
+    implementations ignore the `gateway` parameter if `renew` is set.
+    It is RECOMMENDED that when the `renew` parameter is set its value be "true".
 
--   gateway [OPTIONAL] - if this parameter is set, CAS will not ask the client
+-   `gateway` [OPTIONAL] - if this parameter is set, CAS will not ask the client
     for credentials. If the client has a pre-existing single sign-on session
     with CAS, or if a single sign-on session can be established through
     non-interactive means (i.e. trust authentication), CAS MAY redirect the
-    client to the URL specified by the "service" parameter, appending a valid
+    client to the URL specified by the `service` parameter, appending a valid
     service ticket. (CAS also MAY interpose an advisory page informing the
     client that a CAS authentication has taken place.) If the client does not
     have a single sign-on session with CAS, and a non-interactive authentication
     cannot be established, CAS MUST redirect the client to the URL specified by
-    the "service" parameter with no "ticket" parameter appended to the URL. If
-    the "service" parameter is not specified and "gateway" is set, the behavior
+    the `service` parameter with no "ticket" parameter appended to the URL. If
+    the `service` parameter is not specified and `gateway` is set, the behavior
     of CAS is undefined. It is RECOMMENDED that in this case, CAS request
     credentials as if neither parameter was specified. This parameter is not
-    compatible with the "renew" parameter. Behavior is undefined if both are
-    set. It is RECOMMENDED that when the gateway parameter is set its value be
+    compatible with the `renew` parameter. Behavior is undefined if both are
+    set. It is RECOMMENDED that when the `gateway` parameter is set its value be
     "true".
 
--   method [OPTIONAL, CAS 3.0] - The method to be used when sending responses.
+-   `method` [OPTIONAL, CAS 3.0] - The `method` to be used when sending responses.
     While native HTTP redirects (GET) may be utilized as the default method,
     applications that require a POST response can use this parameter to indicate
     the method type. It is up to the CAS server implementation to determine
@@ -190,14 +202,14 @@ Use POST responses instead of redirects:
 
 ### **2.1.3. response for username/password authentication**
 
-When /login behaves as a credential requestor, the response will vary depending
+When `/login` behaves as a credential requestor, the response will vary depending
 on the type of credentials it is requesting. In most cases, CAS will respond by
 displaying a login screen requesting a username and password. This page MUST
 include a form with the parameters, "username", "password", and "lt". The form
-MAY also include the parameter "warn". If "service" was specified to /login,
-"service" MUST also be a parameter of the form, containing the value originally
-passed to /login. These parameters are discussed in detail in Section [2.2.1](#head2.2.1). The
-form MUST be submitted through the HTTP POST method to /login which will then
+MAY also include the parameter "warn". If `service` was specified to `/login`,
+`service` MUST also be a parameter of the form, containing the value originally
+passed to `/login`. These parameters are discussed in detail in Section [2.2.1](#head2.2.1). The
+form MUST be submitted through the HTTP POST method to `/login` which will then
 act as a credential acceptor, discussed in Section [2.2](#head2.2).
 
 <a name="head2.1.4"/>
@@ -209,7 +221,7 @@ request as a basis for authentication. The appropriate user experience for trust
 authentication will be highly deployer-specific in consideration of local policy
 and of the logistics of the particular authentication mechanism implemented.
 
-When /login behaves as a credential requestor for trust authentication, its
+When `/login` behaves as a credential requestor for trust authentication, its
 behavior will be determined by the type of credentials it will be receiving. If
 the credentials are valid, CAS MAY transparently redirect the user to the
 service. Alternately, CAS MAY display a warning that credentials were presented
@@ -225,8 +237,8 @@ authentication).
 ### **2.1.5. response for single sign-on authentication**
 
 If the client has already established a single sign-on session with CAS, the
-client will have presented its HTTP session cookie to /login and behavior will
-be handled as in Section [2.2.4](#head2.2.4). However, if the "renew" parameter
+client will have presented its HTTP session cookie to `/login` and behavior will
+be handled as in Section [2.2.4](#head2.2.4). However, if the `renew` parameter
 is set, the behavior will be handled as in Section [2.1.3](#head2.1.3) or
 [2.1.4](#head2.1.4).
 
@@ -235,18 +247,18 @@ is set, the behavior will be handled as in Section [2.1.3](#head2.1.3) or
 **2.2. /login as credential acceptor**
 --------------------------------------
 
-When a set of accepted credentials are passed to /login, /login acts as a
+When a set of accepted credentials are passed to `/login`, `/login` acts as a
 credential acceptor and its behavior is defined in this Section.
 
 <a name="head2.2.1"/>
 
 ### **2.2.1. parameters common to all types of authentication**
 
-The following HTTP request parameters MAY be passed to /login while it is acting
+The following HTTP request parameters MAY be passed to `/login` while it is acting
 as a credential acceptor. They are all case-sensitive and they all MUST be
-handled by /login.
+handled by `/login`.
 
--   service [OPTIONAL] - the URL of the application the client is trying to
+-   `service` [OPTIONAL] - the URL of the application the client is trying to
     access. As a HTTP request parameter, this URL value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)]. CAS MUST redirect the
     client to this URL upon successful authentication. This is discussed in
@@ -255,11 +267,20 @@ handled by /login.
     within the CAS Server), the CAS Server MUST deny operation and print out
     a meaningful message if a non-authorized service URL is presented.
 
--   warn [OPTIONAL] - if this parameter is set, single sign-on MUST NOT be
+    > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
+    > the service management tool, such that only authorized and known
+    > client applications would be able to use the CAS server.
+    > Leaving the service management tool open to allow lenient access to
+    > all applications will potentially increase the risk of service attacks
+    > and other security vulnerabilities. Furthermore, it is RECOMMENDED that
+    > only secure protocols such as `https` be allowed for client applications
+    > for further strengthen the authenticating client.
+
+-   `warn` [OPTIONAL] - if this parameter is set, single sign-on MUST NOT be
     transparent. The client MUST be prompted before being authenticated to
     another service.
 
--   method [OPTIONAL] - The method to be used when sending responses. See
+-   `method` [OPTIONAL] - The `method` to be used when sending responses. See
     section [2.1.1](<#head2.1.1>) for details
 
 <a name="head2.2.2"/>
@@ -267,19 +288,19 @@ handled by /login.
 ### **2.2.2. parameters for username/password authentication**
 
 In addition to the OPTIONAL parameters specified in Section [2.2.1](#head2.2.1),
-the following HTTP request parameters MUST be passed to /login while it is
+the following HTTP request parameters MUST be passed to `/login` while it is
 acting as a credential acceptor for username/password authentication. They are
 all case-sensitive.
 
--   username [REQUIRED] - the username of the client that is trying to log in
+-   `username` [REQUIRED] - the username of the client that is trying to log in
 
--   password [REQUIRED] - the password of the client that is trying to log in
+-   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   lt [REQUIRED] - a login ticket. This is provided as part of the login form
+-   `lt` [REQUIRED] - a login ticket. This is provided as part of the login form
     discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
     in Section [3.5](#head3.5).
 
--   rememberMe [OPTIONAL, CAS 3.0] - if this parameter is set, a Long-Term
+-   `rememberMe` [OPTIONAL, CAS 3.0] - if this parameter is set, a Long-Term
     Ticket Granting Ticket might be created by the CAS server (refered to as
     Remember-Me support). It is subject to the CAS server configuration whether
     Long-Term Ticket Granting Tickets are supported or not.
@@ -301,19 +322,19 @@ authentication MAY be based on any aspect of the HTTP request.
 
 ### **2.2.4. response**
 
-One of the following responses MUST be provided by /login when it is operating
+One of the following responses MUST be provided by `/login` when it is operating
 as a credential acceptor.
 
--   successful login: redirect the client to the URL specified by the "service"
+-   successful login: redirect the client to the URL specified by the `service`
     parameter in a manner that will not cause the client's credentials to be
-    forwarded to the service. This redirection MUST result in the client issuing
-    a GET request to the service. The request MUST include a valid service
+    forwarded to the `service`. This redirection MUST result in the client issuing
+    a GET request to the `service`. The request MUST include a valid service
     ticket, passed as the HTTP request parameter, "ticket". See [Appendix
-    B](<#head_appdx_b>) for more information. If "service" was not specified,
+    B](<#head_appdx_b>) for more information. If `service` was not specified,
     CAS MUST display a message notifying the client that it has successfully
     initiated a single sign-on session.
 
--   failed login: return to /login as a credential requestor. It is RECOMMENDED
+-   failed login: return to `/login` as a credential requestor. It is RECOMMENDED
     in this case that the CAS server display an error message to the user
     describing why login failed (e.g. bad password, locked account, etc.),
     and if appropriate, provide an opportunity for the user to attempt to
@@ -324,8 +345,8 @@ as a credential acceptor.
 **2.3. /logout**
 ----------------
 
-/logout destroys a client's single sign-on CAS session. The ticket-granting
-cookie (Section [3.6](#head3.6)) is destroyed, and subsequent requests to /login will not
+`/logout` destroys a client's single sign-on CAS session. The ticket-granting
+cookie (Section [3.6](#head3.6)) is destroyed, and subsequent requests to `/login` will not
 obtain service tickets until the user again presents primary credentials (and
 thereby establishes a new single sign-on session).
 
@@ -333,50 +354,51 @@ thereby establishes a new single sign-on session).
 
 ### **2.3.1. parameters**
 
-The following HTTP request parameter MAY be specified to /logout. It is case
-sensitive and SHOULD be handled by /logout.
+The following HTTP request parameter MAY be specified to `/logout`. It is case
+sensitive and SHOULD be handled by `/logout`.
 
--   service [OPTIONAL, CAS 3.0] - if a "service" parameter is specified, the
-    browser might be automatically redirected to the URL specified by "service"
+-   `service` [OPTIONAL, CAS 3.0] - if a `service` parameter is specified, the
+    browser might be automatically redirected to the URL specified by `service`
     after the logout was performed by the CAS server. If redirection by the
     CAS Server is actually performed depends on the server configuration.
-    As a HTTP request parameter, the "service" value MUST be URL-encoded as
+    As a HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
+    > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
+    > the service management tool, such that only authorized and known
+    > client applications would be able to use the CAS server.
+    > Leaving the service management tool open to allow lenient access to
+    > all applications will potentially increase the risk of service attacks
+    > and other security vulnerabilities. Furthermore, it is RECOMMENDED that
+    > only secure protocols such as `https` be allowed for client applications
+    > for further strengthen the authenticating client.
 
-
->   Note: The "url" parameter defined in the former CAS 2.0 specification is
->   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
->   'url' parameters.
->   A CAS client MAY provide the "service" parameter as described above,
->   as this ensures the parameter is validated against the registered service
->   URLs when operating in non-open mode. See [2.3.2](#head2.3.2) for details.
-
-
+    > Note: The `url` parameter defined in the former CAS 2.0 specification is
+    > not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
+    > `url` parameters.
+    > A CAS client MAY provide the `service` parameter as described above,
+    > as this ensures the parameter is validated against the registered service
+    > URLs when operating in non-open mode. See [2.3.2](#head2.3.2) for details.
 
 <a name="head2.3.2"/>
 
 ### **2.3.2. response**
 
-[CAS 1.0, CAS 2.0] /logout MUST display a page stating that the user has been
-logged out. If the "url" request parameter is implemented, /logout SHOULD also
+[CAS 1.0, CAS 2.0] `/logout` MUST display a page stating that the user has been
+logged out. If the "url" request parameter is implemented, `/logout` SHOULD also
 provide a link to the provided URL as described in Section [2.3.1](#head2.3.1).
 
-[CAS 3.0] /logout MUST display a page stating that the user has been logged out
-if no "service" parameter was provided. If a "service" request parameter with an
+[CAS 3.0] `/logout` MUST display a page stating that the user has been logged out
+if no `service` parameter was provided. If a `service` request parameter with an
 encoded URL value is provided, the CAS server redirects to the given service URL
 after successful logout.
-
-
 
 >   Note: When CAS Server operates in non-open mode (allowed Service URLs are
 >   registered within the CAS Server), the CAS server MUST ensure that only
 >   registered [service] parameter Service URLs are accepted for redirection.
->   The "url" parameter defined in the former CAS 2.0 specification is
+>   The `url` parameter defined in the former CAS 2.0 specification is
 >   not a valid parameter in CAS 3.0 anymore. CAS Servers MUST ignore given
->   'url' parameters.
-
-
+>   `url` parameters.
 
 <a name="head2.3.3"/>
 
@@ -408,7 +430,7 @@ availability ("fire and forget").
 
 #### **2.3.3.2 Client behaviour**
 
-Handling the logout POST request data is up to the CAS client. It is recommended
+Handling the logout POST request data is up to the CAS client. It is RECOMMENDED
 to logout the user from the application identified by the service ticket id sent
 in the SLO POST request.
 If the client supports SLO POST request handling, the client SHALL return a HTTP success
@@ -420,10 +442,10 @@ status code.
 
 ## **2.4. /validate [CAS 1.0]**
 
-/validate checks the validity of a service ticket. /validate is part of the CAS
+`/validate` checks the validity of a service ticket. `/validate` is part of the CAS
 1.0 protocol and thus does not handle proxy authentication. CAS MUST respond
 with a ticket validation failure response when a proxy ticket is passed to
-/validate.
+`/validate`.
 
 
 
@@ -431,18 +453,27 @@ with a ticket validation failure response when a proxy ticket is passed to
 
 ### **2.4.1. parameters**
 
-The following HTTP request parameters MAY be specified to /validate. They are
-case sensitive and MUST all be handled by /validate.
+The following HTTP request parameters MAY be specified to `/validate`. They are
+case sensitive and MUST all be handled by `/validate`.
 
--   service [REQUIRED] - the identifier of the service for which the ticket was
+-   `service` [REQUIRED] - the identifier of the service for which the ticket was
     issued, as discussed in Section 2.2.1.
-    As a HTTP request parameter, the "service" value MUST be URL-encoded as
+    As a HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
--   ticket [REQUIRED] - the service ticket issued by /login. Service tickets are
+    > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
+    > the service management tool, such that only authorized and known
+    > client applications would be able to use the CAS server.
+    > Leaving the service management tool open to allow lenient access to
+    > all applications will potentially increase the risk of service attacks
+    > and other security vulnerabilities. Furthermore, it is RECOMMENDED that
+    > only secure protocols such as `https` be allowed for client applications
+    > for further strengthen the authenticating client.
+
+-   `ticket` [REQUIRED] - the service ticket issued by `/login`. Service tickets are
     described in Section 3.1.
 
--   renew [OPTIONAL] - if this parameter is set, ticket validation will only
+-   `renew` [OPTIONAL] - if this parameter is set, ticket validation will only
     succeed if the service ticket was issued from the presentation of the user's
     primary credentials. It will fail if the ticket was issued from a single
     sign-on session.
@@ -453,7 +484,7 @@ case sensitive and MUST all be handled by /validate.
 
 ### **2.4.2. response**
 
-/validate will return one of the following two responses:
+`/validate` will return one of the following two responses:
 
 On ticket validation success:
 
@@ -484,12 +515,12 @@ Ensure service ticket was issued by presentation of primary credentials:
 **2.5. /serviceValidate [CAS 2.0]**
 -----------------------------------
 
-/serviceValidate checks the validity of a service ticket and returns an XML-fragment response.
-/serviceValidate MUST also generate and issue proxy-granting tickets when requested.
-/serviceValidate MUST NOT return a successful authentication if it receives a proxy ticket.
-It is RECOMMENDED that if /serviceValidate receives a proxy ticket, the error message in the XML
+`/serviceValidate` checks the validity of a service ticket and returns an XML-fragment response.
+`/serviceValidate` MUST also generate and issue proxy-granting tickets when requested.
+`/serviceValidate` MUST NOT return a successful authentication if it receives a proxy ticket.
+It is RECOMMENDED that if `/serviceValidate` receives a proxy ticket, the error message in the XML
 response SHOULD explain that validation failed because a proxy ticket was passed
-to /serviceValidate.
+to `/serviceValidate`.
 
 
 
@@ -497,23 +528,32 @@ to /serviceValidate.
 
 ### **2.5.1. parameters**
 
-The following HTTP request parameters MAY be specified to /serviceValidate. They
-are case sensitive and MUST all be handled by /serviceValidate.
+The following HTTP request parameters MAY be specified to `/serviceValidate`. They
+are case sensitive and MUST all be handled by `/serviceValidate`.
 
--   service [REQUIRED] - the identifier of the service for which the ticket was
+-   `service` [REQUIRED] - the identifier of the service for which the ticket was
     issued, as discussed in Section [2.2.1](#head2.2.1).
-    As a HTTP request parameter, the "service" value MUST be URL-encoded as
+    As a HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
--   ticket [REQUIRED] - the service ticket issued by /login. Service tickets are
+    > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
+    > the service management tool, such that only authorized and known
+    > client applications would be able to use the CAS server.
+    > Leaving the service management tool open to allow lenient access to
+    > all applications will potentially increase the risk of service attacks
+    > and other security vulnerabilities. Furthermore, it is RECOMMENDED that
+    > only secure protocols such as `https` be allowed for client applications
+    > for further strengthen the authenticating client.
+
+-   `ticket` [REQUIRED] - the service ticket issued by `/login`. Service tickets are
     described in Section [3.1](#head3.1).
 
--   pgtUrl [OPTIONAL] - the URL of the proxy callback. Discussed in Section
+-   `pgtUrl` [OPTIONAL] - the URL of the proxy callback. Discussed in Section
     [2.5.4](#head2.5.4).
     As a HTTP request parameter, the "pgtUrl" value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
--   renew [OPTIONAL] - if this parameter is set, ticket validation will only
+-   `renew` [OPTIONAL] - if this parameter is set, ticket validation will only
     succeed if the service ticket was issued from the presentation of the user's
     primary credentials. It will fail if the ticket was issued from a single
     sign-on session.
@@ -524,7 +564,7 @@ are case sensitive and MUST all be handled by /serviceValidate.
 
 ### **2.5.2. response**
 
-/serviceValidate will return an XML-formatted CAS serviceResponse as described
+`/serviceValidate` will return an XML-formatted CAS serviceResponse as described
 in the XML schema in Appendix A. Below are example responses:
 
 **On ticket validation success:**
@@ -549,8 +589,6 @@ in the XML schema in Appendix A. Below are example responses:
 
 For proxy responses, see section [2.6.2](<#head2.6.2>).
 
-
-
 <a name="head2.5.3"/>
 
 ### **2.5.3. error codes**
@@ -559,28 +597,28 @@ The following values MAY be used as the "code" attribute of authentication
 failure responses. The following is the minimum set of error codes that all CAS
 servers MUST implement. Implementations MAY include others.
 
--   INVALID_REQUEST - not all of the required request parameters were present
+-   `INVALID_REQUEST` - not all of the required request parameters were present
 
--   INVALID_TICKET_SPEC - failure to meet the requirements of validation specification
+-   `INVALID_TICKET_SPEC` - failure to meet the requirements of validation specification
 
--   UNAUTHORIZED_SERVICE_PROXY - the service is not authorized to perform proxy authentication
+-   `UNAUTHORIZED_SERVICE_PROXY` - the service is not authorized to perform proxy authentication
 
--   INVALID_PROXY_CALLBACK - The proxy callback specified is invalid. The credentials specified
+-   `INVALID_PROXY_CALLBACK` - The proxy callback specified is invalid. The credentials specified
     for proxy authentication do not meet the security requirements
 
--   INVALID_TICKET - the ticket provided was not valid, or the ticket did not
-    come from an initial login and "renew" was set on validation. The body of
-    the \<cas:authenticationFailure\> block of the XML response SHOULD describe
+-   `INVALID_TICKET` - the ticket provided was not valid, or the ticket did not
+    come from an initial login and `renew` was set on validation. The body of
+    the `\<cas:authenticationFailure\>` block of the XML response SHOULD describe
     the exact details.
 
--   INVALID_SERVICE - the ticket provided was valid, but the service specified
+-   `INVALID_SERVICE` - the ticket provided was valid, but the service specified
     did not match the service associated with the ticket. CAS MUST invalidate
     the ticket and disallow future validation of that same ticket.
 
--   INTERNAL_ERROR - an internal error occurred during ticket validation
+-   `INTERNAL_ERROR` - an internal error occurred during ticket validation
 
 For all error codes, it is RECOMMENDED that CAS provide a more detailed message
-as the body of the \<cas:authenticationFailure\> block of the XML response.
+as the body of the `\<cas:authenticationFailure\>` block of the XML response.
 
 
 
@@ -599,7 +637,7 @@ The proxy callback mechanism works as follows:
 
 1.  The service that is requesting a proxy-granting ticket (PGT) specifies upon
     initial service ticket or proxy ticket validation the HTTP request parameter
-    "pgtUrl" to /serviceValidate (or /proxyValidate). This is a callback URL of
+    "pgtUrl" to `/serviceValidate` (or `/proxyValidate`). This is a callback URL of
     the service to which CAS will connect to verify the service's identity. This
     URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust.
     Building trust at a minimum involves utilizing PKIX and employing container trust to 
@@ -609,12 +647,12 @@ The proxy callback mechanism works as follows:
     security requirements such as failure to establishing trust between peers or unresponsiveness
     of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS
     service response as described in Section [2.5.2](#head2.5.2) MUST NOT contain a
-    \<proxyGrantingTicket\> block. At this point, the issuance of a
+    `\<proxyGrantingTicket\>` block. At this point, the issuance of a
     proxy-granting ticket is halted and service ticket validation will
     fail. Otherwise, the process will proceed normally to step 2.
 
-2.  CAS uses an HTTP GET request to pass the HTTP request parameters "pgtId" and
-    "pgtIou" to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
+2.  CAS uses an HTTP GET request to pass the HTTP request parameters `pgtId` and
+    `pgtIou` to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
     [3.4](#head3.4), respectively. If the proxy callback url specifies any parameters, those
     MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying 
     the response HTTP status code from the GET request, as detailed in step #3. If the
@@ -623,15 +661,15 @@ The proxy callback mechanism works as follows:
     as is described in section [2.5.3](<#head2.5.3>).
 
 3.  If the HTTP GET returns an HTTP status code of 200 (OK), CAS MUST respond to
-    the /serviceValidate (or /proxyValidate) request with a service response
+    the `/serviceValidate` (or `/proxyValidate`) request with a service response
     (Section [2.5.2](#head2.5.2)) containing the proxy-granting ticket IOU (Section [3.4](#head3.4))
-    within the \<cas:proxyGrantingTicket\> block. If the HTTP GET returns any
+    within the `\<cas:proxyGrantingTicket\>` block. If the HTTP GET returns any
     other status code, except HTTP 3xx redirects, CAS MUST respond to the
-    /serviceValidate (or /proxyValidate) request with a service response that
-    MUST NOT contain a \<cas:proxyGrantingTicket\> block. CAS MAY follow any HTTP
-    redirects issued by the pgtUrl. However, the identifying callback URL
-    provided upon validation in the \<proxy\> block MUST be the same URL that was
-    initially passed to /serviceValidate (or /proxyValidate) as the "pgtUrl"
+    `/serviceValidate` (or `/proxyValidate`) request with a service response that
+    MUST NOT contain a `\<cas:proxyGrantingTicket\>` block. CAS MAY follow any HTTP
+    redirects issued by the `pgtUrl`. However, the identifying callback URL
+    provided upon validation in the `\<proxy\>` block MUST be the same URL that was
+    initially passed to `/serviceValidate` (or `/proxyValidate`) as the `pgtUrl`
     parameter.
 
 4.  The service, having received a proxy-granting ticket IOU in the CAS
@@ -650,8 +688,6 @@ The proxy callback mechanism works as follows:
 [CAS 3.0] The response document MAY include an optional \<cas:attributes\>
 element for additional authentication and/or user attributes. See [Appendix
 A](<#head_appdx_b>) for details.
-
-
 
 <a name="head2.5.6"/>
 
@@ -698,8 +734,8 @@ Pass in a callback URL for proxying:
 **2.6. /proxyValidate [CAS 2.0]**
 ---------------------------------
 
-/proxyValidate MUST perform the same validation tasks as /serviceValidate and
-additionally validate proxy tickets. /proxyValidate MUST be capable of
+`/proxyValidate` MUST perform the same validation tasks as `/serviceValidate` and
+additionally validate proxy tickets. `/proxyValidate` MUST be capable of
 validating both service tickets and proxy tickets. See Section
 [2.5.4](<#head2.5.4>) for details.
 
@@ -709,7 +745,7 @@ validating both service tickets and proxy tickets. See Section
 
 ### **2.6.1. parameters**
 
-/proxyValidate has the same parameter requirements as /serviceValidate. See
+`/proxyValidate` has the same parameter requirements as `/serviceValidate`. See
 Section [2.5.1](<#head2.5.1>).
 
 
@@ -718,7 +754,7 @@ Section [2.5.1](<#head2.5.1>).
 
 ### **2.6.2. response**
 
-/proxyValidate will return an XML-formatted CAS serviceResponse as described in
+`/proxyValidate` will return an XML-formatted CAS serviceResponse as described in
 the XML schema in Appendix A. Below are example responses:
 
 Response on ticket validation success:
@@ -767,7 +803,7 @@ See section [2.5.3](<#head2.5.3>)
 
 ### **2.6.4 URL examples of /proxyValidate**
 
-/proxyValidate accepts the same parameters as /serviceValidate. See Section
+`/proxyValidate` accepts the same parameters as `/serviceValidate`. See Section
 [2.5.5](<#head2.5.5>) for use examples, substituting "proxyValidate" for
 "serviceValidate".
 
@@ -778,7 +814,7 @@ See section [2.5.3](<#head2.5.3>)
 **2.7. /proxy [CAS 2.0]**
 -------------------------
 
-/proxy provides proxy tickets to services that have acquired proxy-granting
+`/proxy` provides proxy tickets to services that have acquired proxy-granting
 tickets and will be proxying authentication to back-end services.
 
 
@@ -786,24 +822,23 @@ tickets and will be proxying authentication to back-end services.
 
 ### **2.7.1. parameters**
 
-The following HTTP request parameters MUST be specified to /proxy. They are both
+The following HTTP request parameters MUST be specified to `/proxy`. They are both
 case-sensitive.
 
--   pgt [REQUIRED] - the proxy-granting ticket acquired by the service during
+-   `pgt` [REQUIRED] - the proxy-granting ticket acquired by the service during
     service ticket or proxy ticket validation.
--   targetService [REQUIRED] - the service identifier of the back-end service.
+-   `targetService` [REQUIRED] - the service identifier of the back-end service.
     Note that not all back-end services are web services so this service identifier
     will not always be an URL. However, the service identifier specified here
-    MUST match the "service" parameter specified to /proxyValidate upon validation
+    MUST match the `service` parameter specified to `/proxyValidate` upon validation
     of the proxy ticket.
-
 
 
 <a name="head2.7.2"/>
 
 ### **2.7.2. response**
 
-/proxy will return an XML-formatted CAS serviceResponse document as described in the XML
+`/proxy` will return an XML-formatted CAS serviceResponse document as described in the XML
 schema in [Appendix A](#head_appdx_a). Below are example responses:
 
 Response on request success:
@@ -831,15 +866,15 @@ Response on request failure:
 
 ### **2.7.3. error codes**
 
-The following values MAY be used as the "code" attribute of authentication
+The following values MAY be used as the `code` attribute of authentication
 failure responses. The following is the minimum set of error codes that all CAS
 servers MUST implement. Implementations MAY include others.
 
--   INVALID_REQUEST - not all of the required request parameters were present
+-   `INVALID_REQUEST` - not all of the required request parameters were present
 
--   BAD_PGT - the pgt provided was invalid
+-   `UNAUTHORIZED_SERVICE` - service is unauthorized to perform the proxy request
 
--   INTERNAL_ERROR - an internal error occurred during ticket validation
+-   `INTERNAL_ERROR` - an internal error occurred during ticket validation
 
 For all error codes, it is RECOMMENDED that CAS provide a more detailed message
 as the body of the \<cas:authenticationFailure\> block of the XML response.
@@ -860,6 +895,32 @@ Simple proxy request:
 ### **2.7.4 Service Ticket Lifecycle implications**
 The CAS Server implementation MAY update the parent Service Ticket (ST) lifetime upon proxy ticket generation.
 
+**2.8. /p3/serviceValidate [CAS 3.0]**
+---------------------------------
+
+`/p3/serviceValidate` MUST perform the same validation tasks as `/serviceValidate` and
+additionally return user attributes in the CAS response. See
+Section [2.5](<#head2.5>) and Section [2.5.7](<#head2.5.7>) for details.
+
+<a name="head2.8.1"/>
+
+### **2.8.1. parameters**
+
+`/p3/serviceValidate` has the same parameter requirements as `/serviceValidate`. See
+Section [2.5.1](<#head2.5.1>).
+
+**2.9. /p3/proxyValidate [CAS 3.0]**
+---------------------------------
+
+`/p3/proxyValidate` MUST perform the same validation tasks as `/p3/proxyValidate` and
+additionally validate proxy tickets. See Section [2.8](<#head2.5>).
+
+<a name="head2.8.1"/>
+
+### **2.9.1. parameters**
+
+`/p3/proxyValidate` has the same parameter requirements as `/p3/serviceValidate`. See
+Section [2.8.1](<#head2.8.1>).
 
 **3. CAS Entities**
 ===================
@@ -871,7 +932,7 @@ The CAS Server implementation MAY update the parent Service Ticket (ST) lifetime
 
 A service ticket is an opaque string that is used by the client as a credential
 to obtain access to a service. The service ticket is obtained from CAS upon a
-client's presentation of credentials and a service identifier to /login as
+client's presentation of credentials and a service identifier to `/login` as
 described in Section [2.2](#head2.2).
 
 <a name="head3.1.1"/>
@@ -879,7 +940,7 @@ described in Section [2.2](#head2.2).
 ### **3.1.1. service ticket properties**
 
 -   Service tickets are only valid for the service identifier that was specified
-    to /login when they were generated. The service identifier SHOULD NOT be
+    to `/login` when they were generated. The service identifier SHOULD NOT be
     part of the service ticket.
 
 -   Service tickets MUST only be valid for one ticket validation attempt.
@@ -900,7 +961,7 @@ described in Section [2.2](#head2.2).
 -   Service tickets MUST contain adequate secure random data so that a ticket is
     not guessable.
 
--   Service tickets MUST begin with the characters, "ST-".
+-   Service tickets MUST begin with the characters, `ST-`.
 
 -   Services MUST be able to accept service tickets of up to 32 characters in length.
     It is RECOMMENDED that services support service tickets of up to 256 characters in
@@ -925,7 +986,7 @@ it is connecting.
 
 ### **3.2.1. proxy ticket properties**
 
--   Proxy tickets are only valid for the service identifier specified to /proxy
+-   Proxy tickets are only valid for the service identifier specified to `/proxy`
     when they were generated. The service identifier SHOULD NOT be part of the
     proxy ticket.
 
@@ -947,9 +1008,8 @@ it is connecting.
 
 -   Proxy tickets MUST contain adequate secure random data so that a ticket is
     not guessable.
--   Proxy tickets SHOULD begin with the characters, "PT-".
 
--   Proxy tickets MUST begin with either the characters, "ST-" or "PT-".
+-   Proxy tickets SHOULD begin with the characters, `PT-`.
 
 -   Back-end services MUST be able to accept proxy tickets of up to 32 characters
     in length.
@@ -986,7 +1046,7 @@ or a proxy ticket. Proxy-granting ticket issuance is described fully in Section
     ticket is not guessable in a reasonable period of time through brute-force
     attacks.
 
--   Proxy-granting tickets SHOULD begin with the characters "PGT-".
+-   Proxy-granting tickets SHOULD begin with the characters `PGT-`.
 
 -   Services MUST be able to handle proxy-granting tickets of up to 64
     characters in length.
@@ -1002,7 +1062,7 @@ or a proxy ticket. Proxy-granting ticket issuance is described fully in Section
 ----------------------------------
 
 A proxy-granting ticket IOU is an opaque string that is placed in the response
-provided by /serviceValidate and /proxyValidate used to correlate a service
+provided by `/serviceValidate` and `/proxyValidate` used to correlate a service
 ticket or proxy ticket validation with a particular proxy-granting ticket. See
 Section [2.5.4](<#head2.5.4>) for a full description of this process.
 
@@ -1021,7 +1081,7 @@ Section [2.5.4](<#head2.5.4>) for a full description of this process.
     a ticket is not guessable in a reasonable period of time through brute-force
     attacks.
 
--   Proxy-granting ticket IOUs SHOULD begin with the characters, "PGTIOU-".
+-   Proxy-granting ticket IOUs SHOULD begin with the characters, `PGTIOU-`.
 
 -   Services MUST be able to handle PGTIOUs of up to 64 characters in length. It
     is RECOMMENDED that services support PGTIOUs of up to 256 characters in
@@ -1034,8 +1094,8 @@ Section [2.5.4](<#head2.5.4>) for a full description of this process.
 **3.5. login ticket**
 ---------------------
 
-A login ticket is a string that is provided by /login as a credential requestor
-and passed to /login as a credential acceptor for username/password
+A login ticket is a string that is provided by `/login` as a credential requestor
+and passed to `/login` as a credential acceptor for username/password
 authentication. Its purpose is to prevent the replaying of credentials due to
 bugs in web browsers.
 
@@ -1045,16 +1105,14 @@ bugs in web browsers.
 
 ### **3.5.1. login ticket properties**
 
--   Login tickets issued by /login MUST be probabilistically unique.
+-   Login tickets issued by `/login` MUST be probabilistically unique.
 
 -   Login tickets MUST only be valid for one authentication attempt. Whether or
     not authentication was successful, CAS MUST then invalidate the login
     ticket, causing all future authentication attempts with that instance of
     that login ticket to fail.
 
--   Login tickets SHOULD begin with the characters "LT-".
-
-
+-   Login tickets SHOULD begin with the characters `LT-`.
 
 <a name="head3.6"/>
 
@@ -1064,7 +1122,7 @@ bugs in web browsers.
 A ticket-granting cookie is an HTTP cookie[[5](<#5>)] set by CAS upon the
 establishment of a single sign-on session. This cookie maintains login state for
 the client, and while it is valid, the client can present it to CAS in lieu of
-primary credentials. Services can opt out of single sign-on through the "renew"
+primary credentials. Services can opt out of single sign-on through the `renew`
 parameter described in Sections [2.1.1](<#head2.1.1>), [2.4.1](<#head2.4.1>),
 and [2.5.1](<#head2.5.1>).
 
@@ -1085,9 +1143,11 @@ and [2.5.1](<#head2.5.1>).
 -   The value of ticket-granting cookies SHALL contain adequate secure random data
     so that a ticket-granting cookie is not guessable in a reasonable period of time.
 
--   The value of ticket-granting cookies SHOULD begin with the characters "TGC-".
+-   The name of ticket-granting cookies SHOULD begin with the characters `TGC-`.
 
-
+-   The value of ticket-granting cookies SHOULD follow the same rules as the ticket-granting
+    ticket. Typically, the value of the ticket-granting cookies MAY contain the ticket-granting
+    ticket itself as the representation of the authenticated single sign-on session.
 
 <a name="head3.7"/>
 
@@ -1095,10 +1155,43 @@ and [2.5.1](<#head2.5.1>).
 --------------------------------------------------------
 
 In addition to the above requirements, all CAS tickets and the value of the
-ticket-granting cookie MUST contain only characters from the set {A-Z, a-z, 0-9,
-and the hyphen character "-"}.
+ticket-granting cookie MUST contain only characters from the set `{A-Z, a-z, 0-9}`,
+and the hyphen character `-`.
 
 
+<a name="head3.8"/>
+
+**3.8. ticket-granting ticket**
+------------------------------
+
+A ticket-granting ticket (PGT) is an opaque string that is generated by the CAS
+server that is issued upon an successful authentication event upon `/login`.
+This ticket may be tied to the ticket-granting cookie which represents the
+state of the single sign-on session, with validity period and acts as the
+foundation and baseline for issuance of service tickets, proxy-granting
+tickets, and more.
+
+<a name="head3.8.1"/>
+
+### **3.8.1. ticket-granting ticket properties**
+
+-   Ticket-granting tickets MAY be used by services to obtain multiple service
+    tickets. Ticket-granting tickets are not one-time-use tickets and are associated
+    with a validity period and expiration policy.
+
+-   Ticket-granting tickets MUST expire when the client whose authentication is
+    being managed logs out of CAS.
+
+-   Ticket-granting tickets MUST contain adequate secure random data so that a
+    ticket is not guessable in a reasonable period of time through brute-force
+    attacks.
+
+-   Ticket-granting tickets SHOULD begin with the characters `TGT-`.
+
+-   It is RECOMMENDED that ticket-granting tickets be encrypted when
+    shared with other external resources in order to minimize security
+    vulnerabilities as they are tied to the ticket-granting cookie
+    and represent the authentication session.
 
 
 <a name="head4"/>
@@ -1116,7 +1209,6 @@ CAS Server MAY support Long-Term Ticket Granting Tickets (referred to as
 is possible to perform recurring, non interactive re-logins to the CAS Server as
 long as the Long-Term Ticket Granting Ticket in the CAS Server is not expired
 and the browsers TGC Cookie is valid.
-
 
 
 <a name="head4.1.1"/>
@@ -1173,7 +1265,7 @@ ticket validation methods supported by the CAS Server (See Sections
 
 If the CAS client needs to handle Remember-Me logins special (e.g. deny access to
 sensitive areas of the CAS client application on a remembered login), the CAS
-client MUST NOT use the /validate CAS validation URL, as this URL does not
+client MUST NOT use the `/validate` CAS validation URL, as this URL does not
 support CAS attributes in the validation response document.
 
 
@@ -1192,7 +1284,7 @@ The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.
 **4.2 /samlValidate [CAS 3.0]**
 -------------------------------
 
-/samlValidate checks the validity of a Service Ticket by a SAML 1.1 request
+`/samlValidate` checks the validity of a Service Ticket by a SAML 1.1 request
 document provided by a HTTP POST. A SAML (Secure Access Markup Language)[7](#7) 1.1
 response document MUST be returned. This allows the release of additional
 information (attributes) of the authenticated NetID. The Security Assertion
@@ -1206,14 +1298,14 @@ be exchanged.
 
 ### **4.2.1 parameters**
 
-The following HTTP request parameters MUST be specified to /samlValidate. They
+The following HTTP request parameters MUST be specified to `/samlValidate`. They
 are both case-sensitive.
 
--   TARGET [REQUIRED] - URL encoded service identifier of the back-end service.
+-   `TARGET` [REQUIRED] - URL encoded service identifier of the back-end service.
     Note that as an HTTP request parameter, this URL value MUST be URL-encoded
     as described in Section 2.2 of RFC 1738[[4]](#4). The service identifier
-    specified here MUST match the "service" parameter provided to /login. See
-    Section [2.1.1](<#head2.1.1>). The TARGET service SHALL use HTTPS. SAML
+    specified here MUST match the `service` parameter provided to `/login`. See
+    Section [2.1.1](<#head2.1.1>). The `TARGET` service SHALL use HTTPS. SAML
     attributes MUST NOT be released to a non-SSL site.
 
 
@@ -1347,7 +1439,7 @@ Example SAML 1.1 validation response
 
 The following additional attributes might be provided within the SAML response:
 
--   longTermAuthenticationRequestTokenUsed - If Long Term Ticket Granting
+-   `longTermAuthenticationRequestTokenUsed` - If Long Term Ticket Granting
     Tickets (Remember-Me) are supported by the CAS Server (see Section [4.1](<#head4.1>)), the
     SAML response MUST include this attribute to indicate remembered logins
     to the CAS client.
@@ -1363,10 +1455,10 @@ The following additional attributes might be provided within the SAML response:
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Licensed to Jasig under one or more contributor license
+Licensed to Apereo under one or more contributor license
 agreements. See the NOTICE file distributed with this work
 for additional information regarding copyright ownership.
-Jasig licenses this file to you under the Apache License,
+Apereo licenses this file to you under the Apache License,
 Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a
 copy of the License at the following location:
@@ -1392,7 +1484,9 @@ under the License.
             response.
             This covers the responses for the following servlets:
                 /serviceValidate,
-                /proxyValidate
+                /proxyValidate,
+                /p3/serviceValidate,
+                /p3/proxyValidate,
                 /proxy
             This specification is subject to change.
         </xs:documentation>
@@ -1479,7 +1573,7 @@ under the License.
 
 
 >   Note: As userAttributes can be extended by the CAS Server implementor (see
->   \<xs:any\> schema definition), it is recommended to form custom attributes
+>   \<xs:any\> schema definition), it is RECOMMENDED to form custom attributes
 >   as \<cas:attributes\>\<cas:attribute name="NAME"\>VALUE\<cas:attribute\>\</cas:attributes\>.
 
 
@@ -1500,7 +1594,7 @@ request can, through a 303 redirection, forward the browser to another URL
 through a GET request. However, not all browsers have implemented this behavior
 correctly.
 
-The recommended method of redirection is thus JavaScript. A page containing a
+The RECOMMENDED method of redirection is thus JavaScript. A page containing a
 window.location.href in the following manner performs adequately:
 
 {% highlight html %}
@@ -1598,7 +1692,7 @@ Engineering Task Force, October 1989.
 
 <a name="7"/>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.
 
-<a name="8"/>[8] JASIG [CAS Server](<http://www.jasig.org/cas>) reference
+<a name="8"/>[8] Apereo [CAS Server](<http://www.Apereo.org/cas>) reference
 implementation
 
 
@@ -1607,9 +1701,9 @@ implementation
 **Appendix E: CAS License**
 ===========================
 
-Licensed to Jasig under one or more contributor license agreements. See the
+Licensed to Apereo under one or more contributor license agreements. See the
 NOTICE file distributed with this work for additional information regarding
-copyright ownership. Jasig licenses this file to you under the Apache License,
+copyright ownership. Apereo licenses this file to you under the Apache License,
 Version 2.0 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at the following location:
 
@@ -1664,81 +1758,4 @@ May 4, 2005: v1.0 - initial release
 March 2, 2012: v1.0.1 - fixed "noscropt" typo. apetro per amazurek with credit
 to Faraz Khan at ASU for catching the typo.
 
-April, 2013: v2.0 - CAS 3.0 protocol, Ja-SIG copyright, Apache License 2.0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+April, 2013: v2.0 - CAS 3.0 protocol, Apereo copyright, Apache License 2.0
