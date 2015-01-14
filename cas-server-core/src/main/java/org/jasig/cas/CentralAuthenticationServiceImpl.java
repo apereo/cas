@@ -392,10 +392,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
-        Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
-        Assert.notNull(service, "service cannot be null");
- 
+    public Assertion validateServiceTicket(@NotNull final String serviceTicketId, @NotNull final Service service) throws TicketException {
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        verifyRegisteredServiceProperties(registeredService, service);
+
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
@@ -403,10 +403,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new InvalidTicketException(serviceTicketId);
         }
 
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-
-        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
-        
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
