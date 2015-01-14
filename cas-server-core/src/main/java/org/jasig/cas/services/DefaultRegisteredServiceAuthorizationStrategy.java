@@ -160,7 +160,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      */
     @Override
     public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes, final Service service) {
-        if (getRequiredAttributes().isEmpty()) {
+        if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;
         }
@@ -169,7 +169,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             return false;
         }
 
-        if (principalAttributes.size() < getRequiredAttributes().size()) {
+        if (principalAttributes.size() < this.requiredAttributes.size()) {
             logger.warn("The size of the principal attributes that are [{}] does not match requirements, "
                     + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
@@ -182,14 +182,14 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         final Sets.SetView<String> difference = Sets.intersection(getRequiredAttributes().keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
 
-        if (isRequireAllAttributes() && copy.size() < getRequiredAttributes().size()) {
+        if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
             logger.warn("Not all required attributes are available to the principal");
             return false;
         }
 
         for (final String key : copy) {
-            final Set<?> requiredValues = getRequiredAttributes().get(key);
-            Set<?> availableValues = null;
+            final Set<?> requiredValues = this.requiredAttributes.get(key);
+            Set<?> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
@@ -211,18 +211,18 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
 
     @Override
     public boolean isServiceAuthorizedForSso(@NotNull final Service service) {
-        if (!isSsoEnabled()) {
+        if (!this.ssoEnabled) {
             logger.warn("Service [{}] is not allowed to participate in SSO.", service.getId());
         }
-        return isSsoEnabled();
+        return this.ssoEnabled;
     }
 
     @Override
     public boolean isServiceAuthorized(final Service service) {
-        if (!isEnabled()) {
+        if (!this.enabled) {
             logger.warn("Service [{}] is not enabled in service registry.", service.getId());
         }
-        return isEnabled();
+        return this.enabled;
     }
 
 
