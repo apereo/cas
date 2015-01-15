@@ -52,6 +52,7 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());
         final Authentication authentication = builder.build();
         this.credentialCache.put(authentication.getPrincipal().getId(), c.getPassword());
     }
