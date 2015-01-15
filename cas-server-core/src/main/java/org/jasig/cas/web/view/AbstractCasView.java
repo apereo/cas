@@ -20,6 +20,7 @@ package org.jasig.cas.web.view;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.validation.Assertion;
 import org.slf4j.Logger;
@@ -73,6 +74,18 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
         return getAssertionFrom(model).getPrimaryAuthentication();
+    }
+
+    /**
+     * Obtain the credential password from the authentication under
+     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}
+     * @param model the model
+     * @return the password cached as an authentication attribute, or null.
+     */
+    protected final String getCredentialPasswordFromAuthentication(final Map<String, Object> model) {
+        final Authentication authn = getPrimaryAuthenticationFrom(model);
+        final Principal principal = getPrincipal(model);
+        return (String) authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
     }
 
     /**
