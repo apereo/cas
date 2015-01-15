@@ -24,6 +24,8 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -70,16 +72,19 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                             final HttpServletResponse response) throws Exception {
 
         super.prepareMergedOutputModel(model, request, response);
-        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, getPrincipalAttributesAsMultiValuedAttributes(model));
-        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, getAuthenticationDate(model));
-        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, isAssertionBackedByNewLogin(model));
-        super.putIntoModel(model, CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                isRememberMeAuthentication(model));
+
+        final Map<String, Object> attributes = new HashMap<>(getPrincipalAttributesAsMultiValuedAttributes(model));
+        attributes.put(MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, Collections.singleton(getAuthenticationDate(model)));
+        attributes.put(MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, Collections.singleton(isAssertionBackedByNewLogin(model)));
+        attributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+                Collections.singleton(isRememberMeAuthentication(model)));
 
         final String credential = super.getCredentialPasswordFromAuthentication(model);
         if (StringUtils.isNotBlank(credential)) {
-            logger.debug("Obtained credential password is passed to the CAS payload under [{}]", MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, credential);
+            logger.debug("Obtained credential password is passed to the CAS payload under [{}]",
+                    MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            attributes.put(MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, Collections.singleton(credential));
         }
+        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, attributes);
     }
 }
