@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
@@ -49,6 +50,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
      */
     public static final String MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = "isFromNewLogin";
 
+    /**
+     * Represents the flag to note the principal credential used to establish
+     * a successful authentication event.
+     */
+    public static final String MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL = "credential";
 
     /**
      * Instantiates a new Abstract cas jstl view.
@@ -69,5 +75,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
         super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, isAssertionBackedByNewLogin(model));
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 isRememberMeAuthentication(model));
+
+        final String credential = super.getCredentialPasswordFromAuthentication(model);
+        if (StringUtils.isNotBlank(credential)) {
+            logger.debug("Obtained credential password is passed to the CAS payload under [{}]", MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, credential);
+        }
     }
 }
