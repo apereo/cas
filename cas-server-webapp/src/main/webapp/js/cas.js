@@ -17,32 +17,16 @@
  * under the License.
  */
 
-function loadScript(urls, success) {
-    for (var i = 0; i < urls.length; i++) {
-        var url = urls[i];
-        var script = document.createElement('script');
-        script.src = url;
-        var head = document.getElementsByTagName('head')[0], done=false;
-
-        script.onload = script.onreadystatechange = function(){
-            if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
-                done=true;
-                success(url);
-
-                script.onload = script.onreadystatechange = null;
-                head.removeChild(script);
-            }
-        };
-        head.appendChild(script);
-    }
-
-}
-
 var scripts = [ "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
     "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js",
     "https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"];
 
-loadScript(scripts, function(url) {
+head.ready(document, function() {
+    head.load(scripts, resourceLoadedSuccessfully);
+});
+
+
+function resourceLoadedSuccessfully() {
     $(document).ready(function() {
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
@@ -72,4 +56,5 @@ loadScript(scripts, function(url) {
         }
     });
 
-});
+};
+
