@@ -16,33 +16,60 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-$(document).ready(function(){
-    //focus username field
-    if ($(":focus").length === 0){
-      $("input:visible:enabled:first").focus();
+
+function loadScript(urls, success) {
+    for (var i = 0; i < urls.length; i++) {
+        var url = urls[i];
+        var script = document.createElement('script');
+        script.src = url;
+        var head = document.getElementsByTagName('head')[0], done=false;
+
+        script.onload = script.onreadystatechange = function(){
+            if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+                done=true;
+                success(url);
+
+                script.onload = script.onreadystatechange = null;
+                head.removeChild(script);
+            }
+        };
+        head.appendChild(script);
     }
 
-    //flash error box
-    $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
+}
 
-    //flash success box
-    $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+var scripts = [ "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
+    "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js",
+    "https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"];
 
-    //flash confirm box
-    $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+loadScript(scripts, function(url) {
+    $(document).ready(function() {
+        if ($(":focus").length === 0){
+            $("input:visible:enabled:first").focus();
+        }
 
-    $('#capslock-on').hide();
-    $('#password').keypress(function(e) {
-        var s = String.fromCharCode( e.which );
-        if ( s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey ) {
-            $('#capslock-on').show();
-        } else {
-            $('#capslock-on').hide();
+        //flash error box
+        $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
+
+        //flash success box
+        $('#msg.success').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+
+        //flash confirm box
+        $('#msg.question').animate({ backgroundColor: 'rgb(51,204,0)' }, 30).animate({ backgroundColor: 'rgb(221,255,170)' }, 500);
+
+        $('#capslock-on').hide();
+        $('#password').keypress(function(e) {
+            var s = String.fromCharCode( e.which );
+            if ( s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey ) {
+                $('#capslock-on').show();
+            } else {
+                $('#capslock-on').hide();
+            }
+        });
+
+        if (typeof(jqueryReady) == "function") {
+            jqueryReady();
         }
     });
 
-    /*
-     * Using the JavaScript Debug library, you may issue log messages such as:
-     * debug.log("Welcome to Central Authentication Service");
-     */
 });
