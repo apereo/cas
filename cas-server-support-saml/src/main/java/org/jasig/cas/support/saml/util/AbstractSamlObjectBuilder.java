@@ -93,11 +93,16 @@ public abstract class AbstractSamlObjectBuilder {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Initialize and bootstrap opensaml.
+     * Check for prior OpenSAML initialization to prevent double init
+     * that would overwrite existing OpenSAML configuration.
+     */
     static {
         try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
-            DefaultBootstrap.bootstrap();
+            if (Configuration.getParserPool() == null) {
+                DefaultBootstrap.bootstrap();
+            }
         } catch (final ConfigurationException e) {
             throw new IllegalStateException("Error initializing OpenSAML library.", e);
         }
