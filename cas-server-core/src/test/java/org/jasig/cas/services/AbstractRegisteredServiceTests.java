@@ -18,18 +18,17 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link AbstractRegisteredService}.
@@ -79,12 +78,12 @@ public class AbstractRegisteredServiceTests {
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, this.r.getDescription());
         assertEquals(ENABLED, this.r.getAuthorizationStrategy()
-                .isServiceAuthorized(TestUtils.getService()));
+                .isServiceAuthorized());
         assertEquals(ID, this.r.getId());
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
         assertEquals(SSO_ENABLED, this.r.getAuthorizationStrategy()
-                .isServiceAuthorizedForSso(TestUtils.getService()));
+                .isServiceAuthorizedForSso());
         assertEquals(THEME, this.r.getTheme());
 
         assertFalse(this.r.equals(null));

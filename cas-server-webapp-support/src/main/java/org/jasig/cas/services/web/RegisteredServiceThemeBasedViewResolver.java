@@ -95,7 +95,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         final String themeId = service != null && registeredService != null
-                && registeredService.getAuthorizationStrategy().isServiceAuthorized(service)
+                && registeredService.getAuthorizationStrategy().isServiceAuthorized()
                 && StringUtils.hasText(registeredService.getTheme()) ? registeredService.getTheme() : defaultThemeId;
 
         final String themePrefix = String.format("%s/%s/ui/", pathPrefix, themeId);
