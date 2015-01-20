@@ -54,6 +54,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
@@ -161,6 +162,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
+    /** Default instance for the ticket id generator. */
+    @NotNull
+    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
+            = new DefaultUniqueTicketIdGenerator();
     /**
      * Build the central authentication service implementation.
      *
@@ -280,11 +285,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
         final String uniqueTicketIdGenKey = service.getClass().getName();
-        if (!this.uniqueTicketIdGeneratorsForService.containsKey(uniqueTicketIdGenKey)) {
-            logger.warn("Cannot create service ticket because the key [{}] for service [{}] is not linked to a ticket id generator",
-                    uniqueTicketIdGenKey, service.getId());
-            throw new UnauthorizedSsoServiceException();
-        }
+        logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
+        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
@@ -296,8 +298,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedServiceForPrincipalException();
         }
 
-        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+        if (serviceTicketUniqueTicketIdGenerator == null) {
+            serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
+            logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
+                    uniqueTicketIdGenKey);
+        }
 
 
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
