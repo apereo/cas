@@ -95,7 +95,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
             logger.debug("Placing service in context scope: [{}]", service.getId());
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService != null && registeredService.getAuthorizationStrategy().isServiceAuthorized(service)) {
+            if (registeredService != null && registeredService.getAuthorizationStrategy().isServiceAuthorized()) {
                 logger.debug("Placing registered service [{}] with id [{}] in context scope",
                         registeredService.getServiceId(),
                         registeredService.getId());
