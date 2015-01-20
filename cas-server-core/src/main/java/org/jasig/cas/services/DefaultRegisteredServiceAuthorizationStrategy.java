@@ -23,11 +23,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -159,13 +157,13 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * for any individual attribute value.
      */
     @Override
-    public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes, final Service service) {
+    public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes) {
         if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;
         }
         if (principalAttributes.isEmpty()) {
-            logger.warn("No principal attributes are found to satisfy attribute requirements for [{}]", service.getId());
+            logger.warn("No principal attributes are found to satisfy attribute requirements");
             return false;
         }
 
@@ -176,8 +174,8 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             return false;
         }
 
-        logger.debug("These required attributes [{}] are examined against [{}] before service [{}] can proceed.",
-                getRequiredAttributes(), principalAttributes, service.getId());
+        logger.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
+                getRequiredAttributes(), principalAttributes);
 
         final Sets.SetView<String> difference = Sets.intersection(getRequiredAttributes().keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
@@ -201,26 +199,26 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
 
             final Sets.SetView<?> differenceInValues = Sets.intersection(availableValues, requiredValues);
             if (differenceInValues.size() > 0) {
-                logger.info("Principal is authorized to access service [{}]", service.getId());
+                logger.info("Principal is authorized to access the service");
                 return true;
             }
         }
-        logger.info("Principal is denied access to service [{}]", service.getId());
+        logger.info("Principal is denied access as the required attributes for the registered service are missing");
         return false;
     }
 
     @Override
-    public boolean isServiceAuthorizedForSso(@NotNull final Service service) {
+    public boolean isServiceAuthorizedForSso() {
         if (!this.ssoEnabled) {
-            logger.warn("Service [{}] is not allowed to participate in SSO.", service.getId());
+            logger.trace("Service is not authorized to participate in SSO.");
         }
         return this.ssoEnabled;
     }
 
     @Override
-    public boolean isServiceAuthorized(final Service service) {
+    public boolean isServiceAuthorized() {
         if (!this.enabled) {
-            logger.warn("Service [{}] is not enabled in service registry.", service.getId());
+            logger.trace("Service is not enabled in service registry.");
         }
         return this.enabled;
     }
