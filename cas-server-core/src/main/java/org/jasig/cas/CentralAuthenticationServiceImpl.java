@@ -263,7 +263,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
 
-        if (currentAuthentication == null && !registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso(service)) {
+        if (currentAuthentication == null && !registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso()) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -284,27 +284,25 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
-        final String uniqueTicketIdGenKey = service.getClass().getName();
-        logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
-        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
-
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
 
         final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-        if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs, service)) {
+        if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs)) {
             logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
             throw new UnauthorizedServiceForPrincipalException();
         }
 
+        final String uniqueTicketIdGenKey = service.getClass().getName();
+        logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
+        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
                 this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (serviceTicketUniqueTicketIdGenerator == null) {
             serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
             logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
                     uniqueTicketIdGenKey);
         }
-
 
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
         final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
@@ -604,9 +602,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.getAuthorizationStrategy().isServiceAuthorized(service)) {
+        if (!registeredService.getAuthorizationStrategy().isServiceAuthorized()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service %s] is not enabled in service registry.", service.getId());
+                    + "Service [%s] is not enabled in service registry.", service.getId());
 
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);

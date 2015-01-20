@@ -81,7 +81,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final Service service = WebUtils.getService(context);
         if (service != null) {
             final RegisteredService rService = this.servicesManager.findServiceBy(service);
-            if (rService != null && rService.getAuthorizationStrategy().isServiceAuthorized(service)
+            if (rService != null && rService.getAuthorizationStrategy().isServiceAuthorized()
                     && StringUtils.isNotBlank(rService.getTheme())) {
                 LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
                 final CasThemeResourceBundleMessageSource messageSource = new CasThemeResourceBundleMessageSource();
