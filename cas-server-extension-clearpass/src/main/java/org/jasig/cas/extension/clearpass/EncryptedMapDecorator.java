@@ -48,9 +48,11 @@ import java.util.Set;
 /**
  * Decorator for a map that will hash the key and encrypt the value.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0.6
  */
+@Deprecated
 public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
