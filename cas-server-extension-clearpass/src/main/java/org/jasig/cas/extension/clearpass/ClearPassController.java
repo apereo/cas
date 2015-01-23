@@ -33,9 +33,11 @@ import java.util.Map;
  * A controller that returns the password based on some external authentication/authorization rules.  The recommended
  * method is to use the Apereo CAS Client for Java and its proxy authentication features.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0
  */
+@Deprecated
 public final class ClearPassController extends AbstractController {
 
     /** view if clearpass request fails. */

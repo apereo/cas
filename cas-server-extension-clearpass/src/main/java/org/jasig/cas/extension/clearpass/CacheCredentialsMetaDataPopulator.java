@@ -32,9 +32,11 @@ import java.util.Map;
  * the password in our cache rather than use the original design which relied on modifying the flow.  This method, while
  * technically a misuse of the interface relieves us of having to modify and maintain the login flow manually.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0
  */
+@Deprecated
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @NotNull
@@ -52,7 +54,6 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());
         final Authentication authentication = builder.build();
         this.credentialCache.put(authentication.getPrincipal().getId(), c.getPassword());
     }
