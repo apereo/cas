@@ -254,17 +254,17 @@ will report back that the proxy chain is invalid for the requesting proxy url. <
     <span class="nt">&lt;constructor-arg</span> <span class="na">name=</span><span class="s">&quot;maximumChunkSize&quot;</span> <span class="na">value=</span><span class="s">&quot;5000000&quot;</span><span class="nt">/&gt;</span>  
 <span class="nt">&lt;/bean&gt;</span>
 
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;credentialsCache&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas3.extensions.clearpass.EhcacheBackedMap&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;credentialsCache&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.extensions.clearpass.EhcacheBackedMap&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;constructor-arg</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span> <span class="na">ref=</span><span class="s">&quot;clearPassEhCache&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ticketRegistry&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas3.extensions.clearpass.TicketRegistryDecorator&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ticketRegistry&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.extensions.clearpass.TicketRegistryDecorator&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;constructor-arg</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span> <span class="na">ref=</span><span class="s">&quot;ticketRegistryValue&quot;</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;constructor-arg</span> <span class="na">index=</span><span class="s">&quot;1&quot;</span> <span class="na">ref=</span><span class="s">&quot;credentialsCache&quot;</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 
 <span class="c">&lt;!-- implementation of the clear pass vending service --&gt;</span>
-<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;clearPassController&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas3.extensions.clearpass.ClearPassController&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;clearPassController&quot;</span> <span class="na">class=</span><span class="s">&quot;org.jasig.cas.extensions.clearpass.ClearPassController&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;constructor-arg</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span> <span class="na">ref=</span><span class="s">&quot;credentialsCache&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/bean&gt;</span>
 
