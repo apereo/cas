@@ -21,10 +21,12 @@ package org.jasig.cas.util.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
 
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
@@ -38,6 +40,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
         mapper.addMixInAnnotations(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
+        mapper.addMixInAnnotations(RegisteredServiceAuthorizationStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
         return mapper;
     }
 
@@ -57,6 +60,35 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @JsonIgnore
         boolean isAllowedProxyCallbackUrl(URL pgtUrl);
     }
+
+    private interface RegisteredServiceAuthorizationStrategyMixin {
+        /**
+         * Is service authorized.
+         *
+         * @return the boolean
+         */
+        @JsonIgnore
+        boolean isServiceAuthorized();
+
+        /**
+         * Is service authorized for sso.
+         *
+         * @return the boolean
+         */
+        @JsonIgnore
+        boolean isServiceAuthorizedForSso();
+
+        /**
+         * Is service access authorized for principal.
+         *
+         * @param principalAttributes the principal attributes
+         * @return the boolean
+         */
+        @JsonIgnore
+        boolean isServiceAccessAuthorizedForPrincipal(Map<String, Object> principalAttributes);
+    }
+
+
 
     @Override
     protected Class<RegisteredService> getTypeToSerialize() {
