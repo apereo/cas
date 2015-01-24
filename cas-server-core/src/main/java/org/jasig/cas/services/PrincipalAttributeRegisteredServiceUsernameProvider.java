@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * Determines the username for this registered service based on a principal attribute.
  * If the attribute is not found, default principal id is returned.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class PrincipalAttributeRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
 
@@ -43,6 +43,13 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     
     @NotNull
     private final String usernameAttribute;
+
+    /**
+     * Private constructor to get around serialization issues.
+     */
+    private PrincipalAttributeRegisteredServiceUsernameProvider() {
+        this.usernameAttribute = null;
+    }
 
     /**
      * Instantiates a new default registered service username provider.
@@ -74,7 +81,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         }
         
         logger.debug("Principal id to return is [{}]. The default principal id is [{}].",
-                principal.getId(), principalId);
+                principalId, principal.getId());
         return principalId;
     }
     

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.slf4j.impl;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ import java.util.regex.Pattern;
  * logging messages if needed, such as removing sensitive ticket id from
  * the log message.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class CasDelegatingLogger extends MarkerIgnoringBase implements Serializable {
 
@@ -95,8 +94,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return the modified message with tgt id removed
      */
     private String removeTicketId(final String msg) {
-        final StringBuilder builder = new StringBuilder(msg.length());
-
         String modifiedMessage = msg;
 
         final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);

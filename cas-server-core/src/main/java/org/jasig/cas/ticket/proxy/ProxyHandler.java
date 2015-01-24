@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.proxy;
 
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
  * Abstraction for what needs to be done to handle proxies. Useful because the
@@ -28,7 +29,7 @@ import org.jasig.cas.authentication.Credential;
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public interface ProxyHandler {
 
@@ -36,11 +37,10 @@ public interface ProxyHandler {
      * Method to actually process the proxy request.
      *
      * @param credential The credential of the item that will be proxying.
-     * @param proxyGrantingTicketId The ticketId for the ProxyGrantingTicket (in
-     * CAS 3 this is a TicketGrantingTicket)
+     * @param proxyGrantingTicketId The ticketId for the PGT (which really is a TGT)
      * @return the String value that needs to be passed to the CAS client.
      */
-    String handle(Credential credential, String proxyGrantingTicketId);
+    String handle(Credential credential, TicketGrantingTicket proxyGrantingTicketId);
     
     /**
      * Whether this handler can support the proxy request identified by the given credentials.

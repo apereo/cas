@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.Inflater;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
@@ -38,7 +37,9 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.SimpleHttpClient;
+
+import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class FrontChannelLogoutActionTests {
     @Before
     public void onSetUp() throws Exception {
         final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class),
-                new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
+                new SimpleHttpClientFactoryBean().getObject(), new SamlCompliantLogoutMessageCreator());
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
         this.request = new MockHttpServletRequest();
@@ -91,21 +92,21 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Test
-    public void testLogoutNoRequest() throws Exception {
+    public void verifyLogoutNoRequest() throws Exception {
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutNoIndex() throws Exception {
+    public void verifyLogoutNoIndex() throws Exception {
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutOneLogoutRequestSuccess() throws Exception {
+    public void verifyLogoutOneLogoutRequestSuccess() throws Exception {
         final LogoutRequest logoutRequest = new LogoutRequest("", null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
@@ -115,9 +116,9 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Test
-    public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final String FAKE_URL = "http://url";
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
+    public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
+        final String fakeUrl = "http://url";
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(fakeUrl));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
@@ -125,8 +126,9 @@ public class FrontChannelLogoutActionTests {
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get("logoutUrl");
-        assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
-        final byte[] samlMessage = Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url,  "?SAMLRequest="), "UTF-8"));
+        assertTrue(url.startsWith(fakeUrl + "?SAMLRequest="));
+        final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
+                URLDecoder.decode(StringUtils.substringAfter(url, "?SAMLRequest="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
         final byte[] result = new byte[1000];

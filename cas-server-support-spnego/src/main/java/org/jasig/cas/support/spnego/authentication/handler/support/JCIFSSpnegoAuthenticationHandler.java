@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -20,17 +20,18 @@ package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
-import java.security.GeneralSecurityException;
-import java.security.Principal;
-import java.util.regex.Pattern;
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -40,9 +41,10 @@ import javax.security.auth.login.FailedLoginException;
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  * @since 3.1
  */
+@Deprecated
 public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private Authentication authentication;
@@ -55,12 +57,12 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     /**
      * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
      */
-    private boolean isNTLMallowed = false;
+    private boolean isNTLMallowed;
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
-        Principal principal;
+        java.security.Principal principal;
         byte[] nextToken;
         try {
             // proceed authentication using jcifs
@@ -86,12 +88,12 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         if (principal != null) {
             if (spnegoCredential.isNtlm()) {
                 logger.debug("NTLM Credential is valid for user [{}]", principal.getName());
-                spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), true));
+                spnegoCredential.setPrincipal(getPrincipal(principal.getName(), true));
                 success = this.isNTLMallowed;
             }
             // else => kerberos
             logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
-            spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), false));
+            spnegoCredential.setPrincipal(getPrincipal(principal.getName(), false));
             success = true;
         }
 
@@ -119,21 +121,45 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     }
 
     /**
+     * @deprecated As of 4.1. Use {@link #getPrincipal(String, boolean)}
      * Gets the simple principal from the given name.
      *
      * @param name the name
      * @param isNtlm the is ntlm
      * @return the simple principal
      */
+    @Deprecated
     protected SimplePrincipal getSimplePrincipal(final String name, final boolean isNtlm) {
+        logger.warn("getSimplePrincipal() is deprecated and will be removed. Consider getPrincipal() instead.");
+
         if (this.principalWithDomainName) {
-            return new SimplePrincipal(name);
+            return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
         }
         if (isNtlm) {
             return Pattern.matches("\\S+\\\\\\S+", name)
-                    ? new SimplePrincipal(name.split("\\\\")[1])
-                    : new SimplePrincipal(name);
+                    ? (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("\\\\")[1])
+                    : (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
         }
-        return new SimplePrincipal(name.split("@")[0]);
+        return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("@")[0]);
+    }
+
+    /**
+     * Gets the principal from the given name. The principal
+     * is created by the factory instance.
+     *
+     * @param name the name
+     * @param isNtlm the is ntlm
+     * @return the simple principal
+     */
+    protected Principal getPrincipal(final String name, final boolean isNtlm) {
+        if (this.principalWithDomainName) {
+            return this.principalFactory.createPrincipal(name);
+        }
+        if (isNtlm) {
+            return Pattern.matches("\\S+\\\\\\S+", name)
+                    ? this.principalFactory.createPrincipal(name.split("\\\\")[1])
+                    : this.principalFactory.createPrincipal(name);
+        }
+        return this.principalFactory.createPrincipal(name.split("@")[0]);
     }
 }

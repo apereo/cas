@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -44,7 +44,9 @@ public final class RegisteredServiceValidator implements Validator {
     /** Default length, which matches what is in the view. */
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
-    /** {@link ServicesManager} to look up services. */
+    /**
+     * {@link ServicesManager} to look up services.
+     **/
     @NotNull
     private final ServicesManager servicesManager;
 
@@ -52,7 +54,9 @@ public final class RegisteredServiceValidator implements Validator {
     @Min(0)
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
-    /** {@link IPersonAttributeDao} to manage person attributes. */
+    /**
+     * {@link IPersonAttributeDao} to manage person attributes.
+     **/
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 

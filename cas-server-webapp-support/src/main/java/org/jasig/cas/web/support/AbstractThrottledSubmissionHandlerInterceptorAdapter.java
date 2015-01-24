@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -76,8 +77,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-            response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter)
-                                + " from IP Address [" + request.getRemoteAddr() + "]");
+            response.sendError(HttpStatus.SC_FORBIDDEN,
+                    "Access Denied for user [" + request.getParameter(usernameParameter)
+                    + " from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
 
@@ -141,7 +143,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     protected void recordThrottle(final HttpServletRequest request) {
         logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
-                new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+                request.getRemoteAddr(), failureThreshold, failureRangeInSeconds);
     }
 
     /**

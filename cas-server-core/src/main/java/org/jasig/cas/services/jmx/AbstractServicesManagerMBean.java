@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.services.jmx;
 
 import org.jasig.cas.services.RegisteredService;
@@ -43,7 +42,7 @@ import java.util.List;
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
 
     @NotNull
-    private T servicesManager;
+    private final T servicesManager;
 
     /**
      * Instantiates a new abstract services manager m bean.
@@ -65,7 +64,7 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
      */
     @ManagedAttribute(description = "Retrieves the list of Registered Services in a slightly friendlier output.")
     public final List<String> getRegisteredServicesAsStrings() {
-        final List<String> services = new ArrayList<String>();
+        final List<String> services = new ArrayList<>();
 
         for (final RegisteredService r : this.servicesManager.getAllServices()) {
         services.add(new StringBuilder().append("id: ").append(r.getId())

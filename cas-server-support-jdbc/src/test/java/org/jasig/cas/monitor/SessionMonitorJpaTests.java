@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.monitor;
 
 import org.jasig.cas.TestUtils;
@@ -64,7 +63,7 @@ public class SessionMonitorJpaTests {
 
     @Test
     @Rollback(false)
-    public void testObserveOkJpaTicketRegistry() throws Exception {
+    public void verifyObserveOkJpaTicketRegistry() throws Exception {
         addTicketsToRegistry(this.jpaRegistry, 5, 5);
         assertEquals(10, this.jpaRegistry.getTickets().size());
         this.monitor.setTicketRegistry(this.jpaRegistry);

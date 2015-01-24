@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,7 +26,7 @@ import java.net.URLEncoder;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginCompatibilityTests {
@@ -39,7 +39,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         super(name);
     }
 
-    public void testSingleSignOn() {
+    public void verifySingleSignOn() {
         beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
@@ -50,7 +50,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         // TODO test logging in to another service
     }
 
-    public void testValidCredentialsAuthenticationWithWarn() throws IOException {
+    public void verifyValidCredentialsAuthenticationWithWarn() throws IOException {
         final String service = "http://www.yale.edu";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
         setFormElement(FORM_USERNAME, getUsername());
@@ -71,7 +71,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
 
     }
 
-    public void testValidCredentialsAuthenticationWithoutWarn() throws UnsupportedEncodingException {
+    public void verifyValidCredentialsAuthenticationWithoutWarn() throws UnsupportedEncodingException {
         final String service = "http://www.cnn.com";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
         setFormElement(FORM_USERNAME, getUsername());
@@ -83,7 +83,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     /*
      * jWebUnit doesn't allow you to change pre-populated hidden form values.
      *
-    public void testBadLoginTicket() {
+    public void verifyBadLoginTicket() {
         setFormElement(FORM_USERNAME, "test");
         setFormElement(FORM_PASSWORD, "test");
         setFormElement(WebConstants.LOGIN_TOKEN, "test");
@@ -92,7 +92,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         assertFormElementPresent(FORM_USERNAME);
     }
 
-    public void testNoLoginTicket() {
+    public void verifyNoLoginTicket() {
         setFormElement(FORM_USERNAME, "test");
         setFormElement(FORM_PASSWORD, "test");
         setFormElement(WebConstants.LOGIN_TOKEN, "");
@@ -100,13 +100,13 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         assertFormElementPresent(FORM_USERNAME);
     }
 
-    public void testDoubleLoginTicket() {
+    public void verifyDoubleLoginTicket() {
         //TODO covered by badLoginTicket?
     }
      *
      */
 
-    public void testPassBadCredentials() {
+    public void verifyPassBadCredentials() {
         beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getBadPassword());
@@ -114,7 +114,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         assertFormElementPresent(FORM_USERNAME);
     }
 
-    public void testPassEmptyCredentials() {
+    public void verifyPassEmptyCredentials() {
         beginAt("/login");
         submit();
         assertFormElementPresent(FORM_USERNAME);
@@ -125,7 +125,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
      * service tickets for the previously authenticated user.
      * @throws IOException
      */
-    public void testLoginAsSomeoneElse() throws IOException {
+    public void verifyLoginAsSomeoneElse() throws IOException {
         final String encodedService = URLEncoder.encode(getServiceUrl(), "UTF-8");
 
         // establish SSO session as the first user

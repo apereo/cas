@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.slf4j.impl;
 
 import org.apache.commons.io.FileUtils;
@@ -40,6 +39,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
+ * @since 4.1.0
  */
 public class CasLoggerFactoryTests {
 
@@ -69,96 +69,96 @@ public class CasLoggerFactoryTests {
     }
 
     @Test
-    public void testLoggerSelectedCorrectly() {
+    public void verifyLoggerSelectedCorrectly() {
         assertTrue(logger instanceof CasDelegatingLogger);
     }
 
     @Test
-    public void testLogging1() {
+    public void verifyLogging1() {
         logger.trace(mock(Marker.class), getMessageToLogWithParams(), null, null);
         validateLogData();
     }
 
     @Test
-    public void testLogging2() {
+    public void verifyLogging2() {
         logger.trace(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging3() {
+    public void verifyLogging3() {
         logger.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging4() {
+    public void verifyLogging4() {
         logger.trace(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging5() {
+    public void verifyLogging5() {
         logger.trace(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging6() {
+    public void verifyLogging6() {
         logger.trace(getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging7() {
+    public void verifyLogging7() {
         logger.trace(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging8() {
+    public void verifyLogging8() {
         logger.trace(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging9() {
+    public void verifyLogging9() {
         logger.trace(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging21() {
+    public void verifyLogging21() {
         logger.debug(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging31() {
+    public void verifyLogging31() {
         logger.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging41() {
+    public void verifyLogging41() {
         logger.debug(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging51() {
+    public void verifyLogging51() {
         logger.debug(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging61() {
+    public void verifyLogging61() {
         logger.debug(getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging771() {
+    public void verifyLogging771() {
         final TicketGrantingTicket t = mock(TicketGrantingTicket.class);
         when(t.getId()).thenReturn(ID1);
         when(t.toString()).thenReturn(ID1);
@@ -168,163 +168,163 @@ public class CasLoggerFactoryTests {
     }
 
     @Test
-    public void testLogging71() {
+    public void verifyLogging71() {
         logger.debug(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging81() {
+    public void verifyLogging81() {
         logger.debug(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging91() {
+    public void verifyLogging91() {
         logger.debug(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging211() {
+    public void verifyLogging211() {
         logger.info(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging311() {
+    public void verifyLogging311() {
         logger.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging411() {
+    public void verifyLogging411() {
         logger.info(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging511() {
+    public void verifyLogging511() {
         logger.info(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging611() {
+    public void verifyLogging611() {
         logger.info(getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging711() {
+    public void verifyLogging711() {
         logger.info(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging811() {
+    public void verifyLogging811() {
         logger.info(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging911() {
+    public void verifyLogging911() {
         logger.info(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging2111() {
+    public void verifyLogging2111() {
         logger.warn(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging3111() {
+    public void verifyLogging3111() {
         logger.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging4111() {
+    public void verifyLogging4111() {
         logger.warn(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging5111() {
+    public void verifyLogging5111() {
         logger.warn(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging6111() {
+    public void verifyLogging6111() {
         logger.warn(getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging7111() {
+    public void verifyLogging7111() {
         logger.warn(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging8111() {
+    public void verifyLogging8111() {
         logger.warn(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging9111() {
+    public void verifyLogging9111() {
         logger.warn(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging21110() {
+    public void verifyLogging21110() {
         logger.error(mock(Marker.class), getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging31110() {
+    public void verifyLogging31110() {
         logger.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging41110() {
+    public void verifyLogging41110() {
         logger.error(mock(Marker.class), getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging51110() {
+    public void verifyLogging51110() {
         logger.error(mock(Marker.class), getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }
 
     @Test
-    public void testLogging61110() {
+    public void verifyLogging61110() {
         logger.error(getMessageToLog());
         validateLogData();
     }
 
     @Test
-    public void testLogging71110() {
+    public void verifyLogging71110() {
         logger.error(getMessageToLogWithParams(), ID2, ID1);
         validateLogData();
     }
 
     @Test
-    public void testLogging81110() {
+    public void verifyLogging81110() {
         logger.error(getMessageToLogWithParams(), ID2, ID1, ID2);
         validateLogData();
     }
 
     @Test
-    public void testLogging91110() {
+    public void verifyLogging91110() {
         logger.error(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
         validateLogData();
     }

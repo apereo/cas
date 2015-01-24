@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -46,6 +46,27 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>requestParameterSecurityFilter</filter-name>
+    <filter-class>org.jasig.cas.security.RequestParameterPolicyEnforcementFilter</filter-class>
+    <init-param>
+      <param-name>parametersToCheck</param-name>
+      <param-value>ticket service renew gateway warn target SAMLart pgtUrl pgt pgtId pgtIou targetService</param-value>
+    </init-param>
+    <init-param>
+      <param-name>charactersToForbid</param-name>
+      <param-value>none</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowMultiValuedParameters</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>requestParameterSecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
@@ -73,6 +94,9 @@
   <listener>
     <listener-class>
         org.springframework.web.context.ContextLoaderListener
+    </listener-class>
+    <listener-class>
+        org.jasig.cas.CasEnvironmentContextListener
     </listener-class>
   </listener>
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,7 +28,7 @@ import javax.validation.constraints.Size;
  * may provide in order to prove the authenticity of who they say they are.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  * <p>
  * This is a published and supported CAS Server 3 API.
  * </p>
@@ -103,8 +105,10 @@ public class UsernamePasswordCredentials implements Credentials {
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(username)
+                .append(password)
+                .toHashCode();
+
     }
 }

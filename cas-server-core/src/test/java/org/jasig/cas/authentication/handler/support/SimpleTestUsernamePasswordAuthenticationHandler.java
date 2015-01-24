@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -46,11 +46,11 @@ import org.springframework.util.StringUtils;
  *
  * @author Scott Battagliaa
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
-    private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<String, Exception>();
+    private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
     /** Instance of logging for subclasses. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -25,7 +25,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="cas"
@@ -86,9 +86,8 @@
         </property>
     </bean>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          c:readTimeout="5000"
-          c:connectionTimeout="5000" />
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+        p:readTimeout="5000" p:connectionTimeout="5000" />
 
     <util:map id="uniqueTicketIdGeneratorsForService">
         <entry
