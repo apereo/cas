@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,20 @@
  */
 package org.jasig.cas.support.pac4j.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.Protocol;
+import org.pac4j.core.client.Mechanism;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -47,10 +47,15 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
+
 /**
- * This class represents an action to put at the beginning of the webflow.<br />
+ * This class represents an action to put at the beginning of the webflow.<br>
  * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
- * locale, method and service are saved into the web session.<br />
+ * locale, method and service are saved into the web session.<br>
  * After authentication, appropriate information are expected on this callback url to finish the authentication
  * process with the provider.
  *
@@ -59,12 +64,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public final class ClientAction extends AbstractAction {
-
-    /**
-     * The logger.
-     */
-    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
-
     /**
      * Constant for the service parameter.
      */
@@ -81,6 +80,16 @@ public final class ClientAction extends AbstractAction {
      * Constant for the method parameter.
      */
     public static final String METHOD = "method";
+    /**
+     * Supported protocols.
+     */
+    private static final List<Mechanism> SUPPORTED_PROTOCOLS = Arrays.asList(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
+            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL);
+
+    /**
+     * The logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
     /**
      * The clients used for authentication.
@@ -121,7 +130,7 @@ public final class ClientAction extends AbstractAction {
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
-        logger.debug("clientName : {}", clientName);
+        logger.debug("clientName: {}", clientName);
 
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
@@ -129,20 +138,21 @@ public final class ClientAction extends AbstractAction {
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
                     .findClient(clientName);
-            logger.debug("client : {}", client);
+            logger.debug("client: {}", client);
 
-            // HTTP protocol not allowed
-            if (client.getProtocol() == Protocol.HTTP) {
-                throw new TechnicalException("HTTP protocol client not supported : " + client);
+            // Only supported protocols
+            final Mechanism mechanism = client.getMechanism();
+            if (!SUPPORTED_PROTOCOLS.contains(mechanism)) {
+                throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
             }
 
             // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                logger.debug("credentials : {}", credentials);
+                logger.debug("credentials: {}", credentials);
             } catch (final RequiresHttpAction e) {
-                logger.info("requires http action : {}", e);
+                logger.debug("requires http action: {}", e);
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
@@ -152,14 +162,19 @@ public final class ClientAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(SERVICE);
             context.getFlowScope().put(SERVICE, service);
+            logger.debug("retrieve service: {}", service);
+            if (service != null) {
+                request.setAttribute(SERVICE, service.getId());
+            }
             restoreRequestAttribute(request, session, THEME);
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                WebUtils.putTicketGrantingTicketInRequestScope(context,
-                        this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials)));
+                final TicketGrantingTicket tgt = 
+                        this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials));
+                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
         }
@@ -183,10 +198,9 @@ public final class ClientAction extends AbstractAction {
         final WebContext webContext = new J2EContext(request, response);
 
         // save parameters in web session
-        final Service service = (Service) context.getFlowScope().get(SERVICE);
-        if (service != null) {
-            session.setAttribute(SERVICE, service);
-        }
+        final WebApplicationService service = WebUtils.getService(context);
+        logger.debug("save service: {}", service);
+        session.setAttribute(SERVICE, service);
         saveRequestParameter(request, session, THEME);
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);

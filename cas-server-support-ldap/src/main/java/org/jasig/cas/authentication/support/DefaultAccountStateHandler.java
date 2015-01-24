@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,17 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.authentication.support;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.LoginException;
 
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.AccountDisabledException;
@@ -45,6 +34,16 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.AccountExpiredException;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Default account state handler.
  *
@@ -52,19 +51,18 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
+    /** Map of account state error to CAS authentication exception. */
+    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
 
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /** Map of account state error to CAS authentication exception. */
-    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
 
     /**
      * Instantiates a new account state handler, that populates
      * the error map with LDAP error codes and corresponding exceptions.
      */
     static {
-        ERROR_MAP = new HashMap<AccountState.Error, LoginException>();
+        ERROR_MAP = new HashMap<>();
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
         ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
@@ -96,7 +94,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             error = null;
             warning = null;
         }
-        final List<Message> messages = new ArrayList<Message>();
+        final List<Message> messages = new ArrayList<>();
         handleError(error, response, configuration, messages);
         handleWarning(warning, response, configuration, messages);
         return messages;

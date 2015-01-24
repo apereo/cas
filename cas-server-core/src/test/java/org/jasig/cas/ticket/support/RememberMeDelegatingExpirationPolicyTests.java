@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,19 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.util.Collections;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -38,6 +40,11 @@ import org.junit.Test;
  *
  */
 public final class RememberMeDelegatingExpirationPolicyTests {
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
 
     private RememberMeDelegatingExpirationPolicy p;
 
@@ -49,9 +56,9 @@ public final class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketExpirationWithRememberMe() {
+    public void verifyTicketExpirationWithRememberMe() {
         final Authentication authentication = TestUtils.getAuthentication(
-                new SimplePrincipal("test"),
+                this.principalFactory.createPrincipal("test"),
                 Collections.<String, Object>singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
@@ -62,7 +69,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketExpirationWithoutRememberMe() {
+    public void verifyTicketExpirationWithoutRememberMe() {
         final Authentication authentication = TestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());

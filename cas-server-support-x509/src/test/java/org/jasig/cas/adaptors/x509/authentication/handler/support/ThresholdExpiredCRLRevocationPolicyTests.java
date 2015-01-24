@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -79,7 +79,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         final Date now = new Date();
         final Date twoHoursAgo = new Date(now.getTime() - 7200000);
@@ -122,7 +122,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * Test method for {@link ThresholdExpiredCRLRevocationPolicy#apply(java.security.cert.X509CRL)}.
      */
     @Test
-    public void testApply() {
+    public void verifyApply() {
         try {
             this.policy.apply(this.crl);
             if (this.expected != null) {

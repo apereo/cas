@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,19 +18,21 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
  * Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public abstract class AbstractAttributeReleasePolicy implements AttributeReleasePolicy {
     
@@ -40,11 +42,22 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The attribute filter. */
-    private AttributeFilter attributeFilter = null;
-    
+    private AttributeFilter attributeFilter;
+
+    /** Attribute repository that refreshes attributes for a principal. **/
+    private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
+
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
+    }
+
+    public final void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
+        this.principalAttributesRepository = repository;
+    }
+
+    protected PrincipalAttributesRepository getPrincipalAttributesRepository() {
+        return principalAttributesRepository;
     }
 
     /**
@@ -58,21 +71,22 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
-        final Map<String, Object> attributes = getAttributesInternal(p);
+        final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
+        final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
         
         if (this.attributeFilter != null) {
-            return this.attributeFilter.filter(attributes);
+            return this.attributeFilter.filter(attributesToRelease);
         }
-        return attributes;
+        return attributesToRelease;
     }
     
     /**
      * Gets the attributes internally from the implementation.
      *
-     * @param p the principal
+     * @param attributes the principal attributes
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(final Principal p);
+    protected abstract Map<String, Object> getAttributesInternal(final Map<String, Object> attributes);
 
     @Override
     public int hashCode() {

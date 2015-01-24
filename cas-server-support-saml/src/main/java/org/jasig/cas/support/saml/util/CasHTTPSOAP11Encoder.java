@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.util;
 
 import org.opensaml.Configuration;
@@ -34,7 +33,9 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  *
  * @author Marvin S. Addison
  * @since 3.5.1
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 

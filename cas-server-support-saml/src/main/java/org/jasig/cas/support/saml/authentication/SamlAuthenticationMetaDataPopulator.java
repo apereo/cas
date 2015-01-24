@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -55,7 +55,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     /** The Constant AUTHN_METHOD_UNSPECIFIED. */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
-    private final Map<String, String> authenticationMethods = new HashMap<String, String>();
+    private final Map<String, String> authenticationMethods = new HashMap<>();
 
     /**
      * Instantiates a new SAML authentication meta data populator.
@@ -86,13 +86,18 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
         builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
     }
 
+    @Override
+    public boolean supports(final Credential credential) {
+        return true;
+    }
+
     /**
-     * Map of user-defined mappings. Note it is possible to over-ride the
+     * Map of user-defined mappings. Note it is possible to override the
      * defaults. Mapping should be of the following type:
-     * <p>(<String version of Package/Class Name> <SAML Type>)
+     * <pre>Package/Class Name as String -&gt; Name SAML Type</pre>
      * <p>
-     * Example: (<"org.jasig.cas.authentication.HttpBasedServiceCredential">
-     * <SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client>)
+     * Example: (<code>"org.jasig.cas.authentication.HttpBasedServiceCredential"
+     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
      *
      * @param userDefinedMappings map of user defined authentication types.
      */

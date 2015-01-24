@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.proxy.support;
 
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 
 /**
@@ -26,13 +27,13 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  * 1.0 has no proxying capabilities.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas10ProxyHandler implements ProxyHandler {
 
     @Override
     public String handle(final Credential credential,
-        final String proxyGrantingTicketId) {
+        final TicketGrantingTicket proxyGrantingTicketId) {
         return null;
     }
 

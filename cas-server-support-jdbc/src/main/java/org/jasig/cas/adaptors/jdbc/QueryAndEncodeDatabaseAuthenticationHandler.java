@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +26,6 @@ import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -54,6 +52,7 @@ import java.util.Map;
  * </p>
  * @author Misagh Moayyed
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
+ * @since 4.1.0
  */
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
@@ -92,24 +91,24 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
     /**
-     * The number of iterations.
+     * The number of iterations. Defaults to 0.
      */
-    protected long numberOfIterations = 0;
+    protected long numberOfIterations;
 
     /**
      * The static/private salt.
      */
-    protected String staticSalt = null;
+    protected String staticSalt;
 
     /**
      * Instantiates a new Query and encode database authentication handler.
      *
      * @param datasource The database datasource
      * @param sql the sql query to execute which must include a parameter placeholder
-     *            for the userid. (i.e. <code>SELECT * FROM table WHERE username = ?</code>
+     *            for the user id. (i.e. <code>SELECT * FROM table WHERE username = ?</code>
      * @param algorithmName the algorithm name (i.e. <code>MessageDigestAlgorithms.SHA_512</code>)
-     * @see {@link org.apache.commons.codec.digest.MessageDigestAlgorithms}
      */
+
     public QueryAndEncodeDatabaseAuthenticationHandler(final DataSource datasource,
                                                        final String sql,
                                                        final String algorithmName) {
@@ -132,7 +131,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            return createHandlerResult(transformedCredential, new SimplePrincipal(username), null);
+            return createHandlerResult(transformedCredential,
+                    this.principalFactory.createPrincipal(username), null);
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {

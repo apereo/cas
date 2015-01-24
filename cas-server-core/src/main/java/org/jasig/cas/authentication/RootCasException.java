@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
-import org.springframework.util.Assert;
+import javax.validation.constraints.NotNull;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
@@ -35,7 +35,7 @@ public abstract class RootCasException extends Exception {
   private static final long serialVersionUID = -2384466176716541689L;
 
   /** The code description of the exception. */
-  private String code;
+  private final String code;
 
   /**
    * Constructor that takes a <code>code</code> description of the error along with the exception
@@ -44,8 +44,8 @@ public abstract class RootCasException extends Exception {
    *
    * @param code the code to describe what type of exception this is.
    */
-  public RootCasException(final String code) {
-      initException(code);
+  public RootCasException(@NotNull final String code) {
+      this.code = code;
   }
 
   /**
@@ -55,9 +55,9 @@ public abstract class RootCasException extends Exception {
    * @param code the code to describe what type of exception this is.
    * @param msg The error message associated with this exception for additional logging purposes.
    */
-  public RootCasException(final String code, final String msg) {
+  public RootCasException(@NotNull final String code, final String msg) {
       super(msg);
-      initException(code);
+      this.code = code;
   }
 
   /**
@@ -67,32 +67,22 @@ public abstract class RootCasException extends Exception {
    * @param code the code to describe what type of exception this is.
    * @param throwable the original exception we are chaining.
    */
-  public RootCasException(final String code, final Throwable throwable) {
+  public RootCasException(@NotNull final String code, final Throwable throwable) {
       super(throwable);
-      initException(code);
+      this.code = code;
   }
 
   /**
    * @return Returns the code. If there is a chained exception it recursively
-   * calls {@link #getCode()} of the chained exception rather than the returning
+   * calls <code>getCode()</code> on the cause of the chained exception rather than the returning
    * the code itself.
    */
   public final String getCode() {
       final Throwable cause = this.getCause();
-      if (cause != null && (cause instanceof RootCasException)) {
+      if (cause instanceof RootCasException) {
         return ((RootCasException) cause).getCode();
       }
       return this.code;
-  }
-
-  /**
-   * Inits the exception with the code.
-   *
-   * @param code the code
-   */
-  private void initException(final String code) {
-      Assert.hasLength(code, "The exception code cannot be blank");
-      this.code = code;
   }
 
   @Override

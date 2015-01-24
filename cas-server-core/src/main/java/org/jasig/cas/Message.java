@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,29 +18,30 @@
  */
 package org.jasig.cas;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default
  * message string to use if no message code can be resolved.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class Message implements Serializable {
 
     /** Serialization support. */
     private static final long serialVersionUID = 1227390629186486032L;
 
-    private String code;
+    private final String code;
 
-    private String defaultMessage;
+    private final String defaultMessage;
 
-    private Serializable[] params;
+    private final Serializable[] params;
 
     /**
      * Instantiates a new message.
@@ -74,8 +75,16 @@ public class Message implements Serializable {
         return this.defaultMessage;
     }
 
+    /**
+     * Get parameters for the message.
+     *
+     * @return the serializable [ ]
+     */
     public Serializable[] getParams() {
-        return this.params;
+        if (this.params == null) {
+            return null;
+        }
+        return ImmutableList.copyOf(this.params).toArray(new Serializable[this.params.length]);
     }
 
     @Override

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,24 +18,25 @@
  */
 package org.jasig.cas.authentication;
 
-import javax.security.auth.login.FailedLoginException;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.Principal;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import javax.security.auth.login.FailedLoginException;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link PolicyBasedAuthenticationManager}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManagerTests {
 
     @Test
-    public void testAuthenticateAnySuccess() throws Exception {
+    public void verifyAuthenticateAnySuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
@@ -46,7 +47,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateAnyButTryAllSuccess() throws Exception {
+    public void verifyAuthenticateAnyButTryAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
@@ -60,7 +61,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateAnyFailure() throws Exception {
+    public void verifyAuthenticateAnyFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
@@ -69,7 +70,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateAllSuccess() throws Exception {
+    public void verifyAuthenticateAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(true));
@@ -81,7 +82,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateAllFailure() throws Exception {
+    public void verifyAuthenticateAllFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
@@ -91,7 +92,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateRequiredHandlerSuccess() throws Exception {
+    public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
@@ -103,7 +104,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test(expected = AuthenticationException.class)
-    public void testAuthenticateRequiredHandlerFailure() throws Exception {
+    public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
@@ -113,7 +114,7 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
-    public void testAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
+    public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
@@ -156,10 +157,12 @@ public class PolicyBasedAuthenticationManagerTests {
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
         if (success) {
+            final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
+
             final HandlerResult result = new HandlerResult(
                     mock,
                     mock(CredentialMetaData.class),
-                    new SimplePrincipal("nobody"));
+                    p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());

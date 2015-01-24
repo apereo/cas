@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,6 +19,8 @@
 package org.jasig.cas.util;
 
 import org.jasig.cas.authentication.FileTrustStoreSslSocketFactory;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,30 +30,32 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
-    private SimpleHttpClient client;
-
     private static final ClassPathResource TRUST_STORE = new ClassPathResource("truststore.jks");
     private static final String TRUST_STORE_PSW = "changeit";
 
+    private HttpClient client;
+
     @Before
     public void prepareHttpClient() throws Exception {
-        final FileTrustStoreSslSocketFactory f = new FileTrustStoreSslSocketFactory(
+        final FileTrustStoreSslSocketFactory sslFactory = new FileTrustStoreSslSocketFactory(
                 TRUST_STORE.getFile(), TRUST_STORE_PSW);
 
-        this.client = new SimpleHttpClient(f);
+        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(sslFactory);
+        this.client = clientFactory.getObject();
     }
 
     @Ignore
-    public void testSuccessfulConnection() {
+    public void verifySuccessfulConnection() {
         final boolean valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
-    public void testSuccessfulConnectionWithCustomSSLCert() {
+    public void verifySuccessfulConnectionWithCustomSSLCert() {
         final boolean valid = client.isValidEndPoint("https://www.cacert.org");
         assertTrue(valid);
     }

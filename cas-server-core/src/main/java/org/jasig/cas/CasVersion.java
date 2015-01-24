@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas;
 
 /**
@@ -25,7 +24,7 @@ package org.jasig.cas;
  *
  * @author Dmitriy Kopylenko
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class CasVersion {
 
@@ -38,8 +37,8 @@ public final class CasVersion {
     }
 
     /**
-     * @see java.lang.Package#getImplementationVersion
      * @return Return the full CAS version string.
+     * @see java.lang.Package#getImplementationVersion
      */
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();

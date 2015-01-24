@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
@@ -32,8 +35,19 @@ import java.util.List;
  */
 public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
+
     @NotNull
-    private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
+    private List<RegisteredService> registeredServices = new ArrayList<>();
+
+    /**
+     * Instantiates a new In memory service registry.
+     */
+    public InMemoryServiceRegistryDaoImpl() {
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime "
+                + "will be LOST upon container restarts.");
+    }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
