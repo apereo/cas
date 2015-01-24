@@ -78,7 +78,7 @@ public abstract class AbstractCasView extends AbstractView {
 
     /**
      * Obtain the credential password from the authentication under
-     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}
+     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}.
      * @param model the model
      * @return the password cached as an authentication attribute, or null.
      */
