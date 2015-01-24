@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
  * Unit test to verify Spring context wiring.
  *
  * @author Middleware Services
+ * @since 3.0.0
  */
 public class WiringTests {
     private XmlWebApplicationContext applicationContext;
@@ -39,10 +40,10 @@ public class WiringTests {
     @Before
     public void setUp() {
         applicationContext = new XmlWebApplicationContext();
-        applicationContext.setConfigLocations(new String[]{
+        applicationContext.setConfigLocations(
                 "file:src/main/webapp/WEB-INF/cas-management-servlet.xml",
                 "file:src/main/webapp/WEB-INF/managementConfigContext.xml",
-        "file:src/main/webapp/WEB-INF/spring-configuration/*.xml"});
+        "file:src/main/webapp/WEB-INF/spring-configuration/*.xml");
         applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
             @Override
             public Resource getResource(final String location) {
@@ -58,7 +59,7 @@ public class WiringTests {
     }
 
     @Test
-    public void testWiring() throws Exception {
+    public void verifyWiring() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 }

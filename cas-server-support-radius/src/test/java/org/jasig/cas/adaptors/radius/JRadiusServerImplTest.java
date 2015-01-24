@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
  * Unit test for {@link JRadiusServerImpl}.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-context.xml")
@@ -43,7 +44,7 @@ public class JRadiusServerImplTest {
      * An external RADIUS server test fixture is required for thorough testing.
      */
     @Test
-    public void testAuthenticate() {
+    public void verifyAuthenticate() {
         assertNotNull(this.radiusServer);
     }
 }

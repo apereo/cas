@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,6 @@
  */
 package org.jasig.cas.services.support;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.services.AttributeFilter;
 import org.jasig.cas.services.RegisteredService;
@@ -37,14 +26,23 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private AttributeFilter filter;
-    private Map<String, Object> givenAttributesMap = null;
+    private final AttributeFilter filter;
+    private final Map<String, Object> givenAttributesMap;
 
     @Mock
     private RegisteredService registeredService;
@@ -53,7 +51,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
-        this.givenAttributesMap = new HashMap<String, Object>();
+        this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("uid", "loggedInTestUid");
         this.givenAttributesMap.put("phone", "1290");
         this.givenAttributesMap.put("familyName", "Smith");
@@ -63,7 +61,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
 
-        final Map<String, String> mapAttributes = new HashMap<String, String>();
+        final Map<String, String> mapAttributes = new HashMap<>();
         mapAttributes.put("uid", "loggedInTestUid");
         mapAttributes.put("phone", "890");
         mapAttributes.put("familyName", "Smith");
@@ -79,7 +77,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    public void testPatternFilter() {
+    public void verifyPatternFilter() {
 
         final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), 7);
@@ -102,9 +100,9 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
     
     @Test
-    public void testSerialization() {
+    public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
-        final AttributeFilter secondFilter = (AttributeFilter) SerializationUtils.deserialize(data);
+        final AttributeFilter secondFilter = SerializationUtils.deserialize(data);
         assertEquals(secondFilter, this.filter);
     }
 }

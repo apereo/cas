@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,6 +23,8 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Unit tests for {@link org.jasig.cas.support.rest.TicketsResource}.
  *
  * @author Dmitriy Kopylenko
+ * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TicketsResourceTests {
@@ -61,9 +64,9 @@ public class TicketsResourceTests {
     public void setup() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
-                        .contextPath("/cas")
-                        .servletPath("/v1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .contextPath("/cas")
+                .servletPath("/v1")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }
 
@@ -135,11 +138,13 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockToCreateValidTGT() throws Throwable {
-        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenReturn("TGT-1");
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("TGT-1");
+        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
-        final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<String, Class<? extends Exception>>(1);
+        final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(new AuthenticationException(handlerErrors));
     }
@@ -149,6 +154,8 @@ public class TicketsResourceTests {
     }
 
     private void configureCasMockToCreateValidST() throws Throwable {
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenReturn("ST-1");
+        final ServiceTicket st = mock(ServiceTicket.class);
+        when(st.getId()).thenReturn("ST-1");
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenReturn(st);
     }
 }

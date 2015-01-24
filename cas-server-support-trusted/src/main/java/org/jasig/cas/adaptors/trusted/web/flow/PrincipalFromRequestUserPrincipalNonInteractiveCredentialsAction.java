@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,16 @@
  */
 package org.jasig.cas.adaptors.trusted.web.flow;
 
-import java.security.Principal;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 /**
  * Implementation of the NonInteractiveCredentialsAction that looks for a user
@@ -39,7 +37,7 @@ import org.springframework.webflow.execution.RequestContext;
  * it could not find any credentials.
  *
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
@@ -56,8 +54,7 @@ public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAct
         if (principal != null) {
 
             logger.debug("UserPrincipal [{}] found in HttpServletRequest", principal.getName());
-            return new PrincipalBearingCredential(new SimplePrincipal(
-                    principal.getName()));
+            return new PrincipalBearingCredential(this.principalFactory.createPrincipal(principal.getName()));
         }
 
         logger.debug("UserPrincipal not found in HttpServletRequest.");

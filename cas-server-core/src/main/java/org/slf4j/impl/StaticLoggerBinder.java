@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.slf4j.impl;
 
 import org.slf4j.ILoggerFactory;
@@ -24,11 +23,11 @@ import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
  * The static binder for slf4j logging, which allows CAS
- * to select its own {@Link ILoggerFactory} instance at runtime.
+ * to select its own {@link org.slf4j.ILoggerFactory} instance at runtime.
  * Note that this class MUST reside in the <code>org.slf4j.impl</code>
  * package so it can be loaded by the runtime dynamic lookup.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
 
@@ -36,15 +35,6 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
      * The unique instance of this class.
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
-
-    /**
-     * Return the singleton of this class.
-     *
-     * @return the StaticLoggerBinder singleton
-     */
-    public static StaticLoggerBinder getSingleton() {
-        return SINGLETON;
-    }
 
     /**
      * The {@link ILoggerFactory} instance returned by the
@@ -58,6 +48,15 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
      */
     private StaticLoggerBinder() {
         this.loggerFactory = new CasLoggerFactory();
+    }
+
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+        return SINGLETON;
     }
 
     public ILoggerFactory getLoggerFactory() {

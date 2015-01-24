@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,14 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.services.web;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
@@ -48,6 +40,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * SimpleFormController to handle adding/editing of RegisteredServices.
@@ -111,10 +110,10 @@ public final class RegisteredServiceSimpleFormController {
      */
     @InitBinder
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) throws Exception {
-        binder.setRequiredFields(new String[] {"description", "serviceId",
+        binder.setRequiredFields("description", "serviceId",
                 "name", "enabled", "ssoEnabled",
-                "anonymousAccess", "evaluationOrder"});
-        binder.setDisallowedFields(new String[] {"id"});
+                "anonymousAccess", "evaluationOrder");
+        binder.setDisallowedFields("id");
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
@@ -194,12 +193,12 @@ public final class RegisteredServiceSimpleFormController {
      * @param request the request
      */
     private void updateModelMap(final ModelMap model, final HttpServletRequest request) {
-        final List<String> possibleAttributeNames = new ArrayList<String>();
+        final List<String> possibleAttributeNames = new ArrayList<>();
         possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
         Collections.sort(possibleAttributeNames);
         model.addAttribute("availableAttributes", possibleAttributeNames);
 
-        final List<String> possibleUsernameAttributeNames = new ArrayList<String>();
+        final List<String> possibleUsernameAttributeNames = new ArrayList<>();
         possibleUsernameAttributeNames.addAll(possibleAttributeNames);
         possibleUsernameAttributeNames.add(0, "");
         model.addAttribute("availableUsernameAttributes", possibleUsernameAttributeNames);

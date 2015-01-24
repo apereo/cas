@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.6
+ * @since 3.0.0.6
  *
  */
 public class X509SubjectDNPrincipalResolverTests extends AbstractX509CertificateTests {
@@ -37,20 +37,20 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
         resolver = new X509SubjectDNPrincipalResolver();
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c).getId());
     }
 
     @Test
-    public void testSupport() {
+    public void verifySupport() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    public void testSupportFalse() {
+    public void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 

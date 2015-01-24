@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,26 +18,33 @@
  */
 package org.jasig.cas.services;
 
-import java.net.URL;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
  * that match the specified regex pattern.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -211069319543047324L;
     
     private final Pattern pattern;
+
+    /**
+     * Instantiates a new Regex matching registered service proxy policy.
+     * Required for serialization.
+     */
+    protected RegexMatchingRegisteredServiceProxyPolicy() {
+        this.pattern = null;
+    }
 
     /**
      * Init the policy with the pgt url regex pattern that
@@ -47,6 +54,15 @@ public final class RegexMatchingRegisteredServiceProxyPolicy implements Register
      */
     public RegexMatchingRegisteredServiceProxyPolicy(@NotNull final String pgtUrlPattern) {
         this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * Gets the pattern.
+     *
+     * @return the pattern
+     */
+    protected Pattern getPattern() {
+        return this.pattern;
     }
 
     @Override

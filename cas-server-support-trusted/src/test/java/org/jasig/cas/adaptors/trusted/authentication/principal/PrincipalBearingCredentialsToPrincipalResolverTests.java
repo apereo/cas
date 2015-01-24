@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,16 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import static org.junit.Assert.*;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
@@ -38,16 +38,16 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void testSupports() {
-        assertTrue(this.resolver.supports(new PrincipalBearingCredential(new SimplePrincipal("test"))));
+    public void verifySupports() {
+        assertTrue(this.resolver.supports(new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"))));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
     }
 
     @Test
-    public void testReturnedPrincipal() {
+    public void verifyReturnedPrincipal() {
         assertEquals("test", this.resolver.resolve(
-                new PrincipalBearingCredential(new SimplePrincipal("test"))).getId());
+                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"))).getId());
     }
 
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class JaasAuthenticationHandlerTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -49,26 +53,26 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test(expected = LoginException.class)
-    public void testWithAlternativeRealm() throws Exception {
+    public void verifyWithAlternativeRealm() throws Exception {
 
         this.handler.setRealm("TEST");
         this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
     @Test
-    public void testWithAlternativeRealmAndValidCredentials() throws Exception {
+    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
         assertNotNull(this.handler.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
     }
 
     @Test
-    public void testWithValidCredenials() throws Exception {
+    public void verifyWithValidCredenials() throws Exception {
         assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test(expected = LoginException.class)
-    public void testWithInvalidCredentials() throws Exception {
+    public void verifyWithInvalidCredentials() throws Exception {
         this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 

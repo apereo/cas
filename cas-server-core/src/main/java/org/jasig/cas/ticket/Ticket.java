@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public interface Ticket extends Serializable {
 
@@ -40,8 +40,8 @@ public interface Ticket extends Serializable {
      * Determines if the ticket is expired. Most common implementations might
      * collaborate with <i>ExpirationPolicy </i> strategy.
      *
-     * @see org.jasig.cas.ticket.ExpirationPolicy
      * @return true, if the ticket is expired
+     * @see org.jasig.cas.ticket.ExpirationPolicy
      */
     boolean isExpired();
 

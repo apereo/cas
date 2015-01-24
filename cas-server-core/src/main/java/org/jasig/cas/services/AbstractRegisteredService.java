@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -25,20 +24,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
-import javax.persistence.Transient;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -46,6 +44,7 @@ import javax.persistence.Transient;
  * @author Marvin S. Addison
  * @author Scott Battaglia
  * @author Misagh Moayyed
+ * @since 3.0.0
  */
 @Entity
 @Inheritance
@@ -55,13 +54,6 @@ import javax.persistence.Transient;
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
     private static final long serialVersionUID = 7645279151115635245L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
-
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
-    private String description;
 
     /**
      * The unique identifier for this service.
@@ -75,6 +67,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private String description;
+
     /**
      * Proxy policy for the service.
      * By default, the policy is {@link RefuseRegisteredServiceProxyPolicy}.
@@ -83,8 +82,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "proxy_policy", nullable = false)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
 
+    @Column(name = "ssoEnabled", nullable = false)
     private boolean ssoEnabled = true;
 
     @Column(name = "evaluation_order", nullable = false)
@@ -103,18 +104,21 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * The logout type of the service. 
      * The default logout type is the back channel one.
      */
-    @Transient
+    @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers")
-    private HashSet<String> requiredHandlers = new HashSet<String>();
+    private HashSet<String> requiredHandlers = new HashSet<>();
 
     /** The attribute filtering policy. */
     @Lob
     @Column(name = "attribute_release")
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-    
+
+    @Column(name = "logo")
+    private URL logo;
+
     public long getId() {
         return this.id;
     }
@@ -175,6 +179,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
                 .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+                .append(this.logo, that.logo)
                 .isEquals();
     }
 
@@ -190,7 +195,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
                 .append(this.logoutType)
-                .append(this.attributeReleasePolicy).toHashCode();
+                .append(this.attributeReleasePolicy)
+                .append(this.logo)
+                .toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -269,7 +276,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredService clone() throws CloneNotSupportedException {
+    public final RegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;
@@ -293,6 +300,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
+        this.setLogo(source.getLogo());
     }
 
     /**
@@ -324,6 +332,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
+        toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("proxyPolicy", this.proxyPolicy);
+        toStringBuilder.append("logo", this.logo);
 
         return toStringBuilder.toString();
     }
@@ -338,7 +349,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public Set<String> getRequiredHandlers() {
         if (this.requiredHandlers == null) {
-            this.requiredHandlers = new HashSet<String>();
+            this.requiredHandlers = new HashSet<>();
         }
         return this.requiredHandlers;
     }
@@ -370,5 +381,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public final AttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
+    }
+
+    @Override
+    public URL getLogo() {
+        return this.logo;
+    }
+
+    public void setLogo(final URL logo) {
+        this.logo = logo;
     }
 }

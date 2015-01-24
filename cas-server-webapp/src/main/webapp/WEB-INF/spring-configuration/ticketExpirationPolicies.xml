@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -34,14 +34,14 @@
         can be used before becoming expired / invalid.
     </description>
 
-    <!-- Expiration policies -->
     <util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>
+
+    <!-- Expiration policies -->
     <bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy"
           c:numberOfUses="1" c:timeToKill="${st.timeToKillInSeconds:10}" c:timeUnit-ref="SECONDS"/>
 
     <!-- TicketGrantingTicketExpirationPolicy: Default as of 3.5 -->
     <!-- Provides both idle and hard timeouts, for instance 2 hour sliding window with an 8 hour max lifetime -->
-    <util:constant id="HOURS" static-field="java.util.concurrent.TimeUnit.HOURS"/>
     <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
-          c:maxTimeToLive="8" c:timeToKill="2" c:timeUnit-ref="HOURS" />
+          c:maxTimeToLive="${tgt.maxTimeToLiveInSeconds:28800}" c:timeToKill="${tgt.timeToKillInSeconds:7200}" c:timeUnit-ref="SECONDS" />
 </beans>

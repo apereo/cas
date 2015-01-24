@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -70,7 +70,7 @@ public final class OAuth20AuthorizeControllerTests {
     private static final String STATE = "state";
 
     @Test
-    public void testNoClientId() throws Exception {
+    public void verifyNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
@@ -82,7 +82,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testNoRedirectUri() throws Exception {
+    public void verifyNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -94,7 +94,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testNoCasService() throws Exception {
+    public void verifyNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -110,14 +110,14 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
+    public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -128,7 +128,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -138,7 +138,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -164,7 +164,7 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
-    public void testOKWithState() throws Exception {
+    public void verifyOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -175,7 +175,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<RegisteredService>();
+        final List<RegisteredService> services = new ArrayList<>();
         services.add(getRegisteredService(REDIRECT_URI, SERVICE_NAME));
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();

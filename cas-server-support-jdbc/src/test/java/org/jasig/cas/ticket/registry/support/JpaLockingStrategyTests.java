@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -56,17 +56,17 @@ import static org.junit.Assert.*;
  * Unit test for {@link JpaLockingStrategy}.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -99,7 +99,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testAcquireAndRelease() throws Exception {
+    public void verifyAcquireAndRelease() throws Exception {
         final String appId = "basic";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -120,7 +120,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On errors.
      */
     @Test
-    public void testLockExpiration() throws Exception {
+    public void verifyLockExpiration() throws Exception {
         final String appId = "expquick";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
@@ -143,7 +143,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * Verify non-reentrant behavior.
      */
     @Test
-    public void testNonReentrantBehavior() {
+    public void verifyNonReentrantBehavior() {
         final String appId = "reentrant";
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
@@ -164,7 +164,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndRelease() throws Exception {
+    public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, getConcurrentLocks("concurrent-new"));
@@ -181,7 +181,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      */
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
+    public void verifyConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
         final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
         locks[0].release();
@@ -213,7 +213,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         return (LockingStrategy) Proxy.newProxyInstance(
                JpaLockingStrategy.class.getClassLoader(),
                new Class[] {LockingStrategy.class},
-               new TransactionalLockInvocationHandler(lock));
+               new TransactionalLockInvocationHandler(lock, this.txManager));
     }
 
     private String getOwner(final String appId) {
@@ -226,7 +226,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
 
     private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<Locker>(locks.length);
+        final List<Locker> lockers = new ArrayList<>(locks.length);
         for (int i = 0; i < locks.length; i++) {
             lockers.add(new Locker(locks[i]));
         }
@@ -239,7 +239,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<Releaser>(locks.length);
+        final List<Releaser> releasers = new ArrayList<>(locks.length);
         for (int i = 0; i < locks.length; i++) {
             releasers.add(new Releaser(locks[i]));
         }
@@ -252,18 +252,24 @@ public class JpaLockingStrategyTests implements InitializingBean {
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
     }
 
-    class TransactionalLockInvocationHandler implements InvocationHandler {
-        private JpaLockingStrategy jpaLock;
+    private static class TransactionalLockInvocationHandler implements InvocationHandler {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final JpaLockingStrategy jpaLock;
+        private final PlatformTransactionManager txManager;
 
-        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
+        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
+                                      final PlatformTransactionManager txManager) {
             jpaLock = lock;
+            this.txManager = txManager;
         }
 
         public JpaLockingStrategy getLock() {
             return jpaLock;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
@@ -283,15 +289,17 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     }
 
-    class Locker implements Callable<Boolean> {
-
-        private LockingStrategy lock;
+    private static class Locker implements Callable<Boolean> {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final LockingStrategy lock;
 
         public Locker(final LockingStrategy l) {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {
@@ -303,16 +311,17 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
     }
 
-
-    class Releaser implements Callable<Boolean> {
-
-        private LockingStrategy lock;
+    private static class Releaser implements Callable<Boolean> {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final LockingStrategy lock;
 
         public Releaser(final LockingStrategy l) {
             lock = l;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public Boolean call() throws Exception {
             try {

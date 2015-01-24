@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link org.jasig.cas.util.AutowiringSchedulerFactoryBean} class.
@@ -41,9 +41,9 @@ public class AutowiringSchedulerFactoryBeanTests {
 
     @Before
     public void setUp() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[] {
+        context = new ClassPathXmlApplicationContext(
         "core-context.xml",
-        "applicationContext.xml"});
+        "applicationContext.xml");
 
         this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");
         this.scheduler.start();
@@ -51,7 +51,7 @@ public class AutowiringSchedulerFactoryBeanTests {
     }
 
     @Test
-    public void testAfterPropertiesSet() throws Exception {
+    public void verifyAfterPropertiesSet() throws Exception {
         assertEquals(1, this.scheduler.getTriggerGroupNames().size());
     }
 }
