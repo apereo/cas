@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,26 +18,24 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
 import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -70,7 +68,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             try {
                 final RadiusResponse response = radiusServer.authenticate(username, password);
                 if (response != null) {
-                     return createHandlerResult(credential, new SimplePrincipal(username), null);
+                     return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
                 } 
                                 
                 if (!this.failoverOnAuthenticationFailure) {

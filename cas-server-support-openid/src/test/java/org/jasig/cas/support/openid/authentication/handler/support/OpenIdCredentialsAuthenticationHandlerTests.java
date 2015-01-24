@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -51,13 +51,13 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
         assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void testTGTWithSameId() throws Exception {
+    public void verifyTGTWithSameId() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -66,7 +66,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testTGTThatIsExpired() throws Exception {
+    public void verifyTGTThatIsExpired() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -76,7 +76,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testTGTWithDifferentId() throws Exception {
+    public void verifyTGTWithDifferentId() throws Exception {
         final OpenIdCredential c = new OpenIdCredential("test", "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);

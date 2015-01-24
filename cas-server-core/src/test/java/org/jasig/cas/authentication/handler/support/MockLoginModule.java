@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.util.Map;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -27,7 +25,12 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.util.Map;
 
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
 
@@ -47,7 +50,7 @@ public class MockLoginModule implements LoginModule {
         final String userName = ((NameCallback) callbacks[0]).getName();
         final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
-        if (userName.equals("test") && password.equals("test")) {
+        if ("test".equals(userName) && "test".equals(password)) {
             return true;
         }
 

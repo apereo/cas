@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author John Gasper
- * @since 4.1
+ * @since 4.1.0
  *
  */
 public class RegisteredServiceThemeBasedViewResolverTests {
@@ -64,7 +64,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
     }
 
     @Test
-    public void testGetServiceWithTheme() throws Exception {
+    public void verifyGetServiceWithTheme() throws Exception {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
@@ -76,7 +76,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
     }
 
     @Test
-    public void testGetServiceWithDefault() throws Exception {
+    public void verifyGetServiceWithDefault() throws Exception {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
@@ -88,7 +88,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
     }
 
     @Test
-    public void testNoService() throws Exception {
+    public void verifyNoService() throws Exception {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 

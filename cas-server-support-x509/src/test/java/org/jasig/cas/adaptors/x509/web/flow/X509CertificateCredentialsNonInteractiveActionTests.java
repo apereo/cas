@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -49,7 +49,10 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-
+/**
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
 
     private X509CertificateCredentialsNonInteractiveAction action;
@@ -57,7 +60,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     @Before
     public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
@@ -78,7 +81,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     }
 
     @Test
-    public void testNoCredentialsResultsInError() throws Exception {
+    public void verifyNoCredentialsResultsInError() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -86,7 +89,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     }
 
     @Test
-    public void testCredentialsResultsInSuccess() throws Exception {
+    public void verifyCredentialsResultsInSuccess() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {VALID_CERTIFICATE});

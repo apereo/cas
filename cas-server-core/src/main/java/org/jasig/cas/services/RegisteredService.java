@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,11 @@
  */
 package org.jasig.cas.services;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.jasig.cas.authentication.principal.Service;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Set;
 
 /**
  * Interface for a service that can be registered by the Services Management
@@ -129,7 +130,6 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-
     
     /**
      * Clone this service.
@@ -154,4 +154,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the attribute release policy
      */
     AttributeReleasePolicy getAttributeReleasePolicy();
+
+    /**
+     * Gets the logo image associated with this service.
+     * The image mostly is served on the user interface
+     * to identify this requesting service during authentication.
+     * @return URL of the image
+     * @since 4.1
+     */
+    URL getLogo();
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -49,12 +49,6 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
 
     @NotNull
     private final ServicesManager servicesManager;
-    
-    @Override
-    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return GoogleAccountsService.createServiceFrom(request,
-                this.privateKey, this.publicKey, this.servicesManager);
-    }
 
     /**
      * Instantiates a new google accounts argument extractor.
@@ -64,10 +58,16 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
      * @param servicesManager the services manager
      */
     public GoogleAccountsArgumentExtractor(final PublicKey publicKey,
-            final PrivateKey privateKey, final ServicesManager servicesManager) {
+                                           final PrivateKey privateKey, final ServicesManager servicesManager) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.servicesManager = servicesManager;
+    }
+
+    @Override
+    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
+        return GoogleAccountsService.createServiceFrom(request,
+                this.privateKey, this.publicKey, this.servicesManager);
     }
 
     /**

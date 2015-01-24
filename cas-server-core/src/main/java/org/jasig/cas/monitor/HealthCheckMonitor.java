@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
 
 /**
  * Simple health check monitor that reports the overall health as the greatest reported
@@ -46,23 +46,28 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         this.monitors = monitors;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String getName() {
         return HealthCheckMonitor.class.getSimpleName();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public HealthStatus observe() {
-        final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());
+        final Map<String, Status> results = new LinkedHashMap<>(this.monitors.size());
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
         for (final Monitor monitor : this.monitors) {
             try {
                 result = monitor.observe();
-                if (result.getCode().value() > code.value()) {
-                    code = result.getCode();
+                final StatusCode resCode = result.getCode();
+                if (resCode.value() > code.value()) {
+                    code = resCode;
                 }
             } catch (final Exception e) {
                 code = StatusCode.ERROR;

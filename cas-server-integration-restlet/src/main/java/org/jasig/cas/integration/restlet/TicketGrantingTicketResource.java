@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -21,6 +21,7 @@ package org.jasig.cas.integration.restlet;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -32,18 +33,18 @@ import org.restlet.representation.Variant;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implementation of a Restlet resource for creating Service Tickets from a
- * TicketGrantingTicket, as well as deleting a TicketGrantingTicket.
+ * {@link org.jasig.cas.ticket.TicketGrantingTicket}, as well as deleting a
+ * {@link org.jasig.cas.ticket.TicketGrantingTicket}.
  *
  * @author Scott Battaglia
  * @since 3.3
- * @deprecated Use TicketsResource implementation from cas-server-support-rest module
+ * @deprecated As of 4.1. Use the {@link TicketResource} implementation from cas-server-support-rest module
  */
 @Deprecated
 public final class TicketGrantingTicketResource extends ServerResource {
@@ -81,10 +82,10 @@ public final class TicketGrantingTicketResource extends ServerResource {
         final Form form = new Form(entity);
         final String serviceUrl = form.getFirstValue("service");
         try {
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     this.ticketGrantingTicketId,
                     new SimpleWebApplicationServiceImpl(serviceUrl));
-            getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
+            getResponse().setEntity(serviceTicketId.getId(), MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
         } catch (final Exception e) {

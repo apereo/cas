@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -33,26 +27,36 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
 /**
  *
  * @author Scott Battaglia
  * @since 3.1
  *
  */
-public class DistributedTicketRegistryTests {
+public final class DistributedTicketRegistryTests {
 
     private TestDistributedTicketRegistry ticketRegistry;
 
-    private boolean wasTicketUpdated = false;
+    private boolean wasTicketUpdated;
+
+    public void setWasTicketUpdated(final boolean wasTicketUpdated) {
+        this.wasTicketUpdated = wasTicketUpdated;
+    }
 
     @Before
     public void setUp() throws Exception {
-        this.ticketRegistry = new TestDistributedTicketRegistry();
+        this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;
     }
 
     @Test
-    public void testProxiedInstancesEqual() {
+    public void verifyProxiedInstancesEqual() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -88,7 +92,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testUpdateOfRegistry() {
+    public void verifyUpdateOfRegistry() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
@@ -110,16 +114,20 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void testTicketDoesntExist() {
+    public void verifyTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 
-    protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+    private static class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+        private final DistributedTicketRegistryTests parent;
+        private final Map<String, Ticket> tickets = new HashMap<>();
 
-        private Map<String, Ticket> tickets = new HashMap<String, Ticket>();
+        public TestDistributedTicketRegistry(final DistributedTicketRegistryTests parent) {
+            this.parent = parent;
+        }
 
         protected void updateTicket(final Ticket ticket) {
-            DistributedTicketRegistryTests.this.wasTicketUpdated = true;
+            this.parent.setWasTicketUpdated(true);
         }
 
         public void addTicket(final Ticket ticket) {

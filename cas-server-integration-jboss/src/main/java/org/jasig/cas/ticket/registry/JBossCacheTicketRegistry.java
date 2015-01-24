@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
- * Please use other means of confguring your distributed ticket registry, such as
+ * Please use other means of configuring your distributed ticket registry, such as
  * ehcache or memcached integrations with CAS.
  *
  * <p>Implementation of TicketRegistry that is backed by a JBoss TreeCache.
@@ -48,8 +48,6 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     /** Instance of JBoss TreeCache. */
     @NotNull
     private Cache<String, Ticket> cache;
-
-
 
     @Override
     protected void updateTicket(final Ticket ticket) {
@@ -74,7 +72,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     @Override
     public boolean deleteTicket(final String ticketId) {
         try {
-            logger.debug("Removing ticket from registry for: ", ticketId);
+            logger.debug("Removing ticket from registry for: {}", ticketId);
             return this.cache.remove(FQN_TICKET, ticketId) != null;
         } catch (final CacheException e) {
             logger.error(e.getMessage(), e);
@@ -109,7 +107,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             }
 
             final Set<String> keys = node.getKeys();
-            final List<Ticket> list = new ArrayList<Ticket>();
+            final List<Ticket> list = new ArrayList<>();
 
             for (final String key : keys) {
 

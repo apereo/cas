@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -62,7 +63,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Before
     public void setUp() throws Exception {
-        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("test", Arrays.asList(new Object[] {"test"}));
 
         this.repository = new StubPersonAttributeDao();
@@ -76,7 +77,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     @Test
-    public void testAddRegisteredServiceNoValues() throws Exception {
+    public void verifyAddRegisteredServiceNoValues() throws Exception {
         final BindingResult result = mock(BindingResult.class);
         when(result.getModel()).thenReturn(new HashMap<String, Object>());
         when(result.hasErrors()).thenReturn(true);
@@ -88,7 +89,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     @Test
-    public void testAddRegisteredServiceWithValues() throws Exception {
+    public void verifyAddRegisteredServiceWithValues() throws Exception {
         final RegisteredServiceImpl svc = new RegisteredServiceImpl();
         svc.setDescription("description");
         svc.setServiceId("serviceId");
@@ -106,7 +107,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     @Test
-    public void testEditRegisteredServiceWithValues() throws Exception {
+    public void verifyEditRegisteredServiceWithValues() throws Exception {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("Test Service");
@@ -131,7 +132,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
    @Test
-    public void testAddRegexRegisteredService() throws Exception {
+    public void verifyAddRegexRegisteredService() throws Exception {
         final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
@@ -149,7 +150,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
    @Test
-   public void testChangingServicePatternAndType() throws Exception {
+   public void verifyChangingServicePatternAndType() throws Exception {
        final AbstractRegisteredService svc = new RegexRegisteredService();
        svc.setDescription("description");
        svc.setServiceId("serviceId");
@@ -181,7 +182,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
    
     @Test
-    public void testAddMultipleRegisteredServiceTypes() throws Exception {
+    public void verifyAddMultipleRegisteredServiceTypes() throws Exception {
         AbstractRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
@@ -203,16 +204,16 @@ public class RegisteredServiceSimpleFormControllerTests {
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
         for(RegisteredService rs : this.manager.getAllServices()) {
-            if(rs.getName().equals("ant")) {
+            if(StringUtils.equals(rs.getName(), "ant")) {
                 assertTrue(rs instanceof RegisteredServiceImpl);
-            }else if (rs.getName().equals("regex")) {
+            }else if (StringUtils.equals(rs.getName(), "regex")) {
                 assertTrue(rs instanceof RegexRegisteredService);
             }
         }
     }
 
     @Test
-    public void testAddMockRegisteredService() throws Exception {
+    public void verifyAddMockRegisteredService() throws Exception {
         final MockRegisteredService svc = new MockRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
@@ -230,7 +231,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     @Test
-    public void testEmptyServiceWithModelAttributesRestored() throws Exception {
+    public void verifyEmptyServiceWithModelAttributesRestored() throws Exception {
         final BindingResult result = mock(BindingResult.class);
         when(result.getModel()).thenReturn(new HashMap<String, Object>());
         when(result.hasErrors()).thenReturn(true);
@@ -250,7 +251,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     
     @Test
-    public void testEditMockRegisteredService() throws Exception {
+    public void verifyEditMockRegisteredService() throws Exception {
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
         r.setName("Test Service");

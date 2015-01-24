@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -80,7 +80,7 @@ public class OpenIdSingleSignOnActionTests {
                         handler,
                         new OpenIdPrincipalResolver()));
 
-        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
         impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
@@ -95,7 +95,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoTgt() throws Exception {
+    public void verifyNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(),
@@ -104,7 +104,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoService() throws Exception {
+    public void verifyNoService() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -118,7 +118,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testBadUsername() throws Exception {
+    public void verifyBadUsername() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("openid.identity", "fablah");
@@ -135,7 +135,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testSuccessfulServiceTicket() throws Exception {
+    public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final Authentication authentication = TestUtils.getAuthentication("scootman28");

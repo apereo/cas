@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,7 +26,7 @@ public class OpenIdPostUrlHandlerMappingTests {
 
     private OpenIdPostUrlHandlerMapping handlerMapping;
 
-    public void testTest() {
+    public void verifyTest() {
     }
 
     /*
@@ -38,7 +38,7 @@ public class OpenIdPostUrlHandlerMappingTests {
 
         context.start();
 
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("/login", new Object());
 
         this.handlerMapping = new OpenIdPostUrlHandlerMapping();
@@ -48,21 +48,21 @@ public class OpenIdPostUrlHandlerMappingTests {
     }
 
 
-    public void testNoMatch() throws Exception {
+    public void verifyNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
     }
 
-    public void testImproperMatch() throws Exception {
+    public void verifyImproperMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
 
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchWrongMethod() throws Exception {
+    public void verifyProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("GET");
@@ -70,7 +70,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchCorrectMethodNoParam() throws Exception {
+    public void verifyProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
@@ -78,7 +78,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
-    public void testProperMatchCorrectMethodWithParam() throws Exception {
+    public void verifyProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");

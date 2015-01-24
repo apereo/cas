@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link AbstractRegisteredService}.
  *
  * @author Marvin S. Addison
+ * @since 3.4.12
  */
 public class AbstractRegisteredServiceTests {
 
@@ -63,7 +64,7 @@ public class AbstractRegisteredServiceTests {
     };
 
     @Test
-    public void testAllowToProxyIsFalseByDefault() {
+    public void verifyAllowToProxyIsFalseByDefault() {
         final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
@@ -71,7 +72,7 @@ public class AbstractRegisteredServiceTests {
     }
 
     @Test
-    public void testSettersAndGetters() {
+    public void verifySettersAndGetters() {
         prepareService();
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
@@ -89,7 +90,7 @@ public class AbstractRegisteredServiceTests {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
         assertFalse(new RegisteredServiceImpl().equals(null));
         assertFalse(new RegisteredServiceImpl().equals(new Object()));
@@ -109,12 +110,12 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllAttributes() {
+    public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -127,14 +128,14 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterAllowedAttributes() {
+    public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -149,10 +150,10 @@ public class AbstractRegisteredServiceTests {
     }
     
     @Test
-    public void testServiceAttributeFilterMappedAttributes() {
+    public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Map<String, String> mappedAttr = new HashMap<String, String>();
+        final Map<String, String> mappedAttr = new HashMap<>();
         mappedAttr.put("attr1", "newAttr1");
         
         policy.setAllowedAttributes(mappedAttr);
@@ -160,7 +161,7 @@ public class AbstractRegisteredServiceTests {
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
