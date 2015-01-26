@@ -163,12 +163,12 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
             return true;
         }
         if (principalAttributes.isEmpty()) {
-            logger.warn("No principal attributes are found to satisfy attribute requirements");
+            logger.debug("No principal attributes are found to satisfy attribute requirements");
             return false;
         }
 
         if (principalAttributes.size() < this.requiredAttributes.size()) {
-            logger.warn("The size of the principal attributes that are [{}] does not match requirements, "
+            logger.debug("The size of the principal attributes that are [{}] does not match requirements, "
                     + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
@@ -181,7 +181,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         final Set<String> copy = difference.immutableCopy();
 
         if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
-            logger.warn("Not all required attributes are available to the principal");
+            logger.debug("Not all required attributes are available to the principal");
             return false;
         }
 
