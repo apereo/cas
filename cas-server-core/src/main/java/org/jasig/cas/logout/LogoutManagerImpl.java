@@ -150,10 +150,9 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Service supports back channel single logout?
      * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
      * @param registeredService the registered service
-     * @param service the service itself
      * @return true, if support is available.
      */
-    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService, final Service service) {
+    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
         return registeredService != null
                 && registeredService.getAuthorizationStrategy().isServiceAuthorized()
                 && registeredService.getLogoutType() != LogoutType.NONE;
@@ -170,7 +169,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
             final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
-            if (serviceSupportsSingleLogout(registeredService, singleLogoutService)) {
+            if (serviceSupportsSingleLogout(registeredService)) {
                 final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
                 final LogoutType type = registeredService.getLogoutType() == null
                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
