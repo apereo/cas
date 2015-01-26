@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link DefaultRegisteredServiceAuthorizationStrategy}
+ * This is {@link DefaultRegisteredServiceAccessStrategy}
  * that allows the following rules:
  *
  * <ul>
@@ -48,7 +48,7 @@ import java.util.Set;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public class DefaultRegisteredServiceAuthorizationStrategy implements RegisteredServiceAuthorizationStrategy {
+public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = 1245279151345635245L;
 
@@ -77,7 +77,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * By default, rules indicate that services are both enabled
      * and can participate in SSO.
      */
-    public DefaultRegisteredServiceAuthorizationStrategy() {
+    public DefaultRegisteredServiceAccessStrategy() {
         this(true, true);
     }
 
@@ -87,7 +87,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * @param enabled the enabled
      * @param ssoEnabled the sso enabled
      */
-    public DefaultRegisteredServiceAuthorizationStrategy(final boolean enabled, final boolean ssoEnabled) {
+    public DefaultRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         this.enabled = enabled;
         this.ssoEnabled = ssoEnabled;
     }
@@ -157,7 +157,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
      * for any individual attribute value.
      */
     @Override
-    public boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
         if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;
@@ -216,7 +216,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
     }
 
     @Override
-    public boolean isServiceAuthorized() {
+    public boolean isServiceAccessAllowed() {
         if (!this.enabled) {
             logger.trace("Service is not enabled in service registry.");
         }
@@ -235,7 +235,7 @@ public class DefaultRegisteredServiceAuthorizationStrategy implements Registered
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final DefaultRegisteredServiceAuthorizationStrategy rhs = (DefaultRegisteredServiceAuthorizationStrategy) obj;
+        final DefaultRegisteredServiceAccessStrategy rhs = (DefaultRegisteredServiceAccessStrategy) obj;
         return new EqualsBuilder()
                 .append(this.enabled, rhs.enabled)
                 .append(this.ssoEnabled, rhs.ssoEnabled)
