@@ -116,8 +116,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Lob
     @Column(name = "authz_strategy")
-    private RegisteredServiceAuthorizationStrategy authorizationStrategy =
-            new DefaultRegisteredServiceAuthorizationStrategy();
+    private RegisteredServiceAccessStrategy authorizationStrategy =
+            new DefaultRegisteredServiceAccessStrategy();
 
     public long getId() {
         return this.id;
@@ -144,7 +144,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredServiceAuthorizationStrategy getAuthorizationStrategy() {
+    public RegisteredServiceAccessStrategy getAuthorizationStrategy() {
         return this.authorizationStrategy;
     }
 
@@ -235,7 +235,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.usernameAttributeProvider;
     }
 
-    public void setAuthorizationStrategy(final RegisteredServiceAuthorizationStrategy authorizationStrategy) {
+    public void setAuthorizationStrategy(final RegisteredServiceAccessStrategy authorizationStrategy) {
         this.authorizationStrategy = authorizationStrategy;
     }
 

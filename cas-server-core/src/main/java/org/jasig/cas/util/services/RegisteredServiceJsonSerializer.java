@@ -21,7 +21,7 @@ package org.jasig.cas.util.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAuthorizationStrategy;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
 
@@ -40,7 +40,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
         mapper.addMixInAnnotations(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
-        mapper.addMixInAnnotations(RegisteredServiceAuthorizationStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
+        mapper.addMixInAnnotations(RegisteredServiceAccessStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
         return mapper;
     }
 

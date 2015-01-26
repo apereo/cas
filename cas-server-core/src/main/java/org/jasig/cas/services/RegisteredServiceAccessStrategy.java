@@ -23,21 +23,21 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * This is {@link org.jasig.cas.services.RegisteredServiceAuthorizationStrategy}
+ * This is {@link RegisteredServiceAccessStrategy}
  * that can decide if a service is recognized and authorized to participate
  * in the CAS protocol flow during authentication/validation events.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public interface RegisteredServiceAuthorizationStrategy extends Serializable {
+public interface RegisteredServiceAccessStrategy extends Serializable {
 
     /**
      * Verify is the service is enabled and recognized by CAS.
      *
      * @return true/false if service is enabled
      */
-    boolean isServiceAuthorized();
+    boolean isServiceAccessAllowed();
 
     /**
      * Assert that the service can participate in sso.
@@ -56,5 +56,5 @@ public interface RegisteredServiceAuthorizationStrategy extends Serializable {
      *                            itself. (Cached principal attributes, etc)
      * @return true/false if service access can be granted to principal
      */
-    boolean isServiceAccessAuthorizedForPrincipal(Map<String, Object> principalAttributes);
+    boolean doPrincipalAttributesAllowServiceAccess(Map<String, Object> principalAttributes);
 }

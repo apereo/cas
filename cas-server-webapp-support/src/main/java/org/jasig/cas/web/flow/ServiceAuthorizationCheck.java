@@ -74,7 +74,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.getAuthorizationStrategy().isServiceAuthorized()) {
+        if (!registeredService.getAuthorizationStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
             

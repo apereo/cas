@@ -177,7 +177,7 @@
                     <property name="serviceId" value="^TestSsoFalse"/>
                     <property name="evaluationOrder" value="555"/>
                     <property name="authorizationStrategy">
-                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy"
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
                                 c:ssoEnabled="false"
                                 c:enabled="true"/>
                     </property>
@@ -189,7 +189,7 @@
                     <property name="serviceId" value="^TestServiceAttributeForAuthzFails"/>
                     <property name="evaluationOrder" value="600"/>
                     <property name="authorizationStrategy">
-                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
                              <property name="requiredAttributes">
                                  <map>
                                      <entry key="cn"
@@ -208,7 +208,7 @@
                     <property name="serviceId" value="TestServiceAttributeForAuthzPasses"/>
                     <property name="evaluationOrder" value="610"/>
                     <property name="authorizationStrategy">
-                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
                             <property name="requiredAttributes">
                                 <map>
                                     <entry key="groupMembership"

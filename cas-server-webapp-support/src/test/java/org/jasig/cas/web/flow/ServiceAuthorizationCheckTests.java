@@ -26,7 +26,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.webflow.execution.Event;
@@ -59,7 +59,7 @@ public class ServiceAuthorizationCheckTests {
         final RegisteredServiceImpl authorizedRegisteredService = new RegisteredServiceImpl();
         final RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
         unauthorizedRegisteredService.setAuthorizationStrategy(
-                new DefaultRegisteredServiceAuthorizationStrategy(false, false));
+                new DefaultRegisteredServiceAccessStrategy(false, false));
 
         final List<RegisteredService> list = new ArrayList<>();
         list.add(authorizedRegisteredService);
