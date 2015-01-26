@@ -288,7 +288,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
 
         final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-        if (!registeredService.getAuthorizationStrategy().isServiceAccessAuthorizedForPrincipal(principalAttrs)) {
+        if (!registeredService.getAuthorizationStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
             logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
             throw new UnauthorizedServiceForPrincipalException();
@@ -602,7 +602,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.getAuthorizationStrategy().isServiceAuthorized()) {
+        if (!registeredService.getAuthorizationStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
 

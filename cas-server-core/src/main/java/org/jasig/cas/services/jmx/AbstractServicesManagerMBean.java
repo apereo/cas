@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.services.jmx;
 
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -121,7 +121,7 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
         Assert.notNull(r, "invalid RegisteredService id");
 
         // we screwed up our APIs in older versions of CAS, so we need to CAST this to do anything useful.
-        ((DefaultRegisteredServiceAuthorizationStrategy) r.getAuthorizationStrategy()).setEnabled(newState);
+        ((DefaultRegisteredServiceAccessStrategy) r.getAuthorizationStrategy()).setEnabled(newState);
         this.servicesManager.save(r);
     }
 }
