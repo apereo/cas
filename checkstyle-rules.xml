@@ -307,6 +307,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="format" value="log\.is\w+Enabled\("/>
       <property name="message" value="If the construction of the log message is cheap, consider not checking for logging levels."/>
     </module>
+    <module name="RegexpSinglelineJava">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
+      <property name="severity" value="error"/>
+      <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
+      <property name="message" value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
+    </module>
   </module>
 
   <!-- Checker module checks -->
@@ -344,12 +350,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="severity" value="error"/>
     <property name="format" value="\(\w+\)\w+"/>
     <property name="message" value="There are no spaces after cast."/>
-  </module>
-  <module name="RegexpSingleline">
-    <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
-    <property name="severity" value="error"/>
-    <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
-    <property name="message" value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Usage of java.util.Random"/>
