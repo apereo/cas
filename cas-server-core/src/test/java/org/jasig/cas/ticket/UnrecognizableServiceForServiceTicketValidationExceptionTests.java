@@ -19,27 +19,27 @@
 
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
- * An exception that may be thrown during service ticket validation
- * to indicate that the service ticket is not valid and was not originally
- * issued for the submitted service.
+ * Test cases for {@link UnrecognizableServiceForServiceTicketValidationException}.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class UnrecognizableServiceForServiceTicketValidationException extends TicketValidationException {
-    private static final long serialVersionUID = -8076771862820008358L;
+public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
-    /** The code description. */
-    protected static final String CODE = "INVALID_SERVICE";
+    private final Service service = TestUtils.getService();
 
-    /**
-     * Instantiates a new Unrecognizable service for service ticket validation exception.
-     *
-     * @param service the service
-     */
-    public UnrecognizableServiceForServiceTicketValidationException(final Service service) {
-        super(CODE, service);
+    @Test
+    public void verifyThrowableConstructor() {
+        final UnrecognizableServiceForServiceTicketValidationException t = new UnrecognizableServiceForServiceTicketValidationException(this.service);
+
+        assertSame(UnrecognizableServiceForServiceTicketValidationException.CODE, t.getCode());
+        assertEquals(this.service, t.getOriginalService());
     }
 }
