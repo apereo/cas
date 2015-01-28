@@ -114,7 +114,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      *
      * @return the authorization strategy
      */
-    RegisteredServiceAuthorizationStrategy getAuthorizationStrategy();
+    RegisteredServiceAccessStrategy getAuthorizationStrategy();
 
     /**
      * Returns whether the service matches the registered service.
