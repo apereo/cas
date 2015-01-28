@@ -36,6 +36,16 @@ import java.util.Map;
 public final class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSerializer<RegisteredService> {
     private static final long serialVersionUID = 7645698151115635245L;
 
+    /**
+     * Mixins are added to the object mapper in order to
+     * ignore certain method signatures from serialization
+     * that are otherwise treated as getters. Each mixin
+     * implements the appropriate interface as a private
+     * dummy class and is annotated with JsonIgnore elements
+     * throughout. This helps us catch errors at compile-time
+     * when the interface changes.
+     * @return the prepped object mapper.
+     */
     @Override
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
@@ -57,24 +67,22 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) { return false; };
     }
 
-    private class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAuthorizationStrategy {
+    private class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAccessStrategy {
 
         private static final long serialVersionUID = -5070823601540670379L;
 
         @JsonIgnore
         @Override
-        public boolean isServiceAuthorized() { return false; };
+        public boolean isServiceAccessAllowed() { return false; };
 
         @JsonIgnore
         @Override
-        public boolean isServiceAuthorizedForSso() { return false; };
+        public boolean isServiceAuthorizedForSso() { return false; }
 
         @JsonIgnore
         @Override
-        public  boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes) { return false; };
+        public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) { return false; };
     }
-
-
 
     @Override
     protected Class<RegisteredService> getTypeToSerialize() {
