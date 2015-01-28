@@ -44,48 +44,34 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         return mapper;
     }
 
-    private interface RegisteredServiceProxyPolicyMixin {
-        /**
-         * Ignore method call.
-         * @return allowed or not
-         **/
-        @JsonIgnore
-        boolean isAllowedToProxy();
+    private class RegisteredServiceProxyPolicyMixin implements RegisteredServiceProxyPolicy {
 
-        /**
-         * Ignore method call.
-         * @param pgtUrl proxying url
-         * @return allowed or not
-         **/
+        private static final long serialVersionUID = 4854597398304437341L;
+
         @JsonIgnore
-        boolean isAllowedProxyCallbackUrl(URL pgtUrl);
+        @Override
+        public boolean isAllowedToProxy() { return false; };
+
+        @JsonIgnore
+        @Override
+        public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) { return false; };
     }
 
-    private interface RegisteredServiceAuthorizationStrategyMixin {
-        /**
-         * Is service authorized.
-         *
-         * @return the boolean
-         */
-        @JsonIgnore
-        boolean isServiceAuthorized();
+    private class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAuthorizationStrategy {
 
-        /**
-         * Is service authorized for sso.
-         *
-         * @return the boolean
-         */
-        @JsonIgnore
-        boolean isServiceAuthorizedForSso();
+        private static final long serialVersionUID = -5070823601540670379L;
 
-        /**
-         * Is service access authorized for principal.
-         *
-         * @param principalAttributes the principal attributes
-         * @return the boolean
-         */
         @JsonIgnore
-        boolean isServiceAccessAuthorizedForPrincipal(Map<String, Object> principalAttributes);
+        @Override
+        public boolean isServiceAuthorized() { return false; };
+
+        @JsonIgnore
+        @Override
+        public boolean isServiceAuthorizedForSso() { return false; };
+
+        @JsonIgnore
+        @Override
+        public  boolean isServiceAccessAuthorizedForPrincipal(final Map<String, Object> principalAttributes) { return false; };
     }
 
 
