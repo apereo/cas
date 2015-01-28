@@ -18,8 +18,7 @@
  */
 package org.jasig.cas.util.http;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -27,7 +26,7 @@ import org.junit.Test;
  * @author Francesco Cina
  * @since 4.1
  */
-public class HttpMessageTest {
+public class HttpMessageTests {
 
 	@Test
 	public void verifyAsyncArgIsTakenIntoAccount() throws Exception {
@@ -37,3 +36,4 @@ public class HttpMessageTest {
 	}
 
 }
+
