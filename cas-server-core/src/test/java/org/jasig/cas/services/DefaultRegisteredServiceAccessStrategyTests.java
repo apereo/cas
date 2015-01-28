@@ -31,116 +31,116 @@ import static org.junit.Assert.*;
 
 /**
  * This is test cases for
- * {@link org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy}.
+ * {@link DefaultRegisteredServiceAccessStrategy}.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public class DefaultRegisteredServiceAuthorizationStrategyTests {
+public class DefaultRegisteredServiceAccessStrategyTests {
     @Test
      public void checkDefaultAuthzStrategyConfig() {
-        final RegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
-        assertTrue(authz.isServiceAuthorized());
+        final RegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
+        assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAuthorizedForSso());
     }
 
     @Test
     public void checkDisabledAuthzStrategyConfig() {
-        final RegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy(false, true);
-        assertFalse(authz.isServiceAuthorized());
+        final RegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(false, true);
+        assertFalse(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAuthorizedForSso());
     }
 
     @Test
     public void checkDisabledSsoAuthzStrategyConfig() {
-        final RegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy(true, false);
-        assertTrue(authz.isServiceAuthorized());
+        final RegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, false);
+        assertTrue(authz.isServiceAccessAllowed());
         assertFalse(authz.isServiceAuthorizedForSso());
     }
 
     @Test
     public void setAuthzStrategyConfig() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy(false, false);
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(false, false);
         authz.setEnabled(true);
         authz.setSsoEnabled(true);
-        assertTrue(authz.isServiceAuthorized());
+        assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAuthorizedForSso());
         assertTrue(authz.isRequireAllAttributes());
     }
 
     @Test
     public void checkAuthzPrincipalNoAttrRequirements() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
-        assertTrue(authz.isServiceAccessAuthorizedForPrincipal(new HashMap<String, Object>()));
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsEmptyPrincipal() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertFalse(authz.isServiceAccessAuthorizedForPrincipal(new HashMap<String, Object>()));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsAll() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertTrue(authz.isServiceAccessAuthorizedForPrincipal(
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(
                 this.getPrincipalAttributes()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsMissingOne() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
 
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertFalse(authz.isServiceAccessAuthorizedForPrincipal(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsMissingOneButNotAllNeeded() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
         authz.setRequireAllAttributes(false);
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertTrue(authz.isServiceAccessAuthorizedForPrincipal(pAttrs));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
         authz.setRequireAllAttributes(false);
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
         pAttrs.put("givenName", "theName");
-        assertFalse(authz.isServiceAccessAuthorizedForPrincipal(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         pAttrs.put("givenName", "kaz");
-        assertFalse(authz.isServiceAccessAuthorizedForPrincipal(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
 
