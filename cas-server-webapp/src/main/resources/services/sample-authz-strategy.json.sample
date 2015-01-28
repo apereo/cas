@@ -5,7 +5,7 @@
   "id" : 666,
   "description" : "sample",
   "authorizationStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy",
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : false,
     "ssoEnabled" : false,
     "requireAllAttributes" : true,

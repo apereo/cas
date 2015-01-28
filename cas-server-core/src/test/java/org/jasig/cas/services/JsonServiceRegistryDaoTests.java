@@ -198,7 +198,7 @@ public class JsonServiceRegistryDaoTests {
         r.setServiceId("testId");
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
-        r.setAuthorizationStrategy(new DefaultRegisteredServiceAuthorizationStrategy(true, false));
+        r.setAuthorizationStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
         r.setRequiredHandlers(new HashSet<String>(Arrays.asList("h1", "h2")));
 
@@ -303,8 +303,8 @@ public class JsonServiceRegistryDaoTests {
         r.setName("checkForAuthorizationStrategy");
         r.setId(42);
 
-        final DefaultRegisteredServiceAuthorizationStrategy authz =
-                new DefaultRegisteredServiceAuthorizationStrategy(false, false);
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(false, false);
 
         final Map<String, Set<String>> attrs = new HashMap<>();
         attrs.put("cn", Sets.newHashSet("v1, v2, v3"));

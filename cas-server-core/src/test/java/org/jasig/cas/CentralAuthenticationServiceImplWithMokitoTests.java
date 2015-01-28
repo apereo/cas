@@ -28,6 +28,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -37,7 +38,6 @@ import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.services.DefaultRegisteredServiceAuthorizationStrategy;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -256,7 +256,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
         when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(new ReturnAllAttributeReleasePolicy());
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
-        when(mockRegSvc.getAuthorizationStrategy()).thenReturn(new DefaultRegisteredServiceAuthorizationStrategy(enabled, true));
+        when(mockRegSvc.getAuthorizationStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy(enabled, true));
         return mockRegSvc;
     }
 }
