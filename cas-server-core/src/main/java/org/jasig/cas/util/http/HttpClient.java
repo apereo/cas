@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.util.http;
 
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -39,7 +40,7 @@ public interface HttpClient {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      * @since 4.1.0
      */
-    boolean sendMessageToEndPoint(HttpMessage message);
+    boolean sendMessageToEndPoint(@NotNull HttpMessage message);
 
     /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.
@@ -47,7 +48,7 @@ public interface HttpClient {
      * @param url the url to call
      * @return whether the url is valid
      */
-    boolean isValidEndPoint(String url);
+    boolean isValidEndPoint(@NotNull String url);
 
     /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.
@@ -55,5 +56,5 @@ public interface HttpClient {
      * @param url the url to call
      * @return whether the url is valid
      */
-    boolean isValidEndPoint(URL url);
+    boolean isValidEndPoint(@NotNull URL url);
 }
