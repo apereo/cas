@@ -54,34 +54,44 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         return mapper;
     }
 
-    private class RegisteredServiceProxyPolicyMixin implements RegisteredServiceProxyPolicy {
+    private static class RegisteredServiceProxyPolicyMixin implements RegisteredServiceProxyPolicy {
 
         private static final long serialVersionUID = 4854597398304437341L;
 
         @JsonIgnore
         @Override
-        public boolean isAllowedToProxy() { return false; };
+        public boolean isAllowedToProxy() {
+            return false;
+        };
 
         @JsonIgnore
         @Override
-        public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) { return false; };
+        public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
+            return false;
+        };
     }
 
-    private class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAccessStrategy {
+    private static class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAccessStrategy {
 
         private static final long serialVersionUID = -5070823601540670379L;
 
         @JsonIgnore
         @Override
-        public boolean isServiceAccessAllowed() { return false; };
+        public boolean isServiceAccessAllowed() {
+            return false;
+        };
 
         @JsonIgnore
         @Override
-        public boolean isServiceAuthorizedForSso() { return false; }
+        public boolean isServiceAuthorizedForSso() {
+            return false;
+        }
 
         @JsonIgnore
         @Override
-        public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) { return false; };
+        public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
+            return false;
+        };
     }
 
     @Override
