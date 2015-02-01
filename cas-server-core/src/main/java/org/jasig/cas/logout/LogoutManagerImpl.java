@@ -154,7 +154,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
         return registeredService != null
-                && registeredService.getAuthorizationStrategy().isServiceAccessAllowed()
+                && registeredService.getAccessStrategy().isServiceAccessAllowed()
                 && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
