@@ -42,7 +42,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final RegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.isServiceAccessAllowed());
-        assertTrue(authz.isServiceAuthorizedForSso());
+        assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final RegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy(false, true);
         assertFalse(authz.isServiceAccessAllowed());
-        assertTrue(authz.isServiceAuthorizedForSso());
+        assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final RegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy(true, false);
         assertTrue(authz.isServiceAccessAllowed());
-        assertFalse(authz.isServiceAuthorizedForSso());
+        assertFalse(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         authz.setEnabled(true);
         authz.setSsoEnabled(true);
         assertTrue(authz.isServiceAccessAllowed());
-        assertTrue(authz.isServiceAuthorizedForSso());
+        assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.isRequireAllAttributes());
     }
 
