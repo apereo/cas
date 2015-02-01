@@ -121,7 +121,7 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
         Assert.notNull(r, "invalid RegisteredService id");
 
         // we screwed up our APIs in older versions of CAS, so we need to CAST this to do anything useful.
-        ((DefaultRegisteredServiceAccessStrategy) r.getAuthorizationStrategy()).setEnabled(newState);
+        ((DefaultRegisteredServiceAccessStrategy) r.getAccessStrategy()).setEnabled(newState);
         this.servicesManager.save(r);
     }
 }

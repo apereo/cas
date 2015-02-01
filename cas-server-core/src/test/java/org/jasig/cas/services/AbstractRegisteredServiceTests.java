@@ -77,13 +77,13 @@ public class AbstractRegisteredServiceTests {
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.getAuthorizationStrategy()
+        assertEquals(ENABLED, this.r.getAccessStrategy()
                 .isServiceAccessAllowed());
         assertEquals(ID, this.r.getId());
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.getAuthorizationStrategy()
-                .isServiceAuthorizedForSso());
+        assertEquals(SSO_ENABLED, this.r.getAccessStrategy()
+                .isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
         assertFalse(this.r.equals(null));
