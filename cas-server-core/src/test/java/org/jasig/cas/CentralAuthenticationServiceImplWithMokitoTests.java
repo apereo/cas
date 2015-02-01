@@ -256,7 +256,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
         when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(new ReturnAllAttributeReleasePolicy());
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
-        when(mockRegSvc.getAuthorizationStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy(enabled, true));
+        when(mockRegSvc.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy(enabled, true));
         return mockRegSvc;
     }
 }

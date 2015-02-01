@@ -144,7 +144,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredServiceAccessStrategy getAuthorizationStrategy() {
+    public RegisteredServiceAccessStrategy getAccessStrategy() {
         return this.authorizationStrategy;
     }
 
@@ -290,7 +290,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
-        this.setAuthorizationStrategy(source.getAuthorizationStrategy());
+        this.setAuthorizationStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
     }
 

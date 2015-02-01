@@ -77,7 +77,7 @@ public final class LogoutAction extends AbstractLogoutAction {
             final Service webAppService = new SimpleWebApplicationServiceImpl(service);
             final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
-            if (rService != null && rService.getAuthorizationStrategy().isServiceAccessAllowed()) {
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
                 context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }

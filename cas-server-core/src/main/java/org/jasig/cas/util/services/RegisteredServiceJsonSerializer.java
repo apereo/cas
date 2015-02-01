@@ -83,7 +83,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
 
         @JsonIgnore
         @Override
-        public boolean isServiceAuthorizedForSso() {
+        public boolean isServiceAccessAllowedForSso() {
             return false;
         }
 

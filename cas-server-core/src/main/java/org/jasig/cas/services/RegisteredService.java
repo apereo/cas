@@ -109,12 +109,12 @@ public interface RegisteredService extends Cloneable, Serializable {
     Set<String> getRequiredHandlers();
 
     /**
-     * Gets authorization strategy that decides whether this registered
+     * Gets the access strategy that decides whether this registered
      * service is able to proceed with authentication requests.
      *
-     * @return the authorization strategy
+     * @return the access strategy
      */
-    RegisteredServiceAccessStrategy getAuthorizationStrategy();
+    RegisteredServiceAccessStrategy getAccessStrategy();
 
     /**
      * Returns whether the service matches the registered service.
