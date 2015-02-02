@@ -37,7 +37,8 @@ public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
     @Test
     public void verifyThrowableConstructor() {
-        final UnrecognizableServiceForServiceTicketValidationException t = new UnrecognizableServiceForServiceTicketValidationException(this.service);
+        final UnrecognizableServiceForServiceTicketValidationException t =
+                new UnrecognizableServiceForServiceTicketValidationException(this.service);
 
         assertSame(UnrecognizableServiceForServiceTicketValidationException.CODE, t.getCode());
         assertEquals(this.service, t.getOriginalService());
