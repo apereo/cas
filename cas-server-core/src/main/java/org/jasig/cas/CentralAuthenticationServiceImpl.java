@@ -42,6 +42,7 @@ import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -261,8 +262,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
-        
-        if (!registeredService.isSsoEnabled() && currentAuthentication == null) {
+
+        if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -283,6 +284,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         // This throws if no suitable policy is found
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
 
+        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
+        final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
+
+        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
+            logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
+                    service.getId(), principal);
+            throw new UnauthorizedServiceForPrincipalException();
+        }
+
         final String uniqueTicketIdGenKey = service.getClass().getName();
         logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
@@ -293,7 +304,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     uniqueTicketIdGenKey);
         }
 
-        final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
         final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
         final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
@@ -304,9 +314,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
-        final String principalId = authentications.get(authentications.size() - 1).getPrincipal().getId();
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
-                serviceTicket.getId(), service.getId(), principalId);
+                serviceTicket.getId(), service.getId(), principal.getId());
 
         return serviceTicket;
     }
@@ -588,10 +597,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.isEnabled()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service %s] is not enabled in service registry.", service.getId());
-            
+                    + "Service [%s] is not enabled in service registry.", service.getId());
+
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }

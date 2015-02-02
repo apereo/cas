@@ -5,8 +5,6 @@
   "serviceId" : "^(https|imaps)://.*",
   "name": "HTTPS and IMAPS",
   "evaluationOrder" : 10000001,
-  "enabled" : true,
-  "ssoEnabled" : true,
   "logo" : null,
   "logoutType" : "BACK_CHANNEL",
   "requiredHandlers" : [ "java.util.HashSet", [ ] ]

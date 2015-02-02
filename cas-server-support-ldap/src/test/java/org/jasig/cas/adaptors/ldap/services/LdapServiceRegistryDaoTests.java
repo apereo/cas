@@ -45,9 +45,6 @@ import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapServiceRegistryDao} class.
- * <p>
- * The casRegisteredService schema MUST be installed on the target OpenLDAP server prior to running this test.
- *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
  * @since 4.0.0
