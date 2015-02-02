@@ -30,6 +30,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws org.jasig.cas.ticket.TicketException if ticket cannot be created
      */
-    TicketGrantingTicket createTicketGrantingTicket(Credential... credentials)
+    TicketGrantingTicket createTicketGrantingTicket(@NotNull Credential... credentials)
         throws AuthenticationException, TicketException;
 
 
@@ -85,7 +86,7 @@ public interface CentralAuthenticationService {
      * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
      * @since 4.1.0
      */
-    <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz)
+    <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<? extends Ticket> clazz)
             throws InvalidTicketException;
 
     /**
@@ -100,7 +101,7 @@ public interface CentralAuthenticationService {
      * @return the tickets
      * @since 4.1.0
      */
-     Collection<Ticket> getTickets(Predicate predicate);
+     Collection<Ticket> getTickets(@NotNull Predicate predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
@@ -112,7 +113,7 @@ public interface CentralAuthenticationService {
      *
      * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
-    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketException;
+    ServiceTicket grantServiceTicket(@NotNull String ticketGrantingTicketId, @NotNull Service service) throws TicketException;
 
     /**
      * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
@@ -135,7 +136,7 @@ public interface CentralAuthenticationService {
      * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-            final String ticketGrantingTicketId, final Service service, final Credential... credentials)
+            @NotNull final String ticketGrantingTicketId, @NotNull final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException;
 
     /**
@@ -148,7 +149,7 @@ public interface CentralAuthenticationService {
      *
      * @throws org.jasig.cas.ticket.TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
+    Assertion validateServiceTicket(@NotNull final String serviceTicketId, @NotNull final Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
@@ -158,7 +159,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
      */
-    List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId);
+    List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
@@ -174,6 +175,6 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws org.jasig.cas.ticket.TicketException if there was an error creating the ticket
      */
-    TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    TicketGrantingTicket delegateTicketGrantingTicket(@NotNull final String serviceTicketId, @NotNull final Credential... credentials)
             throws AuthenticationException, TicketException;
 }
