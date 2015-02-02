@@ -44,14 +44,14 @@ import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.TicketValidationException;
+import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -219,7 +219,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId) {
         try {
             logger.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
@@ -241,8 +241,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(
-            @NotNull final String ticketGrantingTicketId,
-            @NotNull final Service service, final Credential... credentials)
+            final String ticketGrantingTicketId,
+            final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
@@ -366,9 +366,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
-        Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
-        Assert.notNull(credentials, "credentials cannot be null");
-
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
@@ -406,7 +403,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     @Override
-    public Assertion validateServiceTicket(@NotNull final String serviceTicketId, @NotNull final Service service) throws TicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         verifyRegisteredServiceProperties(registeredService, service);
 
@@ -427,7 +424,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 if (!serviceTicket.isValidFor(service)) {
                     logger.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
                             serviceTicketId, serviceTicket.getService().getId(), service);
-                    throw new TicketValidationException(serviceTicket.getService());
+                    throw new UnrecognizableServiceForServiceTicketValidationException(serviceTicket.getService());
                 }
             }
 
@@ -470,8 +467,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
-        Assert.notNull(credentials, "credentials cannot be null");
-
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
@@ -488,7 +483,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      */
     @Transactional(readOnly = true)
     @Override
-    public <T extends Ticket> T getTicket(@NotNull final String ticketId, @NotNull final Class<? extends Ticket> clazz)
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
             throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
@@ -514,7 +509,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      */
     @Transactional(readOnly = true)
     @Override
-    public Collection<Ticket> getTickets(@NotNull final Predicate predicate) {
+    public Collection<Ticket> getTickets(final Predicate predicate) {
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
         final Iterator<Ticket> it = c.iterator();
         while (it.hasNext()) {
