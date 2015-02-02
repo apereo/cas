@@ -198,7 +198,7 @@ public class JsonServiceRegistryDaoTests {
         r.setServiceId("testId");
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
-        r.setAuthorizationStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
+        r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
         r.setRequiredHandlers(new HashSet<String>(Arrays.asList("h1", "h2")));
 
@@ -310,7 +310,7 @@ public class JsonServiceRegistryDaoTests {
         attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
         attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
         authz.setRequiredAttributes(attrs);
-        r.setAuthorizationStrategy(authz);
+        r.setAccessStrategy(authz);
 
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();
