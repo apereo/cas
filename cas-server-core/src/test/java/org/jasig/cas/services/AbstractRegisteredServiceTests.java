@@ -83,7 +83,7 @@ public class AbstractRegisteredServiceTests {
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
         assertEquals(SSO_ENABLED, this.r.getAccessStrategy()
-                .isServiceAuthorizedForSso());
+                .isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
         assertFalse(this.r.equals(null));
