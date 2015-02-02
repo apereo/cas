@@ -82,12 +82,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "proxy_policy", nullable = false)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled = true;
-
-    @Column(name = "ssoEnabled", nullable = false)
-    private boolean ssoEnabled = true;
-
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
@@ -119,6 +113,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "logo")
     private URL logo;
 
+    @Lob
+    @Column(name = "access_strategy")
+    private RegisteredServiceAccessStrategy accessStrategy =
+            new DefaultRegisteredServiceAccessStrategy();
+
     public long getId() {
         return this.id;
     }
@@ -143,12 +142,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.proxyPolicy;
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    public boolean isSsoEnabled() {
-        return this.ssoEnabled;
+    @Override
+    public RegisteredServiceAccessStrategy getAccessStrategy() {
+        return this.accessStrategy;
     }
 
     @Override
@@ -169,9 +165,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
         return new EqualsBuilder()
                 .append(this.proxyPolicy, that.proxyPolicy)
-                .append(this.enabled, that.enabled)
                 .append(this.evaluationOrder, that.evaluationOrder)
-                .append(this.ssoEnabled, that.ssoEnabled)
                 .append(this.description, that.description)
                 .append(this.name, that.name)
                 .append(this.serviceId, that.serviceId)
@@ -179,6 +173,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
                 .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+                .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
                 .isEquals();
     }
@@ -190,12 +185,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.serviceId)
                 .append(this.name)
                 .append(this.theme)
-                .append(this.enabled)
-                .append(this.ssoEnabled)
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
+                .append(this.accessStrategy)
                 .append(this.logoutType)
                 .append(this.attributeReleasePolicy)
+                .append(this.accessStrategy)
                 .append(this.logo)
                 .toHashCode();
     }
@@ -206,10 +201,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setDescription(final String description) {
         this.description = description;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
     /**
@@ -227,10 +218,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.name = name;
     }
 
-    public void setSsoEnabled(final boolean ssoEnabled) {
-        this.ssoEnabled = ssoEnabled;
-    }
-
     public void setTheme(final String theme) {
         this.theme = theme;
     }
@@ -245,6 +232,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
         return this.usernameAttributeProvider;
+    }
+
+    public void setAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy) {
+        this.accessStrategy = accessStrategy;
     }
 
     /**
@@ -291,15 +282,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setId(source.getId());
         this.setProxyPolicy(source.getProxyPolicy());
         this.setDescription(source.getDescription());
-        this.setEnabled(source.isEnabled());
         this.setName(source.getName());
         this.setServiceId(source.getServiceId());
-        this.setSsoEnabled(source.isSsoEnabled());
         this.setTheme(source.getTheme());
         this.setEvaluationOrder(source.getEvaluationOrder());
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
+        this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
     }
 
@@ -327,12 +317,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("description", this.description);
         toStringBuilder.append("serviceId", this.serviceId);
         toStringBuilder.append("usernameAttributeProvider", this.usernameAttributeProvider);
-        toStringBuilder.append("enabled", this.enabled);
-        toStringBuilder.append("ssoEnabled", this.ssoEnabled);
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
+        toStringBuilder.append("accessStrategy", this.accessStrategy);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
 

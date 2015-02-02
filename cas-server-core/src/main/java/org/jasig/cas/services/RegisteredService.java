@@ -37,13 +37,6 @@ public interface RegisteredService extends Cloneable, Serializable {
     long INITIAL_IDENTIFIER_VALUE = Long.MAX_VALUE;
 
     /**
-     * Is this application currently allowed to use CAS?
-     *
-     * @return true if it can use CAS, false otherwise.
-     */
-    boolean isEnabled();
-
-    /**
      * Get the proxy policy rules for this service.
      *
      * @return the proxy policy
@@ -80,13 +73,6 @@ public interface RegisteredService extends Cloneable, Serializable {
     String getTheme();
 
     /**
-     * Does this application participate in the SSO session?
-     *
-     * @return true if it does, false otherwise.
-     */
-    boolean isSsoEnabled();
-
-    /**
      * Returns the description of the service.
      *
      * @return the description of the service.
@@ -121,6 +107,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return Non-null set of required handler names.
      */
     Set<String> getRequiredHandlers();
+
+    /**
+     * Gets the access strategy that decides whether this registered
+     * service is able to proceed with authentication requests.
+     *
+     * @return the access strategy
+     */
+    RegisteredServiceAccessStrategy getAccessStrategy();
 
     /**
      * Returns whether the service matches the registered service.

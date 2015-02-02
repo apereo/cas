@@ -28,11 +28,13 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -49,8 +51,6 @@ import org.jasig.cas.validation.Assertion;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,8 +80,6 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     private static final String SVC2_ID = "test2";
     
     private static final String PRINCIPAL = "principal";
-    
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private CentralAuthenticationService cas;
     private Authentication authentication;
@@ -253,12 +251,12 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
             final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
-        when(mockRegSvc.isEnabled()).thenReturn(enabled);
-        when(mockRegSvc.isSsoEnabled()).thenReturn(true);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
         when(mockRegSvc.getName()).thenReturn(svcId);
         when(mockRegSvc.matches(argThat(new VerifyServiceByIdMatcher(svcId)))).thenReturn(true);
+        when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(new ReturnAllAttributeReleasePolicy());
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
+        when(mockRegSvc.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy(enabled, true));
         return mockRegSvc;
     }
 }
