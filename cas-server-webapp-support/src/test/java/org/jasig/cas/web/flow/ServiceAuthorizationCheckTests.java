@@ -58,7 +58,7 @@ public class ServiceAuthorizationCheckTests {
     public void setUpMocks() {
         final RegisteredServiceImpl authorizedRegisteredService = new RegisteredServiceImpl();
         final RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
-        unauthorizedRegisteredService.setAuthorizationStrategy(
+        unauthorizedRegisteredService.setAccessStrategy(
                 new DefaultRegisteredServiceAccessStrategy(false, false));
 
         final List<RegisteredService> list = new ArrayList<>();

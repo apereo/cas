@@ -115,8 +115,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private URL logo;
 
     @Lob
-    @Column(name = "authz_strategy")
-    private RegisteredServiceAccessStrategy authorizationStrategy =
+    @Column(name = "access_strategy")
+    private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
     public long getId() {
@@ -144,8 +144,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredServiceAccessStrategy getAuthorizationStrategy() {
-        return this.authorizationStrategy;
+    public RegisteredServiceAccessStrategy getAccessStrategy() {
+        return this.accessStrategy;
     }
 
     @Override
@@ -174,7 +174,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
                 .append(this.logoutType, that.logoutType)
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
-                .append(this.authorizationStrategy, that.authorizationStrategy)
+                .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
                 .isEquals();
     }
@@ -188,10 +188,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.theme)
                 .append(this.evaluationOrder)
                 .append(this.usernameAttributeProvider)
-                .append(this.authorizationStrategy)
+                .append(this.accessStrategy)
                 .append(this.logoutType)
                 .append(this.attributeReleasePolicy)
-                .append(this.authorizationStrategy)
+                .append(this.accessStrategy)
                 .append(this.logo)
                 .toHashCode();
     }
@@ -235,8 +235,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.usernameAttributeProvider;
     }
 
-    public void setAuthorizationStrategy(final RegisteredServiceAccessStrategy authorizationStrategy) {
-        this.authorizationStrategy = authorizationStrategy;
+    public void setAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy) {
+        this.accessStrategy = accessStrategy;
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         this.setLogoutType(source.getLogoutType());
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
-        this.setAuthorizationStrategy(source.getAuthorizationStrategy());
+        this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
     }
 
@@ -322,7 +322,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
-        toStringBuilder.append("authorizationStrategy", this.authorizationStrategy);
+        toStringBuilder.append("accessStrategy", this.accessStrategy);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
 
