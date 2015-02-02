@@ -208,7 +208,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     @Override
-    public boolean isServiceAuthorizedForSso() {
+    public boolean isServiceAccessAllowedForSso() {
         if (!this.ssoEnabled) {
             logger.trace("Service is not authorized to participate in SSO.");
         }

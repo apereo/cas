@@ -44,7 +44,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      *
      * @return true/false if service can participate in sso
      */
-    boolean isServiceAuthorizedForSso();
+    boolean isServiceAccessAllowedForSso();
 
     /**
      * Verify authorization policy by checking the pre-configured rules
