@@ -362,9 +362,9 @@
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>             logger.warn(msg);
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
 <a class="jxr_linenumber" name="L356" href="#L356">356</a>         }
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <strong class="jxr_keyword">if</strong> (!registeredService.isEnabled()) {
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
 <a class="jxr_linenumber" name="L358" href="#L358">358</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>                     + <span class="jxr_string">"Service %s] is not enabled in service registry."</span>, service.getId());
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                     + <span class="jxr_string">"Service [%s] is not enabled in service registry."</span>, service.getId());
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>             
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>             logger.warn(msg);
 <a class="jxr_linenumber" name="L362" href="#L362">362</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);

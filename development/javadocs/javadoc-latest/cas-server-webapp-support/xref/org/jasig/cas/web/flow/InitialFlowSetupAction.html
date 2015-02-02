@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              logger.debug(<span class="jxr_string">"Placing service in context scope: [{}]"</span>, service.getId());
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> RegisteredService registeredService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">if</strong> (registeredService != <strong class="jxr_keyword">null</strong> &amp;&amp; registeredService.isEnabled()) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">if</strong> (registeredService != <strong class="jxr_keyword">null</strong> &amp;&amp; registeredService.getAccessStrategy().isServiceAccessAllowed()) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>                  logger.debug(<span class="jxr_string">"Placing registered service [{}] with id [{}] in context scope"</span>,
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>                         registeredService.getServiceId(),
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>                         registeredService.getId());

@@ -82,9 +82,9 @@
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              logger.warn(msg);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          }
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">if</strong> (!registeredService.isEnabled()) {
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>                      + <span class="jxr_string">"Service %s] is not enabled in service registry."</span>, service.getId());
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                      + <span class="jxr_string">"Service [%s] is not enabled in service registry."</span>, service.getId());
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              logger.warn(msg);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
