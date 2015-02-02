@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -194,10 +196,9 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
         r.setServiceId("testId");
-        r.setEnabled(true);
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
-        r.setSsoEnabled(false);
+        r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
         r.setRequiredHandlers(new HashSet<String>(Arrays.asList("h1", "h2")));
 
@@ -220,7 +221,6 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("testServiceType");
-        r.setEnabled(true);
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
 
@@ -233,7 +233,6 @@ public class JsonServiceRegistryDaoTests {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("hell/o@world:*");
-        r.setEnabled(true);
         r.setEvaluationOrder(1000);
 
         final RegisteredService r2 = this.dao.save(r);
@@ -284,7 +283,6 @@ public class JsonServiceRegistryDaoTests {
             final RegexRegisteredService r = new RegexRegisteredService();
             r.setServiceId("^https://.+");
             r.setName("testServiceType");
-            r.setEnabled(true);
             r.setTheme("testtheme");
             r.setEvaluationOrder(1000);
             r.setId(i * 100);
@@ -298,4 +296,24 @@ public class JsonServiceRegistryDaoTests {
 
     }
 
+    @Test
+    public void checkForAuthorizationStrategy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("checkForAuthorizationStrategy");
+        r.setId(42);
+
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(false, false);
+
+        final Map<String, Set<String>> attrs = new HashMap<>();
+        attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
+        attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
+        authz.setRequiredAttributes(attrs);
+        r.setAccessStrategy(authz);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertEquals(list.size(), 1);
+    }
 }

@@ -25,6 +25,7 @@ import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -114,6 +115,24 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             TestUtils.getService());
     }
 
+    @Test(expected=UnauthorizedServiceForPrincipalException.class)
+    public void verifyGrantServiceTicketFailsAuthzRule() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
+                TestUtils.getService("TestServiceAttributeForAuthzFails"));
+    }
+
+    @Test
+    public void verifyGrantServiceTicketPassesAuthzRule() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
+                TestUtils.getService("TestServiceAttributeForAuthzPasses"));
+    }
+
     @Test
     public void verifyGrantProxyTicketWithValidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
@@ -148,6 +167,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             public boolean isExpired(final TicketState ticket) {
                 return true;
             }});
+
     final TicketGrantingTicket ticketId = getCentralAuthenticationService()
         .createTicketGrantingTicket(
             TestUtils.getCredentialsWithSameUsernameAndPassword());

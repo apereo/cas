@@ -134,7 +134,6 @@ public final class TestUtils {
         s.setEvaluationOrder(1);
         s.setName("Test registered service");
         s.setDescription("Registered service description");
-        s.setEnabled(true);
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(new SecureRandom().nextInt(32));
         return s;
