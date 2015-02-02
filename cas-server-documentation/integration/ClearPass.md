@@ -210,17 +210,17 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
     <constructor-arg name="maximumChunkSize" value="5000000"/>  
 </bean>
 
-<bean id="credentialsCache" class="org.jasig.cas3.extensions.clearpass.EhcacheBackedMap">
+<bean id="credentialsCache" class="org.jasig.cas.extensions.clearpass.EhcacheBackedMap">
     <constructor-arg index="0" ref="clearPassEhCache" />
 </bean>
 
-<bean id="ticketRegistry" class="org.jasig.cas3.extensions.clearpass.TicketRegistryDecorator">
+<bean id="ticketRegistry" class="org.jasig.cas.extensions.clearpass.TicketRegistryDecorator">
     <constructor-arg index="0" ref="ticketRegistryValue"/>
     <constructor-arg index="1" ref="credentialsCache"/>
 </bean>
 
 <!-- implementation of the clear pass vending service -->
-<bean id="clearPassController" class="org.jasig.cas3.extensions.clearpass.ClearPassController">
+<bean id="clearPassController" class="org.jasig.cas.extensions.clearpass.ClearPassController">
     <constructor-arg index="0" ref="credentialsCache" />
 </bean>
 
