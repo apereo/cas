@@ -34,7 +34,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -302,7 +301,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * @see #getEvaluationOrder()
      */
     @Override
-    public int compareTo(@NotNull final RegisteredService other) {
+    public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
                   .append(this.getEvaluationOrder(), other.getEvaluationOrder())
                   .append(this.getName().toLowerCase(), other.getName().toLowerCase())
