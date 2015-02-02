@@ -77,12 +77,12 @@ public class AbstractRegisteredServiceTests {
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.getAuthorizationStrategy()
+        assertEquals(ENABLED, this.r.getAccessStrategy()
                 .isServiceAccessAllowed());
         assertEquals(ID, this.r.getId());
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.getAuthorizationStrategy()
+        assertEquals(SSO_ENABLED, this.r.getAccessStrategy()
                 .isServiceAuthorizedForSso());
         assertEquals(THEME, this.r.getTheme());
 
@@ -107,7 +107,7 @@ public class AbstractRegisteredServiceTests {
         this.r.setName(NAME);
         this.r.setServiceId(SERVICEID);
         this.r.setTheme(THEME);
-        this.r.setAuthorizationStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
+        this.r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
     }
     
     @Test

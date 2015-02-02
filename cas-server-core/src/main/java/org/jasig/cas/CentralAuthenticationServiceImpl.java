@@ -263,7 +263,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
 
-        if (currentAuthentication == null && !registeredService.getAuthorizationStrategy().isServiceAuthorizedForSso()) {
+        if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAuthorizedForSso()) {
             logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -288,7 +288,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
 
         final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-        if (!registeredService.getAuthorizationStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
             logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
             throw new UnauthorizedServiceForPrincipalException();
@@ -597,7 +597,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.getAuthorizationStrategy().isServiceAccessAllowed()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
 
