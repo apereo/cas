@@ -29,10 +29,10 @@ import org.jasig.cas.authentication.principal.Service;
  * @since 4.1
  */
 public class UnrecognizableServiceForServiceTicketValidationException extends TicketValidationException {
-    private static final long serialVersionUID = -8076771862820008358L;
-
     /** The code description. */
     protected static final String CODE = "INVALID_SERVICE";
+
+    private static final long serialVersionUID = -8076771862820008358L;
 
     /**
      * Instantiates a new Unrecognizable service for service ticket validation exception.
