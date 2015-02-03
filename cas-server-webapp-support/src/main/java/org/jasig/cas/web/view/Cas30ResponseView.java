@@ -20,10 +20,16 @@ package org.jasig.cas.web.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
+import org.springframework.web.servlet.view.JstlView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,29 +43,12 @@ import java.util.Map;
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
-    /**
-     * Represents the collection of attributes in the view.
-     */
-    public static final String MODEL_ATTRIBUTE_NAME_ATTRIBUTES = "attributes";
+    /** The Services manager. */
+    @NotNull
+    private ServicesManager servicesManager;
 
     /**
-     * Represents the authentication date object in the view.
-     */
-    public static final String MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = "authenticationDate";
-
-    /**
-     * Represents the flag to note whether assertion is backed by new login.
-     */
-    public static final String MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = "isFromNewLogin";
-
-    /**
-     * Represents the flag to note the principal credential used to establish
-     * a successful authentication event.
-     */
-    public static final String MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL = "credential";
-
-    /**
-     * Instantiates a new Abstract cas jstl view.
+     * Instantiates a new Abstract cas response view.
      *
      * @param view the view
      */
@@ -74,17 +63,50 @@ public class Cas30ResponseView extends Cas20ResponseView {
         super.prepareMergedOutputModel(model, request, response);
 
         final Map<String, Object> attributes = new HashMap<>(getPrincipalAttributesAsMultiValuedAttributes(model));
-        attributes.put(MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, Collections.singleton(getAuthenticationDate(model)));
-        attributes.put(MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, Collections.singleton(isAssertionBackedByNewLogin(model)));
+        attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+                Collections.singleton(getAuthenticationDate(model)));
+        attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
+                Collections.singleton(isAssertionBackedByNewLogin(model)));
         attributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model);
+        super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, attributes);
+    }
+
+    /**
+     * Decide if credential password should be released as attribute.
+     * The credential must have been cached as an authentication attribute
+     * and the attribute release policy must be allowed to release the
+     * mock attribute that {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}.
+     *
+     * @param attributes the attributes
+     * @param model the model
+     */
+    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Map<String, Object> model) {
         final String credential = super.getCredentialPasswordFromAuthentication(model);
         if (StringUtils.isNotBlank(credential)) {
-            logger.debug("Obtained credential password is passed to the CAS payload under [{}]",
-                    MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            attributes.put(MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, Collections.singleton(credential));
+            logger.debug("Obtained credential password as an authentication attribute");
+
+            final Service service = super.getServiceFrom(model);
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final Principal principal = super.getPrincipal(model);
+            final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+            if (principalAttrs.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
+                logger.debug("Obtained credential password is passed to the CAS payload under [{}]",
+                        CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+                attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, Collections.singleton(credential));
+            } else {
+                logger.debug("Released principal attributes [{}] do not authorize the release of "
+                                + "credential password, because the attribute [{}] is missing from the attribute release policy",
+                        principalAttrs.keySet(), CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            }
+        } else {
+            logger.trace("Credential password is not cached and will not be made available to the response.");
         }
-        super.putIntoModel(model, MODEL_ATTRIBUTE_NAME_ATTRIBUTES, attributes);
+    }
+
+    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }
