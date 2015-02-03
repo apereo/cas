@@ -16,20 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+
+package org.jasig.cas.ticket;
+
+import org.jasig.cas.authentication.principal.Service;
 
 /**
- * Interface that enables for pluggable unique ticket Ids strategies.
- *
- * @author Scott Battaglia
- * @since 3.0.0
+ * An exception that may be thrown during service ticket validation
+ * to indicate that the service ticket is not valid and was not originally
+ * issued for the submitted service.
+ * @author Misagh Moayyed
+ * @since 4.1
  */
-public interface UniqueTicketIdGenerator {
+public class UnrecognizableServiceForServiceTicketValidationException extends TicketValidationException {
+    /** The code description. */
+    protected static final String CODE = "INVALID_SERVICE";
+
+    private static final long serialVersionUID = -8076771862820008358L;
+
     /**
-     * Return a new unique ticket id beginning with the prefix.
+     * Instantiates a new Unrecognizable service for service ticket validation exception.
      *
-     * @param prefix The prefix we want attached to the ticket.
-     * @return the unique ticket id
+     * @param service the service
      */
-    String getNewTicketId(String prefix);
+    public UnrecognizableServiceForServiceTicketValidationException(final Service service) {
+        super(CODE, service);
+    }
 }
