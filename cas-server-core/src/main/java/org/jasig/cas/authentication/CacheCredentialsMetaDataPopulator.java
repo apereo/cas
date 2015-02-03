@@ -19,10 +19,13 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.util.CompressionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.validation.constraints.NotNull;
 import java.security.PublicKey;
+
 
 /**
  * We utilize the {@link org.jasig.cas.authentication.AuthenticationMetaDataPopulator} to retrieve and store
@@ -37,6 +40,8 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
 
     /** The default algorithm to encrypt the password with. */
     public static final String DEFAULT_CIPHER_ALGORITHM = "RSA";
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private final PublicKey publicKey;
@@ -67,16 +72,23 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-
         try {
+            logger.debug("Processing request to capture the credential for [{}]", credential.getId());
+
             final Cipher cipher = Cipher.getInstance(this.cipherAlgorithm);
+            logger.debug("Created cipher instance to encrypt credential via [{}]", this.cipherAlgorithm);
+
             cipher.init(Cipher.ENCRYPT_MODE, this.publicKey);
+            logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
+                    this.publicKey.getAlgorithm());
+
+            final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
             final byte[] cipherData = cipher.doFinal(c.getPassword().getBytes());
             final String password = CompressionUtils.encodeBase64(cipherData);
-
             builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD,
                     password);
+            logger.debug("Encrypted credential is encoded in base64 and added as the authentication attribute [{}]",
+                    UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
