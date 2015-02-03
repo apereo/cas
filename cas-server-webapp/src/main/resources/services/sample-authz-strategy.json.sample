@@ -1,0 +1,18 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 666,
+  "description" : "sample",
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : false,
+    "ssoEnabled" : false,
+    "requireAllAttributes" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "v1, v2, v3" ] ],
+      "memberOf" : [ "java.util.HashSet", [ "v4, v5, v6" ] ]
+    }
+  }
+}

@@ -88,7 +88,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
     }
 
     @Override
-    public boolean sendMessageToEndPoint(@NotNull final HttpMessage message) {
+    public boolean sendMessageToEndPoint(final HttpMessage message) {
         Assert.notNull(this.httpClient);
 
         try {

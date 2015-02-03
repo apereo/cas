@@ -354,9 +354,9 @@ public class ServiceValidateController extends DelegateController {
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
-        if (!registeredService.isEnabled()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service %s] is not enabled in service registry.", service.getId());
+                    + "Service [%s] is not enabled in service registry.", service.getId());
             
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);

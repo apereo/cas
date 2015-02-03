@@ -89,13 +89,17 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
 
     @Override
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
-        final String value = LdapUtils.getString(entry, this.serviceDefinitionAttribute);
-        if (StringUtils.hasText(value)) {
-            final RegisteredService service = this.jsonSerializer.fromJson(value);
-            return service;
-        }
+        try {
+            final String value = LdapUtils.getString(entry, this.serviceDefinitionAttribute);
+            if (StringUtils.hasText(value)) {
+                final RegisteredService service = this.jsonSerializer.fromJson(value);
+                return service;
+            }
 
-        return null;
+            return null;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getObjectClass() {
