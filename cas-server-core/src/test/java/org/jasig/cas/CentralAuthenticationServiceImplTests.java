@@ -25,6 +25,7 @@ import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -94,12 +95,42 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     @Test
+    public void checkGrantingOfServiceTicketUsingDefaultTicketIdGen() throws Exception {
+        final Service mockService = mock(Service.class);
+        when(mockService.getId()).thenReturn("testDefault");
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final ServiceTicket serviceTicketId = getCentralAuthenticationService()
+                .grantServiceTicket(ticketId.getId(), mockService);
+        assertNotNull(serviceTicketId);
+    }
+
+    @Test
     public void verifyGrantServiceTicketWithValidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                     TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
             TestUtils.getService());
+    }
+
+    @Test(expected=UnauthorizedServiceForPrincipalException.class)
+    public void verifyGrantServiceTicketFailsAuthzRule() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
+                TestUtils.getService("TestServiceAttributeForAuthzFails"));
+    }
+
+    @Test
+    public void verifyGrantServiceTicketPassesAuthzRule() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
+                TestUtils.getService("TestServiceAttributeForAuthzPasses"));
     }
 
     @Test
@@ -136,6 +167,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             public boolean isExpired(final TicketState ticket) {
                 return true;
             }});
+
     final TicketGrantingTicket ticketId = getCentralAuthenticationService()
         .createTicketGrantingTicket(
             TestUtils.getCredentialsWithSameUsernameAndPassword());
