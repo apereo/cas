@@ -246,7 +246,7 @@ public class ServiceValidateController extends DelegateController {
 
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
-        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
+        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
 
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);

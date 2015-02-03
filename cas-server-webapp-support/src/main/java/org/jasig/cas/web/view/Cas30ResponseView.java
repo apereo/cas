@@ -25,7 +25,6 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import org.springframework.web.servlet.view.JstlView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,7 +82,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param attributes the attributes
      * @param model the model
      */
-    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Map<String, Object> model) {
+    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
+                                                                         final Map<String, Object> model) {
         final String credential = super.getCredentialPasswordFromAuthentication(model);
         if (StringUtils.isNotBlank(credential)) {
             logger.debug("Obtained credential password as an authentication attribute");

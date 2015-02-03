@@ -35,13 +35,22 @@ public interface CasViewConstants {
      */
     String MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL = "credential";
 
-    /** Represents the {@link org.jasig.cas.authentication.principal.Principal} object in the view.*/
+    /**
+     * Represents the
+     * {@link org.jasig.cas.authentication.principal.Principal} object in the view.
+     */
     String MODEL_ATTRIBUTE_NAME_PRINCIPAL = "principal";
 
-    /** Represents the chained authentication objects in the view for proxying. */
+    /**
+     * Represents the chained authentication objects
+     * in the view for proxying.
+     */
     String MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS = "chainedAuthentications";
 
-    /** Represents the {@link org.jasig.cas.authentication.Authentication} object in the view. */
+    /**
+     *  Represents the
+     * {@link org.jasig.cas.authentication.Authentication} object in the view.
+     **/
     String MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION = "primaryAuthentication";
 
     /** Constant representing the Assertion in the cas validation model. */
