@@ -553,7 +553,7 @@
        <groupId>javax.el</groupId>
        <artifactId>javax.el-api</artifactId>
        <version>${javax.el-api.version}</version>
-       <scope>runtime</scope>
+       <scope>provided</scope>
     </dependency>
 
     <dependency>
