@@ -32,6 +32,11 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Map;
 
@@ -62,11 +67,11 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
 
-        final Map<?, ?> col1 = (Map<?, ?>) req.getAttribute(Cas30ResponseView.MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
-
-        assertTrue(col1.containsKey(Cas30ResponseView.MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
-        assertTrue(col1.containsKey(Cas30ResponseView.MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
+        final Map<?, ?> col1 = (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
+        assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
+        assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
         assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
+
     }
 
 }
