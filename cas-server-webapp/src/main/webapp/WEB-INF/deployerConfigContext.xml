@@ -65,12 +65,14 @@
             </map>
         </constructor-arg>
 
-        <!-- Uncomment the metadata populator to allow clearpass to capture and cache the password
-             This switch effectively will turn on clearpass.
+        <!-- Uncomment the metadata populator to capture the password.
+             A 'publicKeyFactoryBean' bean needs to be configured with
+             a reference to your public key file in order to securely
+             encrypt the password
         <property name="authenticationMetaDataPopulators">
            <util:list>
-              <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
-                    c:credentialCache-ref="encryptedMap" />
+               <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"
+                     c:publicKey-ref="publicKeyFactoryBean" c:cipherAlgorithm="RSA" />
            </util:list>
         </property>
         -->
@@ -86,6 +88,16 @@
             <bean class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
         </property>
     </bean>
+
+    <!--
+    Uncomment the 'publicKeyFactoryBean' bean
+    needs to be configured with a reference to your public key file in order to securely
+    encrypt the password.
+
+    <bean id="publicKeyFactoryBean" class="org.jasig.cas.util.PublicKeyFactoryBean"
+            p:location="classpath:public.key"
+            p:algorithm="RSA" />
+    -->
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
@@ -135,6 +147,16 @@
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
+
+        <!--
+        Uncomment to allow the resolution of credential as an attribute.
+        Your attribute repository must be able to resolve
+        an attribute named 'credential' in order to ensure
+        the release of the captured password as an attribute
+        in the validation response.
+
+        <entry key="credential" value="<not-used>" />
+        -->
         <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>
