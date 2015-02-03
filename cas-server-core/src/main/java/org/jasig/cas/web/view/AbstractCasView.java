@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the assertion from
      */
     protected final Assertion getAssertionFrom(final Map<String, Object> model) {
-        return (Assertion) model.get("assertion");
+        return (Assertion) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION);
     }
 
     /**
@@ -179,6 +180,16 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final Date getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
+    }
+
+    /**
+     * Gets validated service from the model.
+     *
+     * @param model the model
+     * @return the validated service from
+     */
+    protected final Service getServiceFrom(final Map<String, Object> model) {
+        return (Service) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
     }
 
     /**
