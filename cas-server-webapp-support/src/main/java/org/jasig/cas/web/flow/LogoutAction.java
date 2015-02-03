@@ -18,12 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
@@ -32,6 +27,11 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Action to delete the TGT and the appropriate cookies.
@@ -74,9 +74,10 @@ public final class LogoutAction extends AbstractLogoutAction {
 
         final String service = request.getParameter("service");
         if (this.followServiceRedirects && service != null) {
-            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+            final Service webAppService = new SimpleWebApplicationServiceImpl(service);
+            final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
-            if (rService != null && rService.isEnabled()) {
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
                 context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }
