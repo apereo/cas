@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="CAS - Single Sign-On for the Web" />
     
-    
     <link rel="stylesheet" type="text/css" media="screen"
           href="../../stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="print"
@@ -117,7 +116,11 @@
 <h4 id="ldap">LDAP</h4>
 <p>The following snippet assumes that connection information beans are already defined.</p>
 
-<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ldapPersonAttributeDao&quot;</span>
+<div class="highlight"><pre><code class="xml">
+<span class="nt">&lt;context:component-scan</span> <span class="na">base-package=</span><span class="s">&quot;org.jasig.cas&quot;</span>
+<span class="nt">&lt;context:annotation-config</span> <span class="na">/&gt;</span>
+
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;ldapPersonAttributeDao&quot;</span>
       <span class="na">class=</span><span class="s">&quot;org.jasig.cas.persondir.LdapPersonAttributeDao&quot;</span>
       <span class="na">p:connectionFactory-ref=</span><span class="s">&quot;pooledLdapConnectionFactory&quot;</span>
       <span class="na">p:baseDN=</span><span class="s">&quot;${ldap.baseDn}&quot;</span>
