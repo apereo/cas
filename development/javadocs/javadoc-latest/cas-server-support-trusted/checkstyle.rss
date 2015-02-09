@@ -46,7 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java</a>
                 </td>
                 <td>
                   0
@@ -60,7 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-trusted//checkstyle.html#org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java">org/jasig/cas/adaptors/trusted/web/flow/PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.java</a>
                 </td>
                 <td>
                   0
