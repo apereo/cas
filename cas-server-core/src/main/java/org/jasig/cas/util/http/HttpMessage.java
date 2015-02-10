@@ -44,7 +44,7 @@ public class HttpMessage {
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private final boolean asynchronous = DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED;
+    private final boolean asynchronous;
     
     /**
      * The content type for this message once submitted.
@@ -72,6 +72,7 @@ public class HttpMessage {
     public HttpMessage(final URL url, final String message, final boolean async) {
         this.url = url;
         this.message = message;
+        this.asynchronous = async;
     }
     
     protected boolean isAsynchronous() {
@@ -108,4 +109,3 @@ public class HttpMessage {
         return message;
     }
 }
-
