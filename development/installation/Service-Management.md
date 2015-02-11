@@ -47,7 +47,8 @@ Registered services present the following metadata:
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `id`     							| Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
 | `name`        					| Required name (255 characters or less).      
-| `description`						| Optional free-text description of the service. (255 characters or less)   
+| `description`						| Optional free-text description of the service. (255 characters or less) 
+| `logo`						      | Optional path to an image file that is the for this service. The image will be displayed on the login page along with the service description and name.  
 | `serviceId`        				| Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
 | `theme`        					| Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
 | `proxyPolicy`        				| Determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication. 
