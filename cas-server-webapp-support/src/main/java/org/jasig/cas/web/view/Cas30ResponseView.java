@@ -24,6 +24,8 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.web.support.CasAttributeEncoder;
+import org.jasig.cas.web.support.DefaultCasAttributeEncoder;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +43,10 @@ import java.util.Map;
  * @since 4.1.0
  */
 public class Cas30ResponseView extends Cas20ResponseView {
+
+    /** The attribute encoder instance. */
+    @NotNull
+    private CasAttributeEncoder casAttributeEncoder = new DefaultCasAttributeEncoder();
 
     /** The Services manager. */
     @NotNull
@@ -70,7 +76,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
                 Collections.singleton(isRememberMeAuthentication(model)));
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model);
-        super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, attributes);
+
+        super.putIntoModel(model,
+                CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
+                this.casAttributeEncoder.encodeAttributes(attributes));
     }
 
     /**
