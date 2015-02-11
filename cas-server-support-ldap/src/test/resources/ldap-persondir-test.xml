@@ -43,7 +43,7 @@
                 <!--
                    | Key is LDAP attribute name, value is principal attribute name.
                    -->
-                <entry key="member" value="member" />
+                <entry key="cn" value="commonName" />
                 <entry key="mail" value="mail" />
                 <entry key="displayName" value="displayName" />
             </map>
