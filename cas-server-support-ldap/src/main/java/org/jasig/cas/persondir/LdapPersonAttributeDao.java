@@ -211,8 +211,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
     private Map<String, List<Object>> convertLdapEntryToMap(final LdapEntry entry) {
         final Map<String, List<Object>> attributeMap = new LinkedHashMap<>(entry.size());
         for (final LdapAttribute attr : entry.getAttributes()) {
-            final String attrNewName = this.getResultAttributeMapping().get(attr.getName()).toString();
-            attributeMap.put(attrNewName, new ArrayList<Object>(attr.getStringValues()));
+            attributeMap.put(attr.getName(), new ArrayList<Object>(attr.getStringValues()));
         }
         logger.debug("Converted ldap DN entry [{}] to attribute map {}", entry.getDn(), attributeMap.toString());
         return attributeMap;
