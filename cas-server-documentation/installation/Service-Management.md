@@ -43,21 +43,21 @@ management controls are required.
 
 Registered services present the following metadata:
 
-| Field         					| Description 
+| Field                             | Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `id`     							| Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
-| `name`        					| Required name (255 characters or less).      
-| `description`						| Optional free-text description of the service. (255 characters or less) 
-| `logo`						      | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name.  
-| `serviceId`        				| Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
-| `theme`        					| Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
-| `proxyPolicy`        				| Determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication. 
-| `evaluationOrder`        			| Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first.      
-| `requiredHandlers`        		| Set of authentication handler names that must successfully authenticate credentials in order to access the service.
-| `attributeReleasePolicy`        	| The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `logoutType`        				| Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
+| `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
+| `name`                            | Required name (255 characters or less).      
+| `description`                     | Optional free-text description of the service. (255 characters or less) 
+| `logo`                              | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name.  
+| `serviceId`                       | Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
+| `theme`                           | Optional [Spring theme](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/mvc.html#mvc-themeresolver) that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
+| `proxyPolicy`                     | Determines whether the service is able to proxy authentication, not whether the service accepts proxy authentication. 
+| `evaluationOrder`                 | Required value that determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first.      
+| `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service.
+| `attributeReleasePolicy`          | The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
+| `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `accessStrategy`        			| The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
+| `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
 
 ###Configure Service Access Strategy
 The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives. 
@@ -70,12 +70,12 @@ This is the parent interface that outlines the required operations from the CAS 
 #####`DefaultRegisteredServiceAccessStrategy`
 The default access manager allows on to configure a service with the following properties:
 
-| Field         					| Description 
+| Field                             | Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `enabled`     					| Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`        				| Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `requiredAttributes`        		| A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
-| `requireAllAttributes`     		| Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully. 
+| `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
+| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
+| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
+| `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully. 
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
 
@@ -90,11 +90,11 @@ Some examples of RBAC configuration follow:
 <bean class="org.jasig.cas.services.RegexRegisteredService"
          p:id="10000001" p:name="HTTP and IMAP"
          p:serviceId="^(https?|imaps?)://.*">
-	<property name="accessStrategy">
-	    <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-	            c:ssoEnabled="true"
-	            c:enabled="false"/>
-	</property>
+    <property name="accessStrategy">
+        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+                c:ssoEnabled="true"
+                c:enabled="false"/>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -106,11 +106,11 @@ Some examples of RBAC configuration follow:
 <bean class="org.jasig.cas.services.RegexRegisteredService"
          p:id="10000001" p:name="HTTP and IMAP"
          p:serviceId="^(https?|imaps?)://.*">
-	<property name="accessStrategy">
-	    <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-	            c:ssoEnabled="false"
-	            c:enabled="true"/>
-	</property>
+    <property name="accessStrategy">
+        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+                c:ssoEnabled="false"
+                c:enabled="true"/>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -123,14 +123,14 @@ Some examples of RBAC configuration follow:
 <bean class="org.jasig.cas.services.RegexRegisteredService"
          p:id="10000001" p:name="HTTP and IMAP"
          p:serviceId="^(https?|imaps?)://.*">
-	<property name="accessStrategy">
-	    <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-			<map>
-	             <entry key="cn" value="admin" />
-	             <entry key="givenName" value="Administrator" />
-	         </map>
-		</bean>
-	</property>
+    <property name="accessStrategy">
+        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+             <map>
+                 <entry key="cn" value="admin" />
+                 <entry key="givenName" value="Administrator" />
+             </map>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -141,19 +141,19 @@ Some examples of RBAC configuration follow:
 <bean class="org.jasig.cas.services.RegexRegisteredService"
          p:id="10000001" p:name="HTTP and IMAP"
          p:serviceId="^(https?|imaps?)://.*">
-	<property name="accessStrategy">
-	    <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-			<map>
-	            <entry key="cn">
-					<list>
-                        <value>admin</value>
-                        <value>Admin</value>
-                        <value>TheAdmin</value>
+    <property name="accessStrategy">
+        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+            <map>
+                <entry key="cn">
+                    <list>
+                           <value>admin</value>
+                           <value>Admin</value>
+                           <value>TheAdmin</value>
                     </list>
-				</entry>
-	         </map>
-		</bean>
-	</property>
+                </entry>
+             </map>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -166,27 +166,27 @@ OR the principal must have a `member` attribute whose value is either of `admins
 <bean class="org.jasig.cas.services.RegexRegisteredService"
          p:id="10000001" p:name="HTTP and IMAP"
          p:serviceId="^(https?|imaps?)://.*">
-	<property name="accessStrategy">
-	    <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-				p:requireAllAttributes="false">
-			<map>
-	            <entry key="cn">
-					<list>
+    <property name="accessStrategy">
+        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+                p:requireAllAttributes="false">
+            <map>
+                <entry key="cn">
+                    <list>
                         <value>admin</value>
                         <value>Admin</value>
                         <value>TheAdmin</value>
                     </list>
-				</entry>
-				<entry key="member">
-					<list>
+                </entry>
+                <entry key="member">
+                    <list>
                         <value>admins</value>
                         <value>adminGroup</value>
                         <value>staff</value>
                     </list>
-				</entry>
-	         </map>
-		</bean>
-	</property>
+                </entry>
+             </map>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -210,10 +210,10 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
          p:id="10000001" p:name="HTTP and IMAP"
          p:description="Allows HTTP(S) and IMAP(S) protocols"
          p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-	<property name="proxyPolicy">
-		<bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-			c:pgtUrlPattern="^https?://.*" />
-	</property>
+    <property name="proxyPolicy">
+        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+            c:pgtUrlPattern="^https?://.*" />
+    </property>
 </bean>
 {% endhighlight %}
 
@@ -264,9 +264,9 @@ A sample JSON file follows:
         "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
         "pattern" : "https://.+"
     },
-	"accessStrategy" : {
-	    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-	},
+    "accessStrategy" : {
+        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+    },
     "evaluationOrder" : 1000,
     "usernameAttributeProvider" : {
         "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
@@ -310,11 +310,11 @@ The format and syntax of the JSON is identical to that of `JsonServiceRegistryDa
 ######`DefaultLdapRegisteredServiceMapper`
 The default mapper has support for the following optional items:
 
-| Field         					| Default Value 
+| Field                             | Default Value 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `objectClass`     				| casRegisteredService
-| `serviceDefinitionAttribute`     	| description
-| `idAttribute`     				| uid
+| `objectClass`                     | casRegisteredService
+| `serviceDefinitionAttribute`      | description
+| `idAttribute`                     | uid
 
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as JSON objects. 
 
@@ -327,21 +327,21 @@ when doing CAS upgrades:
 {% highlight sql %}
 
 create table RegisteredServiceImpl (
-	expression_type VARCHAR(15) DEFAULT 'ant' not null, 
-	id bigint generated by default as identity (start with 1), 
-	access_strategy blob(255), 
-	attribute_release blob(255), 
-	description varchar(255) not null, 
-	evaluation_order integer not null, 
-	logo varchar(255), 
-	logout_type integer, 
-	name varchar(255) not null, 
-	proxy_policy blob(255) not null, 
-	required_handlers blob(255), 
-	serviceId varchar(255) not null, 
-	theme varchar(255), 
-	username_attr blob(255), 
-	primary key (id)
+    expression_type VARCHAR(15) DEFAULT 'ant' not null, 
+    id bigint generated by default as identity (start with 1), 
+    access_strategy blob(255), 
+    attribute_release blob(255), 
+    description varchar(255) not null, 
+    evaluation_order integer not null, 
+    logo varchar(255), 
+    logout_type integer, 
+    name varchar(255) not null, 
+    proxy_policy blob(255) not null, 
+    required_handlers blob(255), 
+    serviceId varchar(255) not null, 
+    theme varchar(255), 
+    username_attr blob(255), 
+    primary key (id)
 )
 
 {% endhighlight %}
