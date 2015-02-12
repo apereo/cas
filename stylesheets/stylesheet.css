@@ -178,7 +178,7 @@ img.undecorated {
 pre, code {
   color: #296643;
   font-family: "Consolas", "Andale Mono", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  font-size: 15px;
+  font-size: 12px;
 }
 
 .highlight {
