@@ -18,80 +18,29 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
-import javax.validation.constraints.NotNull;
-import java.security.PublicKey;
-
-
 /**
  * We utilize the {@link org.jasig.cas.authentication.AuthenticationMetaDataPopulator} to retrieve and store
- * the password as an authentication attribute. The password is encrypted using
- * {@link #DEFAULT_CIPHER_ALGORITHM} and converted to base64 by default. To decrypt, one
- * can first decode from base64, and use a cipher of size 2048 to retrieve the original.
+ * the password as an authentication attribute under the key
+ * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    /** The default algorithm to encrypt the password with. */
-    public static final String DEFAULT_CIPHER_ALGORITHM = "RSA";
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @NotNull
-    private final PublicKey publicKey;
-
-    @NotNull
-    private final String cipherAlgorithm;
-
-    /**
-     * Instantiates a new Cache credentials meta data populator.
-     *
-     * @param publicKey the public key
-     */
-    public CacheCredentialsMetaDataPopulator(final PublicKey publicKey) {
-        this.publicKey = publicKey;
-        this.cipherAlgorithm = DEFAULT_CIPHER_ALGORITHM;
-    }
-
-    /**
-     * Instantiates a new Cache credentials meta data populator.
-     *
-     * @param publicKey the public key
-     * @param cipherAlgorithm the cipher algorithm
-     */
-    public CacheCredentialsMetaDataPopulator(final PublicKey publicKey, final String cipherAlgorithm) {
-        this.publicKey = publicKey;
-        this.cipherAlgorithm = cipherAlgorithm;
-    }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        try {
-            logger.debug("Processing request to capture the credential for [{}]", credential.getId());
-
-            final Cipher cipher = Cipher.getInstance(this.cipherAlgorithm);
-            logger.debug("Created cipher instance to encrypt credential via [{}]", this.cipherAlgorithm);
-
-            cipher.init(Cipher.ENCRYPT_MODE, this.publicKey);
-            logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
-                    this.publicKey.getAlgorithm());
-
-            final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-            final byte[] cipherData = cipher.doFinal(c.getPassword().getBytes());
-            final String password = CompressionUtils.encodeBase64(cipherData);
-            builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD,
-                    password);
-            logger.debug("Encrypted credential is encoded in base64 and added as the authentication attribute [{}]",
+        logger.debug("Processing request to capture the credential for [{}]", credential.getId());
+        final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());
+        logger.debug("Encrypted credential is encoded in base64 and added as the authentication attribute [{}]",
                     UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override

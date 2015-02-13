@@ -34,7 +34,9 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.security.PublicKey;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -118,26 +120,36 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
+    @Lob
+    @Column(name = "public_key")
+    private PublicKey publicKey;
+
+    @Override
     public long getId() {
         return this.id;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
 
+    @Override
     public String getServiceId() {
         return this.serviceId;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public String getTheme() {
         return this.theme;
     }
 
+    @Override
     public RegisteredServiceProxyPolicy getProxyPolicy() {
         return this.proxyPolicy;
     }
@@ -222,14 +234,17 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.theme = theme;
     }
 
+    @Override
     public void setEvaluationOrder(final int evaluationOrder) {
         this.evaluationOrder = evaluationOrder;
     }
 
+    @Override
     public int getEvaluationOrder() {
         return this.evaluationOrder;
     }
 
+    @Override
     public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
         return this.usernameAttributeProvider;
     }
@@ -248,11 +263,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.usernameAttributeProvider = usernameProvider;
     }
 
-    /**
-     * Returns the logout type of the service.
-     *
-     * @return the logout type of the service.
-     */
+    @Override
     public final LogoutType getLogoutType() {
         return logoutType;
     }
@@ -379,5 +390,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setLogo(final URL logo) {
         this.logo = logo;
+    }
+
+    @Override
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(@NotNull final PublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 }
