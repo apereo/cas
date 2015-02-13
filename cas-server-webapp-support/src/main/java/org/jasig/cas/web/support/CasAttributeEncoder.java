@@ -19,6 +19,8 @@
 
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.authentication.principal.Service;
+
 import java.util.Map;
 
 /**
@@ -35,6 +37,9 @@ import java.util.Map;
  */
 public interface CasAttributeEncoder {
 
+    /** The default algorithm to encrypt. */
+    String DEFAULT_CIPHER_ALGORITHM = "RSA";
+
     /**
      * Encodes attributes that are ready to be released.
      * Specifically, this method tries to ensure that the
@@ -43,9 +48,10 @@ public interface CasAttributeEncoder {
      * and removed and it is assumed that all will be returned
      * back to the service.
      * @param attributes The attribute collection that is ready to be released
+     * @param service the requesting service for which attributes are to be encoded
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */
-    Map<String, Object> encodeAttributes(Map<String, Object> attributes);
+    Map<String, Object> encodeAttributes(Map<String, Object> attributes, Service service);
 
 }
