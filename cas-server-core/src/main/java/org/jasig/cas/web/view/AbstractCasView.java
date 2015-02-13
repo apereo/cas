@@ -85,7 +85,6 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final String getCredentialPasswordFromAuthentication(final Map<String, Object> model) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
-        final Principal principal = getPrincipal(model);
         return (String) authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
     }
 

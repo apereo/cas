@@ -25,7 +25,6 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CasAttributeEncoder;
-import org.jasig.cas.web.support.DefaultCasAttributeEncoder;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +45,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     /** The attribute encoder instance. */
     @NotNull
-    private CasAttributeEncoder casAttributeEncoder = new DefaultCasAttributeEncoder();
+    private CasAttributeEncoder casAttributeEncoder;
 
     /** The Services manager. */
     @NotNull
@@ -79,7 +78,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
-                this.casAttributeEncoder.encodeAttributes(attributes));
+                this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model)));
     }
 
     /**
@@ -115,7 +114,23 @@ public class Cas30ResponseView extends Cas20ResponseView {
         }
     }
 
+    /**
+     * Sets services manager.
+     *
+     * @param servicesManager the services manager
+     * @since 4.1
+     */
     public void setServicesManager(@NotNull final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Sets cas attribute encoder.
+     *
+     * @param casAttributeEncoder the cas attribute encoder
+     * @since 4.1
+     */
+    public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
+        this.casAttributeEncoder = casAttributeEncoder;
     }
 }
