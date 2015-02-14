@@ -31,6 +31,13 @@ function loadSidebarForActiveVersion() {
   $("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
 }
 
+function hideDevelopmentVersionWarning() {
+  var formattedVersion = getActiveDocumentationVersionInView();
+  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+    $("#dev-doc-info").hide();
+  }
+}
+
 function generateSidebarLinksForActiveVersion() {
   $('a').each(function() {
     var href = this.href;
@@ -163,18 +170,19 @@ function ensureBootrapIsLoaded() {
 
 $(function() {
   ensureBootrapIsLoaded();
-	loadSidebarForActiveVersion();
-	generateTableOfContentsForPage();
+  loadSidebarForActiveVersion();
+  generateTableOfContentsForPage();
   generateToolbarIcons();
-	collapseCodeBlocks();
-	
-	var formattedVersion = getActiveDocumentationVersionInView();
-	if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-		formattedVersion = " (" + formattedVersion + ")"
-	} else {
-		formattedVersion = "";
-	}
-	document.title = $("h1").first().text() + formattedVersion;
+  collapseCodeBlocks();
+
+  var formattedVersion = getActiveDocumentationVersionInView();
+  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+	formattedVersion = " (" + formattedVersion + ")"
+  } else {
+	formattedVersion = "";
+  }
+  hideDevelopmentVersionWarning();
+  document.title = $("h1").first().text() + formattedVersion;
   
 });
 
