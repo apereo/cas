@@ -19,11 +19,9 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.PublicKeyFactoryBean;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.security.PublicKey;
 import java.util.Set;
 
 /**

@@ -69,13 +69,14 @@
              A 'publicKeyFactoryBean' bean needs to be configured with
              a reference to your public key file in order to securely
              encrypt the password
+              -->
+
         <property name="authenticationMetaDataPopulators">
            <util:list>
-               <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"
-                     c:publicKey-ref="publicKeyFactoryBean" c:cipherAlgorithm="RSA" />
+               <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
            </util:list>
         </property>
-        -->
+
 
         <!--
            | Defines the security policy around authentication. Some alternative policies that ship with CAS:
@@ -88,16 +89,6 @@
             <bean class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
         </property>
     </bean>
-
-    <!--
-    Uncomment the 'publicKeyFactoryBean' bean
-    needs to be configured with a reference to your public key file in order to securely
-    encrypt the password.
-
-    <bean id="publicKeyFactoryBean" class="org.jasig.cas.util.PublicKeyFactoryBean"
-            p:location="classpath:public.key"
-            p:algorithm="RSA" />
-    -->
 
     <!-- Required for proxy ticket mechanism. -->
     <bean id="proxyAuthenticationHandler"
@@ -155,8 +146,9 @@
         the release of the captured password as an attribute
         in the validation response.
 
-        <entry key="credential" value="<not-used>" />
+        <entry key="credential" value="not-used" />
         -->
+
         <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>

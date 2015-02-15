@@ -20,7 +20,6 @@
 package org.jasig.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
