@@ -23,6 +23,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
@@ -32,6 +33,7 @@ import javax.validation.constraints.NotNull;
  * FactoryBean for creating a public key from a file.
  *
  * @author Scott Battaglia
+ * @author Misagh Moayyed
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean {
@@ -60,6 +62,13 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean {
         return PublicKey.class;
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
 
     public void setLocation(final Resource resource) {
         this.resource = resource;
@@ -67,5 +76,14 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean {
 
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("resource", this.resource)
+                .append("algorithm", this.algorithm)
+                .toString();
     }
 }

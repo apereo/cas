@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.web.support;
+package org.jasig.cas.authentication.support;
 
 import org.jasig.cas.authentication.principal.Service;
 
