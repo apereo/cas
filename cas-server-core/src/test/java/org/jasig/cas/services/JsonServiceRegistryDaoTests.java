@@ -22,7 +22,9 @@ import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.BeforeClass;
@@ -311,6 +313,22 @@ public class JsonServiceRegistryDaoTests {
         attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertEquals(list.size(), 1);
+    }
+
+    @Test
+    public void serializePublicKeyForServiceAndVerify() throws Exception {
+        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+                "classpath:RSA1024Public.key", CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
+
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("serializePublicKeyForServiceAndVerify");
+        r.setId(4245);
+        r.setPublicKey(publicKey);
 
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();

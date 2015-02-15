@@ -73,7 +73,7 @@
     <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
 
-    <bean id="casAttributeEncoder" class="org.jasig.cas.web.support.DefaultCasAttributeEncoder"
+    <bean id="casAttributeEncoder" class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
           c:servicesManager-ref="servicesManager"  />
 
     <!-- Failure Validation Views -->

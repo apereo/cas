@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jasig.cas.util.PublicKeyFactoryBean;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -36,7 +37,6 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
-import java.security.PublicKey;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -122,7 +122,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Lob
     @Column(name = "public_key")
-    private PublicKey publicKey;
+    private RegisteredServicePublicKey publicKey;
 
     @Override
     public long getId() {
@@ -187,6 +187,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
+                .append(this.publicKey, that.publicKey)
                 .isEquals();
     }
 
@@ -204,6 +205,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy)
                 .append(this.accessStrategy)
                 .append(this.logo)
+                .append(this.publicKey)
                 .toHashCode();
     }
 
@@ -302,6 +304,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
+        this.setPublicKey(source.getPublicKey());
     }
 
     /**
@@ -333,6 +336,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("accessStrategy", this.accessStrategy);
+        toStringBuilder.append("publicKey", this.publicKey);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
 
@@ -393,11 +397,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public PublicKey getPublicKey() {
-        return publicKey;
+    public RegisteredServicePublicKey getPublicKey() {
+        return this.publicKey;
     }
 
-    public void setPublicKey(@NotNull final PublicKey publicKey) {
+    public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
     }
 }

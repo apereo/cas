@@ -20,17 +20,12 @@ package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
-import org.jasig.cas.web.support.CasAttributeEncoder;
-import org.jasig.cas.web.support.DefaultCasAttributeEncoder;
-import org.junit.Before;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
+import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +40,6 @@ import org.springframework.web.servlet.view.JstlView;
 
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Locale;
 import java.util.Map;
 

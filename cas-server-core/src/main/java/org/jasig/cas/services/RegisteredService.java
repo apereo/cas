@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.PublicKeyFactoryBean;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -168,5 +169,5 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the public key instance used to authorize the request
      * @since 4.1
      */
-    PublicKey getPublicKey();
+    RegisteredServicePublicKey getPublicKey();
 }
