@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
@@ -38,6 +30,13 @@ import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -150,12 +149,13 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Service supports back channel single logout?
      * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
-     * @param registeredService the service
+     * @param registeredService the registered service
      * @return true, if support is available.
      */
     private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null && registeredService.isEnabled()
-                                         && registeredService.getLogoutType() != LogoutType.NONE;
+        return registeredService != null
+                && registeredService.getAccessStrategy().isServiceAccessAllowed()
+                && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
     /**
@@ -167,8 +167,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
-            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
 
+            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
                 final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
                 final LogoutType type = registeredService.getLogoutType() == null
@@ -189,6 +189,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                 }
                 return logoutRequest;
             }
+
         }
         return null;
     }
