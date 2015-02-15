@@ -69,6 +69,7 @@
                 <entry key="uid" value="uid"/>
                 <entry key="eduPersonAffiliation" value="developer"/>
                 <entry key="groupMembership" value="adopters"/>
+                <entry key="credential" value="credential"/>
             </map>
         </property>
     </bean>
@@ -87,6 +88,20 @@
                     <property name="proxyPolicy">
                         <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
                             c:pgtUrlPattern=".+" />
+                    </property>
+                    <property name="publicKey">
+                        <bean class="org.jasig.cas.util.PublicKeyFactoryBean"
+                              p:location="classpath:RSA1024Public.key"
+                              p:algorithm="RSA" />
+                    </property>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+                            <property name="allowedAttributes">
+                                <list>
+                                    <value>credential</value>
+                                </list>
+                            </property>
+                        </bean>
                     </property>
                 </bean>
 
@@ -159,7 +174,7 @@
                             c:pgtUrlPattern=".+" />
                     </property>
                 </bean>
-                
+
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
                     <property name="id" value="100"/>
                     <property name="name" value="TestProxyService"/>
@@ -239,6 +254,7 @@
         <property name="authenticationMetaDataPopulators">
             <list>
                 <ref bean="authenticationMetaDataPopulator" />
+                <ref bean="cacheCredentialsMetaDataPopulator" />
             </list>
         </property>
 
@@ -270,6 +286,8 @@
 
     <bean id="authenticationMetaDataPopulator"
           class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
+    <bean id="cacheCredentialsMetaDataPopulator"
+          class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
 
