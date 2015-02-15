@@ -24,10 +24,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.util.PublicKeyFactoryBean;
-import org.reflections.util.ClasspathHelper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -90,7 +88,7 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
         }
         factory.setAlgorithm(this.algorithm);
         factory.setSingleton(false);
-        return (PublicKey) factory.getObject();
+        return factory.getObject();
     }
 
     @Override
