@@ -106,7 +106,6 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("TestService");
         impl.setName("TestService");
-        impl.setEnabled(true);
         this.serviceManager.save(impl);
         this.logoutAction.setFollowServiceRedirects(true);
         final Event event = this.logoutAction.doExecute(this.requestContext);
