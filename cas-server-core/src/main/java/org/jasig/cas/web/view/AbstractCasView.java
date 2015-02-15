@@ -67,6 +67,16 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
+     * Gets the PGT from the model.
+     *
+     * @param model the model
+     * @return the pgt id
+     */
+    protected final String getProxyGrantingTicketId(final Map<String, Object> model) {
+        return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+    }
+
+    /**
      * Gets the authentication from the model.
      *
      * @param model the model
@@ -78,16 +88,16 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
-     * Obtain the credential password from the authentication under
-     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}.
+     * Gets an authentication attribute from the primary authentication object.
+     *
      * @param model the model
-     * @return the password cached as an authentication attribute, or null.
+     * @param attributeName the attribute name
+     * @return the authentication attribute
      */
-    protected final String getCredentialPasswordFromAuthentication(final Map<String, Object> model) {
+    protected final String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
-        return (String) authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        return (String) authn.getAttributes().get(attributeName);
     }
-
     /**
      * Gets the principal from the model.
      *

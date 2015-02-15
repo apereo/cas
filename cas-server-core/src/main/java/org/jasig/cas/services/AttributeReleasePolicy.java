@@ -30,7 +30,21 @@ import org.jasig.cas.authentication.principal.Principal;
  * @since 4.1.0
  */
 public interface AttributeReleasePolicy extends Serializable {
-    
+
+    /**
+     * Is authorized to release credential password?
+     *
+     * @return the boolean
+     */
+    boolean isAuthorizedToReleaseCredentialPassword();
+
+    /**
+     * Is authorized to release proxy granting ticket?
+     *
+     * @return the boolean
+     */
+    boolean isAuthorizedToReleaseProxyGrantingTicket();
+
     /**
      * Sets the attribute filter.
      *
