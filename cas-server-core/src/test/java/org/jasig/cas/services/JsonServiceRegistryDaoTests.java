@@ -24,7 +24,6 @@ import org.jasig.cas.authentication.principal.CachingPrincipalAttributesReposito
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.BeforeClass;

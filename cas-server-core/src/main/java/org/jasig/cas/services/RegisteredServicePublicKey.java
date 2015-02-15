@@ -19,8 +19,6 @@
 
 package org.jasig.cas.services;
 
-import org.springframework.core.io.Resource;
-
 import java.security.PublicKey;
 
 /**
