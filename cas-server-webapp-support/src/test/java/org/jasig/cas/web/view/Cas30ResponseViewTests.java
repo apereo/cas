@@ -19,7 +19,17 @@
 package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
+import org.jasig.cas.web.support.CasAttributeEncoder;
+import org.jasig.cas.web.support.DefaultCasAttributeEncoder;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +42,13 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.crypto.Cipher;
+import javax.servlet.http.HttpServletRequest;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Locale;
 import java.util.Map;
 
@@ -49,8 +66,22 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("protocolCas3ViewResolver")
     private ViewResolver resolver;
 
-    @Test
-    public void verifyView() throws Exception {
+    private PublicKey publicKey;
+
+    private PrivateKey privateKey;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Before
+    public void setup() {
+        final KeyPair pair = generateKeyPair();
+        this.publicKey = pair.getPublic();
+        this.privateKey = pair.getPrivate();
+    }
+
+    private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final JstlView v = (JstlView) resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
@@ -59,14 +90,49 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 new GenericWebApplicationContext(req.getServletContext()));
 
         final Cas30ResponseView view = new Cas30ResponseView(v);
+        view.setServicesManager(this.servicesManager);
+        view.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.servicesManager));
+
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
+        return (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
+    }
 
-        final Map<?, ?> col1 = (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
-        assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
-        assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
-        assertTrue(col1.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
+    @Test
+    public void verifyViewAuthnAttributes() throws Exception {
+        final Map<?, ?> attributes = renderView();
+        assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
+        assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
+        assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
 
+    }
+
+    @Test
+    public void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
+        final Map<?, ?> attributes = renderView();
+    }
+
+    private static KeyPair generateKeyPair() {
+        try {
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
+            kpg.initialize(2048);
+            return kpg.genKeyPair();
+        } catch (final NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String decryptCredential(final String cred) {
+        try {
+            final Cipher cipher = Cipher.getInstance(CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+            final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
+            final byte[] cipherData = cipher.doFinal(cred64);
+            return new String(cipherData);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
