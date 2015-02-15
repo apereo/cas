@@ -23,6 +23,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
@@ -43,10 +44,6 @@ import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.crypto.Cipher;
-import javax.servlet.http.HttpServletRequest;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Locale;
@@ -66,20 +63,13 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("protocolCas3ViewResolver")
     private ViewResolver resolver;
 
-    private PublicKey publicKey;
-
+    @Autowired
+    @Qualifier("testRegisteredServicePrivateKey")
     private PrivateKey privateKey;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Before
-    public void setup() {
-        final KeyPair pair = generateKeyPair();
-        this.publicKey = pair.getPublic();
-        this.privateKey = pair.getPrivate();
-    }
 
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
@@ -110,17 +100,12 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
         final Map<?, ?> attributes = renderView();
-    }
+        assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
-    private static KeyPair generateKeyPair() {
-        try {
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-                    CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
-            kpg.initialize(2048);
-            return kpg.genKeyPair();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        final String encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        final String password = decryptCredential(encodedPsw);
+        final UsernamePasswordCredential creds = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        assertEquals(password, creds.getPassword());
     }
 
     private String decryptCredential(final String cred) {
