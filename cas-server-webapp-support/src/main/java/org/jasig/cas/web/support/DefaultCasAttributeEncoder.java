@@ -19,6 +19,7 @@
 
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
@@ -43,19 +44,18 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultCasAttributeEncoder implements CasAttributeEncoder {
+public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @NotNull
-    private final String cipherAlgorithm;
+    /** The Cipher instance used to encrypt attributes. */
+    protected final Cipher cipher;
 
     /** The Services manager. */
     @NotNull
-    private final ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
-    /** The Cipher instance used to encrypt attributes. */
-    private final Cipher cipher;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private String cachedCredential;
 
     /**
      * Instantiates a new Cache credentials meta data populator.
@@ -77,11 +77,9 @@ public final class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      */
     public DefaultCasAttributeEncoder(final String cipherAlgorithm, final ServicesManager servicesManager)
             throws Exception {
-        this.cipherAlgorithm = cipherAlgorithm;
         this.servicesManager = servicesManager;
-
-        this.cipher = Cipher.getInstance(this.cipherAlgorithm);
-        logger.debug("Created cipher instance to encrypt credential via [{}]", this.cipherAlgorithm);
+        this.cipher = Cipher.getInstance(cipherAlgorithm);
+        logger.debug("Created cipher instance to encrypt credential via [{}]", cipherAlgorithm);
     }
 
     /**
@@ -92,18 +90,18 @@ public final class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      *
      * @param attributes the attributes
      */
-    private void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes) {
+    protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes) {
         try {
-            final String password = (String) attributes.get(
-                    UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+            if (StringUtils.isNotBlank(this.cachedCredential)) {
+                logger.debug("Retrieved the password as an authentication attribute...");
+                final byte[] cipherData = this.cipher.doFinal(this.cachedCredential.getBytes());
+                final String encPassword = CompressionUtils.encodeBase64(cipherData);
 
-            logger.debug("Retrieved the password as an authentication attribute...");
-            final byte[] cipherData = this.cipher.doFinal(password.getBytes());
-            final String encPassword = CompressionUtils.encodeBase64(cipherData);
-
-            attributes.remove(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
-            attributes.put(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, encPassword);
-            logger.debug("Encrypted and encoded password as an authentication attribute.");
+                attributes.put(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, encPassword);
+                logger.debug("Encrypted and encoded password as an authentication attribute.");
+            } else {
+                logger.debug("Credential is not available as an authentication attribute to encrypt...");
+            }
 
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -117,30 +115,75 @@ public final class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * @param attributes the attributes
      * @param service the service
      */
-    private void encodeAttributesInternal(final Map<String, Object> attributes, final RegisteredService service) {
+    protected void encodeAttributesInternal(final Map<String, Object> attributes, final RegisteredService service) {
         try {
-            final PublicKey publicKey = service.getPublicKey();
-            if (publicKey != null) {
-
-                this.cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-                logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
-                        publicKey.getAlgorithm());
-
-                encodeAndEncryptCredentialPassword(attributes);
-
+            if (!initializeCipherBasedOnServicePublicKey(service)) {
+                return;
             }
+
+            encodeAndEncryptCredentialPassword(attributes);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Initialize cipher based on service public key.
+     *
+     * @param service the service
+     * @return the false if no public key is found
+     * or if cipher cannot be initialized, etc.
+     */
+    protected boolean initializeCipherBasedOnServicePublicKey(final RegisteredService service) {
+        try {
+            final PublicKey publicKey = service.getPublicKey();
+            if (publicKey == null) {
+                logger.debug("No public key is defined for service [{}]. No encoding will take place.", service);
+                return false;
+            }
+            logger.debug("Using public key [{}]:[{}] to initialize the cipher",
+                    publicKey.getAlgorithm(), publicKey.getFormat());
+
+            this.cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
+                    publicKey.getAlgorithm());
+            return true;
+        } catch (final Exception e) {
+            logger.warn(e.getMessage(), e);
+        }
+        return false;
+    }
+
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {
+        logger.debug("Starting to encode attributes for release to service [{}]", service);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
+
+        initialize(newEncodedAttributes);
+
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, registeredService);
         }
+        logger.debug("[{}] Encoded attributes are available for release to [{}]",
+                newEncodedAttributes.size(), service);
         return newEncodedAttributes;
+    }
+
+    /**
+     * Initialize the encoding process. Removes the
+     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}
+     * from the authentication attributes originally and caches it, so it
+     * can later on be encrypted if needed.
+     * @param attributes the new encoded attributes
+     */
+    protected void initialize(final Map<String, Object> attributes) {
+
+        broken...
+        this.cachedCredential = (String) attributes.remove(
+                UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        if (!StringUtils.isNotBlank(this.cachedCredential)) {
+            logger.debug("Removed credential as an authentication attribute and cached it locally.");
+        }
     }
 }
