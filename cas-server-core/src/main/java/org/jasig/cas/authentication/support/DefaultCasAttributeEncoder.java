@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.web.support;
+package org.jasig.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -138,13 +138,12 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      */
     protected boolean initializeCipherBasedOnServicePublicKey(final RegisteredService service) {
         try {
-            final PublicKey publicKey = service.getPublicKey();
+            final PublicKey publicKey = service.getPublicKey().createInstance();
             if (publicKey == null) {
                 logger.debug("No public key is defined for service [{}]. No encoding will take place.", service);
                 return false;
             }
-            logger.debug("Using public key [{}]:[{}] to initialize the cipher",
-                    publicKey.getAlgorithm(), publicKey.getFormat());
+            logger.debug("Using public key [{}] to initialize the cipher", service.getPublicKey());
 
             this.cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
@@ -174,7 +173,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
 
     /**
      * Initialize the encoding process. Removes the
-     * {@link UsernamePasswordCredential#AUTHENTICATION_ATTRIBUTE_PASSWORD}
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
      * from the authentication attributes originally and caches it, so it
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes
