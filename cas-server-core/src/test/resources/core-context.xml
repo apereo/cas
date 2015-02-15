@@ -77,6 +77,11 @@
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
           c:serviceRegistryDao-ref="serviceRegistryDao" />
 
+    <bean id="testRegisteredServicePrivateKey"
+            class="org.jasig.cas.util.PrivateKeyFactoryBean"
+            p:location="classpath:RSA1024Private.p8"
+            p:algorithm="RSA" />
+
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
             <list>
