@@ -133,6 +133,13 @@
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="333"/>
+                    <property name="name" value="proxyService"/>
+                    <property name="serviceId" value="proxyService"/>
+                    <property name="evaluationOrder" value="333"/>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="4"/>
                     <property name="name" value="Test Service anonymous"/>
                     <property name="serviceId" value="testAnonymous"/>
@@ -165,11 +172,54 @@
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
-                    <property name="id" value="666"/>
+                    <property name="id" value="222"/>
                     <property name="name" value="TestSsoFalse"/>
-                    <property name="serviceId" value="TestSsoFalse"/>
-                    <property name="evaluationOrder" value="100"/>
-                    <property name="ssoEnabled" value="false" />
+                    <property name="serviceId" value="^TestSsoFalse"/>
+                    <property name="evaluationOrder" value="555"/>
+                    <property name="accessStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+                                c:ssoEnabled="false"
+                                c:enabled="true"/>
+                    </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="111"/>
+                    <property name="name" value="TestServiceAttributeForAuthzFails"/>
+                    <property name="serviceId" value="^TestServiceAttributeForAuthzFails"/>
+                    <property name="evaluationOrder" value="600"/>
+                    <property name="accessStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+                             <property name="requiredAttributes">
+                                 <map>
+                                     <entry key="cn"
+                                            value="cnValue" />
+                                     <entry key="givenName"
+                                            value="gnameValue" />
+                                 </map>
+                             </property>
+                        </bean>
+                    </property>
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="100"/>
+                    <property name="name" value="TestServiceAttributeForAuthzPasses"/>
+                    <property name="serviceId" value="TestServiceAttributeForAuthzPasses"/>
+                    <property name="evaluationOrder" value="610"/>
+                    <property name="accessStrategy">
+                        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+                            <property name="requiredAttributes">
+                                <map>
+                                    <entry key="groupMembership"
+                                           value="adopters" />
+                                </map>
+                            </property>
+                        </bean>
+                    </property>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+                    </property>
                 </bean>
             </list>
         </property>

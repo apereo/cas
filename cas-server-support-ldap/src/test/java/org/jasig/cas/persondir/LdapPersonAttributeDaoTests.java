@@ -54,6 +54,8 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
             actual = attributeDao.getPerson(username);
             assertNotNull(actual);
             assertEquals(username, actual.getName());
+            assertEquals(actual.getAttributes().size(), 3);
+            assertTrue(actual.getAttributes().containsKey("commonName"));
             assertSameValues(entry.getAttribute("mail").getStringValues(), actual.getAttributes().get("mail"));
         }
     }
