@@ -66,17 +66,12 @@
         </constructor-arg>
 
         <!-- Uncomment the metadata populator to capture the password.
-             A 'publicKeyFactoryBean' bean needs to be configured with
-             a reference to your public key file in order to securely
-             encrypt the password
-              -->
-
         <property name="authenticationMetaDataPopulators">
            <util:list>
                <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
            </util:list>
         </property>
-
+        -->
 
         <!--
            | Defines the security policy around authentication. Some alternative policies that ship with CAS:
