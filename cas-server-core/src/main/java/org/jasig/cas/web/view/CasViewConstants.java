@@ -59,7 +59,9 @@ public interface CasViewConstants {
     /** The constant representing the validated service in the response. */
     String MODEL_ATTRIBUTE_NAME_SERVICE = "service";
 
-    /** The constant representing the pgtiou in the response. */
+    /** The constant representing the PGTIOU in the response. */
     String MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU = CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU;
 
+    /** The constant representing the PGT in the response. */
+    String MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET = CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET;
 }
