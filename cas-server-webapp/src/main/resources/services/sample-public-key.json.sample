@@ -1,0 +1,19 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "id" : 10000001,
+  "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
+  "serviceId" : "^(https|imaps)://.*",
+  "name": "HTTPS and IMAPS",
+  "evaluationOrder" : 10000001,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseCredentialPassword": false,
+    "authorizedToReleaseProxyGrantingTicket": false,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail" ] ]
+  },
+  "publicKey" : {
+    "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",
+    "location" : "classpath:RSA1024Public.key",
+    "algorithm" : "RSA"
+  }
+}
