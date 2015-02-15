@@ -572,24 +572,24 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j.version}</version>
       <scope>runtime</scope>
-      <type>jar</type>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>compile</scope>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 
@@ -934,6 +934,12 @@
         <artifactId>spring-webflow-client-repo</artifactId>
         <version>${spring.webflow.client.repo.version}</version>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+            <artifactId>log4j</artifactId>
+            <groupId>log4j</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -991,19 +997,6 @@
               <artifactId>slf4j-api</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <version>${log4j.version}</version>
-          <scope>compile</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <version>${log4j.version}</version>
-          <scope>compile</scope>
       </dependency>
 
       <dependency>
@@ -1235,12 +1228,12 @@
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
     <hibernate.core.version>4.3.8.Final</hibernate.core.version>
-    <slf4j.version>1.7.9</slf4j.version>
+    <slf4j.version>1.7.10</slf4j.version>
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
     <commons.codec.version>1.9</commons.codec.version>
-    <log4j.version>2.0.2</log4j.version>
+    <log4j.version>2.1</log4j.version>
     <junit.version>4.11</junit.version>
     <checkstyle.version>6.3</checkstyle.version>
     <commons.lang.version>3.3.2</commons.lang.version>
