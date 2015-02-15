@@ -69,7 +69,6 @@
                 <entry key="uid" value="uid"/>
                 <entry key="eduPersonAffiliation" value="developer"/>
                 <entry key="groupMembership" value="adopters"/>
-                <entry key="credential" value="credential"/>
             </map>
         </property>
     </bean>
@@ -100,13 +99,9 @@
                               c:algorithm="RSA" />
                     </property>
                     <property name="attributeReleasePolicy">
-                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-                            <property name="allowedAttributes">
-                                <list>
-                                    <value>credential</value>
-                                </list>
-                            </property>
-                        </bean>
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
+                                p:authorizedToReleaseCredentialPassword="true"
+                                p:authorizedToReleaseProxyGrantingTicket="true" />
                     </property>
                 </bean>
 

@@ -191,7 +191,7 @@ public class ServiceValidateController extends DelegateController {
 
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou, service);
+            return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
         } catch (final TicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -240,14 +240,18 @@ public class ServiceValidateController extends DelegateController {
      * @param assertion the assertion
      * @param proxyIou the proxy iou
      * @param service the validated service
+     * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
-    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou, final WebApplicationService service) {
+    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
+                                             final WebApplicationService service,
+                                             final TicketGrantingTicket proxyGrantingTicket) {
 
         final ModelAndView success = new ModelAndView(this.successView);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
 
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {

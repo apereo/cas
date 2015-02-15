@@ -102,6 +102,16 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         assertEquals(password, creds.getPassword());
     }
 
+    @Test
+    public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
+        final Map<?, ?> attributes = renderView();
+        assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
+
+        final String encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        final String pgt = decryptCredential(encodedPgt);
+        assertNotNull(pgt);
+    }
+
     private String decryptCredential(final String cred) {
         try {
             final Cipher cipher = Cipher.getInstance(CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);

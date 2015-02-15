@@ -33,7 +33,9 @@ import javax.validation.constraints.NotNull;
 import java.security.PublicKey;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The default implementation of the attribute
@@ -56,7 +58,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String cachedCredential;
+    private Map<String, String> cachedAttributesToEncode = new HashMap<>();
 
     /**
      * Instantiates a new Cache credentials meta data populator.
@@ -92,20 +94,35 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * @param attributes the attributes
      */
     protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes) {
-        try {
-            if (StringUtils.isNotBlank(this.cachedCredential)) {
-                logger.debug("Retrieved the password as an authentication attribute...");
-                final byte[] cipherData = this.cipher.doFinal(this.cachedCredential.getBytes());
-                final String encPassword = CompressionUtils.encodeBase64(cipherData);
+        encryptAndEncodeAndPutIntoAttributesMap(attributes, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+    }
 
-                attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encPassword);
-                logger.debug("Encrypted and encoded password as an authentication attribute.");
-            } else {
-                logger.debug("Credential is not available as an authentication attribute to encrypt...");
-            }
+    /**
+     * Encode and encrypt pgt using the public key
+     * supplied by the service. The result is base64 encoded
+     * and put into the attributes collection again, overwriting
+     * the previous value.
+     *
+     * @param attributes the attributes
+     */
+    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes) {
+        encryptAndEncodeAndPutIntoAttributesMap(attributes, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+    }
 
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+    /**
+     * Encrypt, encode and put the attribute into attributes map.
+     *
+     * @param attributes the attributes
+     * @param cachedAttributeName the cached attribute name
+     */
+    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes, final String cachedAttributeName) {
+        final String cachedAttribute = this.cachedAttributesToEncode.remove(cachedAttributeName);
+        if (StringUtils.isNotBlank(cachedAttribute)) {
+            logger.debug("Retrieved the [{}] as a cached model attribute...", cachedAttributeName);
+            attributes.put(cachedAttributeName, CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher));
+            logger.debug("Encrypted and encoded [{}] as an attribute.", cachedAttributeName);
+        } else {
+            logger.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
     }
 
@@ -121,8 +138,8 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
             if (!initializeCipherBasedOnServicePublicKey(service)) {
                 return;
             }
-
             encodeAndEncryptCredentialPassword(attributes);
+            encodeAndEncryptProxyGrantingTicket(attributes);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -173,18 +190,27 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
     /**
      * Initialize the encoding process. Removes the
      * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
-     * from the authentication attributes originally and caches it, so it
+     * and
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET}
+     * from the authentication attributes originally and into a cache object, so it
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes
      */
     protected void initialize(final Map<String, Object> attributes) {
-        final Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-        if (collection != null && collection.size() == 1) {
-            this.cachedCredential = collection.iterator().next().toString();
+        this.cachedAttributesToEncode.clear();
 
-            if (StringUtils.isNotBlank(this.cachedCredential)) {
-                logger.debug("Removed credential as an authentication attribute and cached it locally.");
-            }
+        Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        if (collection != null && collection.size() == 1) {
+            this.cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                    collection.iterator().next().toString());
+            logger.debug("Removed credential as an authentication attribute and cached it locally.");
+        }
+
+        collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        if (collection != null && collection.size() == 1) {
+           this.cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
+                   collection.iterator().next().toString());
+            logger.debug("Removed PGT as an authentication attribute and cached it locally.");
         }
     }
 }
