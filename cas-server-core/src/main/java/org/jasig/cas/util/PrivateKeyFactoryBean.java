@@ -45,16 +45,12 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
 
     @Override
     protected Object createInstance() throws Exception {
-        final InputStream privKey = this.location.getInputStream();
-        try {
+        try (final InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
             privKey.read(bytes);
-            privKey.close();
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
             final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePrivate(privSpec);
-        } finally {
-            privKey.close();
         }
     }
 

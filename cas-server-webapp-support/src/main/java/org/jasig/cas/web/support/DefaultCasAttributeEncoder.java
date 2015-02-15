@@ -25,12 +25,14 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.validation.constraints.NotNull;
 import java.security.PublicKey;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,7 +99,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
                 final byte[] cipherData = this.cipher.doFinal(this.cachedCredential.getBytes());
                 final String encPassword = CompressionUtils.encodeBase64(cipherData);
 
-                attributes.put(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, encPassword);
+                attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encPassword);
                 logger.debug("Encrypted and encoded password as an authentication attribute.");
             } else {
                 logger.debug("Credential is not available as an authentication attribute to encrypt...");
@@ -178,12 +180,13 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * @param attributes the new encoded attributes
      */
     protected void initialize(final Map<String, Object> attributes) {
+        final Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        if (collection != null && collection.size() == 1) {
+            this.cachedCredential = collection.iterator().next().toString();
 
-        broken...
-        this.cachedCredential = (String) attributes.remove(
-                UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
-        if (!StringUtils.isNotBlank(this.cachedCredential)) {
-            logger.debug("Removed credential as an authentication attribute and cached it locally.");
+            if (StringUtils.isNotBlank(this.cachedCredential)) {
+                logger.debug("Removed credential as an authentication attribute and cached it locally.");
+            }
         }
     }
 }
