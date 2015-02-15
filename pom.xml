@@ -591,6 +591,14 @@
       <version>${log4j.version}</version>
       <scope>runtime</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-jcl</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
   </dependencies>
 
   <repositories>
@@ -751,6 +759,12 @@
         <artifactId>hibernate-core</artifactId>
         <version>${hibernate.core.version}</version>
         <type>jar</type>
+        <exclusions>
+          <exclusion>
+              <artifactId>jboss-logging-annotations</artifactId>
+              <groupId>org.jboss.logging</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -962,6 +976,10 @@
           <exclusion>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
+          </exclusion>
+          <exclusion>
+              <artifactId>jboss-logging</artifactId>
+              <groupId>org.jboss.logging</groupId>
           </exclusion>
         </exclusions>
       </dependency>

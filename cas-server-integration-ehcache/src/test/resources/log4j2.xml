@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
 <!--
   ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
@@ -33,10 +34,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.slf4j.impl" level="trace">
-            <AppenderRef ref="file"/>
-        </Logger>
-        <Logger name="org.jasig" level="warn">
+        <Logger name="org.apache.xml.security" level="off" />
+        <Logger name="org.springframework.test" level="off" />
+
+        <Logger name="org.jasig" level="info">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">
