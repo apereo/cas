@@ -251,8 +251,9 @@ public class ServiceValidateController extends DelegateController {
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
-        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
-
+        if (proxyGrantingTicket != null) {
+            success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+        }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);
