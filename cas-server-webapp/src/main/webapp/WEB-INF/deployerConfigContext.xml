@@ -23,8 +23,8 @@
 | deployerConfigContext.xml centralizes into one file some of the declarative configuration that
 | all CAS deployers will need to modify.
 |
-| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.  
-| The beans declared in this file are instantiated at context initialization time by the Spring 
+| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.
+| The beans declared in this file are instantiated at context initialization time by the Spring
 | ContextLoaderListener declared in web.xml.  It finds this file because this
 | file is among those declared in the context parameter "contextConfigLocation".
 |
@@ -138,17 +138,6 @@
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
-
-        <!--
-        Uncomment to allow the resolution of credential as an attribute.
-        Your attribute repository must be able to resolve
-        an attribute named 'credential' in order to ensure
-        the release of the captured password as an attribute
-        in the validation response.
-
-        <entry key="credential" value="not-used" />
-        -->
-
         <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>
