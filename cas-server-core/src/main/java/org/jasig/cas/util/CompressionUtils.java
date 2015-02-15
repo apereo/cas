@@ -19,8 +19,12 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.Cipher;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -123,6 +127,22 @@ public final class CompressionUtils {
      */
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
+    }
+
+    /**
+     * Encrypt using the given cipher, and encode the data in base 64.
+     *
+     * @param data the data
+     * @param cipher the cipher
+     * @return the encoded piece of data in base64
+     */
+    public static String encryptAndEncodeBase64(final String data, final Cipher cipher) {
+        try {
+            final byte[] cipherData = cipher.doFinal(data.getBytes());
+            return CompressionUtils.encodeBase64(cipherData);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

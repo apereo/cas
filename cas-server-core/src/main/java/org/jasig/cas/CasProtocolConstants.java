@@ -31,6 +31,9 @@ public interface CasProtocolConstants {
 
     /** CAS Protocol Validation Fields. **/
 
+    /** Constant representing the PGT in the cas validation model. */
+    String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET = "proxyGrantingTicket";
+
     /** Constant representing the PGTIOU in the cas validation model. */
     String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
