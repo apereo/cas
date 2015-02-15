@@ -130,6 +130,10 @@
 	    	  <artifactId>servlet-api</artifactId>
 	    	  <groupId>javax.servlet</groupId>
 	    	</exclusion>
+            <exclusion>
+                <artifactId>log4j</artifactId>
+                <groupId>log4j</groupId>
+            </exclusion>
 	    </exclusions>
 	</dependency>
 	
