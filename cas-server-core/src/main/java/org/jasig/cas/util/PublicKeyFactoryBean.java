@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 3.1
  */
-public class PublicKeyFactoryBean extends AbstractFactoryBean {
+public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
 
     @NotNull
     private Resource resource;
@@ -45,16 +45,13 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean {
     private String algorithm;
 
     @Override
-    protected final Object createInstance() throws Exception {
-        final InputStream pubKey = this.resource.getInputStream();
-        try {
+    protected final PublicKey createInstance() throws Exception {
+        try (final InputStream pubKey = this.resource.getInputStream()) {
             final byte[] bytes = new byte[pubKey.available()];
             pubKey.read(bytes);
             final X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(bytes);
             final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePublic(pubSpec);
-        } finally {
-            pubKey.close();
         }
     }
 
