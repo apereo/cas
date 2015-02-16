@@ -32,8 +32,8 @@ function loadSidebarForActiveVersion() {
 }
 
 function hideDevelopmentVersionWarning() {
-  var formattedVersion = getActiveDocumentationVersionInView();
-  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+  var formattedVersion = getActiveDocumentationVersionInView(true);
+  if (formattedVersion == CONST_CURRENT_VER) {
     $("#dev-doc-info").hide();
   }
 }
