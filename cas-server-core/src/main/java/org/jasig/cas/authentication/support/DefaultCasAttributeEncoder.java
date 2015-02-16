@@ -56,8 +56,6 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Map<String, String> cachedAttributesToEncode = new HashMap<>();
-
     /**
      * Instantiates a new attribute encoder.
      * The default cipher algorithm is set to be
@@ -90,9 +88,12 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * the previous value.
      *
      * @param attributes the attributes
+     * @param cachedAttributesToEncode the cached attributes to encode
      */
-    protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes) {
-        encryptAndEncodeAndPutIntoAttributesMap(attributes, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+    protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
+                                                      final Map<String, String> cachedAttributesToEncode) {
+        encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
     }
 
     /**
@@ -102,19 +103,25 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * the previous value.
      *
      * @param attributes the attributes
+     * @param cachedAttributesToEncode the cached attributes to encode
      */
-    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes) {
-        encryptAndEncodeAndPutIntoAttributesMap(attributes, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
+                                                       final Map<String, String> cachedAttributesToEncode) {
+        encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
 
     /**
      * Encrypt, encode and put the attribute into attributes map.
      *
      * @param attributes the attributes
+     * @param cachedAttributesToEncode the cached attributes to encode
      * @param cachedAttributeName the cached attribute name
      */
-    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes, final String cachedAttributeName) {
-        final String cachedAttribute = this.cachedAttributesToEncode.remove(cachedAttributeName);
+    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
+                                                           final Map<String, String> cachedAttributesToEncode,
+                                                           final String cachedAttributeName) {
+        final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
             final String encodedValue = CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher);
@@ -130,15 +137,18 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * and then start to encrypt select attributes.
      *
      * @param attributes the attributes
+     * @param cachedAttributesToEncode the cached attributes to encode
      * @param service the service
      */
-    protected void encodeAttributesInternal(final Map<String, Object> attributes, final RegisteredService service) {
+    protected void encodeAttributesInternal(final Map<String, Object> attributes,
+                                            final Map<String, String> cachedAttributesToEncode,
+                                            final RegisteredService service) {
         try {
             if (!initializeCipherBasedOnServicePublicKey(service)) {
                 return;
             }
-            encodeAndEncryptCredentialPassword(attributes);
-            encodeAndEncryptProxyGrantingTicket(attributes);
+            encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode);
+            encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -175,11 +185,11 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
         logger.debug("Starting to encode attributes for release to service [{}]", service);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
 
-        initialize(newEncodedAttributes);
+        final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            encodeAttributesInternal(newEncodedAttributes, registeredService);
+            encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, registeredService);
         }
         logger.debug("[{}] Encoded attributes are available for release to [{}]",
                 newEncodedAttributes.size(), service);
@@ -195,21 +205,22 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes
      */
-    protected void initialize(final Map<String, Object> attributes) {
-        this.cachedAttributesToEncode.clear();
+    protected Map<String, String> initialize(final Map<String, Object> attributes) {
+        final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
 
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {
-            this.cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+            cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
                     collection.iterator().next().toString());
             logger.debug("Removed credential as an authentication attribute and cached it locally.");
         }
 
         collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         if (collection != null && collection.size() == 1) {
-           this.cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
+           cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
                    collection.iterator().next().toString());
             logger.debug("Removed PGT as an authentication attribute and cached it locally.");
         }
+        return cachedAttributesToEncode;
     }
 }
