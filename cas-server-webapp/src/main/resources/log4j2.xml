@@ -24,9 +24,18 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/slf4j.log" append="true"
-                     filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="cas.log" append="true"
+                     filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="perfFileAppender" fileName="target/slf4j.log" append="true"
+                     filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout pattern="%m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -35,16 +44,20 @@
         </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework.webflow" level="warn" />
+
         <Logger name="org.jasig" level="info">
-            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
         </Logger>
-        <Logger name="org.springframework" level="warn">
-            <AppenderRef ref="console"/>
+
+        <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
+            <AppenderRef ref="file"/>
         </Logger>
         <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="file"/>
         </Logger>
-        <Root level="warn">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
