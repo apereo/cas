@@ -117,8 +117,9 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
         final String cachedAttribute = this.cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            attributes.put(cachedAttributeName, CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher));
-            logger.debug("Encrypted and encoded [{}] as an attribute.", cachedAttributeName);
+            final String encodedValue = CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher);
+            attributes.put(cachedAttributeName, encodedValue);
+            logger.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
         } else {
             logger.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
