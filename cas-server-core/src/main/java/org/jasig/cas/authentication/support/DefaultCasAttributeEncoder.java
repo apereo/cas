@@ -59,7 +59,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
     private Map<String, String> cachedAttributesToEncode = new HashMap<>();
 
     /**
-     * Instantiates a new Cache credentials meta data populator.
+     * Instantiates a new attribute encoder.
      * The default cipher algorithm is set to be
      * {@link #DEFAULT_CIPHER_ALGORITHM}.
      * @param servicesManager the services manager
@@ -80,7 +80,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
             throws Exception {
         this.servicesManager = servicesManager;
         this.cipher = Cipher.getInstance(cipherAlgorithm);
-        logger.debug("Created cipher instance to encrypt credential via [{}]", cipherAlgorithm);
+        logger.debug("Created cipher instance to encrypt via [{}]", cipherAlgorithm);
     }
 
     /**
@@ -116,7 +116,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
     protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes, final String cachedAttributeName) {
         final String cachedAttribute = this.cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
-            logger.debug("Retrieved the [{}] as a cached model attribute...", cachedAttributeName);
+            logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
             attributes.put(cachedAttributeName, CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher));
             logger.debug("Encrypted and encoded [{}] as an attribute.", cachedAttributeName);
         } else {
