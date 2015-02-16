@@ -38,7 +38,7 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
         logger.debug("Processing request to capture the credential for [{}]", credential.getId());
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());
-        logger.debug("Encrypted credential is encoded in base64 and added as the authentication attribute [{}]",
+        logger.debug("Encrypted credential is added as the authentication attribute [{}] to the authentication",
                     UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
 
     }
