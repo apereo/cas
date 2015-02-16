@@ -23,12 +23,14 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -56,10 +58,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Autowired
     @Qualifier("protocolCas3ViewResolver")
     private ViewResolver resolver;
-
-    @Autowired
-    @Qualifier("testRegisteredServicePrivateKey")
-    private PrivateKey privateKey;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -114,9 +112,21 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     private String decryptCredential(final String cred) {
         try {
+            final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
+            factory.setAlgorithm("RSA");
+            factory.setLocation(new ClassPathResource("RSA1024Private.p8"));
+            factory.setSingleton(false);
+            final PrivateKey privateKey = factory.getObject();
+
+            logger.debug("Initializing cipher based on [{}]", CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
             final Cipher cipher = Cipher.getInstance(CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+
+            logger.debug("Decoding value [{}]", cred);
             final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
+
+            logger.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
             final byte[] cipherData = cipher.doFinal(cred64);
             return new String(cipherData);
         } catch (final Exception e) {
