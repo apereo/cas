@@ -33,7 +33,7 @@ function loadSidebarForActiveVersion() {
 
 function hideDevelopmentVersionWarning() {
   var formattedVersion = getActiveDocumentationVersionInView(true);
-  if (formattedVersion == CONST_CURRENT_VER) {
+  if (formattedVersion != CONST_CURRENT_VER) {
     $("#dev-doc-info").hide();
   }
 }
