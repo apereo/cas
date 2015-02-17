@@ -35,9 +35,14 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.springframework" level="info" />
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework.webflow" level="warn" />
+        <Logger name="org.springframework.web" level="warn" />
+        <Logger name="org.springframework.security" level="warn" />
+
+        <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
         </Logger>
         <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="cas-management"/>
