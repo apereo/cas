@@ -554,7 +554,7 @@
        <groupId>javax.el</groupId>
        <artifactId>javax.el-api</artifactId>
        <version>${javax.el-api.version}</version>
-       <scope>runtime</scope>
+       <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -1305,7 +1305,7 @@
     <google.guava.version>18.0</google.guava.version>
     <jcache.version>1.0.0</jcache.version>
     <jcache.ri.version>1.0.0</jcache.ri.version>
-    <javax.el-api.version>2.2.5</javax.el-api.version>
+    <javax.el-api.version>3.0.0</javax.el-api.version>
     <javax.el-impl.version>2.2.6</javax.el-impl.version>
 
     <!-- Plugin Versions -->
