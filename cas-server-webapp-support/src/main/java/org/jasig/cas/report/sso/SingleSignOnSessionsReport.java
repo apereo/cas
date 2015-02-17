@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.report;
+package org.jasig.cas.report.sso;
 
 import java.util.Collection;
 import java.util.Map;
