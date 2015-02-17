@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.report;
+package org.jasig.cas.report.sso;
 
 import org.apache.commons.collections.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
@@ -34,10 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Default implementation of <code>SingleSignOnSessionReport</code>.
- * <p/>
- * Uses CAS' <code>TicketSupport</code> API to retrieve <code>TicketGrantingTicket</code>s
- *
+ * Default implementation of the {@link SingleSignOnSessionsReport}.
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
  * @since 4.1

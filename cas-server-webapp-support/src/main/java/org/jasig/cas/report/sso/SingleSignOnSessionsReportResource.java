@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.report;
+package org.jasig.cas.report.sso;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
