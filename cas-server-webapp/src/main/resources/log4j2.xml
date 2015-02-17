@@ -19,7 +19,8 @@
   ~ under the License.
   -->
 
-<Configuration monitorInterval="60000">
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
@@ -44,6 +45,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="org.jasig" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </Logger>
         <Logger name="org.springframework" level="warn" />
         <Logger name="org.springframework.webflow" level="warn" />
 
