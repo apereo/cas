@@ -204,6 +204,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * from the authentication attributes originally and into a cache object, so it
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes
+     * @return a map of attributes that are to be encoded and encrypted
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
         final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
