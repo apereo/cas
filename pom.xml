@@ -650,6 +650,13 @@
       </dependency>
 
       <dependency>
+        <groupId>io.dropwizard.metrics</groupId>
+        <artifactId>metrics-servlets</artifactId>
+        <version>${metrics.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
         <groupId>com.ryantenney.metrics</groupId>
         <artifactId>metrics-spring</artifactId>
         <version>${metrics.spring.version}</version>

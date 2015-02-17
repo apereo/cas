@@ -139,6 +139,11 @@
         </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-servlets</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <properties>
