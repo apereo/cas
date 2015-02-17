@@ -34,14 +34,20 @@
         This is the Spring configuration file that orchestrates the CAS metrics.
     </description>
 
-    <!-- Registry should be defined in only one context XML file -->
     <metrics:metric-registry id="metrics" />
 
-    <!-- annotation-driven must be included in all context files -->
     <metrics:annotation-driven metric-registry="metrics" />
 
-    <!-- (Optional) Registry should be defined in only one context XML file -->
-    <metrics:reporter type="slf4j" metric-registry="metrics" period="30s" duration-unit="MILLISECONDS"
+    <metrics:reporter type="slf4j" metric-registry="metrics" period="${metrics.refresh.internal:30s}"
+                      duration-unit="MILLISECONDS"
                       rate-unit="MILLISECONDS" logger="perfStatsLogger"/>
 
+    <metrics:reporter type="jmx" metric-registry="metrics" />
+
+    <metrics:register metric-registry="metrics">
+        <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
+        <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
+        <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
+        <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
+    </metrics:register>
 </beans>
