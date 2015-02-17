@@ -105,7 +105,7 @@ The openIdSingleSignOnAction is itself defined in the *cas-servlet.xml* file:
 ###Enable OpenID in the AuthenticationManager
 
 The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this : http://localhost:8080/cas/openid/*myusername*. Actually, in your users database, this users login is probably myusername. We must provide the CAS server with a way to extract the user principal from the credentials he provides us. This is the first thing we'll do in this section: add an OpenIdCredentialsToPrincipalResolver to the authentication manager. The next thing to give CAS is a specialized authentication handler.  
-Open the *deployerConfigContext.xml* file, and locate the authenticationManager bean definition. Ad below property definition:
+Open the *deployerConfigContext.xml* file, and locate the authenticationManager bean definition. Add below property definition:
 
 {% highlight xml %}
 <entry key-ref="openidAuthenticationHandler" value-ref="openidPrincipalResolver" />
