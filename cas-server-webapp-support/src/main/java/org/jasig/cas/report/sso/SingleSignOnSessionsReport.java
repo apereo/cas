@@ -31,7 +31,7 @@ import java.util.Map;
  * view of unexpired sessions by the time it is presented to clients.
  * </p>
  * <p>
- * This API returns an un-typed view of this data in a form of <code>Map<String, Object></code> which adds a flexibility
+ * This API returns an un-typed view of this data in a form of a map which adds a flexibility
  * to clients to render it however they choose. As a convenience, this interface also exposes an Enum of the map keys
  * it expects implementors to use.
  * </p>
@@ -43,6 +43,9 @@ import java.util.Map;
  */
 public interface SingleSignOnSessionsReport {
 
+    /**
+     * The enum Sso session attribute keys.
+     */
     enum SsoSessionAttributeKeys {
         AUTHENTICATED_PRINCIPAL("authenticated_principal"),
         AUTHENTICATION_DATE("authentication_date"),

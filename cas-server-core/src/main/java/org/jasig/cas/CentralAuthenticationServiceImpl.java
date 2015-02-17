@@ -19,7 +19,6 @@
 package org.jasig.cas;
 
 import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Gauge;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.github.inspektr.audit.annotation.Audit;
