@@ -99,8 +99,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/status">healthCheckController</prop>
-        <prop key="/statistics">statisticsController</prop>
       </util:properties>
     </property>
     <!--
@@ -235,19 +233,12 @@
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
-  <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:centralAuthenticationService-ref="centralAuthenticationService"
-        p:casTicketSuffix="${host.name}"/>
-
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
 
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
         c:logoutManager-ref="logoutManager"/>
-
-  <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
-        p:healthCheckMonitor-ref="healthCheckMonitor"/>
 
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"

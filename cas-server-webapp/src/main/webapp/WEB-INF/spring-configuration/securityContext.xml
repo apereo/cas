@@ -37,7 +37,7 @@
   </sec:http>
 
   <sec:http pattern="/statistics/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
-    <sec:intercept-url pattern="/statistics" access="${cas.securityContext.statistics.access}" />
+    <sec:intercept-url pattern="/statistics/**" access="${cas.securityContext.statistics.access}" />
   </sec:http>
 
   <bean id="notAuthorizedEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
