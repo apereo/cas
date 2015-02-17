@@ -120,7 +120,7 @@
 
 <h2>Performance Statistics</h2>
 
-<a href="statistics/threads?pretty=true">SSO Sessions</a>
+<a href="statistics/ssosessions?pretty=true">SSO Sessions</a>
 <a href="statistics/metrics?pretty=true">Metrics</a>
 <a href="statistics/ping?pretty=true">Ping</a>
 <a href="statistics/threads?pretty=true">Thread Dump</a>
