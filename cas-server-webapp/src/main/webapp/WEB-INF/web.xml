@@ -149,6 +149,11 @@
         <servlet-class>com.codahale.metrics.servlets.ThreadDumpServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ssosessions</servlet-name>
+        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -222,6 +227,11 @@
     <servlet-mapping>
         <servlet-name>metrics-health</servlet-name>
         <url-pattern>/statistics/healthcheck</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ssosessions</servlet-name>
+        <url-pattern>/statistics/ssosessions</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
