@@ -10,14 +10,13 @@ CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode
 
 OpenID identifiers are URIs. The default mechanism in CAS support is an uri ending with the actual user login (ie. http://my.cas.server/openid/*myusername* where the actual user login is *myusername*). This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependencies in the Maven WAR overlay:
 
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-openid</artifactId>
       <version>${cas.version}</version>
     </dependency>
-
    <dependency>
       <groupId>ognl</groupId>
       <artifactId>ognl</artifactId>
