@@ -1,9 +1,9 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -23,14 +23,14 @@
 <!-- FOOTER -->
 
 <div id="footer" class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-  <a id="jasig" href="http://www.jasig.org" title="go to Jasig home page"></a>
+  <a id="jasig" href="http://www.apereo.org" title="go to Apereo home page"></a>
   <div>
     <h4><spring:message code="footer.links" /></h4>
     <ul id="nav-campus-sites">
-      <li><a href="http://www.jasig.org/cas" rel="_blank"><spring:message code="footer.homePage" /></a>,</li>
+      <li><a href="http://www.apereo.org/cas" rel="_blank"><spring:message code="footer.homePage" /></a>,</li>
       <li><a href="http://wiki.jasig.org" rel="_blank"><spring:message code="footer.wiki" /></a>,</li>
       <li><a href="http://issues.jasig.org" rel="_blank"><spring:message code="footer.issueTracker" /></a>,</li>
-      <li><a href="http://www.jasig.org/cas/mailing-lists" rel="_blank"><spring:message code="footer.mailingLists" /></a>.</li>
+      <li><a href="http://www.apereo.org/cas/mailing-lists" rel="_blank"><spring:message code="footer.mailingLists" /></a>.</li>
     </ul>
   </div>
   <div id="copyright">

@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-openid</artifactId>
 	<packaging>jar</packaging>
-	<name>Jasig CAS OpenId Server Support</name>
+	<name>Apereo CAS OpenId Server Support</name>
 
 	<dependencies>
 		<dependency>
@@ -44,30 +44,23 @@
 
         <dependency>
             <groupId>org.openid4java</groupId>
-            <artifactId>openid4java-nodeps</artifactId>
-            <version>0.9.6</version>
+            <artifactId>openid4java</artifactId>
+            <version>${openid4java.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.1.3</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
+          <groupId>org.jasig.cas</groupId>
+          <artifactId>cas-server-core</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
         </dependency>
-
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-core</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
     </dependencies>
 
   <properties>

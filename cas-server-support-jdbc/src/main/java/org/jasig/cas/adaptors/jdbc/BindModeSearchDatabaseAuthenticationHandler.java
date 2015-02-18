@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,15 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import java.security.GeneralSecurityException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.security.auth.login.FailedLoginException;
-
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * This class attempts to authenticate the user by opening a connection to the
@@ -40,11 +38,13 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -54,7 +54,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             final String password = getPasswordEncoder().encode(credential.getPassword());
             final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
-            return createHandlerResult(credential, new SimplePrincipal(username), null);
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {

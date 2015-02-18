@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.jasig.cas.support.spnego.util;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Bytes;
 
 /**
  * Spnego Constants.
@@ -46,8 +49,9 @@ public interface SpnegoConstants {
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
     /** The ntlmssp signature. */
-    byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
-            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
+    Byte[] NTLMSSP_SIGNATURE = (Byte[]) ImmutableList.copyOf(
+            Bytes.asList(new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
+            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0})).toArray();
 
     /** The ntlm. */
     String NTLM = "NTLM";

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -51,12 +51,12 @@ import org.slf4j.LoggerFactory;
  * with ldaptive components to populate person attributes.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
 
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Search base DN. */
     @NotNull
@@ -138,6 +138,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
         try {
             try {
                 connection = this.connectionFactory.getConnection();
+                connection.open();
             } catch (final LdapException e) {
                 throw new RuntimeException("Failed getting LDAP connection", e);
             }
@@ -148,7 +149,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
                 throw new RuntimeException("Failed executing LDAP query " + filter, e);
             }
             final SearchResult result = response.getResult();
-            final List<IPersonAttributes> peopleAttributes = new ArrayList<IPersonAttributes>(result.size());
+            final List<IPersonAttributes> peopleAttributes = new ArrayList<>(result.size());
             for (final LdapEntry entry : result.getEntries()) {
                 final IPersonAttributes person;
                 final String userNameAttribute = this.getConfiguredUserNameAttribute();
@@ -208,7 +209,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
      * @return Attribute map.
      */
     private Map<String, List<Object>> convertLdapEntryToMap(final LdapEntry entry) {
-        final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>(entry.size());
+        final Map<String, List<Object>> attributeMap = new LinkedHashMap<>(entry.size());
         for (final LdapAttribute attr : entry.getAttributes()) {
             attributeMap.put(attr.getName(), new ArrayList<Object>(attr.getStringValues()));
         }

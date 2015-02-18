@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled
@@ -66,7 +65,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public final HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {

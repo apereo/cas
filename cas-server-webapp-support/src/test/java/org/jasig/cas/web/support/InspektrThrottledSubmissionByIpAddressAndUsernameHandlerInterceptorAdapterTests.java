@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,8 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.web.support;
-
-import javax.sql.DataSource;
 
 import com.github.inspektr.common.web.ClientInfo;
 import com.github.inspektr.common.web.ClientInfoHolder;
@@ -37,12 +35,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.sql.DataSource;
+
 import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {

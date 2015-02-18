@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -21,7 +21,7 @@
 -->
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
   <action-state id="terminateSession">
     <evaluate expression="terminateSessionAction.terminate(flowRequestContext)" />

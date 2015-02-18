@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,21 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
+
 /**
- * Generates a unique consistant Id based on the principal, a service, and some
- * algorithm.
+ * Generates a unique consistent Id based on the principal.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface PersistentIdGenerator {
+public interface PersistentIdGenerator extends Serializable {
 
     /**
-     * Generates a PersistentId based on some algorithm plus the principal and
-     * service.
+     * Generates a PersistentId based on some algorithm plus the principal.
      *
      * @param principal the principal to generate the id for.
-     * @param service the service to generate the id for.
+     * @param service the service for which the id may be generated.
      * @return the generated persistent id.
      */
     String generate(Principal principal, Service service);

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -29,16 +29,17 @@ import org.junit.Test;
 public final class BlockedCredentialsAuthenticationExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.blocked";
+    private static final String MESSAGE = "GG";
 
     @Test
-    public void testGetCode() {
+    public void verifyGetCode() {
         final AuthenticationException e = new BlockedCredentialsAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
 
     @Test
-    public void testThrowableConstructor() {
+    public void verifyThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(r);
 
@@ -47,16 +48,14 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
     }
 
     @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
+    public void verifyCodeConstructor() {
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE);
 
         assertEquals(MESSAGE, e.getCode());
     }
 
     @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
+    public void verifyThrowableConstructorWithCode() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE, r);
 

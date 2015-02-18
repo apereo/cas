@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,6 +34,7 @@ import java.util.Collection;
  * Unit test for {@link org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver}.
  *
  * @author Dmitriy Kopylenko
+ * @since 3.0.0
  */
 @RunWith(Parameterized.class)
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
@@ -45,8 +46,8 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath
-     * @param expectedResult
+     * @param certPath path to the cert
+     * @param expectedResult the result expected from the test
      */
     public X509SubjectAlternativeNameUPNPrincipalResolverTests(
             final String certPath,
@@ -69,7 +70,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         params.add(new Object[] {
                 "/x509-san-upn-resolver.crt",
@@ -79,7 +80,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

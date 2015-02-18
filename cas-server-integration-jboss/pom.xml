@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -27,7 +27,13 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-integration-jboss</artifactId>
 	<packaging>jar</packaging>
-	<name>Jasig CAS JBoss Cache Integration</name>
+	<name>Apereo CAS JBoss Cache Integration - DEPRECATED</name>
+    <description>
+        The CAS cas-server-integration-jboss module is deprecated and will be removed from subsequent CAS releases.
+        You should not attempt to include this module in your CAS Maven overlays, and rather try to use alternative
+        methods for your distributed ticket registry needs, such as the cas-server-integration-ehcache or
+        cas-server-integration-memcached modules.
+    </description>
 
     <build>
       <plugins>
@@ -78,6 +84,14 @@
 			<name>JBoss Repository</name>
 			<url>http://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
+
+	    <repository>
+	      <id>jboss</id>
+	      <name>JBoss Repository</name>
+	      <layout>default</layout>
+	      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+	    </repository>
+
 	</repositories>
 
   <properties>

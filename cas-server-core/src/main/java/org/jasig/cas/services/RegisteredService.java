@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,11 @@
  */
 package org.jasig.cas.services;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.jasig.cas.authentication.principal.Service;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Set;
 
 /**
  * Interface for a service that can be registered by the Services Management
@@ -34,22 +35,6 @@ public interface RegisteredService extends Cloneable, Serializable {
 
     /** Initial ID value of newly created (but not persisted) registered service. **/
     long INITIAL_IDENTIFIER_VALUE = Long.MAX_VALUE;
-
-    /**
-     * Is this application currently allowed to use CAS?
-     *
-     * @return true if it can use CAS, false otherwise.
-     */
-    boolean isEnabled();
-
-    /**
-     * Determines whether the service is allowed anonymous or privileged access
-     * to user information. Anonymous access should not return any identifying
-     * information such as user id.
-     *
-     * @return if we should use a pseudo random identifier instead of their real id
-     */
-    boolean isAnonymousAccess();
 
     /**
      * Get the proxy policy rules for this service.
@@ -88,13 +73,6 @@ public interface RegisteredService extends Cloneable, Serializable {
     String getTheme();
 
     /**
-     * Does this application participate in the SSO session?
-     *
-     * @return true if it does, false otherwise.
-     */
-    boolean isSsoEnabled();
-
-    /**
      * Returns the description of the service.
      *
      * @return the description of the service.
@@ -118,14 +96,9 @@ public interface RegisteredService extends Cloneable, Serializable {
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
-     *
-     * @return Either of the following values:
-     * <ul>
-     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
-     *  <li><code>null</code> indicating the default username</li>
-     * </ul>
+     * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
      */
-    String getUsernameAttribute();
+    RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
@@ -136,6 +109,14 @@ public interface RegisteredService extends Cloneable, Serializable {
     Set<String> getRequiredHandlers();
 
     /**
+     * Gets the access strategy that decides whether this registered
+     * service is able to proceed with authentication requests.
+     *
+     * @return the access strategy
+     */
+    RegisteredServiceAccessStrategy getAccessStrategy();
+
+    /**
      * Returns whether the service matches the registered service.
      * <p>Note, as of 3.1.2, matches are case insensitive.
      *
@@ -143,7 +124,6 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-
     
     /**
      * Clone this service.
@@ -168,4 +148,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the attribute release policy
      */
     AttributeReleasePolicy getAttributeReleasePolicy();
+
+    /**
+     * Gets the logo image associated with this service.
+     * The image mostly is served on the user interface
+     * to identify this requesting service during authentication.
+     * @return URL of the image
+     * @since 4.1
+     */
+    URL getLogo();
 }

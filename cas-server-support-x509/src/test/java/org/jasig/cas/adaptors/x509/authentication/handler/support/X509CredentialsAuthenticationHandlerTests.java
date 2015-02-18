@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,7 +23,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,15 +36,14 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link X509CredentialsAuthenticationHandler} class.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 @RunWith(Parameterized.class)
@@ -92,7 +91,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         X509CredentialsAuthenticationHandler handler;
         X509CertificateCredential credential;
@@ -106,7 +105,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential,
+                new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
@@ -148,7 +148,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
@@ -172,7 +172,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
@@ -203,7 +203,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
-                new HandlerResult(handler, credential, new SimplePrincipal(credential.getId())),
+                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #11: Revoked end user certificate
@@ -242,7 +242,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Tests the {@link X509CredentialsAuthenticationHandler#authenticate(org.jasig.cas.authentication.Credential)} method.
      */
     @Test
-    public void testAuthenticate() {
+    public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
                 final HandlerResult result = this.handler.authenticate(this.credential);
@@ -265,7 +265,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Tests the {@link X509CredentialsAuthenticationHandler#supports(org.jasig.cas.authentication.Credential)} method.
      */
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertEquals(this.expectedSupports, this.handler.supports(this.credential));
     }
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,23 +18,25 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.security.GeneralSecurityException;
+
+import static org.junit.Assert.*;
+
 /**
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @since 3.1
- *
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  */
+@Deprecated
 public class JCSIFSpnegoAuthenticationHandlerTests {
     private JCIFSSpnegoAuthenticationHandler authenticationHandler;
 
@@ -44,7 +46,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithDomainName() throws Exception {
+    public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(true);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
@@ -54,7 +56,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSuccessfulAuthenticationWithoutDomainName() throws Exception {
+    public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(false);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
@@ -64,7 +66,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testUnsuccessfulAuthentication() throws Exception {
+    public void verifyUnsuccessfulAuthentication() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
         try {
@@ -77,32 +79,34 @@ public class JCSIFSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertFalse(this.authenticationHandler.supports(null));
         assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
         assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void testGetSimpleCredentials() {
+    public void verifyGetSimpleCredentials() {
         final String myNtlmUser = "DOMAIN\\Username";
         final String myNtlmUserWithNoDomain = "Username";
         final String myKerberosUser = "Username@DOMAIN.COM";
 
+        final PrincipalFactory factory = new DefaultPrincipalFactory();
+
         this.authenticationHandler.setPrincipalWithDomainName(true);
-        assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, false));
-        assertEquals(new SimplePrincipal(myKerberosUser), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+        assertEquals(factory.createPrincipal(myNtlmUser), this.authenticationHandler
+                .getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
+                .getPrincipal(myNtlmUserWithNoDomain, false));
+        assertEquals(factory.createPrincipal(myKerberosUser), this.authenticationHandler
+                .getPrincipal(myKerberosUser, false));
 
         this.authenticationHandler.setPrincipalWithDomainName(false);
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myNtlmUser, true));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myNtlmUserWithNoDomain, true));
+        assertEquals(factory.createPrincipal("Username"), this.authenticationHandler
+                .getPrincipal(myKerberosUser, false));
     }
 }

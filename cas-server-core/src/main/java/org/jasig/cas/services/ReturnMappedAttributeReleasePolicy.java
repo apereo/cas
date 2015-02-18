@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,23 +18,21 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jasig.cas.authentication.principal.Principal;
+import java.util.TreeMap;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
  * offers the ability to rename attributes on a per-service level.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
     
-    private Map<String, String> allowedAttributes = Collections.emptyMap();
+    private Map<String, String> allowedAttributes = new TreeMap<>();
     
     /**
      * Sets the allowed attributes.
@@ -51,21 +49,21 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
      * @return the allowed attributes
      */
     protected Map<String, String> getAllowedAttributes() {
-        return Collections.unmodifiableMap(this.allowedAttributes);
+        return new TreeMap<String, String>(this.allowedAttributes);
     }
     
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal p) {
-        final Map<String, Object> attributesToRelease = new HashMap<String, Object>(p.getAttributes().size());
-        final Map<String, Object> resolvedAttributes = p.getAttributes();
-        
-        for (final String attribute : this.allowedAttributes.keySet()) {
-            final Object value = resolvedAttributes.get(attribute);
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
+        final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
+
+        for (final Map.Entry<String, String> entry : this.allowedAttributes.entrySet()) {
+            final String key = entry.getKey();
+            final Object value = resolvedAttributes.get(key);
 
             if (value != null) {
-                final String mappedAttributeName = this.allowedAttributes.get(attribute);
+                final String mappedAttributeName = entry.getValue();
                 logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                        attribute, mappedAttributeName);
+                        key, mappedAttributeName);
                 attributesToRelease.put(mappedAttributeName, value);
             }
         }

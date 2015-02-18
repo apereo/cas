@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,26 +18,25 @@
  */
 package org.jasig.cas.logout;
 
-import java.net.URL;
-import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.HttpMessage;
+import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -68,7 +67,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     private final LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
-    private boolean singleLogoutCallbacksDisabled = false;
+    private boolean singleLogoutCallbacksDisabled;
     
     /** 
      * Whether messages to endpoints would be sent in an asynchronous fashion.
@@ -93,7 +92,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Set if messages are sent in an asynchronous fashion.
      *
      * @param asyncCallbacks if message is synchronously sent
-     * @since 4.1
+     * @since 4.1.0
      */
     public void setAsynchronous(final boolean asyncCallbacks) {
         this.asynchronous = asyncCallbacks;
@@ -128,15 +127,15 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         ticket.markTicketExpired();
 
-        final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
+        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
             // through all services
-            for (final String ticketId : services.keySet()) {
-                final Service service = services.get(ticketId);
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
                 // it's a SingleLogoutService, else ignore
+                final Service service = entry.getValue();
                 if (service instanceof SingleLogoutService) {
-                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, ticketId);
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
                     if (logoutRequest != null) {
                         logoutRequests.add(logoutRequest);
                     }
@@ -150,27 +149,26 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * Service supports back channel single logout?
      * Service must be found in the registry. enabled and logout type must not be {@link LogoutType#NONE}.
-     * @param registeredService the service
+     * @param registeredService the registered service
      * @return true, if support is available.
      */
     private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null && registeredService.isEnabled()
-                                         && registeredService.getLogoutType() != LogoutType.NONE;
+        return registeredService != null
+                && registeredService.getAccessStrategy().isServiceAccessAllowed()
+                && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
     /**
      * Handle logout for slo service.
      *
-     * @param service the service
+     * @param singleLogoutService the service
      * @param ticketId the ticket id
      * @return the logout request
      */
-    private LogoutRequest handleLogoutForSloService(final SingleLogoutService service, final String ticketId) {
-        final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
+    private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
-            final RegisteredService registeredService = servicesManager.findServiceBy(service);
-
+            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
                 final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
                 final LogoutType type = registeredService.getLogoutType() == null
@@ -191,6 +189,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                 }
                 return logoutRequest;
             }
+
         }
         return null;
     }
@@ -224,14 +223,8 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
-        final Deflater deflater = new Deflater();
-        deflater.setInput(logoutMessage.getBytes(ASCII));
-        deflater.finish();
-        final byte[] buffer = new byte[logoutMessage.length()];
-        final int resultSize = deflater.deflate(buffer);
-        final byte[] output = new byte[resultSize];
-        System.arraycopy(buffer, 0, output, 0, resultSize);
-        return Base64.encodeBase64String(output);
+        LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
+        return CompressionUtils.deflate(logoutMessage);
     }
 
     /**
@@ -246,7 +239,7 @@ public final class LogoutManagerImpl implements LogoutManager {
     /**
      * A logout http message that is accompanied by a special content type
      * and formatting.
-     * @since 4.1
+     * @since 4.1.0
      */
     private final class LogoutHttpMessage extends HttpMessage {
         

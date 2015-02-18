@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 /**
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
@@ -46,14 +46,14 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
      * support for this behavior is recommended but not required.
      * @throws UnsupportedEncodingException
      */
-    public void testUrlParameter() throws UnsupportedEncodingException {
+    public void verifyUrlParameter() throws UnsupportedEncodingException {
         final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/logout?url=" + URLEncoder.encode(service, "UTF-8"));
 
         assertTextPresent(service);
     }
 
-    public void testShowLoggedOutPage() {
+    public void verifyShowLoggedOutPage() {
         beginAt("/logout");
 
         assertTextPresent("logged out");
@@ -66,7 +66,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
      * service ticket invalid.
      * @throws IOException
      */
-    public void testLogoutEndsSso() throws IOException {
+    public void verifyLogoutEndsSso() throws IOException {
         // demonstrate lack of SSO session
         final String serviceUrl = getServiceUrl();
         final String encodedService = URLEncoder.encode(serviceUrl, "UTF-8");

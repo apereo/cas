@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,46 +18,46 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Principal;
+import org.joda.time.DateTime;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
-
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AuthenticationBuilder {
     /** Authenticated principal. */
     private Principal principal;
 
     /** Credential metadata. */
-    private List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
+    private final List<CredentialMetaData> credentials = new ArrayList<>();
 
     /** Authentication metadata attributes. */
-    private Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication successes. */
-    private Map<String, HandlerResult> successes = new LinkedHashMap<String, HandlerResult>();
+    private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
-    private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<String, Class<? extends Exception>>();
-
+    private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
-    private Date authenticationDate;
+    private DateTime authenticationDate;
 
     /**
      * Creates a new instance using the current date for the authentication date.
      */
     public AuthenticationBuilder() {
-        authenticationDate = new Date();
+        authenticationDate = new DateTime();
     }
 
     /**
@@ -76,8 +76,8 @@ public class AuthenticationBuilder {
      *
      * @return Authentication date.
      */
-    public Date getAuthenticationDate() {
-        return authenticationDate;
+    public DateTime getAuthenticationDate() {
+        return this.authenticationDate == null ? null : new DateTime(this.authenticationDate);
     }
 
     /**
@@ -88,7 +88,7 @@ public class AuthenticationBuilder {
      * @return This builder instance.
      */
     public AuthenticationBuilder setAuthenticationDate(final Date d) {
-        this.authenticationDate = d;
+        this.authenticationDate = new DateTime(d);
         return this;
     }
 
@@ -132,9 +132,7 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setCredentials(final List<CredentialMetaData> credentials) {
         Assert.notNull(credentials, "Credential cannot be null");
         this.credentials.clear();
-        for (final CredentialMetaData c : credentials) {
-            this.credentials.add(c);
-        }
+        this.credentials.addAll(credentials);
         return this;
     }
 
@@ -169,8 +167,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
         Assert.notNull(attributes, "Attributes cannot be null");
         this.attributes.clear();
-        for (final String name : attributes.keySet()) {
-            this.attributes.put(name, attributes.get(name));
+        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+            this.attributes.put(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -207,8 +205,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setSuccesses(final Map<String, HandlerResult> successes) {
         Assert.notNull(successes, "Successes cannot be null");
         this.successes.clear();
-        for (final String handler : successes.keySet()) {
-            this.successes.put(handler, successes.get(handler));
+        for (final Map.Entry<String, HandlerResult> entry : successes.entrySet()) {
+            this.successes.put(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -245,8 +243,8 @@ public class AuthenticationBuilder {
     public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
-        for (final String handler : failures.keySet()) {
-            this.failures.put(handler, failures.get(handler));
+        for (final Map.Entry<String, Class<? extends Exception>> entry : failures.entrySet()) {
+            this.failures.put(entry.getKey(), entry.getValue());
         }
         return this;
     }

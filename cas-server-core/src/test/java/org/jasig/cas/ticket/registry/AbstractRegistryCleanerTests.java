@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,25 +18,27 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
+
+import static org.junit.Assert.*;
+
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractRegistryCleanerTests {
+    protected TicketRegistry ticketRegistry;
 
     private RegistryCleaner registryCleaner;
 
-    private TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -49,31 +51,29 @@ public abstract class AbstractRegistryCleanerTests {
     public abstract TicketRegistry getNewTicketRegistry();
 
     @Test
-    public void testCleanEmptyTicketRegistry() {
-        this.registryCleaner.clean();
+    public void verifyCleanEmptyTicketRegistry() {
+        clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOfExpiredTicketsAllExpired() {
+    public void verifyCleanRegistryOfExpiredTicketsAllExpired() {
         populateRegistryWithExpiredTickets();
-        this.registryCleaner.clean();
+        clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     @Test
-    public void testCleanRegistryOneNonExpired() {
+    public void verifyCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
-
-        this.registryCleaner.clean();
-
+        clean();
         assertEquals(this.ticketRegistry.getTickets().size(), 1);
     }
 
-    private void populateRegistryWithExpiredTickets() {
+    protected void populateRegistryWithExpiredTickets() {
         for (int i = 0; i < 10; i++) {
             final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
@@ -81,4 +81,11 @@ public abstract class AbstractRegistryCleanerTests {
             this.ticketRegistry.addTicket(ticket);
         }
     }
+
+    private void clean() {
+        beforeCleaning();
+        afterCleaning(this.registryCleaner.clean());
+    }
+    protected void beforeCleaning() {}
+    protected void afterCleaning(final Collection<Ticket> removedCol) {}
 }

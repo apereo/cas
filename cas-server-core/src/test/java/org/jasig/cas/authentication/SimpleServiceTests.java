@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,35 +18,35 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class SimpleServiceTests {
 
     @Test
-    public void testProperId() {
+    public void verifyProperId() {
         assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils.getService().getId());
     }
 
     @Test
-    public void testEqualsWithNull() {
-        assertFalse("Service matches null.", TestUtils.getService().equals(null));
+    public void verifyEqualsWithNull() {
+        assertNotEquals("Service matches null.", TestUtils.getService(), null);
     }
 
     @Test
-    public void testEqualsWithBadClass() {
+    public void verifyEqualsWithBadClass() {
         assertFalse("Services matches String class.", TestUtils.getService().equals(new Object()));
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
     }
 }

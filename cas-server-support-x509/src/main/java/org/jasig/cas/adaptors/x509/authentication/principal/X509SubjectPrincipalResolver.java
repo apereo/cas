@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -55,30 +55,31 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p>
      * EXAMPLE:
      * <p>
-     * <pre>
-     * <bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
-     *   p:descriptor="$UID@$DC.$DC" />
-     * </pre>
+     * <code>
+     * &lt;bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+     *   p:descriptor="$UID@$DC.$DC" /&gt;
+     * </code>
      * <p>
      * The above bean when applied to a certificate with the DN<br>
      * <strong>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</strong><br>
      * produces the principal <strong>jacky@vt.edu</strong>.
+     * </p>
      *
      * @param s Descriptor string where attribute names are prefixed with "$"
      * to identify replacement by real attribute values from the subject DN.
      * Valid attributes include common X.509 DN attributes such as the following:
      * <ul>
-     * <li>C</li>
-     * <li>CN</li>
-     * <li>DC</li>
-     * <li>EMAILADDRESS</li>
-     * <li>L</li>
-     * <li>O</li>
-     * <li>OU</li>
-     * <li>SERIALNUMBER</li>
-     * <li>ST</li>
-     * <li>UID</li>
-     * <li>UNIQUEIDENTIFIER</li>
+     *  <li>C</li>
+     *  <li>CN</li>
+     *  <li>DC</li>
+     *  <li>EMAILADDRESS</li>
+     *  <li>L</li>
+     *  <li>O</li>
+     *  <li>OU</li>
+     *  <li>SERIALNUMBER</li>
+     *  <li>ST</li>
+     *  <li>UID</li>
+     *  <li>UNIQUEIDENTIFIER</li>
      * </ul>
      * For a complete list of supported attributes, see
      * {@link edu.vt.middleware.crypt.x509.types.AttributeType}.
@@ -101,7 +102,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         logger.debug("Resolving principal for {}", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
-        final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
+        final Map<String, AttributeContext> attrMap = new HashMap<>();
         String name;
         String[] values;
         AttributeContext context;

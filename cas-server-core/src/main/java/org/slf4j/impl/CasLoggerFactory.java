@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.slf4j.impl;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link org.slf4j.impl.StaticLoggerBinder} of CAS itself. It is responsible for
  * creating {@link org.slf4j.Logger} instances and passing them back to the slf4j engine.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class CasLoggerFactory implements ILoggerFactory {
 
@@ -54,7 +53,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
      * in order to find other avaliable factories.
      */
     public CasLoggerFactory() {
-        this.loggerMap = new ConcurrentHashMap<String, CasDelegatingLogger>();
+        this.loggerMap = new ConcurrentHashMap<>();
         final Set<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
         final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
 

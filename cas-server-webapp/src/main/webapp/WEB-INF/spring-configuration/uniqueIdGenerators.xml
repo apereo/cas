@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -27,27 +27,27 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
-    Controls the generation of the unique identifiers for tickets.  You most likely do not need to modify these.  Though you may need to add
-    the SAML ticket id generator.
+        Controls the generation of the unique identifiers for tickets.  You most likely do not need to modify these.  Though you may need to add
+        the SAML ticket id generator.
     </description>
-       
-	<!-- ID Generators -->
-	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="50" c:suffix="${host.name}" />
 
-	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="20" c:suffix="${host.name}" />
+    <!-- ID Generators -->
+    <bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+          c:maxLength="50" c:suffix="${host.name}" />
+
+    <bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+          c:maxLength="20" c:suffix="${host.name}" />
 
     <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="30" c:suffix="${host.name}" />
-    	
+          c:maxLength="30" c:suffix="${host.name}" />
+
     <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="20" c:suffix="${host.name}" />
-	 
-	<util:map id="uniqueIdGeneratorsMap">
-		<entry
-			key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-			value-ref="serviceTicketUniqueIdGenerator" />
-	</util:map>
+          c:maxLength="20" c:suffix="${host.name}" />
+
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                value-ref="serviceTicketUniqueIdGenerator" />
+    </util:map>
 
 </beans>

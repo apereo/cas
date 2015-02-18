@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
+ * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandlerTests {
 
@@ -42,7 +43,7 @@ public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new ArrayList<String>();
+        this.users = new ArrayList<>();
 
         this.users.add("scott");
         this.users.add("dima");
@@ -54,7 +55,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
@@ -63,7 +64,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         try {
             final RegisteredServiceImpl svc = new RegisteredServiceImpl();
             svc.setServiceId("https://some.app.edu");
@@ -76,7 +77,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected=FailedLoginException.class)
-    public void testFailsUserInMap() throws Exception {
+    public void verifyFailsUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -85,7 +86,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testPassesUserNotInMap() throws Exception {
+    public void verifyPassesUserNotInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -95,7 +96,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserName() throws Exception {
+    public void verifyPassesNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -105,7 +106,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserNameAndPassword() throws Exception {
+    public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }
 }

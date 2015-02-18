@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -44,7 +44,7 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
@@ -79,7 +79,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
                 + request.getQueryString() : "");
 
         logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);

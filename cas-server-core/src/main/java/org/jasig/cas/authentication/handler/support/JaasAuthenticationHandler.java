@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,11 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.Set;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -29,13 +32,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.springframework.util.Assert;
+import java.security.GeneralSecurityException;
+import java.util.Set;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -71,10 +69,10 @@ import org.springframework.util.Assert;
  * @author Marvin S. Addison
  * @author Misagh Moayyed
  *
- * @since 3.0.5
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
+ * @since 3.0.0.5
  */
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -110,7 +108,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -139,7 +139,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         Principal principal = null;
         final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
         if (principals != null && principals.size() > 0) {
-            principal = new SimplePrincipal(principals.iterator().next().getName());
+            principal = this.principalFactory.createPrincipal(principals.iterator().next().getName());
         }
         return createHandlerResult(credential, principal, null);
     }
@@ -159,10 +159,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
-     * @since 4.1
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
+     * @since 4.1.0
      */
     public final void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
@@ -179,10 +179,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
      * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
      * then the default values used for these items are implementation-specific.
-     * @since 4.1
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
+     * @since 4.1.0
      */
     public final void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;

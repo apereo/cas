@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
@@ -43,7 +43,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * Instantiates a new default ticket registry.
      */
     public DefaultTicketRegistry() {
-        this.cache = new ConcurrentHashMap<String, Ticket>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     /**
@@ -60,7 +60,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * accommodate this many threads.
      */
     public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
-        this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
+        this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**

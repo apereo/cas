@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,8 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-
 import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
 import org.junit.Before;
@@ -35,6 +27,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.core.io.ClassPathResource;
+
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509CRL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 
 /**
@@ -47,7 +46,7 @@ import org.springframework.core.io.ClassPathResource;
 @RunWith(Parameterized.class)
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
 
-    /** Instance under test */
+    /** Instance under test. */
     private final CRLDistributionPointRevocationChecker checker;
 
     /** Answers requests for CRLs made to localhost:8085. */
@@ -84,7 +83,8 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        CacheManager.getInstance().removeAllCaches();
+        final Collection<Object[]> params = new ArrayList<>();
         Cache cache;
         final ThresholdExpiredCRLRevocationPolicy defaultPolicy = new ThresholdExpiredCRLRevocationPolicy();
         final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();

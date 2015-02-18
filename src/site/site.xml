@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<project name="Jasig CAS ${project.version}">
+<project name="Apereo CAS ${project.version}">
 	<skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -33,7 +33,7 @@
             <sitesearch/>
           </googleSearch>
           <twitter>
-            <user>Jasig</user>
+            <user>Apereo</user>
             <showUser>true</showUser>
             <showFollowers>true</showFollowers>
           </twitter>
@@ -47,7 +47,7 @@
         <href>http://www.jasig.org/cas</href>
     </bannerLeft>
     <bannerRight>
-        <name>Jasig</name>
+        <name>Apereo</name>
         <src>images/jasig-logo.png</src>
         <href>http://www.jasig.org</href>
     </bannerRight>

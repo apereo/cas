@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,31 +18,31 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.jasig.cas.Message;
+import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
+import org.ldaptive.auth.AuthenticationRequest;
+import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.AuthenticationResultCode;
+import org.ldaptive.auth.Authenticator;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.Message;
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.auth.AuthenticationRequest;
-import org.ldaptive.auth.AuthenticationResponse;
-import org.ldaptive.auth.AuthenticationResultCode;
-import org.ldaptive.auth.Authenticator;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
@@ -51,14 +51,22 @@ import org.ldaptive.auth.Authenticator;
  * Principal resolution is controlled by the following properties:
  *
  * <ul>
- *     <ol>{@link #setPrincipalIdAttribute(String)}</ol>
- *     <ol>{@link #setPrincipalAttributeMap(java.util.Map)}</ol>
+ *     <li>{@link #setPrincipalIdAttribute(String)}</li>
+ *     <li>{@link #setPrincipalAttributeMap(java.util.Map)}</li>
  * </ul>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+
+    /** Mapping of LDAP attribute name to principal attribute name. */
+    @NotNull
+    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
+
+    /** List of additional attributes to be fetched but are not principal attributes. */
+    @NotNull
+    protected List<String> additionalAttributes = Collections.emptyList();
 
     /** Performs LDAP authentication given username/password. */
     @NotNull
@@ -72,18 +80,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String principalIdAttribute;
 
     /** Flag indicating whether multiple values are allowed fo principalIdAttribute. */
-    private boolean allowMultiplePrincipalAttributeValues = false;
-
-    /** Mapping of LDAP attribute name to principal attribute name. */
-    @NotNull
-    protected Map<String, String> principalAttributeMap = Collections.emptyMap();
-
-    /** List of additional attributes to be fetched but are not principal attributes. */
-    @NotNull
-    protected List<String> additionalAttributes = Collections.emptyList();
+    private boolean allowMultiplePrincipalAttributeValues;
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
-    private String[] authenticatedEntryAttributes;
+    private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -184,7 +184,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
-        throw new FailedLoginException("Invalid credentials.");
+        throw new FailedLoginException("Invalid credentials");
     }
 
     /**
@@ -242,12 +242,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         } else {
             id = username;
         }
-        final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
-        for (String ldapAttrName : this.principalAttributeMap.keySet()) {
-            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttrName);
+        final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
+        for (final Map.Entry<String, String> ldapAttr : this.principalAttributeMap.entrySet()) {
+            final LdapAttribute attr = ldapEntry.getAttribute(ldapAttr.getKey());
             if (attr != null) {
                 logger.debug("Found principal attribute: {}", attr);
-                final String principalAttrName = this.principalAttributeMap.get(ldapAttrName);
+                final String principalAttrName = ldapAttr.getValue();
                 if (attr.size() > 1) {
                     attributeMap.put(principalAttrName, attr.getStringValues());
                 } else {
@@ -255,7 +255,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
             }
         }
-        return new SimplePrincipal(id, attributeMap);
+        return this.principalFactory.createPrincipal(id, attributeMap);
     }
 
     /**
@@ -263,13 +263,24 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     @PostConstruct
     public void initialize() {
-        final List<String> attributes = new ArrayList<String>();
+        /**
+         * Use a set to ensure we ignore duplicates.
+         */
+        final Set<String> attributes = new HashSet<>();
+
         if (this.principalIdAttribute != null) {
             attributes.add(this.principalIdAttribute);
         }
-        attributes.addAll(this.principalAttributeMap.keySet());
-        attributes.addAll(this.additionalAttributes);
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        if (!this.principalAttributeMap.isEmpty()) {
+            attributes.addAll(this.principalAttributeMap.keySet());
+        }
+        if (!this.additionalAttributes.isEmpty()) {
+            attributes.addAll(this.additionalAttributes);
+        }
+        if (!attributes.isEmpty()) {
+            this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        }
     }
+
 
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -23,9 +23,10 @@ package org.jasig.cas.authentication.handler;
  * going on.
  *
  * @author Scott Battaglia
-
- * @since 3.0
+ * @since 3.0.0
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
+@Deprecated
 public abstract class UncategorizedAuthenticationException extends AuthenticationException {
 
     private static final long serialVersionUID = 872764495107139229L;
@@ -49,7 +50,7 @@ public abstract class UncategorizedAuthenticationException extends Authenticatio
      * @param throwable the chained exception.
      */
     public UncategorizedAuthenticationException(final String code,
-        final Throwable throwable) {
+                                                final Throwable throwable) {
         super(code, throwable);
     }
 }

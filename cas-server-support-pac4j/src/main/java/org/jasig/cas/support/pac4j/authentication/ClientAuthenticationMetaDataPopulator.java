@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -42,9 +42,12 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      */
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
-        if (credential instanceof ClientCredential) {
-            final ClientCredential clientCredential = (ClientCredential) credential;
-            builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
-        }
+        final ClientCredential clientCredential = (ClientCredential) credential;
+        builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof ClientCredential;
     }
 }

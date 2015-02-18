@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,6 +26,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.webflow.execution.Event;
@@ -38,27 +39,29 @@ import static org.mockito.Mockito.*;
  * Mockito based tests for @{link ServiceAuthorizationCheck}
  *
  * @author Dmitriy Kopylenko
+ * @since 3.5.0
  */
 public class ServiceAuthorizationCheckTests {
 
     private ServiceAuthorizationCheck serviceAuthorizationCheck;
 
-    private WebApplicationService authorizedService = mock(WebApplicationService.class);
+    private final WebApplicationService authorizedService = mock(WebApplicationService.class);
 
-    private WebApplicationService unauthorizedService = mock(WebApplicationService.class);
+    private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
 
-    private WebApplicationService undefinedService = mock(WebApplicationService.class);
+    private final WebApplicationService undefinedService = mock(WebApplicationService.class);
 
-    private ServicesManager servicesManager = mock(ServicesManager.class);
+    private final ServicesManager servicesManager = mock(ServicesManager.class);
 
 
     @Before
     public void setUpMocks() {
         final RegisteredServiceImpl authorizedRegisteredService = new RegisteredServiceImpl();
         final RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
-        unauthorizedRegisteredService.setEnabled(false);
+        unauthorizedRegisteredService.setAccessStrategy(
+                new DefaultRegisteredServiceAccessStrategy(false, false));
 
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
         list.add(authorizedRegisteredService);
         list.add(unauthorizedRegisteredService);
         

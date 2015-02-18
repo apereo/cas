@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -38,6 +39,8 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
                                                 '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
+    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
     @NotNull
     private final String encodingAlgorithm;
@@ -60,13 +63,12 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         }
 
         try {
-            final MessageDigest messageDigest = MessageDigest
-                .getInstance(this.encodingAlgorithm);
+            final MessageDigest messageDigest = MessageDigest.getInstance(this.encodingAlgorithm);
 
             if (StringUtils.hasText(this.characterEncoding)) {
                 messageDigest.update(password.getBytes(this.characterEncoding));
             } else {
-                messageDigest.update(password.getBytes());
+                messageDigest.update(password.getBytes(Charset.defaultCharset()));
             }
 
 
@@ -90,8 +92,8 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (int j = 0; j < bytes.length; j++) {
-            buf.append(HEX_DIGITS[(bytes[j] >> 4) & 0x0f]);
-            buf.append(HEX_DIGITS[bytes[j] & 0x0f]);
+            buf.append(HEX_DIGITS[(bytes[j] >> HEX_RIGHT_SHIFT_COEFFICIENT) & HEX_HIGH_BITS_BITWISE_FLAG]);
+            buf.append(HEX_DIGITS[bytes[j] & HEX_HIGH_BITS_BITWISE_FLAG]);
         }
         return buf.toString();
     }

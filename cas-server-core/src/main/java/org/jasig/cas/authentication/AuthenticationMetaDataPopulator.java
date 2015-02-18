@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -27,7 +27,7 @@ package org.jasig.cas.authentication;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public interface AuthenticationMetaDataPopulator {
 
@@ -38,4 +38,15 @@ public interface AuthenticationMetaDataPopulator {
      * @param credential Successfully authenticated credential.
      */
     void populateAttributes(AuthenticationBuilder builder, Credential credential);
+
+    /**
+     * Determines whether the populator has the capability to perform tasks on the given credential.
+     * In practice, the {@link #populateAttributes(AuthenticationBuilder, Credential)} needs to be able
+     * to operate on said credentials only if the return result here is <code>true</code>.
+     *
+     * @param credential The credential to check.
+     * @return True if populator supports the Credential, false otherwise.
+     * @since 4.1.0
+     */
+    boolean supports(Credential credential);
 }

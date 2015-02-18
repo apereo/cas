@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,26 +18,25 @@
  */
 package org.jasig.cas;
 
-import java.security.GeneralSecurityException;
-import java.util.Map;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.springframework.util.StringUtils;
+
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * Test one-time password authentication handler that supports {@link MultifactorAuthenticationTests}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
 
@@ -63,7 +62,8 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
-            return new HandlerResult(this, new BasicCredentialMetaData(otp), new SimplePrincipal(otp.getId()));
+            return new HandlerResult(this, new BasicCredentialMetaData(otp),
+                    new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
     }

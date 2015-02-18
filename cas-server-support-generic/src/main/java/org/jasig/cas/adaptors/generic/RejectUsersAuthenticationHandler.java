@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -40,7 +39,7 @@ import javax.validation.constraints.NotNull;
  * RejectUsersAuthenticationHandler to authenticate someone.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -57,7 +56,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
 
-        return createHandlerResult(credential, new SimplePrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     /**

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -30,7 +30,6 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
@@ -117,7 +116,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                         .getClass());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
@@ -148,7 +149,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new HandlerResult(this, x509Credential, new SimplePrincipal(x509Credential.getId()));
+            return new HandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         throw new FailedLoginException();
     }

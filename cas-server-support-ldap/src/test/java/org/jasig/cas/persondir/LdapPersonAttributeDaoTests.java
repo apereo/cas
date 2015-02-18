@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,65 +18,44 @@
  */
 package org.jasig.cas.persondir;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.jasig.cas.authentication.AbstractLdapTests;
-import org.jasig.cas.util.LdapTestUtils;
+import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapPersonAttributeDao}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
-@RunWith(Parameterized.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/ldap-context.xml", "/ldap-persondir-test.xml"})
 public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
 
+    @Autowired
     private LdapPersonAttributeDao attributeDao;
 
-    public LdapPersonAttributeDaoTests(
-            final LdapTestUtils.DirectoryType directoryType, final String ... contextPaths) {
-
-        this.directoryType = directoryType;
-        this.contextPaths = contextPaths;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> getParameters() {
-        return Arrays.asList(new Object[][]{
-                {
-                        LdapTestUtils.DirectoryType.OpenLdap,
-                        new String[]{"/ldap-provision-context.xml", "/openldap-persondir-test.xml"},
-                },
-        });
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        this.attributeDao = this.context.getBean(LdapPersonAttributeDao.class);
-    }
-
     @Test
-    public void testGetPerson() throws Exception {
+    public void verifyGetPerson() throws Exception {
+
         IPersonAttributes actual;
         String username;
-        for (final LdapEntry entry : this.testEntries) {
+        for (final LdapEntry entry : this.getEntries()) {
             username = getUsername(entry);
             actual = attributeDao.getPerson(username);
             assertNotNull(actual);
             assertEquals(username, actual.getName());
+            assertEquals(actual.getAttributes().size(), 3);
+            assertTrue(actual.getAttributes().containsKey("commonName"));
             assertSameValues(entry.getAttribute("mail").getStringValues(), actual.getAttributes().get("mail"));
         }
     }

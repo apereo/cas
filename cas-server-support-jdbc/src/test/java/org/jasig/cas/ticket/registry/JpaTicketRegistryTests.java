@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,8 +19,8 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -65,23 +65,23 @@ import static org.junit.Assert.*;
  * Unit test for {@link JpaTicketRegistry} class.
  *
  * @author Marvin S. Addison
- *
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
 
-    private static UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
+    private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator(64);
 
-    private static ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
+    private static final ExpirationPolicy EXP_POLICY_TGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static final ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -109,7 +109,7 @@ public class JpaTicketRegistryTests {
 
 
     @Test
-    public void testTicketCreationAndDeletion() throws Exception {
+    public void verifyTicketCreationAndDeletion() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
@@ -126,14 +126,14 @@ public class JpaTicketRegistryTests {
 
     @Test
     @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentServiceTicketGeneration() throws Exception {
+    public void verifyConcurrentServiceTicketGeneration() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            final List<ServiceTicketGenerator> generators = new ArrayList<ServiceTicketGenerator>(CONCURRENT_SIZE);
+            final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
             for (int i = 0; i < CONCURRENT_SIZE; i++) {
-                generators.add(new ServiceTicketGenerator(newTgt.getId()));
+                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.jpaTicketRegistry, this.txManager));
             }
             final List<Future<String>> results = executor.invokeAll(generators);
             for (Future<String> result : results) {
@@ -149,7 +149,7 @@ public class JpaTicketRegistryTests {
 
 
     static TicketGrantingTicket newTGT() {
-        final Principal principal = new SimplePrincipal(
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId("TGT"),
@@ -201,15 +201,21 @@ public class JpaTicketRegistryTests {
         });
     }
 
-    class ServiceTicketGenerator implements Callable<String> {
+    private static class ServiceTicketGenerator implements Callable<String> {
+        private PlatformTransactionManager txManager;
+        private final String parentTgtId;
+        private final JpaTicketRegistry jpaTicketRegistry;
 
-        private String parentTgtId;
-
-        public ServiceTicketGenerator(final String tgtId) {
+        public ServiceTicketGenerator(final String tgtId, final JpaTicketRegistry jpaTicketRegistry,
+                                      final PlatformTransactionManager txManager) {
             parentTgtId = tgtId;
+            this.jpaTicketRegistry = jpaTicketRegistry;
+            this.txManager = txManager;
         }
 
-        /** {@inheritDoc} */
+        /**
+     * {@inheritDoc}
+     */
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {

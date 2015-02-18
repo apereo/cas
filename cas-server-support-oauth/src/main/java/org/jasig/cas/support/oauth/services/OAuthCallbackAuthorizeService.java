@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,7 +26,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
  * correct url syntax for the OAuth callback authorize url. The url must end with
  * {@link OAuthConstants#CALLBACK_AUTHORIZE_URL}.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public final class OAuthCallbackAuthorizeService extends RegexRegisteredService {
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,21 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 /**
  *
  * @author battags
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class DefaultServicesManagerImplTests  {
@@ -42,7 +42,7 @@ public class DefaultServicesManagerImplTests  {
     @Before
     public void setUp() throws Exception {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
 
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(2500);
@@ -57,7 +57,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testSaveAndGet() {
+    public void verifySaveAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -68,7 +68,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testMultiServicesBySameName() {
+    public void verifyMultiServicesBySameName() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(666);
         r.setName("testServiceName");
@@ -88,7 +88,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testSaveWithReturnedPersistedInstance() {
+    public void verifySaveWithReturnedPersistedInstance() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000L);
         r.setName("test");
@@ -100,7 +100,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testDeleteAndGet() {
+    public void verifyDeleteAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -114,12 +114,12 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testDeleteNotExistentService() {
+    public void verifyDeleteNotExistentService() {
         assertNull(this.defaultServicesManagerImpl.delete(1500));
     }
 
     @Test
-    public void testMatchesExistingService() {
+    public void verifyMatchesExistingService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -136,7 +136,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testAllService() {
+    public void verifyAllService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
@@ -150,7 +150,7 @@ public class DefaultServicesManagerImplTests  {
     }
     
     @Test
-    public void testRegexService() {
+    public void verifyRegexService() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(10000);
         r.setName("regex test");
@@ -164,7 +164,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void testEmptyServicesRegistry() {
+    public void verifyEmptyServicesRegistry() {
         final SimpleService s = new SimpleService("http://www.google.com");
         
         for (final RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
@@ -176,7 +176,7 @@ public class DefaultServicesManagerImplTests  {
     }
     
     @Test
-    public void testEvaluationOrderOfServices() {
+    public void verifyEvaluationOrderOfServices() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(100);
         r.setName("test");
@@ -199,7 +199,7 @@ public class DefaultServicesManagerImplTests  {
         this.defaultServicesManagerImpl.save(r3);
         this.defaultServicesManagerImpl.save(r2);
 
-        final List<RegisteredService> allServices = new ArrayList<RegisteredService>(
+        final List<RegisteredService> allServices = new ArrayList<>(
                 this.defaultServicesManagerImpl.getAllServices());
 
         //We expect the 3 newly added services, plus the one added in setUp()
@@ -211,13 +211,14 @@ public class DefaultServicesManagerImplTests  {
 
     }
 
-    protected class SimpleService implements Service {
+    private static class SimpleService implements Service {
 
         /**
          * Comment for <code>serialVersionUID</code>.
          */
         private static final long serialVersionUID = 6572142033945243669L;
-        private String id;
+
+        private final String id;
 
         protected SimpleService(final String id) {
             this.id = id;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -28,8 +28,8 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server</artifactId>
   <packaging>pom</packaging>
-  <name>Jasig Central Authentication Service</name>
-  <description>Jasig CAS SSO server libraries and Web application.</description>
+  <name>Apereo Central Authentication Service</name>
+  <description>Apereo CAS SSO server libraries and Web application.</description>
   <version>4.1.0-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
@@ -244,11 +244,41 @@
                 <aggregate>true</aggregate>
             </configuration>
         </plugin>
-
       </plugins>
     </pluginManagement>
 
     <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${maven-findbugs-plugin.version}</version>
+            <configuration>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mebigfatguy.fb-contrib</groupId>
+                        <artifactId>fb-contrib</artifactId>
+                        <version>${maven-findbugs-contrib-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.h3xstream.findsecbugs</groupId>
+                        <artifactId>findsecbugs-plugin</artifactId>
+                        <version>${maven-findbugs-security-plugin.version}</version>
+                    </plugin>
+                </plugins>
+                <includeFilterFile>${cs.dir}/findbugs-rules.xml</includeFilterFile>
+                <effort>Max</effort>
+                <failOnError>true</failOnError>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>findbugs-check</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>    
+            </executions>   
+        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
@@ -258,6 +288,7 @@
                 <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
                 <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
+                <includeTestSourceDirectory>true</includeTestSourceDirectory>
             </configuration>
             <executions>
                 <execution>
@@ -319,6 +350,25 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>${maven-buildnumber-plugin-version}</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>create-timestamp</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <timestampFormat>EEE, d MMM yyyy HH:mm:ss Z</timestampFormat>
+          <timestampPropertyName>timestamp</timestampPropertyName>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -326,6 +376,9 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Date>${timestamp}</Implementation-Date>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -415,6 +468,7 @@
             <exclude>**/*.jks</exclude>
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
+            <exclude>**/*.json</exclude>
             <exclude>**/*.checkstyle</exclude>
             <exclude>**/*.properties</exclude>
             <exclude>**/.gitignore</exclude>
@@ -457,6 +511,12 @@
         <artifactId>mockito-core</artifactId>
         <version>${mockito.version}</version>
         <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
     <dependency>
@@ -487,6 +547,20 @@
       <artifactId>validation-api</artifactId>
       <version>${javax.validation.version}</version>
       <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>javax.el</groupId>
+       <artifactId>javax.el-api</artifactId>
+       <version>${javax.el-api.version}</version>
+       <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>org.glassfish.web</groupId>
+       <artifactId>javax.el</artifactId>
+       <version>${javax.el-impl.version}</version>
+       <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -529,14 +603,7 @@
     <repository>
       <id>jasig-repository</id>
       <name>Jasig Maven2 Repository</name>
-      <url>http://developer.ja-sig.org/maven2</url>
-    </repository>
-
-    <repository>
-      <id>jboss</id>
-      <name>JBoss Repository</name>
-      <layout>default</layout>
-      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
     </repository>
   </repositories>
 
@@ -557,6 +624,12 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.databind.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${google.guava.version}</version>
       </dependency>
 
       <dependency>
@@ -581,6 +654,12 @@
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+            </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -606,18 +685,36 @@
         <groupId>com.github.inspektr</groupId>
         <artifactId>inspektr-audit</artifactId>
         <version>${inspektr.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
         <groupId>com.github.inspektr</groupId>
         <artifactId>inspektr-common</artifactId>
         <version>${inspektr.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
         <groupId>com.github.inspektr</groupId>
         <artifactId>inspektr-support-spring</artifactId>
         <version>${inspektr.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -628,6 +725,10 @@
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -835,6 +936,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.jasig</groupId>
+        <artifactId>spring-webflow-client-repo</artifactId>
+        <version>${spring.webflow.client.repo.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
         <version>${aspectj.version}</version>
@@ -850,12 +958,25 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate.validator.version}</version>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.unboundid</groupId>
+        <artifactId>unboundid-ldapsdk</artifactId>
+        <version>${uboundid.ldapsdk.version}</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -870,6 +991,12 @@
         <version>${quartz.version}</version>
         <type>jar</type>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -897,7 +1024,18 @@
             </exclusion>
         </exclusions>
       </dependency>
-
+      <dependency>
+          <groupId>org.apache.shiro</groupId>
+          <artifactId>shiro-core</artifactId>
+          <version>${apache.shiro.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
@@ -905,6 +1043,32 @@
         <scope>compile</scope>
       </dependency>
 
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+        <scope>test</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-security-filter</artifactId>
+        <version>${cas-server-security-filter.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>javax.cache</groupId>
+          <artifactId>cache-api</artifactId>
+          <version>${jcache.version}</version>
+          <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.jsr107.ri</groupId>
+          <artifactId>cache-ri-impl</artifactId>
+          <version>${jcache.ri.version}</version>
+          <scope>runtime</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -937,9 +1101,25 @@
   <reporting>
     <plugins>
       <plugin>
+        <!-- Excluding test javadpcs from the report set until this bug is fixed:
+        see https://jira.codehaus.org/browse/MJAVADOC-418 -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven-javadoc-plugin.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+      </reportSets>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -1002,7 +1182,22 @@
         <license.skip>true</license.skip>
         <notice.skip>true</notice.skip>
         <versions.skip>true</versions.skip>
+        <findbugs.skip>true</findbugs.skip>
       </properties>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                  <log4j.configuration>file:noLogs.xml</log4j.configuration>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>ci</id>
@@ -1045,58 +1240,72 @@
   </profiles>
 
   <properties>
-
     <!-- Dependency Versions -->
-    <spring.webflow.version>2.3.3.RELEASE</spring.webflow.version>
-    <spring.version>4.0.6.RELEASE</spring.version>
-    <ldaptive.version>1.0.3</ldaptive.version>
+    <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
+    <spring.version>4.1.4.RELEASE</spring.version>
+    <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
+    <ldaptive.version>1.0.5</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.8.2</aspectj.version>
-    <javax.validation.version>1.0.0.GA</javax.validation.version>
+    <javax.validation.version>1.1.0.Final</javax.validation.version>
     <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
-    <hibernate.validator.version>4.3.2.Final</hibernate.validator.version>
-    <hibernate.core.version>4.3.6.Final</hibernate.core.version>
-    <slf4j.version>1.7.7</slf4j.version>
+    <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
+    <hibernate.core.version>4.3.8.Final</hibernate.core.version>
+    <slf4j.version>1.7.9</slf4j.version>
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
-    <commons.codec.version>1.7</commons.codec.version>
+    <commons.codec.version>1.9</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.11</junit.version>
-    <checkstyle.version>5.7</checkstyle.version>
+    <checkstyle.version>6.3</checkstyle.version>
     <commons.lang.version>3.3.2</commons.lang.version>
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.9.5</mockito.version>
-    <ehcache.version>2.7.2</ehcache.version>
+    <ehcache.version>2.9.0</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <apache.httpclient.version>4.3.4</apache.httpclient.version>
     <joda-time.version>2.4</joda-time.version>
     <cas.client.version>3.3.1</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <reflections.version>0.9.8</reflections.version>
+    <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.2.0</jackson.databind.version>
+    <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
+    <jstl.version>1.2</jstl.version>
+    <openid4java.version>0.9.8</openid4java.version>
+    <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
+    <google.guava.version>18.0</google.guava.version>
+    <jcache.version>1.0.0</jcache.version>
+    <jcache.ri.version>1.0.0</jcache.ri.version>
+    <javax.el-api.version>2.2.5</javax.el-api.version>
+    <javax.el-impl.version>2.2.6</javax.el-impl.version>
 
     <!-- Plugin Versions -->
-    <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
+    <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
     <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
-    <maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
-    <maven-versions-plugin.version>1.3.1</maven-versions-plugin.version>
-    <maven-source-plugin.version>2.2</maven-source-plugin.version>
-    <maven-pmd-plugin.version>2.7.1</maven-pmd-plugin.version>
-    <maven-jxr-plugin.version>2.3</maven-jxr-plugin.version>
-    <maven-projectinfo-reports-plugin.version>2.4</maven-projectinfo-reports-plugin.version>
+    <maven-javadoc-plugin.version>2.10.1</maven-javadoc-plugin.version>
+    <maven-versions-plugin.version>2.1</maven-versions-plugin.version>
+    <maven-source-plugin.version>2.4</maven-source-plugin.version>
+    <maven-pmd-plugin.version>3.3</maven-pmd-plugin.version>
+    <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
+    <maven-projectinfo-reports-plugin.version>2.8</maven-projectinfo-reports-plugin.version>
     <maven-taglist-plugin.version>2.4</maven-taglist-plugin.version>
-    <maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
-    <maven-checkstyle-plugin.version>2.10</maven-checkstyle-plugin.version>
-    <maven-enforcer-plugin.version>1.2</maven-enforcer-plugin.version>
-    <maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
-    <maven-aspectj-plugin.version>1.5</maven-aspectj-plugin.version>
-    <maven-antrun-plugin.version>1.5</maven-antrun-plugin.version>
+    <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+    <maven-checkstyle-plugin.version>2.13</maven-checkstyle-plugin.version>
+    <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
+    <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+    <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <maven-findbugs-plugin.version>3.0.0</maven-findbugs-plugin.version>
+    <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
+    <maven-findbugs-security-plugin.version>1.3.0</maven-findbugs-security-plugin.version>
+    <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
 
     <!-- Project configuration -->
     <project.build.sourceVersion>1.7</project.build.sourceVersion>

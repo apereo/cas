@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -34,6 +32,9 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /**
  *
  * @author Scott Battaglia
@@ -42,10 +43,10 @@ import org.junit.Test;
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
-    private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
+    private final RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     @Test
-    public void testWithTrueRememberMeCredentials() {
+    public void verifyWithTrueRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         final AuthenticationBuilder builder = newBuilder(c);
@@ -55,7 +56,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testWithFalseRememberMeCredentials() {
+    public void verifyWithFalseRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         final AuthenticationBuilder builder = newBuilder(c);
@@ -65,7 +66,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testWithoutRememberMeCredentials() {
+    public void verifyWithoutRememberMeCredentials() {
         final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 
@@ -79,7 +80,9 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
                 .addCredential(meta)
                 .addSuccess("test", new HandlerResult(handler, meta));
 
-        this.p.populateAttributes(builder, credential);
+        if (this.p.supports(credential)) {
+            this.p.populateAttributes(builder, credential);
+        }
         return builder;
     }
 

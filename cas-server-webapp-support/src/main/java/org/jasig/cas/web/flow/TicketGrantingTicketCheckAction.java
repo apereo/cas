@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -37,31 +39,39 @@ import org.springframework.webflow.execution.RequestContext;
  * </ol>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
-public class TicketGrantingTicketCheckAction {
+public class TicketGrantingTicketCheckAction extends AbstractAction {
 
-    /** TGT does not exist event ID={@value}. */
+    /**
+     * TGT does not exist event ID={@value}.
+     **/
     public static final String NOT_EXISTS = "notExists";
 
-    /** TGT invalid event ID={@value}. */
+    /**
+     * TGT invalid event ID={@value}.
+     **/
     public static final String INVALID = "invalid";
 
-    /** TGT valid event ID={@value}. */
+    /**
+     * TGT valid event ID={@value}.
+     **/
     public static final String VALID = "valid";
 
-    /** Ticket registry searched for TGT by ID. */
+    /**
+     * The Central authentication service.
+     */
     @NotNull
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
 
     /**
      * Creates a new instance with the given ticket registry.
      *
-     * @param registry Ticket registry to query for valid tickets.
+     * @param centralAuthenticationService the central authentication service
      */
-    public TicketGrantingTicketCheckAction(final TicketRegistry registry) {
-        this.ticketRegistry = registry;
+    public TicketGrantingTicketCheckAction(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**
@@ -69,16 +79,25 @@ public class TicketGrantingTicketCheckAction {
      *
      * @param requestContext Flow request context.
      *
+     * @throws Exception in case ticket cannot be retrieved from the service layer
      * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
      */
-    public Event checkValidity(final RequestContext requestContext) {
-
+    @Override
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (!StringUtils.hasText(tgtId)) {
             return new Event(this, NOT_EXISTS);
         }
 
-        final Ticket ticket = this.ticketRegistry.getTicket(tgtId);
-        return new Event(this, ticket != null && !ticket.isExpired() ? VALID : INVALID);
+        String eventId = INVALID;
+        try {
+            final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            if (ticket != null && !ticket.isExpired()) {
+                eventId = VALID;
+            }
+        } catch (final TicketException e) {
+            logger.trace("Could not retrieve ticket id {} from registry.", e);
+        }
+        return new Event(this,  eventId);
     }
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,19 +32,19 @@ public class DefaultOpenIdUserNameExtractorTests {
     private final DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     @Test
-    public void testExtractionSuccessful() {
+    public void verifyExtractionSuccessful() {
         assertEquals("scootman28", this.extractor
                 .extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
     @Test
-    public void testExtractionFailed() {
+    public void verifyExtractionFailed() {
         assertNull(this.extractor
                 .extractLocalUsernameFromUri("test.com"));
     }
 
     @Test
-    public void testNull() {
+    public void verifyNull() {
         assertNull(this.extractor
                 .extractLocalUsernameFromUri(null));
     }

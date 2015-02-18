@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.monitor;
 
-import java.util.Formatter;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.statistics.StatisticsGateway;
+import org.apache.commons.lang3.StringUtils;
+import java.util.Formatter;
 
 /**
  * Ehcache statistics wrapper.
@@ -32,6 +32,8 @@ import net.sf.ehcache.statistics.StatisticsGateway;
  */
 public class EhCacheStatistics implements CacheStatistics {
 
+    private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
+    private static final int PERCENTAGE_VALUE = 100;
     private final Cache cache;
 
     // Flag to determine whether size units are in bytes or simple object counts
@@ -102,7 +104,7 @@ public class EhCacheStatistics implements CacheStatistics {
         if (capacity == 0) {
             return 0;
         }
-        return (int) ((capacity - getSize()) * 100 / capacity);
+        return (int) ((capacity - getSize()) * PERCENTAGE_VALUE / capacity);
     }
 
     @Override
@@ -112,21 +114,22 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public void toString(final StringBuilder builder) {
-        if (getName() != null) {
-            builder.append(getName()).append(':');
+        final String name = this.getName();
+        if (StringUtils.isNotBlank(name)) {
+            builder.append(name).append(':');
         }
         final int free = getPercentFree();
         final Formatter formatter = new Formatter(builder);
         if (useBytes) {
-            formatter.format("%.2f", heapSize / 1048510.0);
+            formatter.format("%.2f", heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             builder.append("MB heap, ");
-            formatter.format("%.2f", diskSize / 1048510.0);
+            formatter.format("%.2f", diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             builder.append("MB disk, ");
         } else {
             builder.append(heapSize).append(" items in heap, ");
             builder.append(diskSize).append(" items on disk, ");
         }
-        formatter.format("%.2f", offHeapSize / 1048510.0);
+        formatter.format("%.2f", offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
         builder.append("MB off-heap, ");
         builder.append(free).append("% free, ");
         builder.append(getEvictions()).append(" evictions");

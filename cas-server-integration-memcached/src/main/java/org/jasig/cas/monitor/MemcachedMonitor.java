@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -79,23 +79,24 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      * @return Statistics for all available hosts.
      */
     protected CacheStatistics[] getStatistics() {
-        long evictions;
-        long size;
-        long capacity;
-        String name;
-        Map<String, String> statsMap;
+
+
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
-        final List<CacheStatistics> statsList = new ArrayList<CacheStatistics>();
-        for (final SocketAddress address : allStats.keySet()) {
-            statsMap = allStats.get(address);
+        final List<CacheStatistics> statsList = new ArrayList<>();
+        for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
+            final SocketAddress key = entry.getKey();
+            final Map<String, String> statsMap = entry.getValue();
+
             if (statsMap.size() > 0) {
-                size = Long.parseLong(statsMap.get("bytes"));
-                capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                evictions = Long.parseLong(statsMap.get("evictions"));
-                if (address instanceof InetSocketAddress) {
-                    name = ((InetSocketAddress) address).getHostName();
+                final long size = Long.parseLong(statsMap.get("bytes"));
+                final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                final long evictions = Long.parseLong(statsMap.get("evictions"));
+
+                String name;
+                if (key instanceof InetSocketAddress) {
+                    name = ((InetSocketAddress) key).getHostName();
                 } else {
-                    name = address.toString();
+                    name = key.toString();
                 }
                 statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
             }

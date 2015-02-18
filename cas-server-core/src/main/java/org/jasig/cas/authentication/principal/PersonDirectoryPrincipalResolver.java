@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -30,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -39,7 +38,7 @@ import javax.validation.constraints.NotNull;
  * otherwise the credential ID is used for the principal ID.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  *
  */
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
@@ -47,13 +46,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private boolean returnNullIfNoAttributes = false;
+    private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
-    /** Optional prinicpal attribute name. */
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
+    /** Optional principal attribute name. */
     private String principalAttributeName;
 
     @Override
@@ -84,16 +87,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
 
         if (attributes == null & !this.returnNullIfNoAttributes) {
-            return new SimplePrincipal(principalId);
+            return this.principalFactory.createPrincipal(principalId);
         }
 
         if (attributes == null) {
             return null;
         }
 
-        final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
-        for (final String key : attributes.keySet()) {
-            final List<Object> values = attributes.get(key);
+        final Map<String, Object> convertedAttributes = new HashMap<>();
+        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+            final String key = entry.getKey();
+            final List<Object> values = entry.getValue();
             if (key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
@@ -108,7 +112,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         }
-        return new SimplePrincipal(principalId, convertedAttributes);
+        return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
@@ -126,6 +130,15 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**
