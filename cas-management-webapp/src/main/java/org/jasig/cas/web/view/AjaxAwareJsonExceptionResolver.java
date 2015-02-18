@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,9 +34,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String ajaxRequestHeaderName ="x-requested-with";
     private String ajaxRequestHeaderValue = "XMLHttpRequest";
@@ -62,6 +62,7 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
     @Override
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
             final Object handler, final Exception ex) {
+
         final String contentType = request.getHeader(this.ajaxRequestHeaderName);
         if (contentType != null && contentType.equals(this.ajaxRequestHeaderValue)) {
             logger.debug("Handling exception {} for ajax request indicated by header {}",
