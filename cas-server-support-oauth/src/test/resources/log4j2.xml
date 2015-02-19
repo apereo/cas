@@ -24,8 +24,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/slf4j.log" append="true"
-                     filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="target/oauth.log" append="true"
+                     filePattern="oauth-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
