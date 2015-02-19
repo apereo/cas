@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -50,7 +50,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     @Test
-    public void testDeleteService() {
+    public void verifyDeleteService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
@@ -67,7 +67,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertEquals("name", modelAndView.getModelMap().get("serviceName"));
     }
 
-    public void testDeleteServiceNoService() {
+    public void verifyDeleteServiceNoService() {
 
         final ModelAndView modelAndView = this.controller.deleteRegisteredService(1200);
         assertNotNull(modelAndView);
@@ -76,7 +76,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertEquals("", modelAndView.getModelMap().get("serviceName"));
     }
 
-    public void testManage() {
+    public void verifyManage() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");

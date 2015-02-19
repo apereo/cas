@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.support.rest;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Formatter;
@@ -54,15 +54,15 @@ import java.util.Formatter;
  * </ul>
  *
  * @author Dmitriy Kopylenko
- * @since 4.1
+ * @since 4.1.0
  */
 @RestController("/v1")
 public class TicketsResource {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+
     @Autowired
     private CentralAuthenticationService cas;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
 
     /**
      * Create new ticket granting ticket.
@@ -71,33 +71,25 @@ public class TicketsResource {
      * @param request raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @RequestMapping(value = "/tickets",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                      final HttpServletRequest request) {
-
-        Formatter fmt = null;
-        try {
-            final String tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId);
+                                                                   final HttpServletRequest request) {
+        try (Formatter fmt = new Formatter()) {
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-
-            fmt = new Formatter();
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
+            //IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
                     .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
                     .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-
             return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } finally {
-            IOUtils.closeQuietly(fmt);
         }
     }
 
@@ -106,17 +98,15 @@ public class TicketsResource {
      *
      * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
-     * @return @return ResponseEntity representing RESTful response
+     * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/tickets/{tgtId:.+}",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
-            final String serviceTicketId = this.cas.grantServiceTicket(tgtId,
+            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
                     new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
-            return new ResponseEntity<String>(serviceTicketId, HttpStatus.OK);
+            return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
@@ -129,10 +119,13 @@ public class TicketsResource {
      * Destroy ticket granting ticket.
      *
      * @param tgtId ticket granting ticket id URI path param
+     * @return {@link ResponseEntity} representing RESTful response. Signals
+     * {@link HttpStatus#OK} when successful.
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final void deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
+        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
     }
 
     /**

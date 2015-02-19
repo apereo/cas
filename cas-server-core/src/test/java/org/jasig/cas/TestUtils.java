@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -27,9 +27,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -45,19 +45,25 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.2
+ * @since 3.0.0.2
  */
 public final class TestUtils {
 
     public static final String CONST_USERNAME = "test";
+
+    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
+
+    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
+
+    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private static final String CONST_PASSWORD = "test1";
 
@@ -67,12 +73,6 @@ public final class TestUtils {
             "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
-
-    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
-
-    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
-
-    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
         // do not instantiate
@@ -121,7 +121,11 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return new SimplePrincipal(name);
+        return getPrincipal(name, Collections.EMPTY_MAP);
+    }
+
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
@@ -130,9 +134,8 @@ public final class TestUtils {
         s.setEvaluationOrder(1);
         s.setName("Test registered service");
         s.setDescription("Registered service description");
-        s.setEnabled(true);
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(new Random().nextInt(32));
+        s.setId(new SecureRandom().nextInt(32));
         return s;
     }
 
@@ -178,7 +181,7 @@ public final class TestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
         final String[] extraPrincipals) {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {

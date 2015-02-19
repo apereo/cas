@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.slf4j.Logger;
@@ -42,6 +41,11 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
 
+    /**
+     * Unique Id for serialization.
+     */
+    private static final long serialVersionUID = -6867572626767140223L;
+
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
 
@@ -56,12 +60,9 @@ public final class SamlService extends AbstractWebApplicationService {
 
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
-    private String requestId;
+    private static final int CONST_REQUEST_ID_LENGTH = 11;
 
-    /**
-     * Unique Id for serialization.
-     */
-    private static final long serialVersionUID = -6867572626767140223L;
+    private String requestId;
 
     /**
      * Instantiates a new SAML service.
@@ -143,7 +144,7 @@ public final class SamlService extends AbstractWebApplicationService {
 
     @Override
     public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map<String, String> parameters = new HashMap<>();
 
         parameters.put(CONST_PARAM_TICKET, ticketId);
         parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());
@@ -163,8 +164,8 @@ public final class SamlService extends AbstractWebApplicationService {
         }
 
         try {
-            final int position = requestBody.indexOf("RequestID=\"") + 11;
-            final int nextPosition = requestBody.indexOf("\"", position);
+            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
+            final int nextPosition = requestBody.indexOf('"', position);
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
@@ -181,19 +182,15 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = request.getReader();
-
+        try (final BufferedReader reader = request.getReader()) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
             return builder.toString();
         } catch (final Exception e) {
+            LOGGER.error("Could not obtain the saml request body from the http request", e);
             return null;
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
     }
 }

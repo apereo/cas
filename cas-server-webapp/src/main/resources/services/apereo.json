@@ -1,0 +1,9 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "id" : 0,
+  "description" : "Apereo foundation sample service",
+  "serviceId" : "^https://www.apereo.org",
+  "name" : "Apereo",
+  "theme" : "apereo",
+  "evaluationOrder" : 0
+}

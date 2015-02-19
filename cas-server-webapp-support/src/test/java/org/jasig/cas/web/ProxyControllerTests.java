@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
 
@@ -52,7 +52,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNoParams() throws Exception {
+    public void verifyNoParams() throws Exception {
         assertEquals("INVALID_REQUEST", this.proxyController
                 .handleRequestInternal(new MockHttpServletRequest(),
                         new MockHttpServletResponse()).getModel()
@@ -60,7 +60,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNonExistentPGT() throws Exception {
+    public void verifyNonExistentPGT() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("pgt", "TestService");
         request.addParameter("targetService", "testDefault");
@@ -71,7 +71,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testExistingPGT() throws Exception {
+    public void verifyExistingPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
                 "ticketGrantingTicketId", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
@@ -88,7 +88,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void testNotAuthorizedPGT() throws Exception {
+    public void verifyNotAuthorizedPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);

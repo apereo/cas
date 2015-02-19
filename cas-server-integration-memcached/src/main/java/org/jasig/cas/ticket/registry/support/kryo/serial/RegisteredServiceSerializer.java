@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,43 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * Serializier for {@link org.jasig.cas.services.RegisteredService} instances.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
-public class RegisteredServiceSerializer  extends SimpleSerializer<RegisteredService> {
-    /** Kyro instance. **/
-    protected final Kryo kryo;
-
-    /**
-     * Instantiates a new simple web application service serializer.
-     *
-     * @param kryo the kryo
-     */
-    public RegisteredServiceSerializer(final Kryo kryo) {
-        this.kryo = kryo;
+public class RegisteredServiceSerializer  extends Serializer<RegisteredService> {
+    
+    @Override
+    public void write(final Kryo kryo, final Output output, final RegisteredService service) {
+        kryo.writeObject(output, service.getServiceId());
     }
 
     @Override
-    public void write(final ByteBuffer buffer, final RegisteredService service) {
-        kryo.writeObjectData(buffer, service.getServiceId());
-    }
-
-    @Override
-    public RegisteredService read(final ByteBuffer buffer) {
-        final String id = kryo.readObjectData(buffer, String.class);
+    public RegisteredService read(final Kryo kryo, final Input input, final Class<RegisteredService> type) {
+        final String id = kryo.readObject(input, String.class);
         final AbstractRegisteredService svc = new RegisteredServiceImpl();
         svc.setServiceId(id);
         return svc;

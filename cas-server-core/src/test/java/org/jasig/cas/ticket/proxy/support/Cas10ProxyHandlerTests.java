@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,27 +18,30 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas10ProxyHandlerTests {
 
-    private ProxyHandler proxyHandler = new Cas10ProxyHandler();
+    private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
-    public void testNoCredentialsOrProxy() {
+    public void verifyNoCredentialsOrProxy() {
         assertNull(this.proxyHandler.handle(null, null));
     }
 
     @Test
-    public void testCredentialsAndProxy() {
-        assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), "test"));
+    public void verifyCredentialsAndProxy() {
+        final TicketGrantingTicket proxyGrantingTicket = mock(TicketGrantingTicket.class);
+        when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
+        assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));
     }
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,11 @@
  */
 package org.jasig.cas.integration.restlet;
 
-import java.security.Principal;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -46,6 +37,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.WebRequest;
+
+import java.security.Principal;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles the creation of Ticket Granting Tickets.
@@ -79,16 +79,13 @@ public class TicketResource extends ServerResource {
         LOGGER.debug("Obtaining credentials...");
         final Credential c = obtainCredentials();
 
-        Formatter fmt = null;
-        try {
-            final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
+        try (final Formatter fmt = new Formatter()) {
+            final TicketGrantingTicket ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
-            final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
+            final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId.getId());
             getResponse().setLocationRef(ticketReference);
 
-            fmt = new Formatter();
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-
             fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription())
                .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference)
                .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
@@ -98,8 +95,6 @@ public class TicketResource extends ServerResource {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fmt);
         }
     }
     /**
@@ -136,7 +131,7 @@ public class TicketResource extends ServerResource {
      */
     private void logFormRequest(final Form form) {
         if (LOGGER.isDebugEnabled()) {
-            final Set<String> pairs = new HashSet<String>();
+            final Set<String> pairs = new HashSet<>();
             for (final String name : form.getNames()) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(name);
@@ -152,7 +147,7 @@ public class TicketResource extends ServerResource {
         }
     }
 
-    protected class RestletWebRequest implements WebRequest {
+    protected static class RestletWebRequest implements WebRequest {
         private final Form form;
         private final Request request;
 
@@ -198,7 +193,7 @@ public class TicketResource extends ServerResource {
 
         @Override
         public Map<String, String[]> getParameterMap() {
-            final Map<String, String[]> conversion = new HashMap<String, String[]>();
+            final Map<String, String[]> conversion = new HashMap<>();
 
             for (final Map.Entry<String, String> entry : this.form.getValuesMap().entrySet()) {
                 conversion.put(entry.getKey(), new String[] {entry.getValue()});

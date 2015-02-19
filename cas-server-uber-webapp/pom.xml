@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -26,7 +26,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
-    <name>Jasig CAS - Uber WAR - DEPRECATED</name>
+    <name>Apereo CAS - Uber WAR - DEPRECATED</name>
     <description>
         The CAS uber-webapp module is deprecated and will be removed from subsequent CAS releases.
         You should not attempt to include this module in your CAS Maven overlays, and rather try to use the cas-server-webapp

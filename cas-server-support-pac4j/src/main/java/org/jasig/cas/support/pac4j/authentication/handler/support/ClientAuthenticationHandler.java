@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
@@ -31,7 +25,8 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -42,6 +37,12 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
+import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+
 /**
  * This handler authenticates the client credentials : it uses them to get the user profile returned by the provider
  * for an authenticated user.
@@ -51,6 +52,10 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  */
 @SuppressWarnings("unchecked")
 public final class ClientAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
+    /** Factory to create the principal type. **/
+    @NotNull
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * The clients for authentication.
@@ -111,7 +116,7 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
               return new HandlerResult(
                       this,
                       new BasicCredentialMetaData(credential),
-                      new SimplePrincipal(id, userProfile.getAttributes()));
+                      this.principalFactory.createPrincipal(id, userProfile.getAttributes()));
             }
         }
 
@@ -124,5 +129,9 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
 
     public void setTypedIdUsed(final boolean typedIdUsed) {
         this.typedIdUsed = typedIdUsed;
+    }
+    
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 }

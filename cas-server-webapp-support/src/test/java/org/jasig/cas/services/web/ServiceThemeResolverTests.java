@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -56,13 +56,13 @@ public class ServiceThemeResolverTests {
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
         this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        final Map<String, String> mobileBrowsers = new HashMap<String, String>();
+        final Map<String, String> mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
         this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
     }
 
     @Test
-    public void testGetServiceThemeDoesNotExist() {
+    public void verifyGetServiceThemeDoesNotExist() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
@@ -82,7 +82,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetDefaultService() {
+    public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
@@ -90,7 +90,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetDefaultServiceWithNoServicesManager() {
+    public void verifyGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");

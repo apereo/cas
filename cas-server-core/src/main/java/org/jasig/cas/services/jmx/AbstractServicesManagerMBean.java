@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.services.jmx;
 
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -43,7 +42,7 @@ import java.util.List;
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
 
     @NotNull
-    private T servicesManager;
+    private final T servicesManager;
 
     /**
      * Instantiates a new abstract services manager m bean.
@@ -65,13 +64,11 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
      */
     @ManagedAttribute(description = "Retrieves the list of Registered Services in a slightly friendlier output.")
     public final List<String> getRegisteredServicesAsStrings() {
-        final List<String> services = new ArrayList<String>();
+        final List<String> services = new ArrayList<>();
 
         for (final RegisteredService r : this.servicesManager.getAllServices()) {
         services.add(new StringBuilder().append("id: ").append(r.getId())
                 .append(" name: ").append(r.getName())
-                .append(" enabled: ").append(r.isEnabled())
-                .append(" ssoEnabled: ").append(r.isSsoEnabled())
                 .append(" serviceId: ").append(r.getServiceId())
                 .toString());
         }
@@ -124,7 +121,7 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
         Assert.notNull(r, "invalid RegisteredService id");
 
         // we screwed up our APIs in older versions of CAS, so we need to CAST this to do anything useful.
-        ((RegisteredServiceImpl) r).setEnabled(newState);
+        ((DefaultRegisteredServiceAccessStrategy) r.getAccessStrategy()).setEnabled(newState);
         this.servicesManager.save(r);
     }
 }

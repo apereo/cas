@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -54,7 +54,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
  *
  * @author John Gasper
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
@@ -91,10 +91,11 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
     @Override
     protected AbstractUrlBasedView buildView(final String viewName) throws Exception {
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        final WebApplicationService service = (WebApplicationService) WebUtils.getService(requestContext);
+        final WebApplicationService service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final String themeId = service != null && registeredService != null && registeredService.isEnabled()
+        final String themeId = service != null && registeredService != null
+                && registeredService.getAccessStrategy().isServiceAccessAllowed()
                 && StringUtils.hasText(registeredService.getTheme()) ? registeredService.getTheme() : defaultThemeId;
 
         final String themePrefix = String.format("%s/%s/ui/", pathPrefix, themeId);

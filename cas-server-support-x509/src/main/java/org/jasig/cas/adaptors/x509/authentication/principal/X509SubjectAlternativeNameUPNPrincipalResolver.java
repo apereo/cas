@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,12 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
-
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERUTF8String;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
@@ -39,7 +36,7 @@ import java.util.List;
  * from the provided certificate if available as a resolved principal id.
  *
  * @author Dmitriy Kopylenko
- * @since 4.1
+ * @since 4.1.0
  */
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
 
@@ -56,8 +53,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
      *
      * @see AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
-     *     X509Certificate#getSubjectAlternativeNames</a>
+     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
      */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
@@ -94,7 +90,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
             final DERObjectIdentifier id = DERObjectIdentifier.getInstance(seq.getObjectAt(0));
-            if (id.getId().equals(UPN_OBJECTID)) {
+            if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 final DERUTF8String str = DERUTF8String.getInstance(obj.getObject());
                 return str.getString();
@@ -141,19 +137,16 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         DERObject oct = null;
-        ASN1InputStream input = null;
-        ByteArrayInputStream bInput = null;
-        try {
-            bInput = new ByteArrayInputStream(sanValue);
-            input = new ASN1InputStream(bInput);
-            oct = input.readObject();
+        try (final ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
+            try (final ASN1InputStream input = new ASN1InputStream(bInput)) {
+                oct = input.readObject();
+            } catch (final IOException e) {
+                logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
+            }
+            return ASN1Sequence.getInstance(oct);
         } catch (final IOException e) {
-            logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(bInput);
-            IOUtils.closeQuietly(input);
+            logger.error("An error has occurred while reading the subject alternative name value", e);
         }
-        //It is OK to pass null DERObject to this method (in case of handled IOException). null will be returned
-        return ASN1Sequence.getInstance(oct);
+        return null;
     }
 }

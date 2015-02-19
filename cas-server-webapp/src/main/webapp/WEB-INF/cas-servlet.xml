@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -48,39 +48,39 @@
   <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
         p:paramName="theme" />
 
-  <!-- View Resolver -->
+  <!-- View Resolver  -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
     <property name="basenames">
-      <util:list>
-        <value>protocol_views</value>
-      </util:list>
+        <util:list>
+            <value>cas_views</value>
+        </util:list>
     </property>
   </bean>
-  
-  <!-- Locale Resolver -->
-  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
 
-  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+  <!--
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="1"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+  -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="1"/>
+        p:order="2"/>
 
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
-        p:order="2"/>
-  
-  <!--
-  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="3"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
-  -->
-  	
+        p:order="3"/>
+
+  <!-- Locale Resolver -->
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
+
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -96,7 +96,6 @@
         
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
-        
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
@@ -121,7 +120,9 @@
   <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="loginFlowRegistry" p:order="2">
     <property name="interceptors">
-      <ref bean="localeChangeInterceptor" />
+        <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+            <ref bean="localeChangeInterceptor" />
+        </array>
     </property>
   </bean>
 
@@ -129,16 +130,27 @@
         p:supportedFlowId="login" p:flowExecutor-ref="loginFlowExecutor" p:flowUrlHandler-ref="loginFlowUrlHandler" />
 
   <bean id="loginFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
+              
+  <bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl" 
+        c:definitionLocator-ref="loginFlowRegistry"
+        c:executionFactory-ref="loginFlowExecutionFactory"
+        c:executionRepository-ref="loginFlowExecutionRepository" />
+   
+  <bean name="loginFlowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"
+        p:executionKeyFactory-ref="loginFlowExecutionRepository"/>
+  
+  <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+        c:flowExecutionFactory-ref="loginFlowExecutionFactory"
+        c:flowDefinitionLocator-ref="loginFlowRegistry"
+        c:transcoder-ref="loginFlowStateTranscoder" />
 
-  <webflow:flow-executor id="loginFlowExecutor" flow-registry="loginFlowRegistry">
-    <webflow:flow-execution-attributes>
-      <webflow:always-redirect-on-pause value="false" />
-      <webflow:redirect-in-same-state value="false" />
-    </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
-  </webflow:flow-executor>
+  <!--
+  The login flow transcoder encrypts the flow execution identifier
+  using the  128-bit AES in CBC ciphering mode with compression turned on.
+
+  This behaviour can be altered by defining an explicit CipherBean.
+  -->
+  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
 
   <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
     <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
@@ -147,9 +159,11 @@
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
-    <property name="interceptors">
-      <ref bean="localeChangeInterceptor" />
-    </property>
+      <property name="interceptors">
+          <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+              <ref bean="localeChangeInterceptor" />
+          </array>
+      </property>
   </bean>
 
   <bean id="logoutHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
@@ -163,9 +177,6 @@
       <webflow:always-redirect-on-pause value="false" />
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
   <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
@@ -175,9 +186,6 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
-
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
-        p:timeToDieInSeconds="${terminate.web.session.timeout:2}"/>
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">
@@ -228,9 +236,8 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:ticketRegistry-ref="ticketRegistry"
-        p:casTicketSuffix="${host.name}"
-        p:viewPath="/WEB-INF/view/jsp/monitoring/viewStatistics.jsp" />
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        p:casTicketSuffix="${host.name}"/>
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
@@ -245,12 +252,15 @@
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        p:servicesManager-ref="servicesManager"  />
+
+  <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketRegistry-ref="ticketRegistry"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"/>
 
   <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
 
@@ -276,7 +286,7 @@
         p:messageInterpolator-ref="messageInterpolator"/>
 
   <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
-        c:registry-ref="ticketRegistry" />
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="terminateSessionAction" class="org.jasig.cas.web.flow.TerminateSessionAction"
         c:cas-ref="centralAuthenticationService"

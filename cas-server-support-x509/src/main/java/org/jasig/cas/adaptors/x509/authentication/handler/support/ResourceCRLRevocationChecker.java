@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,13 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
+
+import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -28,14 +35,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.security.auth.x500.X500Principal;
-
-import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
 
 /**
  * CRL-based revocation checker that uses one or more CRL resources to fetch
@@ -82,7 +81,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      * at least one non-null element.
      */
     public ResourceCRLRevocationChecker(final Resource[] crls) {
-        this.fetcher = new CRLFetcher(crls);
+        this.fetcher = new CRLFetcher(crls, this);
     }
 
     /**
@@ -154,7 +153,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     /**
      * Handles details of fetching CRL data from resources.
      */
-    protected class CRLFetcher {
+    private static class CRLFetcher {
+        private final ResourceCRLRevocationChecker crlRevocationChecker;
         /** Logger instance. */
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -166,20 +166,22 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          *
          * @param crls Resources containing CRL data.  MUST NOT be null and MUST have
          * at least one non-null element.
+         * @param crlRevocationChecker the crl revocation checker
          */
-        public CRLFetcher(final Resource[] crls) {
+        public CRLFetcher(final Resource[] crls, final ResourceCRLRevocationChecker crlRevocationChecker) {
             if (crls == null) {
                 throw new IllegalArgumentException("CRL resources cannot be null.");
             }
-            this.resources = new ArrayList<Resource>();
+            this.resources = new ArrayList<>();
             for (Resource r : crls) {
                 if (r != null) {
                     this.resources.add(r);
                 }
             }
-            if (this.resources.size() == 0) {
+            if (this.resources.isEmpty()) {
                 throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
             }
+            this.crlRevocationChecker = crlRevocationChecker;
         }
 
         /**
@@ -192,7 +194,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             for (Resource r : this.resources) {
                 logger.debug("Fetching CRL data from {}", r);
                 try {
-                    addCrl(CertUtils.fetchCRL(r));
+                    this.crlRevocationChecker.addCrl(CertUtils.fetchCRL(r));
                 } catch (final Exception e) {
                     if (throwOnError) {
                         throw new RuntimeException("Error fetching CRL from " + r, e);

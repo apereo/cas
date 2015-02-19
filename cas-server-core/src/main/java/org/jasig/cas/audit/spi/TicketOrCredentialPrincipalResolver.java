@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -20,7 +20,9 @@ package org.jasig.cas.audit.spi;
 
 import com.github.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -48,15 +50,29 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
     @NotNull
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Instantiates a new ticket or credential principal resolver.
      *
+     * @deprecated As of 4.1 access to the registry is no longer relevant
+     * Consider using alternative constructors instead.
      * @param ticketRegistry the ticket registry
      */
+    @Deprecated
     public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        LOGGER.warn("The constructor is deprecated and will be removed. Consider an alternate constructor");
+        this.centralAuthenticationService = null;
+    }
+
+    /**
+     * Instantiates a new Ticket or credential principal resolver.
+     *
+     * @param centralAuthenticationService the central authentication service
+     * @since 4.1.0
+     */
+    public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @Override
@@ -109,13 +125,17 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         if (arg1 instanceof Credential) {
             return arg1.toString();
         } else if (arg1 instanceof String) {
-            final Ticket ticket = this.ticketRegistry.getTicket((String) arg1);
-            if (ticket instanceof ServiceTicket) {
-                final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-                return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
-            } else if (ticket instanceof TicketGrantingTicket) {
-                final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-                return tgt.getAuthentication().getPrincipal().getId();
+            try {
+                final Ticket ticket = this.centralAuthenticationService.getTicket((String) arg1, Ticket.class);
+                if (ticket instanceof ServiceTicket) {
+                    final ServiceTicket serviceTicket = (ServiceTicket) ticket;
+                    return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
+                } else if (ticket instanceof TicketGrantingTicket) {
+                    final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
+                    return tgt.getAuthentication().getPrincipal().getId();
+                }
+            } catch (final InvalidTicketException e) {
+                LOGGER.trace(e.getMessage(), e);
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         } else {

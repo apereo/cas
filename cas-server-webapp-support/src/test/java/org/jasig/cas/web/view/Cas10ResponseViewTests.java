@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -38,6 +38,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public class Cas10ResponseViewTests {
 
@@ -47,15 +48,15 @@ public class Cas10ResponseViewTests {
 
     @Before
     public void setUp() throws Exception {
-        this.model = new HashMap<String, Object>();
-        final List<Authentication> list = new ArrayList<Authentication>();
+        this.model = new HashMap<>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new ImmutableAssertion(
                 TestUtils.getAuthentication(), list, TestUtils.getService("TestService"), true));
     }
 
     @Test
-    public void testSuccessView() throws Exception {
+    public void verifySuccessView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(true);
         this.view.render(this.model, new MockHttpServletRequest(), response
@@ -64,7 +65,7 @@ public class Cas10ResponseViewTests {
     }
 
     @Test
-    public void testFailureView() throws Exception {
+    public void verifyFailureView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(false);
         this.view.render(this.model, new MockHttpServletRequest(),

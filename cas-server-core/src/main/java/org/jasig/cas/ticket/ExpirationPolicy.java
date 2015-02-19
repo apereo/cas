@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,12 +26,12 @@ import java.io.Serializable;
  * Ticket to be.
  *
  * @author Scott Battaglia
-
- * @since 3.0
+ *
  * <p>
  * This is a published and supported CAS Server 3 API.
  * </p>
  * @see org.jasig.cas.ticket.Ticket
+ * @since 3.0.0
  */
 public interface ExpirationPolicy extends Serializable {
 

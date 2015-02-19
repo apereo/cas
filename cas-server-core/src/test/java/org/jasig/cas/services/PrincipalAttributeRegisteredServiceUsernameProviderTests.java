@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,15 +31,15 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     @Test
-    public void testUsernameByPrincipalAttribute() {
+    public void verifyUsernameByPrincipalAttribute() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
-        final Map<String, Object> attrs = new HashMap<String, Object>();
+        final Map<String, Object> attrs = new HashMap<>();
         attrs.put("userid", "u1");
         attrs.put("cn", "TheName");
         
@@ -53,11 +53,11 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
     
     @Test
-    public void testUsernameByPrincipalAttributeNotFound() {
+    public void verifyUsernameByPrincipalAttributeNotFound() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         
-        final Map<String, Object> attrs = new HashMap<String, Object>();
+        final Map<String, Object> attrs = new HashMap<>();
         attrs.put("userid", "u1");
                 
         final Principal p = mock(Principal.class);
@@ -70,7 +70,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 

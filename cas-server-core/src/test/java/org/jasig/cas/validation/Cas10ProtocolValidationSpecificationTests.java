@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,48 +25,48 @@ import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
-    public void testRenewGettersAndSettersFalse() {
+    public void verifyRenewGettersAndSettersFalse() {
         final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     @Test
-    public void testRenewGettersAndSettersTrue() {
+    public void verifyRenewGettersAndSettersTrue() {
         final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }
 
     @Test
-    public void testRenewAsTrueAsConstructor() {
+    public void verifyRenewAsTrueAsConstructor() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isRenew());
     }
 
     @Test
-    public void testRenewAsFalseAsConstructor() {
+    public void verifyRenewAsFalseAsConstructor() {
         assertFalse(new Cas10ProtocolValidationSpecification(false).isRenew());
     }
 
     @Test
-    public void testSatisfiesSpecOfTrue() {
+    public void verifySatisfiesSpecOfTrue() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
-    public void testNotSatisfiesSpecOfTrue() {
+    public void verifyNotSatisfiesSpecOfTrue() {
         assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
-    public void testSatisfiesSpecOfFalse() {
+    public void verifySatisfiesSpecOfFalse() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
-    public void testSatisfiesSpecOfFalse2() {
+    public void verifySatisfiesSpecOfFalse2() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 

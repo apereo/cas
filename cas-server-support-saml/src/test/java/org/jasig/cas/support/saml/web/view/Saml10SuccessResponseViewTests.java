@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,7 +22,8 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
@@ -37,15 +38,14 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -62,11 +62,10 @@ public class Saml10SuccessResponseViewTests {
     @Before
     public void setUp() throws Exception {
 
-        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        final List<RegisteredService> list = new ArrayList<>();
 
         final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
         regSvc.setServiceId(TestUtils.getService().getId());
-        regSvc.setEnabled(true);
         regSvc.setName("Test Service");
         regSvc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
@@ -75,22 +74,21 @@ public class Saml10SuccessResponseViewTests {
         dao.setRegisteredServices(list);
         final ServicesManager servicesManager = new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
-        this.response.setServicesManager(servicesManager);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
     }
 
     @Test
-    public void testResponse() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+    public void verifyResponse() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
 
-        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
-        attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
-        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -119,12 +117,12 @@ public class Saml10SuccessResponseViewTests {
     }
 
     @Test
-    public void testResponseWithNoAttributes() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+    public void verifyResponseWithNoAttributes() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
 
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal");
 
-        final Map<String, Object> authAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -147,14 +145,14 @@ public class Saml10SuccessResponseViewTests {
     }
 
     @Test
-    public void testResponseWithoutAuthMethod() throws Exception {
-        final Map<String, Object> model = new HashMap<String, Object>();
+    public void verifyResponseWithoutAuthMethod() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
 
-        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
-        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
-        final Map<String, Object> authnAttributes = new HashMap<String, Object>();
+        final Map<String, Object> authnAttributes = new HashMap<>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);

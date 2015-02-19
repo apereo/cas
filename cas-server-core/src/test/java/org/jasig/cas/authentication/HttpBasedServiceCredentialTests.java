@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -27,26 +27,26 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class HttpBasedServiceCredentialTests {
 
     @Test
-    public void testProperUrl() {
+    public void verifyProperUrl() {
         assertEquals(TestUtils.CONST_GOOD_URL, TestUtils.getHttpBasedServiceCredentials().getCallbackUrl()
                 .toExternalForm());
     }
 
     @Test
-    public void testEqualsWithNull() throws Exception {
+    public void verifyEqualsWithNull() throws Exception {
         final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
                 TestUtils.getRegisteredService("https://some.app.edu"));
 
-        assertFalse(c.equals(null));
+        assertNotEquals(c, null);
     }
 
     @Test
-    public void testEqualsWithFalse() throws Exception {
+    public void verifyEqualsWithFalse() throws Exception {
         final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
                 TestUtils.getRegisteredService("https://some.app.edu"));
         final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"),
@@ -57,7 +57,7 @@ public final class HttpBasedServiceCredentialTests {
     }
 
     @Test
-    public void testEqualsWithTrue() throws Exception {
+    public void verifyEqualsWithTrue() throws Exception {
         final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),
                 TestUtils.getRegisteredService("https://some.app.edu"));
         final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.cnn.com"),

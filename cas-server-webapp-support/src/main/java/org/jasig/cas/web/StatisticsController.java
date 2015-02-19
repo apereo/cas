@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,10 @@
  */
 package org.jasig.cas.web;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
-
+import org.apache.commons.collections.functors.TruePredicate;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.perf4j.log4j.GraphingStatisticsAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +31,17 @@ import org.springframework.web.servlet.view.InternalResourceView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @author Scott Battaglia
  * @since 3.3.5
  */
 public final class StatisticsController extends AbstractController {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
@@ -53,7 +51,9 @@ public final class StatisticsController extends AbstractController {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 
-    private final TicketRegistry ticketRegistry;
+    private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 
@@ -61,13 +61,15 @@ public final class StatisticsController extends AbstractController {
 
     private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
 
+    private final CentralAuthenticationService centralAuthenticationService;
+
     /**
      * Instantiates a new statistics controller.
      *
-     * @param ticketRegistry the ticket registry
+     * @param centralAuthenticationService the CAS service layer
      */
-    public StatisticsController(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    public StatisticsController(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     public void setCasTicketSuffix(final String casTicketSuffix) {
@@ -89,9 +91,10 @@ public final class StatisticsController extends AbstractController {
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
                         NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
                         new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
-        modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / 1024 / 1024);
-        modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
-        modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
+
+        modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
+        modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
+        modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
         modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
@@ -103,7 +106,7 @@ public final class StatisticsController extends AbstractController {
         int expiredSts = 0;
 
         try {
-            final Collection<Ticket> tickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.getInstance());
 
             for (final Ticket ticket : tickets) {
                 if (ticket instanceof ServiceTicket) {
@@ -137,6 +140,14 @@ public final class StatisticsController extends AbstractController {
     }
 
     /**
+     * Convert to megabytes from bytes.
+     * @param bytes the total number of bytes
+     * @return value converted to MB
+     */
+    private double convertToMegaBytes(final double bytes) {
+        return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
+    }
+    /**
      * Calculates the up time.
      *
      * @param difference the difference
@@ -155,6 +166,6 @@ public final class StatisticsController extends AbstractController {
         final String currentLabel = labels.remove();
         final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
 
-        return Integer.toString(new Double(time).intValue()) + " "+ label + " " + calculateUptime(newDifference, calculations, labels);
+        return Integer.toString((int) time) + " " + label + " " + calculateUptime(newDifference, calculations, labels);
     }
 }

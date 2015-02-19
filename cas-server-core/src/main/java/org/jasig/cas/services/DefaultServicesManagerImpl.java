@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -45,10 +45,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
+    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     /**
      * Instantiates a new default services manager impl.
@@ -62,13 +62,14 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
-     * <p>
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
-     * @deprecated As of 4.1. Use {@link org.jasig.cas.services.DefaultServicesManagerImpl(ServiceRegistryDao)}
+     *
+     * @deprecated
+     * <p>As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
      * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
      * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
-     * for more details.
+     * for more details.</p>
      *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
@@ -98,9 +99,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /**
      * {@inheritDoc}
-     * Note, if the repository is empty, this implementation will return a default service to grant all access.
-     * <p>
-     * This preserves default CAS behavior.
      */
     @Override
     public RegisteredService findServiceBy(final Service service) {
@@ -165,7 +163,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      */
     private void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<Long, RegisteredService>();
+                new ConcurrentHashMap<>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
             LOGGER.debug("Adding registered service {}", r.getServiceId());

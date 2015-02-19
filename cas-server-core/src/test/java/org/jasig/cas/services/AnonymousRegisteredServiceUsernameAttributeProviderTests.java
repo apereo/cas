@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.services;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -29,25 +29,25 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
-    public void testPrincipalResolution() {
+    public void verifyPrincipalResolution() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator("casrox"));
         
         final Service service = mock(Service.class);
         when(service.getId()).thenReturn("id");
-        final Principal principal = new SimplePrincipal("uid");
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("uid");
         final String id = provider.resolveUsername(principal, service);
         assertNotNull(id);
     }
 
     @Test
-    public void testEquality() {
+    public void verifyEquality() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider =
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator("casrox"));

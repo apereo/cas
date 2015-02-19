@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,6 @@
  */
 package org.jasig.cas.support.oauth;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -35,6 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Iterator;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -50,7 +47,8 @@ public final class OAuthUtils {
     /**
      * Instantiates a new OAuth utils.
      */
-    private OAuthUtils() {}
+    private OAuthUtils() {
+    }
 
     /**
      * Write to the output this error text and return a null view.
@@ -73,15 +71,11 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        PrintWriter printWriter = null;
-        try {
-            printWriter = response.getWriter();
+        try (PrintWriter printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
             LOGGER.error("Failed to write to response", e);
-        } finally {
-            IOUtils.closeQuietly(printWriter);
         }
         return null;
     }
@@ -122,10 +116,10 @@ public final class OAuthUtils {
     public static String addParameter(final String url, final String name, final String value) {
         final StringBuilder sb = new StringBuilder();
         sb.append(url);
-        if (url.indexOf("?") >= 0) {
-            sb.append("&");
+        if (url.indexOf('?') >= 0) {
+            sb.append('&');
         } else {
-            sb.append("?");
+            sb.append('?');
         }
         sb.append(name);
         sb.append("=");
@@ -145,13 +139,12 @@ public final class OAuthUtils {
      * @param clientId the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
-    public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager,
-                                                                   final String clientId) {
+    public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
         final Iterator<RegisteredService> it = servicesManager.getAllServices().iterator();
         while (it.hasNext()) {
             final RegisteredService aService = it.next();
             if (aService instanceof OAuthRegisteredService) {
-                final OAuthRegisteredService service  = (OAuthRegisteredService) aService;
+                final OAuthRegisteredService service = (OAuthRegisteredService) aService;
                 if (service.getClientId().equals(clientId)) {
                     return service;
                 }

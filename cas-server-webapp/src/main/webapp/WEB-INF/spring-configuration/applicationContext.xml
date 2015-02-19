@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -23,9 +23,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
@@ -46,6 +48,11 @@
     -->
     <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
 
+    <!--
+    | The base-package indicates where components stored. Spring will scan this
+    | folder and find out the annotated beans and register it in Spring container.
+    -->
+    <context:component-scan base-package="org.jasig.cas" />
 
     <!-- 
         Message source for this context, loaded from localized "messages_xx" files.]
@@ -85,20 +92,22 @@
           p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"  abstract="true"
-          c:readTimeout="${http.client.read.timeout:5000}"
-          c:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
-          c:redirectsEnabled="false" c:circularRedirectsAllowed="false"  />
+    <!-- HTTP clients -->
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" abstract="true"
+        p:readTimeout="${http.client.read.timeout:5000}"
+        p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="trustStoreSslSocketFactory"
-          class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
-          c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
-          c:trustStorePassword="${http.client.truststore.psw:changeit}" />
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
+        p:redirectsEnabled="false" p:circularRedirectsAllowed="false" />
 
-    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" parent="httpClient"
-          c:sslSocketFactory-ref="trustStoreSslSocketFactory" />
+    <bean id="trustStoreSslSocketFactory" class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
+        c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
+        c:trustStorePassword="${http.client.truststore.psw:changeit}" />
+
+    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+         parent="httpClient" p:sslSocketFactory-ref="trustStoreSslSocketFactory" />
+
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
@@ -108,21 +117,22 @@
           p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 
     <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
-    
+
+    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.DefaultPrincipalFactory"
+            scope="prototype"/>
+
     <!-- CentralAuthenticationService -->
-    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
-        <constructor-arg index="0" ref="ticketRegistry"/>
-        <constructor-arg index="1">
-          <null />
-        </constructor-arg>
-        <constructor-arg index="2" ref="authenticationManager"/>
-        <constructor-arg index="3" ref="ticketGrantingTicketUniqueIdGenerator"/>
-        <constructor-arg index="4" ref="uniqueIdGeneratorsMap"/>
-        <constructor-arg index="5" ref="grantingTicketExpirationPolicy"/>
-        <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
-        <constructor-arg index="7" ref="servicesManager"/>
-        <constructor-arg index="8" ref="logoutManager"/>
-    </bean>
+    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          c:ticketRegistry-ref="ticketRegistry"
+          c:serviceTicketRegistry="#{null}"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
+          c:authenticationManager-ref="authenticationManager"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
+          c:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
+          c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
+          c:servicesManager-ref="servicesManager"
+          c:logoutManager-ref="logoutManager"
+          p:principalFactory-ref="principalFactory"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -47,7 +46,7 @@ import java.util.regex.Pattern;
  * with the service or the service was not found, a default theme will be used.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ServiceThemeResolver extends AbstractThemeResolver {
 
@@ -56,7 +55,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     /** The ServiceRegistry to look up the service. */
     private ServicesManager servicesManager;
 
-    private Map<Pattern, String> overrides = new HashMap<Pattern, String>();
+    private Map<Pattern, String> overrides = new HashMap<>();
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
@@ -82,7 +81,8 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final Service service = WebUtils.getService(context);
         if (service != null) {
             final RegisteredService rService = this.servicesManager.findServiceBy(service);
-            if (rService != null && rService.isEnabled() && StringUtils.isNotBlank(rService.getTheme())) {
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()
+                    && StringUtils.isNotBlank(rService.getTheme())) {
                 LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
                 final CasThemeResourceBundleMessageSource messageSource = new CasThemeResourceBundleMessageSource();
                 messageSource.setBasename(rService.getTheme());
@@ -117,7 +117,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      */
     public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
         // initialize the overrides variable to an empty map
-        this.overrides = new HashMap<Pattern, String>();
+        this.overrides = new HashMap<>();
 
         for (final Map.Entry<String, String> entry : mobileOverrides.entrySet()) {
             this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
@@ -126,7 +126,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {
         @Override
-        protected ResourceBundle doGetBundle(final String basename, final Locale locale) throws MissingResourceException {
+        protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
             try {
                 final ResourceBundle bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
                 if (bundle != null && bundle.keySet().size() > 0) {

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,7 +34,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class SimpleWebApplicationServiceImplTests {
 
     @Test
-    public void testResponse() {
+    public void verifyResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -45,7 +45,15 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseForJsession() {
+    public void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("service", "service");
+        final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        assertNotNull(impl);
+    }
+
+    @Test
+    public void verifyResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -54,7 +62,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicket() {
+    public void verifyResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -66,7 +74,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicketAndNoParameterInServiceURL() {
+    public void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
@@ -79,7 +87,7 @@ public class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void testResponseWithNoTicketAndOneParameterInServiceURL() {
+    public void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);

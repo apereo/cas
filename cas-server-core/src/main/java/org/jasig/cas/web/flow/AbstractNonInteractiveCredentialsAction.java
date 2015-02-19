@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,23 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
@@ -37,10 +42,17 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author Scott Battaglia
 
- * @since 3.0.4
+ * @since 3.0.0.4
  */
-public abstract class AbstractNonInteractiveCredentialsAction extends
-    AbstractAction {
+public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
+
+    /** The logger instance. */
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The Principal factory.
+     */
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -72,12 +84,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
                         service,
                             credential);
-                WebUtils.putServiceTicketInRequestScope(context,
-                    serviceTicketId);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 return result("warn");
             } catch (final AuthenticationException e) {
                 onError(context, credential);
@@ -89,7 +100,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInRequestScope(
+            WebUtils.putTicketGrantingTicketInScopes(
                 context,
                 this.centralAuthenticationService
                     .createTicketGrantingTicket(credential));
@@ -104,6 +115,15 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 
     /**

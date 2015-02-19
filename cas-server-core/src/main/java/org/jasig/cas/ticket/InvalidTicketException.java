@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,16 +22,16 @@ package org.jasig.cas.ticket;
  * TicketException to alert that a Ticket was not found or that it is expired.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class InvalidTicketException extends TicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
 
-    private String ticketId = null;
-
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
+
+    private final String ticketId;
 
     /**
      * Constructs a InvalidTicketException with the default exception code.
@@ -51,6 +51,7 @@ public class InvalidTicketException extends TicketException {
      */
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
+        this.ticketId = ticketId;
     }
 
     /**

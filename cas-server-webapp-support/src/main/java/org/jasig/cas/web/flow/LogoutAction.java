@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
@@ -33,6 +28,11 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 /**
  * Action to delete the TGT and the appropriate cookies.
  * It also performs the back-channel SLO on the services accessed by the user during its browsing.
@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author Scott Battaglia
  * @author Jerome Leleu
- * @since 3.0
+ * @since 3.0.0
  */
 public final class LogoutAction extends AbstractLogoutAction {
 
@@ -74,9 +74,10 @@ public final class LogoutAction extends AbstractLogoutAction {
 
         final String service = request.getParameter("service");
         if (this.followServiceRedirects && service != null) {
-            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+            final Service webAppService = new SimpleWebApplicationServiceImpl(service);
+            final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
-            if (rService != null && rService.isEnabled()) {
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
                 context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }

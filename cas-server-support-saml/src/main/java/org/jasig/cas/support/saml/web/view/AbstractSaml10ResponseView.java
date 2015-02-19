@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,37 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
-import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
+import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
 import org.joda.time.DateTime;
-import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.SAMLVersion;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.Status;
-import org.opensaml.saml1.core.StatusCode;
-import org.opensaml.saml1.core.StatusMessage;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.ConfigurationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import javax.xml.namespace.QName;
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
@@ -56,24 +39,28 @@ import java.util.Map;
  * @since 3.5.1
  */
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
-
-    private static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
-
     private static final String DEFAULT_ENCODING = "UTF-8";
 
+    /**
+     * The Saml object builder.
+     */
+    protected final Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
+
     private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
-
-    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-
-    private final SecureRandomIdentifierGenerator idGenerator;
-
-    /** The Services manager. */
-    protected ServicesManager servicesManager = null;
 
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
-    private int skewAllowance = 0;
+    /** Defaults to 0. */
+    private int skewAllowance;
+
+    static {
+        try {
+            DefaultBootstrap.bootstrap();
+        } catch (final ConfigurationException e) {
+            throw new IllegalStateException("Error initializing OpenSAML library.", e);
+        }
+    }
 
     /**
      * Sets the character encoding in the HTTP response.
@@ -82,10 +69,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
-    }
-
-    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 
     /**
@@ -113,27 +96,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         this.skewAllowance = skewAllowance;
     }
 
-    static {
-        try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
-            DefaultBootstrap.bootstrap();
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
-
-    /**
-     * Instantiates a new abstract saml10 response view.
-     */
-    protected AbstractSaml10ResponseView() {
-        try {
-            this.idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
-        }
-    }
-
     @Override
     protected void renderMergedOutputModel(
             final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -144,24 +106,13 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         final String serviceId = service != null ? service.getId() : "UNKNOWN";
 
         try {
-            final Response samlResponse = newSamlObject(Response.class);
-            samlResponse.setID(generateId());
-            samlResponse.setIssueInstant(DateTime.now().minusSeconds(skewAllowance));
-            samlResponse.setVersion(SAMLVersion.VERSION_11);
-            samlResponse.setRecipient(serviceId);
-            if (service instanceof SamlService) {
-                final SamlService samlService = (SamlService) service;
+            final Response samlResponse = this.samlObjectBuilder.newResponse(
+                    this.samlObjectBuilder.generateSecureRandomId(),
+                    DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
 
-                if (samlService.getRequestID() != null) {
-                    samlResponse.setInResponseTo(samlService.getRequestID());
-                }
-            }
             prepareResponse(samlResponse, model);
 
-            final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-            messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, request.isSecure()));
-            messageContext.setOutboundSAMLMessage(samlResponse);
-            this.encoder.encode(messageContext);
+            this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
             logger.error("Error generating SAML response for service {}.", serviceId);
             throw e;
@@ -177,57 +128,4 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
-
-    /**
-     * Generate id.
-     *
-     * @return the string
-     */
-    protected final String generateId() {
-        return this.idGenerator.generateIdentifier();
-    }
-
-    /**
-     * Create a new SAML object.
-     *
-     * @param <T> the generic type
-     * @param objectType the object type
-     * @return the t
-     */
-    protected final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        final QName qName;
-        try {
-            final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            qName = (QName) f.get(null);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
-        } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
-        }
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject());
-    }
-
-    /**
-     * Create a new SAML status object.
-     *
-     * @param codeValue the code value
-     * @param statusMessage the status message
-     * @return the status
-     */
-    protected final Status newStatus(final QName codeValue, final String statusMessage) {
-        final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
-        code.setValue(codeValue);
-        status.setStatusCode(code);
-        if (statusMessage != null) {
-            final StatusMessage message = newSamlObject(StatusMessage.class);
-            message.setMessage(statusMessage);
-            status.setStatusMessage(message);
-        }
-        return status;
-    }
 }

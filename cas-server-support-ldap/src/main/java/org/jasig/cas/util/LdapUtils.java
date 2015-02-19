@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
@@ -25,12 +26,14 @@ import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+
 /**
  * Utilities related to LDAP functions.
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public final class LdapUtils {
 
@@ -70,7 +73,7 @@ public final class LdapUtils {
      * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute) {
-        return getBoolean(ctx, attribute, false);
+        return getBoolean(ctx, attribute, Boolean.FALSE);
     }
 
     /**
@@ -103,13 +106,13 @@ public final class LdapUtils {
     /**
      * Reads a Long value from the LdapEntry.
      *
-     * @param ctx       the ldap entry
+     * @param entry       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
      * @return the long value
      */
-    public static Long getLong(final LdapEntry ctx, final String attribute, final Long nullValue) {
-        final String v = getString(ctx, attribute, nullValue.toString());
+    public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
+        final String v = getString(entry, attribute, nullValue.toString());
         if (v != null && NumberUtils.isNumber(v)) {
             return Long.valueOf(v);
         }
@@ -119,52 +122,39 @@ public final class LdapUtils {
     /**
      * Reads a String value from the LdapEntry.
      *
-     * @param ctx       the ldap entry
+     * @param entry       the ldap entry
      * @param attribute the attribute name
      * @return the string
      */
-    public static String getString(final LdapEntry ctx, final String attribute) {
-        return getString(ctx, attribute, null);
+    public static String getString(final LdapEntry entry, final String attribute) {
+        return getString(entry, attribute, null);
     }
 
     /**
      * Reads a String value from the LdapEntry.
      *
-     * @param ctx       the ldap entry
+     * @param entry       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
      * @return the string
      */
-    public static String getString(final LdapEntry ctx, final String attribute, final String nullValue) {
-        final LdapAttribute attr = ctx.getAttribute(attribute);
+    public static String getString(final LdapEntry entry, final String attribute, final String nullValue) {
+        final LdapAttribute attr = entry.getAttribute(attribute);
         if (attr == null) {
             return nullValue;
         }
 
-        final String v = attr.getStringValue();
-        if (v != null) {
+        String v = null;
+        if (attr.isBinary()) {
+            final byte[] b = attr.getBinaryValue();
+            v = new String(b, Charset.forName("UTF-8"));
+        } else {
+            v = attr.getStringValue();
+        }
+
+        if (StringUtils.isNotBlank(v)) {
             return v;
         }
         return nullValue;
-    }
-    
-    
-    /**
-     * Gets the value for a binary attribute.
-     *
-     * @param ctx the ctx
-     * @param attribute the attribute
-     * @return the binary value, or null.
-     */
-    public static byte[] getBinary(final LdapEntry ctx, final String attribute) {
-        final LdapAttribute attr = ctx.getAttribute(attribute);
-        if (attr == null) {
-            return null;
-        }
-        final byte[] v = attr.getBinaryValue();
-        if (v != null) {
-            return v;
-        }
-        return null;
     }
 }

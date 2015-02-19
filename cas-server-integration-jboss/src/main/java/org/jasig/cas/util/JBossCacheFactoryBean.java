@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -35,7 +35,7 @@ import org.springframework.core.io.Resource;
  * Please use other means of confguring your distributed ticket registry, such as
  * ehcache or memcached integrations with CAS.
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  *
  */
 @Deprecated
@@ -64,7 +64,7 @@ public final class JBossCacheFactoryBean implements FactoryBean, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<String, Ticket>();
+        final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<>();
         this.cache = cf.createCache(this.configLocation.getInputStream());
     }
 

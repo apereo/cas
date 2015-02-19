@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * First action of a SPNEGO flow : negotiation.<br/> The server checks if the
+ * First action of a SPNEGO flow : negotiation.<br> The server checks if the
  * negotiation string is in the request header and this is a supported browser:
  * <ul>
  * <li>If found do nothing and return <code>success()</code></li>
@@ -41,19 +41,19 @@ import org.springframework.webflow.execution.RequestContext;
  * then return <code>success()</code></li>
  * </ul>
  *
- * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
  * @author John Gasper
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
 public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /** Whether this is using the NTLM protocol or not. */
-    private boolean ntlm = false;
+    private boolean ntlm;
 
-    private boolean mixedModeAuthentication = false;
+    private boolean mixedModeAuthentication;
 
     private List<String> supportedBrowser;
 
@@ -128,7 +128,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (this.supportedBrowser == null) {
-            this.supportedBrowser = new ArrayList<String>();
+            this.supportedBrowser = new ArrayList<>();
             this.supportedBrowser.add("MSIE");
             this.supportedBrowser.add("Firefox");
             this.supportedBrowser.add("AppleWebKit");

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,44 +18,47 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.validation.constraints.NotNull;
-
 import com.github.inspektr.audit.annotation.Audit;
-import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides an authenticaiton manager that is inherently aware of multiple credentials and supports pluggable
  * security policy via the {@link AuthenticationPolicy} component. The authentication process is as follows:
  *
  * <ul>
- *   <li>For each given credential do the following:</li>
- *   <ul>
- *     <li>Iterate over all configured authentication handlers.</li>
- *     <li>Attempt to authenticate a credential if a handler supports it.</li>
- *     <li>On success attempt to resolve a principal by doing the following:</li>
+ *   <li>For each given credential do the following:
  *     <ul>
- *       <li>Check whether a resolver is configured for the handler that authenticated the credential.</li>
- *       <li>If a suitable resolver is found, attempt to resolve the principal.</li>
- *       <li>If a suitable resolver is not found, use the principal resolved by the authentication handler.</li>
+ *       <li>Iterate over all configured authentication handlers.</li>
+ *       <li>Attempt to authenticate a credential if a handler supports it.</li>
+ *       <li>On success attempt to resolve a principal by doing the following:
+ *         <ul>
+ *           <li>Check whether a resolver is configured for the handler that authenticated the credential.</li>
+ *           <li>If a suitable resolver is found, attempt to resolve the principal.</li>
+ *           <li>If a suitable resolver is not found, use the principal resolved by the authentication handler.</li>
+ *         </ul>
+ *       </li>
+ *       <li>Check whether the security policy (e.g. any, all) is satisfied.
+ *         <ul>
+ *           <li>If security policy is met return immediately.</li>
+ *           <li>Continue if security policy is not met.</li>
+ *         </ul>
+ *       </li>
  *     </ul>
- *     <li>Check whether the security policy (e.g. any, all) is satisfied.</li>
- *     <ul>
- *       <li>If security policy is met return immediately.</li>
- *       <li>Continue if security policy is not met.</li>
- *     </ul>
- *   </ul>
+ *   </li>
  *   <li>
  *     After all credentials have been attempted check security policy again.
  *     Note there is an implicit security policy that requires at least one credential to be authenticated.
@@ -67,12 +70,9 @@ import org.springframework.util.Assert;
  * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
-
-    /** Default principal implementation that allows us to create {@link Authentication}s (principal cannot be null). */
-    private static final Principal NULL_PRINCIPAL = new NullPrincipal();
 
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -80,7 +80,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
-            new ArrayList<AuthenticationMetaDataPopulator>();
+            new ArrayList<>();
 
     /** Authentication security policy. */
     @NotNull
@@ -111,7 +111,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     public PolicyBasedAuthenticationManager(final List<AuthenticationHandler> handlers) {
         Assert.notEmpty(handlers, "At least one authentication handler is required");
-        this.handlerResolverMap = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>(
+        this.handlerResolverMap = new LinkedHashMap<>(
                 handlers.size());
         for (final AuthenticationHandler handler : handlers) {
             this.handlerResolverMap.put(handler, null);
@@ -131,7 +131,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         this.handlerResolverMap = map;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Audit(
         action="AUTHENTICATION",
@@ -156,7 +158,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             for (final Credential credential : credentials) {
-                populator.populateAttributes(builder, credential);
+                if (populator.supports(credential)) {
+                    populator.populateAttributes(builder, credential);
+                }
             }
         }
 
@@ -195,7 +199,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
             throws AuthenticationException {
 
-        final AuthenticationBuilder builder = new AuthenticationBuilder(NULL_PRINCIPAL);
+        final AuthenticationBuilder builder = new AuthenticationBuilder(NullPrincipal.getInstance());
         for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
@@ -204,14 +208,15 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         PrincipalResolver resolver;
         for (final Credential credential : credentials) {
             found = false;
-            for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
+            for (final Map.Entry<AuthenticationHandler, PrincipalResolver> entry : this.handlerResolverMap.entrySet()) {
+                final AuthenticationHandler handler = entry.getKey();
                 if (handler.supports(credential)) {
                     found = true;
                     try {
                         final HandlerResult result = handler.authenticate(credential);
                         builder.addSuccess(handler.getName(), result);
                         logger.info("{} successfully authenticated {}", handler.getName(), credential);
-                        resolver = this.handlerResolverMap.get(handler);
+                        resolver = entry.getValue();
                         if (resolver == null) {
                             principal = result.getPrincipal();
                             logger.debug(
@@ -285,24 +290,4 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         return null;
     }
 
-    /**
-     * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
-     * principal is resolved during the authentication process.
-     */
-    static class NullPrincipal implements Principal {
-
-        private static final long serialVersionUID = 2309300426720915104L;
-        /** The nobody principal. */
-        private static final String NOBODY = "nobody";
-
-        @Override
-        public String getId() {
-            return NOBODY;
-        }
-
-        @Override
-        public Map<String, Object> getAttributes() {
-            return Collections.emptyMap();
-        }
-    }
 }

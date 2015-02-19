@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -28,9 +28,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Handles tests for {@link JpaServiceRegistryDaoImpl}
  * @author battags
- * @since 3.1
+ * @since 3.1.0
  *
  */
 @ContextConfiguration(locations= {"classpath:jpaTestApplicationContext.xml"})
@@ -40,7 +40,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     private JpaServiceRegistryDaoImpl dao;
 
     @Test
-    public void testSaveMethodWithNonExistentServiceAndNoAttributes() {
+    public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");
@@ -55,7 +55,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     }
     
     @Test
-    public void testSaveAttributeReleasePolicy() {
+    public void verifySaveAttributeReleasePolicy() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");
@@ -73,7 +73,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
     }
 
     @Test
-    public void testSaveMethodWithExistingServiceNoAttribute() {
+    public void verifySaveMethodWithExistingServiceNoAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
         r.setServiceId("testId");

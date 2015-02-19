@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,9 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -33,10 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -48,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class OAuth20ProfileController extends AbstractController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
 
     private static final String ID = "id";
 
@@ -68,17 +64,18 @@ public final class OAuth20ProfileController extends AbstractController {
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-
-        final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        if (StringUtils.isBlank(accessToken)) {
+            final String authHeader = request.getHeader("Authorization");
+            if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith(OAuthConstants.BEARER_TOKEN + " ")) {
+                accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
+            }
+        }
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
-
-        try {
+        try (final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter())) {
             response.setContentType("application/json");
-
             // accessToken is required
             if (StringUtils.isBlank(accessToken)) {
                 LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
@@ -88,8 +85,7 @@ public final class OAuth20ProfileController extends AbstractController {
                 return null;
             }
             // get ticket granting ticket
-            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-                    .getTicket(accessToken);
+            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(accessToken);
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
                 LOGGER.error("expired accessToken : {}", accessToken);
                 jsonGenerator.writeStartObject();
@@ -103,16 +99,15 @@ public final class OAuth20ProfileController extends AbstractController {
             jsonGenerator.writeStringField(ID, principal.getId());
             jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
             final Map<String, Object> attributes = principal.getAttributes();
-            for (final String key : attributes.keySet()) {
+            for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeObjectField(key, attributes.get(key));
+                jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
                 jsonGenerator.writeEndObject();
             }
             jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
             return null;
         } finally {
-            IOUtils.closeQuietly(jsonGenerator);
             response.flushBuffer();
         }
     }

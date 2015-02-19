@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -53,7 +53,7 @@ public final class ManageRegisteredServicesMultiActionController {
     private final ServicesManager servicesManager;
 
     @NotNull
-    private String defaultServiceUrl;
+    private final String defaultServiceUrl;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -93,9 +93,9 @@ public final class ManageRegisteredServicesMultiActionController {
      */
     @RequestMapping("manage.html")
     public ModelAndView manage() {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
 
-        final List<RegisteredService> services = new ArrayList<RegisteredService>(this.servicesManager.getAllServices());
+        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
 
         model.put("services", services);
         model.put("pageTitle", VIEW_NAME);
@@ -111,8 +111,7 @@ public final class ManageRegisteredServicesMultiActionController {
      *
      * @param id the id
      * @param evaluationOrder the evaluation order
-     * @return a {@link ModelAndView} object back to the <code>jsonView</code>
-     * @returns {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
+     * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
      * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccessful.
      * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
      * was successful.

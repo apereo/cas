@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
  * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
@@ -27,11 +31,12 @@ package org.jasig.cas.util;
  * </p>
  *
  * @author Scott Battaglia
-
- * @since 3.0
+ * @since 3.0.0
  */
-public final class DefaultUniqueTicketIdGenerator implements
-    UniqueTicketIdGenerator {
+public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+
+    /** The logger instance. */
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The numeric generator to generate the static part of the id. */
     private final NumericGenerator numericGenerator;
@@ -51,7 +56,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * 1.
      */
     public DefaultUniqueTicketIdGenerator() {
-        this(null);
+        this(DefaultRandomStringGenerator.DEFAULT_MAX_RANDOM_LENGTH);
     }
 
     /**
@@ -66,22 +71,22 @@ public final class DefaultUniqueTicketIdGenerator implements
     }
 
     /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with default values
-     * including a {@link DefaultLongNumericGenerator} with a starting value of
-     * 1.
+     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
+     * maximum length for the random portion.
      *
+     * @param numericGenerator the numeric generator
+     * @param randomStringGenerator the random string generator
      * @param suffix the value to append at the end of the unique id to ensure
      * uniqueness across JVMs.
+     * @since 4.1.0
      */
-    public DefaultUniqueTicketIdGenerator(final String suffix) {
-        this.numericGenerator = new DefaultLongNumericGenerator(1);
-        this.randomStringGenerator = new DefaultRandomStringGenerator();
+    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
+                                          final RandomStringGenerator randomStringGenerator,
+                                          final String suffix) {
 
-        if (suffix != null) {
-            this.suffix = "-" + suffix;
-        } else {
-            this.suffix = null;
-        }
+        this.randomStringGenerator = randomStringGenerator;
+        this.numericGenerator = numericGenerator;
+        this.suffix = StringUtils.isNoneBlank(suffix) ? "-" + suffix : null;
     }
 
     /**
@@ -93,23 +98,17 @@ public final class DefaultUniqueTicketIdGenerator implements
      * @param suffix the value to append at the end of the unique id to ensure
      * uniqueness across JVMs.
      */
-    public DefaultUniqueTicketIdGenerator(final int maxLength,
-        final String suffix) {
-        this.numericGenerator = new DefaultLongNumericGenerator(1);
-        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
-
-        if (suffix != null) {
-            this.suffix = "-" + suffix;
-        } else {
-            this.suffix = null;
-        }
+    public DefaultUniqueTicketIdGenerator(final int maxLength, final String suffix) {
+        this(new DefaultLongNumericGenerator(1), new DefaultRandomStringGenerator(maxLength), suffix);
     }
 
+
+
     @Override
-    public String getNewTicketId(final String prefix) {
+    public final String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
         final StringBuilder buffer = new StringBuilder(prefix.length() + 2
-            + (this.suffix != null ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
+            + (StringUtils.isNotBlank(this.suffix) ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
             + number.length());
 
         buffer.append(prefix);

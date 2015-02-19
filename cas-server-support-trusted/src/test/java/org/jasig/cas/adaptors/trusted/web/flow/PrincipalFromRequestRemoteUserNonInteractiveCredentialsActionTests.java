@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -49,7 +49,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.5
+ * @since 3.0.0.5
  *
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests {
@@ -60,7 +60,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
 
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
@@ -76,7 +76,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     }
 
     @Test
-    public void testRemoteUserExists() throws Exception {
+    public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("test");
 
@@ -88,7 +88,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     }
 
     @Test
-    public void testRemoteUserDoesntExists() throws Exception {
+    public void verifyRemoteUserDoesntExists() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,7 +24,7 @@ import java.net.URLEncoder;
 
 /**
  * Common test cases for /serviceValidate and /proxyValidate.
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
@@ -59,14 +59,14 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
         return getProperties().getProperty(PROXY_RECEPTOR_URL_PROPERTY);
     }
 
-    public void testNoParameters() {
+    public void verifyNoParameters() {
         beginAt(getValidationPath());
         assertTextPresent("cas:authenticationFailure");
 
         // TODO actually test the validation response XML.
     }
 
-    public void testBadServiceTicket() throws UnsupportedEncodingException {
+    public void verifyBadServiceTicket() throws UnsupportedEncodingException {
         final String service = getServiceUrl();
         beginAt(getValidationPath() + "?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=test");
 
@@ -80,7 +80,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * not multiply validatable.
      * @throws IOException
      */
-    public void testProperCredentialsAndServiceTicket() throws IOException {
+    public void verifyProperCredentialsAndServiceTicket() throws IOException {
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
@@ -120,7 +120,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * validation succeeds.
      * @throws IOException
      */
-    public void testRenew() throws IOException {
+    public void verifyRenew() throws IOException {
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?renew=true&service=" + encodedService);
@@ -145,7 +145,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * Test a couple renew=true logins...
      * @throws IOException
      */
-    public void testMultipleRenew() throws IOException {
+    public void verifyMultipleRenew() throws IOException {
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
 
@@ -193,7 +193,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * though renew wasn't set then.
      * @throws IOException
      */
-    public void testAccidentalRenew() throws IOException {
+    public void verifyAccidentalRenew() throws IOException {
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
@@ -220,7 +220,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * vended via SSO.
      * @throws IOException
      */
-    public void testRenewBlocksSsoValidation() throws IOException {
+    public void verifyRenewBlocksSsoValidation() throws IOException {
 
         // initial authentication
         final String firstService = getServiceUrl();
@@ -268,7 +268,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * doesn't really exist.
      * @throws IOException
      */
-    public void testBrokenProxyCallbackUrl() throws IOException {
+    public void verifyBrokenProxyCallbackUrl() throws IOException {
 
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
@@ -298,7 +298,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
 
     }
 
-    public void testPgtAcquisition() throws IOException {
+    public void verifyPgtAcquisition() throws IOException {
 
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
@@ -339,7 +339,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
      * to cover this issue.
      * @throws IOException
      */
-    public void test224() throws IOException {
+    public void verify224() throws IOException {
 
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
