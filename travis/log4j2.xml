@@ -24,8 +24,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/slf4j.log" append="true"
-                     filePattern="slf4j-%d{yyyy-MM-dd-HH}-%i.log">
+        <RollingFile name="file" fileName="target/travis.log" append="true"
+                     filePattern="travis-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
