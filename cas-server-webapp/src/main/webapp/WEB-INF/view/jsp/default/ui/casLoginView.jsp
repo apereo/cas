@@ -22,8 +22,8 @@
 
 <c:if test="${not pageContext.request.secure}">
     <div id="msg" class="errors">
-        <h2>Non-secure Connection</h2>
-        <p>You are currently accessing CAS over a non-secure connection.  Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over HTTPS.</p>
+        <h2><spring:message code="screen.nonsecure.title" /></h2>
+        <p><spring:message code="screen.nonsecure.message" /></p>
     </div>
 </c:if>
 
