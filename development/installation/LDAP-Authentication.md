@@ -509,8 +509,7 @@ LPPE is by default turned off. To enable the functionally, navigate to `src/main
         p:accountStateHandler-ref="accountStateHandler" />
 
   <!-- This component is suitable for most cases but can be replaced with a custom component for special cases. -->
-<bean id="accountStateHandler" 
-      class="org.jasig.cas.authentication.support.DefaultAccountStateHandler" />
+<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHandler" />
 {% endhighlight %}      
 
 Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
@@ -528,13 +527,13 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
 
 {% highlight xml %}
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-      c:resolver-ref="dnResolver"
-      c:handler-ref="authHandler">
-   <property name="authenticationResponseHandlers">
-     <util:list>
-        <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
-     </util:list>
-   </property>
+	c:resolver-ref="dnResolver"
+	c:handler-ref="authHandler">
+	<property name="authenticationResponseHandlers">
+        <util:list>
+            <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+        </util:list>
+</property>
 </bean>
 {% endhighlight %}  
 
@@ -544,11 +543,11 @@ Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `Bin
 
 {% highlight xml %}
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-      p:connectionFactory-ref="bindPooledLdapConnectionFactory">
+	p:connectionFactory-ref="bindPooledLdapConnectionFactory">
 	<property name="authenticationControls">
-           <util:list>
-              <bean class="org.ldaptive.control.PasswordPolicyControl" />
-           </util:list>
+        <util:list>
+                <bean class="org.ldaptive.control.PasswordPolicyControl" />
+        </util:list>
 	</property>
 </bean>
 {% endhighlight %}  
@@ -562,8 +561,7 @@ The default account state handler, that calculates the password expiration warni
 Supports both opt-in and opt-out warnings on a per-user basis.
 
 {% highlight xml %}
-<bean id="accountStateHandler" 
-      class="org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler"
+<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler"
         p:warningAttributeName="${password.warning.attr.name}"
         p:warningAttributeValue="${password.warning.attr.value}"
         p:displayWarningOnMatch="${password.warning.display.match}" />
