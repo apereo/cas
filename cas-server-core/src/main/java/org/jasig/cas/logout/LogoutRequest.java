@@ -20,6 +20,7 @@ package org.jasig.cas.logout;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 
 /**
@@ -68,5 +69,15 @@ public final class LogoutRequest implements Serializable {
 
     public SingleLogoutService getService() {
         return service;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("ticketId", ticketId)
+                .append("service", service)
+                .append("status", status)
+                .toString();
     }
 }
