@@ -122,7 +122,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestSuccess() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest("", null);
+        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
@@ -170,7 +170,9 @@ public class FrontChannelLogoutActionTests {
     }
 
     private Event getLogoutEvent() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(TEST_URL));
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID,
+                new SimpleWebApplicationServiceImpl(TEST_URL),
+                new URL(TEST_URL));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         return this.frontChannelLogoutAction.doExecute(this.requestContext);
