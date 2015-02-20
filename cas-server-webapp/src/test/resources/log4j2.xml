@@ -33,7 +33,7 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
-        <RollingFile name="perfFileAppender" fileName="target/slf4j.log" append="true"
+        <RollingFile name="perfFileAppender" fileName="target/perfStats.log" append="true"
                      filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%m%n"/>
             <Policies>
