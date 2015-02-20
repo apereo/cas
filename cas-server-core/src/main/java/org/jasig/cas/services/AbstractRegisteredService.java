@@ -113,6 +113,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "logo")
     private URL logo;
 
+    @Column(name = "logout_url")
+    private URL logoutUrl;
+
     @Lob
     @Column(name = "access_strategy")
     private RegisteredServiceAccessStrategy accessStrategy =
@@ -145,6 +148,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public RegisteredServiceAccessStrategy getAccessStrategy() {
         return this.accessStrategy;
+    }
+
+    @Override
+    public URL getLogoutUrl() {
+        return this.logoutUrl;
     }
 
     @Override
@@ -236,6 +244,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy) {
         this.accessStrategy = accessStrategy;
+    }
+
+    public void setLogoutUrl(final URL logoutUrl) {
+        this.logoutUrl = logoutUrl;
     }
 
     /**
