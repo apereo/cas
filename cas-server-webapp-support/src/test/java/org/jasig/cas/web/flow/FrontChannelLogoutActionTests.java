@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.web.flow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,12 +30,15 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 
 import org.jasig.cas.util.CompressionUtils;
@@ -43,6 +46,8 @@ import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -62,6 +67,8 @@ public class FrontChannelLogoutActionTests {
 
     private static final String TICKET_ID = "ST-XXX";
 
+    private static final String TEST_URL = "https://www.apereo.org";
+
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private MockHttpServletRequest request;
@@ -70,11 +77,19 @@ public class FrontChannelLogoutActionTests {
 
     private RequestContext requestContext;
 
+    @Mock
+    private ServicesManager servicesManager;
+
+    public FrontChannelLogoutActionTests() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Before
     public void onSetUp() throws Exception {
+
         final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class),
                 new SimpleHttpClientFactoryBean().getObject(), new SamlCompliantLogoutMessageCreator());
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager, this.servicesManager);
 
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
@@ -117,18 +132,15 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final String fakeUrl = "http://url";
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(fakeUrl));
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
-        this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+        final Event event = getLogoutEvent();
+
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
-        final String url = (String) event.getAttributes().get("logoutUrl");
-        assertTrue(url.startsWith(fakeUrl + "?SAMLRequest="));
+        final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
+        assertTrue(url.startsWith(TEST_URL + "?" + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + "="));
         final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
-                URLDecoder.decode(StringUtils.substringAfter(url, "?SAMLRequest="), "UTF-8"));
+                URLDecoder.decode(StringUtils.substringAfter(url, "?" + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + "="), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
         final byte[] result = new byte[1000];
@@ -136,6 +148,31 @@ public class FrontChannelLogoutActionTests {
         decompresser.end();
         final String message = new String(result);
         assertTrue(message.startsWith("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""));
-        assertTrue(message.indexOf("<samlp:SessionIndex>" + TICKET_ID + "</samlp:SessionIndex>") >= 0);
+        assertTrue(message.contains("<samlp:SessionIndex>" + TICKET_ID + "</samlp:SessionIndex>"));
+    }
+
+    @Test
+    public void verifyLogoutUrlForServiceIsUsed() throws Exception {
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setServiceId("https://www.github.com");
+        svc.setLogoutUrl(new URL("https://www.google.com"));
+        svc.setName("Service logout test");
+        svc.setLogoutType(LogoutType.FRONT_CHANNEL);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(svc);
+
+        final Event event = getLogoutEvent();
+        assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
+        final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
+        assertEquals(1, list.size());
+        final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
+        assertTrue(url.startsWith(svc.getLogoutUrl().toExternalForm()));
+
+    }
+
+    private Event getLogoutEvent() throws Exception {
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(TEST_URL));
+        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+        this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
+        return this.frontChannelLogoutAction.doExecute(this.requestContext);
     }
 }

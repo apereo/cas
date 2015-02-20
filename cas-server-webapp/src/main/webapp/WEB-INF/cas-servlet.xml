@@ -244,7 +244,8 @@
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
 
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
-        c:logoutManager-ref="logoutManager"/>
+        c:logoutManager-ref="logoutManager"
+        c:servicesManager-ref="servicesManager"  />
 
   <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
         p:healthCheckMonitor-ref="healthCheckMonitor"/>
