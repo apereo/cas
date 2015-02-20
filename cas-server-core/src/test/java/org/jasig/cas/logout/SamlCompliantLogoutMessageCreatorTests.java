@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -46,7 +47,8 @@ public class SamlCompliantLogoutMessageCreatorTests {
     public void verifyMessageBuilding() throws Exception {
 
         final SingleLogoutService service = mock(SingleLogoutService.class);
-        final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
+        final URL logoutUrl = new URL(service.getOriginalUrl());
+        final LogoutRequest request = new LogoutRequest("TICKET-ID", service, logoutUrl);
 
         final String msg = builder.create(request);
 
