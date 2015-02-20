@@ -164,6 +164,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * This is an optional setting. When undefined, the service
      * url as is defined by {@link #getServiceId()} will be used
      * to handle logout invocations.
+     * @return the logout url for this service
      * @since 4.1
      */
     URL getLogoutUrl();

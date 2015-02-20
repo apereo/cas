@@ -19,6 +19,7 @@
 package org.jasig.cas.logout;
 
 import java.io.Serializable;
+import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
@@ -43,16 +44,20 @@ public final class LogoutRequest implements Serializable {
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
+    private URL logoutUrl;
+
     /**
      * Build a logout request from ticket identifier and service.
      * Default status is {@link LogoutRequestStatus#NOT_ATTEMPTED}.
      *
      * @param ticketId the service ticket id.
      * @param service the service.
+     * @param logoutUrl the logout url
      */
-    public LogoutRequest(final String ticketId, final SingleLogoutService service) {
+    public LogoutRequest(final String ticketId, final SingleLogoutService service, final URL logoutUrl) {
         this.ticketId = ticketId;
         this.service = service;
+        this.logoutUrl = logoutUrl;
     }
 
     public LogoutRequestStatus getStatus() {
@@ -71,6 +76,10 @@ public final class LogoutRequest implements Serializable {
         return service;
     }
 
+
+    public URL getLogoutUrl() {
+        return logoutUrl;
+    }
 
     @Override
     public String toString() {
