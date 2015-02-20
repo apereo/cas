@@ -10,13 +10,18 @@ CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode
 
 OpenID identifiers are URIs. The default mechanism in CAS support is an uri ending with the actual user login (ie. http://my.cas.server/openid/*myusername* where the actual user login is *myusername*). This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependencies in the Maven WAR overlay:
 
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-openid</artifactId>
       <version>${cas.version}</version>
     </dependency>
+   <dependency>
+      <groupId>ognl</groupId>
+      <artifactId>ognl</artifactId>
+      <version>2.7.3</version>
+  </dependency>
 
 
 ##Configuration
@@ -100,18 +105,21 @@ The openIdSingleSignOnAction is itself defined in the *cas-servlet.xml* file:
 ###Enable OpenID in the AuthenticationManager
 
 The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this : http://localhost:8080/cas/openid/*myusername*. Actually, in your users database, this users login is probably myusername. We must provide the CAS server with a way to extract the user principal from the credentials he provides us. This is the first thing we'll do in this section: add an OpenIdCredentialsToPrincipalResolver to the authentication manager. The next thing to give CAS is a specialized authentication handler.  
-Open the *deployerConfigContext.xml* file, and locate the authenticationManager bean definition. It has two properties containing beans. In the credentials to principal property, add this bean definition:
+Open the *deployerConfigContext.xml* file, and locate the authenticationManager bean definition. Add below property definition:
 
 {% highlight xml %}
-<!-- The openid credentials to principal resolver -->
-<bean class="org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver" />
+<entry key-ref="openidAuthenticationHandler" value-ref="openidPrincipalResolver" />
 {% endhighlight %}
 
-Then, in the authentication handler property, add this bean definition:
+Then, add two beans definitions in the same file:
 
 {% highlight xml %}
 <!-- The open id authentication handler -->
 <bean class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler" p:ticketRegistry-ref="ticketRegistry" />
+{% endhighlight %}
+
+{% highlight xml %}
+ <bean id="openidPrincipalResolver" class="org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver" /> 
 {% endhighlight %}
 
 
@@ -188,6 +196,26 @@ We are done with the delegates. Now we must create the Delegating controller its
 
 Don't forget to include the *util* namespace if you don't have it already!
 
+Change EL expresiion parser to OGNL:
+
+Comment out EL:
+
+{% highlight xml %}
+<!--  <bean id="expressionParser"
+class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
+        c:conversionService-ref="logoutConversionService">
+    <constructor-arg>
+        <bean
+class="org.springframework.expression.spel.standard.SpelExpressionParser" />
+    </constructor-arg>
+  </bean>-->
+{% endhighlight %}
+
+Add OGNL:
+
+{% highlight xml %}
+<bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser" />
+{% endhighlight %}
 
 ###Add an argument extractor
 
@@ -211,7 +239,7 @@ Next we must provide a ServerManager, which is a class from the openid4java libr
 
 {% highlight xml %}
 <bean id="serverManager" class="org.openid4java.server.ServerManager"
-   p:oPEndpointUrl="{cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
+   p:oPEndpointUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
    p:enforceRpId="false" />
 {% endhighlight %}
 
