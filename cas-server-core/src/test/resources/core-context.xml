@@ -82,7 +82,7 @@
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
                     <property name="id" value="0"/>
                     <property name="name" value="Test Service"/>
-                    <property name="serviceId" value="test$"/>
+                    <property name="serviceId" value="(https://)*test.com$"/>
                     <property name="evaluationOrder" value="1"/>
                     <property name="proxyPolicy">
                         <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
