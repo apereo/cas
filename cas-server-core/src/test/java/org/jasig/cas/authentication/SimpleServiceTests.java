@@ -32,7 +32,7 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyProperId() {
-        assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils.getService().getId());
+        assertEquals("Ids are not equal.", TestUtils.CONST_TEST_URL, TestUtils.getService().getId());
     }
 
     @Test
