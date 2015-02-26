@@ -21,8 +21,44 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
 3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
 4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
+5. [Principal Attributes Retrieval](#ldap-authentication-principal-attributes) - Resolve principal attributes directly as part of LDAP authentication.
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
+
+## Ldap Authentication Principal Attributes
+The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html). 
+
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="sAMAccountName"
+      c:authenticator-ref="authenticator">
+    <property name="principalAttributeMap">
+        <map>
+            <entry key="displayName" value="simpleName" />
+            <entry key="mail" value="email" />
+            <entry key="memberOf" value="membership" />
+        </map>
+    </property>
+</bean>
+{% endhighlight %}
+
+The above configuration defines a map of attribtues. Keys are LDAP attribute names and values are CAS attribute names which allow you to optionally, retrieve a given attribute and release it under a virtual name. (i.e. Retrieve `mail` from LDAP and remap/rename it to `email` to be released later). If you have no need for this virtual mapping mechanism, you could directly specify the attributes as a list, in which case the above configuration would become:
+
+{% highlight xml %}
+<bean id="ldapAuthenticationHandler"
+    class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+    p:principalIdAttribute-ref="usernameAttribute"
+    c:authenticator-ref="authenticator">
+    <property name="principalAttributeList">
+       <list>
+          <value>displayName</value>
+          <value>mail</value>
+          <value>memberOf</value>
+       </list>
+    </property>
+</bean>
+{% endhighlight %}
 
 
 ## Active Directory Authentication
@@ -469,6 +505,7 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     # Search filter used for configurations that require searching for DNs
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
     ldap.authn.format=%s@example.com
+
 
 ## LDAP Password Policy Enforcement
 The purpose of the LPPE is twofold:
