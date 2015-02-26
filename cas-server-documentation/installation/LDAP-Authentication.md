@@ -190,6 +190,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
       p:baseDn="${ldap.baseDn}"
+      p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
       p:userFilter="${ldap.authn.searchFilter}" />
@@ -299,6 +300,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
       p:baseDn="${ldap.baseDn}"
+      p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
       p:userFilter="${ldap.authn.searchFilter}" />
