@@ -140,6 +140,7 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
+            // Begin here....
             logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                     CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null);
