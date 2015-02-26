@@ -214,6 +214,7 @@ followed by a bind. Copy the configuration to <code>deployerConfigContext.xml</c
 
 <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;dnResolver&quot;</span> <span class="na">class=</span><span class="s">&quot;org.ldaptive.auth.PooledSearchDnResolver&quot;</span>
       <span class="na">p:baseDn=</span><span class="s">&quot;${ldap.baseDn}&quot;</span>
+      <span class="na">p:subtreeSearch=</span><span class="s">&quot;true&quot;</span>
       <span class="na">p:allowMultipleDns=</span><span class="s">&quot;false&quot;</span>
       <span class="na">p:connectionFactory-ref=</span><span class="s">&quot;searchPooledLdapConnectionFactory&quot;</span>
       <span class="na">p:userFilter=</span><span class="s">&quot;${ldap.authn.searchFilter}&quot;</span> <span class="nt">/&gt;</span>
@@ -322,6 +323,7 @@ followed by a bind. Copy the configuration to <code>deployerConfigContext.xml</c
 
 <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;dnResolver&quot;</span> <span class="na">class=</span><span class="s">&quot;org.ldaptive.auth.PooledSearchDnResolver&quot;</span>
       <span class="na">p:baseDn=</span><span class="s">&quot;${ldap.baseDn}&quot;</span>
+      <span class="na">p:subtreeSearch=</span><span class="s">&quot;true&quot;</span>
       <span class="na">p:allowMultipleDns=</span><span class="s">&quot;false&quot;</span>
       <span class="na">p:connectionFactory-ref=</span><span class="s">&quot;searchPooledLdapConnectionFactory&quot;</span>
       <span class="na">p:userFilter=</span><span class="s">&quot;${ldap.authn.searchFilter}&quot;</span> <span class="nt">/&gt;</span>
