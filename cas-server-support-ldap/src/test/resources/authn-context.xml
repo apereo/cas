@@ -38,18 +38,12 @@
           p:principalIdAttribute-ref="usernameAttribute"
 
           c:authenticator-ref="authenticator">
-        <property name="principalAttributeMap">
-            <map>
-                <!--
-                   | This map provides a simple attribute resolution mechanism.
-                   | Keys are LDAP attribute names, values are CAS attribute names.
-                   | Use this facility instead of a PrincipalResolver if LDAP is
-                   | the only attribute source.
-                   -->
-                <entry key="displayName" value="displayName" />
-                <entry key="mail" value="mail" />
-                <entry key="givenName" value="givenName" />
-            </map>
+        <property name="principalAttributeList">
+            <list>
+                <value>displayName</value>
+                <value>mail</value>
+                <value>givenName</value>
+            </list>
         </property>
     </bean>
 
