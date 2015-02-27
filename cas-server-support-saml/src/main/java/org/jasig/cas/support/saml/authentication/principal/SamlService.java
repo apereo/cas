@@ -134,6 +134,9 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
+        // Maybe each service could expose its paramaters up through the argumentextractor which in turn passes them up
+        // to the serviceValidateController....hmm...thinking out loud....
+
         LOGGER.debug("Attempted to extract Request from HttpServletRequest. Results:");
         LOGGER.debug("Request Body: {}", requestBody);
         LOGGER.debug("Extracted ArtifactId: {}", artifactId);
