@@ -136,7 +136,7 @@ public final class CompressionUtils {
      */
     public static String encryptAndEncodeBase64(final String data, final Cipher cipher) {
         try {
-            final byte[] cipherData = cipher.doFinal(data.getBytes());
+            final byte[] cipherData = cipher.doFinal(data.getBytes(UTF8_ENCODING));
             return encodeBase64(cipherData);
         } catch (final Exception e) {
             throw new RuntimeException(e);

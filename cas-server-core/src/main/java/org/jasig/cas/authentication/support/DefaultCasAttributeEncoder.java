@@ -47,12 +47,11 @@ import java.util.Map;
  */
 public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
 
-    /** The Cipher instance used to encrypt attributes. */
-    protected final Cipher cipher;
-
     /** The Services manager. */
     @NotNull
     protected final ServicesManager servicesManager;
+
+    private final String cipherAlgorithm;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -77,8 +76,7 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
     public DefaultCasAttributeEncoder(final String cipherAlgorithm, final ServicesManager servicesManager)
             throws Exception {
         this.servicesManager = servicesManager;
-        this.cipher = Cipher.getInstance(cipherAlgorithm);
-        logger.debug("Created cipher instance to encrypt via [{}]", cipherAlgorithm);
+        this.cipherAlgorithm = cipherAlgorithm;
     }
 
     /**
@@ -89,11 +87,14 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      *
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
+     * @param cipher the cipher
      */
     protected final void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
-                                                      final Map<String, String> cachedAttributesToEncode) {
+                                                      final Map<String, String> cachedAttributesToEncode,
+                                                      final Cipher cipher) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                cipher);
     }
 
     /**
@@ -104,11 +105,13 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      *
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
+     * @param cipher the cipher
      */
     protected final void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
-                                                       final Map<String, String> cachedAttributesToEncode) {
+                                                       final Map<String, String> cachedAttributesToEncode,
+                                                       final Cipher cipher) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher);
     }
 
     /**
@@ -117,14 +120,16 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
      * @param cachedAttributeName the cached attribute name
+     * @param cipher the cipher
      */
     protected final void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
                                                            final Map<String, String> cachedAttributesToEncode,
-                                                           final String cachedAttributeName) {
+                                                           final String cachedAttributeName,
+                                                           final Cipher cipher) {
         final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final String encodedValue = CompressionUtils.encryptAndEncodeBase64(cachedAttribute, this.cipher);
+            final String encodedValue = CompressionUtils.encryptAndEncodeBase64(cachedAttribute, cipher);
             attributes.put(cachedAttributeName, encodedValue);
             logger.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
         } else {
@@ -138,13 +143,13 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      *
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
-     * @param service the service
+     * @param cipher the cipher
      */
     protected void encodeAttributesInternal(final Map<String, Object> attributes,
                                             final Map<String, String> cachedAttributesToEncode,
-                                            final RegisteredService service) {
-        encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode);
-        encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode);
+                                            final Cipher cipher) {
+        encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher);
+        encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher);
     }
 
     /**
@@ -154,36 +159,37 @@ public class DefaultCasAttributeEncoder implements CasAttributeEncoder {
      * @return the false if no public key is found
      * or if cipher cannot be initialized, etc.
      */
-    protected final boolean initializeCipherBasedOnServicePublicKey(final RegisteredService service) {
+    protected final Cipher initializeCipherBasedOnServicePublicKey(final RegisteredService service) {
         try {
             final PublicKey publicKey = service.getPublicKey().createInstance();
             if (publicKey == null) {
                 logger.debug("No public key is defined for service [{}]. No encoding will take place.", service);
-                return false;
+                return null;
             }
             logger.debug("Using public key [{}] to initialize the cipher", service.getPublicKey());
 
-            this.cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            final Cipher cipher = Cipher.getInstance(cipherAlgorithm);
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             logger.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}]",
                     publicKey.getAlgorithm());
-            return true;
+            return cipher;
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
         }
-        return false;
+        return null;
     }
 
     @Override
     public final Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {
         logger.debug("Starting to encode attributes for release to service [{}]", service);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
-
         final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            if (initializeCipherBasedOnServicePublicKey(registeredService)) {
-                encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, registeredService);
+            final Cipher cipher = initializeCipherBasedOnServicePublicKey(registeredService);
+            if (cipher != null) {
+                encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, cipher);
             } else {
                 logger.warn("Cipher could not be initialized for service [{}]. No encryption was applied to attributes",
                         service);
