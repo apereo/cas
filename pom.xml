@@ -1237,7 +1237,7 @@
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.4.RELEASE</spring.version>
     <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
-    <ldaptive.version>1.0.5</ldaptive.version>
+    <ldaptive.version>1.0.6</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.8.2</aspectj.version>
