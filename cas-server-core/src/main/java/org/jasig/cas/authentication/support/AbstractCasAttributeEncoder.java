@@ -28,7 +28,6 @@ import org.jasig.cas.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
