@@ -1269,7 +1269,7 @@
     <jackson.databind.version>2.5.0</jackson.databind.version>
     <uboundid.ldapsdk.version>2.3.8</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
-    <xml.apis.version>2.0.2</xml.apis.version>
+    <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
     <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
