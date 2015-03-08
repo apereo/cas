@@ -37,9 +37,6 @@ import java.util.Map;
  */
 public interface CasAttributeEncoder {
 
-    /** The default algorithm to encrypt. */
-    String DEFAULT_CIPHER_ALGORITHM = "RSA";
-
     /**
      * Encodes attributes that are ready to be released.
      * Specifically, this method tries to ensure that the
