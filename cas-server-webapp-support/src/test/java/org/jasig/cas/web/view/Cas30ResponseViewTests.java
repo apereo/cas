@@ -118,8 +118,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             factory.setSingleton(false);
             final PrivateKey privateKey = factory.getObject();
 
-            logger.debug("Initializing cipher based on [{}]", CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
-            final Cipher cipher = Cipher.getInstance(CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
+            logger.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+            final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
             logger.debug("Decoding value [{}]", cred);
             final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
