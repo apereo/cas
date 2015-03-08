@@ -1262,7 +1262,7 @@
     <hsqldb.version>2.0.0</hsqldb.version>
     <apache.httpclient.version>4.3.4</apache.httpclient.version>
     <joda-time.version>2.4</joda-time.version>
-    <cas.client.version>3.3.1</cas.client.version>
+    <cas.client.version>3.3.3</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
     <reflections.version>0.9.8</reflections.version>
     <apache.shiro.version>1.2.3</apache.shiro.version>
