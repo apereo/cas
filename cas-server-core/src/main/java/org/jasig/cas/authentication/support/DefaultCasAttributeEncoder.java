@@ -21,12 +21,8 @@ package org.jasig.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.cipher.CipherExecutor;
 import org.jasig.cas.web.view.CasViewConstants;
-import org.jose4j.lang.StringUtil;
-
-import javax.crypto.Cipher;
 import java.util.Map;
 
 /**
