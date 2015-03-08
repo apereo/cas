@@ -20,8 +20,9 @@
 package org.jasig.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.cipher.CipherExecutor;
+import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.web.view.CasViewConstants;
 import java.util.Map;
 
@@ -47,6 +48,16 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
     }
 
     /**
+     * Instantiates a new Default cas attribute encoder.
+     *
+     * @param servicesManager the services manager
+     * @param cipherExecutor the cipher executor
+     */
+    public DefaultCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
+        super(servicesManager, cipherExecutor);
+    }
+
+    /**
      * Encode and encrypt credential password using the public key
      * supplied by the service. The result is base64 encoded
      * and put into the attributes collection again, overwriting
@@ -55,13 +66,15 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
      * @param cipher the cipher
+     * @param registeredService the registered service
      */
     protected final void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
                                                       final Map<String, String> cachedAttributesToEncode,
-                                                      final CipherExecutor cipher) {
+                                                      final RegisteredServiceCipherExecutor cipher,
+                                                      final RegisteredService registeredService) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
                 CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-                cipher);
+                cipher, registeredService);
     }
 
     /**
@@ -70,12 +83,14 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
      * @param cipher the cipher
+     * @param registeredService the registered service
      */
     protected final void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
                                                        final Map<String, String> cachedAttributesToEncode,
-                                                       final CipherExecutor cipher) {
+                                                       final RegisteredServiceCipherExecutor cipher,
+                                                       final RegisteredService registeredService) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher);
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
     }
 
     /**
@@ -85,15 +100,17 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cachedAttributesToEncode the cached attributes to encode
      * @param cachedAttributeName the cached attribute name
      * @param cipher the cipher
+     * @param registeredService the registered service
      */
     protected final void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
                                                            final Map<String, String> cachedAttributesToEncode,
                                                            final String cachedAttributeName,
-                                                           final CipherExecutor cipher) {
+                                                           final RegisteredServiceCipherExecutor cipher,
+                                                           final RegisteredService registeredService) {
         final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             logger.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final String encodedValue = cipher.encode(cachedAttribute);
+            final String encodedValue = cipher.encode(cachedAttribute, registeredService);
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
                 logger.debug("Encrypted and encoded [{}] as an attribute to [{}].",
@@ -107,8 +124,9 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
     @Override
     protected void encodeAttributesInternal(final Map<String, Object> attributes,
                                             final Map<String, String> cachedAttributesToEncode,
-                                            final CipherExecutor cipher) {
-        encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher);
-        encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher);
+                                            final RegisteredServiceCipherExecutor cipher,
+                                            final RegisteredService registeredService) {
+        encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
+        encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
     }
 }
