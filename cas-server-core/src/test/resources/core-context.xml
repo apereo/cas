@@ -233,7 +233,7 @@
                 </bean>
 
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
-                    <property name="id" value="0"/>
+                    <property name="id" value="35"/>
                     <property name="name" value="Test Encryption of Attributes"/>
                     <property name="serviceId" value="testencryption$"/>
                     <property name="evaluationOrder" value="1"/>

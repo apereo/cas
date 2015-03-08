@@ -22,8 +22,8 @@ package org.jasig.cas.authentication.support;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.cipher.CipherExecutor;
-import org.jasig.cas.util.services.RegisteredServicePublicKeyCipherExecutor;
+import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
+import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.jasig.cas.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,23 +48,34 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     /** The Logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CipherExecutor cipherExecutor;
+    private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
      * Instantiates a new attribute encoder.
      * @param servicesManager the services manager
      */
     public AbstractCasAttributeEncoder(final ServicesManager servicesManager) {
+        this(servicesManager, new DefaultRegisteredServiceCipherExecutor());
+    }
+
+    /**
+     * Instantiates a new Abstract cas attribute encoder.
+     *
+     * @param servicesManager the services manager
+     * @param cipherExecutor the cipher executor
+     */
+    public AbstractCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
         this.servicesManager = servicesManager;
+        this.cipherExecutor = cipherExecutor;
     }
 
     /**
      * Optional. If none defined,
-     * a {@link org.jasig.cas.util.services.RegisteredServicePublicKeyCipherExecutor}
+     * a {@link org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor}
      * will be used instead.
      * @param cipherExecutor the executor to use.
      */
-    public void setCipherExecutor(final CipherExecutor cipherExecutor) {
+    public void setCipherExecutor(final RegisteredServiceCipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 
@@ -77,14 +88,8 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-
-            if (this.cipherExecutor != null) {
-                encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
-                        this.cipherExecutor);
-            } else {
-                encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
-                        new RegisteredServicePublicKeyCipherExecutor(registeredService));
-            }
+            encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
+                    this.cipherExecutor, registeredService);
         } else {
             logger.warn("Service [{}] is not found and/or enabled in the service registry.", service);
         }
@@ -100,10 +105,12 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param attributes the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
      * @param cipher the cipher object initialized per service public key
+     * @param registeredService the registered service
      */
     protected abstract void encodeAttributesInternal(final Map<String, Object> attributes,
                                             final Map<String, String> cachedAttributesToEncode,
-                                            final CipherExecutor cipher);
+                                            final RegisteredServiceCipherExecutor cipher,
+                                            final RegisteredService registeredService);
 
 
     /**
