@@ -17,21 +17,23 @@
  * under the License.
  */
 
-package org.jasig.cas.util.cipher;
+package org.jasig.cas.util.services;
+
+import org.jasig.cas.services.RegisteredService;
 
 /**
- * Interface to define generic encryption operations
- * that may be carried out by java Ciphers, or others.
+ * Defines how to encrypt data based on registered service's public key, etc.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface CipherExecutor {
+public interface RegisteredServiceCipherExecutor {
     /**
      * Encode string.
      *
      * @param data the data
+     * @param service the service
      * @return the encoded string or null
      */
-    String encode(final String data);
+    String encode(String data, RegisteredService service);
 }
