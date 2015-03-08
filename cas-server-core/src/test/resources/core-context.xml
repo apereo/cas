@@ -231,6 +231,24 @@
                         <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
                     </property>
                 </bean>
+
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="0"/>
+                    <property name="name" value="Test Encryption of Attributes"/>
+                    <property name="serviceId" value="testencryption$"/>
+                    <property name="evaluationOrder" value="1"/>
+                    <property name="publicKey">
+                        <bean class="org.jasig.cas.services.RegisteredServicePublicKeyImpl"
+                              c:location="classpath:keys/RSA1024Public.key"
+                              c:algorithm="RSA" />
+                    </property>
+                    <property name="attributeReleasePolicy">
+                        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
+                              p:authorizedToReleaseCredentialPassword="true"
+                              p:authorizedToReleaseProxyGrantingTicket="true" />
+                    </property>
+                </bean>
+
             </list>
         </property>
     </bean>
