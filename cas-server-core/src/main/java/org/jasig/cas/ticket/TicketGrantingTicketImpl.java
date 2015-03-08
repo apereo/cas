@@ -59,7 +59,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
-    @Column(name="AUTHENTICATION", nullable=false)
+    @Column(name="AUTHENTICATION", nullable=false, length = 1000000)
     private Authentication authentication;
 
     /** Flag to enforce manual expiration. */
@@ -68,11 +68,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** The services associated to this ticket. */
     @Lob
-    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
+    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
     private final HashMap<String, Service> services = new HashMap<>();
 
     @Lob
-    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
+    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
     private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
     /**
