@@ -24,6 +24,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.util.PublicKeyFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -38,9 +40,13 @@ import java.security.PublicKey;
 public final class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private String location;
 
     private String algorithm;
+
+    private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
 
     /**
      * Instantiates a new Registered service public key impl.
@@ -77,18 +83,31 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
         return this.algorithm;
     }
 
+    /**
+     * Sets public key factory bean class.
+     *
+     * @param publicKeyFactoryBeanClass the public key factory bean class
+     */
+    public void setPublicKeyFactoryBeanClass(final Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass) {
+        this.publicKeyFactoryBeanClass = publicKeyFactoryBeanClass;
+    }
 
     @Override
     public PublicKey createInstance() throws Exception {
-        final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
-        if (this.location.startsWith("classpath:")) {
-            factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, "classpath:")));
-        } else {
-            factory.setLocation(new FileSystemResource(this.location));
+        try {
+            final PublicKeyFactoryBean factory = publicKeyFactoryBeanClass.newInstance();
+            if (this.location.startsWith("classpath:")) {
+                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, "classpath:")));
+            } else {
+                factory.setLocation(new FileSystemResource(this.location));
+            }
+            factory.setAlgorithm(this.algorithm);
+            factory.setSingleton(false);
+            return factory.getObject();
+        } catch (final Exception e) {
+           logger.warn(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-        factory.setAlgorithm(this.algorithm);
-        factory.setSingleton(false);
-        return factory.getObject();
     }
 
     @Override

@@ -321,7 +321,7 @@ public class JsonServiceRegistryDaoTests {
     @Test
     public void serializePublicKeyForServiceAndVerify() throws Exception {
         final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
-                "classpath:RSA1024Public.key", CasAttributeEncoder.DEFAULT_CIPHER_ALGORITHM);
+                "classpath:RSA1024Public.key", "RSA");
 
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");

@@ -128,22 +128,6 @@ public final class CompressionUtils {
     }
 
     /**
-     * Encrypt using the given cipher, and encode the data in base 64.
-     *
-     * @param data the data
-     * @param cipher the cipher
-     * @return the encoded piece of data in base64
-     */
-    public static String encryptAndEncodeBase64(final String data, final Cipher cipher) {
-        try {
-            final byte[] cipherData = cipher.doFinal(data.getBytes(UTF8_ENCODING));
-            return encodeBase64(cipherData);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Base64 decode operation, which retrieves the equivalent
      * byte[] of the data in <code>UTF-8</code> encoding
      * and decodes the result.

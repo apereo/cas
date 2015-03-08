@@ -24,6 +24,8 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
@@ -37,6 +39,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private Resource resource;
@@ -46,6 +49,9 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
 
     @Override
     protected final PublicKey createInstance() throws Exception {
+        logger.debug("Creating public key instance from [{}] using [{}]",
+                this.resource.getFilename(), this.algorithm);
+
         try (final InputStream pubKey = this.resource.getInputStream()) {
             final byte[] bytes = new byte[pubKey.available()];
             pubKey.read(bytes);
