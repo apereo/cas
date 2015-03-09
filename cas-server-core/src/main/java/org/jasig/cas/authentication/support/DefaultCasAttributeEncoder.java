@@ -53,7 +53,8 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param servicesManager the services manager
      * @param cipherExecutor the cipher executor
      */
-    public DefaultCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
+    public DefaultCasAttributeEncoder(final ServicesManager servicesManager,
+                                      final RegisteredServiceCipherExecutor cipherExecutor) {
         super(servicesManager, cipherExecutor);
     }
 
