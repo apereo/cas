@@ -25,7 +25,6 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
-import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
