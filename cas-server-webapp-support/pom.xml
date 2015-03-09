@@ -56,6 +56,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <scope>runtime</scope>
@@ -122,8 +127,7 @@
       <artifactId>jstl</artifactId>
     </dependency>
 
-
-      <dependency>
+    <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
       <scope>compile</scope>
