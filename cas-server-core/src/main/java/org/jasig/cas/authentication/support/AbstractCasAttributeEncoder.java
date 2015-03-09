@@ -51,7 +51,8 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
-     * Instantiates a new attribute encoder.
+     * Instantiates a new attribute encoder with the default
+     * cipher as {@link DefaultRegisteredServiceCipherExecutor}.
      * @param servicesManager the services manager
      */
     public AbstractCasAttributeEncoder(final ServicesManager servicesManager) {
@@ -64,18 +65,9 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param servicesManager the services manager
      * @param cipherExecutor the cipher executor
      */
-    public AbstractCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
+    public AbstractCasAttributeEncoder(final ServicesManager servicesManager,
+                                       final RegisteredServiceCipherExecutor cipherExecutor) {
         this.servicesManager = servicesManager;
-        this.cipherExecutor = cipherExecutor;
-    }
-
-    /**
-     * Optional. If none defined,
-     * a {@link org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor}
-     * will be used instead.
-     * @param cipherExecutor the executor to use.
-     */
-    public void setCipherExecutor(final RegisteredServiceCipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 
@@ -90,11 +82,13 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode,
                     this.cipherExecutor, registeredService);
+            logger.debug("[{}] Encoded attributes are available for release to [{}]",
+                    newEncodedAttributes.size(), service);
         } else {
-            logger.warn("Service [{}] is not found and/or enabled in the service registry.", service);
+            logger.debug("Service [{}] is not found and/or enabled in the service registry. "
+                    + "No encoding has taken place.", service);
         }
-        logger.debug("[{}] Encoded attributes are available for release to [{}]",
-                newEncodedAttributes.size(), service);
+
         return newEncodedAttributes;
     }
 
@@ -130,14 +124,16 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
                     collection.iterator().next().toString());
-            logger.debug("Removed credential as an authentication attribute and cached it locally.");
+            logger.debug("Removed [{}] as an authentication attribute and cached it locally.",
+                    CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         }
 
         collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
                     collection.iterator().next().toString());
-            logger.debug("Removed PGT as an authentication attribute and cached it locally.");
+            logger.debug("Removed [{}] as an authentication attribute and cached it locally.",
+                    CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         }
         return cachedAttributesToEncode;
     }
