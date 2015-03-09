@@ -125,7 +125,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                     publicKey.getAlgorithm());
             return cipher;
         } catch (final Exception e) {
-            logger.warn("Cipher could not be initialized for service [{}]. Error [{}]"
+            logger.warn("Cipher could not be initialized for service [{}]. Error [{}]",
                     registeredService, e.getMessage());
         }
         return null;
