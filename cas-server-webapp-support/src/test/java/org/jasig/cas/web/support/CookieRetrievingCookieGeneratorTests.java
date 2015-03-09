@@ -29,23 +29,23 @@ import javax.servlet.http.Cookie;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
+ * Unit tests for {@link org.jasig.cas.web.support.CookieRetrievingCookieGenerator}.
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public final class CookieRetrievingCookieGeneratorTests {
 
-    private CookieRetrievingCookieGenerator g;
+    private CookieRetrievingCookieGenerator generator;
 
     @Before
     public void setUp() throws Exception {
-        this.g = new CookieRetrievingCookieGenerator();
-        this.g.setRememberMeMaxAge(100);
-        this.g.setCookieDomain("cas.org");
-        this.g.setCookieMaxAge(5);
-        this.g.setCookiePath("/");
-        this.g.setCookieName("test");
+        this.generator = new CookieRetrievingCookieGenerator();
+        this.generator.setRememberMeMaxAge(100);
+        this.generator.setCookieDomain("cas.org");
+        this.generator.setCookieMaxAge(5);
+        this.generator.setCookiePath("/");
+        this.generator.setCookieName("test");
     }
 
     @Test
@@ -54,33 +54,32 @@ public final class CookieRetrievingCookieGeneratorTests {
         request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        this.g.addCookie(request, response, "test");
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
 
         final Cookie c = response.getCookie("test");
         assertEquals(100, c.getMaxAge());
-        assertEquals("test", c.getValue());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 
     @Test
     public void verifyCookieAddWithoutRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        this.g.addCookie(request, response, "test");
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
 
         final Cookie c = response.getCookie("test");
         assertEquals(5, c.getMaxAge());
-        assertEquals("test", c.getValue());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 
     @Test
     public void verifyCookieRetrieve() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Cookie cookie = new Cookie("test", "test");
-        cookie.setDomain("cas.org");
-        cookie.setMaxAge(5);
-        request.setCookies(cookie);
-
-        assertEquals("test", this.g.retrieveCookieValue(request));
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 }

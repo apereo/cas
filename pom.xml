@@ -614,6 +614,12 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.bitbucket.b_c</groupId>
+        <artifactId>jose4j</artifactId>
+        <version>${jose.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.databind.version}</version>
@@ -1278,6 +1284,7 @@
     <jcache.ri.version>1.0.0</jcache.ri.version>
     <javax.el-api.version>2.2.5</javax.el-api.version>
     <javax.el-impl.version>2.2.6</javax.el-impl.version>
+    <jose.version>0.4.0</jose.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
