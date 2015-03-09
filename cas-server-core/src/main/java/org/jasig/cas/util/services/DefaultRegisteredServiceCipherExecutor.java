@@ -40,13 +40,14 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * Encrypt using the given cipher, and encode the data in base 64.
+     * Encrypt using the given cipher associated with the service,
+     * and encode the data in base 64.
      *
      * @param data the data
      * @return the encoded piece of data in base64
      */
     @Override
-    public String encode(final String data, final RegisteredService service) {
+    public final String encode(final String data, final RegisteredService service) {
         try {
             final PublicKey publicKey = createRegisteredServicePublicKey(service);
             final byte[] result = encodeInternal(data, publicKey, service);
@@ -63,7 +64,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     /**
      * Encode internally, meant to be called by extensions.
      * Default behavior will encode the data based on the
-     * registered service public's alg using {@link javax.crypto.Cipher}.
+     * registered service public key's algorithm using {@link javax.crypto.Cipher}.
      *
      * @param data the data
      * @param publicKey the public key
