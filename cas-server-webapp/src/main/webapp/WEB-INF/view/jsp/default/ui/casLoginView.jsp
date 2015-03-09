@@ -35,8 +35,8 @@
                     <div class="row fl-controls-left">
                         <label for="username" class="fl-label"><spring:message code="screen.welcome.label.netid" /></label>
 						<c:if test="${not empty sessionScope.openIdLocalId}">
-						<strong>${sessionScope.openIdLocalId}</strong>
-						<input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
+						<strong><c:out value="${sessionScope.openIdLocalId}" /></strong>
+						<input type="hidden" id="username" name="username" value="<c:out value="${sessionScope.openIdLocalId}" />" />
 						</c:if>
 
 						<c:if test="${empty sessionScope.openIdLocalId}">
