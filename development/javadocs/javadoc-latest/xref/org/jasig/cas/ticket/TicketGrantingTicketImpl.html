@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      <em class="jxr_javadoccomment">/** The authenticated object for which this ticket was generated for. */</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      @Lob
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Column(name=<span class="jxr_string">"AUTHENTICATION"</span>, nullable=false)
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      @Column(name=<span class="jxr_string">"AUTHENTICATION"</span>, nullable=false, length = 1000000)
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** Flag to enforce manual expiration. */</em>
@@ -76,11 +76,11 @@
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <em class="jxr_javadoccomment">/** The services associated to this ticket. */</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Lob
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Column(name=<span class="jxr_string">"SERVICES_GRANTED_ACCESS_TO"</span>, nullable=false)
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Column(name=<span class="jxr_string">"SERVICES_GRANTED_ACCESS_TO"</span>, nullable=false, length = 1000000)
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> HashMap&lt;String, Service&gt; services = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      @Lob
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Column(name=<span class="jxr_string">"SUPPLEMENTAL_AUTHENTICATIONS"</span>, nullable=false)
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      @Column(name=<span class="jxr_string">"SUPPLEMENTAL_AUTHENTICATIONS"</span>, nullable=false, length = 1000000)
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ArrayList&lt;Authentication&gt; supplementalAuthentications = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <em class="jxr_javadoccomment">/**</em>
