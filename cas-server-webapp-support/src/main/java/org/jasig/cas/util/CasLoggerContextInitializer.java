@@ -36,6 +36,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -133,7 +134,7 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
     private ServletContextListener prepareAndgetContextListener() {
         try {
             if (StringUtils.isNotBlank(this.loggerContextPackageName)) {
-                final Set<URL> set = ClasspathHelper.forPackage(this.loggerContextPackageName);
+                final Collection<URL> set = ClasspathHelper.forPackage(this.loggerContextPackageName);
                 final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
                 final Set<Class<? extends ServletContextListener>> subTypesOf = reflections.getSubTypesOf(ServletContextListener.class);
                 final ServletContextListener loggingContext = subTypesOf.iterator().next().newInstance();
