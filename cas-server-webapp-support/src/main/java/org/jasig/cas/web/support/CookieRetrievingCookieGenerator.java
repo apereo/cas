@@ -46,8 +46,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
     /** The maximum age the cookie should be remembered for.
      * The default is three months ({@value} in seconds, according to Google) */
     private int rememberMeMaxAge = DEFAULT_REMEMBER_ME_MAX_AGE;
