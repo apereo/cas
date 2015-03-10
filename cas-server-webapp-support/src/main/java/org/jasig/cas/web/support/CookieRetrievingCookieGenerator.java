@@ -19,8 +19,6 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;

@@ -51,6 +51,12 @@ public interface CookieValueManager {
      */
     String obtainCookieValue(final Cookie cookie, final HttpServletRequest request);
 
+    /**
+     * Default cookie value builder that simply returns the given cookie value
+     * and does not perform any additional checks.
+     * @author Misagh Moayyed
+     * @since 4.1
+     */
     public static class DefaultCookieValueManager implements CookieValueManager {
 
         @Override
