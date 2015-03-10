@@ -1243,37 +1243,37 @@
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.4.RELEASE</spring.version>
     <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
-    <ldaptive.version>1.0.5</ldaptive.version>
+    <ldaptive.version>1.0.6</ldaptive.version>
     <spring.security.version>3.2.5.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.8.2</aspectj.version>
+    <aspectj.version>1.8.5</aspectj.version>
     <javax.validation.version>1.1.0.Final</javax.validation.version>
     <perf4j.version>0.9.16</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
     <hibernate.core.version>4.3.8.Final</hibernate.core.version>
-    <slf4j.version>1.7.9</slf4j.version>
+    <slf4j.version>1.7.10</slf4j.version>
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
-    <commons.codec.version>1.9</commons.codec.version>
+    <commons.codec.version>1.10</commons.codec.version>
     <log4j.version>1.2.17</log4j.version>
-    <junit.version>4.11</junit.version>
-    <checkstyle.version>6.3</checkstyle.version>
+    <junit.version>4.12</junit.version>
+    <checkstyle.version>6.4</checkstyle.version>
     <commons.lang.version>3.3.2</commons.lang.version>
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
-    <mockito.version>1.9.5</mockito.version>
+    <mockito.version>1.10.19</mockito.version>
     <ehcache.version>2.9.0</ehcache.version>
-    <hsqldb.version>2.0.0</hsqldb.version>
-    <apache.httpclient.version>4.3.4</apache.httpclient.version>
-    <joda-time.version>2.4</joda-time.version>
-    <cas.client.version>3.3.1</cas.client.version>
+    <hsqldb.version>2.3.2</hsqldb.version>
+    <apache.httpclient.version>4.3.6</apache.httpclient.version>
+    <joda-time.version>2.7</joda-time.version>
+    <cas.client.version>3.3.3</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
-    <reflections.version>0.9.8</reflections.version>
+    <reflections.version>0.9.9</reflections.version>
     <apache.shiro.version>1.2.3</apache.shiro.version>
-    <jackson.databind.version>2.2.0</jackson.databind.version>
-    <uboundid.ldapsdk.version>2.3.6</uboundid.ldapsdk.version>
+    <jackson.databind.version>2.5.0</jackson.databind.version>
+    <uboundid.ldapsdk.version>2.3.8</uboundid.ldapsdk.version>
     <opensaml.version>2.6.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
