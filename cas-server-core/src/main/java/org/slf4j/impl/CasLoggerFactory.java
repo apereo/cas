@@ -29,6 +29,7 @@ import org.slf4j.helpers.NOPLogger;
 import org.slf4j.helpers.Util;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,11 +51,11 @@ public final class CasLoggerFactory implements ILoggerFactory {
     /**
      * Instantiates a new Cas logger factory.
      * Configures the reflection scanning engine to be prepared to scan <code>org.slf4j.impl</code>
-     * in order to find other avaliable factories.
+     * in order to find other available factories.
      */
     public CasLoggerFactory() {
         this.loggerMap = new ConcurrentHashMap<>();
-        final Set<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
+        final Collection<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
         final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
 
         final Set<Class<? extends ILoggerFactory>> subTypesOf = reflections.getSubTypesOf(ILoggerFactory.class);

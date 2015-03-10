@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.Maps;
 import org.jasig.cas.Message;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -135,6 +137,17 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setPrincipalAttributeMap(final Map<String, String> attributeNameMap) {
         this.principalAttributeMap = attributeNameMap;
+    }
+
+    /**
+     * Sets the mapping of additional principal attributes where the key and value is the LDAP attribute
+     * name. Note that the principal ID attribute
+     * should not be listed among these attributes.
+     *
+     * @param attributeList List of LDAP attribute names
+     */
+    public void setPrincipalAttributeList(final List<String> attributeList) {
+        this.principalAttributeMap = Maps.uniqueIndex(attributeList, Functions.toStringFunction());
     }
 
     /**
