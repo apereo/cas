@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Test cases for {@link org.jasig.cas.util.DefaultCipherExecutor}.
  *
  * @author Misagh Moayyed
- * @since {4.1
+ * @since 4.1
  */
 public class DefaultCipherExecutorTests {
 
