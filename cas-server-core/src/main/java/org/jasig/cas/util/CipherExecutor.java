@@ -46,6 +46,11 @@ public interface CipherExecutor {
      */
     String decode(String value);
 
+    /**
+     * No-Op cipher executor that does nothing for encryption/decryption.
+     * @author Misagh Moayyed
+     * @since 4.1
+     */
     public static final class NoOpCipherExecutor implements CipherExecutor {
 
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -55,9 +60,9 @@ public interface CipherExecutor {
          * Issues a warning on safety.
          */
         public NoOpCipherExecutor() {
-            logger.warn("[{}] does no encryption and may NOT be safe in a production environment. " +
-                    "Consider using other choices, such as [{}] that handle encryption, signing and verification of " +
-                    "all appropriate values.", this.getClass().getName(), DefaultCipherExecutor.class.getName());
+            logger.warn("[{}] does no encryption and may NOT be safe in a production environment. "
+                    + "Consider using other choices, such as [{}] that handle encryption, signing and verification of "
+                    + "all appropriate values.", this.getClass().getName(), DefaultCipherExecutor.class.getName());
         }
 
         @Override
