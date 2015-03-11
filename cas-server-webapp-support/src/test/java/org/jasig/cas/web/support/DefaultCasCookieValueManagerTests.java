@@ -28,25 +28,25 @@ import javax.servlet.http.Cookie;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for {@link org.jasig.cas.web.support.CasCookieValueManagerTests}.
+ * Test cases for {@link DefaultCasCookieValueManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class CasCookieValueManagerTests {
+public class DefaultCasCookieValueManagerTests {
 
     @Test(expected = IllegalStateException.class)
     public void defaultCookieWithNoRemote() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr(null);
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         mgmr.buildCookieValue("cas", request);
     }
 
     @Test(expected = IllegalStateException.class)
     public void defaultCookieWithNoAgent() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         mgmr.buildCookieValue("cas", request);
     }
 
@@ -54,7 +54,7 @@ public class CasCookieValueManagerTests {
     public void defaultCookieGood() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("user-agent", "the agent");
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         assertNotNull(mgmr.buildCookieValue("cas", request));
     }
 
@@ -62,7 +62,7 @@ public class CasCookieValueManagerTests {
     public void defaultCookieVerify() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("user-agent", "the agent");
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         final String c = mgmr.buildCookieValue("cas", request);
         assertEquals("cas", mgmr.obtainCookieValue(new Cookie("test", c), request));
     }
@@ -71,7 +71,7 @@ public class CasCookieValueManagerTests {
     public void defaultCookieVerifyNoRemote() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("user-agent", "the agent");
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         final String c = mgmr.buildCookieValue("cas", request);
         request.setRemoteAddr("another ip");
         assertEquals("cas", mgmr.obtainCookieValue(new Cookie("test", c), request));
@@ -81,7 +81,7 @@ public class CasCookieValueManagerTests {
     public void defaultCookieVerifyNoAgent() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("user-agent", "the agent");
-        final CasCookieValueManager mgmr = new CasCookieValueManager(new DefaultCipherExecutor());
+        final DefaultCasCookieValueManager mgmr = new DefaultCasCookieValueManager(new DefaultCipherExecutor());
         final String c = mgmr.buildCookieValue("cas", request);
 
         request = new MockHttpServletRequest();
