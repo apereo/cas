@@ -22,6 +22,8 @@ package org.jasig.cas.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Responsible to define operation that deal with encryption, signing
  * and verification of a value.
@@ -37,14 +39,14 @@ public interface CipherExecutor {
      * @param value the value
      * @return the encrypted value or null
      */
-    String encode(String value);
+    String encode(@NotNull String value);
 
     /**
      * Decode the value. Signatures may also be verified.
      * @param value encrypted value
      * @return the decoded value. 
      */
-    String decode(String value);
+    String decode(@NotNull String value);
 
     /**
      * No-Op cipher executor that does nothing for encryption/decryption.
