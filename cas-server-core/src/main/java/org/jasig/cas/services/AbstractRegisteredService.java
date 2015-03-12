@@ -23,6 +23,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -34,6 +36,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,9 +58,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     private static final long serialVersionUID = 7645279151115635245L;
 
-    /**
-     * The unique identifier for this service.
-     */
+    /** The logger instance. */
+    @Transient
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
