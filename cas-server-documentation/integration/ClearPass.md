@@ -34,7 +34,7 @@ Once you have received the public key from the client application owner, it must
 ...
 {% endhighlight %}
 
-###Authorize PGT for Service
+###Authorize Credential for Service
 The service that holds the public key above must also be authorized to receive the password
 as an attribute for the given attribute release policy of choice:
 
@@ -67,19 +67,19 @@ return new String(cipherData);
 
 ##Components
 
-`RegisteredServiceCipherExecutor`
+- `RegisteredServiceCipherExecutor`
 Defines how to encrypt data based on registered service's public key, etc.
 
-`DefaultRegisteredServiceCipherExecutor`
+- `DefaultRegisteredServiceCipherExecutor`
 A default implementation of the `RegisteredServiceCipherExecutor`
 that will use the service's public key to initialize the cipher to 
 encrypt and encode the value. All results are converted to base-64.
 
-`CasAttributeEncoder`
+- `CasAttributeEncoder`
 Parent component that defines how a CAS attribute
 is to be encoded and signed in the CAS validation response. 
 
-`DefaultCasAttributeEncoder`
+- `DefaultCasAttributeEncoder`
 The default implementation of the attribute encoder that will use a per-service key-pair
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
 which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`. 
