@@ -124,7 +124,7 @@ SERVER IP ADDRESS: ...
 Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration. 
 
 ##Performance Statistics
-CAS also uses the [DropWizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
+CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
 
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
