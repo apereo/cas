@@ -101,6 +101,13 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
 ### Attribute Release Policy
 The release policy decides how attributes are to be released for a given service. Each policy has the ability to apply an optional filter.
 
+The following settings are shared by all attribute release policies:
+
+| Field                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+
 #### Components
 
 #####`ReturnAllAttributeReleasePolicy`
@@ -317,3 +324,30 @@ For example:
 ...
 </bean>
 {% endhighlight %}
+
+###Encrypting Attributes
+CAS by default supports the ability to encrypt certain attributes, such as the proxy-granting ticket and the credential conditionally. 
+If you wish to take this a step further and encrypt other attributes that you deem sensitive, you can use the following components
+as a baseline to carry out the task at hand:
+
+`DefaultCasAttributeEncoder`
+The default implementation of the attribute encoder that will use a per-service key-pair
+to encrypt. It will attempt to query the collection of attributes that resolved to determine
+which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`. 
+
+{% highlight xml %}
+<bean id="cas3ServiceSuccessView" 
+	class="org.jasig.cas.web.view.Cas30ResponseView"
+    c:view-ref="cas3JstlSuccessView"
+    p:successResponse="true"
+    p:servicesManager-ref="servicesManager"
+    p:casAttributeEncoder-ref="casAttributeEncoder"  />
+
+<bean id="casRegisteredServiceCipherExecutor" 
+	class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
+
+<bean id="casAttributeEncoder" 
+	class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+    c:servicesManager-ref="servicesManager"
+	c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
+{% endhighlight %} 
