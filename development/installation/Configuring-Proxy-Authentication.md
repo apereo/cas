@@ -135,16 +135,17 @@ as an attribute for the given attribute release policy of choice:
 {% endhighlight %} 
 
 ####Decrypt the PGT id
-Once the client application has received the proxy-granting ticket id attribute in the CAS validation response, it can decrypt it
-via its own private key. Here's a sample code snippet:
+Once the client application has received the `proxyGrantingTicket` id attribute in the CAS validation response, it can decrypt it
+via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
+decryption can occur. Here's a sample code snippet:
 
 {% highlight java %}
 
 final Map<?, ?> attributes = ...
-final String encodedPsw = (String) attributes.get("proxyGrantingTicket");
+final String encodedPgt = (String) attributes.get("proxyGrantingTicket");
 final PrivateKey privateKey = ...
 final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64ToByteArray(cred);
+final byte[] cred64 = decodeBase64ToByteArray(encodedPgt);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);

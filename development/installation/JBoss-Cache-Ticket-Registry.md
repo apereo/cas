@@ -5,15 +5,17 @@ title: CAS - JBoss Cache Ticket Registry
 
 # JBoss Cache Ticket Registry
 
-<div class="alert alert-danger"><strong>Deprecated Module!</strong><p>The JBoss Cache Ticket Registry module is deprecated as of this version and will no longer be maintained. Furthermore, the module may be removed in subsequent CAS releases. Please try to use other options provided by the CAS server for your distributed ticket registry needs.</p></div>
+<div class="alert alert-danger"><strong>Deprecated Module!</strong><p>The JBoss Cache Ticket Registry module is deprecated and will no longer be maintained. Furthermore, the module may be removed in subsequent CAS releases. Please try to use other options provided by the CAS server for your distributed ticket registry needs.</p></div>
 
 JBoss integration is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-         <groupId>org.jasig.cas</groupId>
-         <artifactId>cas-server-integration-jboss</artifactId>
-         <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+     <groupId>org.jasig.cas</groupId>
+     <artifactId>cas-server-integration-jboss</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 `JBossCacheTicketRegistry` stores data in a [JBoss Cache](http://www.jboss.org/jbosscache/) that supports distributed
 caches for failover support and is therefore suitable for HA deployments. Almost all of the configuration for this
