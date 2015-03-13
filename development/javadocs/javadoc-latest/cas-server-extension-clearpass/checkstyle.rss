@@ -19,9 +19,9 @@ under the License.
 -->
 <rss version="0.91">
   <channel>
-    <title>Apereo CAS ClearPass Extension - Checkstyle report</title>
+    <title>Apereo CAS ClearPass Extension - DEPRECATED - Checkstyle report</title>
     <link>http://www.jasig.org/cas/cas-server-extension-clearpass/</link>
-    <description>Apereo CAS ClearPass Extension - Checkstyle report</description>
+    <description>Apereo CAS ClearPass Extension - DEPRECATED - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2004 - 2015 Jasig</copyright>
     <item>

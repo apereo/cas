@@ -37,27 +37,45 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../org/jasig/cas/CasProtocolConstants.html">CasProtocolConstants</a> {
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_javadoccomment">/** Constant representing the PGTIOU in the cas validation model. */</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>      String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU = <span class="jxr_string">"pgtIou"</span>;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <em class="jxr_javadoccomment">/** Constant representing the remember-me long term token in the validation payload. */</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>      String VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME = <span class="jxr_string">"longTermAuthenticationRequestTokenUsed"</span>;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <em class="jxr_javadoccomment">/** Constant representing the proxy callback url parameter in the request. */</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      String PARAMETER_PROXY_CALLBACK_URL = <span class="jxr_string">"pgtUrl"</span>;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <em class="jxr_javadoccomment">/** Constant representing the renew parameter in the request. */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      String PARAMETER_RENEW = <span class="jxr_string">"renew"</span>;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid request for validation. */</em>
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      String ERROR_CODE_INVALID_REQUEST = <span class="jxr_string">"INVALID_REQUEST"</span>;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>      
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid proxy callback for validation. */</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      String ERROR_CODE_INVALID_PROXY_CALLBACK = <span class="jxr_string">"INVALID_PROXY_CALLBACK"</span>;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid ticket for validation. */</em>
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      String ERROR_CODE_INVALID_TICKET = <span class="jxr_string">"INVALID_TICKET"</span>;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  }
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_javadoccomment">/** CAS Protocol Validation Fields. **/</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/** Constant representing the PGT in the cas validation model. */</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET = <span class="jxr_string">"proxyGrantingTicket"</span>;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <em class="jxr_javadoccomment">/** Constant representing the PGTIOU in the cas validation model. */</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU = <span class="jxr_string">"pgtIou"</span>;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <em class="jxr_javadoccomment">/** Constant representing the remember-me long term token in the validation payload. */</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      String VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME = <span class="jxr_string">"longTermAuthenticationRequestTokenUsed"</span>;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <em class="jxr_javadoccomment">/** Represents the collection of attributes in the view. */</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES = <span class="jxr_string">"attributes"</span>;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/** Represents the authentication date object in the view. */</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = <span class="jxr_string">"authenticationDate"</span>;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <em class="jxr_javadoccomment">/** Represents the flag to note whether assertion is backed by new login. */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = <span class="jxr_string">"isFromNewLogin"</span>;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <em class="jxr_javadoccomment">/** CAS Protocol Parameters. **/</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <em class="jxr_javadoccomment">/** Constant representing the proxy callback url parameter in the request. */</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      String PARAMETER_PROXY_CALLBACK_URL = <span class="jxr_string">"pgtUrl"</span>;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/** Constant representing the renew parameter in the request. */</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      String PARAMETER_RENEW = <span class="jxr_string">"renew"</span>;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <em class="jxr_javadoccomment">/** CAS Protocol Error Codes. **/</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid request for validation. */</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      String ERROR_CODE_INVALID_REQUEST = <span class="jxr_string">"INVALID_REQUEST"</span>;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid proxy callback for validation. */</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      String ERROR_CODE_INVALID_PROXY_CALLBACK = <span class="jxr_string">"INVALID_PROXY_CALLBACK"</span>;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** Constant representing an invalid ticket for validation. */</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      String ERROR_CODE_INVALID_TICKET = <span class="jxr_string">"INVALID_TICKET"</span>;
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

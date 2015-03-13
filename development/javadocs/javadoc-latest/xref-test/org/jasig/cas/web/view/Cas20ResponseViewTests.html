@@ -69,9 +69,9 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse resp = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          view.render(modelAndView.getModel(), req, resp);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  

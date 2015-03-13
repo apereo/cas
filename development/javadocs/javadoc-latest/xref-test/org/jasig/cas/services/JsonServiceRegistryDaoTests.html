@@ -324,7 +324,23 @@
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">this</strong>.dao.load();
 <a class="jxr_linenumber" name="L317" href="#L317">317</a>         assertEquals(list.size(), 1);
 <a class="jxr_linenumber" name="L318" href="#L318">318</a>     }
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> }
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> 
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>     @Test
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> serializePublicKeyForServiceAndVerify() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey = <strong class="jxr_keyword">new</strong> RegisteredServicePublicKeyImpl(
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>                 <span class="jxr_string">"classpath:RSA1024Public.key"</span>, <span class="jxr_string">"RSA"</span>);
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>         r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         r.setName(<span class="jxr_string">"serializePublicKeyForServiceAndVerify"</span>);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         r.setId(4245);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         r.setPublicKey(publicKey);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">this</strong>.dao.load();
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>         assertEquals(list.size(), 1);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>     }
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
