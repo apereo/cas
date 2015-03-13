@@ -103,7 +103,7 @@ configured inside CAS. CAS will use the public key to encrypt the proxy granting
 in the validation response, only if the service is authorized to receive it.
 
 Note that the return of the proxy granting ticket id is only carried out by the CAS validation response, provided the client
-application issues a request to the `/p3/serviceValidate` endpoint. Other means of returning attributes to CAS, such as SAML1
+application issues a request to the `/p3/serviceValidate` endpoint (or `/p3/proxyValidate`). Other means of returning attributes to CAS, such as SAML1
 will **not** support the additional returning of the proxy granting ticket.
 
 ###Configuration
