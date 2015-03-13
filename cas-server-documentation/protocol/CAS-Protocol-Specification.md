@@ -1571,12 +1571,15 @@ under the License.
 </xs:schema>
 {% endhighlight %}
 
-
 >   Note: As userAttributes can be extended by the CAS Server implementor (see
 >   \<xs:any\> schema definition), it is RECOMMENDED to form custom attributes
->   as \<cas:attributes\>\<cas:attribute name="NAME"\>VALUE\<cas:attribute\>\</cas:attributes\>.
+>   as using the following format:
 
-
+{% highlight xml %}
+<cas:attributes>
+    <cas:[attribute-name]>VALUE</cas:attribute>
+</cas:attributes>
+{% endhighlight %}
 
 <a name="head_appdx_b"/>
 
@@ -1595,7 +1598,7 @@ through a GET request. However, not all browsers have implemented this behavior
 correctly.
 
 The RECOMMENDED method of redirection is thus JavaScript. A page containing a
-window.location.href in the following manner performs adequately:
+`window.location.href` in the following manner performs adequately:
 
 {% highlight html %}
  <html>
