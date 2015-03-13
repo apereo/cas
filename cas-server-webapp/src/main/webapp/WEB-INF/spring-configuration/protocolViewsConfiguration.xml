@@ -66,10 +66,15 @@
     <!-- Successful Validation Views -->
     <bean id="cas3ServiceSuccessView" class="org.jasig.cas.web.view.Cas30ResponseView"
           c:view-ref="cas3JstlSuccessView"
-          p:successResponse="true" />
+          p:successResponse="true"
+          p:servicesManager-ref="servicesManager"
+          p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
     <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <bean id="casAttributeEncoder" class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+          c:servicesManager-ref="servicesManager"  />
 
     <!-- Failure Validation Views -->
     <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
