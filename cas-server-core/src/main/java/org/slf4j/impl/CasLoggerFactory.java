@@ -71,7 +71,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
         if (subTypesOf.isEmpty()) {
             final RuntimeException e = new RuntimeException("No ILoggerFactory could be found on the classpath."
                     + " CAS cannot determine the logging framework."
-                    + " Examine the project dependencies and ensure there is one and only one logging framework is available.");
+                    + " Examine the project dependencies and ensure that there is one and only one logging framework available.");
 
             Util.report(e.getMessage(), e);
             throw e;

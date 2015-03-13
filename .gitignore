@@ -18,3 +18,4 @@ build.xml
 *.log
 rebel.xml
 **/.checkstyle
+*.log.gz
