@@ -26,8 +26,12 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.monitor.HealthCheckMonitor;
 import org.jasig.cas.monitor.HealthStatus;
 import org.jasig.cas.monitor.Status;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+
 
 /**
  * Reports overall CAS health based on the observations of the configured {@link HealthCheckMonitor} instance.
@@ -35,29 +39,26 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Marvin S. Addison
  * @since 3.5
  */
-public class HealthCheckController extends AbstractController {
+@Controller("healthCheckController")
+@RequestMapping("/status")
+public class HealthCheckController {
 
     /** Prefix for custom response headers with health check details. */
     private static final String HEADER_PREFIX = "X-CAS-";
 
     @NotNull
+    @Autowired
     private HealthCheckMonitor healthCheckMonitor;
 
-
     /**
-     * Sets the health check monitor used to observe system health.
-     * @param monitor Health monitor configured with subordinate monitors that observe specific aspects of overall
-     *                system health.
+     * Handle request.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
      */
-    public void setHealthCheckMonitor(final HealthCheckMonitor monitor) {
-        this.healthCheckMonitor = monitor;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
+    @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(
             final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
