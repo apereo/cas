@@ -21,6 +21,7 @@ package org.jasig.cas.web.view;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,17 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the assertion from
      */
     protected final Assertion getAssertionFrom(final Map<String, Object> model) {
-        return (Assertion) model.get("assertion");
+        return (Assertion) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION);
+    }
+
+    /**
+     * Gets the PGT from the model.
+     *
+     * @param model the model
+     * @return the pgt id
+     */
+    protected final String getProxyGrantingTicketId(final Map<String, Object> model) {
+        return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
 
     /**
@@ -75,6 +86,17 @@ public abstract class AbstractCasView extends AbstractView {
         return getAssertionFrom(model).getPrimaryAuthentication();
     }
 
+    /**
+     * Gets an authentication attribute from the primary authentication object.
+     *
+     * @param model the model
+     * @param attributeName the attribute name
+     * @return the authentication attribute
+     */
+    protected final String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
+        final Authentication authn = getPrimaryAuthenticationFrom(model);
+        return (String) authn.getAttributes().get(attributeName);
+    }
     /**
      * Gets the principal from the model.
      *
@@ -166,6 +188,16 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final Date getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
+    }
+
+    /**
+     * Gets validated service from the model.
+     *
+     * @param model the model
+     * @return the validated service from
+     */
+    protected final Service getServiceFrom(final Map<String, Object> model) {
+        return (Service) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
     }
 
     /**

@@ -47,6 +47,12 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     /** Attribute repository that refreshes attributes for a principal. **/
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
+    /** Authorize the release of credential for this service. Default is false. **/
+    private boolean authorizedToReleaseCredentialPassword;
+
+    /** Authorize the release of PGT for this service. Default is false. **/
+    private boolean authorizedToReleaseProxyGrantingTicket;
+
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
@@ -68,7 +74,25 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     protected final AttributeFilter getAttributeFilter() {
         return this.attributeFilter;
     }
-    
+
+    @Override
+    public boolean isAuthorizedToReleaseCredentialPassword() {
+        return this.authorizedToReleaseCredentialPassword;
+    }
+
+    @Override
+    public boolean isAuthorizedToReleaseProxyGrantingTicket() {
+        return this.authorizedToReleaseProxyGrantingTicket;
+    }
+
+    public void setAuthorizedToReleaseCredentialPassword(final boolean authorizedToReleaseCredentialPassword) {
+        this.authorizedToReleaseCredentialPassword = authorizedToReleaseCredentialPassword;
+    }
+
+    public void setAuthorizedToReleaseProxyGrantingTicket(final boolean authorizedToReleaseProxyGrantingTicket) {
+        this.authorizedToReleaseProxyGrantingTicket = authorizedToReleaseProxyGrantingTicket;
+    }
+
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
