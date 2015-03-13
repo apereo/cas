@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <!--
 
     Licensed to Apereo under one or more contributor license
@@ -20,14 +19,14 @@
     under the License.
 
 -->
-
 <Configuration>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/travis.log" append="true"
-                     filePattern="travis-%d{yyyy-MM-dd-HH}-%i.log">
+        <!-- Required by CasLoggerFactoryTests. Filename is linked to the test. -->
+        <RollingFile name="slf4j" fileName="target/slf4j.log" append="true"
+                     filePattern="slf4j-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -38,10 +37,8 @@
     </Appenders>
     <Loggers>
         <Logger name="org.slf4j.impl" level="trace">
-            <AppenderRef ref="file"/>
+            <AppenderRef ref="slf4j"/>
         </Logger>
-        <Logger name="org.jasig" level="warn" />
-        <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
