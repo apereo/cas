@@ -5,7 +5,7 @@ title: CAS - Logging Configuration
 
 
 #Logging 
-CAS provides a logging facility that logs important informational events like authentication success and failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J Logging framework as a facade for the [Log4J engine](http://logging.apache.org/log4j/‎) by default. 
+CAS provides a logging facility that logs important informational events like authentication success and failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J Logging framework as a facade for the [Log4J engine](http://logging.apache.org/log4j/2.x/‎) by default. 
 
 The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j2.xml`. By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`. 
 
@@ -21,8 +21,6 @@ The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WE
 ...
 {% endhighlight %}
 
-
-<br/>
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though, you probably want to run them both as `WARN`.</p></div>
 
 
@@ -168,7 +166,7 @@ Supported metrics include:
 - Breakdown of thread states, including deadlocks
 - File descriptor usage
 - ...
-- 
+
 ###Loggers
 All performance data and metrics are routed to a log file via the Log4j configuration:
 
