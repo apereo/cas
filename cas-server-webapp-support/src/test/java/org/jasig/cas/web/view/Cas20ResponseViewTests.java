@@ -61,9 +61,9 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
 
-        assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
-        assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
-        assertNotNull(req.getAttribute(Cas20ResponseView.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
+        assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
+        assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
+        assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));
     }
 
