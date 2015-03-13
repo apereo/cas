@@ -17,7 +17,7 @@ Attributes pass through a two-step process:
 
 
 ## Configuration
-Once principal attributes are [resolved]((Attribute-Resolution.html), adopters may choose to allow/release each attribute per each definition in the registry. Example configuration follows:
+Once principal attributes are [resolved](Attribute-Resolution.html), adopters may choose to allow/release each attribute per each definition in the registry. Example configuration follows:
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
