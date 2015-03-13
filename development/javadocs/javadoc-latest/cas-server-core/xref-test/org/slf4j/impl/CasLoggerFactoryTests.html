@@ -83,31 +83,31 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging1() {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          logger.trace(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          logger.trace(getMarker(<span class="jxr_string">"trace"</span>), getMessageToLogWithParams(), <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          validateLogData();
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      @Test
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging2() {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          logger.trace(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog());
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          logger.trace(getMarker(<span class="jxr_string">"trace"</span>), getMessageToLog());
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          validateLogData();
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      }
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      @Test
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging3() {
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          logger.trace(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          logger.trace(getMarker(<span class="jxr_string">"trace"</span>), getMessageToLogWithParams(), ID2, ID1);
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          validateLogData();
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      @Test
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging4() {
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          logger.trace(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1, ID2);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          logger.trace(getMarker(<span class="jxr_string">"trace"</span>), getMessageToLogWithParams(), ID2, ID1, ID2);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>          validateLogData();
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      }
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     @Test
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging5() {
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         logger.trace(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         logger.trace(getMarker(<span class="jxr_string">"trace"</span>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         validateLogData();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     }
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> 
@@ -137,25 +137,25 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> 
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     @Test
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging21() {
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         logger.debug(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog());
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         logger.debug(getMarker(<span class="jxr_string">"debug"</span>), getMessageToLog());
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         validateLogData();
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     }
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> 
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>     @Test
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging31() {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         logger.debug(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         logger.debug(getMarker(<span class="jxr_string">"debug"</span>), getMessageToLogWithParams(), ID2, ID1);
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         validateLogData();
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>     }
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     @Test
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging41() {
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         logger.debug(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1, ID2);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         logger.debug(getMarker(<span class="jxr_string">"debug"</span>), getMessageToLogWithParams(), ID2, ID1, ID2);
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         validateLogData();
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> 
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     @Test
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging51() {
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         logger.debug(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         logger.debug(getMarker(<span class="jxr_string">"debug"</span>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         validateLogData();
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> 
@@ -195,25 +195,25 @@
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>     @Test
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging211() {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         logger.info(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog());
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         logger.info(getMarker(<span class="jxr_string">"info"</span>), getMessageToLog());
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>         validateLogData();
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>     }
 <a class="jxr_linenumber" name="L193" href="#L193">193</a> 
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>     @Test
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging311() {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>         logger.info(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1);
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         logger.info(getMarker(<span class="jxr_string">"info"</span>), getMessageToLogWithParams(), ID2, ID1);
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         validateLogData();
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>     }
 <a class="jxr_linenumber" name="L199" href="#L199">199</a> 
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>     @Test
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging411() {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         logger.info(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1, ID2);
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         logger.info(getMarker(<span class="jxr_string">"info"</span>), getMessageToLogWithParams(), ID2, ID1, ID2);
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>         validateLogData();
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>     }
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> 
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>     @Test
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging511() {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>         logger.info(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         logger.info(getMarker(<span class="jxr_string">"info"</span>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         validateLogData();
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>     }
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
@@ -243,25 +243,25 @@
 <a class="jxr_linenumber" name="L235" href="#L235">235</a> 
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>     @Test
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging2111() {
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>         logger.warn(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog());
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         logger.warn(getMarker(<span class="jxr_string">"warn"</span>), getMessageToLog());
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>         validateLogData();
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>     }
 <a class="jxr_linenumber" name="L241" href="#L241">241</a> 
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>     @Test
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging3111() {
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>         logger.warn(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1);
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>         logger.warn(getMarker(<span class="jxr_string">"warn"</span>), getMessageToLogWithParams(), ID2, ID1);
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>         validateLogData();
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>     }
 <a class="jxr_linenumber" name="L247" href="#L247">247</a> 
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>     @Test
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging4111() {
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>         logger.warn(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1, ID2);
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         logger.warn(getMarker(<span class="jxr_string">"warn"</span>), getMessageToLogWithParams(), ID2, ID1, ID2);
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>         validateLogData();
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>     }
 <a class="jxr_linenumber" name="L253" href="#L253">253</a> 
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>     @Test
 <a class="jxr_linenumber" name="L255" href="#L255">255</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging5111() {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         logger.warn(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         logger.warn(getMarker(<span class="jxr_string">"warn"</span>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
 <a class="jxr_linenumber" name="L257" href="#L257">257</a>         validateLogData();
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>     }
 <a class="jxr_linenumber" name="L259" href="#L259">259</a> 
@@ -291,25 +291,25 @@
 <a class="jxr_linenumber" name="L283" href="#L283">283</a> 
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>     @Test
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging21110() {
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>         logger.error(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog());
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         logger.error(getMarker(<span class="jxr_string">"error"</span>), getMessageToLog());
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>         validateLogData();
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>     }
 <a class="jxr_linenumber" name="L289" href="#L289">289</a> 
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>     @Test
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging31110() {
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>         logger.error(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1);
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>         logger.error(getMarker(<span class="jxr_string">"error"</span>), getMessageToLogWithParams(), ID2, ID1);
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>         validateLogData();
 <a class="jxr_linenumber" name="L294" href="#L294">294</a>     }
 <a class="jxr_linenumber" name="L295" href="#L295">295</a> 
 <a class="jxr_linenumber" name="L296" href="#L296">296</a>     @Test
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging41110() {
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>         logger.error(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLogWithParams(), ID2, ID1, ID2);
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>         logger.error(getMarker(<span class="jxr_string">"error"</span>), getMessageToLogWithParams(), ID2, ID1, ID2);
 <a class="jxr_linenumber" name="L299" href="#L299">299</a>         validateLogData();
 <a class="jxr_linenumber" name="L300" href="#L300">300</a>     }
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> 
 <a class="jxr_linenumber" name="L302" href="#L302">302</a>     @Test
 <a class="jxr_linenumber" name="L303" href="#L303">303</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogging51110() {
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>         logger.error(mock(Marker.<strong class="jxr_keyword">class</strong>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         logger.error(getMarker(<span class="jxr_string">"error"</span>), getMessageToLog(), <strong class="jxr_keyword">new</strong> RuntimeException(ID1, <strong class="jxr_keyword">new</strong> InvalidTicketException(ID2)));
 <a class="jxr_linenumber" name="L305" href="#L305">305</a>         validateLogData();
 <a class="jxr_linenumber" name="L306" href="#L306">306</a>     }
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> 
@@ -357,8 +357,14 @@
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>             fail(e.getMessage());
 <a class="jxr_linenumber" name="L350" href="#L350">350</a>         }
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>     }
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> }
-<a class="jxr_linenumber" name="L353" href="#L353">353</a> 
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> 
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>     <strong class="jxr_keyword">private</strong> Marker getMarker(<strong class="jxr_keyword">final</strong> String name) {
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>         <strong class="jxr_keyword">final</strong> Marker marker = mock(Marker.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>         when(marker.getName()).thenReturn(name);
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>         <strong class="jxr_keyword">return</strong> marker;
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>     }
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
