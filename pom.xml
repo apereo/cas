@@ -1127,7 +1127,7 @@
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
-        <scope>test</scope>
+        <scope>compile</scope>
       </dependency>
       
       <dependency>
