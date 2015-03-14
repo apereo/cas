@@ -20,7 +20,6 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.CasProtocolConstants;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
