@@ -57,6 +57,19 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     @NotNull
     private ServicesManager servicesManager;
 
+    /**
+     * Instantiates a new Send ticket granting ticket action.
+     *
+     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
+     * @param centralAuthenticationService the central authentication service
+     */
+    public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                          final CentralAuthenticationService centralAuthenticationService) {
+        super();
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
     @Override
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -71,7 +84,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else {
             this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils.getHttpServletRequest(context), WebUtils
-                    .getHttpServletResponse(context), ticketGrantingTicketId);
+                .getHttpServletResponse(context), ticketGrantingTicketId);
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
@@ -82,13 +95,23 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         return success();
     }
 
+    /**
+     * @deprecated As of 4.1, use constructors instead.
+     * @param ticketGrantingTicketCookieGenerator the id generator
+     */
+    @Deprecated
     public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
+        logger.warn("setTicketGrantingTicketCookieGenerator() is deprecated and has no effect. Use constructors instead.");
     }
 
+    /**
+     * @deprecated As of 4.1, use constructors instead.
+     * @param centralAuthenticationService  cas instance
+     */
+    @Deprecated
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
+        logger.warn("setCentralAuthenticationService() is deprecated and has no effect. Use constructors instead.");
     }
 
     public void setCreateSsoSessionCookieOnRenewAuthentications(final boolean createSsoSessionCookieOnRenewAuthentications) {
