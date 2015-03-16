@@ -37,23 +37,23 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * Unit tests for {@link org.jasig.cas.web.support.CookieRetrievingCookieGenerator}.</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * @since 3.2.1</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/support/CookieRetrievingCookieGeneratorTests.html">CookieRetrievingCookieGeneratorTests</a> {
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator g;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> CookieRetrievingCookieGenerator generator;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Before
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">this</strong>.g = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">this</strong>.g.setRememberMeMaxAge(100);
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">this</strong>.g.setCookieDomain(<span class="jxr_string">"cas.org"</span>);
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">this</strong>.g.setCookieMaxAge(5);
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">this</strong>.g.setCookiePath(<span class="jxr_string">"/"</span>);
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">this</strong>.g.setCookieName(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">this</strong>.generator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">this</strong>.generator.setRememberMeMaxAge(100);
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">this</strong>.generator.setCookieDomain(<span class="jxr_string">"cas.org"</span>);
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">this</strong>.generator.setCookieMaxAge(5);
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">this</strong>.generator.setCookiePath(<span class="jxr_string">"/"</span>);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">this</strong>.generator.setCookieName(<span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      @Test
@@ -62,36 +62,35 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, <span class="jxr_string">"true"</span>);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">this</strong>.g.addCookie(request, response, <span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">final</strong> Cookie c = response.getCookie(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          assertEquals(100, c.getMaxAge());
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>          assertEquals(<span class="jxr_string">"test"</span>, c.getValue());
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Test
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieAddWithoutRememberMe() {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.g.addCookie(request, response, <span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">final</strong> Cookie c = response.getCookie(<span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          assertEquals(5, c.getMaxAge());
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          assertEquals(<span class="jxr_string">"test"</span>, c.getValue());
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieRetrieve() {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(<span class="jxr_string">"test"</span>, <span class="jxr_string">"test"</span>);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          cookie.setDomain(<span class="jxr_string">"cas.org"</span>);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          cookie.setMaxAge(5);
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          request.setCookies(cookie);
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          assertEquals(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">this</strong>.g.retrieveCookieValue(request));
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      }
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  }
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">this</strong>.generator.addCookie(request, response, <span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          request.setCookies(response.getCookies());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">final</strong> Cookie c = response.getCookie(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          assertEquals(100, c.getMaxAge());
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          assertEquals(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">this</strong>.generator.retrieveCookieValue(request));
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Test
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieAddWithoutRememberMe() {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.generator.addCookie(request, response, <span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          request.setCookies(response.getCookies());
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> Cookie c = response.getCookie(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          assertEquals(5, c.getMaxAge());
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          assertEquals(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">this</strong>.generator.retrieveCookieValue(request));
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Test
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyCookieRetrieve() {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">final</strong> MockHttpServletRequest request = <strong class="jxr_keyword">new</strong> MockHttpServletRequest();
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> MockHttpServletResponse response = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">this</strong>.generator.addCookie(request, response, <span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          request.setCookies(response.getCookies());
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          assertEquals(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">this</strong>.generator.retrieveCookieValue(request));
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
