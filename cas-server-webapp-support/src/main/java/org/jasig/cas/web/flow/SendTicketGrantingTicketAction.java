@@ -52,22 +52,25 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /**
      * Instantiates a new Send ticket granting ticket action.
      *
      * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
      * @param centralAuthenticationService the central authentication service
+     * @param servicesManager the services manager
      */
     public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                          final CentralAuthenticationService centralAuthenticationService) {
+                                          final CentralAuthenticationService centralAuthenticationService,
+                                          final ServicesManager servicesManager) {
         super();
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.centralAuthenticationService = centralAuthenticationService;
+        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -118,8 +121,13 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         this.createSsoSessionCookieOnRenewAuthentications = createSsoSessionCookieOnRenewAuthentications;
     }
 
+    /**
+     * @deprecated As of 4.1, use constructors instead.
+     * @param servicesManager  the service manager
+     */
+    @Deprecated
     public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
+        logger.warn("setServicesManager() is deprecated and has no effect. Use constructors instead.");
     }
 
     /**
