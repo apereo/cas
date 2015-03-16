@@ -28,13 +28,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * The {@link CasCookieValueManager} is responsible for...
+ * The {@link DefaultCasCookieValueManager} is responsible for...
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class CasCookieValueManager implements CookieValueManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCookieValueManager.class);
+public final class DefaultCasCookieValueManager implements CookieValueManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final String COOKIE_FIELD_SEPARATOR = "@";
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
@@ -45,7 +45,7 @@ public final class CasCookieValueManager implements CookieValueManager {
      * Instantiates a new Cas cookie value manager.
      * Set the default cipher to do absolutely  nothing.
      */
-    public CasCookieValueManager() {
+    public DefaultCasCookieValueManager() {
         this(new CipherExecutor.NoOpCipherExecutor());
     }
 
@@ -54,7 +54,7 @@ public final class CasCookieValueManager implements CookieValueManager {
      *
      * @param cipherExecutor the cipher executor
      */
-    public CasCookieValueManager(final CipherExecutor cipherExecutor) {
+    public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());
