@@ -38,8 +38,8 @@
       <label for="username"><spring:message code="screen.welcome.label.netid" /></label>
       <c:choose>
         <c:when test="${not empty sessionScope.openIdLocalId}">
-          <strong>${sessionScope.openIdLocalId}</strong>
-          <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
+          <strong><c:out value="${sessionScope.openIdLocalId}" /></strong>
+          <input type="hidden" id="username" name="username" value="<c:out value="${sessionScope.openIdLocalId}" />" />
         </c:when>
         <c:otherwise>
           <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
