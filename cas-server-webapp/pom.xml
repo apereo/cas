@@ -57,6 +57,18 @@
       <artifactId>cas-server-security-filter</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>com.ryantenney.metrics</groupId>
+      <artifactId>metrics-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-jvm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-servlets</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
