@@ -19,9 +19,6 @@
 
 package org.jasig.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -47,34 +44,4 @@ public interface CipherExecutor {
      * @return the decoded value. 
      */
     String decode(@NotNull String value);
-
-    /**
-     * No-Op cipher executor that does nothing for encryption/decryption.
-     * @author Misagh Moayyed
-     * @since 4.1
-     */
-    public static final class NoOpCipherExecutor implements CipherExecutor {
-
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-        /**
-         * Instantiates a new No op cipher executor.
-         * Issues a warning on safety.
-         */
-        public NoOpCipherExecutor() {
-            logger.warn("[{}] does no encryption and may NOT be safe in a production environment. "
-                    + "Consider using other choices, such as [{}] that handle encryption, signing and verification of "
-                    + "all appropriate values.", this.getClass().getName(), DefaultCipherExecutor.class.getName());
-        }
-
-        @Override
-        public String encode(final String value) {
-            return value;
-        }
-
-        @Override
-        public String decode(final String value) {
-            return value;
-        }
-    }
 }
