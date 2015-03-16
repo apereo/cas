@@ -21,6 +21,7 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.CipherExecutor;
+import org.jasig.cas.util.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
      * Set the default cipher to do absolutely  nothing.
      */
     public DefaultCasCookieValueManager() {
-        this(new CipherExecutor.NoOpCipherExecutor());
+        this(new NoOpCipherExecutor());
     }
 
     /**
