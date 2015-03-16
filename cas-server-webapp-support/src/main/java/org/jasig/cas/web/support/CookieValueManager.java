@@ -21,6 +21,7 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 /**
  * The {@link org.jasig.cas.web.support.CookieValueManager} is responsible for
@@ -40,7 +41,7 @@ public interface CookieValueManager {
      * @param request the request
      * @return the original cookie value
      */
-    String buildCookieValue(final String givenCookieValue, final HttpServletRequest request);
+    String buildCookieValue(@NotNull String givenCookieValue, @NotNull HttpServletRequest request);
 
     /**
      * Obtain cookie value.
@@ -49,7 +50,7 @@ public interface CookieValueManager {
      * @param request the request
      * @return the cookie value or null
      */
-    String obtainCookieValue(final Cookie cookie, final HttpServletRequest request);
+    String obtainCookieValue(@NotNull Cookie cookie, @NotNull HttpServletRequest request);
 
     /**
      * Default cookie value builder that simply returns the given cookie value
@@ -57,7 +58,7 @@ public interface CookieValueManager {
      * @author Misagh Moayyed
      * @since 4.1
      */
-    public static class DefaultCookieValueManager implements CookieValueManager {
+    public static class NoOpCookieValueManager implements CookieValueManager {
 
         @Override
         public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
