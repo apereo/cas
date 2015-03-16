@@ -23,11 +23,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+  <!-- Scan CAS artifacts to mvc annotations, such as controllers.
+       The scan is controlled by the application context config file -->
+  <mvc:annotation-driven />
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
@@ -99,8 +105,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/status">healthCheckController</prop>
-        <prop key="/statistics">statisticsController</prop>
       </util:properties>
     </property>
     <!--
@@ -235,10 +239,6 @@
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
-  <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:centralAuthenticationService-ref="centralAuthenticationService"
-        p:casTicketSuffix="${host.name}"/>
-
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
@@ -246,9 +246,6 @@
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
         c:logoutManager-ref="logoutManager"
         c:servicesManager-ref="servicesManager"  />
-
-  <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
-        p:healthCheckMonitor-ref="healthCheckMonitor"/>
 
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"

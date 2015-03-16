@@ -18,11 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -139,7 +141,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
-    @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
+    @Timed(name="AUTHENTICATE")
+    @Metered(name="AUTHENTICATE")
+    @Counted(name="AUTHENTICATE", monotonic=true)
     public final Authentication authenticate(final Credential... credentials) throws AuthenticationException {
 
         final AuthenticationBuilder builder = authenticateInternal(credentials);

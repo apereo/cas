@@ -168,4 +168,16 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     URL getLogoutUrl();
+    
+    /**
+     * Gets the public key associated with this service
+     * that is used to authorize the request by
+     * encrypting certain elements and attributes in
+     * the CAS validation protocol response, such as
+     * the PGT.
+     * @return the public key instance used to authorize the request
+     * @since 4.1
+     */
+    RegisteredServicePublicKey getPublicKey();
+    
 }
