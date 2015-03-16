@@ -171,6 +171,8 @@ Argument extractor compliant with OpenId protocol.
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
 
 ### PrincipalNameTransformer Components
+Authentication handlers that generally deal with username-password credentials
+can be configured to transform the user id prior to executing the authentication sequence. The following components are available:
 
 ######`NoOpPrincipalNameTransformer`
 Default transformer, that actually does no transformation on the user id.
@@ -181,6 +183,25 @@ Transforms the user id by adding a postfix or suffix.
 ######`ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
 to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
+
+#### Configuration
+Here is an example configuration based for the `AcceptUsersAuthenticationHandler`:
+
+{% highlight xml %}
+<bean id="primaryAuthenticationHandler"
+    class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
+    p:principalNameTransformer-ref="convertCasePrincipalNameTransformer">
+    <property name="users">
+        <map>
+            <entry key="casuser" value="Mellon"/>
+        </map>
+    </property>
+</bean>
+
+<bean id="convertCasePrincipalNameTransformer" class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
+p:toUpperCase="true" />
+
+{% endhighlight %}
 
 ## Authentication Metadata
 `AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the

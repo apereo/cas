@@ -49,9 +49,6 @@
                         <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attrval)}</cas:${fn:escapeXml(attr.key)}>
                     </c:forEach>
                 </c:forEach>
-                <cas:isFromNewLogin>${fn:escapeXml(isFromNewLogin)}</cas:isFromNewLogin>
-                <cas:longTermAuthenticationRequestTokenUsed>${fn:escapeXml(longTermAuthenticationRequestTokenUsed)}</cas:longTermAuthenticationRequestTokenUsed>
-                <cas:authenticationDate>${fn:escapeXml(authenticationDate)}</cas:authenticationDate>
             </cas:attributes>
         </c:if>
 
