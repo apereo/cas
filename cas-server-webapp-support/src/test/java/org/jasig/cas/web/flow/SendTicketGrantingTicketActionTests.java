@@ -48,16 +48,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Before
     public void onSetUp() throws Exception {
-        this.action = new SendTicketGrantingTicketAction();
 
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
-
         this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
 
-        this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-
-        this.action.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-
+        this.action = new SendTicketGrantingTicketAction(this.ticketGrantingTicketCookieGenerator,
+                getCentralAuthenticationService());
         this.action.afterPropertiesSet();
 
         this.context = new MockRequestContext();
@@ -74,15 +70,17 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     @Test
     public void verifyTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("test");
 
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                request, response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(tgt.getId(), response.getCookies()[0].getValue());
+        request.setCookies(response.getCookies());
+        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
 
     @Test
@@ -98,6 +96,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(tgt.getId(), response.getCookies()[0].getValue());
+        request.setCookies(response.getCookies());
+        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
 }
