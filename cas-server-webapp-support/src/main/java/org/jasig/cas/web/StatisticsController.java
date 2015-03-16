@@ -18,17 +18,27 @@
  */
 package org.jasig.cas.web;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import org.apache.commons.collections.functors.TruePredicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.perf4j.log4j.GraphingStatisticsAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.InternalResourceView;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -41,7 +51,9 @@ import java.util.Queue;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public final class StatisticsController extends AbstractController {
+@Controller("statisticsController")
+@RequestMapping("/statistics")
+public final class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
@@ -57,30 +69,35 @@ public final class StatisticsController extends AbstractController {
 
     private final Date upTimeStartDate = new Date();
 
+    @Value("${host.name}")
     private String casTicketSuffix;
 
     private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    @Autowired
+    private CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * Instantiates a new statistics controller.
-     *
-     * @param centralAuthenticationService the CAS service layer
-     */
-    public StatisticsController(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
+    @Autowired
+    @Qualifier("metrics")
+    private MetricRegistry metricsRegistry;
 
-    public void setCasTicketSuffix(final String casTicketSuffix) {
-        this.casTicketSuffix = casTicketSuffix;
-    }
+    @Autowired
+    @Qualifier("healthCheckMetrics")
+    private HealthCheckRegistry healthCheckRegistry;
 
     public void setViewPath(final String viewPath){
         this.viewPath = viewPath;
     }
 
-    @Override
+    /**
+     * Handles the request.
+     *
+     * @param httpServletRequest the http servlet request
+     * @param httpServletResponse the http servlet response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
                 throws Exception {
         final ModelAndView modelAndView = new ModelAndView(new InternalResourceView(viewPath));
@@ -127,14 +144,11 @@ public final class StatisticsController extends AbstractController {
             logger.trace("The ticket registry doesn't support this information.");
         }
 
-        final Collection<GraphingStatisticsAppender> appenders = GraphingStatisticsAppender.getAllGraphingStatisticsAppenders();
-
         modelAndView.addObject("unexpiredTgts", unexpiredTgts);
         modelAndView.addObject("unexpiredSts", unexpiredSts);
         modelAndView.addObject("expiredTgts", expiredTgts);
         modelAndView.addObject("expiredSts", expiredSts);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
-        modelAndView.addObject("graphingStatisticAppenders", appenders);
 
         return modelAndView;
     }
@@ -167,5 +181,12 @@ public final class StatisticsController extends AbstractController {
         final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
 
         return Integer.toString((int) time) + " " + label + " " + calculateUptime(newDifference, calculations, labels);
+    }
+
+    @Override
+    public void setServletContext(final ServletContext servletContext) {
+        servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
+        servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, true);
+        servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, this.healthCheckRegistry);
     }
 }
