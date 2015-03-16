@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -121,26 +122,36 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
+    @Lob
+    @Column(name = "public_key")
+    private RegisteredServicePublicKey publicKey;
+
+    @Override
     public long getId() {
         return this.id;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
 
+    @Override
     public String getServiceId() {
         return this.serviceId;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public String getTheme() {
         return this.theme;
     }
 
+    @Override
     public RegisteredServiceProxyPolicy getProxyPolicy() {
         return this.proxyPolicy;
     }
@@ -183,6 +194,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
+                .append(this.publicKey, that.publicKey)
                 .isEquals();
     }
 
@@ -200,6 +212,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy)
                 .append(this.accessStrategy)
                 .append(this.logo)
+                .append(this.publicKey)
                 .toHashCode();
     }
 
@@ -230,14 +243,17 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.theme = theme;
     }
 
+    @Override
     public void setEvaluationOrder(final int evaluationOrder) {
         this.evaluationOrder = evaluationOrder;
     }
 
+    @Override
     public int getEvaluationOrder() {
         return this.evaluationOrder;
     }
 
+    @Override
     public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
         return this.usernameAttributeProvider;
     }
@@ -260,11 +276,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.usernameAttributeProvider = usernameProvider;
     }
 
-    /**
-     * Returns the logout type of the service.
-     *
-     * @return the logout type of the service.
-     */
+    @Override
     public final LogoutType getLogoutType() {
         return logoutType;
     }
@@ -303,6 +315,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
+        this.setPublicKey(source.getPublicKey());
     }
 
     /**
@@ -334,6 +347,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("accessStrategy", this.accessStrategy);
+        toStringBuilder.append("publicKey", this.publicKey);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
 
@@ -391,5 +405,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setLogo(final URL logo) {
         this.logo = logo;
+    }
+
+    @Override
+    public RegisteredServicePublicKey getPublicKey() {
+        return this.publicKey;
+    }
+
+    public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 }
