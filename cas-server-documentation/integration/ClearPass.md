@@ -21,7 +21,7 @@ application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/pro
 
 ##Configuration
 
-###Register the public key for service
+###Register Service Public Key
 Once you have received the public key from the client application owner, it must be first registered inside the CAS server's service registry:
 
 {% highlight xml %}
@@ -47,7 +47,7 @@ as an attribute for the given attribute release policy of choice:
 ...
 {% endhighlight %} 
 
-###Decrypt the password
+###Decrypt the Password
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
 
