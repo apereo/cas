@@ -88,6 +88,11 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
     public String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
         final String cookieValue = this.cipherExecutor.decode(cookie.getValue());
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
+        if (StringUtils.isBlank(cookieValue)) {
+            LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
+            return null;
+        }
+
         final String[] cookieParts = cookieValue.split(COOKIE_FIELD_SEPARATOR);
         if (cookieParts.length != COOKIE_FIELDS_LENGTH) {
             throw new IllegalStateException("Invalid cookie. Required fields are missing");
