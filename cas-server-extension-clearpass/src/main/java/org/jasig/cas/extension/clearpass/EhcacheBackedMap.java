@@ -31,9 +31,11 @@ import java.util.Set;
 /**
  * EhCache-backed implementation of a Map for caching a set of Strings.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0
  */
+@Deprecated
 public final class EhcacheBackedMap implements Map<String, String> {
 
     @NotNull
