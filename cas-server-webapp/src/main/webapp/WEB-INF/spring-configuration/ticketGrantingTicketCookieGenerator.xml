@@ -39,7 +39,16 @@
 
     <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor" />
 
-    <bean id="cookieValueManager" class="org.jasig.cas.web.support.CasCookieValueManager"
+    <bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
           c:cipherExecutor-ref="cookieCipherExecutor" />
 
+    <!-- As an alternative, the cookie value verification and encryption can be turned off via
+    the following configuration
+
+    <bean id="cookieCipherExecutor" class="org.jasig.cas.util.CipherExecutor.NoOpCipherExecutor" />
+
+    <bean id="cookieValueManager" class="org.jasig.cas.web.support.CookieValueManager.NoOpCookieValueManager"
+          c:cipherExecutor-ref="cookieCipherExecutor" />
+
+    -->
 </beans>
