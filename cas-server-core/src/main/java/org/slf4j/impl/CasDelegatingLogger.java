@@ -96,14 +96,16 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     private String removeTicketId(final String msg) {
         String modifiedMessage = msg;
 
-        final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
-        while (matcher.find()) {
-            final String match = matcher.group();
-            final String newId = matcher.group(1) + "-"
-                    + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
-                    + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
+        if (StringUtils.isNotBlank(msg)) {
+            final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
+            while (matcher.find()) {
+                final String match = matcher.group();
+                final String newId = matcher.group(1) + "-"
+                        + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
+                        + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
 
-            modifiedMessage = modifiedMessage.replaceAll(match, newId);
+                modifiedMessage = modifiedMessage.replaceAll(match, newId);
+            }
         }
         return modifiedMessage;
     }

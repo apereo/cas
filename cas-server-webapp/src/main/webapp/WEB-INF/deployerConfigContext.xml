@@ -23,8 +23,8 @@
 | deployerConfigContext.xml centralizes into one file some of the declarative configuration that
 | all CAS deployers will need to modify.
 |
-| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.  
-| The beans declared in this file are instantiated at context initialization time by the Spring 
+| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.
+| The beans declared in this file are instantiated at context initialization time by the Spring
 | ContextLoaderListener declared in web.xml.  It finds this file because this
 | file is among those declared in the context parameter "contextConfigLocation".
 |
@@ -65,12 +65,10 @@
             </map>
         </constructor-arg>
 
-        <!-- Uncomment the metadata populator to allow clearpass to capture and cache the password
-             This switch effectively will turn on clearpass.
+        <!-- Uncomment the metadata populator to capture the password.
         <property name="authenticationMetaDataPopulators">
            <util:list>
-              <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
-                    c:credentialCache-ref="encryptedMap" />
+               <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
            </util:list>
         </property>
         -->
