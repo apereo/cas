@@ -68,7 +68,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 ...
 {% endhighlight %}
 
-On CAS client side, to receive attributes, you need to use the SAML validation or the new CAS 3.0 validation (/p3/serviceValidate url).
+On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is `/p3/serviceValidate` url.
 
 ###How to recreate user profiles in CAS applications?
 
