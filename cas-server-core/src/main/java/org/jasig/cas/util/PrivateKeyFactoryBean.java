@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  *
  */
-public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
+public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     @NotNull
     private Resource location;
@@ -44,17 +44,13 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
     private String algorithm;
 
     @Override
-    protected Object createInstance() throws Exception {
-        final InputStream privKey = this.location.getInputStream();
-        try {
+    protected PrivateKey createInstance() throws Exception {
+        try (final InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
             privKey.read(bytes);
-            privKey.close();
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
             final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePrivate(privSpec);
-        } finally {
-            privKey.close();
         }
     }
 

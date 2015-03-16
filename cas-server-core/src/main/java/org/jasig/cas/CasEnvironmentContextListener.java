@@ -29,6 +29,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Formatter;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A context listener that reports back the CAS application
@@ -40,6 +41,8 @@ import java.util.Properties;
 @Component
 public final class CasEnvironmentContextListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEnvironmentContextListener.class);
+
+    private static AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
     /**
      * Instantiates a new Cas environment context listener.
@@ -57,7 +60,10 @@ public final class CasEnvironmentContextListener implements ServletContextListen
      */
     @PostConstruct
     public void logEnvironmentInfo() {
-        LOGGER.info(collectEnvironmentInfo());
+        if (!INITIALIZED.get()) {
+            LOGGER.info(collectEnvironmentInfo());
+            INITIALIZED.set(true);
+        }
     }
 
     /**
@@ -96,5 +102,5 @@ public final class CasEnvironmentContextListener implements ServletContextListen
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent servletContextEvent) {}
+    public void contextDestroyed(final ServletContextEvent event) {}
 }

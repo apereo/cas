@@ -316,4 +316,20 @@ public class JsonServiceRegistryDaoTests {
         final List<RegisteredService> list = this.dao.load();
         assertEquals(list.size(), 1);
     }
+
+    @Test
+    public void serializePublicKeyForServiceAndVerify() throws Exception {
+        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+                "classpath:RSA1024Public.key", "RSA");
+
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("serializePublicKeyForServiceAndVerify");
+        r.setId(4245);
+        r.setPublicKey(publicKey);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertEquals(list.size(), 1);
+    }
 }

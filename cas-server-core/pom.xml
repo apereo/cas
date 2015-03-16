@@ -28,17 +28,21 @@
   <artifactId>cas-server-core</artifactId>
   <name>Apereo CAS Core</name>
   <description>CAS core</description>
-
-    <dependencies>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
+  <dependencies>
         <dependency>
             <groupId>com.github.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+
+        <dependency>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-annotation</artifactId>
         </dependency>
 
         <dependency>
@@ -134,14 +138,6 @@
             <artifactId>javassist</artifactId>
             <scope>test</scope>
             <version>3.12.1.GA</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.perf4j</groupId>
-            <artifactId>perf4j</artifactId>
-            <version>${perf4j.version}</version>
-            <classifier>log4jonly</classifier>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>

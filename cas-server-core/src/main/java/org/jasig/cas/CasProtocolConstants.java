@@ -29,17 +29,35 @@ package org.jasig.cas;
  */
 public interface CasProtocolConstants {
 
+    /** CAS Protocol Validation Fields. **/
+
+    /** Constant representing the PGT in the cas validation model. */
+    String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET = "proxyGrantingTicket";
+
     /** Constant representing the PGTIOU in the cas validation model. */
     String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
     /** Constant representing the remember-me long term token in the validation payload. */
     String VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
-    
+
+    /** Represents the collection of attributes in the view. */
+    String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES = "attributes";
+
+    /** Represents the authentication date object in the view. */
+    String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = "authenticationDate";
+
+    /** Represents the flag to note whether assertion is backed by new login. */
+    String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = "isFromNewLogin";
+
+    /** CAS Protocol Parameters. **/
+
     /** Constant representing the proxy callback url parameter in the request. */
     String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
 
     /** Constant representing the renew parameter in the request. */
     String PARAMETER_RENEW = "renew";
+
+    /** CAS Protocol Error Codes. **/
 
     /** Constant representing an invalid request for validation. */
     String ERROR_CODE_INVALID_REQUEST = "INVALID_REQUEST";
