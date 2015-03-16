@@ -33,6 +33,9 @@ import java.io.Serializable;
  */
 public class UsernamePasswordCredential implements Credential, Serializable {
 
+    /** Authentication attribute name for password. **/
+    public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
+
     /** Unique ID for serialization. */
     private static final long serialVersionUID = -700605081472810939L;
 

@@ -18,6 +18,9 @@
  */
 package org.jasig.cas;
 
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import com.github.inspektr.audit.annotation.Audit;
 import org.apache.commons.collections.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
@@ -58,7 +61,6 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
-import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -216,7 +218,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             action="TICKET_GRANTING_TICKET_DESTROYED",
             actionResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
             resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
+    @Timed(name = "DESTROY_TICKET_GRANTING_TICKET_TIMER")
+    @Metered(name="DESTROY_TICKET_GRANTING_TICKET_METER")
+    @Counted(name="DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId) {
@@ -237,7 +241,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         action="SERVICE_TICKET",
         actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
+    @Timed(name="GRANT_SERVICE_TICKET_TIMER")
+    @Metered(name="GRANT_SERVICE_TICKET_METER")
+    @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(
@@ -344,7 +350,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         action="SERVICE_TICKET",
         actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag = "GRANT_SERVICE_TICKET", logFailuresSeparately = false)
+    @Timed(name = "GRANT_SERVICE_TICKET_TIMER")
+    @Metered(name="GRANT_SERVICE_TICKET_METER")
+    @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
@@ -360,7 +368,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         action="PROXY_GRANTING_TICKET",
         actionResolverName="GRANT_PROXY_GRANTING_TICKET_RESOLVER",
         resourceResolverName="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag="GRANT_PROXY_GRANTING_TICKET", logFailuresSeparately = false)
+    @Timed(name="GRANT_PROXY_GRANTING_TICKET_TIMER")
+    @Metered(name="GRANT_PROXY_GRANTING_TICKET_METER")
+    @Counted(name="GRANT_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
@@ -400,7 +410,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
         resourceResolverName="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag="VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
+    @Timed(name="VALIDATE_SERVICE_TICKET_TIMER")
+    @Metered(name="VALIDATE_SERVICE_TICKET_METER")
+    @Counted(name="VALIDATE_SERVICE_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
@@ -461,7 +473,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         action="TICKET_GRANTING_TICKET",
         actionResolverName="CREATE_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
+    @Timed(name = "CREATE_TICKET_GRANTING_TICKET_TIMER")
+    @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
+    @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
@@ -482,6 +496,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * {@inheritDoc}
      */
     @Transactional(readOnly = true)
+    @Timed(name = "GET_TICKET_TIMER")
+    @Metered(name = "GET_TICKET_METER")
+    @Counted(name="GET_TICKET_COUNTER", monotonic=true)
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
             throws InvalidTicketException {
@@ -508,6 +525,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * {@inheritDoc}
      */
     @Transactional(readOnly = true)
+    @Timed(name = "GET_TICKETS_TIMER")
+    @Metered(name = "GET_TICKETS_METER")
+    @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
     @Override
     public Collection<Ticket> getTickets(final Predicate predicate) {
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
