@@ -139,6 +139,12 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      * @return true if renewed
      */
     private boolean isAuthenticationRenewed(final RequestContext ctx) {
+        if (ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
+            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
+                    CasProtocolConstants.PARAMETER_RENEW);
+            return true;
+        }
+
         final Service service = WebUtils.getService(ctx);
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
@@ -150,10 +156,6 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             }
         }
 
-        if (ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
-            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.");
-            return true;
-        }
         return false;
     }
 }
