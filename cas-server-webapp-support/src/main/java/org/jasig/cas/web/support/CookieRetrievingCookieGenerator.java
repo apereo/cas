@@ -53,10 +53,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     /**
      * Instantiates a new cookie retrieving cookie generator
-     * with a default cipher of {@link org.jasig.cas.web.support.CookieValueManager.DefaultCookieValueManager}.
+     * with a default cipher of {@link org.jasig.cas.web.support.CookieValueManager.NoOpCookieValueManager}.
      */
     public CookieRetrievingCookieGenerator() {
-        this(new CookieValueManager.DefaultCookieValueManager());
+        this(new CookieValueManager.NoOpCookieValueManager());
     }
 
     /**
