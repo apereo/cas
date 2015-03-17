@@ -400,6 +400,7 @@ Full-Width Styles
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  padding-left: 25px;
 }
 
 #footer_wrap {
