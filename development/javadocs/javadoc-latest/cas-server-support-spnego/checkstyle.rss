@@ -46,63 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler.java">org/jasig/cas/support/spnego/authentication/handler/support/JCIFSSpnegoAuthenticationHandler.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.MockJCSIFAuthentication.java">org/jasig/cas/support/spnego/MockJCSIFAuthentication.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.MockPrincipal.java">org/jasig/cas/support/spnego/MockPrincipal.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoCredentialsAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsToPrincipalResolverTests.java</a>
                 </td>
                 <td>
                   0
@@ -144,7 +88,35 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsToPrincipalResolverTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.MockJCSIFAuthentication.java">org/jasig/cas/support/spnego/MockJCSIFAuthentication.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler.java">org/jasig/cas/support/spnego/authentication/handler/support/JCIFSSpnegoAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsTests.java</a>
                 </td>
                 <td>
                   0
@@ -207,6 +179,34 @@ under the License.
                 </td>
                 <td>
                   1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.MockPrincipal.java">org/jasig/cas/support/spnego/MockPrincipal.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoCredentialsAction.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
                 </td>
                 <td>
                   0
