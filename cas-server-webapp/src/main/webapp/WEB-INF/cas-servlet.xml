@@ -266,7 +266,9 @@
 
   <bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
         c:centralAuthenticationService-ref="centralAuthenticationService"
-        c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        c:servicesManager-ref="servicesManager"
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}"  />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />
