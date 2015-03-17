@@ -50,8 +50,9 @@ public final class DefaultCipherExecutor implements CipherExecutor {
 
     private final String signingAlgorithm;
 
-    private final String secretKeyEncryption;
-    private final String secretKeySigning;
+    private final Key secretKeyEncryptionKey;
+
+    private final Key secretKeySigningKey;
 
     /**
      * Instantiates a new cipher.
@@ -81,17 +82,18 @@ public final class DefaultCipherExecutor implements CipherExecutor {
                                  final String secretKeySigning,
                                  final String contentEncryptionAlgorithmIdentifier,
                                  final String signingAlgorithm) {
-        this.secretKeyEncryption = secretKeyEncryption;
+        this.secretKeyEncryptionKey =  prepareJsonWebTokenKey(secretKeyEncryption);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
         logger.debug("Initialized cipher encryption sequence via [{}]",
                  contentEncryptionAlgorithmIdentifier);
 
         this.signingAlgorithm = signingAlgorithm;
-        this.secretKeySigning = secretKeySigning;
+        this.secretKeySigningKey = new AesKey(secretKeySigning.getBytes());
 
         logger.debug("Initialized cipher signing sequence via [{}]",
                 signingAlgorithm);
+
     }
 
     @Override
@@ -110,6 +112,24 @@ public final class DefaultCipherExecutor implements CipherExecutor {
     }
 
     /**
+     * Prepare json web token key.
+     *
+     * @param secret the secret
+     * @return the key
+     */
+    private Key prepareJsonWebTokenKey(final String secret) {
+        try {
+            final Map<String, Object> keys = new HashMap<>(2);
+            keys.put("kty", "oct");
+            keys.put("k", secret);
+            final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
+            return jwk.getKey();
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Encrypt the value based on the seed array whose length was given during init,
      * and the key and content encryption ids.
      *
@@ -118,21 +138,15 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      */
     private String encryptValue(@NotNull final String value) {
         try {
-            final Map<String, Object> keys = new HashMap<>(2);
-            keys.put("kty", "oct");
-            keys.put("k", this.secretKeyEncryption);
-            final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setPayload(value);
             jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
             jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
-            jwe.setKey(jwk.getKey());
-
+            jwe.setKey(this.secretKeyEncryptionKey);
             logger.debug("Encrypting via [{}]", this.contentEncryptionAlgorithmIdentifier);
-
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
-            throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files."
+            throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
     }
@@ -145,13 +159,8 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      */
     private String decryptValue(@NotNull final String value) {
         try {
-            final Map<String, Object> keys = new HashMap<>(2);
-            keys.put("kty", "oct");
-            keys.put("k", this.secretKeyEncryption);
-            final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
-
             final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setKey(jwk.getKey());
+            jwe.setKey(this.secretKeyEncryptionKey);
             jwe.setCompactSerialization(value);
             logger.debug("Decrypting value...");
             return jwe.getPayload();
@@ -171,8 +180,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(value);
             jws.setAlgorithmHeaderValue(this.signingAlgorithm);
-            final Key key = new AesKey(this.secretKeySigning.getBytes());
-            jws.setKey(key);
+            jws.setKey(this.secretKeySigningKey);
             return jws.getCompactSerialization();
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -190,8 +198,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
         try {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setCompactSerialization(value);
-            final Key key = new AesKey(this.secretKeySigning.getBytes());
-            jws.setKey(key);
+            jws.setKey(this.secretKeySigningKey);
             final boolean verified = jws.verifySignature();
             if (verified) {
                 logger.debug("Signature successfully verified. Payload is [{}]", jws.getPayload());
