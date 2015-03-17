@@ -297,6 +297,11 @@ Full-Width Styles
   margin: 0 auto;
 }
 
+.ui-widget-content a {
+  text-decoration: none;
+  color: #007edf;
+}
+
 #forkme_banner {
   display: block;
   position: absolute;
@@ -392,6 +397,7 @@ Full-Width Styles
 
 #sidebar_content a {
   font-size: 14px;
+  font-family: Tahoma;
 }
 
 #sidebar_content h1 {
