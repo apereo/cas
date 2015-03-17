@@ -10,7 +10,8 @@ A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of 
 The generation of the ticket-granting cookie is controlled by the file `cas-server-webapp\src\main\webapp\WEB-INF\spring-configuration\ticketGrantingTicketCookieGenerator.xml`
 
 {% highlight xml %}
-<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+<bean id="ticketGrantingTicketCookieGenerator" 
+	class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
     c:casCookieValueManager-ref="cookieValueManager"
     p:cookieSecure="true"
 	p:cookieMaxAge="-1"
@@ -85,7 +86,7 @@ Plausibly, a CAS adopter may want this behavior to be different, such that loggi
 via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
 to an SSO-participating application. This might better match user expectations.
 
-The controlling of this behavior is controlled via the `cas.properties` file:
+The controlling of this behavior is done via the `cas.properties` file:
 
 {% highlight properties %}
 ##
