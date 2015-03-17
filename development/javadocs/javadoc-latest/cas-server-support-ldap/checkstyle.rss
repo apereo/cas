@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDaoTests.java">org/jasig/cas/persondir/LdapPersonAttributeDaoTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.PooledConnectionFactoryMonitorTests.java">org/jasig/cas/monitor/PooledConnectionFactoryMonitorTests.java</a>
                 </td>
                 <td>
                   0
@@ -158,7 +158,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.monitor.PooledConnectionFactoryMonitorTests.java">org/jasig/cas/monitor/PooledConnectionFactoryMonitorTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-ldap//checkstyle.html#org.jasig.cas.persondir.LdapPersonAttributeDaoTests.java">org/jasig/cas/persondir/LdapPersonAttributeDaoTests.java</a>
                 </td>
                 <td>
                   0
