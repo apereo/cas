@@ -37,6 +37,7 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.view.CasViewConstants;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,9 +68,6 @@ public class ServiceValidateController extends DelegateController {
 
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
-
-    /** Constant representing the Assertion in the cas validation model. */
-    private static final String VALIDATION_CAS_MODEL_ASSERTION = "assertion";
 
     /** Implementation of Service Manager. */
     @NotNull
@@ -195,7 +193,7 @@ public class ServiceValidateController extends DelegateController {
 
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou);
+            return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
         } catch (final TicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -237,20 +235,27 @@ public class ServiceValidateController extends DelegateController {
 
         return modelAndView;
     }
-    
+
     /**
      * Generate the success view. The result will contain the assertion and the proxy iou.
      *
      * @param assertion the assertion
      * @param proxyIou the proxy iou
-     * @return the model and view, pointed to the view name set by {@link #setSuccessView(String)}
+     * @param service the validated service
+     * @param proxyGrantingTicket the proxy granting ticket
+     * @return the model and view, pointed to the view name set by
      */
-    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou) {
+    private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
+                                             final WebApplicationService service,
+                                             final TicketGrantingTicket proxyGrantingTicket) {
 
         final ModelAndView success = new ModelAndView(this.successView);
-        success.addObject(VALIDATION_CAS_MODEL_ASSERTION, assertion);
-        success.addObject(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
-
+        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
+        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
+        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        if (proxyGrantingTicket != null) {
+            success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+        }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);

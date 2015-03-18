@@ -19,7 +19,10 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -34,6 +37,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 })
 public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJUnit4SpringContextTests {
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired(required = true)
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -42,6 +47,9 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
 
     @Autowired(required = true)
     private AuthenticationManager authenticationManager;
+
+    @Autowired(required = true)
+    private ServicesManager servicesManager;
 
     public AuthenticationManager getAuthenticationManager() {
         return this.authenticationManager;
@@ -59,4 +67,7 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
         return this.ticketRegistry;
     }
 
+    public ServicesManager getServicesManager() {
+        return this.servicesManager;
+    }
 }

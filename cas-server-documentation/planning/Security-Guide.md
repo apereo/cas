@@ -15,7 +15,7 @@ be considered to achieve suitable security.
 
 
 ### Secure Transport (https)
-All communication with the CAS server MUST occur over a secure channel (i.e. SSLv3, TLSv1). There are two primary
+All communication with the CAS server MUST occur over a secure channel (i.e. TLSv1). There are two primary
 justifications for this requirement:
 
 1. The authentication process requires transmission of security credentials.
