@@ -28,8 +28,6 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +55,13 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     @NotNull
     private final LogoutManager logoutManager;
 
-    @NotNull
-    private final ServicesManager servicesManager;
-
     /**
      * Build from the logout manager.
      *
      * @param logoutManager a logout manager.
-     * @param servicesManager the services manager
      */
-    public FrontChannelLogoutAction(final LogoutManager logoutManager, final ServicesManager servicesManager) {
+    public FrontChannelLogoutAction(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
-        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -87,11 +80,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
                     // save updated index
                     putLogoutIndex(context, i + 1);
 
-                    String logoutUrl = logoutRequest.getService().getId();
-                    final RegisteredService service = this.servicesManager.findServiceBy(logoutRequest.getService());
-                    if (service != null && service.getLogoutUrl() != null) {
-                        logoutUrl = service.getLogoutUrl().toExternalForm();
-                    }
+                    final String logoutUrl = logoutRequest.getLogoutUrl().toExternalForm();
                     LOGGER.debug("Using logout url [{}] for front-channel logout requests", logoutUrl);
 
                     final String logoutMessage = logoutManager.createFrontChannelLogoutMessage(logoutRequest);

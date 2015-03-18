@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -30,14 +31,17 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.jasig.cas.mock.MockTicketGrantingTicket;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 
@@ -80,6 +84,8 @@ public class FrontChannelLogoutActionTests {
     @Mock
     private ServicesManager servicesManager;
 
+    private LogoutManager logoutManager;
+
     public FrontChannelLogoutActionTests() {
         MockitoAnnotations.initMocks(this);
     }
@@ -87,9 +93,9 @@ public class FrontChannelLogoutActionTests {
     @Before
     public void onSetUp() throws Exception {
 
-        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class),
+        this.logoutManager = new LogoutManagerImpl(this.servicesManager,
                 new SimpleHttpClientFactoryBean().getObject(), new SamlCompliantLogoutMessageCreator());
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager, this.servicesManager);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(this.logoutManager);
 
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
@@ -132,7 +138,10 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final Event event = getLogoutEvent();
+        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID,
+                new SimpleWebApplicationServiceImpl(TEST_URL),
+                new URL(TEST_URL));
+        final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
 
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
@@ -153,14 +162,16 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutUrlForServiceIsUsed() throws Exception {
-        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
-        svc.setServiceId("https://www.github.com");
-        svc.setLogoutUrl(new URL("https://www.google.com"));
-        svc.setName("Service logout test");
-        svc.setLogoutType(LogoutType.FRONT_CHANNEL);
-        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(svc);
+        final RegisteredService svc = getRegisteredService();
+        when(this.servicesManager.findServiceBy(any(SingleLogoutService.class))).thenReturn(svc);
 
-        final Event event = getLogoutEvent();
+        final SingleLogoutService service = mock(SingleLogoutService.class);
+        when(service.getId()).thenReturn(svc.getServiceId());
+        when(service.getOriginalUrl()).thenReturn(svc.getServiceId());
+
+        final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("test");
+        tgt.getServices().put("service", service);
+        final Event event = getLogoutEvent(this.logoutManager.performLogout(tgt));
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
@@ -169,11 +180,18 @@ public class FrontChannelLogoutActionTests {
 
     }
 
-    private Event getLogoutEvent() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID,
-                new SimpleWebApplicationServiceImpl(TEST_URL),
-                new URL(TEST_URL));
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+    private RegisteredService getRegisteredService() throws MalformedURLException {
+        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        svc.setServiceId("https://www.github.com");
+        svc.setLogoutUrl(new URL("https://www.google.com"));
+        svc.setName("Service logout test");
+        svc.setLogoutType(LogoutType.FRONT_CHANNEL);
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
+        return svc;
+    }
+
+    private Event getLogoutEvent(final List<LogoutRequest> requests) throws Exception {
+        WebUtils.putLogoutRequests(this.requestContext, requests);
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         return this.frontChannelLogoutAction.doExecute(this.requestContext);
     }
