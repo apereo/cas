@@ -229,3 +229,8 @@ Please [see this guide](Configuring-Multifactor-Authentication.html) for more de
 ## Login Throttling
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
 Please [see this guide](Configuring-Authentication-Throttling.html) for additional details on login throttling.
+
+## SSO Session Cookie
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. 
+This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials.
+Please [see this guide](Configuring-SSO-Session-Cookie.html) for additional details.
