@@ -244,8 +244,7 @@
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
 
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
-        c:logoutManager-ref="logoutManager"
-        c:servicesManager-ref="servicesManager"  />
+        c:logoutManager-ref="logoutManager"/>
 
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"
