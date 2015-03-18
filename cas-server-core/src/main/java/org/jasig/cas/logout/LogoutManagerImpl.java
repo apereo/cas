@@ -179,7 +179,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
                 switch (type) {
                     case BACK_CHANNEL:
-                        if (performBackChannelLogout(logoutRequest, registeredService)) {
+                        if (performBackChannelLogout(logoutRequest)) {
                             logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
                         } else {
                             logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
@@ -207,10 +207,12 @@ public final class LogoutManagerImpl implements LogoutManager {
     private URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
         try {
             URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
-            if (registeredService.getLogoutUrl() != null) {
+            final URL serviceLogoutUrl = registeredService.getLogoutUrl();
+
+            if (serviceLogoutUrl != null) {
                 LOGGER.debug("Logout request will be sent to [{}] for service [{}]",
-                        registeredService.getLogoutUrl(), singleLogoutService);
-                logoutUrl = registeredService.getLogoutUrl();
+                        serviceLogoutUrl, singleLogoutService);
+                logoutUrl = serviceLogoutUrl;
             }
             return logoutUrl;
         } catch (final Exception e) {
@@ -222,10 +224,9 @@ public final class LogoutManagerImpl implements LogoutManager {
      * Log out of a service through back channel.
      *
      * @param request the logout request.
-     * @param registeredService the registered service
      * @return if the logout has been performed.
      */
-    private boolean performBackChannelLogout(final LogoutRequest request, final RegisteredService registeredService) {
+    private boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             final String logoutRequest = this.logoutMessageBuilder.create(request);
             final SingleLogoutService logoutService = request.getService();
