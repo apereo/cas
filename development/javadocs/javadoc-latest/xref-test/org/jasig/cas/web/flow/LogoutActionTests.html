@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutRequestBack() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(cookie);
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         WebUtils.putLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext, Arrays.asList(logoutRequest));
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
@@ -167,7 +167,7 @@
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyLogoutRequestFront() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">final</strong> Cookie cookie = <strong class="jxr_keyword">new</strong> Cookie(COOKIE_TGC_ID, <span class="jxr_string">"test"</span>);
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">this</strong>.request.setCookies(cookie);
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = <strong class="jxr_keyword">new</strong> LogoutRequest(<span class="jxr_string">""</span>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         WebUtils.putLogoutRequests(<strong class="jxr_keyword">this</strong>.requestContext, Arrays.asList(logoutRequest));
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">final</strong> Event event = <strong class="jxr_keyword">this</strong>.logoutAction.doExecute(<strong class="jxr_keyword">this</strong>.requestContext);
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
