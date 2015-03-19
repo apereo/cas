@@ -149,12 +149,12 @@ For front-channel requests:
 -->
 
 <bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^https://web.application.net/login"
-         p:evaluationOrder="10000001"
-         p:logoutType-ref="LOGOUTTYPE"
-		 p:logoutUrl="https://https://web.application.net/logout" />
+        p:id="10000001" p:name="HTTP and IMAP"
+        p:description="Allows HTTP(S) and IMAP(S) protocols"
+        p:serviceId="^https://web.application.net/login"
+        p:evaluationOrder="10000001"
+        p:logoutType-ref="LOGOUTTYPE"
+        p:logoutUrl="https://https://web.application.net/logout" />
 {% endhighlight %}
 
 
