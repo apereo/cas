@@ -39,10 +39,10 @@
   <script type="text/javascript" src="<c:url value="/js/management.js" />"></script>
 
   <style type="text/css">
-  #nav-main #${pageTitle} span {
-      background:#fff;
-      color: #000;
-  }
+  <%--#nav-main #${pageTitle} span {--%>
+      <%--background:#fff;--%>
+      <%--color: #000;--%>
+  <%--}--%>
   </style>
 </head>
 
