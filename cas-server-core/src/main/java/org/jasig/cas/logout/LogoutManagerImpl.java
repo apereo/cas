@@ -137,6 +137,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                 if (service instanceof SingleLogoutService) {
                     final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
                     if (logoutRequest != null) {
+                        LOGGER.debug("Captured logout request [{}]", logoutRequest);
                         logoutRequests.add(logoutRequest);
                     }
                 }
@@ -170,7 +171,9 @@ public final class LogoutManagerImpl implements LogoutManager {
 
             final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
-                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
+
+                final URL logoutUrl = determineLogoutUrl(registeredService, singleLogoutService);
+                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService, logoutUrl);
                 final LogoutType type = registeredService.getLogoutType() == null
                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 
@@ -193,6 +196,30 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         return null;
     }
+
+    /**
+     * Determine logout url.
+     *
+     * @param registeredService the registered service
+     * @param singleLogoutService the single logout service
+     * @return the uRL
+     */
+    private URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
+        try {
+            URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
+            final URL serviceLogoutUrl = registeredService.getLogoutUrl();
+
+            if (serviceLogoutUrl != null) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]",
+                        serviceLogoutUrl, singleLogoutService);
+                logoutUrl = serviceLogoutUrl;
+            }
+            return logoutUrl;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     /**
      * Log out of a service through back channel.
      *
@@ -202,13 +229,13 @@ public final class LogoutManagerImpl implements LogoutManager {
     private boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             final String logoutRequest = this.logoutMessageBuilder.create(request);
-            request.getService().setLoggedOutAlready(true);
+            final SingleLogoutService logoutService = request.getService();
+            logoutService.setLoggedOutAlready(true);
     
-            LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-            final String originalUrl = request.getService().getOriginalUrl();        
-            final LogoutHttpMessage sender = new LogoutHttpMessage(new URL(originalUrl), logoutRequest);
-
-            return this.httpClient.sendMessageToEndPoint(sender);
+            LOGGER.debug("Sending logout request for: [{}]", logoutService.getId());
+            final LogoutHttpMessage msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest);
+            LOGGER.debug("Prepared logout message to send is [{}]", msg);
+            return this.httpClient.sendMessageToEndPoint(msg);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
