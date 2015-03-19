@@ -59,6 +59,8 @@ public final class TestUtils {
 
     public static final String CONST_USERNAME = "test";
 
+    public static final String CONST_TEST_URL = "https://test.com";
+
     public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
@@ -140,7 +142,7 @@ public final class TestUtils {
     }
 
     public static Service getService() {
-        return getService(CONST_USERNAME);
+        return getService(CONST_TEST_URL);
     }
 
     public static Service getService(final String name) {
