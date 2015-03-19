@@ -129,6 +129,34 @@ For front-channel requests:
          p:logoutType-ref="LOGOUTTYPE" />
 {% endhighlight %}
 
+###Service Endpoint for Logout Requests
+By default, logout requests are submitted to the original service id. CAS has the option to submit such requests to a specific service endpoint that is different
+from the original service id, and of course can be configured on a per-service level. This is useful in cases where the application that is integrated with CAS
+does not exactly use a CAS client that supports intercepting such requests and instead, exposes a different endpoint for its logout operations.
+
+To configure a service specific endpoint, try the following example:
+
+{% highlight xml %}
+
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
+
+<!--
+For back-channel requests:
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
+
+For front-channel requests:
+<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
+-->
+
+<bean class="org.jasig.cas.services.RegexRegisteredService"
+         p:id="10000001" p:name="HTTP and IMAP"
+         p:description="Allows HTTP(S) and IMAP(S) protocols"
+         p:serviceId="^https://web.application.net/login"
+         p:evaluationOrder="10000001"
+         p:logoutType-ref="LOGOUTTYPE"
+		 p:logoutUrl="https://https://web.application.net/logout" />
+{% endhighlight %}
+
 
 ###Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
