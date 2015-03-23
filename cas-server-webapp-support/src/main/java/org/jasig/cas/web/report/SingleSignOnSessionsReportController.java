@@ -33,7 +33,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.InternalResourceView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,11 +42,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * SSO Report web controller that produces JSON data for the view.
+ *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
+ * @since 4.1
  */
 @Controller("singleSignOnSessionsReportController")
 @RequestMapping("/statistics/ssosessions")
 public final class SingleSignOnSessionsReportController {
+
+    private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
+
     /**
      * The enum Sso session attribute keys.
      */
@@ -81,8 +87,6 @@ public final class SingleSignOnSessionsReportController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
-
-    private String viewPath = "/WEB-INF/view/jsp/monitoring/viewSsoSessions.jsp";
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -150,7 +154,7 @@ public final class SingleSignOnSessionsReportController {
         final Map<String, Object> sessionsMap = new HashMap<String, Object>(1);
         sessionsMap.put(ROOT_REPORT_ACTIVE_SESSIONS_KEY, getSsoSessions());
         final String jsonRepresentation = this.jsonMapper.writeValueAsString(sessionsMap);
-        final ModelAndView modelAndView = new ModelAndView(new InternalResourceView(this.viewPath));
+        final ModelAndView modelAndView = new ModelAndView(VIEW_SSO_SESSIONS);
         modelAndView.addObject(ROOT_REPORT_ACTIVE_SESSIONS_KEY, jsonRepresentation);
         return modelAndView;
     }
