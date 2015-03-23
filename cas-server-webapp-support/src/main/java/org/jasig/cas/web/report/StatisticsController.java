@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.InternalResourceView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,14 +64,14 @@ public final class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
+    private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 
     @Value("${host.name}")
     private String casTicketSuffix;
-
-    private String viewPath = "/WEB-INF/view/jsp/monitoring/viewStatistics.jsp";
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -85,10 +84,6 @@ public final class StatisticsController implements ServletContextAware {
     @Qualifier("healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
-    public void setViewPath(final String viewPath){
-        this.viewPath = viewPath;
-    }
-
     /**
      * Handles the request.
      *
@@ -100,7 +95,7 @@ public final class StatisticsController implements ServletContextAware {
     @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
                 throws Exception {
-        final ModelAndView modelAndView = new ModelAndView(new InternalResourceView(viewPath));
+        final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("startTime", this.upTimeStartDate);
         final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
 
