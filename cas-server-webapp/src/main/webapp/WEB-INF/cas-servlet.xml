@@ -33,10 +33,14 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
+  <!--
+  | The base-package indicates where components stored. Spring will scan this
+  | folder and find out the annotated beans and register it in Spring container.
+  -->
+  <context:component-scan base-package="org.jasig.cas" />
+
   <!-- Scan CAS artifacts to mvc annotations, such as controllers.
        The scan is controlled by the application context config file -->
-  <context:component-scan base-package="org.jasig.cas" />
-  <context:annotation-config />
   <mvc:annotation-driven />
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
