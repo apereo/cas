@@ -76,7 +76,7 @@ public final class LdapUtils {
         }
 
         for (final String key : properties.keySet()) {
-            final String value = LdapEncoder.nameEncode(properties.get(key));
+            final String value = LdapEncoder.filterEncode(properties.get(key));
             newFilter = newFilter.replaceAll(key, Matcher.quoteReplacement(value));
         }
 
