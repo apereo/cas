@@ -484,6 +484,8 @@
             <exclude>**/*.doc</exclude>
             <exclude>**/*.md</exclude>
             <exclude>**/*.pdf</exclude>
+            <exclude>**/*.pem</exclude>
+            <exclude>**/*.p8</exclude>
           </excludes>
         </configuration>
         <executions>
