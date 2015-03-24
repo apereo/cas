@@ -40,7 +40,6 @@
         line-height: 24px;
     }
 
-
     td {
         padding:3px 5px;
         border-bottom:1px solid #eee;
@@ -119,9 +118,11 @@
 </table>
 
 <h2>Performance Statistics</h2>
-
 <a href="statistics/metrics?pretty=true">Metrics</a>
 <a href="statistics/ping?pretty=true">Ping</a>
 <a href="statistics/threads?pretty=true">Thread Dump</a>
+
+<h2>Reports</h2>
+<a href="statistics/ssosessions">SSO Sessions</a>
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
