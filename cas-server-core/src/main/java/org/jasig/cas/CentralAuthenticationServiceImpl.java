@@ -293,11 +293,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(credentials, "credentials cannot be null");
 
         try {
-            final Authentication authentication = this.authenticationManager
-                .authenticate(credentials);
-
-            final ServiceTicket serviceTicket;
-            serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+            final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(
+                    serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
@@ -311,6 +308,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 log.warn("ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + serviceTicket.getService().getId() + "]");
                 throw new UnauthorizedProxyingException();
             }
+
+            final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
             final TicketGrantingTicket ticketGrantingTicket = serviceTicket
                 .grantTicketGrantingTicket(

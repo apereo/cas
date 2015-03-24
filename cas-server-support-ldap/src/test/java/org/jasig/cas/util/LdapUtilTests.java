@@ -30,6 +30,6 @@ public final class LdapUtilTests extends TestCase {
 
      public void testEncoding() {
         final String filter = "cn=%u";
-        assertEquals("cn=test\\+user@example.com", LdapUtils.getFilterWithValues(filter, "test+user@example.com"));
+        assertEquals("cn=test+user@example.com", LdapUtils.getFilterWithValues(filter, "test+user@example.com"));
     }
 }

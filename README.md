@@ -37,3 +37,4 @@ requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
 [skip]: http://maven.apache.org/general.html#skip-test
+
