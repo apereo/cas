@@ -564,6 +564,12 @@
        <artifactId>javax.el</artifactId>
        <version>${javax.el-impl.version}</version>
        <scope>runtime</scope>
+       <exclusions>
+	     <exclusion>
+	       <groupId>javax.el</groupId>
+	       <artifactId>javax.el-api</artifactId>
+	     </exclusion>
+       </exclusions>
     </dependency>
 
     <dependency>
@@ -592,6 +598,12 @@
       <artifactId>log4j-slf4j-impl</artifactId>
       <version>${log4j.version}</version>
       <scope>runtime</scope>
+      <exclusions>
+	    <exclusion>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-api</artifactId>
+	    </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -648,6 +660,12 @@
         <artifactId>metrics-core</artifactId>
         <version>${metrics.version}</version>
         <scope>compile</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>	
       </dependency>
 
       <dependency>
@@ -655,6 +673,12 @@
         <artifactId>metrics-annotation</artifactId>
         <version>${metrics.version}</version>
         <scope>compile</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -662,6 +686,12 @@
         <artifactId>metrics-jvm</artifactId>
         <version>${metrics.version}</version>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -669,6 +699,12 @@
         <artifactId>metrics-servlets</artifactId>
         <version>${metrics.version}</version>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -676,6 +712,12 @@
         <artifactId>metrics-spring</artifactId>
         <version>${metrics.spring.version}</version>
         <scope>runtime</scope>
+        <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -746,6 +788,10 @@
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
           </exclusion>
+          <exclusion>
+              <artifactId>validation-api</artifactId>
+              <groupId>javax.validation</groupId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -758,6 +804,10 @@
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
           </exclusion>
+          <exclusion>
+              <artifactId>validation-api</artifactId>
+              <groupId>javax.validation</groupId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -769,6 +819,10 @@
           <exclusion>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
+          </exclusion>
+          <exclusion>
+              <artifactId>validation-api</artifactId>
+              <groupId>javax.validation</groupId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -798,6 +852,10 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -818,6 +876,10 @@
               <artifactId>jboss-logging-annotations</artifactId>
               <groupId>org.jboss.logging</groupId>
           </exclusion>
+          <exclusion>
+              <groupId>org.javassist</groupId>
+              <artifactId>javassist</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -826,6 +888,12 @@
         <artifactId>hibernate-entitymanager</artifactId>
         <version>${hibernate.core.version}</version>
         <type>jar</type>
+        <exclusions>
+          <exclusion>
+              <groupId>org.javassist</groupId>
+              <artifactId>javassist</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -1054,6 +1122,11 @@
           <exclusion>
             <artifactId>log4j</artifactId>
             <groupId>log4j</groupId>
+          </exclusion>
+
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
