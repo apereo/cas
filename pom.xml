@@ -631,6 +631,13 @@
       </dependency>
 
       <dependency>
+		<groupId>org.codehaus.woodstox</groupId>
+		<artifactId>woodstox-core-asl</artifactId>
+		<version>${woodstox.version}</version>
+		<scope>runtime</scope>
+	  </dependency>
+
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.databind.version}</version>
@@ -1383,6 +1390,7 @@
     <javax.el-impl.version>2.2.6</javax.el-impl.version>
     <jersey.version>1.19</jersey.version>
     <jose.version>0.4.0</jose.version>
+    <woodstox.version>4.4.1</woodstox.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
