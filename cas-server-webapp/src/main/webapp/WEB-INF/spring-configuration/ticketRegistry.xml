@@ -34,7 +34,8 @@
 	<!--Quartz -->
 	<!-- TICKET REGISTRY CLEANER -->
 	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-		c:centralAuthenticationService-ref="centralAuthenticationService" />
+		c:centralAuthenticationService-ref="centralAuthenticationService"
+        c:ticketRegistry-ref="ticketRegistry"/>
 
 	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
 		p:targetObject-ref="ticketRegistryCleaner"
