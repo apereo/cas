@@ -20,6 +20,8 @@
 --%>
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
+
 <script type="text/javascript">
 
     function parseJsonPayload() {
@@ -27,41 +29,29 @@
         var object = $.parseJSON('${activeSsoSessions}');
         if (object != undefined) {
             var activeSsoSessions = object.activeSsoSessions;
-            if (activeSsoSessions.length == 0)	 {
+            if (activeSsoSessions == undefined || activeSsoSessions.length == 0)	 {
                 showInfo("No SSO Sessions are available at this point.");
             } else {
                 $("#jsonContent").empty();
                 for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
-                    var ssoSession = activeSsoSessions[i];
-                    $("#jsonContent").append("<div class='accordion-group'>"
-                    + "<a class='accordion-toggle' "
-                    + "href='#" + ssoSession.authenticated_principal + i + "' "
-                    + "data-toggle='collapse'>Principal: " + ssoSession.authenticated_principal
-                    + "</a></div>");
+                    var sso = activeSsoSessions[i];
 
+                    $("#jsonContent").append("<h3>Principal: "
+                    + sso.authenticated_principal
+                    + "</h3>");
 
-                    $("#jsonContent").append("<div id='" + ssoSession.authenticated_principal + i + "' "
-                    + "class='accordion-body collapse'> ");
-
-                    $("#jsonContent").append("<div class='accordion-inner'>");
-
-                    $("#jsonContent").append("<table border=3px class='table table-striped table-condensed'>");
-
-                    $("#jsonContent").append("<thead><tr>");
-                    $("#jsonContent").append("<th>Authentication Date</th><th>Number of uses for this SSO session</th>");
-                    $("#jsonContent").append("</tr></thead>");
-
-                    $("#jsonContent").append("<tbody><tr>");
-                    $("#jsonContent").append("<td>"
-                    + ssoSession.authentication_date
-                    + "</td>"
-                    + "<td>"
-                    + ssoSession.number_of_uses
-                    + "</td>");
-
-                    $("#jsonContent").append("</tr></tbody>");
-                    $("#jsonContent").append("</table></div></div>");
+                    $("#jsonContent").append("<div>"
+                    + "<ul>"
+                    + "<li><strong>Authentication Date: </strong>" + sso.authentication_date + "</li>"
+                    + "<li><strong>Usage Count: </strong>" + sso.number_of_uses + "</li>"
+                    + "<li><strong>Ticket Granting Ticket: </strong>"
+                    + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket)
+                    + "</li>"
+                    + "</ul>"
+                    + "</div>");
                 };
+
+
             }
         } else {
             showError("Did not receive the SSO Sessions JSON payload from the CAS server.");
@@ -84,17 +74,23 @@
 
     function jqueryReady() {
         parseJsonPayload();
+        $("#jsonContent").accordion();
     }
 </script>
 
+
 <div>
     <div>
+        <h1>SSO Sessions Report</h1>
+        <p>
         <div id="msg" style="display:none"></div>
-        <div id="login">
-            <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
-        </div>
 
         <div id="jsonContent"></div>
+
+        <div id="login">
+            <div><br/></div>
+            <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
+        </div>
 
     </div>
 </div>
