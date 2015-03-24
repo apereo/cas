@@ -98,7 +98,7 @@ public final class SingleSignOnSessionsReportController {
      * Instantiates a new Single sign on sessions report resource.
      */
     public SingleSignOnSessionsReportController() {
-        this.jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.jsonMapper.disable(SerializationFeature.INDENT_OUTPUT);
         this.jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 

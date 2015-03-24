@@ -20,13 +20,84 @@
 --%>
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
 
-<h1>SSO Sessions Report</h1>
+    function parseJsonPayload() {
 
-<div><p/>
-    <pre><code class="json">${activeSsoSessions}</code></pre>
+        var object = $.parseJSON('${activeSsoSessions}');
+        if (object != undefined) {
+            var activeSsoSessions = object.activeSsoSessions;
+            if (activeSsoSessions.length == 0)	 {
+                showInfo("No SSO Sessions are available at this point.");
+            } else {
+                $("#jsonContent").empty();
+                for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
+                    var ssoSession = activeSsoSessions[i];
+                    $("#jsonContent").append("<div class='accordion-group'>"
+                    + "<a class='accordion-toggle' "
+                    + "href='#" + ssoSession.authenticated_principal + i + "' "
+                    + "data-toggle='collapse'>Principal: " + ssoSession.authenticated_principal
+                    + "</a></div>");
+
+
+                    $("#jsonContent").append("<div id='" + ssoSession.authenticated_principal + i + "' "
+                    + "class='accordion-body collapse'> ");
+
+                    $("#jsonContent").append("<div class='accordion-inner'>");
+
+                    $("#jsonContent").append("<table border=3px class='table table-striped table-condensed'>");
+
+                    $("#jsonContent").append("<thead><tr>");
+                    $("#jsonContent").append("<th>Authentication Date</th><th>Number of uses for this SSO session</th>");
+                    $("#jsonContent").append("</tr></thead>");
+
+                    $("#jsonContent").append("<tbody><tr>");
+                    $("#jsonContent").append("<td>"
+                    + ssoSession.authentication_date
+                    + "</td>"
+                    + "<td>"
+                    + ssoSession.number_of_uses
+                    + "</td>");
+
+                    $("#jsonContent").append("</tr></tbody>");
+                    $("#jsonContent").append("</table></div></div>");
+                };
+            }
+        } else {
+            showError("Did not receive the SSO Sessions JSON payload from the CAS server.");
+        }
+    }
+
+    function showError(msg) {
+        $("#msg").removeClass();
+        $("#msg").addClass("errors");
+        $("#msg").text(msg);
+        $("#msg").show();
+    }
+
+    function showInfo(msg) {
+        $("#msg").removeClass();
+        $("#msg").addClass("info");
+        $("#msg").text(msg);
+        $("#msg").show();
+    }
+
+    function jqueryReady() {
+        parseJsonPayload();
+    }
+</script>
+
+<div>
+    <div>
+        <div id="msg" style="display:none"></div>
+        <div id="login">
+            <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
+        </div>
+
+        <div id="jsonContent"></div>
+
+    </div>
 </div>
+
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
