@@ -100,6 +100,8 @@ public final class SamlUtils {
     public static Document constructDocumentFromXmlString(String xmlString) {
         try {
             final SAXBuilder builder = new SAXBuilder();
+            builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder
                 .build(new ByteArrayInputStream(xmlString.getBytes()));
         } catch (final Exception e) {
