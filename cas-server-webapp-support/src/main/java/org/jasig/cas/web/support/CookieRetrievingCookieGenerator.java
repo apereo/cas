@@ -103,9 +103,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * @return the cookie value
      */
     public String retrieveCookieValue(final HttpServletRequest request) {
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
-                request, getCookieName());
-        return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
+        try {
+            final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
+                    request, getCookieName());
+            return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
+        } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
+        }
+        return null;
     }
 
     public void setRememberMeMaxAge(final int maxAge) {
