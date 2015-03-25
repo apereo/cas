@@ -20,13 +20,80 @@
 --%>
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
 
-<h1>SSO Sessions Report</h1>
+<script type="text/javascript">
 
-<div><p/>
-    <pre><code class="json">${activeSsoSessions}</code></pre>
+    function parseJsonPayload() {
+
+        var object = $.parseJSON('${activeSsoSessions}');
+        if (object != undefined) {
+            var activeSsoSessions = object.activeSsoSessions;
+            if (activeSsoSessions == undefined || activeSsoSessions.length == 0)	 {
+                showInfo("No SSO Sessions are available at this point.");
+            } else {
+                $("#jsonContent").empty();
+                for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
+                    var sso = activeSsoSessions[i];
+
+                    $("#jsonContent").append("<h3>Principal: "
+                    + sso.authenticated_principal
+                    + "</h3>");
+
+                    $("#jsonContent").append("<div>"
+                    + "<ul>"
+                    + "<li><strong>Authentication Date: </strong>" + sso.authentication_date + "</li>"
+                    + "<li><strong>Usage Count: </strong>" + sso.number_of_uses + "</li>"
+                    + "<li><strong>Ticket Granting Ticket: </strong>"
+                    + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket)
+                    + "</li>"
+                    + "</ul>"
+                    + "</div>");
+                };
+
+
+            }
+        } else {
+            showError("Did not receive the SSO Sessions JSON payload from the CAS server.");
+        }
+    }
+
+    function showError(msg) {
+        $("#msg").removeClass();
+        $("#msg").addClass("errors");
+        $("#msg").text(msg);
+        $("#msg").show();
+    }
+
+    function showInfo(msg) {
+        $("#msg").removeClass();
+        $("#msg").addClass("info");
+        $("#msg").text(msg);
+        $("#msg").show();
+    }
+
+    function jqueryReady() {
+        parseJsonPayload();
+        $("#jsonContent").accordion();
+    }
+</script>
+
+
+<div>
+    <div>
+        <h1>SSO Sessions Report</h1>
+        <p>
+        <div id="msg" style="display:none"></div>
+
+        <div id="jsonContent"></div>
+
+        <div id="login">
+            <div><br/></div>
+            <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
+        </div>
+
+    </div>
 </div>
+
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
