@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AcceptableUsagePolicyFormAction {
 
     /** Event id to signal the policy needs to be accepted. **/
-    protected static final String EVENT_ID_MUST_ACCEPT = "musAccept";
+    protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -58,10 +58,9 @@ public class AcceptableUsagePolicyFormAction {
         final String key = credential.getId();
         if (this.policyMap.containsKey(key)) {
             final Boolean hasAcceptedPolicy = this.policyMap.get(key);
-            return hasAcceptedPolicy ? new EventFactorySupport().success(this)
-                    : new EventFactorySupport().event(this, EVENT_ID_MUST_ACCEPT);
+            return hasAcceptedPolicy ? success() : accept();
         }
-        return new EventFactorySupport().event(this, "musAccept");
+        return accept();
     }
 
     /**
@@ -75,6 +74,24 @@ public class AcceptableUsagePolicyFormAction {
     public Event submit(final RequestContext context, final Credential credential,
                               final MessageContext messageContext)  {
         this.policyMap.put(credential.getId(), Boolean.TRUE);
+        return success();
+    }
+
+    /**
+     * Success event.
+     *
+     * @return the event
+     */
+    protected final Event success() {
         return new EventFactorySupport().success(this);
+    }
+
+    /**
+     * Accept event signaled by id {@link #EVENT_ID_MUST_ACCEPT}.
+     *
+     * @return the event
+     */
+    protected final Event accept() {
+        return new EventFactorySupport().event(this, EVENT_ID_MUST_ACCEPT);
     }
 }
