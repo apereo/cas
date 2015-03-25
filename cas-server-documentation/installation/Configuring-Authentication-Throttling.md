@@ -134,7 +134,7 @@ Configure the throttle to fire during the login webflow by editing `cas-servlet.
 	  <property name="interceptors">
 	      <array value-type="org.springframework.web.servlet.HandlerInterceptor">
           	<ref bean="localeChangeInterceptor" />
-			<ref local="loginThrottle" />		
+		<ref bean="loginThrottle" />		
 	      </array>
       </property>
 </bean>
