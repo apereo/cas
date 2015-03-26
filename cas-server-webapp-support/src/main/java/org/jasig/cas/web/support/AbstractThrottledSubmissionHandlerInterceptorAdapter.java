@@ -77,9 +77,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
+            request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
             response.sendError(HttpStatus.SC_FORBIDDEN,
                     "Access Denied for user [" + request.getParameter(usernameParameter)
-                    + " from IP Address [" + request.getRemoteAddr() + "]");
+                    + "] from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
 
