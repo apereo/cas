@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.logout;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,9 +30,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Marvin S. Addison
@@ -46,7 +48,9 @@ public class SamlCompliantLogoutMessageCreatorTests {
     public void verifyMessageBuilding() throws Exception {
 
         final SingleLogoutService service = mock(SingleLogoutService.class);
-        final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
+        when(service.getOriginalUrl()).thenReturn(TestUtils.CONST_TEST_URL);
+        final URL logoutUrl = new URL(service.getOriginalUrl());
+        final LogoutRequest request = new LogoutRequest("TICKET-ID", service, logoutUrl);
 
         final String msg = builder.create(request);
 

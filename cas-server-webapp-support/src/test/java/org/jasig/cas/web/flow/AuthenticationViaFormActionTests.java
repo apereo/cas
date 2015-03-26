@@ -172,7 +172,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("service", TestUtils.getService("test"));
+        context.getFlowScope().put("service", TestUtils.getService());
 
         final MessageContext messageContext = mock(MessageContext.class);
         assertEquals("warn", this.action.submit(context, c, messageContext).getId());

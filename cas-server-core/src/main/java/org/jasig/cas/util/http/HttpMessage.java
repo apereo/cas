@@ -19,6 +19,8 @@
 package org.jasig.cas.util.http;
 
 import java.net.URL;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -107,5 +109,15 @@ public class HttpMessage {
             LOGGER.warn(e.getMessage(), e);
         }
         return message;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("url", this.url)
+                .append("message", this.message)
+                .append("asynchronous", this.asynchronous)
+                .append("contentType", this.contentType)
+                .toString();
     }
 }
