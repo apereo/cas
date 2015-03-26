@@ -46,9 +46,6 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public final class ManageRegisteredServicesMultiActionController {
 
-    /** View name for the Manage Services View. */
-    public static final String VIEW_NAME = "manageServiceView";
-
     /** Instance of ServicesManager. */
     @NotNull
     private final ServicesManager servicesManager;
@@ -120,10 +117,10 @@ public final class ManageRegisteredServicesMultiActionController {
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
 
         model.put("services", services);
-        model.put("pageTitle", VIEW_NAME);
+        model.put("pageTitle", "Manage");
         model.put("defaultServiceUrl", this.defaultServiceUrl);
 
-        return new ModelAndView(VIEW_NAME, model);
+        return new ModelAndView("manage", model);
     }
 
     /**
