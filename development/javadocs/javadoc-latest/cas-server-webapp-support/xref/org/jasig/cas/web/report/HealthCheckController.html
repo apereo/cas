@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>HealthCheckController xref</title>
-<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
 </head>
 <body>
-<div id="overview"><a href="../../../../../apidocs/org/jasig/cas/web/HealthCheckController.html">View Javadoc</a></div><pre>
+<div id="overview"><a href="../../../../../../apidocs/org/jasig/cas/web/report/HealthCheckController.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * Licensed to Apereo under one or more contributor license</em>
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * agreements. See the NOTICE file distributed with this work</em>
@@ -24,7 +24,7 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> * specific language governing permissions and limitations</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> * under the License.</em>
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.web.report;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
@@ -49,14 +49,14 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  @Controller(<span class="jxr_string">"healthCheckController"</span>)
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  @RequestMapping(<span class="jxr_string">"/status"</span>)
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/web/HealthCheckController.html">HealthCheckController</a> {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/report/HealthCheckController.html">HealthCheckController</a> {
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/** Prefix for custom response headers with health check details. */</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String HEADER_PREFIX = <span class="jxr_string">"X-CAS-"</span>;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @NotNull
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      @Autowired
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/monitor/HealthCheckMonitor.html">HealthCheckMonitor</a> healthCheckMonitor;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> HealthCheckMonitor healthCheckMonitor;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * Handle request.</em>
@@ -71,11 +71,11 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response)
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a> healthStatus = <strong class="jxr_keyword">this</strong>.healthCheckMonitor.observe();
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> HealthStatus healthStatus = <strong class="jxr_keyword">this</strong>.healthCheckMonitor.observe();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          sb.append(<span class="jxr_string">"Health: "</span>).append(healthStatus.getCode());
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          String name;
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> status;
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          Status status;
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">int</strong> i = 0;
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Status&gt; entry : healthStatus.getDetails().entrySet()) {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              name = entry.getKey();

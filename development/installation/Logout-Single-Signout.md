@@ -154,7 +154,7 @@ For front-channel requests:
         p:serviceId="^https://web.application.net/login"
         p:evaluationOrder="10000001"
         p:logoutType-ref="LOGOUTTYPE"
-        p:logoutUrl="https://https://web.application.net/logout" />
+        p:logoutUrl="https://web.application.net/logout" />
 {% endhighlight %}
 
 

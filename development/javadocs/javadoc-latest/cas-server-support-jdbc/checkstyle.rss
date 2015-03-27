@@ -102,20 +102,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/BindModeSearchDatabaseAuthenticationHandler.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.DataSourceMonitor.java">org/jasig/cas/monitor/DataSourceMonitor.java</a>
                 </td>
                 <td>
@@ -130,7 +116,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.support.JpaLockingStrategy.java">org/jasig/cas/ticket/registry/support/JpaLockingStrategy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/BindModeSearchDatabaseAuthenticationHandler.java</a>
                 </td>
                 <td>
                   0
@@ -158,6 +144,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.support.JpaLockingStrategy.java">org/jasig/cas/ticket/registry/support/JpaLockingStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/QueryDatabaseAuthenticationHandler.java</a>
                 </td>
                 <td>
@@ -172,7 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImplTests.java">org/jasig/cas/services/JpaServiceRegistryDaoImplTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/SearchModeSearchDatabaseAuthenticationHandler.java</a>
                 </td>
                 <td>
                   0
@@ -186,7 +186,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/SearchModeSearchDatabaseAuthenticationHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImplTests.java">org/jasig/cas/services/JpaServiceRegistryDaoImplTests.java</a>
                 </td>
                 <td>
                   0
@@ -242,7 +242,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.SessionMonitorJpaTests.java">org/jasig/cas/monitor/SessionMonitorJpaTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandlerTests.java</a>
                 </td>
                 <td>
                   0
@@ -256,7 +256,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandlerTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.SessionMonitorJpaTests.java">org/jasig/cas/monitor/SessionMonitorJpaTests.java</a>
                 </td>
                 <td>
                   0
