@@ -17,10 +17,18 @@
  * under the License.
  */
 
-    (function() {
-    var app = angular.module('casmgt', [ ]);
+(function() {
+    var app = angular.module('casmgmt', [ ]);
 
-    app.controller('casmgtController', function() {
+    app.controller('actionsController', function() {
+    	this.actionPanel = 'manage';
 
+    	this.selectAction = function(setAction) {
+    		this.actionPanel = setAction;
+    	};
+
+    	this.isSelected = function(checkAction) {
+    		return this.actionPanel === checkAction;
+    	}
     });
 })();
