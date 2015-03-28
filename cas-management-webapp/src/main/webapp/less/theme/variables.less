@@ -34,17 +34,17 @@
 @gray9: darken(@white, 90%); // #1a1a1a
 
 // Primary color with 3 lightened shades and 3 darkened shades.
-@color1:                            #153e50; // muted darker blue
-@color1-light:                      lighten(@color1, 10%);
-@color1-lighter:                    lighten(@color1, 25%);
-@color1-lightest:                   lighten(@color1, 50%);
+@color1:                            #153e50; // Nile Blue
+@color1-light:                      lighten(@color1, 15%);
+@color1-lighter:                    lighten(@color1, 30%);
+@color1-lightest:                   lighten(@color1, 45%);
 
-@color1-dark:                       darken(@color1, 10%);
-@color1-darker:                     darken(@color1, 25%);
-@color1-darkest:                    darken(@color1, 50%);
+@color1-dark:                       darken(@color1, 5%);
+@color1-darker:                     darken(@color1, 10%);
+@color1-darkest:                    darken(@color1, 15%);
 
 // Secondary color with 3 lightened shades and 3 darkened shades.
-@color2:                            #6FA700; // bright green
+@color2:                            #6ec066; // Mantis
 @color2-light:                      lighten(@color2, 10%);
 @color2-lighter:                    lighten(@color2, 25%);
 @color2-lightest:                   lighten(@color2, 50%);
@@ -54,7 +54,7 @@
 @color2-darkest:                    darken(@color2, 50%);
 
 // Complementary color with 3 lightened shades and 3 darkened shades.
-@color3:                            #B25D00; // muted orange
+@color3:                            #7f6b1d; // Bull Shot
 @color3-light:                      lighten(@color3, 10%);
 @color3-lighter:                    lighten(@color3, 25%);
 @color3-lightest:                   lighten(@color3, 50%);
@@ -63,9 +63,25 @@
 @color3-darker:                     darken(@color3, 25%);
 @color3-darkest:                    darken(@color3, 50%);
 
+// Complementary color with 3 lightened shades and 3 darkened shades.
+@color4:                            #791b28; // Bull Shot
+@color4-light:                      lighten(@color4, 10%);
+@color4-lighter:                    lighten(@color4, 25%);
+@color4-lightest:                   lighten(@color4, 50%);
+
+@color4-dark:                       darken(@color4, 10%);
+@color4-darker:                     darken(@color4, 25%);
+@color4-darkest:                    darken(@color4, 50%);
+
 
 
 // Theme Variables
+// Reassign Bootstrap main colors
+@brand-primary:         @color1-light;
+@brand-success:         @color2-dark;
+@brand-info:            @color1-lighter;
+@brand-warning:         @color3-lighter;
+@brand-danger:          @color4-light;
 
 // Anchors, links
 @link-color:                            @color1-light;
@@ -76,7 +92,7 @@
 @header-background-text-color:          @white;
 @header-height:                         50px;
 @header-image-height:                   @header-height / 2;
-@header-link-font-size:                 80%;
+@header-link-font-size:                 90%;
 @header-link-text-color:                @white;
 @header-link-text-hover-color:          @color1-light;
 @header-link-background-color:          @header-background-color;
@@ -85,7 +101,7 @@
 // Footer styles
 @footer-background-color:               @color1-lightest;
 @footer-background-text-color:          @white;
-@footer-height:                         50px;
+@footer-height:                         100px;
 @footer-image-height:                   @footer-height / 2;
 @footer-link-font-size:                 80%;
 @footer-link-text-color:                @white;
