@@ -265,7 +265,8 @@
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"
+        p:publicWorkstationCookieGenerator-ref="publicWorkstationCookieGenerator"  />
 
   <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
 
@@ -276,7 +277,8 @@
         c:centralAuthenticationService-ref="centralAuthenticationService"
         c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:servicesManager-ref="servicesManager"
-        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}"  />
+        c:publicWorkstationCookieGenerator-ref="publicWorkstationCookieGenerator"
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}" />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -27,10 +28,13 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -57,20 +61,26 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     @NotNull
     private final ServicesManager servicesManager;
 
+    @NotNull
+    private CookieGenerator publicWorkstationCookieGenerator;
+
     /**
      * Instantiates a new Send ticket granting ticket action.
      *
      * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager the services manager
+     * @param publicWorkstationCookieGenerator the public workstation cookie generator
      */
     public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                           final CentralAuthenticationService centralAuthenticationService,
-                                          final ServicesManager servicesManager) {
+                                          final ServicesManager servicesManager,
+                                          final CookieGenerator publicWorkstationCookieGenerator) {
         super();
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
+        this.publicWorkstationCookieGenerator = publicWorkstationCookieGenerator;
     }
 
     @Override
@@ -82,7 +92,10 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
 
-        if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
+        if (isAuthenticatingAtPublicWorkstation(context))  {
+            LOGGER.info("Authentication is at a public workstation. "
+                    + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
+        } else if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else {
@@ -156,6 +169,24 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Is authenticating at a public workstation?
+     *
+     * @param ctx the ctx
+     * @return true if the cookie value is present
+     */
+    private boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(ctx);
+        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
+                request, this.publicWorkstationCookieGenerator.getCookieName());
+        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())) {
+            LOGGER.debug("Located cookie [{}]. SSO session will be considered renewed.",
+                    this.publicWorkstationCookieGenerator.getCookieName());
+            return true;
+        }
         return false;
     }
 }
