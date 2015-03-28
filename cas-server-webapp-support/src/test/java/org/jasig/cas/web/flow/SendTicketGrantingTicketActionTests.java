@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator publicWorkstationCookieGenerator;
     private MockRequestContext context;
 
     @Before
@@ -52,8 +54,12 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         ticketGrantingTicketCookieGenerator.setCookieName("TGT");
 
+        this.publicWorkstationCookieGenerator = new CookieGenerator();
+        this.publicWorkstationCookieGenerator.setCookieName("PUBLIC");
+
         this.action = new SendTicketGrantingTicketAction(ticketGrantingTicketCookieGenerator,
-                getCentralAuthenticationService(), getServicesManager());
+                getCentralAuthenticationService(), getServicesManager(),
+                this.publicWorkstationCookieGenerator);
         this.action.setServicesManager(getServicesManager());
         this.action.setCreateSsoSessionCookieOnRenewAuthentications(true);
         this.action.afterPropertiesSet();
