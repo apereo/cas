@@ -80,6 +80,9 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
+    @NotNull
+    private CookieGenerator publicWorkstationCookieGenerator;
+
     /**
      * Handle the submission of credentials from the post.
      *
@@ -197,6 +200,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
+            putPublicWorkstationCookieIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
@@ -243,6 +247,22 @@ public class AuthenticationViaFormAction {
     }
 
     /**
+     * Put public workstation cookie into the response if request parameter present.
+     *
+     * @param context the context
+     */
+    private void putPublicWorkstationCookieIfRequestParameterPresent(final RequestContext context) {
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+
+        if (StringUtils.isNotBlank(context.getExternalContext()
+                .getRequestParameterMap().get("publicWorkstation"))) {
+            this.publicWorkstationCookieGenerator.addCookie(response, "true");
+        } else {
+            this.publicWorkstationCookieGenerator.removeCookie(response);
+        }
+    }
+
+    /**
      * New event based on the given id.
      *
      * @param id the id
@@ -271,7 +291,16 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-     /**
+    /**
+     * Generates a cookie that indicates authentication at a public workstation.
+     * @param publicCookieGenerator the cookie generator
+     * @since 4.1
+     */
+    public final void setPublicWorkstationCookieGenerator(final CookieGenerator publicCookieGenerator) {
+        this.publicWorkstationCookieGenerator = publicCookieGenerator;
+    }
+
+    /**
      * Sets ticket registry.
      *
      * @param ticketRegistry the ticket registry. No longer needed as the core service layer
