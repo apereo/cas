@@ -6734,6 +6734,9 @@ html {
 .casmgmt-app .casmgmt-content .services-table tbody {
   border: 1px solid #e6e6e6;
 }
+.casmgmt-app .casmgmt-content .form-padding {
+  margin-top: 10px;
+}
 .casmgmt-app .casmgmt-content .services-button-group {
   margin-top: 20px;
   padding-top: 20px;
