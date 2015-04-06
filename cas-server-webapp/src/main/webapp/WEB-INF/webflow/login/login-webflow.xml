@@ -95,11 +95,34 @@
   <action-state id="realSubmit">
     <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
     <transition on="warn" to="warn" />
+    <!--
+    To enable AUP workflows, replace the 'success' transition with the following:
+    <transition on="success" to="acceptableUsagePolicyCheck" />
+    -->
     <transition on="success" to="sendTicketGrantingTicket" />
     <transition on="successWithWarnings" to="showMessages" />
     <transition on="authenticationFailure" to="handleAuthenticationFailure" />
     <transition on="error" to="generateLoginTicket" />
   </action-state>
+
+  <!-- Enable AUP flow
+  <action-state id="acceptableUsagePolicyCheck">
+    <evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition to="acceptableUsagePolicyView" />
+  </action-state>
+
+  <view-state id="acceptableUsagePolicyView" view="casAcceptableUsagePolicyView">
+      <transition on="submit" to="aupAcceptedAction" />
+      <transition to="generateLoginTicket" />
+  </view-state>
+
+  <action-state id="aupAcceptedAction">
+    <evaluate expression="acceptableUsagePolicyFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
+    <transition on="error" to="generateLoginTicket" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+  </action-state>
+  -->
 
   <view-state id="showMessages" view="casLoginMessageView">
     <on-entry>
