@@ -22,20 +22,15 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 ###Components
 {% highlight xml %}
 
-<webflow:flow-executor id="loginFlowExecutor" flow-registry="loginFlowRegistry">
-	<webflow:flow-execution-attributes>
-	  <webflow:always-redirect-on-pause value="false" />
-	  <webflow:redirect-in-same-state value="false" />
-	</webflow:flow-execution-attributes>
-	<webflow:flow-execution-listeners>
-	  <webflow:listener ref="terminateWebSessionListener" />
-	</webflow:flow-execution-listeners>
-</webflow:flow-executor>
+<bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl" 
+    c:definitionLocator-ref="loginFlowRegistry"
+    c:executionFactory-ref="loginFlowExecutionFactory"
+    c:executionRepository-ref="loginFlowExecutionRepository" />
 
 ...
 
-<webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+<webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+<webflow:flow-location-pattern value="/login/*-webflow.xml"/>
 </webflow:flow-registry>
 
 {% endhighlight %}
@@ -115,16 +110,14 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
       <webflow:always-redirect-on-pause value="false" />
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
 </webflow:flow-executor>
 
 ...
 
-<webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder">
-	<webflow:flow-location path="/WEB-INF/logout-webflow.xml" id="logout" />
+<webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+	<webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
 </webflow:flow-registry>
+
 {% endhighlight %}
 
 ###logout-flow.xml Overview
@@ -144,17 +137,33 @@ The Logout protocol is initiated by the following component:
 {% endhighlight %}
 
 Front-channel method of logout is specifically handled by the following component:
+
 {% highlight xml %}
 <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
         c:logoutManager-ref="logoutManager"/>
-
 {% endhighlight %}
 
 
-
 ##Termination of Web Flow Sessions
-Each flow is registered with a `TerminateWebSessionListener` whose job is expire the web session as soon as the webflow is ended. The goal is to decrease memory consumption by deleting as soon as possible the web sessions created mainly for login and logout processes. By default, the webflow session is configured to be destroyed in 2 seconds, once the session has ended.
+CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
+- Support for conversation management (e.g. flow scope)
+- Encryption of encoded flow state to prevent tampering by malicious clients
+
+By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication. 
+
+{% highlight xml %}
+<bean id="loginFlowExecutionRepository" 
+	class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+    c:flowExecutionFactory-ref="loginFlowExecutionFactory"
+    c:flowDefinitionLocator-ref="loginFlowRegistry"
+    c:transcoder-ref="loginFlowStateTranscoder" />
+
+<bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
+
+{% endhighlight %}
+
+Default encryption strategy is using the 128-bit AES in CBC ciphering mode with compression turned on.
 
 ##Extending the Webflow
 The CAS webflow provides discrete points to inject new functionality. Thus, the only thing to modify is the flow definition where new beans and views can be added easily with the Maven overlay build method.
@@ -194,3 +203,39 @@ passwordUpdateView.url=/WEB-INF/view/jsp/default/ui/passwordUpdateView.jsp
 
 {% endhighlight %}
 
+##Acceptable Usage Policy Flow
+CAS presents the ability to allow the user to accept the usage policy before moving on to the application. The task of remembering the user's choice is kept in memory by default and will be lost upon container restarts and/or in clustered deployments. Production-level deployments of this feature would require modifications to the flow such that the retrieval and/or acceptance of the policy would be handled via an external storage mechanism such as LDAP or JDBC.  
+
+###Configuration
+
+####Enable Webflow
+
+- In the `login-webflow.xml` file, enable the transition to `acceptableUsagePolicyCheck` by uncommenting the following entry:
+
+{% highlight xml %}
+<transition on="success" to="acceptableUsagePolicyCheck" />
+{% endhighlight %}
+
+- Enable the actual flow components by uncommenting the following entries:
+
+{% highlight xml %}
+<!-- Enable AUP flow	
+<action-state id="acceptableUsagePolicyCheck">
+	<evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
+	<transition on="success" to="sendTicketGrantingTicket" />
+	<transition to="acceptableUsagePolicyView" />
+</action-state>
+...
+
+-->
+{% endhighlight %}
+
+- Customize the policy by modifying `casAcceptableUsagePolicyView.jsp` located at `src/main/webapp/WEB-INF/view/jsp/default/ui`.
+
+####Configure Storage
+
+The task of remembering and accepting the policy is handled by `AcceptableUsagePolicyFormAction`. Adopters may extend this class to retrieve and persistent the user's choice via an external backend mechanism such as LDAP or JDBC.
+
+{% highlight xml %}
+<bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+{% endhighlight %}
