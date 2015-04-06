@@ -216,6 +216,8 @@ In order to "invoke" a specific language for the UI, the `/login` endpoint may b
     https://cas.server.edu/login?locale=it
 
 
+Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions. For an accurate and complete list of localized messages, always refer to the English language bundle.
+
 ###Configuration
 All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, they may also be formatted under `custom_messages.properties` files.
 
