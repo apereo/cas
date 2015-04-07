@@ -53,11 +53,11 @@
 
     <!-- Failure Proxy Views -->
     <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
 
     <!-- Successful Proxy Views -->
     <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
 
     <!-- CAS 3.0 Response Protocol Views -->
 
