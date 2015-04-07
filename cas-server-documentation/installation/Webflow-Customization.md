@@ -237,5 +237,6 @@ CAS presents the ability to allow the user to accept the usage policy before mov
 The task of remembering and accepting the policy is handled by `AcceptableUsagePolicyFormAction`. Adopters may extend this class to retrieve and persistent the user's choice via an external backend mechanism such as LDAP or JDBC.
 
 {% highlight xml %}
-<bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+<bean id="acceptableUsagePolicyFormAction" 
+      class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
 {% endhighlight %}
