@@ -130,7 +130,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationPolicy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationChecker.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationChecker.java</a>
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationChecker.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationChecker.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-x509//checkstyle.html#org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy.java">org/jasig/cas/adaptors/x509/authentication/handler/support/RevocationPolicy.java</a>
                 </td>
                 <td>
                   0
