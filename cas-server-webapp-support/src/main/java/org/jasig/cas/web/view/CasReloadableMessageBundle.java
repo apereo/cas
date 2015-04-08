@@ -73,7 +73,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
           }       
           
           if (!foundCode) {
-              logger.warn("The code [{}] cannot be found in the language bundle for the locale [{}]",
+              logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]",
                       code, locale);
           }
         }
