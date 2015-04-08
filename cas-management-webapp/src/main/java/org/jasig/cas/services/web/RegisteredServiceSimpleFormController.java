@@ -58,10 +58,9 @@ import java.util.List;
 public final class RegisteredServiceSimpleFormController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
-    
+
     private static final String COMMAND_NAME = "registeredService";
-    private static final String VIEW_NAME = "editServiceView";
-    
+
     /** Instance of ServiceRegistryManager. */
     @NotNull
     private final ServicesManager servicesManager;
@@ -177,7 +176,7 @@ public final class RegisteredServiceSimpleFormController {
     protected ModelAndView render(final HttpServletRequest request, final ModelMap model)
             throws Exception {
         updateModelMap(model, request);
-        return new ModelAndView(VIEW_NAME);
+        return new ModelAndView("add");
     }
     
     /**

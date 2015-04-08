@@ -23,13 +23,20 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
+
+  <context:component-scan base-package="org.jasig.cas.services.web" />
+  <mvc:annotation-driven />
 
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
@@ -55,7 +62,7 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="2"/>
-  
+
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
 
   <bean id="handlerMappingC"
@@ -63,26 +70,12 @@
         p:alwaysUseFullPath="true">
     <property name="mappings">
       <util:properties>
-        <prop key="/loggedOut.html">serviceLogoutViewController</prop>
-        <prop key="/authorizationFailure.html">passThroughController</prop>
+        <prop key="/*.html">passThroughController</prop>
       </util:properties>
     </property>
-    <!--
-     uncomment this to enable sending PageRequest events.
-     <property name="interceptors">
-       <util:list>
-         <ref bean="pageRequestHandlerInterceptorAdapter" />
-       </util:list>
-     </property>
-      -->
   </bean>
 
   <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
-
-  <bean
-      id="serviceLogoutViewController"
-      class="org.springframework.web.servlet.mvc.ParameterizableViewController"
-      p:viewName="serviceLogoutView"/>
 
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
 
