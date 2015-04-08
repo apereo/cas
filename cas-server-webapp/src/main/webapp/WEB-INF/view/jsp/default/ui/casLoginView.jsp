@@ -27,6 +27,11 @@
     </div>
 </c:if>
 
+<div id="cookiesDisabled" class="errors">
+    <h2><spring:message code="screen.cookies.disabled.title" /></h2>
+    <p><spring:message code="screen.cookies.disabled.message" /></p>
+</div>
+
 <c:if test="${not empty registeredService}">
     <c:set var="registeredServiceLogo" value="images/webapp.png"/>
     <c:if test="${not empty registeredService.logo}">
