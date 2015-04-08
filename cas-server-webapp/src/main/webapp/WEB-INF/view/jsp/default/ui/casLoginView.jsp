@@ -88,13 +88,13 @@
 
         <!--
         <section class="row check">
-            <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
-            <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
             <p>
+                <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
+                <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
+                <br/>
                 <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
                 <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
-            </p>
-            <p>
+                <br/>
                 <input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
                 <label for="rememberMe"><spring:message code="screen.rememberme.checkbox.title" /></label>
             </p>
