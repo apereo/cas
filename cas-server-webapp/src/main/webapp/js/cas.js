@@ -19,6 +19,7 @@
 
 var scripts = [ "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
     "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js",
     "https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"];
 
 head.ready(document, function() {
@@ -26,12 +27,30 @@ head.ready(document, function() {
 });
 
 
+function areCookiesEnabled() {
+    $.cookie('cookiesEnabled', 'true');
+    var value = $.cookie('cookiesEnabled');
+    if (value != undefined) {
+        $.removeCookie('cookiesEnabled');
+        return true;
+    }
+    return false;
+}
+
 function resourceLoadedSuccessfully() {
     $(document).ready(function() {
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
         }
 
+
+        if (areCookiesEnabled()) {
+           $('#cookiesDisabled').hide();
+        } else {
+           $('#cookiesDisabled').show();   
+           $('#cookiesDisabled').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
+        }
+            
         //flash error box
         $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
 
@@ -57,4 +76,3 @@ function resourceLoadedSuccessfully() {
     });
 
 };
-
