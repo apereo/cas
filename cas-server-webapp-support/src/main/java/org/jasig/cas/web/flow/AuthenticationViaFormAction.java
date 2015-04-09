@@ -80,8 +80,6 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    @NotNull
-    private CookieGenerator publicWorkstationCookieGenerator;
 
     /**
      * Handle the submission of credentials from the post.
@@ -200,7 +198,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
-            putPublicWorkstationCookieIfRequestParameterPresent(context);
+            putPublicWorkstationToFlowIffRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
@@ -247,18 +245,14 @@ public class AuthenticationViaFormAction {
     }
 
     /**
-     * Put public workstation cookie into the response if request parameter present.
+     * Put public workstation into the flow if request parameter present.
      *
      * @param context the context
      */
-    private void putPublicWorkstationCookieIfRequestParameterPresent(final RequestContext context) {
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-
+    private void putPublicWorkstationToFlowIffRequestParameterPresent(final RequestContext context) {
         if (StringUtils.isNotBlank(context.getExternalContext()
                 .getRequestParameterMap().get("publicWorkstation"))) {
-            this.publicWorkstationCookieGenerator.addCookie(response, "true");
-        } else {
-            this.publicWorkstationCookieGenerator.removeCookie(response);
+            context.getFlowScope().put("publicWorkstation", Boolean.TRUE);
         }
     }
 
@@ -289,15 +283,6 @@ public class AuthenticationViaFormAction {
 
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    /**
-     * Generates a cookie that indicates authentication at a public workstation.
-     * @param publicCookieGenerator the cookie generator
-     * @since 4.1
-     */
-    public final void setPublicWorkstationCookieGenerator(final CookieGenerator publicCookieGenerator) {
-        this.publicWorkstationCookieGenerator = publicCookieGenerator;
     }
 
     /**

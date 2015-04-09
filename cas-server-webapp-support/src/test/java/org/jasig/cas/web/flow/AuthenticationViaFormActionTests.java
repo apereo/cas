@@ -50,14 +50,9 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     private CookieGenerator warnCookieGenerator;
 
-    private CookieGenerator pubilcWorkstationCookieGenerator;
-
     @Before
     public void onSetUp() throws Exception {
         this.action = new AuthenticationViaFormAction();
-
-        this.pubilcWorkstationCookieGenerator = new CookieGenerator();
-        this.pubilcWorkstationCookieGenerator.setCookieName("PUBLIC");
 
         this.warnCookieGenerator = new CookieGenerator();
         this.warnCookieGenerator.setCookieName("WARN");
@@ -67,7 +62,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        this.action.setPublicWorkstationCookieGenerator(this.pubilcWorkstationCookieGenerator);
     }
 
     @Test
