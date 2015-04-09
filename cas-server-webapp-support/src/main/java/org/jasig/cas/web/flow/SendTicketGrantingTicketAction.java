@@ -61,26 +61,20 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     @NotNull
     private final ServicesManager servicesManager;
 
-    @NotNull
-    private CookieGenerator publicWorkstationCookieGenerator;
-
     /**
      * Instantiates a new Send ticket granting ticket action.
      *
      * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager the services manager
-     * @param publicWorkstationCookieGenerator the public workstation cookie generator
      */
     public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                           final CentralAuthenticationService centralAuthenticationService,
-                                          final ServicesManager servicesManager,
-                                          final CookieGenerator publicWorkstationCookieGenerator) {
+                                          final ServicesManager servicesManager) {
         super();
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
-        this.publicWorkstationCookieGenerator = publicWorkstationCookieGenerator;
     }
 
     @Override
@@ -179,12 +173,8 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      * @return true if the cookie value is present
      */
     private boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(ctx);
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
-                request, this.publicWorkstationCookieGenerator.getCookieName());
-        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())) {
-            LOGGER.debug("Located cookie [{}]. SSO session will be considered renewed.",
-                    this.publicWorkstationCookieGenerator.getCookieName());
+        if (ctx.getFlowScope().contains("publicWorkstation")) {
+            LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }
         return false;
