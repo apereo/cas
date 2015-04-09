@@ -27,7 +27,7 @@
     </div>
 </c:if>
 
-<div id="cookiesDisabled" class="errors">
+<div id="cookiesDisabled" class="errors" style="display:none;">
     <h2><spring:message code="screen.cookies.disabled.title" /></h2>
     <p><spring:message code="screen.cookies.disabled.message" /></p>
 </div>
