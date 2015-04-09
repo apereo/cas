@@ -45,7 +45,6 @@ import static org.mockito.Mockito.*;
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private CookieGenerator publicWorkstationCookieGenerator;
     private MockRequestContext context;
 
     @Before
@@ -54,12 +53,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         ticketGrantingTicketCookieGenerator.setCookieName("TGT");
 
-        this.publicWorkstationCookieGenerator = new CookieGenerator();
-        this.publicWorkstationCookieGenerator.setCookieName("PUBLIC");
-
         this.action = new SendTicketGrantingTicketAction(ticketGrantingTicketCookieGenerator,
-                getCentralAuthenticationService(), getServicesManager(),
-                this.publicWorkstationCookieGenerator);
+                getCentralAuthenticationService(), getServicesManager());
         this.action.setServicesManager(getServicesManager());
         this.action.setCreateSsoSessionCookieOnRenewAuthentications(true);
         this.action.afterPropertiesSet();
