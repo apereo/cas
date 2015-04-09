@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">if</strong> (!locale.equals(Locale.ENGLISH)) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>            <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; !foundCode &amp;&amp; i &lt; <strong class="jxr_keyword">this</strong>.basenames.length; i++) {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>                <strong class="jxr_keyword">final</strong> String filename = <strong class="jxr_keyword">this</strong>.basenames[i] + <span class="jxr_string">"_"</span> + locale.getLanguage();
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                <strong class="jxr_keyword">final</strong> String filename = <strong class="jxr_keyword">this</strong>.basenames[i] + <span class="jxr_string">"_"</span> + locale;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>                
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                logger.debug(<span class="jxr_string">"Examining language bundle [{}] for the code [{}]"</span>, filename, code);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>                <strong class="jxr_keyword">final</strong> PropertiesHolder holder = <strong class="jxr_keyword">this</strong>.getProperties(filename);
