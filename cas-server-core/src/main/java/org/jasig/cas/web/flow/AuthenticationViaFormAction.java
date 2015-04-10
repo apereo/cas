@@ -107,7 +107,7 @@ public class AuthenticationViaFormAction {
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
             logger.warn("Invalid login ticket {}", providedLoginTicket);
-            messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
+            messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
             return newEvent(ERROR);
         }
 
