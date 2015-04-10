@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URL;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -77,17 +79,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     protected X509CRL getCRL(final X509Certificate cert) {
         final URL[] urls = getDistributionPoints(cert);
-        logger.debug(String.format(
-                "Distribution points for %s: %s.",
-                CertUtils.toString(cert), Arrays.asList(urls)));
+        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
 
-        Element item;
-        for (URL url : urls) {
-            item = this.crlCache.get(url);
-            if (item != null) {
-                logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
-                return (X509CRL) item.getObjectValue();
+        try {
+            for (final URL url : urls) {
+                final Element item = this.crlCache.get(url);
+                if (item != null) {
+                    logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
+                    final byte[] encodedCrl = (byte[]) item.getObjectValue();
+                    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                    return (X509CRL) cf.generateCRL(new ByteArrayInputStream(encodedCrl));
+                }
             }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
 
         // Try all distribution points and stop at first fetch that succeeds
@@ -97,7 +102,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             try {
                 crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
                 logger.info("Success. Caching fetched CRL.");
-                this.crlCache.put(new Element(urls[i], crl));
+                this.crlCache.put(new Element(urls[i], crl.getEncoded()));
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", urls[i], e);
             }
