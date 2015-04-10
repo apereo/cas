@@ -173,7 +173,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
                 throw new IllegalArgumentException("CRL resources cannot be null.");
             }
             this.resources = new ArrayList<>();
-            for (Resource r : crls) {
+            for (final  Resource r : crls) {
                 if (r != null) {
                     this.resources.add(r);
                 }
@@ -191,7 +191,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          * data, false otherwise.
          */
         public void fetch(final boolean throwOnError) {
-            for (Resource r : this.resources) {
+            for (final Resource r : this.resources) {
                 logger.debug("Fetching CRL data from {}", r);
                 try {
                     this.crlRevocationChecker.addCrl(CertUtils.fetchCRL(r));
