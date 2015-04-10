@@ -1431,9 +1431,9 @@
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
-    <metrics.version>3.1.0</metrics.version>
+    <metrics.version>3.1.1</metrics.version>
     <commons.codec.version>1.10</commons.codec.version>
-    <metrics.spring.version>3.0.3</metrics.spring.version>
+    <metrics.spring.version>3.0.4</metrics.spring.version>
     <log4j.version>2.1</log4j.version>
     <junit.version>4.12</junit.version>
     <checkstyle.version>6.4</checkstyle.version>
@@ -1462,7 +1462,7 @@
     <javax.el-api.version>3.0.0</javax.el-api.version>
     <javax.el-impl.version>2.2.6</javax.el-impl.version>
     <jersey.version>1.19</jersey.version>
-    <jose.version>0.4.0</jose.version>
+    <jose.version>0.4.1</jose.version>
     <woodstox.version>4.4.1</woodstox.version>
 
     <!-- Plugin Versions -->
