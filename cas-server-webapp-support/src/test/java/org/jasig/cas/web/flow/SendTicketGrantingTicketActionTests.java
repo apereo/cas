@@ -22,7 +22,6 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
