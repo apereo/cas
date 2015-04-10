@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CRLException;
@@ -26,7 +27,16 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.core.io.Resource;
+
+import javax.naming.Context;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 
 /**
  * Utility class with methods to support various operations on X.509 certs.
@@ -85,6 +95,43 @@ public final class CertUtils {
     }
 
     /**
+     * Downloads a CRL from given LDAP url, e.g.
+     * <code>ldap://ldap.infonotary.com/dc=identity-ca,dc=infonotary,dc=com</code>
+     *
+     * @param ldapURL the ldap uRL
+     * @param certificateRevocationListAttributeName the certificate revocation list attribute name
+     * @return the x 509 cRL
+     * @throws Exception if connection to ldap fails, or attribute to get the revocation list is unavailable
+     */
+    public static X509CRL fetchCRL(final String ldapURL, final String certificateRevocationListAttributeName) throws Exception {
+        final Map<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, ldapURL);
+
+        final DirContext ctx = new InitialDirContext((Hashtable) env);
+        final Attribute aval = ctx.getAttributes("").get(certificateRevocationListAttributeName);
+        final byte[] val = (byte[]) aval.get();
+        if (val == null || val.length == 0) {
+            throw new CertificateException("Can not download CRL from: " + ldapURL);
+        }
+        ctx.close();
+        return CertUtils.fetchCRL(val);
+    }
+
+    /**
+     * Fetches an X.509 CRL from an encoded byte array.
+     *
+     * @param encodedCrl the encoded crl
+     * @return the x 509 cRL
+     * @throws Exception the certificate exception
+     */
+    public static X509CRL fetchCRL(final byte[] encodedCrl) throws Exception {
+        try (final InputStream inStream = new ByteArrayInputStream(encodedCrl)) {
+            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(inStream);
+        }
+    }
+
+    /**
      * Creates a unique and human-readable representation of the given certificate.
      *
      * @param cert Certificate.
@@ -92,7 +139,10 @@ public final class CertUtils {
      * @return String representation of a certificate that includes the subject and serial number.
      */
     public static String toString(final X509Certificate cert) {
-        return String.format("%s, SerialNumber=%s", cert.getSubjectDN(), cert.getSerialNumber());
+        return new ToStringBuilder(cert)
+                .append("subjectDn", cert.getSubjectDN())
+                .append("serialNumber", cert.getSerialNumber())
+                .build();
     }
 
     /**
