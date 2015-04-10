@@ -1427,14 +1427,14 @@
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
     <hibernate.core.version>4.3.8.Final</hibernate.core.version>
-    <slf4j.version>1.7.10</slf4j.version>
+    <slf4j.version>1.7.12</slf4j.version>
     <person.directory.version>1.6.1</person.directory.version>
     <servlet.api.version>3.0.1</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
     <metrics.version>3.1.0</metrics.version>
     <commons.codec.version>1.10</commons.codec.version>
     <metrics.spring.version>3.0.3</metrics.spring.version>
-    <log4j.version>2.1</log4j.version>
+    <log4j.version>2.2</log4j.version>
     <junit.version>4.12</junit.version>
     <checkstyle.version>6.4</checkstyle.version>
     <commons.lang.version>3.3.2</commons.lang.version>
