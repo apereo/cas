@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.io.ByteArrayInputStream;
+
 import java.net.URI;
 import java.net.URL;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
-
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
  * the CRLDistributionPoints extension field on the certificate.  Although RFC
@@ -56,9 +54,12 @@ import net.sf.ehcache.Element;
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
+    private static final String DEFAULT_CERTIFICATE_REVOC_LIST_ATTR = "certificateRevocationList;binary";
+
     /** CRL cache. */
     private final Cache crlCache;
 
+    private String certificateRevocationListAttributeName = DEFAULT_CERTIFICATE_REVOC_LIST_ATTR;
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
@@ -87,8 +88,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 if (item != null) {
                     logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
                     final byte[] encodedCrl = (byte[]) item.getObjectValue();
-                    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                    return (X509CRL) cf.generateCRL(new ByteArrayInputStream(encodedCrl));
+                    return CertUtils.fetchCRL(encodedCrl);
                 }
             }
         } catch (final Exception e) {
@@ -98,13 +98,19 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         // Try all distribution points and stop at first fetch that succeeds
         X509CRL crl = null;
         for (int i = 0; i < urls.length && crl == null; i++) {
-            logger.info("Attempting to fetch CRL at {}", urls[i]);
+            final URL url = urls[i];
+            logger.info("Attempting to fetch CRL at {}", url);
             try {
-                crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
-                logger.info("Success. Caching fetched CRL.");
-                this.crlCache.put(new Element(urls[i], crl.getEncoded()));
+                if (url.getProtocol().toLowerCase().startsWith("ldap")) {
+                    crl = CertUtils.fetchCRL(url.toExternalForm(),
+                            this.certificateRevocationListAttributeName);
+                } else {
+                    crl = CertUtils.fetchCRL(new UrlResource(url));
+                }
+                logger.info("Success. Caching fetched CRL at {}.", url);
+                this.crlCache.put(new Element(url, crl.getEncoded()));
             } catch (final Exception e) {
-                logger.error("Error fetching CRL at {}", urls[i], e);
+                logger.error("Error fetching CRL at {}", url, e);
             }
         }
 
@@ -159,5 +165,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         } catch (final Exception e) {
             logger.warn("{} is not a valid distribution point URI.", uriString);
         }
+    }
+
+    /**
+     * Default is set to {@link #DEFAULT_CERTIFICATE_REVOC_LIST_ATTR}.
+     *
+     * @param certificateRevocationListAttributeName ldap attribute name
+     */
+    public void setCertificateRevocationListAttributeName(final String certificateRevocationListAttributeName) {
+        this.certificateRevocationListAttributeName = certificateRevocationListAttributeName;
     }
 }
