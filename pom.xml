@@ -1443,7 +1443,7 @@
     <mockito.version>1.10.19</mockito.version>
     <ehcache.version>2.9.0</ehcache.version>
     <hsqldb.version>2.3.2</hsqldb.version>
-    <apache.httpclient.version>4.3.6</apache.httpclient.version>
+    <apache.httpclient.version>4.4.1</apache.httpclient.version>
     <joda-time.version>2.7</joda-time.version>
     <cas.client.version>3.3.3</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
