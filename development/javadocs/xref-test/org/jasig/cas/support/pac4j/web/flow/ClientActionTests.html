@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         assertEquals(MY_METHOD, mockSession.getAttribute(ClientAction.METHOD));
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         assertTrue(((String) flowScope.get(<span class="jxr_string">"FacebookClientUrl"</span>))
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 .startsWith(<span class="jxr_string">"https://www.facebook.com/dialog/oauth?client_id=my_key&amp;redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"</span>
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 .startsWith(<span class="jxr_string">"https://www.facebook.com/v2.2/dialog/oauth?client_id=my_key&amp;redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"</span>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                         + Clients.DEFAULT_CLIENT_NAME_PARAMETER + <span class="jxr_string">"%3DFacebookClient&amp;state="</span>));
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         assertEquals(MY_LOGIN_URL + <span class="jxr_string">"?"</span> + Clients.DEFAULT_CLIENT_NAME_PARAMETER
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                 + <span class="jxr_string">"=TwitterClient&amp;needs_client_redirection=true"</span>, flowScope.get(<span class="jxr_string">"TwitterClientUrl"</span>));
