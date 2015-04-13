@@ -95,7 +95,7 @@
                 <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
                 <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
                 <br/>
-                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
                 <label for="rememberMe"><spring:message code="screen.rememberme.checkbox.title" /></label>
             </p>
         </section>
@@ -106,8 +106,8 @@
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
 
-            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="5" type="submit" />
-            <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="6" type="reset" />
+            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="6" type="submit" />
+            <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="7" type="reset" />
         </section>
     </form:form>
 </div>
