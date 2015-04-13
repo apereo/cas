@@ -101,7 +101,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         for (int i = 0; i < urls.length && crl == null; i++) {
             logger.info("Attempting to fetch CRL at {}", urls[i]);
             try {
-                crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
+                final String path = URLDecoder.decode(urls[i].toExternalForm(), "UTF-8");
+                crl = CertUtils.fetchCRL(new UrlResource(path));
                 logger.info("Success. Caching fetched CRL.");
                 this.crlCache.put(new Element(urls[i], crl.getEncoded()));
             } catch (final Exception e) {
@@ -156,7 +157,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     private void addURL(final List<URL> list, final String uriString) {
         try {
-            final URL url = new URL(URLDecoder.decode(uriString, "UTF-8"));
+            final String decodedUrl = URLDecoder.decode(uriString, "UTF-8");
+            final URL url = new URL(decodedUrl);
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             list.add(uri.toURL());
         } catch (final Exception e) {
