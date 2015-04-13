@@ -18,11 +18,8 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import edu.vt.middleware.crypt.x509.ExtensionReader;
-import edu.vt.middleware.crypt.x509.ExtensionType;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +31,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
