@@ -485,7 +485,7 @@
 <a class="jxr_linenumber" name="L477" href="#L477">477</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String getFormattedText(<strong class="jxr_keyword">final</strong> byte[] bytes) {
 <a class="jxr_linenumber" name="L478" href="#L478">478</a>         <strong class="jxr_keyword">final</strong> StringBuilder buf = <strong class="jxr_keyword">new</strong> StringBuilder(bytes.length * 2);
 <a class="jxr_linenumber" name="L479" href="#L479">479</a> 
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         <strong class="jxr_keyword">for</strong> (byte b : bytes) {
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> byte b : bytes) {
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>             buf.append(HEX_DIGITS[b &gt;&gt; HEX_RIGHT_SHIFT_COEFFICIENT &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
 <a class="jxr_linenumber" name="L482" href="#L482">482</a>             buf.append(HEX_DIGITS[b &amp; HEX_HIGH_BITS_BITWISE_FLAG]);
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>         }

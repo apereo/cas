@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">this</strong>.expected = expected;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">this</strong>.certificates = <strong class="jxr_keyword">new</strong> X509Certificate[certFiles.length];
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">int</strong> i = 0;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">for</strong> (String file : certFiles) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String file : certFiles) {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">this</strong>.certificates[i++] = readCertificate(file);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Test
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkCertificate() {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>              <strong class="jxr_keyword">for</strong> (X509Certificate cert : <strong class="jxr_keyword">this</strong>.certificates) {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509Certificate cert : <strong class="jxr_keyword">this</strong>.certificates) {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                  getChecker().check(cert);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>              }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.expected != <strong class="jxr_keyword">null</strong>) {

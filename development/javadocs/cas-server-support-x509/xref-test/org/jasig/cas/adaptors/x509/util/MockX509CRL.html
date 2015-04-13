@@ -229,7 +229,7 @@
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRevoked(<strong class="jxr_keyword">final</strong> Certificate cert) {
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">if</strong> (cert instanceof X509Certificate) {
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>             <strong class="jxr_keyword">final</strong> X509Certificate xcert = (X509Certificate) cert;
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>             <strong class="jxr_keyword">for</strong> (X509CRLEntry entry : getRevokedCertificates()) {
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509CRLEntry entry : getRevokedCertificates()) {
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>                 <strong class="jxr_keyword">if</strong> (entry.getSerialNumber().equals(xcert.getSerialNumber())) {
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>                 }

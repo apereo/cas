@@ -183,7 +183,7 @@
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> 
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>         @Override
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">public</strong> String chooseClientAlias(<strong class="jxr_keyword">final</strong> String[] keyType, <strong class="jxr_keyword">final</strong> Principal[] issuers, <strong class="jxr_keyword">final</strong> Socket socket) {
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>                 <strong class="jxr_keyword">final</strong> String alias = keyManager.chooseClientAlias(keyType, issuers, socket);
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>                 <strong class="jxr_keyword">if</strong> (alias != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>                     <strong class="jxr_keyword">return</strong> alias;
@@ -195,7 +195,7 @@
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>         @Override
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">public</strong> String chooseServerAlias(<strong class="jxr_keyword">final</strong> String keyType, <strong class="jxr_keyword">final</strong> Principal[] issuers, <strong class="jxr_keyword">final</strong> Socket socket) {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>                 <strong class="jxr_keyword">final</strong> String alias = keyManager.chooseServerAlias(keyType, issuers, socket);
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>                 <strong class="jxr_keyword">if</strong> (alias != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>                     <strong class="jxr_keyword">return</strong> alias;
@@ -207,7 +207,7 @@
 <a class="jxr_linenumber" name="L199" href="#L199">199</a> 
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         @Override
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">public</strong> PrivateKey getPrivateKey(<strong class="jxr_keyword">final</strong> String alias) {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>                 <strong class="jxr_keyword">final</strong> PrivateKey privateKey = keyManager.getPrivateKey(alias);
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>                 <strong class="jxr_keyword">if</strong> (privateKey != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>                     <strong class="jxr_keyword">return</strong> privateKey;
@@ -219,7 +219,7 @@
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         @Override
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">public</strong> X509Certificate[] getCertificateChain(<strong class="jxr_keyword">final</strong> String alias) {
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>                 <strong class="jxr_keyword">final</strong> X509Certificate[] chain = keyManager.getCertificateChain(alias);
 <a class="jxr_linenumber" name="L216" href="#L216">216</a>                 <strong class="jxr_keyword">if</strong> (chain != <strong class="jxr_keyword">null</strong> &amp;&amp; chain.length &gt; 0) {
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>                     <strong class="jxr_keyword">return</strong> chain;
@@ -231,7 +231,7 @@
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>         @Override
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         <strong class="jxr_keyword">public</strong> String[] getClientAliases(<strong class="jxr_keyword">final</strong> String keyType, <strong class="jxr_keyword">final</strong> Principal[] issuers) {
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>             <strong class="jxr_keyword">final</strong> List&lt;String&gt; aliases = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>                 <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(keyManager.getClientAliases(keyType, issuers));
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>                 aliases.addAll(list);
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>             }
@@ -241,7 +241,7 @@
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>         @Override
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>         <strong class="jxr_keyword">public</strong>  String[] getServerAliases(<strong class="jxr_keyword">final</strong> String keyType, <strong class="jxr_keyword">final</strong> Principal[] issuers) {
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             <strong class="jxr_keyword">final</strong> List&lt;String&gt; aliases = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>             <strong class="jxr_keyword">for</strong> (X509KeyManager keyManager : keyManagers) {
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509KeyManager keyManager : keyManagers) {
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>                 <strong class="jxr_keyword">final</strong> List&lt;String&gt; list = Arrays.asList(keyManager.getServerAliases(keyType, issuers));
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>                 aliases.addAll(list);
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>             }
@@ -271,7 +271,7 @@
 <a class="jxr_linenumber" name="L263" href="#L263">263</a> 
 <a class="jxr_linenumber" name="L264" href="#L264">264</a>         @Override
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkClientTrusted(<strong class="jxr_keyword">final</strong> X509Certificate[] chain, <strong class="jxr_keyword">final</strong> String authType) <strong class="jxr_keyword">throws</strong> CertificateException {
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">for</strong> (X509TrustManager trustManager : trustManagers) {
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> X509TrustManager trustManager : trustManagers) {
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L268" href="#L268">268</a>                     trustManager.checkClientTrusted(chain, authType);
 <a class="jxr_linenumber" name="L269" href="#L269">269</a>                     <strong class="jxr_keyword">return</strong>;

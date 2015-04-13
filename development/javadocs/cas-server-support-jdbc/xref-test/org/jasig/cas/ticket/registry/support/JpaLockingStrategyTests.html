@@ -240,7 +240,7 @@
 <a class="jxr_linenumber" name="L232" href="#L232">232</a>         }
 <a class="jxr_linenumber" name="L233" href="#L233">233</a> 
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>         <strong class="jxr_keyword">int</strong> lockCount = 0;
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>         <strong class="jxr_keyword">for</strong> (Future&lt;Boolean&gt; result : executor.invokeAll(lockers)) {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Future&lt;Boolean&gt; result : executor.invokeAll(lockers)) {
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>             <strong class="jxr_keyword">if</strong> (result.get()) {
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>                 lockCount++;
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>             }
@@ -252,7 +252,7 @@
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>             releasers.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a>(locks[i]));
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>         }
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">int</strong> releaseCount = 0;
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">for</strong> (Future&lt;Boolean&gt; result : executor.invokeAll(lockers)) {
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Future&lt;Boolean&gt; result : executor.invokeAll(lockers)) {
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">if</strong> (result.get()) {
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>                 releaseCount++;
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>             }

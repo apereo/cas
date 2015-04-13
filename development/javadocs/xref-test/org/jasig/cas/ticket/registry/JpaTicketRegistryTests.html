@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>                 generators.add(<strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/ticket/registry/JpaTicketRegistryTests.html">ServiceTicketGenerator</a>(newTgt.getId(), <strong class="jxr_keyword">this</strong>.jpaTicketRegistry, <strong class="jxr_keyword">this</strong>.txManager));
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>             }
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>             <strong class="jxr_keyword">final</strong> List&lt;Future&lt;String&gt;&gt; results = executor.invokeAll(generators);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">for</strong> (Future&lt;String&gt; result : results) {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Future&lt;String&gt; result : results) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                 assertNotNull(result.get());
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>             }
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {

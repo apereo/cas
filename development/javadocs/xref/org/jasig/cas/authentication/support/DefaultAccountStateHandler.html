@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultAccountStateHandler.html">DefaultAccountStateHandler</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../org/jasig/cas/authentication/support/AccountStateHandler.html">AccountStateHandler</a> {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      <em class="jxr_javadoccomment">/** Map of account state error to CAS authentication exception. */</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Map&lt;AccountState.Error, LoginException&gt; ERROR_MAP;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Map&lt;AccountState.Error, LoginException&gt; errorMap;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <em class="jxr_javadoccomment">/** Logger instance. */</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
@@ -69,22 +69,22 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * Instantiates a new account state handler, that populates</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * the error map with LDAP error codes and corresponding exceptions.</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">static</strong> {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          ERROR_MAP = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/AccountDisabledException.html">AccountDisabledException</a>());
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, <strong class="jxr_keyword">new</strong> AccountLockedException());
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginTimeException.html">InvalidLoginTimeException</a>());
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginLocationException.html">InvalidLoginLocationException</a>());
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/AccountPasswordMustChangeException.html">AccountPasswordMustChangeException</a>());
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          ERROR_MAP.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, <strong class="jxr_keyword">new</strong> AccountExpiredException());
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, <strong class="jxr_keyword">new</strong> AccountLockedException());
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginTimeException.html">InvalidLoginTimeException</a>());
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          ERROR_MAP.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          ERROR_MAP.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          ERROR_MAP.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, <strong class="jxr_keyword">new</strong> AccountLockedException());
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          ERROR_MAP.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          ERROR_MAP.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultAccountStateHandler.html">DefaultAccountStateHandler</a>() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">this</strong>.errorMap = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/AccountDisabledException.html">AccountDisabledException</a>());
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, <strong class="jxr_keyword">new</strong> AccountLockedException());
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginTimeException.html">InvalidLoginTimeException</a>());
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginLocationException.html">InvalidLoginLocationException</a>());
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/AccountPasswordMustChangeException.html">AccountPasswordMustChangeException</a>());
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, <strong class="jxr_keyword">new</strong> AccountExpiredException());
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, <strong class="jxr_keyword">new</strong> AccountLockedException());
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/jasig/cas/authentication/InvalidLoginTimeException.html">InvalidLoginTimeException</a>());
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, <strong class="jxr_keyword">new</strong> AccountLockedException());
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">this</strong>.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, <strong class="jxr_keyword">new</strong> CredentialExpiredException());
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      @Override
@@ -128,7 +128,7 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>             <strong class="jxr_keyword">throws</strong> LoginException {
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> 
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>         logger.debug(<span class="jxr_string">"Handling {}"</span>, error);
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">final</strong> LoginException ex = ERROR_MAP.get(error);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">final</strong> LoginException ex = <strong class="jxr_keyword">this</strong>.errorMap.get(error);
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">if</strong> (ex != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>             <strong class="jxr_keyword">throw</strong> ex;
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         }

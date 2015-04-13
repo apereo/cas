@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"CRL resources cannot be null."</span>);
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>             }
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>             <strong class="jxr_keyword">this</strong>.resources = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">for</strong> (Resource r : crls) {
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong>  Resource r : crls) {
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">if</strong> (r != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>                     <strong class="jxr_keyword">this</strong>.resources.add(r);
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>                 }
@@ -199,7 +199,7 @@
 <a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">         * data, false otherwise.</em>
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> fetch(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> throwOnError) {
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>             <strong class="jxr_keyword">for</strong> (Resource r : <strong class="jxr_keyword">this</strong>.resources) {
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Resource r : <strong class="jxr_keyword">this</strong>.resources) {
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>                 logger.debug(<span class="jxr_string">"Fetching CRL data from {}"</span>, r);
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>                     <strong class="jxr_keyword">this</strong>.crlRevocationChecker.addCrl(CertUtils.fetchCRL(r));

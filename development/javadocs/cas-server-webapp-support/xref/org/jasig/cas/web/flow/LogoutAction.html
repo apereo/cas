@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          putLogoutIndex(context, 0);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">final</strong> List&lt;LogoutRequest&gt; logoutRequests = WebUtils.getLogoutRequests(context);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">if</strong> (logoutRequests != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">for</strong> (LogoutRequest logoutRequest : logoutRequests) {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest : logoutRequests) {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>                  <em class="jxr_comment">// if some logout request must still be attempted</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">if</strong> (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                      needFrontSlo = <strong class="jxr_keyword">true</strong>;
