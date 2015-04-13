@@ -1464,6 +1464,7 @@
     <jersey.version>1.19</jersey.version>
     <jose.version>0.4.0</jose.version>
     <woodstox.version>4.4.1</woodstox.version>
+    <pac4j.version>1.7.0</pac4j.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
