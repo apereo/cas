@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.adaptors.x509.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CRLException;
@@ -29,7 +28,6 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import edu.vt.middleware.crypt.util.CryptReader;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
