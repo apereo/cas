@@ -84,7 +84,7 @@ public final class ClientAction extends AbstractAction {
      * Supported protocols.
      */
     private static final List<Mechanism> SUPPORTED_PROTOCOLS = Arrays.asList(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
-            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL);
+            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
 
     /**
      * The logger.
