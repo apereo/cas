@@ -131,7 +131,7 @@ public class AuthenticationViaFormAction {
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
-        messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
+        messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
         return newEvent(ERROR);
     }
 
