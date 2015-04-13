@@ -169,7 +169,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      * @return true if the cookie value is present
      */
     private boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains("publicWorkstation")) {
+        if (ctx.getFlowScope().contains(AuthenticationViaFormAction.PUBLIC_WORKSTATION_ATTRIBUTE)) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }

@@ -70,6 +70,9 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
+    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -198,7 +201,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
-            putPublicWorkstationToFlowIffRequestParameterPresent(context);
+            putPublicWorkstationToFlowIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
@@ -249,10 +252,10 @@ public class AuthenticationViaFormAction {
      *
      * @param context the context
      */
-    private void putPublicWorkstationToFlowIffRequestParameterPresent(final RequestContext context) {
+    private void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
         if (StringUtils.isNotBlank(context.getExternalContext()
-                .getRequestParameterMap().get("publicWorkstation"))) {
-            context.getFlowScope().put("publicWorkstation", Boolean.TRUE);
+                .getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
         }
     }
 

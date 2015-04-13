@@ -34,9 +34,4 @@
 		p:cookieName="CASPRIVACY"
 		p:cookiePath="/cas" />
 
-    <bean id="publicWorkstationCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-          p:cookieSecure="true"
-          p:cookieMaxAge="-1"
-          p:cookieName="CASPUBLIC"
-          p:cookiePath="/cas" />
 </beans>
