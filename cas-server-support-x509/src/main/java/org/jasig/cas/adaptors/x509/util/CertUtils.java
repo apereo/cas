@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CRLException;
@@ -26,6 +27,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
+import edu.vt.middleware.crypt.util.CryptReader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
@@ -81,6 +85,20 @@ public final class CertUtils {
     public static X509CRL fetchCRL(final Resource resource) throws CRLException, IOException {
         try (final InputStream in = resource.getURL().openStream()) {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
+        }
+    }
+
+    /**
+     * Read certificate.
+     *
+     * @param resource the resource to read the cert from
+     * @return the x 509 certificate
+     */
+    public static X509Certificate readCertificate(final Resource resource) {
+        try (final InputStream in = resource.getInputStream()) {
+            return (X509Certificate) CryptReader.readCertificate(in);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error reading certificate " + resource, e);
         }
     }
 
