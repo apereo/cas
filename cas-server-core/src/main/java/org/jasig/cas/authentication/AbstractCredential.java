@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
@@ -43,10 +44,17 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof  Credential && getClass().equals(other.getClass())) {
-            return getId().equals(((Credential) other).getId());
+        if (!(other instanceof Credential)) {
+            return false;
         }
-        return false;
+        if (other == this) {
+            return true;
+        }
+        final EqualsBuilder builder = new EqualsBuilder();
+        String id1 = getId();
+        String id2 = ((Credential) other).getId();
+        builder.append(id1, id2);
+        return builder.isEquals();
     }
 
     @Override
