@@ -204,68 +204,42 @@ The following JSP tag libraries are used by the user interface:
 
 
 ####Glossary of Views
-- **`casAccountDisabledView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
 
-- **`casAccountLockedView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `casAccountDisabledView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
+| `casAccountLockedView`    | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
+| `casBadHoursView`         | Specific to Password Policy Enforcement; displayed when authentication encounters an account that is not allowed authentication within the current time window in the underlying account store (i.e. LDAP)
+| `casBadWorkstationView`   | Specific to Password Policy Enforcement; displayed when authentication encounters an account that is not allowed authentication from the current workstation in the underlying account store (i.e. LDAP)
+| `casExpiredPassView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that has expired in the underlying account store (i.e. LDAP)
+| `casMustChangePassView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that must change its password in the underlying account store (i.e. LDAP)
+| `casWarnPassView` | Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
+| `casConfirmView`  | Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+| `casGenericSuccess` | Displayed when the user has been logged in without providing a service to be redirected to.
+| `casLoginView`  | Main login form. 
+| `casLogoutView` | Main logout view. 
+| `serviceErrorView` | Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
+| `serviceErrorSsoView` | Displayed when a user would otherwise have experienced non-interactive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
-- **`casBadHoursView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication within the current time window in the underlying account store (i.e. LDAP)
-
-- **`casBadWorkstationView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication from the current workstation in the underlying account store (i.e. LDAP)
-
-- **`casExpiredPassView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that has expired in the underlying account store (i.e. LDAP)
-
-- **`casMustChangePassView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that must change its password in the underlying account store (i.e. LDAP)
-
-- **`casWarnPassView`**  
-Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
-
-- **`casConfirmView`**  
-Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
-
-- **`casGenericSuccess`**  
-Displayed when the user has been logged in without providing a service to be redirected to.
-
-- **`casLoginView`**  
-Main login form.
-
-- **`casLoginView`**  
-Main login form.
-
-- **`casLoginView`**  
-Main login form.
-
-- **`serviceErrorView`**  
-Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
-
-- **`serviceErrorSsoView`**   
-Displayed when a user would otherwise have experienced noninteractive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
 ####Glossary of Monitoring Views
 The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 
-- **`viewConfig`**  
-Displayed when user attempts to view the state of the CAS application runtime and its configuration.
 
-- **`viewSsoSessions`**  
-Displayed when user wishes to view the Single Sign-on Report.
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `viewConfig`  | Displayed when user attempts to view the state of the CAS application runtime and its configuration.
+| `viewSsoSessions` | Displayed when user wishes to view the Single Sign-on Report.
+| `viewStatistics`  | Displayed when user wishes review the CAS server statistics.
 
-- **`viewStatistics`**  
-Displayed when user wishes review the CAS server statistics.
 
 ####Glossary of System Error Views
 The error views are found at `WEB-INF/view/jsp/`.
 
-- **`errors`** 
-Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
-
-- **`authorizationFailure`**  
-Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `errors`  | Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
+| `authorizationFailure` | Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
 
 ###Warning Before Accessing Application
 CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in. 
