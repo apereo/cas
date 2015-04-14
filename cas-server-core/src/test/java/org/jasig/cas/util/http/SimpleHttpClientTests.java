@@ -27,11 +27,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Test;
 
 /**
- *
+ * Test cases for {@link SimpleHttpClient}.
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -62,7 +63,7 @@ public class SimpleHttpClientTests  {
     public void verifyBypassedInvalidHttpsUrl() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
-        clientFactory.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
         clientFactory.setAcceptableCodes(new int[] {200, 403});
         final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
@@ -78,6 +79,6 @@ public class SimpleHttpClientTests  {
         };
         final SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[] {trm}, null);
-        return new SSLConnectionSocketFactory(sc);
+        return new SSLConnectionSocketFactory(sc, new NoopHostnameVerifier());
     }
 }
