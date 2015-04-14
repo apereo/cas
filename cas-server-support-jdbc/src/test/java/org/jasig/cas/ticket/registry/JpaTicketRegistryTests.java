@@ -136,7 +136,7 @@ public class JpaTicketRegistryTests {
                 generators.add(new ServiceTicketGenerator(newTgt.getId(), this.jpaTicketRegistry, this.txManager));
             }
             final List<Future<String>> results = executor.invokeAll(generators);
-            for (Future<String> result : results) {
+            for (final Future<String> result : results) {
                 assertNotNull(result.get());
             }
         } catch (final Exception e) {
