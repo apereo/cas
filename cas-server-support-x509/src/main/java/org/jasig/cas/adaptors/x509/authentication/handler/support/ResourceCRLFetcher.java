@@ -26,10 +26,9 @@ import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
-import java.net.URL;
 import java.security.cert.X509CRL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Handles the fetching of CRL objects based on resources.
@@ -44,27 +43,25 @@ public class ResourceCRLFetcher implements CRLFetcher {
     /**
      * Creates a new instance using the specified resources for CRL data.
      */
-    public ResourceCRLFetcher() {
-
-    }
+    public ResourceCRLFetcher() {}
 
     @Override
-    public final Map<URL, X509CRL> fetch(@NotNull final Resource[] crls) throws Exception {
+    public final Set<X509CRL> fetch(@NotNull final Resource[] crls) throws Exception {
         if (crls.length == 0) {
             throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
         }
 
-        final Map<URL, X509CRL> results = new HashMap<>();
+        final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
             logger.debug("Fetching CRL data from {}", r);
-            results.put(r.getURL(), fetchInternal(r));
+            results.add(fetchInternal(r));
         }
         return results;
     }
 
     @Override
     public X509CRL fetch(@NotNull final Resource crl) throws Exception {
-        return fetch(new Resource[] {crl}).entrySet().iterator().next().getValue();
+        return fetch(new Resource[] {crl}).iterator().next();
     }
 
     /**
@@ -76,12 +73,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws Exception the exception
      */
     protected X509CRL fetchInternal(final Resource r) throws Exception {
-        final InputStream in = r.getInputStream();
-        if (r.getInputStream() != null) {
-            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
-        }
-
-        try (final InputStream ins = r.getURL().openStream()) {
+        try (final InputStream ins = r.getInputStream()) {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
         }
     }

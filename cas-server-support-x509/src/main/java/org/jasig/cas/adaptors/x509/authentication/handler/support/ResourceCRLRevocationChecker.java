@@ -60,7 +60,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
 
     /** Handles fetching CRL data. */
-    private final ResourceCRLFetcher fetcher;
+    private final CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
     private final Map<X500Principal, X509CRL> crlIssuerMap =
@@ -95,7 +95,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      * @param crls the crls
      * @since 4.1
      */
-    public ResourceCRLRevocationChecker(final ResourceCRLFetcher fetcher, final Resource[] crls) {
+    public ResourceCRLRevocationChecker(final CRLFetcher fetcher, final Resource[] crls) {
         this.fetcher = fetcher;
         this.resources = crls;
     }
@@ -118,7 +118,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     public void afterPropertiesSet() throws Exception {
         try {
             // Fetch CRL data synchronously and throw exception to abort if any fail
-            final Map<URL, X509CRL> results = this.fetcher.fetch(getResources());
+            final Set<X509CRL> results = this.fetcher.fetch(getResources());
             ResourceCRLRevocationChecker.this.addCrls(results);
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -132,7 +132,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             public void run() {
                 try {
                     final Resource[] resources = ResourceCRLRevocationChecker.this.getResources();
-                    final Map<URL, X509CRL> results = getFetcher().fetch(resources);
+                    final Set<X509CRL> results = getFetcher().fetch(resources);
                     ResourceCRLRevocationChecker.this.addCrls(results);
                 } catch (final Exception e) {
                     logger.debug(e.getMessage(), e);
@@ -144,16 +144,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     }
 
     /**
-     * Add fetches crls to the map.
+     * Add fetched crls to the map.
      *
      * @param results the results
      */
-    private void addCrls(final Map<URL, X509CRL> results) {
-        final Set<Map.Entry<URL, X509CRL>> keys = results.entrySet();
-        final Iterator<Map.Entry<URL, X509CRL>> it = keys.iterator();
+    private void addCrls(final Set<X509CRL> results) {
+        final Iterator<X509CRL> it = results.iterator();
         while (it.hasNext()) {
-            final Map.Entry<URL, X509CRL> entry = it.next();
-            addCRL(entry.getKey(), entry.getValue());
+            final X509CRL entry = it.next();
+            addCRL(entry.getIssuerX500Principal(), entry);
         }
     }
 
@@ -167,18 +166,11 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     protected Resource[] getResources() {
         return this.resources;
     }
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Id is always ignored and the entry is put int the CRL
-     * map based on it {@link X509CRL#getIssuerX500Principal()}.
-     * </p>
-     */
+
     @Override
-    protected boolean addCRL(final Object id, final X509CRL crl) {
-        final X500Principal issuer = crl.getIssuerX500Principal();
+    protected boolean addCRL(final Object issuer, final X509CRL crl) {
         logger.debug("Adding CRL for issuer {}", issuer);
-        this.crlIssuerMap.put(issuer, crl);
+        this.crlIssuerMap.put((X500Principal) issuer, crl);
         return this.crlIssuerMap.containsKey(issuer);
     }
 
