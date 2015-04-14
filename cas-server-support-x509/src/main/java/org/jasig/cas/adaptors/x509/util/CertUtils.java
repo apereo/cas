@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 
 /**
@@ -78,7 +79,7 @@ public final class CertUtils {
      * @return String representation of a certificate that includes the subject and serial number.
      */
     public static String toString(final X509Certificate cert) {
-        return new ToStringBuilder(cert)
+        return new ToStringBuilder(cert, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("subjectDn", cert.getSubjectDN())
                 .append("serialNumber", cert.getSerialNumber())
                 .build();
