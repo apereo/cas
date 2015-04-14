@@ -51,9 +51,7 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
             return true;
         }
         final EqualsBuilder builder = new EqualsBuilder();
-        String id1 = getId();
-        String id2 = ((Credential) other).getId();
-        builder.append(id1, id2);
+        builder.append(getId(), ((Credential) other).getId());
         return builder.isEquals();
     }
 
