@@ -258,7 +258,8 @@
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
-        p:servicesManager-ref="servicesManager"  />
+        p:servicesManager-ref="servicesManager"
+        p:enableFlowOnAbsentServiceRequest="${create.sso.missing.service:true}"  />
 
   <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
         c:centralAuthenticationService-ref="centralAuthenticationService" />
