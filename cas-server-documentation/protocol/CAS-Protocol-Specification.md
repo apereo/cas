@@ -912,7 +912,7 @@ Section [2.5.1](<#head2.5.1>).
 **2.9. /p3/proxyValidate [CAS 3.0]**
 ---------------------------------
 
-`/p3/proxyValidate` MUST perform the same validation tasks as `/p3/proxyValidate` and
+`/p3/proxyValidate` MUST perform the same validation tasks as `/p3/serviceValidate` and
 additionally validate proxy tickets. See Section [2.8](<#head2.5>).
 
 <a name="head2.8.1"/>

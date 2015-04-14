@@ -63,7 +63,7 @@ public final class LogoutAction extends AbstractLogoutAction {
         putLogoutIndex(context, 0);
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
-            for (LogoutRequest logoutRequest : logoutRequests) {
+            for (final LogoutRequest logoutRequest : logoutRequests) {
                 // if some logout request must still be attempted
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
                     needFrontSlo = true;
