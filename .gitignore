@@ -19,3 +19,4 @@ build.xml
 rebel.xml
 **/.checkstyle
 *.log.gz
+.fbIncludeFilterFile
