@@ -175,7 +175,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final String alias = keyManager.chooseClientAlias(keyType, issuers, socket);
                 if (alias != null) {
                     return alias;
@@ -187,7 +187,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final String alias = keyManager.chooseServerAlias(keyType, issuers, socket);
                 if (alias != null) {
                     return alias;
@@ -199,7 +199,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final PrivateKey privateKey = keyManager.getPrivateKey(alias);
                 if (privateKey != null) {
                     return privateKey;
@@ -211,7 +211,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public X509Certificate[] getCertificateChain(final String alias) {
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final X509Certificate[] chain = keyManager.getCertificateChain(alias);
                 if (chain != null && chain.length > 0) {
                     return chain;
@@ -223,7 +223,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final List<String> list = Arrays.asList(keyManager.getClientAliases(keyType, issuers));
                 aliases.addAll(list);
             }
@@ -233,7 +233,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
         @Override
         public  String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            for (X509KeyManager keyManager : keyManagers) {
+            for (final X509KeyManager keyManager : keyManagers) {
                 final List<String> list = Arrays.asList(keyManager.getServerAliases(keyType, issuers));
                 aliases.addAll(list);
             }
@@ -263,7 +263,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            for (X509TrustManager trustManager : trustManagers) {
+            for (final X509TrustManager trustManager : trustManagers) {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
                     return;

@@ -232,7 +232,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
 
         int lockCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
+        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
             if (result.get()) {
                 lockCount++;
             }
@@ -244,7 +244,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             releasers.add(new Releaser(locks[i]));
         }
         int releaseCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
+        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
             if (result.get()) {
                 releaseCount++;
             }
