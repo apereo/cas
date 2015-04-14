@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.UrlResource;
 
 import edu.vt.middleware.crypt.x509.ExtensionReader;
@@ -38,6 +39,8 @@ import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -54,23 +57,31 @@ import net.sf.ehcache.Element;
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
-    private static final String DEFAULT_CERTIFICATE_REVOC_LIST_ATTR = "certificateRevocationList;binary";
-
     /** CRL cache. */
     private final Cache crlCache;
 
-    private String certificateRevocationListAttributeName = DEFAULT_CERTIFICATE_REVOC_LIST_ATTR;
+    /** The CRL fetcher instance. **/
+    private final CRLFetcher fetcher;
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
      *
      * @param crlCache Cache for CRL data.
      */
-    public CRLDistributionPointRevocationChecker(final Cache crlCache) {
-        if (crlCache == null) {
-            throw new IllegalArgumentException("Cache cannot be null.");
-        }
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache) {
+        this(crlCache, new ResourceCRLFetcher());
+    }
+
+    /**
+     * Instantiates a new CRL distribution point revocation checker.
+     *
+     * @param crlCache the crl cache
+     * @param fetcher the fetcher
+     */
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
+                                                 @NotNull final CRLFetcher fetcher) {
         this.crlCache = crlCache;
+        this.fetcher = fetcher;
     }
 
     /**
@@ -88,7 +99,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 if (item != null) {
                     logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
                     final byte[] encodedCrl = (byte[]) item.getObjectValue();
-                    return CertUtils.fetchCRL(encodedCrl);
+                    return this.fetcher.fetch(new ByteArrayResource(encodedCrl));
                 }
             }
         } catch (final Exception e) {
@@ -101,20 +112,26 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             final URL url = urls[i];
             logger.info("Attempting to fetch CRL at {}", url);
             try {
-                if (url.getProtocol().toLowerCase().startsWith("ldap")) {
-                    crl = CertUtils.fetchCRL(url.toExternalForm(),
-                            this.certificateRevocationListAttributeName);
-                } else {
-                    crl = CertUtils.fetchCRL(new UrlResource(url));
-                }
+                crl = this.fetcher.fetch(new UrlResource(url));
                 logger.info("Success. Caching fetched CRL at {}.", url);
-                this.crlCache.put(new Element(url, crl.getEncoded()));
+                addCRL(url, crl);
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", url, e);
             }
         }
 
         return crl;
+    }
+
+    @Override
+    protected boolean addCRL(final Object id, final X509CRL crl) {
+        try {
+            this.crlCache.put(new Element(id, crl.getEncoded()));
+            return this.crlCache.get(id) != null;
+        } catch (final Exception e) {
+            logger.warn("Failed to add the crl entry [{}] to the cache", crl);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -167,12 +184,4 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
     }
 
-    /**
-     * Default is set to {@link #DEFAULT_CERTIFICATE_REVOC_LIST_ATTR}.
-     *
-     * @param certificateRevocationListAttributeName ldap attribute name
-     */
-    public void setCertificateRevocationListAttributeName(final String certificateRevocationListAttributeName) {
-        this.certificateRevocationListAttributeName = certificateRevocationListAttributeName;
-    }
 }
