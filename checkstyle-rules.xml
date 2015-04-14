@@ -218,6 +218,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="FinalLocalVariable">
       <property name="severity" value="error"/>
       <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+      <property name="validateEnhancedForLoopVariable" value="true" />
     </module>
     <module name="TodoComment">
       <property name="severity" value="error"/>

@@ -54,7 +54,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
         int i = 0;
-        for (String file : certFiles) {
+        for (final String file : certFiles) {
             this.certificates[i++] = readCertificate(file);
         }
     }
@@ -65,7 +65,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
     @Test
     public void checkCertificate() {
         try {
-            for (X509Certificate cert : this.certificates) {
+            for (final X509Certificate cert : this.certificates) {
                 getChecker().check(cert);
             }
             if (this.expected != null) {

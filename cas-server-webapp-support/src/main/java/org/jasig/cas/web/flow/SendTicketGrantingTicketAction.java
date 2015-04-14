@@ -82,7 +82,10 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
 
-        if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
+        if (isAuthenticatingAtPublicWorkstation(context))  {
+            LOGGER.info("Authentication is at a public workstation. "
+                    + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
+        } else if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else {
@@ -156,6 +159,20 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Is authenticating at a public workstation?
+     *
+     * @param ctx the ctx
+     * @return true if the cookie value is present
+     */
+    private boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
+        if (ctx.getFlowScope().contains(AuthenticationViaFormAction.PUBLIC_WORKSTATION_ATTRIBUTE)) {
+            LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
+            return true;
+        }
         return false;
     }
 }
