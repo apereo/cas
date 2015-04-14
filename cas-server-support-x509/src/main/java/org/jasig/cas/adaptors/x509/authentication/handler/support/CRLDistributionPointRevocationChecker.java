@@ -133,12 +133,12 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
 
         final List<URL> urls = new ArrayList<>();
-        for (DistributionPoint point : points.getItems()) {
+        for (final DistributionPoint point : points.getItems()) {
             final Object location = point.getDistributionPoint();
             if (location instanceof String) {
                 addURL(urls, (String) location);
             } else if (location instanceof GeneralNameList) {
-                for (GeneralName gn : ((GeneralNameList) location).getItems()) {
+                for (final GeneralName gn : ((GeneralNameList) location).getItems()) {
                     addURL(urls, gn.getName());
                 }
             } else {
