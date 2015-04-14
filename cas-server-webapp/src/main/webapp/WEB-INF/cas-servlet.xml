@@ -258,7 +258,8 @@
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
-        p:servicesManager-ref="servicesManager"  />
+        p:servicesManager-ref="servicesManager"
+        p:enableFlowOnAbsentServiceRequest="${create.sso.missing.service:true}"  />
 
   <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
         c:centralAuthenticationService-ref="centralAuthenticationService" />
@@ -276,7 +277,7 @@
         c:centralAuthenticationService-ref="centralAuthenticationService"
         c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:servicesManager-ref="servicesManager"
-        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}"  />
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}" />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />
