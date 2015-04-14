@@ -30,6 +30,13 @@ Health: OK
 {% endhighlight %}
 
 
+## Internal Configuration Report
+
+CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes all components that are under the `org.jasig`
+package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization:
+
+![](https://cloud.githubusercontent.com/assets/1205228/7085296/35819ff0-df2a-11e4-9818-9119fd30588e.jpg)
+
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
 
@@ -225,3 +232,4 @@ By default, ticket-granting ticket ids are not shown. This behavior can be contr
 # sso.sessions.include.tgt=false
 
 {% endhighlight %}
+
