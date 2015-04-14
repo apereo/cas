@@ -70,7 +70,6 @@
 	</dependencies>
 
 	<properties>
-		<pac4j.version>1.6.0</pac4j.version>
     <cs.dir>${project.parent.basedir}</cs.dir>
   </properties>
 </project>

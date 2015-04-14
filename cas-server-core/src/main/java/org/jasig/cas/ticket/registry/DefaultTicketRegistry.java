@@ -107,7 +107,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     @Override
     public int sessionCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof TicketGrantingTicket) {
                 count++;
             }
@@ -118,7 +118,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     @Override
     public int serviceTicketCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof ServiceTicket) {
                 count++;
             }

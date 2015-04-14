@@ -21,6 +21,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
@@ -30,6 +31,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -71,6 +73,9 @@ public final class InitialFlowSetupAction extends AbstractAction {
     /** Boolean to note whether we've set the values on the generators or not. */
     private boolean pathPopulated;
 
+    /** If no authentication request from a service is present, halt and warn the user. */
+    private boolean enableFlowOnAbsentServiceRequest = true;
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -91,6 +96,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
 
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 
+
         if (service != null) {
             logger.debug("Placing service in context scope: [{}]", service.getId());
 
@@ -101,6 +107,11 @@ public final class InitialFlowSetupAction extends AbstractAction {
                         registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
             }
+        } else if (!this.enableFlowOnAbsentServiceRequest) {
+            logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
+                    WebUtils.getHttpServletRequest(context).getRequestURL());
+            throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
+                    new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putService(context, service);
         return result("success");
@@ -128,5 +139,15 @@ public final class InitialFlowSetupAction extends AbstractAction {
      */
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Decide whether CAS should allow authentication requests
+     * when no service is present in the request. Default is enabled.
+     *
+     * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
+     */
+    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
+        this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
 }
