@@ -114,6 +114,9 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             try {
                 crl = this.fetcher.fetch(new UrlResource(url));
                 logger.info("Success. Caching fetched CRL at {}.", url);
+
+                this.fetcher.fetch(new ByteArrayResource(crl.getEncoded()));
+
                 addCRL(url, crl);
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", url, e);

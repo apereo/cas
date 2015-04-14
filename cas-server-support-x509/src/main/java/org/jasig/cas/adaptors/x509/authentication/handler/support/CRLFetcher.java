@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.security.cert.X509CRL;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines operations needed to a fetch a CRL.
@@ -39,7 +40,7 @@ public interface CRLFetcher {
      * @return map of crl entries and their urls
      * @throws Exception the exception thrown if resources cant be fetched
      */
-    Map<URL, X509CRL> fetch(@NotNull Resource[] crls) throws Exception;
+    Set<X509CRL> fetch(@NotNull Resource[] crls) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource

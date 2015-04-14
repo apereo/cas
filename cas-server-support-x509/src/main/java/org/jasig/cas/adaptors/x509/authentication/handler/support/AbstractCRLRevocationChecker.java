@@ -65,7 +65,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             return;
         }
         if (CertUtils.isExpired(crl)) {
-            logger.warn("CRL data expired on ", crl.getNextUpdate());
+            logger.warn("CRL data expired on {}", crl.getNextUpdate());
             this.expiredCRLPolicy.apply(crl);
         }
         final X509CRLEntry entry = crl.getRevokedCertificate(cert);
