@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Arrays;
@@ -132,5 +133,15 @@ public class InitialFlowSetupActionTests {
         assertEquals("test", WebUtils.getService(context).getId());
         assertNotNull(WebUtils.getRegisteredService(context));
         assertEquals("success", event.getId());
+    }
+
+    @Test(expected = NoSuchFlowExecutionException.class)
+    public void disableFlowIfNoService() throws Exception {
+        this.action.setEnableFlowOnAbsentServiceRequest(false);
+        final MockRequestContext context = new MockRequestContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        this.action.execute(context);
     }
 }
