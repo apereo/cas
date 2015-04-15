@@ -25,7 +25,6 @@ import org.springframework.core.io.Resource;
 
 import javax.security.auth.x500.X500Principal;
 import javax.validation.constraints.Min;
-import java.net.URL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
