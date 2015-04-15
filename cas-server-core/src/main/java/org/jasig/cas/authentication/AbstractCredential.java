@@ -44,6 +44,9 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
 
     @Override
     public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
         if (!(other instanceof Credential)) {
             return false;
         }
