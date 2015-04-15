@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -46,6 +47,10 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
+        initDirectoryServer();
+    }
+
+    public static void initDirectoryServer() throws IOException {
         final ClassPathResource properties = new ClassPathResource("ldap.properties");
         final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
 
@@ -57,6 +62,10 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
     @AfterClass
     public static void tearDown() {
         IOUtils.closeQuietly(DIRECTORY);
+    }
+
+    protected static InMemoryTestLdapDirectoryServer getDirectory() {
+        return DIRECTORY;
     }
 
     protected Collection<LdapEntry> getEntries() {

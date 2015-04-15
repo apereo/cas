@@ -17,12 +17,13 @@
 # under the License.
 #
 
-dn: CN=mmoayyed,ou=people,dc=example,dc=org
+dn: CN=x509,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: ad
 objectClass: inetOrgPerson
+objectClass: cRLDistributionPoint
 cn: Misagh Moayyed
 sn: Moayyed
 givenName: Misagh
@@ -34,45 +35,4 @@ userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
-
-
-dn: CN=casTest,ou=people,dc=example,dc=org
-objectClass: top
-objectClass: person
-objectClass: organizationalPerson
-objectClass: inetOrgPerson
-objectClass: ad
-cn: CAS Test
-givenName: CAS
-sn: CAS
-displayName: CAS Test
-sAMAccountName: casTest
-distinguishedName: CN=casTest,ou=people,dc=example,dc=org
-mail: casTest@example.org
-userPassword: thePassw0rd
-unicodePwd: ignoredForTests
-userPrincipalName: castest@example.org
-userAccountControl: 66048
-
-dn: cn=Administrators,ou=people,dc=example,dc=org
-cn: Administrators
-objectClass: top
-objectClass: person
-objectClass: organizationalPerson
-objectClass: inetOrgPerson
-objectClass: casServiceUserDetails
-objectClass: ad
-unicodePwd: ignoredForTests
-uid: 31415926535
-sAMAccountName: administrators
-sn: Administrators
-contactPerson: uid=9000000100,ou=people,dc=example,dc=org
-creationDate: 2012 12 21
-uugid: Administrators
-uugid: Users
-member: cn=Administrators,ou=people,dc=example,dc=org
-mail: Administrators@example.org
-userAccountControl: 66048
-distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
-userPassword: thePassw0rd
-displayName: Administrators
+certificateRevocationList;binary:< file:cas-server-support-x509/src/test/resources/userCA-valid.crl

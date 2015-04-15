@@ -64,6 +64,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     /** The CRL fetcher instance. **/
     private final CRLFetcher fetcher;
 
+    private boolean throwOnFetchFailure;
+
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
      *
@@ -83,6 +85,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                                                  @NotNull final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;
+    }
+
+
+    /**
+     * Throws exceptions if fetching crl fails. Defaults to false.
+     *
+     * @param throwOnFetchFailure the throw on fetch failure
+     */
+    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
+        this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
     /**
@@ -113,13 +125,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             final URI url = urls[i];
             logger.info("Attempting to fetch CRL at {}", url);
             try {
-
                 crl = this.fetcher.fetch(url);
-
                 logger.info("Success. Caching fetched CRL at {}.", url);
                 addCRL(url, crl);
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", url, e);
+                if (this.throwOnFetchFailure) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -136,6 +149,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Gets the distribution points.
