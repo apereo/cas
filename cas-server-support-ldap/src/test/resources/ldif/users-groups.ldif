@@ -23,6 +23,7 @@ objectClass: person
 objectClass: organizationalPerson
 objectClass: ad
 objectClass: inetOrgPerson
+objectClass: cRLDistributionPoint
 cn: Misagh Moayyed
 sn: Moayyed
 givenName: Misagh
@@ -34,6 +35,7 @@ userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
+certificateRevocationList;binary:< file:cas-server-support-x509/src/test/resources/userCA-valid.crl
 
 dn: CN=casTest,ou=people,dc=example,dc=org
 objectClass: top

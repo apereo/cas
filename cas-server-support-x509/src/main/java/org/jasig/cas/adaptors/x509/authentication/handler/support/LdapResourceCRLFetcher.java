@@ -19,14 +19,17 @@
 
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.util.CompressionUtils;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
+import javax.naming.OperationNotSupportedException;
 import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import java.net.URI;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Hashtable;
@@ -42,6 +45,18 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
     /** The Certificate revocation list attribute name.*/
     protected final String certificateRevocationListAttributeName;
 
+    /** Authentication mode for ldap. **/
+    protected String securityAuthentication;
+
+    /** Authentication principal for ldap. **/
+    protected String securityPrincipal;
+
+    /** Authentication credentials for ldap. **/
+    protected String securityCredentials;
+
+    /** object name to look up in the context. **/
+    protected String objectName;
+
     /**
      * Instantiates a new Ldap resource cRL fetcher.
      */
@@ -56,6 +71,28 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
      */
     public LdapResourceCRLFetcher(final String certificateRevocationListAttributeName) {
         this.certificateRevocationListAttributeName = certificateRevocationListAttributeName;
+    }
+
+    /**
+     * This can be one of the following strings:
+     * "none", "simple", sasl_mech, where sasl_mech is a
+     * space-separated list of SASL mechanism names
+     * @param securityAuthentication the authn mode
+     */
+    public void setSecurityAuthentication(final String securityAuthentication) {
+        this.securityAuthentication = securityAuthentication;
+    }
+
+    public void setSecurityPrincipal(final String securityPrincipal) {
+        this.securityPrincipal = securityPrincipal;
+    }
+
+    public void setSecurityCredentials(final String securityCredential) {
+        this.securityCredentials = securityCredential;
+    }
+
+    public void setObjectName(final String objectName) {
+        this.objectName = objectName;
     }
 
     @Override
@@ -75,25 +112,67 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws Exception if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
     protected X509CRL fetchCRLFromLdap(final Object r) throws Exception {
+        DirContext ctx = null;
+        try {
+            final String ldapURL = r.toString();
+            logger.debug("Fetching CRL from ldap {}", ldapURL);
 
-        final String ldapURL = r.toString();
-        logger.debug("Fetching CRL from ldap {}", ldapURL);
+            final Map<String, String> env = configureLdapDirectoryContext(ldapURL);
 
+            logger.debug("Establishing a connection to {}", ldapURL);
+            ctx = new InitialDirContext((Hashtable) env);
+
+            logger.debug("Connected to {}", ldapURL);
+            if (StringUtils.isNotBlank(this.objectName)) {
+                logger.debug("Retrieving object {}", this.objectName);
+                ctx = (DirContext) ctx.lookup(this.objectName);
+            }
+
+            logger.debug("Retrieving certificate revocation list attribute {}",
+                    this.certificateRevocationListAttributeName);
+            final Attributes attrs = ctx.getAttributes("");
+            final Attribute aval = attrs.get(this.certificateRevocationListAttributeName);
+            if (aval != null) {
+                final byte[] val = (byte[]) aval.get();
+                if (val == null || val.length == 0) {
+                    throw new CertificateException("Empty attribute. Can not download CRL from: " + ldapURL);
+                }
+                final byte[] decoded64 = CompressionUtils.decodeBase64ToByteArray(val);
+                logger.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+                return super.fetch(new ByteArrayResource(decoded64));
+            }
+            throw new CertificateException("Attribute not found. Can not retrieve CRL from attribute: "
+                    + this.certificateRevocationListAttributeName);
+        } catch (final AuthenticationException | OperationNotSupportedException e) {
+            logger.error(e.getMessage(), e);
+            throw new CertificateException(e);
+        } finally {
+            if (ctx != null) {
+                ctx.close();
+            }
+        }
+    }
+
+    /**
+     * Configure ldap directory context.
+     *
+     * @param ldapURL the ldap uRL
+     * @return the map of settings for authentication
+     */
+    protected Map<String, String> configureLdapDirectoryContext(final String ldapURL) {
         final Map<String, String> env = new Hashtable<>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapURL);
 
-        logger.debug("Establishing a connection to {}", ldapURL);
-        final DirContext ctx = new InitialDirContext((Hashtable) env);
-        logger.debug("Retrieving certificate revocation list attribute {}",
-                this.certificateRevocationListAttributeName);
-        final Attribute aval = ctx.getAttributes("").get(this.certificateRevocationListAttributeName);
-        final byte[] val = (byte[]) aval.get();
-        if (val == null || val.length == 0) {
-            throw new CertificateException("Can not download CRL from: " + ldapURL);
+        if (StringUtils.isNotBlank(this.securityAuthentication)) {
+            env.put(Context.SECURITY_AUTHENTICATION, this.securityAuthentication);
         }
-        ctx.close();
-        logger.debug("Retrieved CRL from ldap as byte array. Fetching...");
-        return super.fetch(new ByteArrayResource(val));
+        if (StringUtils.isNotBlank(this.securityPrincipal)) {
+            env.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
+        }
+        if (StringUtils.isNotBlank(this.securityCredentials)) {
+            env.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
+        }
+        return env;
     }
 }
