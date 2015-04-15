@@ -32,6 +32,7 @@ import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.Closeable;
 import java.io.File;
@@ -95,19 +96,29 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             final LDAPConnection c = getConnection();
             LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
 
-            populateEntries();
+            populateDefaultEntries(c);
 
+            c.close();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void populateEntries() throws Exception {
-        this.ldapEntries = LdapTestUtils.readLdif(new ClassPathResource("ldif/users-groups.ldif"), getBaseDn());
-        final LDAPConnection c = getConnection();
-        LdapTestUtils.createLdapEntries(c, ldapEntries);
-        c.close();
+    private void populateDefaultEntries(final LDAPConnection c) throws Exception {
+        populateEntries(c, new ClassPathResource("ldif/users-groups.ldif"));
     }
+
+    public void populateEntries(final Resource rs) throws Exception {
+        populateEntries(getConnection(), rs);
+    }
+
+    protected void populateEntries(final LDAPConnection c, final Resource rs) throws Exception {
+        this.ldapEntries = LdapTestUtils.readLdif(rs, getBaseDn());
+        LdapTestUtils.createLdapEntries(c, ldapEntries);
+        populateEntriesInternal(c);
+    }
+
+    protected void populateEntriesInternal(final LDAPConnection c) {}
 
     public String getBaseDn() {
         return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
