@@ -19,6 +19,9 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -30,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jndi.ldap.LdapURL;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.UrlResource;
@@ -117,6 +121,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             try {
 
                 crl = this.fetcher.fetch(url);
+
                 logger.info("Success. Caching fetched CRL at {}.", url);
                 addCRL(url, crl);
             } catch (final Exception e) {

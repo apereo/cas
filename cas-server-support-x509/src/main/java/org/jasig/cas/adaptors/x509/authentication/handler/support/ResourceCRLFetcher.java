@@ -94,7 +94,10 @@ public class ResourceCRLFetcher implements CRLFetcher {
         }
 
         try (final InputStream ins = rs.getInputStream()) {
-            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+            if (ins.available() > 0) {
+                return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+            }
+            return null;
         }
     }
 }
