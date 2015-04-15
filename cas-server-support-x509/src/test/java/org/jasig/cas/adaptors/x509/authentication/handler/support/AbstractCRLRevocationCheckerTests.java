@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
@@ -26,7 +25,6 @@ import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import edu.vt.middleware.crypt.util.CryptReader;
 
 /**
  * Base class for {@link RevocationChecker} unit tests.
