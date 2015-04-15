@@ -19,13 +19,8 @@
 
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import org.springframework.core.io.Resource;
-
 import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.net.URL;
 import java.security.cert.X509CRL;
-import java.util.Map;
 import java.util.Set;
 
 /**
