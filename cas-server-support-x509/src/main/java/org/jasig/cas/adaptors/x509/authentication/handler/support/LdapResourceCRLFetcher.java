@@ -26,6 +26,7 @@ import javax.naming.Context;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import java.net.URI;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Hashtable;
@@ -39,7 +40,14 @@ import java.util.Map;
 public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
 
     /** The Certificate revocation list attribute name.*/
-    protected String certificateRevocationListAttributeName = "certificateRevocationList;binary";;
+    protected final String certificateRevocationListAttributeName;
+
+    /**
+     * Instantiates a new Ldap resource cRL fetcher.
+     */
+    public LdapResourceCRLFetcher() {
+        this("certificateRevocationList;binary");
+    }
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -51,8 +59,8 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    protected X509CRL fetchInternal(final Resource r) throws Exception {
-        if (r.getURL().getProtocol().toLowerCase().startsWith("ldap")) {
+    protected X509CRL fetchInternal(final Object r) throws Exception {
+        if (r.toString().toLowerCase().startsWith("ldap")) {
             return fetchCRLFromLdap(r);
         }
         return super.fetchInternal(r);
@@ -62,12 +70,13 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
      * Downloads a CRL from given LDAP url, e.g.
      * <code>ldap://ldap.infonotary.com/dc=identity-ca,dc=infonotary,dc=com</code>
      *
+     * @param r the resource
      * @return the x 509 cRL
      * @throws Exception if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
-    protected X509CRL fetchCRLFromLdap(final Resource r) throws Exception {
+    protected X509CRL fetchCRLFromLdap(final Object r) throws Exception {
 
-        final String ldapURL = r.getURL().toExternalForm();
+        final String ldapURL = r.toString();
         logger.debug("Fetching CRL from ldap {}", ldapURL);
 
         final Map<String, String> env = new Hashtable<>();

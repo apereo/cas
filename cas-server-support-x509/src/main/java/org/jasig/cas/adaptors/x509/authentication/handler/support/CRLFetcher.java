@@ -22,6 +22,7 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.net.URL;
 import java.security.cert.X509CRL;
 import java.util.Map;
@@ -40,7 +41,7 @@ public interface CRLFetcher {
      * @return map of crl entries and their urls
      * @throws Exception the exception thrown if resources cant be fetched
      */
-    Set<X509CRL> fetch(@NotNull Resource[] crls) throws Exception;
+    Set<X509CRL> fetch(@NotNull Object[] crls) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -49,5 +50,5 @@ public interface CRLFetcher {
      * @return the CRL entry
      * @throws Exception the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull Resource crl) throws Exception;
+    X509CRL fetch(@NotNull Object crl) throws Exception;
 }
