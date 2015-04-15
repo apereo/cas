@@ -76,7 +76,7 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
     /**
      * This can be one of the following strings:
      * "none", "simple", sasl_mech, where sasl_mech is a
-     * space-separated list of SASL mechanism names
+     * space-separated list of SASL mechanism names.
      * @param securityAuthentication the authn mode
      */
     public void setSecurityAuthentication(final String securityAuthentication) {
