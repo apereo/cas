@@ -24,15 +24,6 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="cas-management" fileName="cas-management.log" append="true"
-                     filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="512 KB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.springframework" level="warn" />
@@ -40,12 +31,11 @@
         <Logger name="org.springframework.web" level="warn" />
         <Logger name="org.springframework.security" level="warn" />
 
-        <Logger name="org.jasig" level="info" additivity="false">
-            <AppenderRef ref="cas-management"/>
+        <Logger name="org.jasig" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
-            <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
         </Logger>
 
         <Root level="error">

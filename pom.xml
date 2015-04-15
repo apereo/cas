@@ -500,39 +500,6 @@
             </execution>
         </executions>
       </plugin>
-
-
-      <plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-clean-plugin</artifactId>
-	    <version>${maven-clean-plugin.version}</version>
-	    <configuration>
-	        <filesets>
-	            <fileset>
-	                <directory>target/</directory>
-	                <includes>
-	                    <include>**/*</include>
-	                </includes>
-	                <excludes>
-	                    <exclude>dependency/*.jar</exclude>
-	                    <exclude>*.war</exclude>
-	                </excludes>
-	                <followSymlinks>false</followSymlinks>
-	            </fileset>
-	        </filesets>
-	        <excludeDefaultDirectories>true</excludeDefaultDirectories>
-	    </configuration>
-	    <executions>
-	        <execution>
-	            <id>auto-clean</id>
-	            <phase>install</phase>
-	            <goals>
-	                <goal>clean</goal>
-	            </goals>
-	        </execution>
-	    </executions>
-	</plugin>
-
     </plugins>
   </build>
 

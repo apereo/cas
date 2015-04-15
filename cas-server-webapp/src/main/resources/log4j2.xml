@@ -27,29 +27,10 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="cas.log" append="true"
-                     filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
-        <RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
-                     filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%m%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
-            <AppenderRef ref="file"/>
         </Logger>
         <Logger name="org.springframework" level="warn" />
         <Logger name="org.springframework.webflow" level="warn" />
@@ -57,16 +38,16 @@
         <Logger name="org.springframework.security" level="warn" />
 
         <Logger name="perfStatsLogger" level="info" additivity="false">
-            <AppenderRef ref="perfFileAppender"/>
+            <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
-            <AppenderRef ref="file"/>
+        <Logger name="org.jasig.cas.web.flow" level="debug" additivity="true">
+            <AppenderRef ref="console"/>
         </Logger>
         <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
-            <AppenderRef ref="file"/>
+            <AppenderRef ref="console"/>
         </Logger>
-        <Root level="error">
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
