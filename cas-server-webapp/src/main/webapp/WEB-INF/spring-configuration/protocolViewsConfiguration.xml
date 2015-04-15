@@ -53,11 +53,11 @@
 
     <!-- Failure Proxy Views -->
     <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
 
     <!-- Successful Proxy Views -->
     <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
 
     <!-- CAS 3.0 Response Protocol Views -->
 
@@ -66,10 +66,15 @@
     <!-- Successful Validation Views -->
     <bean id="cas3ServiceSuccessView" class="org.jasig.cas.web.view.Cas30ResponseView"
           c:view-ref="cas3JstlSuccessView"
-          p:successResponse="true" />
+          p:successResponse="true"
+          p:servicesManager-ref="servicesManager"
+          p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
     <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <bean id="casAttributeEncoder" class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+          c:servicesManager-ref="servicesManager"  />
 
     <!-- Failure Validation Views -->
     <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"

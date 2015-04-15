@@ -15,7 +15,7 @@ be considered to achieve suitable security.
 
 
 ### Secure Transport (https)
-All communication with the CAS server MUST occur over a secure channel (i.e. SSLv3, TLSv1). There are two primary
+All communication with the CAS server MUST occur over a secure channel (i.e. TLSv1). There are two primary
 justifications for this requirement:
 
 1. The authentication process requires transmission of security credentials.
@@ -25,6 +25,7 @@ Since the disclosure of either data would allow impersonation attacks, it's vita
 communication channel between CAS clients and the CAS server.
 
 Practically, it means that all CAS urls must use HTTPS, but it **also** means that all connections from the CAS server to the application must be done using HTTPS:
+
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 

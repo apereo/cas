@@ -50,7 +50,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The ExpirationPolicy this ticket will be following. */
     @Lob
-    @Column(name="EXPIRATION_POLICY", nullable=false)
+    @Column(name="EXPIRATION_POLICY", length = 1000000, nullable=false)
     private ExpirationPolicy expirationPolicy;
 
     /** The unique identifier for this ticket. */

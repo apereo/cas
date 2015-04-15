@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.jasig.cas.web.support.WebUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -50,6 +52,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
+
     /** Whether this is using the NTLM protocol or not. */
     private boolean ntlm;
 
@@ -59,36 +63,67 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     private String messageBeginPrefix = constructMessagePrefix();
 
+    /**
+     * Instantiates a new Spnego negociate credentials action.
+     * Also initializes the list of supported browser user agents with the following:
+     * <ul>
+     *     <li><code>MSIE</code></li>
+     *     <li><code>Trident</code></li>
+     *     <li><code>Firefox</code></li>
+     *     <li><code>AppleWebKit</code></li>
+     * </ul>
+     * @see #setSupportedBrowser(List)
+     * @since 4.1
+     */
+    public SpnegoNegociateCredentialsAction() {
+        super();
+
+        this.supportedBrowser = new ArrayList<>();
+        this.supportedBrowser.add("MSIE");
+        this.supportedBrowser.add("Trident");
+        this.supportedBrowser.add("Firefox");
+        this.supportedBrowser.add("AppleWebKit");
+
+    }
+
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils
-                .getHttpServletResponse(context);
-        final String authorizationHeader = request
-                .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = request
-                .getHeader(SpnegoConstants.HEADER_USER_AGENT);
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
-        if (StringUtils.hasText(userAgent) && isSupportedBrowser(userAgent)) {
-            if (!StringUtils.hasText(authorizationHeader)
-                    || !authorizationHeader.startsWith(this.messageBeginPrefix)
-                    || authorizationHeader.length() <= this.messageBeginPrefix
-                    .length()) {
-                if (logger.isDebugEnabled()) {
-                    logger
-                    .debug("Authorization header not found. Sending WWW-Authenticate header");
-                }
-                response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE,
-                        this.ntlm ? SpnegoConstants.NTLM
-                                : SpnegoConstants.NEGOTIATE);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                // The responseComplete flag tells the pausing view-state not to render the response
-                // because another object has taken care of it. If mixed mode authentication is allowed
-                // then responseComplete should not be called so that webflow will display the login page.
-                if (!this.mixedModeAuthentication) {
-                    context.getExternalContext().recordResponseComplete();
-                }
+        final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        final String userAgent = request.getHeader(SpnegoConstants.HEADER_USER_AGENT);
+
+        LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
+
+        if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
+            LOGGER.debug("User Agent header [{}] is empty, or no browsers are supported", userAgent);
+            return success();
+        }
+
+        if (!isSupportedBrowser(userAgent)) {
+            LOGGER.debug("User Agent header [{}] is not supported in the list of supported browsers [{}]",
+                    userAgent, this.supportedBrowser);
+            return success();
+        }
+
+        if (!StringUtils.hasText(authorizationHeader)
+                || !authorizationHeader.startsWith(this.messageBeginPrefix)
+                || authorizationHeader.length() <= this.messageBeginPrefix
+                .length()) {
+
+            final String wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
+            LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
+                    this.messageBeginPrefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // The responseComplete flag tells the pausing view-state not to render the response
+            // because another object has taken care of it. If mixed mode authentication is allowed
+            // then responseComplete should not be called so that webflow will display the login page.
+            if (!this.mixedModeAuthentication) {
+                LOGGER.debug("Mixed-mode authentication is disabled. Executing completion of response");
+                context.getExternalContext().recordResponseComplete();
             }
         }
         return success();
@@ -104,6 +139,16 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.messageBeginPrefix = constructMessagePrefix();
     }
 
+    /**
+     * Sets supported browsers by their user agent. The user agent
+     * header defined by {@link SpnegoConstants#HEADER_USER_AGENT}
+     * will be compared against this list. The user agents configured
+     * here need not be an exact match. So longer is the user agent identifier
+     * configured in this list is "found" in the user agent header retrieved,
+     * the check will pass.
+     *
+     * @param supportedBrowser the supported browsers list
+     */
     public void setSupportedBrowser(final List<String> supportedBrowser) {
         this.supportedBrowser = supportedBrowser;
     }
@@ -125,20 +170,11 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.mixedModeAuthentication = enabled;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (this.supportedBrowser == null) {
-            this.supportedBrowser = new ArrayList<>();
-            this.supportedBrowser.add("MSIE");
-            this.supportedBrowser.add("Firefox");
-            this.supportedBrowser.add("AppleWebKit");
-        }
-    }
-
     /**
      * Construct message prefix.
      *
-     * @return the string
+     * @return if {@link #ntlm} is enabled, {@link SpnegoConstants#NTLM}, otherwise
+     * {@link SpnegoConstants#NEGOTIATE}. An extra space is appended to the end.
      */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)

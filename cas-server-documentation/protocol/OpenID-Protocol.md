@@ -74,10 +74,10 @@ CAS uses a spring webflow to describe the the authentication process. We need to
 <!-- If the request contains a parameter called openid.mode and is not an association request, switch to openId. Otherwise, continue normal webflow. -->
 <decision-state id="selectFirstAction">
     <if
-       test="externalContext.requestParameterMap['openid.mode'] neq ''
-        &amp;&amp; externalContext.requestParameterMap['openid.mode'] neq null
-        &amp;&amp; externalContext.requestParameterMap['openid.mode'] neq 'associate'"
-       then="openIdSingleSignOnAction" else="ticketGrantingTicketExistsCheck" />
+       test="externalContext.requestParameterMap['openid.mode'] ne ''
+        &amp;&amp; externalContext.requestParameterMap['openid.mode'] ne null
+        &amp;&amp; externalContext.requestParameterMap['openid.mode'] ne 'associate'"
+       then="openIdSingleSignOnAction" else="ticketGrantingTicketCheck" />
 </decision-state>
        
 <!-- The OpenID authentication action. If authentication is successful, send the ticket granting ticker. Otherwise, redirect to the login form. -->
@@ -104,7 +104,7 @@ Open the *deployerConfigContext.xml* file, and locate the authenticationManager 
 
 {% highlight xml %}
 <!-- The openid credentials to principal resolver -->
-<bean class="org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver" />
+<bean class="org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver" />
 {% endhighlight %}
 
 Then, in the authentication handler property, add this bean definition:
@@ -211,7 +211,7 @@ Next we must provide a ServerManager, which is a class from the openid4java libr
 
 {% highlight xml %}
 <bean id="serverManager" class="org.openid4java.server.ServerManager"
-   p:oPEndpointUrl="{cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
+   p:oPEndpointUrl="${server.prefix}/login"
    p:enforceRpId="false" />
 {% endhighlight %}
 

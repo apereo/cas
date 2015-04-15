@@ -8,9 +8,11 @@ The CAS server implements the CAS protocol on server side and may even behave li
 
 But the CAS server can also act as a client using the [pac4j library](https://github.com/leleuj/pac4j) and delegate the authentication to:
 
-* another CAS server (using CAS protocol)
-* an OAuth provider (using OAuth protocol): Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
-* an OpenID provider (using OpenID protocol): myopenid.com and Google.
+* another CAS server
+* an OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
+* an OpenID provider: myopenid.com
+* a SAML identity provider
+* an OpenID Connect identity provider.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -22,12 +24,12 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-##How to use CAS/OAuth/OpenID client support in CAS applications?
+##How to use CAS/OAuth/OpenID/SAML client support in CAS applications?
 
 
 ###Information returned by a delegated authentication
 
-Once you have configured (see information below) your CAS server to act as an OAuth, CAS or OpenID client, users will be able to authenticate at a OAuth/CAS/OpenID provider (like Facebook) instead of authenticating directly inside the CAS server.
+Once you have configured (see information below) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
 
 In the CAS server, after this kind of delegated authentication, users have specific authentication data.
 
@@ -68,7 +70,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 ...
 {% endhighlight %}
 
-On CAS client side, to receive attributes, you need to use the SAML validation or the new CAS 3.0 validation (/p3/serviceValidate url).
+On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is `/p3/serviceValidate` url.
 
 ###How to recreate user profiles in CAS applications?
 
@@ -120,6 +122,21 @@ To add OpenID client support, add the following dependency:
       <version>${pac4j.version}</version>
     </dependency>
 
+To add OpenID Connect client support, add the following dependency:
+
+    <dependency>
+      <groupId>org.pac4j</groupId>
+      <artifactId>pac4j-oidc</artifactId>
+      <version>${pac4j.version}</version>
+    </dependency>
+
+To add SAML support, add the following dependency:
+
+    <dependency>
+      <groupId>org.pac4j</groupId>
+      <artifactId>pac4j-saml</artifactId>
+      <version>${pac4j.version}</version>
+    </dependency>
 
 ###Add the needed clients
 

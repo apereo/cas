@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-extension-clearpass</artifactId>
 
-	<name>Apereo CAS ClearPass Extension</name>
+	<name>Apereo CAS ClearPass Extension - DEPRECATED</name>
 	<description>CAS ClearPass Extension</description>
 	<packaging>jar</packaging>
 

@@ -51,7 +51,7 @@ public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTe
                 new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(), mock(ServicesManager.class),
                 mock(LogoutManager.class));
 
-        return new DefaultTicketRegistryCleaner(this.centralAuthenticationService);
+        return new DefaultTicketRegistryCleaner(this.centralAuthenticationService, this.ticketRegistry);
     }
 
     @Override
