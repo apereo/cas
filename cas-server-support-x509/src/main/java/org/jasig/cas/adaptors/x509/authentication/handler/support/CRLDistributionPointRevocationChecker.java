@@ -19,14 +19,17 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.jndi.ldap.LdapURL;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.UrlResource;
@@ -90,11 +93,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     @Override
     protected X509CRL getCRL(final X509Certificate cert) {
-        final URL[] urls = getDistributionPoints(cert);
+        final URI[] urls = getDistributionPoints(cert);
         logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
 
         try {
-            for (final URL url : urls) {
+            for (final URI url : urls) {
                 final Element item = this.crlCache.get(url);
                 if (item != null) {
                     logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
@@ -109,14 +112,12 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         // Try all distribution points and stop at first fetch that succeeds
         X509CRL crl = null;
         for (int i = 0; i < urls.length && crl == null; i++) {
-            final URL url = urls[i];
+            final URI url = urls[i];
             logger.info("Attempting to fetch CRL at {}", url);
             try {
-                crl = this.fetcher.fetch(new UrlResource(url));
+
+                crl = this.fetcher.fetch(url);
                 logger.info("Success. Caching fetched CRL at {}.", url);
-
-                this.fetcher.fetch(new ByteArrayResource(crl.getEncoded()));
-
                 addCRL(url, crl);
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", url, e);
@@ -143,16 +144,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param cert the cert
      * @return the url distribution points
      */
-    private URL[] getDistributionPoints(final X509Certificate cert) {
+    private URI[] getDistributionPoints(final X509Certificate cert) {
         final DistributionPointList points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
             logger.error("Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
-            return new URL[0];
+            return new URI[0];
         }
 
-        final List<URL> urls = new ArrayList<>();
+        final List<URI> urls = new ArrayList<>();
         for (final DistributionPoint point : points.getItems()) {
             final Object location = point.getDistributionPoint();
             if (location instanceof String) {
@@ -166,7 +167,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             }
         }
 
-        return urls.toArray(new URL[urls.size()]);
+        return urls.toArray(new URI[urls.size()]);
     }
 
     /**
@@ -177,11 +178,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param list the list
      * @param uriString the uri string
      */
-    private void addURL(final List<URL> list, final String uriString) {
+    private void addURL(final List<URI> list, final String uriString) {
         try {
-            final URL url = new URL(uriString);
-            final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
-            list.add(uri.toURL());
+            URI uri = null;
+            try {
+                final URL url = new URL(URLDecoder.decode(uriString, "UTF-8"));
+                uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
+            } catch (final MalformedURLException e) {
+                uri = new URI(uriString);
+            }
+            list.add(uri);
         } catch (final Exception e) {
             logger.warn("{} is not a valid distribution point URI.", uriString);
         }

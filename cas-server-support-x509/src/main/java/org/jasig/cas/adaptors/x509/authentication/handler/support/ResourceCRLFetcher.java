@@ -22,10 +22,14 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.security.cert.X509CRL;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,13 +50,13 @@ public class ResourceCRLFetcher implements CRLFetcher {
     public ResourceCRLFetcher() {}
 
     @Override
-    public final Set<X509CRL> fetch(@NotNull final Resource[] crls) throws Exception {
+    public final Set<X509CRL> fetch(@NotNull final Object[] crls) throws Exception {
         if (crls.length == 0) {
             throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
         }
 
         final Set<X509CRL> results = new HashSet<>();
-        for (final Resource r : crls) {
+        for (final Object r : crls) {
             logger.debug("Fetching CRL data from {}", r);
             results.add(fetchInternal(r));
         }
@@ -60,20 +64,36 @@ public class ResourceCRLFetcher implements CRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(@NotNull final Resource crl) throws Exception {
-        return fetch(new Resource[] {crl}).iterator().next();
+    public X509CRL fetch(@NotNull final Object crl) throws Exception {
+        return fetch(new Object[] {crl}).iterator().next();
     }
 
     /**
      * Fetch the resource. Designed so that extensions
      * can decide what and how the resource should be retrieved.
      *
-     * @param r the r
+     * @param r the resource which can be {@link URL}, {@link URI}, {@link String}
+     *          or {@link AbstractResource}
      * @return the x 509 cRL
      * @throws Exception the exception
      */
-    protected X509CRL fetchInternal(final Resource r) throws Exception {
-        try (final InputStream ins = r.getInputStream()) {
+    protected X509CRL fetchInternal(@NotNull final Object r) throws Exception {
+        Resource rs = null;
+        if (r instanceof URI) {
+            rs = new UrlResource(((URI) r).toURL());
+        } else if (r instanceof URL) {
+            rs = new UrlResource(((URL) r));
+        } else if (r instanceof AbstractResource) {
+            rs = (AbstractResource) r;
+        } else if (r instanceof String) {
+            rs = new UrlResource(new URL(r.toString()));
+        }
+
+        if (rs == null) {
+            throw new IllegalArgumentException("Resource " + r + " could not be identified");
+        }
+
+        try (final InputStream ins = rs.getInputStream()) {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
         }
     }
