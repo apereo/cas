@@ -51,6 +51,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     private int usageCount;
 
     private boolean expired;
+
+    private String proxiedBy;
             
 
     public MockTicketGrantingTicket(final String principal) {
@@ -106,5 +108,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public int getCountOfUses() {
         return usageCount;
+    }
+
+    public String getProxiedBy() {
+        return proxiedBy;
     }
 }

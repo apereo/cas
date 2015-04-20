@@ -77,4 +77,12 @@ public interface TicketGrantingTicket extends Ticket {
      * @return the list of principals
      */
     List<Authentication> getChainedAuthentications();
+
+    /**
+     * Gets the service that produced a proxy-granting ticket.
+     *
+     * @return  Service that produced proxy-granting ticket or null if this is
+     * not a proxy-granting ticket.
+     */
+    String getProxiedBy();
 }

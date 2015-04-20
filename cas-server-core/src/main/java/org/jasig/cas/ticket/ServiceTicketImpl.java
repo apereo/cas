@@ -110,8 +110,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
             this.grantedTicketAlready = true;
         }
 
-        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
-            authentication, expirationPolicy);
+        return new TicketGrantingTicketImpl(id, service.getId(), (TicketGrantingTicketImpl) this.getGrantingTicket(), authentication, expirationPolicy);
     }
     
     public Authentication getAuthentication() {
