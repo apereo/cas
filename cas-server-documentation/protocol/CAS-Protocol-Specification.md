@@ -91,7 +91,7 @@ components to be accessible through specific URIs. This section will discuss
 each of the URIs:
 
 | URI                               | Description
-|-----------------------------------+------------------------------------------+
+|-----------------------------------|-------------------------------------------
 | `/login`                          | credential requestor / acceptor
 | `/logout`                         | destroy CAS session (logout)
 | `/validate`                       | service ticket validation
