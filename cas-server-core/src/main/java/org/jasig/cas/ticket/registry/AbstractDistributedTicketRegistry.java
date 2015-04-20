@@ -162,6 +162,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return getTicket().getAuthentication();
         }
 
+        public String getProxiedBy() {
+            return getTicket().getProxiedBy();
+        }
+
         public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
             final ServiceTicket t = this.getTicket().grantServiceTicket(id, service, expirationPolicy, credentialsProvided);
             updateTicket();
