@@ -25,12 +25,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.PersistentIdGenerator;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.*;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -211,11 +206,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedSsoServiceException();
         }
 
-        //CAS-1019
-        final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
-        if(authns.size() > 1) {
-            if (!registeredService.isAllowedToProxy()) {
-                final String message = String.format("ServiceManagement: Service Attempted to Proxy, but is not allowed. Service: [%s] | Registered Service: [%s]", service.getId(), registeredService.toString());
+        final String proxiedBy = ticketGrantingTicket.getProxiedBy();
+        if(proxiedBy != null) {
+            final RegisteredService proxyingService = servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(proxiedBy));
+            if (proxyingService == null || !proxyingService.isAllowedToProxy()) {
+                final String message = String.format("ServiceManagement: Service Attempted to Proxy, but is not allowed. Service: [%s] | Registered Service: [%s]", service.getId(), proxyingService);
                 log.warn(message);
                 throw new UnauthorizedProxyingException(message);
             }
