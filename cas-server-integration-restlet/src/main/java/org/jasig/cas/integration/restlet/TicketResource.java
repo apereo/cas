@@ -79,6 +79,12 @@ public class TicketResource extends ServerResource {
         LOGGER.debug("Obtaining credentials...");
         final Credential c = obtainCredentials();
 
+        if (c == null) {
+            LOGGER.trace("No credentials could be obtained from the REST entity representation");
+            getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "Invalid or missing credentials");
+            return;
+        }
+
         try (final Formatter fmt = new Formatter()) {
             final TicketGrantingTicket ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
@@ -118,10 +124,15 @@ public class TicketResource extends ServerResource {
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
 
-        logFormRequest(new Form(getRequest().getEntity()));
-        binder.bind(webRequest);
+        final Form form = new Form(getRequest().getEntity());
+        logFormRequest(form);
 
-        return c;
+        if (!form.isEmpty()) {
+            binder.bind(webRequest);
+            return c;
+        }
+        LOGGER.trace("Failed to bind the request to credentials. Resulting form is empty");
+        return null;
     }
 
     /**
