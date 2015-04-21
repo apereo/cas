@@ -19,7 +19,7 @@ Support is enabled by including the following in your `pom.xml` file:
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-rest</artifactId>
+    <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
 </dependency>
