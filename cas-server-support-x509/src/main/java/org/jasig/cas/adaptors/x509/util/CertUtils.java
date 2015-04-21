@@ -44,7 +44,7 @@ public final class CertUtils {
     public static final String X509_CERTIFICATE_TYPE = "X509";
 
     /** Attribute name in LDAP to indicate the cert revocation list. **/
-    private static final String DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE = "certificateRevocationList;binary";
+    public static final String DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE = "certificateRevocationList;binary";
 
     /** Suppressed constructor of utility class. */
     private CertUtils() {
