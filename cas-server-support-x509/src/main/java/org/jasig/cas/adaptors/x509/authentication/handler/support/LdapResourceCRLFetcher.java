@@ -20,6 +20,7 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.util.CompressionUtils;
 import org.springframework.core.io.ByteArrayResource;
 
@@ -59,9 +60,11 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
+     * initializes the default certificate revocation attribute
+     * to be {@link CertUtils#DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE}.
      */
     public LdapResourceCRLFetcher() {
-        this("certificateRevocationList;binary");
+        this(CertUtils.DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE);
     }
 
     /**
