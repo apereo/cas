@@ -51,6 +51,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -481,15 +482,20 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
+        if (sanitizedCredentials.size() > 0) {
+            final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-            this.ticketGrantingTicketUniqueTicketIdGenerator
-                .getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, this.ticketGrantingTicketExpirationPolicy);
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+                    this.ticketGrantingTicketUniqueTicketIdGenerator
+                            .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    authentication, this.ticketGrantingTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
-        return ticketGrantingTicket;
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
+            return ticketGrantingTicket;
+        }
+        logger.warn("No credentials were specified in the request for creating a new ticket-granting ticket");
+        throw new TicketCreationException();
     }
 
     /**
