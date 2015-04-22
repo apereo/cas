@@ -494,8 +494,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             this.ticketRegistry.addTicket(ticketGrantingTicket);
             return ticketGrantingTicket;
         }
-        logger.warn("No credentials were specified in the request for creating a new ticket-granting ticket");
-        throw new TicketCreationException();
+        final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
+        logger.warn(msg);
+        throw new TicketCreationException(new IllegalArgumentException(msg));
     }
 
     /**
