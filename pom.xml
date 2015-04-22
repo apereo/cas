@@ -580,6 +580,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
       <version>${log4j.version}</version>
@@ -1455,7 +1462,7 @@
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
-    <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
+    <cas-server-security-filter.version>2.0.1-SNAPSHOT</cas-server-security-filter.version>
     <google.guava.version>18.0</google.guava.version>
     <jcache.version>1.0.0</jcache.version>
     <jcache.ri.version>1.0.0</jcache.ri.version>
