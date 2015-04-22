@@ -68,7 +68,12 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
     private final HashMap<String,Service> services = new HashMap<String, Service>();
-    
+
+    /** Service that produced a proxy-granting ticket. */
+    @Column(name="PROXIED_BY", nullable=true)
+    private String proxiedBy;
+
+
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
@@ -77,19 +82,24 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
      * Constructs a new TicketGrantingTicket.
      * 
      * @param id the id of the Ticket
-     * @param ticketGrantingTicket the parent ticket
+     * @param proxiedBy Service that produced this proxy ticket.
+     * @param parentTicketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
      * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
-        final TicketGrantingTicketImpl ticketGrantingTicket,
+        final String proxiedBy, final TicketGrantingTicketImpl parentTicketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
-        super(id, ticketGrantingTicket, policy);
+        super(id, parentTicketGrantingTicket, policy);
 
         Assert.notNull(authentication, "authentication cannot be null");
 
         this.authentication = authentication;
+        if (parentTicketGrantingTicket != null && proxiedBy == null) {
+            throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
+        }
+        this.proxiedBy = proxiedBy;
     }
 
     /**
@@ -102,11 +112,15 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
      */
     public TicketGrantingTicketImpl(final String id,
         final Authentication authentication, final ExpirationPolicy policy) {
-        this(id, null, authentication, policy);
+        this(id, null, null, authentication, policy);
     }
 
     public Authentication getAuthentication() {
         return this.authentication;
+    }
+
+    public String getProxiedBy() {
+        return proxiedBy;
     }
 
     public synchronized ServiceTicket grantServiceTicket(final String id,

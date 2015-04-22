@@ -54,9 +54,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(false);
         when(tgtMock.grantServiceTicket(anyString(), any(Service.class), any(ExpirationPolicy.class), anyBoolean())).thenReturn(stMock);
-        List<Authentication> authnListMock = mock(List.class);
-        when(authnListMock.size()).thenReturn(2); // <-- criteria for testing the CAS-1019 feature
-        when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
+        when(tgtMock.getProxiedBy()).thenReturn("proxiedBy");
 
         //Mock TicketRegistry
         TicketRegistry ticketRegMock = mock(TicketRegistry.class);
