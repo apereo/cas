@@ -83,20 +83,20 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
      * 
      * @param id the id of the Ticket
      * @param proxiedBy Service that produced this proxy ticket.
-     * @param ticketGrantingTicket the parent ticket
+     * @param parentTicketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
      * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
-        final String proxiedBy, final TicketGrantingTicketImpl ticketGrantingTicket,
+        final String proxiedBy, final TicketGrantingTicketImpl parentTicketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
-        super(id, ticketGrantingTicket, policy);
+        super(id, parentTicketGrantingTicket, policy);
 
         Assert.notNull(authentication, "authentication cannot be null");
 
         this.authentication = authentication;
-        if (ticketGrantingTicket != null && proxiedBy == null) {
+        if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
         }
         this.proxiedBy = proxiedBy;
