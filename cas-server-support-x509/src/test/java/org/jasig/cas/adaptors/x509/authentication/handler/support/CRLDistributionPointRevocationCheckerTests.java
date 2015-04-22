@@ -90,6 +90,18 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();
         zeroThresholdPolicy.setThreshold(0);
 
+        // Test case #0
+        // Valid certificate on valid CRL data with encoded url
+        cache = new Cache("crlCache-0", 100, false, false, 20, 10);
+        CacheManager.getInstance().addCache(cache);
+        params.add(new Object[] {
+                new CRLDistributionPointRevocationChecker(cache),
+                defaultPolicy,
+                new String[] {"uservalid-encoded-crl.crt"},
+                "test ca.crl",
+                null,
+        });
+
         // Test case #1
         // Valid certificate on valid CRL data
         cache = new Cache("crlCache-1", 100, false, false, 20, 10);
