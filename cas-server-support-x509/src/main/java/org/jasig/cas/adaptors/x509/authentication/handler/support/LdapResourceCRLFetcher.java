@@ -43,6 +43,9 @@ import java.util.Map;
  */
 public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
 
+    /** Attribute name in LDAP to indicate the cert revocation list. **/
+    public static final String DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE = "certificateRevocationList;binary";
+
     /** The Certificate revocation list attribute name.*/
     protected final String certificateRevocationListAttributeName;
 
@@ -61,10 +64,10 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
     /**
      * Instantiates a new Ldap resource cRL fetcher.
      * initializes the default certificate revocation attribute
-     * to be {@link CertUtils#DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE}.
+     * to be {@link #DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE}.
      */
     public LdapResourceCRLFetcher() {
-        this(CertUtils.DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE);
+        this(DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE);
     }
 
     /**
