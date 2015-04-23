@@ -532,6 +532,22 @@ ldap.authn.searchFilter=(uid={user})
 ldap.authn.format=%s@example.com
 </code></pre>
 
+<h2 id="principalresolver-vs-authenticationhandler">PrincipalResolver vs. AuthenticationHandler</h2>
+<p>The principal resolution machinery provided by <code>AuthenticationHandler</code> components should be used in preference to
+<code>PrincipalResolver</code> in any situation where the former provides adequate functionality.
+If the principal that is resolved by the authentication handler
+suffices, then a <code>null</code> value may be passed in place of the resolver bean id:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;authenticationManager&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.authentication.PolicyBasedAuthenticationManager&quot;</span>
+      <span class="na">p:authenticationPolicy-ref=</span><span class="s">&quot;authenticationPolicy&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;constructor-arg&gt;</span>
+      <span class="nt">&lt;map&gt;</span>
+          <span class="nt">&lt;entry</span> <span class="na">key-ref=</span><span class="s">&quot;passwordHandler&quot;</span> <span class="na">value=</span><span class="s">&quot;#{null}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/map&gt;</span>
+  <span class="nt">&lt;/constructor-arg&gt;</span>
+<span class="nt">&lt;/bean&gt;</span></code></pre></div>
+
 <h2 id="ldap-password-policy-enforcement">LDAP Password Policy Enforcement</h2>
 <p>The purpose of the LPPE is twofold:</p>
 
