@@ -79,6 +79,64 @@ username from the same IP address. This component requires that the
       p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 {% endhighlight %}
 
+You'll need to have a `dataSource` that defines a connection to your database. The following snippet
+demonstrates a data source that connects to HSQLDB v1.8:
+
+{% highlight xml %}
+<bean id="dataSource" 
+	  class="org.apache.commons.dbcp.BasicDataSource" 
+	  destroy-method="close" lazy-init="true"
+      p:poolPreparedStatements="true"
+      p:url="jdbc:hsqldb:hsql://localhost:9001/misagh"
+      p:username="SA"
+      p:password=""
+      p:driverClassName="org.hsqldb.jdbcDriver"
+      p:validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS;" />
+{% endhighlight %}
+
+In order to configure the `dataSource` you will furthermore need additional dependencies
+in the `pom.xml` file that deal with creating connections. 
+
+{% highlight xml %}
+<dependency>
+	<groupId>commons-dbcp</groupId>
+	<artifactId>commons-dbcp</artifactId>
+	<version>${dbcp.version}</version>
+	<scope>runtime</scope>
+</dependency>
+<dependency>
+	<groupId>commons-pool</groupId>
+	<artifactId>commons-pool</artifactId>
+	<version>${commons.pool.version}</version>
+	<scope>runtime</scope>
+</dependency>
+<!-- Replace with your specific database of choice. -->
+<dependency>
+	<groupId>org.hsqldb</groupId>
+	<artifactId>hsqldb</artifactId>
+	<version>${hsqldb.version}</version>
+	<scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
+You will also need the dependency for the database driver that you have chosen. 
+
+Finally, the following database needs to be created beforehand:
+
+{% highlight sql %}
+CREATE TABLE COM_AUDIT_TRAIL
+(
+	AUD_USER      VARCHAR(100) NOT NULL,
+	AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
+	AUD_SERVER_IP VARCHAR(15)   NOT NULL,
+	AUD_RESOURCE  VARCHAR(100) NOT NULL,
+	AUD_ACTION    VARCHAR(100) NOT NULL,
+	APPLIC_CD     VARCHAR(15)   NOT NULL,
+	AUD_DATE      TIMESTAMP     NOT NULL
+);
+{% endhighlight %}
+
+You may need to augment the syntax and column types per your specific database implementation.
 
 ## High Availability Considerations for Throttling
 
