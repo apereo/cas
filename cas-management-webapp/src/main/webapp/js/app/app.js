@@ -31,4 +31,30 @@
     		return this.actionPanel === checkAction;
     	}
     });
+
+    app.controller('ServiceFormController', function() {
+        this.serviceForm = {};
+
+        logoutTypes = [
+            { 'name': 'None', 'value': 'None' },
+            { 'name': 'Back Channel', 'value': 'back_channel' },
+            { 'name': 'Front Channel', 'value': 'front_channel' }
+        ];
+
+        service = { type : logoutTypes[0].value };
+
+        // serviceForm.service.logoutType = [
+        //     { 'name': 'None', 'value': 'None' },
+        //     { 'name': 'Back Channel', 'value': 'back_channel' },
+        //     { 'name': 'Front Channel', 'value': 'front_channel' }
+        // ];
+
+        // serviceForm.service.logoutType = serviceForm.service.logoutType[0].value;
+
+        this.addService = function(service) {
+            // service.services.push(this.service);
+
+            this.serviceForm = {};
+        };
+    });
 })();
