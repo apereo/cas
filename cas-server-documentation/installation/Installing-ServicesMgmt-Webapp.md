@@ -1,4 +1,8 @@
-# Installing the Services Management Webapp
+---
+layout: default
+title: CAS - Services Management Webapp
+---
+# Services Management Webapp
 
 The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
@@ -128,15 +132,4 @@ When authenticating against a CAS server, the services management webapp will be
 ## Services Registry
 
 You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
-
-
-## UI
-
-The services management webapp is pretty simple to use:
-
-* use the "Manage Services" link to see the list of all CAS services
-* click the "Add New Service" link to add a new CAS service
-* click the "edit" link with the pen image (on the right of a CAS service definition) to edit a specific CAS service
-* click the "delete" link with the trash image (on the right of a CAS service definition) to delete a specific CAS service (after a confirmation alert).
-* The app takes advantage of the Infusion Javascript framework in order to add drag&drop functionality onto the screen.
 
