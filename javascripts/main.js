@@ -64,7 +64,13 @@ function generateToolbarIcons() {
   	page = "index.md";
   }
 
-  var imagesPath = isDocumentationSiteViewedLocally() ? "../images/" : "/cas/images/";
+  var imagesPath = "/cas/images/";
+  if (isDocumentationSiteViewedLocally()) {
+  	var loc = location.href;
+  	var index = loc.indexOf(CONST_SITE_TARGET_DIR);
+  	var uri2 = loc.substring(0, index + CONST_SITE_TARGET_DIR.length);
+  	imagesPath = uri2 + "images/"
+  }
 
   var activeVersion = getActiveDocumentationVersionInView(true);
   if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
