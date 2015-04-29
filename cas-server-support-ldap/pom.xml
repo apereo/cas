@@ -66,13 +66,11 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>${ldaptive.version}</version>
     </dependency>
 
     <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-unboundid</artifactId>
-        <version>${ldaptive.version}</version>
         <scope>test</scope>
     </dependency>
 
