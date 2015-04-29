@@ -27,6 +27,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -81,13 +82,26 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
     }
 
+    @Test(expected=TicketCreationException.class)
+    public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+            .createTicketGrantingTicket(null);
+
+    }
+
+    @Test(expected=TicketCreationException.class)
+    public void disallowNullCredentionalsArrayWhenCreatingTicketGrantingTicket() throws Exception {
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(new Credential[] {null, null} );
+    }
+
     @Test(expected=ClassCastException.class)
     public void verifyDestroyTicketGrantingTicketWithInvalidTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                    TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId.getId(), TestUtils.getService());
+                .grantServiceTicket(ticketId.getId(), TestUtils.getService());
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(
                 serviceTicketId.getId());
