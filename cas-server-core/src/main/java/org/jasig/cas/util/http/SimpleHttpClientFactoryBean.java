@@ -36,8 +36,8 @@ import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultBackoffStrategy;
@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -126,7 +127,7 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
      */
-    private X509HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER;
+    private HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
 
     /** The credentials provider for endpoints that require authentication. */
     private CredentialsProvider credentialsProvider;
@@ -223,12 +224,13 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)
                     .build();
-            
+
+
             final HttpClientBuilder builder = HttpClients.custom()
                     .setConnectionManager(connMgmr)
                     .setDefaultRequestConfig(requestConfig)
                     .setSSLSocketFactory(sslsf)
-                    .setHostnameVerifier(this.hostnameVerifier)
+                    .setSSLHostnameVerifier(this.hostnameVerifier)
                     .setRedirectStrategy(this.redirectionStrategy)
                     .setDefaultCredentialsProvider(this.credentialsProvider)
                     .setDefaultCookieStore(this.cookieStore)
@@ -347,11 +349,11 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
         this.sslSocketFactory = sslSocketFactory;
     }
 
-    public X509HostnameVerifier getHostnameVerifier() {
+    public HostnameVerifier getHostnameVerifier() {
         return this.hostnameVerifier;
     }
 
-    public void setHostnameVerifier(final X509HostnameVerifier hostnameVerifier) {
+    public void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
     }
 
