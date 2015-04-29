@@ -67,18 +67,10 @@ username from the same IP address. This component requires that the
       class="com.github.inspektr.audit.support.JdbcAuditTrailManager"
       c:transactionTemplate-ref="inspektrTransactionTemplate"
       p:dataSource-ref="dataSource" />
-
-<bean id="inspektrTransactionManager"
-      class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-      p:dataSource-ref="dataSource" />
-
-<bean id="inspektrTransactionTemplate"
-      class="org.springframework.transaction.support.TransactionTemplate"
-      p:transactionManager-ref="inspektrTransactionManager"
-      p:isolationLevelName="ISOLATION_READ_COMMITTED"
-      p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 {% endhighlight %}
 
+For additional instructions on how to configure auditing via Inspektr,
+please [review the following guide](Logging.html).
 
 ## High Availability Considerations for Throttling
 

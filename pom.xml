@@ -580,6 +580,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
       <version>${log4j.version}</version>
@@ -1418,7 +1425,7 @@
     <!-- Dependency Versions -->
     <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
     <spring.version>4.1.6.RELEASE</spring.version>
-    <spring.webflow.client.repo.version>1.0-RC1-SNAPSHOT</spring.webflow.client.repo.version>
+    <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
     <ldaptive.version>1.0.6</ldaptive.version>
     <spring.security.version>4.0.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
@@ -1443,7 +1450,7 @@
     <mockito.version>1.10.19</mockito.version>
     <ehcache.version>2.10.0</ehcache.version>
     <hsqldb.version>2.3.2</hsqldb.version>
-    <apache.httpclient.version>4.3.6</apache.httpclient.version>
+    <apache.httpclient.version>4.4.1</apache.httpclient.version>
     <joda-time.version>2.7</joda-time.version>
     <cas.client.version>3.3.3</cas.client.version>
     <quartz.version>2.2.1</quartz.version>
@@ -1455,7 +1462,7 @@
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
-    <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
+    <cas-server-security-filter.version>2.0.1</cas-server-security-filter.version>
     <google.guava.version>18.0</google.guava.version>
     <jcache.version>1.0.0</jcache.version>
     <jcache.ri.version>1.0.0</jcache.ri.version>
