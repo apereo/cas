@@ -162,7 +162,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
-            logger.error("Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
+            logger.error("Error reading CRLDistributionPoints extension field on {}", CertUtils.toString(cert), e);
             return new URI[0];
         }
 
@@ -187,7 +187,9 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Adds the url to the list.
      * Build URI by components to facilitate proper encoding of querystring.
      * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
-     * 
+     *
+     * <p>If <code>uriString</code> is encoded, it will be decoded with <code>UTF-8</code>
+     * first before it's added to the list.</p>
      * @param list the list
      * @param uriString the uri string
      */
