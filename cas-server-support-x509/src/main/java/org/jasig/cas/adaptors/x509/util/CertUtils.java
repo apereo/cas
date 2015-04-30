@@ -87,20 +87,6 @@ public final class CertUtils {
     }
 
     /**
-     * Read certificate.
-     *
-     * @param resource the resource to read the cert from
-     * @return the x 509 certificate
-     */
-    public static X509Certificate readCertificate(final Resource resource) {
-        try (final InputStream in = resource.getInputStream()) {
-            return (X509Certificate) CryptReader.readCertificate(in);
-        } catch (final Exception e) {
-            throw new RuntimeException("Error reading certificate " + resource, e);
-        }
-    }
-
-    /**
      * Creates a unique and human-readable representation of the given certificate.
      *
      * @param cert Certificate.
