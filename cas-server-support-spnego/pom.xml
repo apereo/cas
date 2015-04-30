@@ -24,7 +24,6 @@
 		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-spnego</artifactId>
 	<packaging>jar</packaging>
 	<name>Apereo CAS SPNEGO/NTLM Support</name>
@@ -37,15 +36,21 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.ldaptive</groupId>
+			<artifactId>ldaptive</artifactId>
+			<version>${ldaptive.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.samba.jcifs</groupId>
 			<artifactId>jcifs</artifactId>
-			<version>1.2.25</version>
+			<version>${jcifs.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.samba.jcifs</groupId>
 			<artifactId>jcifs-ext</artifactId>
-			<version>0.9.4</version>
+			<version>${jcifs.ext.version}</version>
 		</dependency>
 
         <dependency>
@@ -58,5 +63,7 @@
 
   <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>
+	<jcifs.version>1.2.25</jcifs.version>
+	<jcifs.ext.version>0.9.4</jcifs.ext.version>
   </properties>
 </project>
