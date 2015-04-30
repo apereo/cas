@@ -20,21 +20,27 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.util.CompressionUtils;
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
+import org.ldaptive.Response;
+import org.ldaptive.ResultCode;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
+import org.ldaptive.provider.Provider;
 import org.springframework.core.io.ByteArrayResource;
 
 import javax.naming.AuthenticationException;
-import javax.naming.Context;
 import javax.naming.OperationNotSupportedException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
+import javax.validation.constraints.NotNull;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
-import java.util.Hashtable;
-import java.util.Map;
 
 /**
  * Fetches a CRL from an LDAP instance.
@@ -49,56 +55,41 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
     /** The Certificate revocation list attribute name.*/
     protected final String certificateRevocationListAttributeName;
 
-    /** Authentication mode for ldap. **/
-    protected String securityAuthentication;
+    /** The connection configuration to ldap.*/
+    protected final ConnectionConfig connectionConfig;
 
-    /** Authentication principal for ldap. **/
-    protected String securityPrincipal;
+    /** Search request to find the attribute in the ldap tree.*/
+    protected final SearchRequest searchRequest;
 
-    /** Authentication credentials for ldap. **/
-    protected String securityCredentials;
-
-    /** object name to look up in the context. **/
-    protected String objectName;
+    /** The ldap provider, defaults to {@link DefaultConnectionFactory#getProvider()}. */
+    protected Provider provider = DefaultConnectionFactory.getDefaultProvider();
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
      * initializes the default certificate revocation attribute
      * to be {@link #DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE}.
+     * @param searchRequest the search request
+     * @param connectionConfig the connection config
      */
-    public LdapResourceCRLFetcher() {
-        this(DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE);
+    public LdapResourceCRLFetcher(@NotNull final SearchRequest searchRequest,
+                                  @NotNull final ConnectionConfig connectionConfig) {
+        this(searchRequest, connectionConfig,
+                DEFAULT_CERTIFICATE_REVOCATION_LIST_ATTRIBUTE);
     }
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
      *
+     * @param searchRequest the search request
+     * @param connectionConfig the connection config
      * @param certificateRevocationListAttributeName the certificate revocation list attribute name
      */
-    public LdapResourceCRLFetcher(final String certificateRevocationListAttributeName) {
+    public LdapResourceCRLFetcher(@NotNull final SearchRequest searchRequest,
+                                  @NotNull final ConnectionConfig connectionConfig,
+                                  @NotNull final String certificateRevocationListAttributeName) {
         this.certificateRevocationListAttributeName = certificateRevocationListAttributeName;
-    }
-
-    /**
-     * This can be one of the following strings:
-     * "none", "simple", sasl_mech, where sasl_mech is a
-     * space-separated list of SASL mechanism names.
-     * @param securityAuthentication the authn mode
-     */
-    public void setSecurityAuthentication(final String securityAuthentication) {
-        this.securityAuthentication = securityAuthentication;
-    }
-
-    public void setSecurityPrincipal(final String securityPrincipal) {
-        this.securityPrincipal = securityPrincipal;
-    }
-
-    public void setSecurityCredentials(final String securityCredential) {
-        this.securityCredentials = securityCredential;
-    }
-
-    public void setObjectName(final String objectName) {
-        this.objectName = objectName;
+        this.connectionConfig = connectionConfig;
+        this.searchRequest = searchRequest;
     }
 
     @Override
@@ -109,76 +100,89 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
         return super.fetchInternal(r);
     }
 
+    public void setProvider(final Provider provider) {
+        this.provider = provider;
+    }
+
     /**
-     * Downloads a CRL from given LDAP url, e.g.
-     * <code>ldap://ldap.infonotary.com/dc=identity-ca,dc=infonotary,dc=com</code>
+     * Downloads a CRL from given LDAP url
      *
-     * @param r the resource
+     * @param r the resource that is the ldap url.
      * @return the x 509 cRL
      * @throws Exception if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
     protected X509CRL fetchCRLFromLdap(final Object r) throws Exception {
-        DirContext ctx = null;
+        Connection connection = null;
         try {
             final String ldapURL = r.toString();
             logger.debug("Fetching CRL from ldap {}", ldapURL);
 
-            final Map<String, String> env = configureLdapDirectoryContext(ldapURL);
+            connection = createConnection(ldapURL);
 
-            logger.debug("Establishing a connection to {}", ldapURL);
-            ctx = new InitialDirContext((Hashtable) env);
-
-            logger.debug("Connected to {}", ldapURL);
-            if (StringUtils.isNotBlank(this.objectName)) {
-                logger.debug("Retrieving object {}", this.objectName);
-                ctx = (DirContext) ctx.lookup(this.objectName);
+            logger.debug("Connected to {}. Searching {}", this.connectionConfig.getLdapUrl(), this.searchRequest);
+            final SearchOperation searchOperation = new SearchOperation(connection);
+            final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
+            if (searchResult.getResultCode() == ResultCode.SUCCESS) {
+                final LdapEntry entry = searchResult.getResult().getEntry();
+                final LdapAttribute aval = entry.getAttribute(this.certificateRevocationListAttributeName);
+                return fetchX509CRLFromAttribute(aval);
             }
+            throw new CertificateException("Failed to establish a connection ldap. "
+                        + searchResult.getMessage());
 
-            logger.debug("Retrieving certificate revocation list attribute {}",
-                    this.certificateRevocationListAttributeName);
-            final Attributes attrs = ctx.getAttributes("");
-            final Attribute aval = attrs.get(this.certificateRevocationListAttributeName);
-            if (aval != null) {
-                final byte[] val = (byte[]) aval.get();
-                if (val == null || val.length == 0) {
-                    throw new CertificateException("Empty attribute. Can not download CRL from: " + ldapURL);
-                }
-                final byte[] decoded64 = CompressionUtils.decodeBase64ToByteArray(val);
-                logger.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
-                return super.fetch(new ByteArrayResource(decoded64));
-            }
-            throw new CertificateException("Attribute not found. Can not retrieve CRL from attribute: "
-                    + this.certificateRevocationListAttributeName);
         } catch (final AuthenticationException | OperationNotSupportedException e) {
             logger.error(e.getMessage(), e);
             throw new CertificateException(e);
         } finally {
-            if (ctx != null) {
-                ctx.close();
+            if (connection != null) {
+                connection.close();
             }
         }
     }
 
     /**
-     * Configure ldap directory context.
+     * Gets x509 cRL from attribute. Retrieves the binary attribute value,
+     * decodes it to base64, and fetches it as a byte-array resource.
+     *
+     * @param aval the attribute, which may be null if it's not found
+     * @return the x 509 cRL from attribute
+     * @throws Exception if attribute not found or could could not be decoded.
+     */
+    protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws Exception {
+        if (aval != null) {
+            final byte[] val = (byte[]) aval.getBinaryValue();
+            if (val == null || val.length == 0) {
+                throw new CertificateException("Empty attribute. Can not download CRL from ldap");
+            }
+            final byte[] decoded64 = CompressionUtils.decodeBase64ToByteArray(val);
+            if (decoded64 == null) {
+                throw new CertificateException("Could not decode the attribute value to base64");
+            }
+            logger.debug("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+            return super.fetch(new ByteArrayResource(decoded64));
+        }
+        throw new CertificateException("Attribute not found. Can not retrieve CRL from attribute: "
+                + this.certificateRevocationListAttributeName);
+    }
+
+    /**
+     * Create and open a connection to ldap
+     * via the given config and provider.
      *
      * @param ldapURL the ldap uRL
-     * @return the map of settings for authentication
+     * @return the connection
+     * @throws LdapException the ldap exception
      */
-    protected Map<String, String> configureLdapDirectoryContext(final String ldapURL) {
-        final Map<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, ldapURL);
-
-        if (StringUtils.isNotBlank(this.securityAuthentication)) {
-            env.put(Context.SECURITY_AUTHENTICATION, this.securityAuthentication);
+    protected Connection createConnection(final String ldapURL) throws LdapException {
+        if (StringUtils.isBlank(this.connectionConfig.getLdapUrl())) {
+            logger.debug("Configuration does not indicate an LDAP url override. Setting ldap url to [{}]"
+                    , ldapURL);
+            this.connectionConfig.setLdapUrl(ldapURL);
         }
-        if (StringUtils.isNotBlank(this.securityPrincipal)) {
-            env.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
-        }
-        if (StringUtils.isNotBlank(this.securityCredentials)) {
-            env.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
-        }
-        return env;
+        logger.debug("Establishing a connection to {}", this.connectionConfig.getLdapUrl());
+        final ConnectionFactory factory = new DefaultConnectionFactory(this.connectionConfig, this.provider);
+        final Connection connection = factory.getConnection();
+        connection.open();
+        return connection;
     }
 }
