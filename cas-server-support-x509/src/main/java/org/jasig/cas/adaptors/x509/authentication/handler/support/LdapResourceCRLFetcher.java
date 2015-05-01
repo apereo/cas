@@ -33,6 +33,9 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.pool.AbstractConnectionPool;
+import org.ldaptive.pool.ConnectionPool;
+import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.provider.Provider;
 import org.springframework.core.io.ByteArrayResource;
 
@@ -63,6 +66,11 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
 
     /** The ldap provider, defaults to {@link DefaultConnectionFactory#getProvider()}. */
     protected Provider provider = DefaultConnectionFactory.getDefaultProvider();
+
+    /** The connection factory to prep for connections. **/
+    protected ConnectionFactory connectionFactory;
+
+    private AbstractConnectionPool connectionPool;
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -104,6 +112,10 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
         this.provider = provider;
     }
 
+    public void setConnectionPool(final AbstractConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
     /**
      * Downloads a CRL from given LDAP url
      *
@@ -117,6 +129,7 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
             final String ldapURL = r.toString();
             logger.debug("Fetching CRL from ldap {}", ldapURL);
 
+            prepareConnectionFactory(ldapURL);
             connection = createConnection(ldapURL);
 
             logger.debug("Connected to {}. Searching {}", this.connectionConfig.getLdapUrl(), this.searchRequest);
@@ -174,15 +187,37 @@ public class LdapResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws LdapException the ldap exception
      */
     protected Connection createConnection(final String ldapURL) throws LdapException {
+        final Connection connection = this.connectionFactory.getConnection();
+        connection.open();
+        return connection;
+    }
+
+    /**
+     * Prepare connection factory.
+     *
+     * @param ldapURL the ldap uRL
+     */
+    private void prepareConnectionFactory(final String ldapURL) {
+        if (this.connectionFactory != null) {
+            return;
+        }
+
         if (StringUtils.isBlank(this.connectionConfig.getLdapUrl())) {
             logger.debug("Configuration does not indicate an LDAP url override. Setting ldap url to [{}]"
                     , ldapURL);
             this.connectionConfig.setLdapUrl(ldapURL);
         }
         logger.debug("Establishing a connection to {}", this.connectionConfig.getLdapUrl());
-        final ConnectionFactory factory = new DefaultConnectionFactory(this.connectionConfig, this.provider);
-        final Connection connection = factory.getConnection();
-        connection.open();
-        return connection;
+
+        if (this.connectionPool != null) {
+            this.connectionPool.setConnectionFactory(
+                    new DefaultConnectionFactory(this.connectionConfig, this.provider));
+            this.connectionPool.initialize();
+            this.connectionFactory = new PooledConnectionFactory(this.connectionPool);
+            logger.debug("Connection pooling enabled. Using [{}]", this.connectionFactory.getClass().getName());
+        } else {
+            this.connectionFactory = new DefaultConnectionFactory(this.connectionConfig, this.provider);
+            logger.debug("Connection pooling not configured. Using [{}]", this.connectionFactory.getClass().getName());
+        }
     }
 }
