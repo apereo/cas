@@ -28,13 +28,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.pool.AbstractConnectionPool;
+import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.provider.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 
@@ -56,6 +57,9 @@ public class LdapResourceCRLFetcherTests extends AbstractLdapTests {
     @Autowired
     private Provider provider;
 
+    @Autowired
+    private AbstractConnectionPool connectionPool;
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDirectoryServer();
@@ -76,6 +80,26 @@ public class LdapResourceCRLFetcherTests extends AbstractLdapTests {
         checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
         final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
         checker.check(cert);
+    }
+
+    @Test
+    public void getCrlFromLdapAndPoolConnections() throws Exception {
+        CacheManager.getInstance().removeAllCaches();
+        final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+        CacheManager.getInstance().addCache(cache);
+        final LdapResourceCRLFetcher fetcher = new LdapResourceCRLFetcher(this.searchRequest,
+                this.connectionConfig);
+        fetcher.setProvider(this.provider);
+        fetcher.setConnectionPool(this.connectionPool);
+
+        final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
+        checker.setThrowOnFetchFailure(true);
+        checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
+        for (int i = 0; i < 10; i++) {
+            final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            checker.check(cert);
+        }
+
     }
 
     @Test(expected = RuntimeException.class)
