@@ -270,7 +270,7 @@ By default, the identifier returned by a delegated authentication is composed of
 
 To start authentication on a remote provider, these links must be added on the login page `casLoginView.jsp` (*ClientNameUrl* attributes are automatically created by the `ClientAction`):
 
-{% highlight xml %}
+{% highlight html %}
 <a href="${FacebookClientUrl}">Authenticate with Facebook</a> <br />
 <br />
 <a href="${TwitterClientUrl}">Authenticate with Twitter</a><br />
@@ -279,6 +279,8 @@ To start authentication on a remote provider, these links must be added on the l
 <br />
 <a href="${CasClientUrl}">Authenticate with another CAS server using CAS protocol</a><br />
 <br />
+
+<p>Authenticate with MyOpenId.com</p>
 <form action="${MyOpenIdClientUrl}" method="POST">
   <input type="text" name="openIdUser" value="http://xxx.myopenid.com/" />
   <input type="submit" value="Authenticate with myopenid.com" />
