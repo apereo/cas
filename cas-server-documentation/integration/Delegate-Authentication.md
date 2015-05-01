@@ -8,11 +8,11 @@ The CAS server implements the CAS protocol on server side and may even behave li
 
 But the CAS server can also act as a client using the [pac4j library](https://github.com/leleuj/pac4j) and delegate the authentication to:
 
-* another CAS server
-* an OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
-* an OpenID provider: myopenid.com
-* a SAML identity provider
-* an OpenID Connect identity provider.
+* Another CAS server
+* An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
+* An OpenID provider: myopenid.com
+* A SAML identity provider
+* An OpenID Connect identity provider.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -35,13 +35,13 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* the attribute *clientName* set to the type of the provider used during authentication process.
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
+* The attribute *`clientName`` set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
 
-* an identifier which is the profile type + # + the identifier of the user for this provider (example : FacebookProfile#0000000001)
-* attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
+* An identifier which is the profile type + # + the identifier of the user for this provider (example : `FacebookProfile#0000000001`)
+* Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
 ###How to send profile attributes to CAS client applications?
 
