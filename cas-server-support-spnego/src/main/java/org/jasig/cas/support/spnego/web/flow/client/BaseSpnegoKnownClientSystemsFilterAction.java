@@ -21,6 +21,7 @@ package org.jasig.cas.support.spnego.web.flow.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.support.spnego.util.ReverseDNS;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
 /**
@@ -49,27 +48,31 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Pattern of idp addresses to check. **/
+    /** Pattern of ip addresses to check. **/
     private Pattern ipsToCheckPattern;
 
+    /** Alternative remote host attribute. **/
     private String alternativeRemoteHostAttribute;
 
     /** The remote ip address. **/
     private String remoteIp;
+
+    /** Timeout for DNS Requests. **/
+    private long timeout = 5000;
 
     /**
      * {@inheritDoc}
      * Gets the remote ip from the request, and invokes spnego if it isn't filtered.
      *
      * @param context
-     * @return {@link #yes()} if spnego should be invoked and ip isnt filtered,
+     * @return {@link #yes()} if spnego should be invoked and ip isn't filtered,
      * {@link #no()} otherwise.
      */
     @Override
     protected final Event doExecute(@NotNull final RequestContext context) {
         this.remoteIp = getRemoteIp(context);
         logger.debug("Current user IP {}", this.remoteIp);
-        return !isIpFiltered() && doSpnego() ? yes() : no();
+        return shouldCheckIP() && doSpnego() ? yes() : no();
     }
 
     /**
@@ -78,9 +81,9 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * for the local / first implementation regex made more sense.
      * @return whether the remote ip received should be ignored
      */
-    private boolean isIpFiltered() {
+    private boolean shouldCheckIP() {
         return this.ipsToCheckPattern != null
-            && ipsToCheckPattern.matcher(this.remoteIp).find();
+            ? ipsToCheckPattern.matcher(this.remoteIp).find() : true;
     }
 
     /**
@@ -111,20 +114,27 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     }
 
     /**
-     * Convenience method to perform a reverse DNS lookup, presumably of the
-     * remote system's IP address, though of course it could be used for anything.
-     * Falls back to providing the IP address back if no value is found or the
-     * request results in an exception.
+     * Convenience method to perform a reverse DNS lookup.  Threads the request
+     * through a custom Runnable class in order to prevent inordinately long
+     * user waits while performing reverse lookup.
      * @return the remote host name
      */
     protected final String getRemoteHostName() {
+
+        ReverseDNS revDNS = new ReverseDNS(this.remoteIp);
+        Thread t = new Thread(revDNS);
+        t.start();
+
         try {
-            final InetAddress remoteHost = InetAddress.getByName(this.remoteIp);
-            return remoteHost.getCanonicalHostName();
-        } catch (final UnknownHostException e) {
-            logger.error("No host found for IP {}", this.remoteIp, e);
+            t.join(this.timeout);
+        } catch (final InterruptedException e) {
+            logger.debug("Threaded lookup failed.  Defaulting to IP {}.", this.remoteIp, e);
         }
-        return this.remoteIp;
+
+        final String remoteHostName = revDNS.get();
+        logger.debug("Found remote host name {}.", remoteHostName);
+
+        return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : this.remoteIp;
     }
 
     /**
@@ -141,6 +151,15 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     public final void setIpsToCheckPattern(@NotNull final String ipsToCheckPattern) {
         this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
+    }
+
+    /**
+     * Set timeout (ms) for DNS requests; valuable for heterogeneous environments employing
+     * fall-through authentication mechanisms.
+     * @param timeout # of milliseconds to wait for a DNS request to return
+     */
+    public final void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
     protected final String getRemoteIp() {
