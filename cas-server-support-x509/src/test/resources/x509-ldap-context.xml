@@ -67,4 +67,24 @@
 
     <bean id="searchFilter" class="org.ldaptive.SearchFilter"
           p:filter="CN=x509" />
+
+    <bean id="connectionPool"
+          class="org.ldaptive.pool.BlockingConnectionPool"
+          p:poolConfig-ref="ldapPoolConfig"
+          p:blockWaitTime="${ldap.pool.blockWaitTime}"
+          p:validator-ref="searchValidator"
+          p:pruneStrategy-ref="pruneStrategy"/>
+
+    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+          p:prunePeriod="${ldap.pool.prunePeriod}"
+          p:idleTime="${ldap.pool.idleTime}" />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+          p:minPoolSize="${ldap.pool.minSize}"
+          p:maxPoolSize="${ldap.pool.maxSize}"
+          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+          p:validatePeriodically="${ldap.pool.validatePeriodically}"
+          p:validatePeriod="${ldap.pool.validatePeriod}" />
 </beans>
