@@ -152,6 +152,11 @@ public final class SamlService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
+    @Override
+    public String[] getServiceParameters() {
+        return new String[]{"Target", "Artifact ID"};
+    }
+
     /**
      * Extract request id from the body.
      *

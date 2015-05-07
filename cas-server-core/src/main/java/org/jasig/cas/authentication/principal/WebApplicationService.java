@@ -48,4 +48,6 @@ public interface WebApplicationService extends Service {
      * @return the original url provided.
      */
     String getOriginalUrl();
+
+    String[] getServiceParameters();
 }

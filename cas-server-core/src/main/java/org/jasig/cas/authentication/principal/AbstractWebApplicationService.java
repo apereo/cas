@@ -39,6 +39,8 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
+    private static final String[] EMPTY_ARRAY = {};
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,6 +82,8 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     public final String getArtifactId() {
         return this.artifactId;
     }
+
+    public String[] getServiceParameters() { return EMPTY_ARRAY; }
 
     public final Map<String, Object> getAttributes() {
         return EMPTY_MAP;
