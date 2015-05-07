@@ -26,8 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 
@@ -167,7 +165,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     @Override
-    public CachedData encode(@NotNull final Object obj) {
+    public CachedData encode(final Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (final Output output = new Output(byteStream)) {
             kryo.writeClassAndObject(output, obj);
