@@ -21,7 +21,6 @@ package org.jasig.cas.support.spnego.web.flow.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.support.spnego.util.ReverseDNS;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +28,14 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +50,9 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
+    private static final int DEFAULT_TIMEOUT = 5000;
+    private static final int THREAD_POOL_SIZE = 10;
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -58,7 +66,25 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private String remoteIp;
 
     /** Timeout for DNS Requests. **/
-    private long timeout = 5000;
+    private long timeout = DEFAULT_TIMEOUT;
+
+    private final ExecutorService executor;
+
+    /**
+     * Instantiation. Defaults the executor a service
+     * to a fixed thread pool of size {@link #THREAD_POOL_SIZE}.
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction() {
+        this(Executors.newFixedThreadPool(THREAD_POOL_SIZE));
+    }
+
+    /**
+     * Initializes the executor service.
+     * @param executor the executor
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction(final ExecutorService executor) {
+        this.executor = executor;
+    }
 
     /**
      * {@inheritDoc}
@@ -82,8 +108,16 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return whether the remote ip received should be ignored
      */
     private boolean shouldCheckIP() {
-        return this.ipsToCheckPattern != null
-            ? ipsToCheckPattern.matcher(this.remoteIp).find() : true;
+        if (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp)) {
+            final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
+            if (matcher.find()) {
+                logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
+                        this.remoteIp, this.ipsToCheckPattern.pattern());
+            }
+        }
+        logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
+                this.remoteIp);
+        return false;
     }
 
     /**
@@ -96,33 +130,42 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     private String getRemoteIp(@NotNull final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        String userAddr = request.getRemoteAddr();
-        logger.debug("Remote Address = {}", userAddr);
+        String userAddress = request.getRemoteAddr();
+        logger.debug("Remote Address = {}", userAddress);
 
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
 
-            userAddr = request.getHeader(this.alternativeRemoteHostAttribute);
-            logger.debug("Header Attribute [{}] = [{}]", this.alternativeRemoteHostAttribute, userAddr);
+            userAddress = request.getHeader(this.alternativeRemoteHostAttribute);
+            logger.debug("Header Attribute [{}] = [{}]", this.alternativeRemoteHostAttribute, userAddress);
 
-            if (StringUtils.isBlank(userAddr)) {
-                userAddr = request.getRemoteAddr();
+            if (StringUtils.isBlank(userAddress)) {
+                userAddress = request.getRemoteAddr();
                 logger.warn("No value could be retrieved from the header [{}]. Falling back to [{}].",
-                        this.alternativeRemoteHostAttribute, userAddr);
+                        this.alternativeRemoteHostAttribute, userAddress);
             }
         }
-        return userAddr;
+        return userAddress;
     }
 
     /**
-     * Convenience method to perform a reverse DNS lookup.  Threads the request
+     * Destroy and shut down the executor.
+     */
+    @PreDestroy
+    public final void destroy() {
+        logger.debug("Shutting down the executor service");
+        this.executor.shutdown();
+    }
+    /**
+     * Convenience method to perform a reverse DNS lookup. Threads the request
      * through a custom Runnable class in order to prevent inordinately long
      * user waits while performing reverse lookup.
      * @return the remote host name
      */
     protected final String getRemoteHostName() {
+        final ReverseDNS revDNS = new ReverseDNS(this.remoteIp);
+        this.executor.submit(revDNS);
 
-        ReverseDNS revDNS = new ReverseDNS(this.remoteIp);
-        Thread t = new Thread(revDNS);
+        final Thread t = new Thread(revDNS);
         t.start();
 
         try {
@@ -158,7 +201,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * fall-through authentication mechanisms.
      * @param timeout # of milliseconds to wait for a DNS request to return
      */
-    public final void setTimeout(long timeout) {
+    public final void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 
@@ -172,6 +215,8 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
                 .append("ipsToCheckPattern", this.ipsToCheckPattern)
                 .append("alternativeRemoteHostAttribute", this.alternativeRemoteHostAttribute)
                 .append("remoteIp", this.remoteIp)
+                .append("timeout", this.timeout)
+                .append("executor", this.executor.getClass().getName())
                 .toString();
     }
 
@@ -183,5 +228,76 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     protected boolean doSpnego() {
         return true;
+    }
+
+    /**
+     *  Utility class to perform DNS work in a threaded, timeout-able way
+     *  Adapted from: http://thushw.blogspot.com/2009/11/resolving-domain-names-quickly-with.html.
+     *
+     *  @author Sean Baker sean.baker@usuhs.edu
+     *  @author Misagh Moayyed
+     *  @since 4.1
+     */
+    private static final class ReverseDNS implements Runnable {
+
+        /** Logger instance. **/
+        private static final Logger LOGGER = LoggerFactory.getLogger(ReverseDNS.class);
+
+        /** Remote user IP address. **/
+        private final String ipAddress;
+
+        /** Remote user hostname. **/
+        private String hostName;
+
+        /**
+         * Simple constructor which also pre-sets hostName attribute for failover situations.
+         * @param ipAddress the ip address on which reverse DNS will be done.
+         */
+        public ReverseDNS(final String ipAddress) {
+            this.ipAddress = ipAddress;
+            this.hostName = ipAddress;
+        }
+
+        /**
+         * Runnable implementation to thread the work done in this class, allowing the
+         * implementer to set a thread timeout and thereby short-circuit the lookup.
+         */
+        @Override
+        public void run() {
+            try {
+                LOGGER.debug("Attempting to resolve {}", this.ipAddress);
+                final InetAddress address = InetAddress.getByName(this.ipAddress);
+                set(address.getCanonicalHostName());
+            } catch (final UnknownHostException e) {
+                /** N/A -- Default to IP address, but that's already done. **/
+                LOGGER.debug("Unable to identify the canonical hostname for ip address.", e);
+            }
+        }
+
+        /**
+         * Glorified setter with logging.
+         * @param hostName the resolved hostname
+         */
+        public synchronized void set(final String hostName) {
+            LOGGER.trace("ReverseDNS -- Found hostName: {}.", hostName);
+            this.hostName = hostName;
+        }
+
+        /**
+         * Getter method to provide result of lookup.
+         * @return the remote host name, or the IP address if name not found
+         */
+        public synchronized String get() {
+            return this.hostName;
+        }
+
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("ipAddress", this.ipAddress)
+                    .append("hostName", this.hostName)
+                    .toString();
+        }
     }
 }
