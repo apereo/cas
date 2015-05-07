@@ -4,7 +4,7 @@ title: CAS - OpenID Protocol
 ---
 
 #OpenID Protocol
-OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent themselves using URIs. For more information see the http://www.openid.net.
+OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent themselves using URIs. For more information see the [http://www.openid.net](http://www.openid.net).
 
 CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode acts in a similar fashion to the existing CAS protocol. The smart mode differs in that it establishes an association between the client and the openId provider (OP) at the begining. Thanks to that association and the key exchange done during association, information exchanged between the client and the provider are signed and verified using this key. There is no need for the final request (which is equivalent in CAS protocol to the ticket validation).
 
@@ -12,15 +12,15 @@ OpenID identifiers are URIs. The default mechanism in CAS support is an uri endi
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-openid</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
-
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-openid</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 ##Configuration
-
 
 ###Declare the OpenID endpoint
 
@@ -43,7 +43,6 @@ In the *cas-servlet.xml* file, the following mapping and bean must be also added
       ...
       <prop key="/openid/*">openIdProviderController</prop>
       ... 
-
 
 <bean
     id="openIdProviderController"
