@@ -36,11 +36,11 @@ In the CAS server, after this kind of delegated authentication, users have speci
 The `Authentication` object has:
 
 * The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* The attribute *`clientName`` set to the type of the provider used during authentication process.
+* The attribute *`clientName`* set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
 
-* An identifier which is the profile type + # + the identifier of the user for this provider (example : `FacebookProfile#0000000001`)
+* An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
 * Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
 ###How to send profile attributes to CAS client applications?
@@ -70,7 +70,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 ...
 {% endhighlight %}
 
-On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is `/p3/serviceValidate` url.
+On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
 
 ###How to recreate user profiles in CAS applications?
 
