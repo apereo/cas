@@ -87,12 +87,13 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             @NotNull final SearchRequest searchRequest,
             @NotNull final ConnectionConfig connectionConfig,
             @NotNull final String spnegoAttributeName) {
+        super();
         this.spnegoAttributeName = spnegoAttributeName;
         this.connectionConfig = connectionConfig;
         this.searchRequest = searchRequest;
     }
 
-    public void setProvider(final Provider provider) {
+    public final void setProvider(final Provider provider) {
         this.provider = provider;
     }
 
@@ -144,7 +145,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      */
     protected boolean verifySpnegoAttribute(final Response<SearchResult> searchResult) {
         final LdapEntry entry = searchResult.getResult().getEntry();
-        final LdapAttribute aval = entry.getAttribute(this.spnegoAttributeName);
-        return aval != null && StringUtils.isNotBlank(aval.getStringValue());
+        final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
+        return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
     }
 }
