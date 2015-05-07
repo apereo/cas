@@ -21,9 +21,7 @@ package org.jasig.cas.support.spnego.web.flow.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
-import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -32,7 +30,6 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.provider.Provider;
 
 import javax.validation.constraints.NotNull;
 
@@ -53,49 +50,38 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected final String spnegoAttributeName;
 
     /** The connection configuration to ldap.*/
-    protected final ConnectionConfig connectionConfig;
+    protected final ConnectionFactory connectionFactory;
 
-    /** Search request to find the attribute in the ldap tree.*/
+    /** The search request. */
     protected final SearchRequest searchRequest;
-
-    /** The ldap provider, defaults to
-     * {@link DefaultConnectionFactory#getProvider()}.
-     **/
-    protected Provider provider = DefaultConnectionFactory.getDefaultProvider();
 
     /**
      * Instantiates new action. Initializes the default attribute
      * to be {@link #DEFAULT_SPNEGO_ATTRIBUTE}.
+     * @param connectionFactory the connection factory
      * @param searchRequest the search request
-     * @param connectionConfig the connection config
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(
-            @NotNull final SearchRequest searchRequest,
-            @NotNull final ConnectionConfig connectionConfig) {
-        this(searchRequest, connectionConfig,
-                DEFAULT_SPNEGO_ATTRIBUTE);
+    public LdapSpnegoKnownClientSystemsFilterAction(@NotNull final ConnectionFactory connectionFactory,
+                                                    @NotNull final SearchRequest searchRequest) {
+        this(connectionFactory, searchRequest, DEFAULT_SPNEGO_ATTRIBUTE);
     }
 
     /**
      * Instantiates a new action.
      *
+     * @param connectionFactory the connection factory
      * @param searchRequest the search request
-     * @param connectionConfig the connection config
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
     public LdapSpnegoKnownClientSystemsFilterAction(
+            @NotNull final ConnectionFactory connectionFactory,
             @NotNull final SearchRequest searchRequest,
-            @NotNull final ConnectionConfig connectionConfig,
             @NotNull final String spnegoAttributeName) {
-        super();
+        this.connectionFactory = connectionFactory;
         this.spnegoAttributeName = spnegoAttributeName;
-        this.connectionConfig = connectionConfig;
         this.searchRequest = searchRequest;
     }
 
-    public final void setProvider(final Provider provider) {
-        this.provider = provider;
-    }
 
     /**
      * Create and open a connection to ldap
@@ -105,9 +91,8 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @throws LdapException the ldap exception
      */
     protected Connection createConnection() throws LdapException {
-        logger.debug("Establishing a connection to {}", this.connectionConfig.getLdapUrl());
-        final ConnectionFactory factory = new DefaultConnectionFactory(this.connectionConfig, this.provider);
-        final Connection connection = factory.getConnection();
+        logger.debug("Establishing a connection...");
+        final Connection connection = this.connectionFactory.getConnection();
         connection.open();
         return connection;
     }
@@ -117,7 +102,6 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         Connection connection = null;
         try {
             connection = createConnection();
-            logger.debug("Connected to {}. Searching {}", this.connectionConfig.getLdapUrl(), this.searchRequest);
             final SearchOperation searchOperation = new SearchOperation(connection);
             final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
