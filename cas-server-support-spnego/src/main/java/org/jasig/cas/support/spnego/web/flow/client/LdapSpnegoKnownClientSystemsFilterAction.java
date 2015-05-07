@@ -113,7 +113,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     }
 
     @Override
-    protected boolean doSpnego() {
+    protected boolean shouldDoSpnego() {
         Connection connection = null;
         try {
             connection = createConnection();

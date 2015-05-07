@@ -32,11 +32,12 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link BaseSpnegoKnownClientSystemsFilterAction}
+ * and {@link HostNameSpnegoKnownClientSystemsFilterAction}.
  * @author Sean Baker sean.baker@usuhs.edu
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class BaseSpnegoKnownClientSystemsFilterActionTest {
+public class AllSpnegoKnownClientSystemsFilterActionTest {
 
     @Test
     public void ensureRemoteIpShouldBeChecked() {
@@ -88,5 +89,23 @@ public class BaseSpnegoKnownClientSystemsFilterActionTest {
 
         final Event ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+    }
+
+    @Test
+    public void ensureHostnameShouldDoSpnego() {
+        final HostNameSpnegoKnownClientSystemsFilterAction action =
+                new HostNameSpnegoKnownClientSystemsFilterAction(".+1e100.net");
+
+        final MockRequestContext ctx = new MockRequestContext();
+        final MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setRemoteAddr("74.125.136.102");
+        final ServletExternalContext extCtx = new ServletExternalContext(
+                new MockServletContext(), req,
+                new MockHttpServletResponse());
+        ctx.setExternalContext(extCtx);
+
+        final Event ev = action.doExecute(ctx);
+        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+
     }
 }
