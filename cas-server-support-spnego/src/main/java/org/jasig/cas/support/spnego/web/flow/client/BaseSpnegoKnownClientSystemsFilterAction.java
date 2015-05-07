@@ -83,6 +83,60 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @param executor the executor
      */
     public BaseSpnegoKnownClientSystemsFilterAction(final ExecutorService executor) {
+        this(null, null, DEFAULT_TIMEOUT, executor);
+    }
+
+    /**
+     * Instantiates a new Base.
+     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     * @param timeout the timeout
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern,
+                                                    final String alternativeRemoteHostAttribute,
+                                                    final long timeout) {
+        this();
+        setIpsToCheckPattern(ipsToCheckPattern);
+        this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
+        this.timeout = timeout;
+    }
+
+    /**
+     * Instantiates a new Base.
+     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern,
+                                                    final String alternativeRemoteHostAttribute) {
+        this(ipsToCheckPattern, alternativeRemoteHostAttribute, DEFAULT_TIMEOUT);
+    }
+
+    /**
+     * Instantiates a new Base.
+     *
+     * @param ipsToCheckPattern the ips to check pattern
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
+        this(ipsToCheckPattern, null, DEFAULT_TIMEOUT);
+    }
+
+    /**
+     * Instantiates a new Base.
+     *
+     * @param ipsToCheckPattern the ips to check pattern
+     * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     * @param timeout the timeout
+     * @param executor the executor
+     */
+    public BaseSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern,
+                                                    final String alternativeRemoteHostAttribute,
+                                                    final long timeout,
+                                                    final ExecutorService executor) {
+        this.ipsToCheckPattern = ipsToCheckPattern;
+        this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
+        this.timeout = timeout;
         this.executor = executor;
     }
 
@@ -113,6 +167,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
             if (matcher.find()) {
                 logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
                         this.remoteIp, this.ipsToCheckPattern.pattern());
+                return true;
             }
         }
         logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
