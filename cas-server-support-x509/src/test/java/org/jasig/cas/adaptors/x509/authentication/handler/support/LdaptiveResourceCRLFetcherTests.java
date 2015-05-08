@@ -22,14 +22,11 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ldaptive.ConnectionConfig;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.pool.AbstractConnectionPool;
-import org.ldaptive.provider.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,21 +45,11 @@ import java.security.cert.X509Certificate;
 public class LdaptiveResourceCRLFetcherTests extends AbstractLdapTests {
 
     @Autowired
-    private ConnectionConfig connectionConfig;
-
-    @Autowired
-    private SearchRequest searchRequest;
-
-    @Autowired
-    private Provider provider;
-
-    @Autowired
-    private AbstractConnectionPool connectionPool;
+    private LdaptiveResourceCRLFetcher fetcher;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDirectoryServer();
-        getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif"));
+        initDirectoryServer(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
     }
 
     @Test
@@ -70,66 +57,28 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractLdapTests {
         CacheManager.getInstance().removeAllCaches();
         final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        final LdaptiveResourceCRLFetcher fetcher = new LdaptiveResourceCRLFetcher(this.searchRequest,
-                this.connectionConfig);
-        fetcher.setProvider(this.provider);
 
-        final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-        checker.setThrowOnFetchFailure(true);
-        checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
-        final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
-        checker.check(cert);
-    }
-
-    @Test
-    public void getCrlFromLdapAndPoolConnections() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
-        final LdaptiveResourceCRLFetcher fetcher = new LdaptiveResourceCRLFetcher(this.searchRequest,
-                this.connectionConfig);
-        fetcher.setProvider(this.provider);
-        fetcher.setConnectionPool(this.connectionPool);
-
-        final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-        checker.setThrowOnFetchFailure(true);
-        checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
         for (int i = 0; i < 10; i++) {
+            final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
+            checker.setThrowOnFetchFailure(true);
+            checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
-
     }
 
-    @Test(expected = RuntimeException.class)
-    public void getCrlFromLdapNoAttribute() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
-        final LdaptiveResourceCRLFetcher fetcher = new LdaptiveResourceCRLFetcher(this.searchRequest,
-                this.connectionConfig, "noattribute");
-        fetcher.setProvider(this.provider);
-
-        final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-        checker.setThrowOnFetchFailure(true);
-        checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
-        final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
-        checker.check(cert);
+    @Test
+    public void getCrlFromLdapWithNoCaching() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            CacheManager.getInstance().removeAllCaches();
+            final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+            CacheManager.getInstance().addCache(cache);
+            final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
+            checker.setThrowOnFetchFailure(true);
+            checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
+            final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            checker.check(cert);
+        }
     }
 
-    @Test(expected = RuntimeException.class)
-    public void getCrlFromLdapInvalidAttribute() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
-        CacheManager.getInstance().addCache(cache);
-        final LdaptiveResourceCRLFetcher fetcher = new LdaptiveResourceCRLFetcher(this.searchRequest,
-                this.connectionConfig, "mail");
-        fetcher.setProvider(this.provider);
-
-        final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-        checker.setThrowOnFetchFailure(true);
-        checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
-        final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
-        checker.check(cert);
-    }
 }
