@@ -17,9 +17,10 @@
  * under the License.
  */
 
-package org.jasig.cas.adaptors.x509.authentication.handler.support;
+package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
 import org.jasig.cas.util.CompressionUtils;
 import org.springframework.core.io.ByteArrayResource;
 
