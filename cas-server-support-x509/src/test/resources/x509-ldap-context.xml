@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Apereo under one or more contributor license
-  ~ agreements. See the NOTICE file distributed with this work
-  ~ for additional information regarding copyright ownership.
-  ~ Apereo licenses this file to you under the Apache License,
-  ~ Version 2.0 (the "License"); you may not use this file
-  ~ except in compliance with the License.  You may obtain a
-  ~ copy of the License at the following location:
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -33,16 +35,38 @@
 
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
+    <bean id="ldapCertFetcher"
+          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+          c:connectionFactory-ref="pooledLdapConnectionFactory"
+          c:searchExecutor-ref="searchExecutor"  />
+
     <bean id="baseDn" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
     </bean>
 
+    <util:list id="returnAttributes">
+        <value>certificateRevocationList</value>
+    </util:list>
+
+    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
+          p:filter="${ldap.searchfilter.cert}" />
+
+    <bean id="searchExecutor" class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
+          p:baseDn-ref="baseDn"
+          p:searchFilter-ref="searchFilter"
+          p:binaryAttributes-ref="returnAttributes" />
+
+    <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="provisioningConnectionConfig"
+          p:provider-ref="unboundidLdapProvider"  />
+
     <bean id="unboundidLdapProvider"
-          class="org.ldaptive.provider.unboundid.UnboundIDProvider" />
+          class="org.ldaptive.provider.unboundid.UnboundIDProvider"/>
 
     <bean id="provisioningConnectionConfig" class="org.ldaptive.ConnectionConfig"
           p:connectTimeout="${ldap.connectTimeout}"
           p:useStartTLS="${ldap.useStartTLS: false}"
+          p:ldapUrl="%s"
           p:connectionInitializer-ref="bindConnectionInitializer"
           p:sslConfig-ref="provisionSslConfig"/>
 
@@ -61,19 +85,18 @@
         </property>
     </bean>
 
-    <bean id="searchRequest" class="org.ldaptive.SearchRequest"
-        p:baseDn-ref="baseDn"
-        p:searchFilter-ref="searchFilter" />
-
-    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
-          p:filter="CN=x509" />
+    <bean id="pooledLdapConnectionFactory"
+          class="org.ldaptive.pool.PooledConnectionFactory"
+          p:connectionPool-ref="connectionPool" />
 
     <bean id="connectionPool"
           class="org.ldaptive.pool.BlockingConnectionPool"
+          lazy-init="true"
           p:poolConfig-ref="ldapPoolConfig"
           p:blockWaitTime="${ldap.pool.blockWaitTime}"
           p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy"/>
+          p:pruneStrategy-ref="pruneStrategy"
+          p:connectionFactory-ref="provisioningConnectionFactory" />
 
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
           p:prunePeriod="${ldap.pool.prunePeriod}"
@@ -88,6 +111,7 @@
           p:validatePeriodically="${ldap.pool.validatePeriodically}"
           p:validatePeriod="${ldap.pool.validatePeriod}" />
 
+
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
-              p:afterInitialization="true"/>
+          p:afterInitialization="true"/>
 </beans>

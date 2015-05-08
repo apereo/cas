@@ -21,12 +21,10 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdapResourceCRLFetcher;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.cert.X509Certificate;
@@ -37,14 +35,7 @@ import java.security.cert.X509Certificate;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(JUnit4.class)
-public class LdapResourceCRLFetcherTests extends AbstractLdapTests {
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDirectoryServer();
-        getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif"));
-    }
+public class LdapResourceCRLFetcherTests extends AbstractX509LdapTests {
 
     @Test
     public void getCrlFromLdap() throws Exception {
@@ -52,7 +43,7 @@ public class LdapResourceCRLFetcherTests extends AbstractLdapTests {
         final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
         final LdapResourceCRLFetcher fetcher = new LdapResourceCRLFetcher();
-        fetcher.setObjectName("CN=x509,ou=people,dc=example,dc=org");
+        fetcher.setObjectName(getTestDN());
         final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
         checker.setThrowOnFetchFailure(true);
         checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());

@@ -27,17 +27,21 @@ import com.unboundid.ldap.sdk.schema.Schema;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.LdapTestUtils;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -54,19 +58,25 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
 
     /**
      * Instantiates a new Ldap directory server.
+     * Parameters need to be streams so they can be read from JARs.
      */
-    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile, final File... schemaFile) {
-
+    public InMemoryTestLdapDirectoryServer(final InputStream properties,
+                                           final InputStream ldifFile,
+                                           final InputStream schemaFile) {
         try {
-
             final Properties p = new Properties();
-            p.load(new FileInputStream(properties));
+            p.load(properties);
 
             final InMemoryDirectoryServerConfig config =
                     new InMemoryDirectoryServerConfig(p.getProperty("ldap.rootDn"));
             config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
-            final String serverKeyStorePath = new ClassPathResource("/ldapServerTrustStore").getFile().getCanonicalPath();
+            final File keystoreFile = File.createTempFile("key", "store");
+            try (final OutputStream outputStream = new FileOutputStream(keystoreFile)) {
+                IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
+            }
+
+            final String serverKeyStorePath = keystoreFile.getCanonicalPath();
             final SSLUtil serverSSLUtil = new SSLUtil(
                     new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), new TrustStoreTrustManager(serverKeyStorePath));
             final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
@@ -84,13 +94,25 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             config.setEnforceSingleStructuralObjectClass(false);
             config.setEnforceAttributeSyntaxCompliance(true);
 
-            final Schema s = Schema.mergeSchemas(Schema.getSchema(schemaFile));
+
+            final File file = File.createTempFile("ldap", "schema");
+            try (final OutputStream outputStream = new FileOutputStream(file)) {
+                IOUtils.copy(schemaFile, outputStream);
+            }
+
+            final Schema s = Schema.mergeSchemas(Schema.getSchema(file));
             config.setSchema(s);
 
-            this.directoryServer = new InMemoryDirectoryServer(config);
 
-            LOGGER.debug("Populating directory with {}", ldifFile);
-            this.directoryServer.importFromLDIF(true, ldifFile.getCanonicalPath());
+            this.directoryServer = new InMemoryDirectoryServer(config);
+            LOGGER.debug("Populating directory...");
+
+            final File ldif = File.createTempFile("ldiff", "file");
+            try (final OutputStream outputStream = new FileOutputStream(ldif)) {
+                IOUtils.copy(ldifFile, outputStream);
+            }
+
+            this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
             this.directoryServer.startListening();
 
             final LDAPConnection c = getConnection();
@@ -104,15 +126,25 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
         }
     }
 
-    private void populateDefaultEntries(final LDAPConnection c) throws Exception {
-        populateEntries(c, new ClassPathResource("ldif/users-groups.ldif"));
+    /**
+     * Instantiates a new Ldap directory server.
+     */
+    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile, final File... schemaFile)
+        throws FileNotFoundException {
+        this(new FileInputStream(properties),
+             new FileInputStream(ldifFile),
+             new FileInputStream(ldifFile));
     }
 
-    public void populateEntries(final Resource rs) throws Exception {
+    private void populateDefaultEntries(final LDAPConnection c) throws Exception {
+        populateEntries(c, new ClassPathResource("ldif/users-groups.ldif").getInputStream());
+    }
+
+    public void populateEntries(final InputStream rs) throws Exception {
         populateEntries(getConnection(), rs);
     }
 
-    protected void populateEntries(final LDAPConnection c, final Resource rs) throws Exception {
+    protected void populateEntries(final LDAPConnection c, final InputStream rs) throws Exception {
         this.ldapEntries = LdapTestUtils.readLdif(rs, getBaseDn());
         LdapTestUtils.createLdapEntries(c, ldapEntries);
         populateEntriesInternal(c);
