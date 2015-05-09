@@ -27,7 +27,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -76,7 +75,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
 
     /**
      * Fetch the resource. Designed so that extensions
-     * can decide what and how the resource should be retrieved.
+     * can decide how the resource should be retrieved.
      *
      * @param r the resource which can be {@link URL}, {@link URI}, {@link String}
      *          or {@link AbstractResource}
