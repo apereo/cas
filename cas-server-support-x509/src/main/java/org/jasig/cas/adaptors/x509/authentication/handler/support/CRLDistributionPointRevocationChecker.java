@@ -76,6 +76,18 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     /**
+     * Creates a new instance that uses the given cache instance for CRL caching.
+     *
+     * @param crlCache Cache for CRL data.
+     * @param throwOnFetchFailure the throw on fetch failure
+     */
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
+                                                 final boolean throwOnFetchFailure) {
+        this(crlCache, new ResourceCRLFetcher());
+        setThrowOnFetchFailure(throwOnFetchFailure);
+    }
+
+    /**
      * Instantiates a new CRL distribution point revocation checker.
      *
      * @param crlCache the crl cache
@@ -142,8 +154,13 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     protected boolean addCRL(final Object id, final X509CRL crl) {
         try {
+            if (crl == null) {
+                return this.crlCache.remove(id);
+            }
+
             this.crlCache.put(new Element(id, crl.getEncoded()));
             return this.crlCache.get(id) != null;
+
         } catch (final Exception e) {
             logger.warn("Failed to add the crl entry [{}] to the cache", crl);
             throw new RuntimeException(e);

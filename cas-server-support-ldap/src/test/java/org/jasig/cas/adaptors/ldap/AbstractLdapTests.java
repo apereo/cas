@@ -46,11 +46,6 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
 
     private ApplicationContext context;
 
-    @BeforeClass
-    public static void bootstrap() throws Exception {
-        initDirectoryServer();
-    }
-
     public static void initDirectoryServer(final InputStream ldifFile) throws IOException {
         final ClassPathResource properties = new ClassPathResource("ldap.properties");
         final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
