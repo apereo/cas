@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdapResourceCRLFetcher;
 import org.jasig.cas.util.CompressionUtils;
-import org.junit.BeforeClass;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
@@ -38,7 +37,9 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Collection;
 
 /**
+ * Parent class to help with testing x509 operations that deal with LDAP.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";

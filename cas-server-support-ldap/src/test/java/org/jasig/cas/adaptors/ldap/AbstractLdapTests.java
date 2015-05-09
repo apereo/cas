@@ -21,7 +21,6 @@ package org.jasig.cas.adaptors.ldap;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
