@@ -37,6 +37,11 @@ import java.security.cert.X509Certificate;
  */
 public class LdapResourceCRLFetcherTests extends AbstractX509LdapTests {
 
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        AbstractX509LdapTests.bootstrap();
+    }
+
     @Test
     public void getCrlFromLdap() throws Exception {
         CacheManager.getInstance().removeAllCaches();

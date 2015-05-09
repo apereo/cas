@@ -113,7 +113,7 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
             }
 
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
-            this.directoryServer.startListening();
+            this.directoryServer.restartServer();
 
             final LDAPConnection c = getConnection();
             LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
@@ -166,6 +166,15 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
 
     @Override
     public void close() throws IOException {
-         this.directoryServer.shutDown(true);
+        LOGGER.debug("Shutting down LDAP server...");
+        this.directoryServer.shutDown(true);
+        LOGGER.debug("Shut down LDAP server.");
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        LOGGER.debug("Finalizing...");
+        close();
+        super.finalize();
     }
 }

@@ -42,14 +42,15 @@ import java.security.cert.X509Certificate;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/x509-ldap-context.xml"})
-public class LdaptiveResourceCRLFetcherTests extends AbstractLdapTests {
+public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
+
 
     @Autowired
     private LdaptiveResourceCRLFetcher fetcher;
 
     @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDirectoryServer(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+    public static void bootstrap() throws Exception {
+        AbstractX509LdapTests.bootstrap();
     }
 
     @Test
@@ -66,7 +67,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractLdapTests {
             checker.check(cert);
         }
     }
-
+     /*
     @Test
     public void getCrlFromLdapWithNoCaching() throws Exception {
         for (int i = 0; i < 10; i++) {
@@ -80,5 +81,5 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractLdapTests {
             checker.check(cert);
         }
     }
-
+    */
 }
