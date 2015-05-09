@@ -18,10 +18,23 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import de.flapdoodle.embed.memcached.Command;
+import de.flapdoodle.embed.memcached.MemcachedExecutable;
+import de.flapdoodle.embed.memcached.MemcachedProcess;
+import de.flapdoodle.embed.memcached.MemcachedStarter;
+import de.flapdoodle.embed.memcached.config.ArtifactStoreBuilder;
+import de.flapdoodle.embed.memcached.config.DownloadConfigBuilder;
+import de.flapdoodle.embed.memcached.config.MemcachedConfig;
+import de.flapdoodle.embed.memcached.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.memcached.distribution.Version;
+import de.flapdoodle.embed.process.config.store.IDownloadConfig;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,9 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,6 +58,9 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Parameterized.class)
 public class MemCacheTicketRegistryTests {
+
+    private static MemcachedExecutable MEMCACHED_EXECUTABLE;
+    private static MemcachedProcess MEMCACHED;
 
     private ApplicationContext context;
 
@@ -63,8 +82,27 @@ public class MemCacheTicketRegistryTests {
         return Arrays.asList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
     }
 
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        final MemcachedStarter runtime = MemcachedStarter.getInstance(
+                new CasRuntimeConfigBuilder().defaults(Command.MemcacheD).build());
+        MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, 11211));
+        MEMCACHED = MEMCACHED_EXECUTABLE.start();
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+       if (MEMCACHED != null && MEMCACHED.isProcessRunning()) {
+           MEMCACHED.stop();
+       }
+        if (MEMCACHED_EXECUTABLE != null) {
+            MEMCACHED_EXECUTABLE.stop();
+        }
+    }
+
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
+
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
@@ -105,6 +143,29 @@ public class MemCacheTicketRegistryTests {
             return true;
         } catch (final Exception e) {
             return false;
+        }
+    }
+
+    private static class CasRuntimeConfigBuilder extends RuntimeConfigBuilder {
+        @Override
+        public RuntimeConfigBuilder defaults(final Command command) {
+            final RuntimeConfigBuilder builder = super.defaults(command);
+
+            final IDownloadConfig downloadConfig = new CasDownloadConfigBuilder()
+                    .defaultsForCommand(command)
+                    .progressListener(new StandardConsoleProgressListener())
+                    .build();
+            this.artifactStore().overwriteDefault((new ArtifactStoreBuilder()).defaults(command).download(downloadConfig).build());
+            return builder;
+        }
+    }
+
+    private static class CasDownloadConfigBuilder extends DownloadConfigBuilder {
+        @Override
+        public DownloadConfigBuilder defaults() {
+            final DownloadConfigBuilder bldr = super.defaults();
+            bldr.downloadPath("http://heli0s.darktech.org/memcached/");
+            return bldr;
         }
     }
 }
