@@ -80,7 +80,7 @@ public class MockWebServer {
         try {
             this.workerThread.join();
         } catch (final InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -139,11 +139,12 @@ public class MockWebServer {
             while (this.running) {
                 try {
                     writeResponse(this.serverSocket.accept());
+                    Thread.sleep(500);
                 } catch (final SocketException se) {
                     logger.debug("Stopping on socket close.");
                     this.running = false;
-                } catch (final IOException ioe) {
-                    ioe.printStackTrace();
+                } catch (final Exception e) {
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
@@ -157,6 +158,7 @@ public class MockWebServer {
         }
 
         private void writeResponse(final Socket socket) throws IOException {
+            logger.debug("Socket response for resource {}", resource.getFilename());
             final OutputStream out = socket.getOutputStream();
             out.write(STATUS_LINE.getBytes());
             out.write(header("Content-Length", this.resource.contentLength()));
@@ -164,12 +166,16 @@ public class MockWebServer {
             out.write(SEPARATOR.getBytes());
 
             final byte[] buffer = new byte[BUFFER_SIZE];
-            final InputStream in = this.resource.getInputStream();
-            int count = 0;
-            while ((count = in.read(buffer)) > -1) {
-                out.write(buffer, 0, count);
+            try (final InputStream in = this.resource.getInputStream()) {
+                int count = 0;
+                while ((count = in.read(buffer)) > -1) {
+                    out.write(buffer, 0, count);
+                }
             }
-            in.close();
+            logger.debug("Wrote response for resource {} for {}",
+                    resource.getFilename(),
+                    resource.contentLength());
+
             socket.shutdownOutput();
         }
 
