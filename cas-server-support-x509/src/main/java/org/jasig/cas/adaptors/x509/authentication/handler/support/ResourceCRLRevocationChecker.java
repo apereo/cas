@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -66,7 +67,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             Collections.synchronizedMap(new HashMap<X500Principal, X509CRL>());
 
     /** Resource CRLs. **/
-    private final Resource[] resources;
+    private final Set<Resource> resources;
 
     /**
      * Creates a new instance using the specified resource for CRL data.
@@ -96,7 +97,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     public ResourceCRLRevocationChecker(final CRLFetcher fetcher, final Resource[] crls) {
         this.fetcher = fetcher;
-        this.resources = crls;
+        this.resources = ImmutableSet.copyOf(crls);
     }
 
 
@@ -130,7 +131,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             @Override
             public void run() {
                 try {
-                    final Resource[] resources = ResourceCRLRevocationChecker.this.getResources();
+                    final Set<Resource> resources = ResourceCRLRevocationChecker.this.getResources();
                     final Set<X509CRL> results = getFetcher().fetch(resources);
                     ResourceCRLRevocationChecker.this.addCrls(results);
                 } catch (final Exception e) {
@@ -162,7 +163,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         return this.fetcher;
     }
 
-    protected Resource[] getResources() {
+    protected Set<Resource> getResources() {
         return this.resources;
     }
 
