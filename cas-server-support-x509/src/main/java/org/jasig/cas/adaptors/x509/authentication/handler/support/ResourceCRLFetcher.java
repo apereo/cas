@@ -27,10 +27,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.security.cert.X509CRL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,11 +52,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     public ResourceCRLFetcher() {}
 
     @Override
-    public final Set<X509CRL> fetch(@NotNull final Object[] crls) throws Exception {
-        if (crls.length == 0) {
-            throw new IllegalArgumentException("Must provide at least one non-null CRL resource.");
-        }
-
+    public final Set<X509CRL> fetch(@NotNull @Size(min=1) final Set<? extends Object> crls) throws Exception {
         final Set<X509CRL> results = new HashSet<>();
         for (final Object r : crls) {
             logger.debug("Fetching CRL data from {}", r);
@@ -68,7 +66,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
 
     @Override
     public X509CRL fetch(@NotNull final Object crl) throws Exception {
-        final Set<X509CRL> results = fetch(new Object[] {crl});
+        final Set<X509CRL> results = fetch(Collections.singleton(crl));
         if (results.size() > 0) {
             return results.iterator().next();
         }
