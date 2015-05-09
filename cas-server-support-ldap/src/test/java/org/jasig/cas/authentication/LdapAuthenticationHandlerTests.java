@@ -19,6 +19,7 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
@@ -43,6 +44,11 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired
     private AuthenticationHandler handler;
+
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        initDirectoryServer();
+    }
 
     @Test
     public void verifyAuthenticateSuccess() throws Exception {

@@ -58,14 +58,22 @@ public class ResourceCRLFetcher implements CRLFetcher {
         final Set<X509CRL> results = new HashSet<>();
         for (final Object r : crls) {
             logger.debug("Fetching CRL data from {}", r);
-            results.add(fetchInternal(r));
+            final X509CRL crl = fetchInternal(r);
+            if (crl != null) {
+                results.add(crl);
+            }
         }
         return results;
     }
 
     @Override
     public X509CRL fetch(@NotNull final Object crl) throws Exception {
-        return fetch(new Object[] {crl}).iterator().next();
+        final Set<X509CRL> results = fetch(new Object[] {crl});
+        if (results.size() > 0) {
+            return results.iterator().next();
+        }
+        logger.warn("Unable to fetch {}", crl);
+        return null;
     }
 
     /**
@@ -94,10 +102,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
         }
 
         try (final InputStream ins = rs.getInputStream()) {
-            if (ins.available() > 0) {
-                return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
-            }
-            return null;
+            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
         }
     }
 }

@@ -20,6 +20,7 @@ package org.jasig.cas.persondir;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
@@ -44,6 +45,10 @@ public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
     @Autowired
     private LdapPersonAttributeDao attributeDao;
 
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        initDirectoryServer();
+    }
     @Test
     public void verifyGetPerson() throws Exception {
 
