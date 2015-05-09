@@ -21,7 +21,6 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
