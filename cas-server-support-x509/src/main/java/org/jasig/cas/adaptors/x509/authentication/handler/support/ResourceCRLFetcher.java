@@ -52,7 +52,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     public ResourceCRLFetcher() {}
 
     @Override
-    public final Set<X509CRL> fetch(@NotNull @Size(min=1) final Set<? extends Object> crls) throws Exception {
+    public final Set<X509CRL> fetch(final Set<? extends Object> crls) throws Exception {
         final Set<X509CRL> results = new HashSet<>();
         for (final Object r : crls) {
             logger.debug("Fetching CRL data from {}", r);
@@ -65,7 +65,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(@NotNull final Object crl) throws Exception {
+    public X509CRL fetch(final Object crl) throws Exception {
         final Set<X509CRL> results = fetch(Collections.singleton(crl));
         if (results.size() > 0) {
             return results.iterator().next();
