@@ -36,7 +36,7 @@ public interface CRLFetcher {
      * @return map of crl entries and their urls
      * @throws Exception the exception thrown if resources cant be fetched
      */
-    Set<X509CRL> fetch(@NotNull Object[] crls) throws Exception;
+    Set<X509CRL> fetch(@NotNull Set<? extends Object> crls) throws Exception;
 
     /**
      * Fetches a single of crl from the specified resource
