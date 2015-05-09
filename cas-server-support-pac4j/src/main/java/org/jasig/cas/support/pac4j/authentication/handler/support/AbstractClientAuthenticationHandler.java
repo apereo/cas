@@ -70,7 +70,7 @@ public abstract class AbstractClientAuthenticationHandler extends AbstractPreAnd
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public final boolean supports(final Credential credential) {
         return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
     }
 
