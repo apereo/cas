@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/opensaml-config.xml"})
+@ContextConfiguration({"/META-INF/spring/opensaml-config.xml"})
 public abstract class AbstractOpenSamlTests {
     @Autowired
     protected ApplicationContext applicationContext;

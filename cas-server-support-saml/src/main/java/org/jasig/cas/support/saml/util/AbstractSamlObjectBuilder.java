@@ -94,6 +94,8 @@ public abstract class AbstractSamlObjectBuilder {
 
     private static final int RANDOM_ID_SIZE = 16;
 
+    private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -122,7 +124,8 @@ public abstract class AbstractSamlObjectBuilder {
      */
     public final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
         }
@@ -275,7 +278,7 @@ public abstract class AbstractSamlObjectBuilder {
                                                     final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider",
-                    "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+                    SIGNATURE_FACTORY_PROVIDER_CLASS);
 
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
                     .getInstance("DOM", (Provider) Class.forName(providerName)

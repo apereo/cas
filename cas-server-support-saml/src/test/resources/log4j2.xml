@@ -40,6 +40,9 @@
         <Logger name="org.jasig" level="info">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.opensaml" level="info">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Logger name="PROTOCOL_MESSAGE" level="info">
             <AppenderRef ref="console"/>
         </Logger>
