@@ -61,6 +61,8 @@ public final class OpenSamlConfigBean {
      */
     @PostConstruct
     public void init() {
+        LOGGER.debug("Initializing OpenSaml configuration...");
+
         try {
             InitializationService.initialize();
         } catch (final InitializationException e) {
