@@ -17,9 +17,11 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml.util;
+package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
+import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.CompressionUtils;
 import org.junit.Test;
 
@@ -30,6 +32,7 @@ import java.util.zip.DeflaterOutputStream;
 import static org.junit.Assert.*;
 
 /**
+ * Utility class to ensure authentication requests are properly encoded and decoded.
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -38,7 +41,8 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
             + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
             + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
-            + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
+            + "ProviderName=\"https://localhost:8443/myRutgers\" "
+            + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
 
     @Test
     public void ensureDeflation() throws Exception {
