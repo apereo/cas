@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
+ * Test cases for {@link SamlCompliantUniqueTicketIdGenerator}.
  * @author Scott Battaglia
  * @since 3.4.3
  */
