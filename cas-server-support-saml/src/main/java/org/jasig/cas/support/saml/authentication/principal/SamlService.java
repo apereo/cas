@@ -20,6 +20,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -45,12 +46,6 @@ public final class SamlService extends AbstractWebApplicationService {
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -6867572626767140223L;
-
-    /** Constant representing service. */
-    private static final String CONST_PARAM_SERVICE = "TARGET";
-
-    /** Constant representing artifact. */
-    private static final String CONST_PARAM_TICKET = "SAMLart";
 
     private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
 
@@ -99,7 +94,7 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     public static SamlService createServiceFrom(
             final HttpServletRequest request) {
-        final String service = request.getParameter(CONST_PARAM_SERVICE);
+        final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         final String artifactId;
         final String requestBody = getRequestBody(request);
         final String requestId;
@@ -146,8 +141,8 @@ public final class SamlService extends AbstractWebApplicationService {
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<>();
 
-        parameters.put(CONST_PARAM_TICKET, ticketId);
-        parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());
+        parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
+        parameters.put(SamlProtocolConstants.CONST_PARAM_TARGET, getOriginalUrl());
 
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
@@ -183,6 +178,11 @@ public final class SamlService extends AbstractWebApplicationService {
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
         try (final BufferedReader reader = request.getReader()) {
+
+            if (reader == null) {
+                LOGGER.debug("Request body could not be read because it's empty.");
+                return null;
+            }
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
