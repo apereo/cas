@@ -115,7 +115,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @Override
     protected boolean shouldDoSpnego() {
         Connection connection = null;
-        final String remoteHostName = this.getRemoteHostName ();
+        final String remoteHostName = getRemoteHostName();
         try {
             connection = createConnection();
             logger.debug("Connected to {}. Searching {}", this.connectionConfig.getLdapUrl(), this.searchRequest);
@@ -146,9 +146,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @return true if attribute value exists and has a value
      */
     protected boolean verifySpnegoAttribute(final Response<SearchResult> searchResult) {
-    	if (searchResult.getResult() == null || searchResult.getResult().getEntries().size() < 1) {
-    		return false;
-    	}
+        if (searchResult.getResult() == null || searchResult.getResult().getEntries().size() < 1) {
+            return false;
+        }
         final LdapEntry entry = searchResult.getResult().getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
