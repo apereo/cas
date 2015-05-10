@@ -32,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 /**
+ * Load the opensaml config context.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public final class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
@@ -40,12 +42,23 @@ public final class OpenSamlConfigBean {
     @Autowired
     private ParserPool parserPool;
 
+    /**
+     * Instantiates the config bean.
+     */
     public OpenSamlConfigBean() {}
 
+    /**
+     * Gets the configured parser pool.
+     *
+     * @return the parser pool
+     */
     public ParserPool getParserPool() {
         return parserPool;
     }
 
+    /**
+     * Initialize opensaml.
+     */
     @PostConstruct
     public void init() {
         try {

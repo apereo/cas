@@ -27,10 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
 
