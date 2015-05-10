@@ -49,11 +49,6 @@ public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
      */
     public CasHTTPSOAP11Encoder() {
         super();
-        try {
-            super.initialize();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
     }
 
     @Override

@@ -63,11 +63,6 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
     /**
-     * Encoder to wrap the saml response in a SOAP envelope.
-     */
-    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-
-    /**
      * Create a new SAML response object.
      * @param id the id
      * @param issueInstant the issue instant
@@ -255,10 +250,14 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void encodeSamlResponse(final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
+
+        final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
         final MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(samlMessage);
-        this.encoder.setHttpServletResponse(httpResponse);
-        this.encoder.setMessageContext(context);
-        this.encoder.encode();
+        encoder.setHttpServletResponse(httpResponse);
+        encoder.setMessageContext(context);
+        encoder.initialize();
+        encoder.prepareContext();
+        encoder.encode();
     }
 }
