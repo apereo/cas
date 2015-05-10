@@ -152,7 +152,9 @@ public final class SpnegoCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this.getInitToken()) ^ Arrays.hashCode(this.getNextToken()) ^ this.principal.hashCode();
+    	int hash = 3;
+    	if (this.principal != null) hash = this.principal.hashCode();
+        return Arrays.hashCode(this.getInitToken()) ^ Arrays.hashCode(this.getNextToken()) ^ hash;
     }
 
     /**
