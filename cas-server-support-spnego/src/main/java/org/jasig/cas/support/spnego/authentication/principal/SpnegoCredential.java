@@ -130,7 +130,7 @@ public final class SpnegoCredential implements Credential, Serializable {
             return false;
         }
         for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
-            if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
+            if (SpnegoConstants.NTLMSSP_SIGNATURE[i].byteValue() != token[i]) {
                 return false;
             }
         }
