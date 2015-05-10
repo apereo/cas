@@ -44,6 +44,9 @@ public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasHTTPSOAP11Encoder.class);
 
+    /**
+     * Instantiates a new encoder.
+     */
     public CasHTTPSOAP11Encoder() {
         super();
         try {
