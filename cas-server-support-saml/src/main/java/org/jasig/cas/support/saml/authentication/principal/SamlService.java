@@ -142,10 +142,7 @@ public final class SamlService extends AbstractWebApplicationService {
     @Override
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<>();
-
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
-        parameters.put(SamlProtocolConstants.CONST_PARAM_TARGET, getOriginalUrl());
-
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
@@ -192,7 +189,7 @@ public final class SamlService extends AbstractWebApplicationService {
             }
             return builder.toString();
         } catch (final Exception e) {
-            LOGGER.error("Could not obtain the saml request body from the http request", e);
+            LOGGER.trace("Could not obtain the saml request body from the http request", e);
             return null;
         }
     }
