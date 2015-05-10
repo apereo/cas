@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collections;
 
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -34,7 +35,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @since 3.1
  *
  */
-public class Saml10FailureResponseViewTests {
+public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private final Saml10FailureResponseView view = new Saml10FailureResponseView();
 

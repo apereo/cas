@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
+ * Test cases for {@link SamlArgumentExtractor}.
  * @author Scott Battaglia
  * @since 3.1
  *
