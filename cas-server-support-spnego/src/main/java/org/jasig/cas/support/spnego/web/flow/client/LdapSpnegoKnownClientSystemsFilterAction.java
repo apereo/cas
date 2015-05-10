@@ -39,7 +39,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
- * in order to grant invocation of spnego.
+ * in order to target invocation of spnego.
  * @author Misagh Moayyed
  * @author Sean Baker
  * @since 4.1
@@ -49,7 +49,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     /** Attribute name in LDAP to indicate spnego invocation. **/
     public static final String DEFAULT_SPNEGO_ATTRIBUTE = "distinguishedName";
 
-    /** The Certificate revocation list attribute name.*/
+    /** The must-have attribute name.*/
     protected final String spnegoAttributeName;
 
     /** The connection configuration to ldap.*/
@@ -115,10 +115,12 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @Override
     protected boolean shouldDoSpnego() {
         Connection connection = null;
+        final String remoteHostName = this.getRemoteHostName ();
         try {
             connection = createConnection();
             logger.debug("Connected to {}. Searching {}", this.connectionConfig.getLdapUrl(), this.searchRequest);
             final SearchOperation searchOperation = new SearchOperation(connection);
+            this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
             final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return verifySpnegoAttribute(searchResult);
@@ -144,6 +146,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @return true if attribute value exists and has a value
      */
     protected boolean verifySpnegoAttribute(final Response<SearchResult> searchResult) {
+    	if (searchResult.getResult() == null || searchResult.getResult().getEntries().size() < 1) {
+    		return false;
+    	}
         final LdapEntry entry = searchResult.getResult().getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
