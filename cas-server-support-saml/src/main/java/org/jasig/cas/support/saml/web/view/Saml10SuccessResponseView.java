@@ -24,12 +24,12 @@ import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.AuthenticationStatement;
-import org.opensaml.saml1.core.Conditions;
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.StatusCode;
-import org.opensaml.saml1.core.Subject;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.AuthenticationStatement;
+import org.opensaml.saml.saml1.core.Conditions;
+import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.StatusCode;
+import org.opensaml.saml.saml1.core.Subject;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
