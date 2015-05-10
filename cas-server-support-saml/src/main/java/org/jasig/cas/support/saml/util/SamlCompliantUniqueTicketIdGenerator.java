@@ -23,8 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.opensaml.saml1.binding.artifact.SAML1ArtifactType0001;
-import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
+import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
+import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
