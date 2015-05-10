@@ -19,10 +19,10 @@
 
 package org.jasig.cas.support.saml.util;
 
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.core.Response;
-import org.opensaml.saml2.core.Status;
-import org.opensaml.saml2.core.StatusCode;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
+import org.opensaml.saml.saml2.core.StatusCode;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
