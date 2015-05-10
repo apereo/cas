@@ -19,6 +19,7 @@
 package org.jasig.cas.support.spnego.authentication.principal;
 
 import com.google.common.io.ByteSource;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
@@ -152,11 +153,13 @@ public final class SpnegoCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = super.hashCode();
         if (this.principal != null) {
             hash = this.principal.hashCode();
         }
-        return Arrays.hashCode(this.getInitToken()) ^ Arrays.hashCode(this.getNextToken()) ^ hash;
+        return new HashCodeBuilder().append(this.getInitToken())
+            .append(this.getNextToken())
+            .append(hash).toHashCode();
     }
 
     /**
