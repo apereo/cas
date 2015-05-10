@@ -100,6 +100,8 @@ public final class SamlService extends AbstractWebApplicationService {
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
+            LOGGER.debug("Request does not specify a {} or request body is empty",
+                    SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
 
@@ -155,6 +157,7 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     protected static String extractRequestId(final String requestBody) {
         if (!requestBody.contains("RequestID")) {
+            LOGGER.debug("Request body does not contain a request id");
             return null;
         }
 
