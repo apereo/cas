@@ -53,7 +53,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
-    private Pattern ipsToCheckPattern;
+    protected Pattern ipsToCheckPattern;
 
     /** Alternative remote host attribute. **/
     private String alternativeRemoteHostAttribute;
@@ -114,15 +114,15 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected final Event doExecute(final RequestContext context) {
         this.remoteIp = getRemoteIp(context);
         logger.debug("Current user IP {}", this.remoteIp);
-        return shouldCheckIP() && shouldDoSpnego() ? yes() : no();
+        return shouldDoSpnego() ? yes() : no();
     }
 
     /**
-     * Default implementation -- always perform SPNEGO if IP check passed.
+     * Default implementation -- simply check the IP filter.
      * @return true
      */
     protected boolean shouldDoSpnego() {
-        return true;
+        return shouldCheckIp();
     }
     
     /**
@@ -131,7 +131,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * for the local / first implementation regex made more sense.
      * @return whether the remote ip received should be queried
      */
-    protected boolean shouldCheckIP() {
+    protected boolean shouldCheckIp() {
         if (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp)) {
             final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
             if (matcher.find()) {
