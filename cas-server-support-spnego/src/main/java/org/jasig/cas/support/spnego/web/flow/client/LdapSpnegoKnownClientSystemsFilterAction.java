@@ -30,6 +30,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.Operation;
 
 import javax.validation.constraints.NotNull;
 
@@ -103,11 +104,11 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         final String remoteHostName = getRemoteHostName();
         try {
             connection = createConnection();
-            final SearchOperation searchOperation = new SearchOperation(connection);
+            final Operation searchOperation = new SearchOperation(connection);
             this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
             final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
-                return verifySpnegoAttribute(searchResult);
+                return processSpnegoAttribute(searchResult);
             }
             throw new RuntimeException("Failed to establish a connection ldap. "
                     + searchResult.getMessage());
@@ -124,17 +125,28 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     /**
      * Verify spnego attribute value.
-     * This impl simply makes sure the attribute exists and has a value.
      *
      * @param searchResult the search result
      * @return true if attribute value exists and has a value
      */
-    protected boolean verifySpnegoAttribute(final Response<SearchResult> searchResult) {
-        if (searchResult.getResult() == null || searchResult.getResult().getEntries().size() < 1) {
+    protected boolean processSpnegoAttribute(final Response<SearchResult> searchResult) {
+        final SearchResult result = searchResult.getResult();
+
+        if (result == null || result.getEntries().isEmpty()) {
             return false;
         }
-        final LdapEntry entry = searchResult.getResult().getEntry();
+        final LdapEntry entry = result.getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
+        return verifySpnegyAttributeValue(attribute);
+    }
+
+    /**
+     * Verify spnegy attribute value.
+     * This impl simply makes sure the attribute exists and has a value.
+     * @param attribute the ldap attribute
+     * @return true if available. false otherwise.
+     */
+    protected boolean verifySpnegyAttributeValue(final LdapAttribute attribute) {
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
     }
 }

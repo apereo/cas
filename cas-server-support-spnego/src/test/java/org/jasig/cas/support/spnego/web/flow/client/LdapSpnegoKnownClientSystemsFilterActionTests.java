@@ -35,7 +35,6 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() {
-        final LdapSpnegoKnownClientSystemsFilterAction action =
-                new LdapSpnegoKnownClientSystemsFilterAction()
+
     }
 }
