@@ -64,8 +64,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     /** Timeout for DNS Requests. **/
     private long timeout = DEFAULT_TIMEOUT;
 
-
-
     /**
      * Instantiates a new Base.
      */
@@ -193,6 +191,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
                 .append("ipsToCheckPattern", this.ipsToCheckPattern)
                 .append("alternativeRemoteHostAttribute", this.alternativeRemoteHostAttribute)
                 .append("remoteIp", this.remoteIp)
+                .append("timeout", this.timeout)
                 .toString();
     }
 
