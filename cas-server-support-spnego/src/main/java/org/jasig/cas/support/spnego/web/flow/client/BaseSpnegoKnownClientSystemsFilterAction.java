@@ -69,7 +69,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     public BaseSpnegoKnownClientSystemsFilterAction() {}
 
-
     /**
      * Instantiates a new Base.
      *
@@ -115,16 +114,24 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected final Event doExecute(final RequestContext context) {
         this.remoteIp = getRemoteIp(context);
         logger.debug("Current user IP {}", this.remoteIp);
-        return shouldDoSpnego() ? yes() : no();
+        return shouldCheckIP() && shouldDoSpnego() ? yes() : no();
     }
 
+    /**
+     * Default implementation -- always perform SPNEGO if IP check passed.
+     * @return true
+     */
+    protected boolean shouldDoSpnego() {
+        return true;
+    }
+    
     /**
      * Simple pattern match to determine whether an IP should be checked.
      * Could stand to be extended to support "real" IP addresses and patterns, but
      * for the local / first implementation regex made more sense.
-     * @return whether the remote ip received should be ignored
+     * @return whether the remote ip received should be queried
      */
-    protected boolean shouldDoSpnego() {
+    protected boolean shouldCheckIP() {
         if (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp)) {
             final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
             if (matcher.find()) {
@@ -228,7 +235,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : getRemoteIp();
     }
 
-
     /**
      *  Utility class to perform DNS work in a threaded, timeout-able way
      *  Adapted from: http://thushw.blogspot.com/2009/11/resolving-domain-names-quickly-with.html.
@@ -289,7 +295,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         public synchronized String get() {
             return this.hostName;
         }
-
 
         @Override
         public String toString() {

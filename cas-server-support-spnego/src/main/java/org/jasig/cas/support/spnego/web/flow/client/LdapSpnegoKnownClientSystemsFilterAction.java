@@ -34,7 +34,6 @@ import org.ldaptive.Operation;
 
 import javax.validation.constraints.NotNull;
 
-
 /**
  * Peek into an LDAP server and check for the existence of an attribute
  * in order to target invocation of spnego.
@@ -43,7 +42,6 @@ import javax.validation.constraints.NotNull;
  * @since 4.1
  */
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-
     /** Attribute name in LDAP to indicate spnego invocation. **/
     public static final String DEFAULT_SPNEGO_ATTRIBUTE = "distinguishedName";
 
@@ -82,7 +80,6 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         this.spnegoAttributeName = spnegoAttributeName;
         this.searchRequest = searchRequest;
     }
-
 
     /**
      * Create and open a connection to ldap
