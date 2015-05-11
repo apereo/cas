@@ -53,7 +53,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     /** The search request. */
     protected final SearchRequest searchRequest;
-
+    
     /**
      * Instantiates new action. Initializes the default attribute
      * to be {@link #DEFAULT_SPNEGO_ATTRIBUTE}.
@@ -98,6 +98,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @Override
     protected boolean shouldDoSpnego() {
         Connection connection = null;
+        if(this.ipsToCheckPattern != null && !shouldCheckIp()) {
+            return false;
+        }
         final String remoteHostName = getRemoteHostName();
         try {
             connection = createConnection();
