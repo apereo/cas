@@ -628,7 +628,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.16.4</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -1483,6 +1483,7 @@
     <jose.version>0.4.1</jose.version>
     <woodstox.version>4.4.1</woodstox.version>
     <pac4j.version>1.7.0</pac4j.version>
+    <lombok.version>1.16.4</lombok.version>
 
     <!-- Plugin Versions -->
     <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
