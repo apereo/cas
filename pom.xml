@@ -398,15 +398,20 @@
         <version>${maven-aspectj-plugin.version}</version>
         <executions>
           <execution>
+            <phase>process-classes</phase>
             <goals>
               <goal>compile</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <source>${project.build.sourceVersion}</source>
-          <target>${project.build.targetVersion}</target>
+          <sources/> 
           <complianceLevel>${project.build.sourceVersion}</complianceLevel>
+          <forceAjcCompile>true</forceAjcCompile>           
+          <weaveDirectories>
+            <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+          </weaveDirectories>
+          <skip>false</skip>
         </configuration>
         <dependencies>
           <dependency>
