@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -54,10 +53,9 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 @Controller
 public final class RegisteredServiceSimpleFormController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
 
     private static final String COMMAND_NAME = "registeredService";
 
@@ -140,19 +138,19 @@ public final class RegisteredServiceSimpleFormController {
        
         RegisteredService svcToUse = service;
         if (service.getServiceId().startsWith("^") && service instanceof RegisteredServiceImpl) {
-            LOGGER.debug("Detected regular expression starting with ^");
+            logger.debug("Detected regular expression starting with ^");
             final RegexRegisteredService regexService = new RegexRegisteredService();
             regexService.copyFrom(service);
             svcToUse = regexService;
         } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
-            LOGGER.debug("Detected ant expression {}", service.getServiceId());
+            logger.debug("Detected ant expression {}", service.getServiceId());
             final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
             regexService.copyFrom(service);
             svcToUse = regexService;
         } 
 
         this.servicesManager.save(svcToUse);
-        LOGGER.info("Saved changes to service {}", svcToUse.getId());
+        logger.info("Saved changes to service {}", svcToUse.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
                 "manage.html#" + svcToUse.getId(), true));
@@ -165,7 +163,7 @@ public final class RegisteredServiceSimpleFormController {
     }
 
     /**
-     * Render the page noted by {@link #VIEW_NAME}.
+     * Render the page.
      * The view is first updated by {@link #updateModelMap(ModelMap, HttpServletRequest)}.
      * @param request the request
      * @param model the model
@@ -219,16 +217,16 @@ public final class RegisteredServiceSimpleFormController {
 
         if (!StringUtils.hasText(id)) {
             final RegisteredService service = new RegisteredServiceImpl();
-            LOGGER.debug("Created new service of type {}", service.getClass().getName());
+            logger.debug("Created new service of type {}", service.getClass().getName());
             return service;
         }
 
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
 
         if (service != null) {
-            LOGGER.debug("Loaded service {}", service.getServiceId());
+            logger.debug("Loaded service {}", service.getServiceId());
         } else {
-            LOGGER.debug("Invalid service id specified.");
+            logger.debug("Invalid service id specified.");
         }
 
         return service;
