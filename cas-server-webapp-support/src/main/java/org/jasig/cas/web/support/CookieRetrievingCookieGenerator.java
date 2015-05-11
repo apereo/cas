@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -40,6 +41,7 @@ import java.lang.reflect.Method;
  * @since 3.1
  *
  */
+@Slf4j
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
@@ -69,7 +71,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         if(setHttpOnlyMethod != null) {
             super.setCookieHttpOnly(true);
         } else {
-            logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
+            LOGGER.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
         }
         this.casCookieValueManager = casCookieValueManager;
     }
@@ -108,7 +110,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
                     request, getCookieName());
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return null;
     }

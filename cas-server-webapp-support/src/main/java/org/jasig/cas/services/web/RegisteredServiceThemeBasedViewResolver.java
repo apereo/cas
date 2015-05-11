@@ -18,12 +18,11 @@
  */
 package org.jasig.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
@@ -56,8 +55,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
     private static final String DEFAULT_PATH_PREFIX = "/WEB-INF/view/jsp";
 
     /** The ServiceRegistry to look up the service. */

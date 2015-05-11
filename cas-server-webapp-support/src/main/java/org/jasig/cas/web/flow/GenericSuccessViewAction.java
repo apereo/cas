@@ -18,23 +18,20 @@
  */
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that should execute prior to rendering the generic-success login view.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public final class GenericSuccessViewAction {
-    /** Log instance for logging events, info, warnings, errors, etc. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final CentralAuthenticationService centralAuthenticationService;
 
     /**
@@ -59,9 +56,9 @@ public final class GenericSuccessViewAction {
                     this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e){
-            logger.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
         }
-        logger.debug("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
+        LOGGER.debug("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
                 NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }

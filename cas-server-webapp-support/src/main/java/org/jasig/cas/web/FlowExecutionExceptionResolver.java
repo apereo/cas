@@ -18,9 +18,8 @@
  */
 package org.jasig.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -46,10 +45,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
 public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
-
-    /** Instance of a logger. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private String modelKey = "exception.message";
@@ -70,7 +67,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
          */
         if (!(exception instanceof FlowExecutionRepositoryException)
               || exception instanceof BadlyFormattedFlowExecutionKeyException) {
-            logger.debug("Ignoring the received exception due to a type mismatch", exception);
+            LOGGER.debug("Ignoring the received exception due to a type mismatch", exception);
             return null;
         }
 
@@ -78,7 +75,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
                 + (request.getQueryString() != null ? "?"
                 + request.getQueryString() : "");
 
-        logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
+        LOGGER.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         final Map<String, Object> model = new HashMap<>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 

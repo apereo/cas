@@ -32,8 +32,6 @@ import java.util.Map;
  */
 public final class Cas10ResponseView extends AbstractCasView {
 
-
-
     @Override
     protected void renderMergedOutputModel(final Map model,
             final HttpServletRequest request, final HttpServletResponse response)

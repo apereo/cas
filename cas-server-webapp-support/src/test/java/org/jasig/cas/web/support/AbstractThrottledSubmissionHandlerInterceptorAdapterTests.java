@@ -20,11 +20,10 @@ package org.jasig.cas.web.support;
 
 import com.github.inspektr.common.web.ClientInfo;
 import com.github.inspektr.common.web.ClientInfoHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +34,7 @@ import static org.junit.Assert.assertEquals;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     protected static final int FAILURE_RANGE = 5;
@@ -44,8 +44,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     protected static final String IP_ADDRESS = "1.2.3.4";
 
     protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Before
     public void setUp() throws Exception {
@@ -86,7 +84,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4").getStatus();
         for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for {} ms", period);
+            LOGGER.debug("Waiting for {} ms", period);
             Thread.sleep(period);
             assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         }

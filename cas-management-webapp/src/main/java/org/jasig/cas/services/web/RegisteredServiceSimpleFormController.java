@@ -138,19 +138,19 @@ public final class RegisteredServiceSimpleFormController {
        
         RegisteredService svcToUse = service;
         if (service.getServiceId().startsWith("^") && service instanceof RegisteredServiceImpl) {
-            logger.debug("Detected regular expression starting with ^");
+            LOGGER.debug("Detected regular expression starting with ^");
             final RegexRegisteredService regexService = new RegexRegisteredService();
             regexService.copyFrom(service);
             svcToUse = regexService;
         } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
-            logger.debug("Detected ant expression {}", service.getServiceId());
+            LOGGER.debug("Detected ant expression {}", service.getServiceId());
             final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
             regexService.copyFrom(service);
             svcToUse = regexService;
         } 
 
         this.servicesManager.save(svcToUse);
-        logger.info("Saved changes to service {}", svcToUse.getId());
+        LOGGER.info("Saved changes to service {}", svcToUse.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
                 "manage.html#" + svcToUse.getId(), true));
@@ -217,16 +217,16 @@ public final class RegisteredServiceSimpleFormController {
 
         if (!StringUtils.hasText(id)) {
             final RegisteredService service = new RegisteredServiceImpl();
-            logger.debug("Created new service of type {}", service.getClass().getName());
+            LOGGER.debug("Created new service of type {}", service.getClass().getName());
             return service;
         }
 
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
 
         if (service != null) {
-            logger.debug("Loaded service {}", service.getServiceId());
+            LOGGER.debug("Loaded service {}", service.getServiceId());
         } else {
-            logger.debug("Invalid service id specified.");
+            LOGGER.debug("Invalid service id specified.");
         }
 
         return service;

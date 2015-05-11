@@ -32,11 +32,10 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
 import org.jasig.cas.util.JsonSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanIsAbstractException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,19 +55,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 /**
  * Controller that exposes the CAS internal state and beans
  * as JSON. The report is available at <code>/status/config</code>.
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 @Controller("internalConfigController")
 @RequestMapping("/status/config")
 public final class InternalConfigStateController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(InternalConfigStateController.class);
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
@@ -164,9 +160,8 @@ public final class InternalConfigStateController {
         }
 
         @JsonFilter("beanObjectFilter")
+        @Slf4j
         private static class CasSimpleBeanObjectFilter extends SimpleBeanPropertyFilter {
-            private static final Logger LOGGER = getLogger(CasSimpleBeanObjectFilter.class);
-
             private static final String[] EXCLUDE_FIELDS = new String[] {"logger"};
 
             @Override

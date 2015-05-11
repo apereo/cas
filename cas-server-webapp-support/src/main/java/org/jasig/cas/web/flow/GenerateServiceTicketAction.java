@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -40,6 +41,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0.4
  */
+@Slf4j
 public final class GenerateServiceTicketAction extends AbstractAction {
 
     /** Instance of CentralAuthenticationService. */
@@ -59,7 +61,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
         } catch (final AuthenticationException e) {
-            logger.error("Could not verify credentials to grant service ticket", e);
+            LOGGER.error("Could not verify credentials to grant service ticket", e);
         } catch (final TicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);

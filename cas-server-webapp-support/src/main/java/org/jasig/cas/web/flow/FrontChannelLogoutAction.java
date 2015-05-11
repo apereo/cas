@@ -25,12 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -41,6 +40,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
     public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
@@ -48,7 +48,6 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the parameter name that is passed to the flow which contains the logout request. */
     public static final String DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL = "logoutUrl";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FrontChannelLogoutAction.class);
 
     private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
 

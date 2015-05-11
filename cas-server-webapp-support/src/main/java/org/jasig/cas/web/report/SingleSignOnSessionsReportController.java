@@ -21,12 +21,11 @@ package org.jasig.cas.web.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -48,6 +47,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.1
  */
+@Slf4j
 @Controller("singleSignOnSessionsReportController")
 @RequestMapping("/statistics/ssosessions")
 public final class SingleSignOnSessionsReportController {
@@ -83,8 +83,6 @@ public final class SingleSignOnSessionsReportController {
     private static final String ROOT_REPORT_ACTIVE_SESSIONS_KEY = "activeSsoSessions";
 
     private static final String ROOT_REPORT_NA_KEY = "notAvailable";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
 

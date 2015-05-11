@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -52,6 +53,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -117,13 +119,13 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             factory.setSingleton(false);
             final PrivateKey privateKey = factory.getObject();
 
-            logger.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
+            LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
             final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
-            logger.debug("Decoding value [{}]", cred);
+            LOGGER.debug("Decoding value [{}]", cred);
             final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
 
-            logger.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
+            LOGGER.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             final byte[] cipherData = cipher.doFinal(cred64);
