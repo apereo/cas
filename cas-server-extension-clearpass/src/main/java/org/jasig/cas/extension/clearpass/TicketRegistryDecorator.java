@@ -18,23 +18,24 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Decorator that captures tickets and attempts to map them.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0.7
  */
+@Deprecated
 public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     /** The real instance of the ticket registry that is to be decorated. */

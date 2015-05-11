@@ -96,14 +96,16 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     private String removeTicketId(final String msg) {
         String modifiedMessage = msg;
 
-        final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
-        while (matcher.find()) {
-            final String match = matcher.group();
-            final String newId = matcher.group(1) + "-"
-                    + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
-                    + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
+        if (StringUtils.isNotBlank(msg)) {
+            final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
+            while (matcher.find()) {
+                final String match = matcher.group();
+                final String newId = matcher.group(1) + "-"
+                        + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
+                        + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
 
-            modifiedMessage = modifiedMessage.replaceAll(match, newId);
+                modifiedMessage = modifiedMessage.replaceAll(match, newId);
+            }
         }
         return modifiedMessage;
     }
@@ -111,15 +113,18 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     /**
      * Gets exception to log.
      *
-     * @param msg the msg
-     * @param t the t
-     * @return the exception to log
+     * @param msg the error msg
+     * @param t the exception to log. May be null if
+     *          the underlying call did not specify an inner exception.
+     * @return the exception message to log
      */
     private String getExceptionToLog(final String msg, final Throwable t) {
         final StringWriter sW = new StringWriter();
         final PrintWriter w = new PrintWriter(sW);
         w.println(manipulateLogMessage(msg));
-        t.printStackTrace(w);
+        if (t != null) {
+            t.printStackTrace(w);
+        }
 
         final String log = sW.getBuffer().toString();
         return manipulateLogMessage(log);

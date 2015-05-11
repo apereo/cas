@@ -23,6 +23,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -34,6 +36,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,9 +59,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     private static final long serialVersionUID = 7645279151115635245L;
 
-    /**
-     * The unique identifier for this service.
-     */
+    /** The logger instance. */
+    @Transient
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
@@ -113,31 +119,44 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "logo")
     private URL logo;
 
+    @Column(name = "logout_url")
+    private URL logoutUrl;
+
     @Lob
     @Column(name = "access_strategy")
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
+    @Lob
+    @Column(name = "public_key")
+    private RegisteredServicePublicKey publicKey;
+
+    @Override
     public long getId() {
         return this.id;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
 
+    @Override
     public String getServiceId() {
         return this.serviceId;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public String getTheme() {
         return this.theme;
     }
 
+    @Override
     public RegisteredServiceProxyPolicy getProxyPolicy() {
         return this.proxyPolicy;
     }
@@ -145,6 +164,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public RegisteredServiceAccessStrategy getAccessStrategy() {
         return this.accessStrategy;
+    }
+
+    @Override
+    public URL getLogoutUrl() {
+        return this.logoutUrl;
     }
 
     @Override
@@ -175,6 +199,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
                 .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
+                .append(this.publicKey, that.publicKey)
                 .isEquals();
     }
 
@@ -192,6 +217,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.attributeReleasePolicy)
                 .append(this.accessStrategy)
                 .append(this.logo)
+                .append(this.publicKey)
                 .toHashCode();
     }
 
@@ -222,20 +248,27 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.theme = theme;
     }
 
+    @Override
     public void setEvaluationOrder(final int evaluationOrder) {
         this.evaluationOrder = evaluationOrder;
     }
 
+    @Override
     public int getEvaluationOrder() {
         return this.evaluationOrder;
     }
 
+    @Override
     public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
         return this.usernameAttributeProvider;
     }
 
     public void setAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy) {
         this.accessStrategy = accessStrategy;
+    }
+
+    public void setLogoutUrl(final URL logoutUrl) {
+        this.logoutUrl = logoutUrl;
     }
 
     /**
@@ -248,11 +281,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.usernameAttributeProvider = usernameProvider;
     }
 
-    /**
-     * Returns the logout type of the service.
-     *
-     * @return the logout type of the service.
-     */
+    @Override
     public final LogoutType getLogoutType() {
         return logoutType;
     }
@@ -291,6 +320,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
+        this.setPublicKey(source.getPublicKey());
     }
 
     /**
@@ -322,6 +352,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutType", this.logoutType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("accessStrategy", this.accessStrategy);
+        toStringBuilder.append("publicKey", this.publicKey);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
 
@@ -379,5 +410,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setLogo(final URL logo) {
         this.logo = logo;
+    }
+
+    @Override
+    public RegisteredServicePublicKey getPublicKey() {
+        return this.publicKey;
+    }
+
+    public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 }

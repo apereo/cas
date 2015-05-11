@@ -18,8 +18,11 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -77,17 +80,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     protected X509CRL getCRL(final X509Certificate cert) {
         final URL[] urls = getDistributionPoints(cert);
-        logger.debug(String.format(
-                "Distribution points for %s: %s.",
-                CertUtils.toString(cert), Arrays.asList(urls)));
+        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
 
-        Element item;
-        for (URL url : urls) {
-            item = this.crlCache.get(url);
-            if (item != null) {
-                logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
-                return (X509CRL) item.getObjectValue();
+        try {
+            for (final URL url : urls) {
+                final Element item = this.crlCache.get(url);
+                if (item != null) {
+                    logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
+                    final byte[] encodedCrl = (byte[]) item.getObjectValue();
+                    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                    return (X509CRL) cf.generateCRL(new ByteArrayInputStream(encodedCrl));
+                }
             }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
 
         // Try all distribution points and stop at first fetch that succeeds
@@ -95,9 +101,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         for (int i = 0; i < urls.length && crl == null; i++) {
             logger.info("Attempting to fetch CRL at {}", urls[i]);
             try {
-                crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
+                final String path = URLDecoder.decode(urls[i].toExternalForm(), "UTF-8");
+                crl = CertUtils.fetchCRL(new UrlResource(path));
                 logger.info("Success. Caching fetched CRL.");
-                this.crlCache.put(new Element(urls[i], crl));
+                this.crlCache.put(new Element(urls[i], crl.getEncoded()));
             } catch (final Exception e) {
                 logger.error("Error fetching CRL at {}", urls[i], e);
             }
@@ -117,17 +124,17 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
-            logger.error("Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
+            logger.error("Error reading CRLDistributionPoints extension field on {}", CertUtils.toString(cert), e);
             return new URL[0];
         }
 
         final List<URL> urls = new ArrayList<>();
-        for (DistributionPoint point : points.getItems()) {
+        for (final DistributionPoint point : points.getItems()) {
             final Object location = point.getDistributionPoint();
             if (location instanceof String) {
                 addURL(urls, (String) location);
             } else if (location instanceof GeneralNameList) {
-                for (GeneralName gn : ((GeneralNameList) location).getItems()) {
+                for (final GeneralName gn : ((GeneralNameList) location).getItems()) {
                     addURL(urls, gn.getName());
                 }
             } else {
@@ -142,13 +149,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Adds the url to the list.
      * Build URI by components to facilitate proper encoding of querystring.
      * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
-     * 
+     *
+     * <p>If <code>uriString</code> is encoded, it will be decoded with <code>UTF-8</code>
+     * first before it's added to the list.</p>
      * @param list the list
      * @param uriString the uri string
      */
     private void addURL(final List<URL> list, final String uriString) {
         try {
-            final URL url = new URL(uriString);
+            final String decodedUrl = URLDecoder.decode(uriString, "UTF-8");
+            final URL url = new URL(decodedUrl);
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             list.add(uri.toURL());
         } catch (final Exception e) {

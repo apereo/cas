@@ -5,10 +5,10 @@ title: CAS - User Interface Customization
 
 
 #Overview
-Branding the CAS User Interface (UI) involves simply editing the CSS stylesheet and also a small collection of relatively simple JSP include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
+Branding the CAS User Interface (UI) involves simply editing the CSS stylesheet and also a small collection of relatively simple JSP include files,
+also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
 
 All the files that we'll be discussing in this section that concern the theme are located in and referenced from: `/cas-server-webapp/src/main/webapp`.
-
 
 #Browser Support
 CAS user interface should properly and comfortably lend itself to all major browser vendors:
@@ -19,7 +19,6 @@ CAS user interface should properly and comfortably lend itself to all major brow
 * Microsoft Internet Explorer
 
 Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
-
 
 #Getting Started
 
@@ -76,7 +75,10 @@ If you need to add some JavaScript, feel free to append `js/cas.js`.
 
 You can also create your own `custom.js` file, for example, and call it from within `WEB-INF/view/jsp/default/ui/includes/bottom.jsp` like so:
 
-	<script type="text/javascript" src="<c:url value="/js/custom.js" />"></script> 
+
+{% highlight html %}
+<script type="text/javascript" src="<c:url value="/js/custom.js" />"></script>
+{% endhighlight %} 
 
 If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting. 
 
@@ -84,11 +86,73 @@ The following Javascript libraries are utilized by CAS automatically:
 
 * JQuery
 * JQuery UI
+* JQuery Cookie
 * [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
 
+###Asynchronous Script Loading
+CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
+The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file:
+
+{% highlight javascript %}
+var scripts = [ "...", "..."];
+head.ready(document, function() {
+    head.load(scripts, resourceLoadedSuccessfully);
+});
+
+function resourceLoadedSuccessfully() {
+	...
+}
+{% endhighlight %}
+
+The only script that is loaded synchronously is the `head.js` library itself.
+
+Because scripts, and specially JQuery are loaded asynchronously, any custom Javascript that is placed inside the page
+that relies on these libraries may not immediately function on page load. CAS provides a callback function that allows
+adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
+functions that depend on JQuery inside the actual page. 
+
+{% highlight javascript %}
+function jqueryReady() {
+	//Custom Javascript tasks can be carried out now via JQuery...
+}
+{% endhighlight %}
+
+
+###Checking CAPSLOCK
+CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check
+is enforced by the `cas.js` file.
+
+{% highlight javascript %}
+$('#password').keypress(function(e) {
+    var s = String.fromCharCode( e.which );
+    if ( s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey ) {
+        $('#capslock-on').show();
+    } else {
+        $('#capslock-on').hide();
+    }
+});
+}
+{% endhighlight %}
+
+###Browser Cookie Support
+For CAS to honor a single sign-on session, the browser MUST support and accept cookies. CAS will notify the
+user if the browser has turned off its support for cookies. This behavior is controlled via the `cas.js` file.
+
+{% highlight javascript %}
+function areCookiesEnabled() {
+    $.cookie('cookiesEnabled', 'true');
+    var value = $.cookie('cookiesEnabled');
+    if (value != undefined) {
+        $.removeCookie('cookiesEnabled');
+        return true;
+    }
+    return false;
+}
+{% endhighlight %}
 
 ###Preserving Anchor Fragments
-Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
+Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url.
+This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
 
 ####Changes to `cas.js`
 {% highlight javascript %}
@@ -123,8 +187,6 @@ function prepareSubmit(form) {
         onsubmit="return prepareSubmit(this);">
 {% endhighlight %}
 
-
-
 ## JSP
 The default views are found at `WEB-INF/view/jsp/default/ui/`.
 
@@ -142,51 +204,66 @@ The following JSP tag libraries are used by the user interface:
 
 
 ####Glossary of Views
-- **`casAccountDisabledView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
 
-- **`casAccountLockedView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `casAccountDisabledView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
+| `casAccountLockedView`    | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
+| `casBadHoursView`         | Specific to Password Policy Enforcement; displayed when authentication encounters an account that is not allowed authentication within the current time window in the underlying account store (i.e. LDAP)
+| `casBadWorkstationView`   | Specific to Password Policy Enforcement; displayed when authentication encounters an account that is not allowed authentication from the current workstation in the underlying account store (i.e. LDAP)
+| `casExpiredPassView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that has expired in the underlying account store (i.e. LDAP)
+| `casMustChangePassView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that must change its password in the underlying account store (i.e. LDAP)
+| `casWarnPassView` | Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
+| `casConfirmView`  | Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+| `casGenericSuccess` | Displayed when the user has been logged in without providing a service to be redirected to.
+| `casLoginView`  | Main login form. 
+| `casLogoutView` | Main logout view. 
+| `serviceErrorView` | Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
+| `serviceErrorSsoView` | Displayed when a user would otherwise have experienced non-interactive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
-- **`casBadHoursView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication within the current time window in the underlying account store (i.e. LDAP)
 
-- **`casBadWorkstationView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is not allowed authentication from the current workstation in the underlying account store (i.e. LDAP)
+####Glossary of Monitoring Views
+The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 
-- **`casExpiredPassView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that has expired in the underlying account store (i.e. LDAP)
 
-- **`casMustChangePassView`**  
-Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that must change its password in the underlying account store (i.e. LDAP)
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `viewConfig`  | Displayed when user attempts to view the state of the CAS application runtime and its configuration.
+| `viewSsoSessions` | Displayed when user wishes to view the Single Sign-on Report.
+| `viewStatistics`  | Displayed when user wishes review the CAS server statistics.
 
-- **`casWarnPassView`**  
-Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
 
-- **`authorizationFailure`**  
-Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
+####Glossary of System Error Views
+The error views are found at `WEB-INF/view/jsp/`.
 
-- **`casConfirmView`**  
-Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
+| View                             | Description 
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `errors`  | Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
+| `authorizationFailure` | Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
 
-- **`casGenericSuccess`**  
-Displayed when the user has been logged in without providing a service to be redirected to.
+###Warning Before Accessing Application
+CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in. 
+(If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
+Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
 
-- **`casLoginView`**  
-Main login form.
+{% highlight jsp %}
+...
+<input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
+<label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
+...
+{% endhighlight %}
 
-- **`casLogoutView`**  
-Displayed when the user logs out.
+###"I am at a public workstation" authentication
+CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
+is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
+and will not generate the TGC that is designed to do so.
 
-- **`errors`** 
-Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
-
-- **`serviceErrorView`**  
-Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
-
-- **`serviceErrorSsoView`**   
-Displayed when a user would otherwise have experienced noninteractive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
-
+{% highlight jsp %}
+...
+<input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
+<label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
+...
+{% endhighlight %}
 
 ##Localization
 The CAS Web application includes a number of localized message files:
@@ -213,11 +290,17 @@ The CAS Web application includes a number of localized message files:
 
 In order to "invoke" a specific language for the UI, the `/login` endpoint may be passed a `locale` parameter as such:
 
-    https://cas.server.edu/login?locale=it
-
+{% highlight jsp %}
+https://cas.server.edu/login?locale=it
+{% endhighlight %}
+   
+Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions. 
+For an accurate and complete list of localized messages, always refer to the English language bundle.
 
 ###Configuration
-All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, they may also be formatted under `custom_messages.properties` files.
+All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the 
+English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, 
+they may also be formatted under `custom_messages.properties` files.
 
 Messages are parsed and loaded via the following configuration:
 
@@ -244,11 +327,13 @@ In the event that the code is not found in the activated resource bundle, the co
 ##Themes
 With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
-Note that support for themes comes two flavors:
+Note that support for themes comes with the following components:
 
-1. A `ServiceThemeResolver` can be configured to decorate CAS views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default JSP views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+| Component                      | Description 
+|--------------------------------+--------------------------------------------------------------------------------+
+| `ServiceThemeResolver`  | can be configured to decorate CAS views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default JSP views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+| `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
-2. If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs a overhaul with additional icons, images, text, etc then a `RegisteredServiceThemeBasedViewResolver` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
 ###`ServiceThemeResolver`
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:

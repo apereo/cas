@@ -42,18 +42,6 @@
     -->
     <aop:aspectj-autoproxy/>
 
-    <!--
-      Declare the TimingAspect that we want to weave into the other beans
-      defined in this config file.
-    -->
-    <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
-
-    <!--
-    | The base-package indicates where components stored. Spring will scan this
-    | folder and find out the annotated beans and register it in Spring container.
-    -->
-    <context:component-scan base-package="org.jasig.cas" />
-
     <!-- 
         Message source for this context, loaded from localized "messages_xx" files.]
         

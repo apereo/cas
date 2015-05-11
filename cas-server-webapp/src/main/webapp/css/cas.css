@@ -123,6 +123,15 @@ header h1 {
 #msg.question { border: 1px dotted #390; color: #390; padding-left: 100px; background: url(../images/question.png) no-repeat 20px center; }
 #msg.warn { border: 1px dotted #960; color: #960; padding-left: 100px; background: #ffbc8f url(../images/info.png) no-repeat 20px center; }
 
+.errors {
+    border: 1px dotted #BB0000;
+    color: #BB0000;
+    padding-left: 100px;
+    padding-top:5px;
+    margin-bottom:5px;
+    background: url(../images/error.png) no-repeat 20px center;
+}
+
 #serviceui.serviceinfo {
     border: 1px dotted #0066FF;
     color: black;
@@ -247,3 +256,4 @@ footer a:link, footer a:visited {
     #sidebar { margin-top: 20px; }
     #sidebar .sidebar-content { padding: 0; }
 }
+

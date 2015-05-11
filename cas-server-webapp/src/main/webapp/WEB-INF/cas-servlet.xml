@@ -23,11 +23,25 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+  <!--
+  | The base-package indicates where components stored. Spring will scan this
+  | folder and find out the annotated beans and register it in Spring container.
+  -->
+  <context:component-scan base-package="org.jasig.cas" />
+
+  <!-- Scan CAS artifacts to mvc annotations, such as controllers.
+       The scan is controlled by the application context config file -->
+  <mvc:annotation-driven />
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
@@ -99,8 +113,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/status">healthCheckController</prop>
-        <prop key="/statistics">statisticsController</prop>
       </util:properties>
     </property>
     <!--
@@ -235,10 +247,6 @@
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
-  <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        c:centralAuthenticationService-ref="centralAuthenticationService"
-        p:casTicketSuffix="${host.name}"/>
-
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
@@ -246,14 +254,12 @@
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
         c:logoutManager-ref="logoutManager"/>
 
-  <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
-        p:healthCheckMonitor-ref="healthCheckMonitor"/>
-
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
-        p:servicesManager-ref="servicesManager"  />
+        p:servicesManager-ref="servicesManager"
+        p:enableFlowOnAbsentServiceRequest="${create.sso.missing.service:true}"  />
 
   <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
         c:centralAuthenticationService-ref="centralAuthenticationService" />
@@ -268,8 +274,10 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        c:servicesManager-ref="servicesManager"
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}" />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />
@@ -292,4 +300,7 @@
         c:cas-ref="centralAuthenticationService"
         c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
+
+  <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+
 </beans>

@@ -15,7 +15,8 @@ CAS provides enterprise single sign-on service:
 - Community documentation and implementation support
 - An extensive community of adopters
 
-## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Coverage Status](https://coveralls.io/repos/Jasig/cas/badge.png?branch=master)](https://coveralls.io/r/Jasig/cas?branch=master) [![Dependency Management](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072)
+## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Coverage Status](https://coveralls.io/repos/Jasig/cas/badge.png?branch=master)](https://coveralls.io/r/Jasig/cas?branch=master) [![Dependency Management](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+
 
 
 It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
@@ -36,7 +37,9 @@ git clone git@github.com:Jasig/cas.git
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
-## Documentation 
+
+
+## Documentation [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 - [Official Documentation][wiki]
 - [Release Notes][releasenotes]
 - [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

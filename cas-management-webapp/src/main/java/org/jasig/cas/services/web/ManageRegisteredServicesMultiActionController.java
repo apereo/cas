@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -44,9 +45,6 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 @Controller
 public final class ManageRegisteredServicesMultiActionController {
-
-    /** View name for the Manage Services View. */
-    public static final String VIEW_NAME = "manageServiceView";
 
     /** Instance of ServicesManager. */
     @NotNull
@@ -67,14 +65,35 @@ public final class ManageRegisteredServicesMultiActionController {
         this.servicesManager = servicesManager;
         this.defaultServiceUrl = defaultServiceUrl;
     }
-    
+
+    /**
+     * Authorization failure handling. Simply returns the view name.
+     *
+     * @return the view name.
+     */
+    @RequestMapping(value="authorizationFailure.html", method={RequestMethod.GET})
+    public String authorizationFailureView() {
+        return "authorizationFailure";
+    }
+
+    /**
+     * Logout handling. Simply returns the view name.
+     *
+     * @return the view name.
+     */
+    @RequestMapping(value="loggedOut.html", method={RequestMethod.GET})
+    public String logoutView() {
+        return "logout";
+    }
+
+
     /**
      * Method to delete the RegisteredService by its ID.
      *
      * @param idAsLong the id
      * @return the Model and View to go to after the service is deleted.
      */
-    @RequestMapping(value="deleteRegisteredService.html")
+    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.GET})
     public ModelAndView deleteRegisteredService(
             @RequestParam("id") final long idAsLong) {
         
@@ -91,17 +110,17 @@ public final class ManageRegisteredServicesMultiActionController {
      * Method to show the RegisteredServices.
      * @return the Model and View to go to after the services are loaded.
      */
-    @RequestMapping("manage.html")
+    @RequestMapping(value="manage.html", method={RequestMethod.GET})
     public ModelAndView manage() {
         final Map<String, Object> model = new HashMap<>();
 
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
 
         model.put("services", services);
-        model.put("pageTitle", VIEW_NAME);
+        model.put("pageTitle", "Manage");
         model.put("defaultServiceUrl", this.defaultServiceUrl);
 
-        return new ModelAndView(VIEW_NAME, model);
+        return new ModelAndView("manage", model);
     }
 
     /**
@@ -116,7 +135,7 @@ public final class ManageRegisteredServicesMultiActionController {
      * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
      * was successful.
      */
-    @RequestMapping("updateRegisteredServiceEvaluationOrder.html")
+    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.GET})
     public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long id,
             @RequestParam("evaluationOrder") final int evaluationOrder) {
         final RegisteredService svc = this.servicesManager.findServiceBy(id);

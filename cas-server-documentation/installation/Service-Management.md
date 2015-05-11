@@ -15,7 +15,7 @@ containing metadata that drives a number of CAS behaviors:
 * Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
 * Theme control - Define alternate CAS themese to be used for particular services.
 
-The service management console is a Web application that may be deployed along side CAS that provides a GUI
+The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
 
 
@@ -31,10 +31,10 @@ bean.
 
 
 A premier consideration around service management is whether to leverage the user interface. If the service management
-console is used, then a `ServiceRegistryDao` that provides durable storage (e.g. `JpaServiceRegistryDaoImpl`) must be
+webapp is used, then a `ServiceRegistryDao` that provides durable storage (e.g. `JpaServiceRegistryDaoImpl`) must be
 used to preserve state across restarts.
 
-It is perfectly acceptable to avoid the service management console Web application for managing registered service data.
+It is perfectly acceptable to avoid the service management webapp Web application for managing registered service data.
 In fact, configuration-driven methods (e.g. XML, JSON) may be preferable in environments where strict configuration
 management controls are required.
 
@@ -58,9 +58,11 @@ Registered services present the following metadata:
 | `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout. 
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
+| `publicKey`                  		| The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configure-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
+| `logoutUrl`                  		| URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
 
 ###Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives. 
+The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives. 
 
 ####Components
 
@@ -68,13 +70,13 @@ The access strategy of a registered service provides fine-grained control over t
 This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
 
 #####`DefaultRegisteredServiceAccessStrategy`
-The default access manager allows on to configure a service with the following properties:
+The default access manager allows one to configure a service with the following properties:
 
 | Field                             | Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
 | `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
+| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully. 
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
@@ -237,7 +239,7 @@ CAS uses in-memory services management by default, with the registry seeded from
 
 {% endhighlight %}
 
-This component is _NOT_ suitable for use with the service management console since it does not persist data.
+This component is _NOT_ suitable for use with the service management webapp since it does not persist data.
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
@@ -286,6 +288,12 @@ A sample JSON file follows:
 {% endhighlight %}
 
 
+<div class="alert alert-warning"><strong>Clustering Services</strong><p>
+You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
+access to the same set of JSON configuration files as the other, or you may have to devise a strategy to keep
+changes synchronzed from one node to the next. 
+</p></div>
+
 ######`LdapServiceRegistryDao`
 Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
@@ -303,7 +311,7 @@ Service registry implementation which stores the services in a LDAP Directory. U
       class="org.jasig.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper"/>
 {% endhighlight %}
 
-The format and syntax of the JSON is identical to that of `JsonServiceRegistryDao`. Also note that the configuration of the mapper is optional and need not explicitly exist. 
+Note that the configuration of the mapper is optional and need not explicitly exist. 
 
 <p/>
 
@@ -311,16 +319,16 @@ The format and syntax of the JSON is identical to that of `JsonServiceRegistryDa
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value 
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------+--------------------------------------------------+
 | `objectClass`                     | casRegisteredService
 | `serviceDefinitionAttribute`      | description
 | `idAttribute`                     | uid
 
-Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as JSON objects. 
+Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as JSON objects. The format and syntax of the JSON is identical to that of `JsonServiceRegistryDao`. 
 
 
 ######`JpaServiceRegistryDaoImpl`
-Stores registered service data in a database; the preferred choice when using the service management console.
+Stores registered service data in a database; the preferred choice when using the service management webapp.
 The following schema shall be generated by CAS automatically for brand new deployments, and must be massaged
 when doing CAS upgrades:
 
@@ -335,9 +343,11 @@ create table RegisteredServiceImpl (
     evaluation_order integer not null, 
     logo varchar(255), 
     logout_type integer, 
+    logout_url varchar(255),
     name varchar(255) not null, 
     proxy_policy blob(255) not null, 
     required_handlers blob(255), 
+    public_key blob(255), 
     serviceId varchar(255) not null, 
     theme varchar(255), 
     username_attr blob(255), 
@@ -474,145 +484,6 @@ Finally, when adding a new source new dependencies may be required on Hibernate,
 
 {% endhighlight %}
 
-## Installing the Services Management Webapp
-
-The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
-
-Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
-
-* the management webapp is used to add/edit/delete all the CAS services
-* the CAS server loads/relies on all these defined CAS services to process all incoming requests.
-
-You can install the services management webapp in your favourite applications server, there is no restriction.
-Though, you need at first to configure it according to your environment. Towards that goal, the best way to proceed is to create your own services management webapp using a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
-
-{% highlight xml %}
-<dependency>
-  <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-management-webapp</artifactId>
-  <version>${cas.version}</version>
-  <type>war</type>
-  <scope>runtime</scope>
-</dependency>
-{% endhighlight %}
-
-
-### Authentication method
-
-By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
-
-
-###Securing Access and Authorization
-Access to the management webapp is controlled via Spring Security. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
-
-
-####Static List of Users
-By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath. 
-
-{% highlight xml %}
-<sec:user-service id="userDetailsService" 
-   properties="${user.details.file.location:classpath:user-details.properties}" />
-{% endhighlight %}
-
-You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
-
-{% highlight bash %}
-##
-# User details file location that contains list of users
-# who are allowed access to the management webapp:
-# 
-# user.details.file.location = classpath:user-details.properties
-{% endhighlight %}
-
-The format of the file should be as such:
-
-{% highlight bash %}
-# The syntax of each entry should be in the form of:
-# 
-# username=password,grantedAuthority[,grantedAuthority][,enabled|disabled]
-
-# Example:
-# casuser=notused,ROLE_ADMIN
-{% endhighlight %}
-
-
-####LDAP-managed List of Users
-If you wish allow access to the services management application via an LDAP group/server, open up the `deployerConfigContext` file of the management web application and adjust for the following:
-
-{% highlight xml %}
-<sec:ldap-server id="ldapServer" url="ldap://myserver:13060/"
-                 manager-dn="cn=adminusername,cn=Users,dc=london-scottish,dc=com"
-                 manager-password="mypassword" />
-<sec:ldap-user-service id="userDetailsService" server-ref="ldapServer"
-            group-search-base="cn=Groups,dc=mycompany,dc=com" group-role-attribute="cn"
-            group-search-filter="(uniquemember={0})"
-            user-search-base="cn=Users,dc=mycompany,dc=com"
-            user-search-filter="(uid={0})"/>
-{% endhighlight %}
-
-You will also need to ensure that the `spring-security-ldap` dependency is available to your build at runtime:
-
-{% highlight xml %}
-<dependency>
-   <groupId>org.springframework.security</groupId>
-   <artifactId>spring-security-ldap</artifactId>
-   <version>${spring.security.ldap.version}</version>
-   <exclusions>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-aop</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-tx</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-beans</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-context</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-core</artifactId>
-     </exclusion>
-   </exclusions>
-</dependency>
-{% endhighlight %}
-
-
-### Urls configuration
-
-The urls configuration of the CAS server and management applications can be done by overriding the default `WEB-INF/cas-management.properties` file:
-
-    # CAS
-    cas.host=http://localhost:8080
-    cas.prefix=${cas.host}/cas
-    cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
-    cas.securityContext.ticketValidator.casServerUrlPrefix=${cas.prefix}
-    # Management
-    cas-management.host=${cas.host}
-    cas-management.prefix=${cas-management.host}/cas-management
-    cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/j_spring_cas_security_check
-    cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
-
-When authenticating against a CAS server, the services management webapp will be processed as a regular CAS service and thus, needs to be defined in the services registry (of the CAS server).
-
-
-### Services registry
-
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
-
-
-### UI
-
-The services management webapp is pretty simple to use:
-
-* use the "Manage Services" link to see the list of all CAS services
-* click the "Add New Service" link to add a new CAS service
-* click the "edit" link with the pen image (on the right of a CAS service definition) to edit a specific CAS service
-* click the "delete" link with the trash image (on the right of a CAS service definition) to delete a specific CAS service (after a confirmation alert).
-* The app takes advantage of the Infusion Javascript framework in order to add drag&drop functionality onto the screen.
-
+## Service Management Webapp
+The Services Management web application is a standardalone application that helps one manage service registrations and entries via a customizable user interface. The management web application *MUST* share the same registry configuration as the CAS server itself so the entire system can load the same services data. To learn more about the management webapp,
+[please see this guide](Installing-ServicesMgmt-Webapp.html).

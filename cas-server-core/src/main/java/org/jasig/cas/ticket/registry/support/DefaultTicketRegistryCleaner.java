@@ -21,7 +21,9 @@ package org.jasig.cas.ticket.registry.support;
 import org.apache.commons.collections.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -73,13 +75,19 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
+    @NotNull
+    private TicketRegistry ticketRegistry;
+
     /**
      * Instantiates a new Default ticket registry cleaner.
      *
      * @param centralAuthenticationService the CAS interface acting as the service layer
+     * @param ticketRegistry the ticket registry
      */
-    public DefaultTicketRegistryCleaner(final CentralAuthenticationService centralAuthenticationService) {
+    public DefaultTicketRegistryCleaner(final CentralAuthenticationService centralAuthenticationService,
+                                        final TicketRegistry ticketRegistry) {
         this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
     }
 
     @Override
@@ -105,7 +113,15 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
             try {
                 for (final Ticket ticket : ticketsToRemove) {
-                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticket.getId());
+                    if (ticket instanceof TicketGrantingTicket) {
+                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                        this.centralAuthenticationService.destroyTicketGrantingTicket(ticket.getId());
+                    } else if (ticket instanceof ServiceTicket) {
+                        logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+                        this.ticketRegistry.deleteTicket(ticket.getId());
+                    } else {
+                        logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
+                    }
                 }
             } catch (final Exception e) {
                 logger.error(e.getMessage(), e);

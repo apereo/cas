@@ -92,7 +92,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * matches.
      * @param evaluationOrder the service evaluation order
      */
-    void setEvaluationOrder(final int evaluationOrder);
+    void setEvaluationOrder(int evaluationOrder);
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
@@ -123,7 +123,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @param service the service to match.
      * @return true if they match, false otherwise.
      */
-    boolean matches(final Service service);
+    boolean matches(Service service);
     
     /**
      * Clone this service.
@@ -157,4 +157,27 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     URL getLogo();
+
+    /**
+     * Identifies the logout url that that will be invoked
+     * upon sending single-logout callback notifications.
+     * This is an optional setting. When undefined, the service
+     * url as is defined by {@link #getServiceId()} will be used
+     * to handle logout invocations.
+     * @return the logout url for this service
+     * @since 4.1
+     */
+    URL getLogoutUrl();
+    
+    /**
+     * Gets the public key associated with this service
+     * that is used to authorize the request by
+     * encrypting certain elements and attributes in
+     * the CAS validation protocol response, such as
+     * the PGT.
+     * @return the public key instance used to authorize the request
+     * @since 4.1
+     */
+    RegisteredServicePublicKey getPublicKey();
+    
 }
