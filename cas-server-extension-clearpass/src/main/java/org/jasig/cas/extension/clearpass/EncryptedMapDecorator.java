@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.util.CompressionUtils;
 import com.google.common.io.ByteSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -52,6 +51,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 1.0.6
  */
+@Slf4j
 @Deprecated
 public final class EncryptedMapDecorator implements Map<String, String> {
 
@@ -72,7 +72,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     @NotNull
     private final Map<String, String> decoratedMap;
@@ -273,7 +273,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         messageDigest.update(key.toLowerCase().getBytes(Charset.defaultCharset()));
         final String hash = getFormattedText(messageDigest.digest());
 
-        logger.debug("Generated hash of value [{}] for key [{}].", hash, key);
+        LOGGER.debug("Generated hash of value [{}] for key [{}].", hash, key);
         return hash;
     }
 
@@ -319,7 +319,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             }
             return source.read();
         } catch (final IOException e) {
-            logger.warn("Could not consume the byte array source", e);
+            LOGGER.warn("Could not consume the byte array source", e);
             return null;
         }
     }
@@ -463,7 +463,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             final String msg = String.format("Could not clone MessageDigest using algorithm '%s'. "
                         + "MessageDigest.getInstance will be used from now on which will be much more expensive.",
                         this.messageDigest.getAlgorithm());
-            logger.warn(msg, e);
+            LOGGER.warn(msg, e);
             return this.getMessageDigest();
         }
     }
