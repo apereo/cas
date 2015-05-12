@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.io.ByteArrayInputStream;
+
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ByteArrayResource;
 
 import edu.vt.middleware.crypt.x509.ExtensionReader;
 import edu.vt.middleware.crypt.x509.types.DistributionPoint;
@@ -41,6 +41,7 @@ import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import javax.validation.constraints.NotNull;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -60,17 +61,52 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     /** CRL cache. */
     private final Cache crlCache;
 
+    /** The CRL fetcher instance. **/
+    private final CRLFetcher fetcher;
+
+    private boolean throwOnFetchFailure;
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
      *
      * @param crlCache Cache for CRL data.
      */
-    public CRLDistributionPointRevocationChecker(final Cache crlCache) {
-        if (crlCache == null) {
-            throw new IllegalArgumentException("Cache cannot be null.");
-        }
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache) {
+        this(crlCache, new ResourceCRLFetcher());
+    }
+
+    /**
+     * Creates a new instance that uses the given cache instance for CRL caching.
+     *
+     * @param crlCache Cache for CRL data.
+     * @param throwOnFetchFailure the throw on fetch failure
+     */
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
+                                                 final boolean throwOnFetchFailure) {
+        this(crlCache, new ResourceCRLFetcher());
+        setThrowOnFetchFailure(throwOnFetchFailure);
+    }
+
+    /**
+     * Instantiates a new CRL distribution point revocation checker.
+     *
+     * @param crlCache the crl cache
+     * @param fetcher the fetcher
+     */
+    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
+                                                 @NotNull final CRLFetcher fetcher) {
         this.crlCache = crlCache;
+        this.fetcher = fetcher;
+    }
+
+
+    /**
+     * Throws exceptions if fetching crl fails. Defaults to false.
+     *
+     * @param throwOnFetchFailure the throw on fetch failure
+     */
+    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
+        this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
     /**
@@ -79,17 +115,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     @Override
     protected X509CRL getCRL(final X509Certificate cert) {
-        final URL[] urls = getDistributionPoints(cert);
+        final URI[] urls = getDistributionPoints(cert);
         logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
 
         try {
-            for (final URL url : urls) {
+            for (final URI url : urls) {
                 final Element item = this.crlCache.get(url);
                 if (item != null) {
                     logger.debug("Found CRL in cache for {}", CertUtils.toString(cert));
                     final byte[] encodedCrl = (byte[]) item.getObjectValue();
-                    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                    return (X509CRL) cf.generateCRL(new ByteArrayInputStream(encodedCrl));
+                    return this.fetcher.fetch(new ByteArrayResource(encodedCrl));
                 }
             }
         } catch (final Exception e) {
@@ -99,19 +134,39 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         // Try all distribution points and stop at first fetch that succeeds
         X509CRL crl = null;
         for (int i = 0; i < urls.length && crl == null; i++) {
-            logger.info("Attempting to fetch CRL at {}", urls[i]);
+            final URI url = urls[i];
+            logger.info("Attempting to fetch CRL at {}", url);
             try {
-                final String path = URLDecoder.decode(urls[i].toExternalForm(), "UTF-8");
-                crl = CertUtils.fetchCRL(new UrlResource(path));
-                logger.info("Success. Caching fetched CRL.");
-                this.crlCache.put(new Element(urls[i], crl.getEncoded()));
+                crl = this.fetcher.fetch(url);
+                logger.info("Success. Caching fetched CRL at {}.", url);
+                addCRL(url, crl);
             } catch (final Exception e) {
-                logger.error("Error fetching CRL at {}", urls[i], e);
+                logger.error("Error fetching CRL at {}", url, e);
+                if (this.throwOnFetchFailure) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
         return crl;
     }
+
+    @Override
+    protected boolean addCRL(final Object id, final X509CRL crl) {
+        try {
+            if (crl == null) {
+                return this.crlCache.remove(id);
+            }
+
+            this.crlCache.put(new Element(id, crl.getEncoded()));
+            return this.crlCache.get(id) != null;
+
+        } catch (final Exception e) {
+            logger.warn("Failed to add the crl entry [{}] to the cache", crl);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * Gets the distribution points.
@@ -119,16 +174,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param cert the cert
      * @return the url distribution points
      */
-    private URL[] getDistributionPoints(final X509Certificate cert) {
+    private URI[] getDistributionPoints(final X509Certificate cert) {
         final DistributionPointList points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
         } catch (final Exception e) {
             logger.error("Error reading CRLDistributionPoints extension field on {}", CertUtils.toString(cert), e);
-            return new URL[0];
+            return new URI[0];
         }
 
-        final List<URL> urls = new ArrayList<>();
+        final List<URI> urls = new ArrayList<>();
         for (final DistributionPoint point : points.getItems()) {
             final Object location = point.getDistributionPoint();
             if (location instanceof String) {
@@ -142,7 +197,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             }
         }
 
-        return urls.toArray(new URL[urls.size()]);
+        return urls.toArray(new URI[urls.size()]);
     }
 
     /**
@@ -155,14 +210,19 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param list the list
      * @param uriString the uri string
      */
-    private void addURL(final List<URL> list, final String uriString) {
+    private void addURL(final List<URI> list, final String uriString) {
         try {
-            final String decodedUrl = URLDecoder.decode(uriString, "UTF-8");
-            final URL url = new URL(decodedUrl);
-            final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
-            list.add(uri.toURL());
+            URI uri = null;
+            try {
+                final URL url = new URL(URLDecoder.decode(uriString, "UTF-8"));
+                uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
+            } catch (final MalformedURLException e) {
+                uri = new URI(uriString);
+            }
+            list.add(uri);
         } catch (final Exception e) {
             logger.warn("{} is not a valid distribution point URI.", uriString);
         }
     }
+
 }

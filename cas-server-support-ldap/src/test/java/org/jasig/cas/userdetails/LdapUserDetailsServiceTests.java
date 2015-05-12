@@ -19,6 +19,7 @@
 package org.jasig.cas.userdetails;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
@@ -46,6 +47,11 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
 
     @Autowired
     private LdapUserDetailsService userDetailsService;
+
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        initDirectoryServer();
+    }
 
     @Test
     public void verifyLoadUserByUsername() throws Exception {

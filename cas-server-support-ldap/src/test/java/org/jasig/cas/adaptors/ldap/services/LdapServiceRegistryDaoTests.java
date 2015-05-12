@@ -31,6 +31,7 @@ import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceRegistryDao;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,11 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
     private ServiceRegistryDao dao;
+
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        initDirectoryServer();
+    }
 
     @Before
     public void setUp() throws Exception {
