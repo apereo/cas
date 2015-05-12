@@ -158,7 +158,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
                 </td>
                 <td>
                   0
@@ -172,7 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
                 </td>
                 <td>
                   0
@@ -214,7 +214,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_fa.properties">messages_fa.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.services.web.WebAppContextConfigurationTests.java">org/jasig/cas/services/web/WebAppContextConfigurationTests.java</a>
                 </td>
                 <td>
                   0
@@ -228,7 +228,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.services.web.WebAppContextConfigurationTests.java">org/jasig/cas/services/web/WebAppContextConfigurationTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_fa.properties">messages_fa.properties</a>
                 </td>
                 <td>
                   0
@@ -270,7 +270,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ar.properties">messages_ar.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver.java">org/jasig/cas/web/view/AjaxAwareJsonExceptionResolver.java</a>
                 </td>
                 <td>
                   0
@@ -284,7 +284,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver.java">org/jasig/cas/web/view/AjaxAwareJsonExceptionResolver.java</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ar.properties">messages_ar.properties</a>
                 </td>
                 <td>
                   0
@@ -382,20 +382,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_pt_PT.properties">messages_pt_PT.properties</a>
                 </td>
                 <td>
@@ -410,7 +396,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_hr.properties">messages_hr.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ur.properties">messages_ur.properties</a>
                 </td>
                 <td>
                   0
@@ -425,6 +411,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_ru.properties">messages_ru.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-management-webapp//checkstyle.html#messages_hr.properties">messages_hr.properties</a>
                 </td>
                 <td>
                   0
