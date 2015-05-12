@@ -37,8 +37,14 @@
 
     <bean id="ldapCertFetcher"
           class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
-          c:connectionFactory-ref="pooledLdapConnectionFactory"
+          c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"  />
+
+    <bean id="poolingLdapCertFetcher"
+          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+          c:connectionConfig-ref="provisioningConnectionConfig"
+          c:searchExecutor-ref="searchExecutor"
+          c:connectionPool-ref="connectionPool"/>
 
     <bean id="baseDn" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
@@ -51,9 +57,10 @@
     <bean id="searchFilter" class="org.ldaptive.SearchFilter"
           p:filter="${ldap.searchfilter.cert}" />
 
-    <bean id="searchExecutor" class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
+    <bean id="searchExecutor" class="org.ldaptive.SearchExecutor"
           p:baseDn-ref="baseDn"
           p:searchFilter-ref="searchFilter"
+          p:returnAttributes-ref="returnAttributes"
           p:binaryAttributes-ref="returnAttributes" />
 
     <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
@@ -66,7 +73,6 @@
     <bean id="provisioningConnectionConfig" class="org.ldaptive.ConnectionConfig"
           p:connectTimeout="${ldap.connectTimeout}"
           p:useStartTLS="${ldap.useStartTLS: false}"
-          p:ldapUrl="%s"
           p:connectionInitializer-ref="bindConnectionInitializer"
           p:sslConfig-ref="provisionSslConfig"/>
 
@@ -85,18 +91,13 @@
         </property>
     </bean>
 
-    <bean id="pooledLdapConnectionFactory"
-          class="org.ldaptive.pool.PooledConnectionFactory"
-          p:connectionPool-ref="connectionPool" />
-
     <bean id="connectionPool"
           class="org.ldaptive.pool.BlockingConnectionPool"
           lazy-init="true"
           p:poolConfig-ref="ldapPoolConfig"
           p:blockWaitTime="${ldap.pool.blockWaitTime}"
           p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy"
-          p:connectionFactory-ref="provisioningConnectionFactory" />
+          p:pruneStrategy-ref="pruneStrategy" />
 
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
           p:prunePeriod="${ldap.pool.prunePeriod}"
@@ -110,7 +111,6 @@
           p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
           p:validatePeriodically="${ldap.pool.validatePeriodically}"
           p:validatePeriod="${ldap.pool.validatePeriod}" />
-
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
