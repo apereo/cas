@@ -24,6 +24,8 @@ import java.security.cert.X509Certificate;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -34,6 +36,8 @@ import org.springframework.core.io.ClassPathResource;
  *
  */
 public abstract class AbstractCRLRevocationCheckerTests {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Certificate to be tested. */
     private final X509Certificate[] certificates;
@@ -85,6 +89,4 @@ public abstract class AbstractCRLRevocationCheckerTests {
     }
 
     protected abstract RevocationChecker getChecker();
-
-
 }
