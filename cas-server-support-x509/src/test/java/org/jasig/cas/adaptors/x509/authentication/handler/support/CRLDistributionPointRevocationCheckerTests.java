@@ -20,14 +20,20 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
@@ -67,13 +73,21 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
             final RevocationPolicy<X509CRL> expiredCRLPolicy,
             final String[] certFiles,
             final String crlFile,
-            final GeneralSecurityException expected) {
+            final GeneralSecurityException expected) throws Exception {
 
         super(certFiles, expected);
 
+        final File file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
+        if (file.exists()) {
+            file.delete();
+        }
+        final OutputStream out = new FileOutputStream(file);
+        IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
+
         this.checker = checker;
         this.checker.setExpiredCRLPolicy(expiredCRLPolicy);
-        this.webServer = new MockWebServer(8085, new ClassPathResource(crlFile), "text/plain");
+        this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
+        logger.debug("Web server listening on port 8085 serving file {}", crlFile);
     }
 
     /**
@@ -82,7 +96,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      * @return  Test parameter data.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() {
+    public static Collection<Object[]> getTestParameters() throws Exception {
         CacheManager.getInstance().removeAllCaches();
         final Collection<Object[]> params = new ArrayList<>();
         Cache cache;
@@ -94,10 +108,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Valid certificate on valid CRL data with encoded url
         cache = new Cache("crlCache-0", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        params.add(new Object[] {
+        params.add(new Object[]{
                 new CRLDistributionPointRevocationChecker(cache),
                 defaultPolicy,
-                new String[] {"uservalid-encoded-crl.crt"},
+                new String[]{"uservalid-encoded-crl.crt"},
                 "test ca.crl",
                 null,
         });
@@ -106,13 +120,14 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // Valid certificate on valid CRL data
         cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        params.add(new Object[] {
-                new CRLDistributionPointRevocationChecker(cache),
+        params.add(new Object[]{
+                new CRLDistributionPointRevocationChecker(cache, true),
                 defaultPolicy,
-                new String[] {"user-valid-distcrl.crt"},
+                new String[]{"user-valid-distcrl.crt"},
                 "userCA-valid.crl",
                 null,
         });
+
 
         // Test case #2
         // Revoked certificate on valid CRL data
@@ -196,6 +211,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     @Before
     public void setUp() throws Exception {
         this.webServer.start();
+        Thread.sleep(500);
     }
 
     /**
@@ -205,7 +221,18 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      */
     @After
     public void tearDown() throws Exception {
+        logger.debug("Stopping web server...");
         this.webServer.stop();
+        Thread.sleep(500);
+        logger.debug("Web server stopped [{}]", !this.webServer.isRunning());
+    }
+
+    @AfterClass
+    public static void destroy() {
+        final File file = new File("ca.crl");
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     @Override

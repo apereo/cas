@@ -26,9 +26,9 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -66,9 +66,9 @@ public final class LdapTestUtils {
      *
      * @throws IOException On IO errors reading LDIF.
      */
-    public static Collection<LdapEntry> readLdif(final Resource ldif, final String baseDn) throws IOException {
+    public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif.getInputStream()))) {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(BASE_DN_PLACEHOLDER)) {

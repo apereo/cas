@@ -75,12 +75,43 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-support-legacy</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-ldap</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.unboundid</groupId>
+      <artifactId>unboundid-ldapsdk</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-unboundid</artifactId>
+      <version>${ldaptive.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>
