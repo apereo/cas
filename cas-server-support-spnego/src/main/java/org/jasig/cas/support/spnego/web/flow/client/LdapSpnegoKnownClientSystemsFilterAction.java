@@ -98,7 +98,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @Override
     protected boolean shouldDoSpnego() {
         Connection connection = null;
-        if(this.ipsToCheckPattern != null && !shouldCheckIp()) {
+        if(!(ipPatternCanBeChecked() && ipPatternMatches())) {
             return false;
         }
         final String remoteHostName = getRemoteHostName();
