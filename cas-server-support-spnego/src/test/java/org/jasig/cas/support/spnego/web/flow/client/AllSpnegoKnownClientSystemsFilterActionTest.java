@@ -94,7 +94,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTest {
     @Test
     public void ensureHostnameShouldDoSpnego() {
         final HostNameSpnegoKnownClientSystemsFilterAction action =
-                new HostNameSpnegoKnownClientSystemsFilterAction(".+1e100.net");
+                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -106,6 +106,44 @@ public class AllSpnegoKnownClientSystemsFilterActionTest {
 
         final Event ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+
+    }
+
+    @Test
+    public void ensureHostnameAndIpShouldDoSpnego() {
+        final HostNameSpnegoKnownClientSystemsFilterAction action =
+                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
+        action.setIpsToCheckPattern("74\\..+");
+
+        final MockRequestContext ctx = new MockRequestContext();
+        final MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setRemoteAddr("74.125.136.102");
+        final ServletExternalContext extCtx = new ServletExternalContext(
+                new MockServletContext(), req,
+                new MockHttpServletResponse());
+        ctx.setExternalContext(extCtx);
+
+        final Event ev = action.doExecute(ctx);
+        assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+
+    }
+
+    @Test
+    public void verifyIpMismatchWhenCheckingHostnameForSpnego() {
+        final HostNameSpnegoKnownClientSystemsFilterAction action =
+                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
+        action.setIpsToCheckPattern("14\\..+");
+
+        final MockRequestContext ctx = new MockRequestContext();
+        final MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setRemoteAddr("74.125.136.102");
+        final ServletExternalContext extCtx = new ServletExternalContext(
+                new MockServletContext(), req,
+                new MockHttpServletResponse());
+        ctx.setExternalContext(extCtx);
+
+        final Event ev = action.doExecute(ctx);
+        assertEquals(ev.getId(), new EventFactorySupport().no(this).getId());
 
     }
 }
