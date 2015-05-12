@@ -54,7 +54,7 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      */
     @Override
     protected boolean shouldDoSpnego() {
-        if(this.ipsToCheckPattern != null && !shouldCheckIp()) {
+        if(!(ipPatternCanBeChecked() && ipPatternMatches())) {
             return false;
         }
         final String hostName = getRemoteHostName();
