@@ -1477,7 +1477,7 @@
     <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.5.0</jackson.databind.version>
     <uboundid.ldapsdk.version>2.3.8</uboundid.ldapsdk.version>
-    <opensaml.version>2.6.1</opensaml.version>
+    <opensaml.version>3.1.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
