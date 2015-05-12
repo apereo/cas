@@ -23,26 +23,27 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.joda.time.DateTime;
-import org.opensaml.common.SAMLVersion;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.Attribute;
-import org.opensaml.saml1.core.AttributeStatement;
-import org.opensaml.saml1.core.AttributeValue;
-import org.opensaml.saml1.core.Audience;
-import org.opensaml.saml1.core.AudienceRestrictionCondition;
-import org.opensaml.saml1.core.AuthenticationStatement;
-import org.opensaml.saml1.core.Conditions;
-import org.opensaml.saml1.core.ConfirmationMethod;
-import org.opensaml.saml1.core.NameIdentifier;
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.Status;
-import org.opensaml.saml1.core.StatusCode;
-import org.opensaml.saml1.core.StatusMessage;
-import org.opensaml.saml1.core.Subject;
-import org.opensaml.saml1.core.SubjectConfirmation;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeStatement;
+import org.opensaml.saml.saml1.core.AttributeValue;
+import org.opensaml.saml.saml1.core.Audience;
+import org.opensaml.saml.saml1.core.AudienceRestrictionCondition;
+import org.opensaml.saml.saml1.core.AuthenticationStatement;
+import org.opensaml.saml.saml1.core.Conditions;
+import org.opensaml.saml.saml1.core.ConfirmationMethod;
+import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.Status;
+import org.opensaml.saml.saml1.core.StatusCode;
+import org.opensaml.saml.saml1.core.StatusMessage;
+import org.opensaml.saml.saml1.core.Subject;
+import org.opensaml.saml.saml1.core.SubjectConfirmation;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,11 +63,6 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
     /**
-     * Encoder to wrap the saml response in a SOAP envelope.
-     */
-    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-
-    /**
      * Create a new SAML response object.
      * @param id the id
      * @param issueInstant the issue instant
@@ -81,7 +77,7 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         samlResponse.setID(id);
         samlResponse.setIssueInstant(issueInstant);
         samlResponse.setVersion(SAMLVersion.VERSION_11);
-        samlResponse.setRecipient(recipient);
+        samlResponse.setInResponseTo(recipient);
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
 
@@ -104,6 +100,7 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
                                         final DateTime issuedAt, final String id) {
         final Assertion assertion = newSamlObject(Assertion.class);
+
         assertion.setID(id);
         assertion.setIssueInstant(issuedAt);
         assertion.setIssuer(issuer);
@@ -220,7 +217,7 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         attrStatement.setSubject(subject);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
+                //don't add the attribute, it causes a org.opensaml.MalformedException
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }
@@ -253,10 +250,14 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void encodeSamlResponse(final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
-        final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-        messageContext.setOutboundMessageTransport(
-                new HttpServletResponseAdapter(httpResponse, httpRequest.isSecure()));
-        messageContext.setOutboundSAMLMessage(samlMessage);
-        this.encoder.encode(messageContext);
+
+        final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
+        final MessageContext<SAMLObject> context = new MessageContext();
+        context.setMessage(samlMessage);
+        encoder.setHttpServletResponse(httpResponse);
+        encoder.setMessageContext(context);
+        encoder.initialize();
+        encoder.prepareContext();
+        encoder.encode();
     }
 }
