@@ -18,8 +18,9 @@
  */
 package org.jasig.cas.support.saml.web.view;
 
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.StatusCode;
+
+import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.StatusCode;
 
 import java.util.Map;
 

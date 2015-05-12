@@ -35,6 +35,7 @@ distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
 
+
 dn: CN=casTest,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person

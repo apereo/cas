@@ -118,8 +118,9 @@ Ensure the following is defined:
 
 
 ##SSO Provider for Shibboleth IdP (External)
-This is a [Shibboleth IdP external authentication plugin](https://github.com/Unicon/shib-cas-authn2) that delegates the authentication to CAS. The advantage of using this component over the plain `RemoteUser`  solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`. 
+This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`. 
 
+The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) and [v3](https://github.com/Unicon/shib-cas-authn3).
 
 ##Shibboleth Service Provider Proxy
 The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS server and enables end applications to get authentication information from CAS rather than the Shibboleth Service Provider. CASShib is designed as an alternative to deploying the Shibboleth service provider for each application in order to:

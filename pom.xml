@@ -381,6 +381,19 @@
             </manifestEntries>
           </archive>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <classifier>client</classifier>
+              <excludes>
+                <exclude>**/persistence.xml</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -647,6 +660,12 @@
         <groupId>org.bitbucket.b_c</groupId>
         <artifactId>jose4j</artifactId>
         <version>${jose.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive</artifactId>
+        <version>${ldaptive.version}</version>
       </dependency>
 
       <dependency>
@@ -1444,7 +1463,7 @@
     <log4j.version>2.2</log4j.version>
     <junit.version>4.12</junit.version>
     <checkstyle.version>6.5</checkstyle.version>
-    <commons.lang.version>3.3.2</commons.lang.version>
+    <commons.lang.version>3.4</commons.lang.version>
     <inspektr.version>1.1.GA</inspektr.version>
     <commons.io.version>2.4</commons.io.version>
     <mockito.version>1.10.19</mockito.version>
@@ -1458,7 +1477,7 @@
     <apache.shiro.version>1.2.3</apache.shiro.version>
     <jackson.databind.version>2.5.0</jackson.databind.version>
     <uboundid.ldapsdk.version>2.3.8</uboundid.ldapsdk.version>
-    <opensaml.version>2.6.1</opensaml.version>
+    <opensaml.version>3.1.1</opensaml.version>
     <xml.apis.version>1.4.01</xml.apis.version>
     <jstl.version>1.2</jstl.version>
     <openid4java.version>0.9.8</openid4java.version>
