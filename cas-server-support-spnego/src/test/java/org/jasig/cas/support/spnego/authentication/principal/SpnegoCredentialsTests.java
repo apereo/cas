@@ -22,6 +22,9 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
 
@@ -52,11 +55,10 @@ public class SpnegoCredentialsTests {
     @Test
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
         final SpnegoCredential credential = new SpnegoCredential(new byte[] {});
+        final Set<SpnegoCredential> set = new HashSet<>();
         try {
-            final int hash = credential.hashCode();
-            assertNotNull(hash);
-        }
-        catch(final Exception e) {
+            set.add(credential);
+        } catch(final Exception e) {
             fail(e.getMessage());
         }
     }
