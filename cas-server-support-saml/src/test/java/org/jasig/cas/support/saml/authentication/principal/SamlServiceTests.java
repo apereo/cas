@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,11 +29,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.Assert.*;
 
 /**
+ * Test cases for {@link SamlService}.
  * @author Scott Battaglia
  * @since 3.1
- *
  */
-public class SamlServiceTests {
+public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
