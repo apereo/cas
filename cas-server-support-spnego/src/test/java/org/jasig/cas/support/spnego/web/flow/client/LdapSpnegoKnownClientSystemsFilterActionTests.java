@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
  * @author Misagh Moayyed
+ * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml"})
