@@ -45,4 +45,32 @@ public class SpnegoCredentialsTests {
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.toString());
     }
+
+    /**
+     * Important for SPNEGO in particular as the credential will be hashed prior to Principal resolution
+     */
+    @Test
+    public void verifyCredentialsHashSafelyWithoutPrincipal() {
+        final SpnegoCredential credential = new SpnegoCredential(new byte[] {});
+        try {
+            final int hash = credential.hashCode();
+            assertNotNull(hash);
+        }
+        catch(final Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Make sure that when the Principal becomes populated / changes we return a new hash
+     */
+    @Test
+    public void verifyPrincipalAffectsHash(){
+        final SpnegoCredential credential = new SpnegoCredential(new byte[] {});
+        final int hash1 = credential.hashCode();
+        final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
+        credential.setPrincipal(principal);
+        final int hash2 = credential.hashCode();
+        assertNotEquals(hash1, hash2);
+    }
 }
