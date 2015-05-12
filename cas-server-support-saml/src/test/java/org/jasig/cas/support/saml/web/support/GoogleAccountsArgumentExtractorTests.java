@@ -22,6 +22,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.mock;
  * @since 3.1
  *
  */
-public class GoogleAccountsArgumentExtractorTests {
+public class GoogleAccountsArgumentExtractorTests extends AbstractOpenSamlTests {
 
     private GoogleAccountsArgumentExtractor extractor;
 

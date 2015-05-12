@@ -29,19 +29,19 @@
 	<packaging>jar</packaging>
 	<name>Apereo CAS Memcached Integration</name>
 
-  <repositories>
-    <repository>
-      <id>couchbase</id>
-      <name>Couchbase Maven Repository</name>
-      <url>http://files.couchbase.com/maven2</url>
-    </repository>
-  </repositories>
+    <repositories>
+      <repository>
+        <id>couchbase</id>
+        <name>Couchbase Maven Repository</name>
+        <url>http://files.couchbase.com/maven2</url>
+      </repository>
+    </repositories>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
 		</dependency>
 
         <dependency>
@@ -52,35 +52,44 @@
         </dependency>
 		
 		<dependency>
-			<groupId>net.spy</groupId>
-			<artifactId>spymemcached</artifactId>
-			<version>2.9.1</version>
+            <groupId>net.spy</groupId>
+            <artifactId>spymemcached</artifactId>
+            <version>${spy.memcached.version}</version>
 		</dependency>
 
-    <dependency>
-      <groupId>com.esotericsoftware</groupId>
-      <artifactId>kryo</artifactId>
-      <version>3.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>de.javakaffee</groupId>
-      <artifactId>kryo-serializers</artifactId>
-      <version>0.27</version>
-    </dependency>
+        <dependency>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>${kryo.serializers.version}</version>
+        </dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>1.9.0</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.memcached</artifactId>
+            <version>${embedded.memcached.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+        <spy.memcached.version>2.11.7</spy.memcached.version>
+        <kryo.version>3.0.1</kryo.version>
+        <kryo.serializers.version>0.27</kryo.serializers.version>
+        <embedded.memcached.version>1.06.2</embedded.memcached.version>
+    </properties>
 
 </project>

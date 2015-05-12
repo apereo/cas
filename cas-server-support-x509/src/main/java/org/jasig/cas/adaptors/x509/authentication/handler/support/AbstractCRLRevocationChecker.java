@@ -65,7 +65,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             return;
         }
         if (CertUtils.isExpired(crl)) {
-            logger.warn("CRL data expired on ", crl.getNextUpdate());
+            logger.warn("CRL data expired on {}", crl.getNextUpdate());
             this.expiredCRLPolicy.apply(crl);
         }
         final X509CRLEntry entry = crl.getRevokedCertificate(cert);
@@ -101,4 +101,12 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      */
     protected abstract X509CRL getCRL(final X509Certificate cert);
 
+    /**
+     * Records the addition of a new CRL entry.
+     * @param id the id of the entry to keep track of
+     * @param crl new CRL entry
+     * @return true if the entry was added successfully.
+     * @since 4.1
+     */
+    protected abstract boolean addCRL(final Object id, final X509CRL crl);
 }

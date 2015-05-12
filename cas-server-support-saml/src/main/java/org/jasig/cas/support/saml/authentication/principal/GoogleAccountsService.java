@@ -30,13 +30,13 @@ import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.AuthnContext;
-import org.opensaml.saml2.core.AuthnStatement;
-import org.opensaml.saml2.core.Conditions;
-import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.core.StatusCode;
-import org.opensaml.saml2.core.Subject;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.saml2.core.Subject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -184,11 +184,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
-        final org.opensaml.saml2.core.Response response = BUILDER.newResponse(
+        final org.opensaml.saml.saml2.core.Response response = BUILDER.newResponse(
                 BUILDER.generateSecureRandomId(),
                 currentDateTime,
                 getId(), this);
-        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS_URI, null));
+        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS, null));
 
         final AuthnStatement authnStatement = BUILDER.newAuthnStatement(
                 AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
