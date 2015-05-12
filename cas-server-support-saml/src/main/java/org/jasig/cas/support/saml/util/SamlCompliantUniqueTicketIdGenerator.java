@@ -23,8 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.opensaml.saml1.binding.artifact.SAML1ArtifactType0001;
-import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
+import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
+import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
@@ -80,9 +80,8 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     public String getNewTicketId(final String prefix) {
         if (saml2compliant) {
             return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), sourceIdDigest).base64Encode();
-        } else {
-            return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
         }
+        return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
     }
 
     public void setSaml2compliant(final boolean saml2compliant) {

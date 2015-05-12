@@ -92,7 +92,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test(expected=TicketCreationException.class)
     public void disallowNullCredentionalsArrayWhenCreatingTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(new Credential[] {null, null} );
+                .createTicketGrantingTicket(new Credential[] {null, null});
     }
 
     @Test(expected=ClassCastException.class)
