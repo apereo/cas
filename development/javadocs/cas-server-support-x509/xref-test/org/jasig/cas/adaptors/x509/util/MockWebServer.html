@@ -88,7 +88,7 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              <strong class="jxr_keyword">this</strong>.workerThread.join();
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException e) {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>              e.printStackTrace();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              logger.error(e.getMessage(), e);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          }
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      }
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
@@ -147,45 +147,51 @@
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">while</strong> (<strong class="jxr_keyword">this</strong>.running) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>                     writeResponse(<strong class="jxr_keyword">this</strong>.serverSocket.accept());
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SocketException se) {
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>                     logger.debug(<span class="jxr_string">"Stopping on socket close."</span>);
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>                     <strong class="jxr_keyword">this</strong>.running = false;
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioe) {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                     ioe.printStackTrace();
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 }
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             }
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         }
-<a class="jxr_linenumber" name="L150" href="#L150">150</a> 
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> stop() {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 <strong class="jxr_keyword">this</strong>.serverSocket.close();
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 logger.trace(<span class="jxr_string">"Exception when closing the server socket: {}"</span>, e.getMessage());
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>             }
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         }
-<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> writeResponse(<strong class="jxr_keyword">final</strong> Socket socket) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">final</strong> OutputStream out = socket.getOutputStream();
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>             out.write(STATUS_LINE.getBytes());
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>             out.write(header(<span class="jxr_string">"Content-Length"</span>, <strong class="jxr_keyword">this</strong>.resource.contentLength()));
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             out.write(header(<span class="jxr_string">"Content-Type"</span>, <strong class="jxr_keyword">this</strong>.contentType));
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             out.write(SEPARATOR.getBytes());
-<a class="jxr_linenumber" name="L165" href="#L165">165</a> 
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">final</strong> byte[] buffer = <strong class="jxr_keyword">new</strong> byte[BUFFER_SIZE];
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>             <strong class="jxr_keyword">final</strong> InputStream in = <strong class="jxr_keyword">this</strong>.resource.getInputStream();
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>             <strong class="jxr_keyword">int</strong> count = 0;
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>             <strong class="jxr_keyword">while</strong> ((count = in.read(buffer)) &gt; -1) {
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 out.write(buffer, 0, count);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             }
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             in.close();
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>             socket.shutdownOutput();
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         }
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">private</strong> byte[] header(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Object value) {
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s: %s\r\n"</span>, name, value).getBytes();
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         }
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>                     Thread.sleep(500);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> SocketException se) {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>                     logger.debug(<span class="jxr_string">"Stopping on socket close."</span>);
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>                     <strong class="jxr_keyword">this</strong>.running = false;
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>                     logger.error(e.getMessage(), e);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 }
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> stop() {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <strong class="jxr_keyword">this</strong>.serverSocket.close();
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 logger.trace(<span class="jxr_string">"Exception when closing the server socket: {}"</span>, e.getMessage());
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>             }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         }
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> writeResponse(<strong class="jxr_keyword">final</strong> Socket socket) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             logger.debug(<span class="jxr_string">"Socket response for resource {}"</span>, resource.getFilename());
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">final</strong> OutputStream out = socket.getOutputStream();
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             out.write(STATUS_LINE.getBytes());
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>             out.write(header(<span class="jxr_string">"Content-Length"</span>, <strong class="jxr_keyword">this</strong>.resource.contentLength()));
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             out.write(header(<span class="jxr_string">"Content-Type"</span>, <strong class="jxr_keyword">this</strong>.contentType));
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>             out.write(SEPARATOR.getBytes());
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>             <strong class="jxr_keyword">final</strong> byte[] buffer = <strong class="jxr_keyword">new</strong> byte[BUFFER_SIZE];
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>             <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> InputStream in = <strong class="jxr_keyword">this</strong>.resource.getInputStream()) {
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">int</strong> count = 0;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 <strong class="jxr_keyword">while</strong> ((count = in.read(buffer)) &gt; -1) {
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>                     out.write(buffer, 0, count);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 }
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>             }
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             logger.debug(<span class="jxr_string">"Wrote response for resource {} for {}"</span>,
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                     resource.getFilename(),
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>                     resource.contentLength());
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> 
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             socket.shutdownOutput();
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         }
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">private</strong> byte[] header(<strong class="jxr_keyword">final</strong> String name, <strong class="jxr_keyword">final</strong> Object value) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>             <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"%s: %s\r\n"</span>, name, value).getBytes();
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         }
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
