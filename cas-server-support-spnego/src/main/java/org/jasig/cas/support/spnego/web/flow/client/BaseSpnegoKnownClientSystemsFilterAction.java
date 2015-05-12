@@ -53,7 +53,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
-    protected Pattern ipsToCheckPattern;
+    private Pattern ipsToCheckPattern;
 
     /** Alternative remote host attribute. **/
     private String alternativeRemoteHostAttribute;
@@ -63,7 +63,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
  
     /** Timeout for DNS Requests. **/
     private long timeout = DEFAULT_TIMEOUT;
-
+    
     /**
      * Instantiates a new Base.
      */
@@ -122,7 +122,15 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return true
      */
     protected boolean shouldDoSpnego() {
-        return shouldCheckIp();
+        return ipPatternCanBeChecked() && ipPatternMatches();
+    }
+    
+    /**
+     * Base class definition for whether the IP should be checked or not; overridable.
+     * @return whether or not the IP can / should be matched against the pattern
+     */
+    protected boolean ipPatternCanBeChecked() {
+        return (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp));
     }
     
     /**
@@ -131,14 +139,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * for the local / first implementation regex made more sense.
      * @return whether the remote ip received should be queried
      */
-    protected boolean shouldCheckIp() {
-        if (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp)) {
-            final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
-            if (matcher.find()) {
-                logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
-                        this.remoteIp, this.ipsToCheckPattern.pattern());
-                return true;
-            }
+    protected boolean ipPatternMatches() {
+        final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
+        if (matcher.find()) {
+            logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
+                    this.remoteIp, this.ipsToCheckPattern.pattern());
+            return true;
         }
         logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
                 this.remoteIp);
