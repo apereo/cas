@@ -64,9 +64,6 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() {
-        Collection c = getEntries();
-        System.out.println(c.size());
-
         final LdapSpnegoKnownClientSystemsFilterAction action =
                 new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
                 this.searchRequest, "mail");
