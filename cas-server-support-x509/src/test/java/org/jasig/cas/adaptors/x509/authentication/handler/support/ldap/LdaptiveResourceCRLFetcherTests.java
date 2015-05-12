@@ -17,12 +17,15 @@
  * under the License.
  */
 
-package org.jasig.cas.adaptors.x509.authentication.handler.support;
+package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import java.security.cert.X509Certificate;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,18 +38,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 /**
- * Test cases for {@link PoolingLdaptiveResourceCRLFetcher}
+ * Test cases for {@link LdaptiveResourceCRLFetcher}
  * @author Misagh Moayyed
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/x509-ldap-context.xml"})
-public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
+public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
 
 
     @Autowired
-    @Qualifier("poolingLdapCertFetcher")
-    private PoolingLdaptiveResourceCRLFetcher fetcher;
+    @Qualifier("ldapCertFetcher")
+    private LdaptiveResourceCRLFetcher fetcher;
 
     @BeforeClass
     public static void bootstrap() throws Exception {
