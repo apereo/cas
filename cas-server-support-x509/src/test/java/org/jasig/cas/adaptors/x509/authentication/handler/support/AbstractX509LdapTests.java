@@ -22,7 +22,6 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
-import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.jasig.cas.util.CompressionUtils;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
