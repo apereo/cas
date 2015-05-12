@@ -97,10 +97,23 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     @Override
     protected boolean shouldDoSpnego() {
-        Connection connection = null;
-        if(!(ipPatternCanBeChecked() && ipPatternMatches())) {
+        final boolean ipCheck = ipPatternCanBeChecked();
+        if(ipCheck && !ipPatternMatches()) {
             return false;
         }
+
+        return executeSearchForSpnegoAttribute();
+    }
+
+    /**
+     * Searches the ldap instance for the attribute value.
+     *
+     * @return the boolean
+     */
+    protected boolean executeSearchForSpnegoAttribute() {
+        Connection connection = null;
+
+
         final String remoteHostName = getRemoteHostName();
         try {
             connection = createConnection();
@@ -133,6 +146,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         final SearchResult result = searchResult.getResult();
 
         if (result == null || result.getEntries().isEmpty()) {
+            logger.debug("Spnego attribute is not found in the search results");
             return false;
         }
         final LdapEntry entry = result.getEntry();
