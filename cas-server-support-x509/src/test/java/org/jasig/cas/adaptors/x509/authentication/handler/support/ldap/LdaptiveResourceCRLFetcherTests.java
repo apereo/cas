@@ -25,7 +25,6 @@ import net.sf.ehcache.CacheManager;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
-import org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
