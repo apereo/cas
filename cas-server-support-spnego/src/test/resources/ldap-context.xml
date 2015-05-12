@@ -23,17 +23,22 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.jasig.cas" />
     <context:annotation-config />
 
     <context:property-placeholder location="classpath:/ldap.properties"/>
+
+    <bean id="searchRequest" class="org.ldaptive.SearchRequest"
+          p:baseDn-ref="baseDn"
+          p:searchFilter-ref="searchFilter" />
+
+    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
+          c:filter="host={0}" />
 
     <bean id="baseDn" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
