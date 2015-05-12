@@ -63,12 +63,11 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
  
     /** Timeout for DNS Requests. **/
     private long timeout = DEFAULT_TIMEOUT;
-
+    
     /**
      * Instantiates a new Base.
      */
     public BaseSpnegoKnownClientSystemsFilterAction() {}
-
 
     /**
      * Instantiates a new Base.
@@ -119,19 +118,33 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     }
 
     /**
+     * Default implementation -- simply check the IP filter.
+     * @return true
+     */
+    protected boolean shouldDoSpnego() {
+        return ipPatternCanBeChecked() && ipPatternMatches();
+    }
+    
+    /**
+     * Base class definition for whether the IP should be checked or not; overridable.
+     * @return whether or not the IP can / should be matched against the pattern
+     */
+    protected boolean ipPatternCanBeChecked() {
+        return (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp));
+    }
+    
+    /**
      * Simple pattern match to determine whether an IP should be checked.
      * Could stand to be extended to support "real" IP addresses and patterns, but
      * for the local / first implementation regex made more sense.
-     * @return whether the remote ip received should be ignored
+     * @return whether the remote ip received should be queried
      */
-    protected boolean shouldDoSpnego() {
-        if (this.ipsToCheckPattern != null && StringUtils.isNotBlank(this.remoteIp)) {
-            final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
-            if (matcher.find()) {
-                logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
-                        this.remoteIp, this.ipsToCheckPattern.pattern());
-                return true;
-            }
+    protected boolean ipPatternMatches() {
+        final Matcher matcher = this.ipsToCheckPattern.matcher(this.remoteIp);
+        if (matcher.find()) {
+            logger.debug("Remote IP address {} should be checked based on the defined pattern {}",
+                    this.remoteIp, this.ipsToCheckPattern.pattern());
+            return true;
         }
         logger.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
                 this.remoteIp);
@@ -228,7 +241,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : getRemoteIp();
     }
 
-
     /**
      *  Utility class to perform DNS work in a threaded, timeout-able way
      *  Adapted from: http://thushw.blogspot.com/2009/11/resolving-domain-names-quickly-with.html.
@@ -289,7 +301,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         public synchronized String get() {
             return this.hostName;
         }
-
 
         @Override
         public String toString() {
