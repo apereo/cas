@@ -19,7 +19,6 @@
 
 package org.jasig.cas.support.spnego.web.flow.client;
 
-
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
@@ -53,12 +52,12 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      * else skips the process.
      */
     @Override
-    protected boolean shouldDoSpnego() {
-        final boolean ipCheck = ipPatternCanBeChecked();
-        if(ipCheck && !ipPatternMatches()) {
+    protected boolean shouldDoSpnego(final String remoteIp) {
+        final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
+        if(ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-        final String hostName = getRemoteHostName();
+        final String hostName = getRemoteHostName(remoteIp);
         logger.debug("Retrieved host name for the remote ip is {}", hostName);
         return this.hostNamePatternString.matcher(hostName).find();
     }
