@@ -96,25 +96,24 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     }
 
     @Override
-    protected boolean shouldDoSpnego() {
-        final boolean ipCheck = ipPatternCanBeChecked();
-        if(ipCheck && !ipPatternMatches()) {
+    protected boolean shouldDoSpnego(final String remoteIp) {
+        final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
+        if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
 
-        return executeSearchForSpnegoAttribute();
+        return executeSearchForSpnegoAttribute(remoteIp);
     }
 
     /**
      * Searches the ldap instance for the attribute value.
      *
+     * @param remoteIp the remote ip
      * @return the boolean
      */
-    protected boolean executeSearchForSpnegoAttribute() {
+    protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
-
-
-        final String remoteHostName = getRemoteHostName();
+        final String remoteHostName = getRemoteHostName(remoteIp);
         try {
             connection = createConnection();
             final Operation searchOperation = new SearchOperation(connection);
