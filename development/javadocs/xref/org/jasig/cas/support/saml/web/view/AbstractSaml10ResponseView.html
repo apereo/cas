@@ -31,112 +31,117 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.view.AbstractCasView;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.opensaml.DefaultBootstrap;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml1.core.Response;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.opensaml.xml.ConfigurationException;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * Base class for all views that render SAML1 SOAP messages directly to the HTTP response stream.</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * @since 3.5.1</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/view/AbstractSaml10ResponseView.html">AbstractSaml10ResponseView</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../org/jasig/cas/web/view/AbstractCasView.html">AbstractCasView</a> {
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_ENCODING = <span class="jxr_string">"UTF-8"</span>;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * The Saml object builder.</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/support/saml/util/Saml10ObjectBuilder.html">Saml10ObjectBuilder</a> samlObjectBuilder = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/support/saml/util/Saml10ObjectBuilder.html">Saml10ObjectBuilder</a>();
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.html">SamlArgumentExtractor</a> samlArgumentExtractor = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.html">SamlArgumentExtractor</a>();
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.opensaml.core.config.InitializationException;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.opensaml.core.config.InitializationService;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.opensaml.saml.saml1.core.Response;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletRequest;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> javax.servlet.http.HttpServletResponse;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment"> * Base class for all views that render SAML1 SOAP messages directly to the HTTP response stream.</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * @since 3.5.1</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/view/AbstractSaml10ResponseView.html">AbstractSaml10ResponseView</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../org/jasig/cas/web/view/AbstractCasView.html">AbstractCasView</a> {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_ENCODING = <span class="jxr_string">"UTF-8"</span>;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * The Saml object builder.</em>
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/support/saml/util/Saml10ObjectBuilder.html">Saml10ObjectBuilder</a> samlObjectBuilder = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/support/saml/util/Saml10ObjectBuilder.html">Saml10ObjectBuilder</a>();
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      @NotNull
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">private</strong> String encoding = DEFAULT_ENCODING;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <em class="jxr_javadoccomment">/** Defaults to 0. */</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> skewAllowance;
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">static</strong> {
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>              DefaultBootstrap.bootstrap();
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> ConfigurationException e) {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Error initializing OpenSAML library."</span>, e);
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * Sets the character encoding in the HTTP response.</em>
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * @param encoding Response character encoding.</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEncoding(<strong class="jxr_keyword">final</strong> String encoding) {
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">this</strong>.encoding = encoding;
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      }
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">    * Sets the allowance for time skew in seconds</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">    * between CAS and the client server.  Default 0s.</em>
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">    * This value will be subtracted from the current time when setting the SAML</em>
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">    * &lt;code&gt;NotBeforeDate&lt;/code&gt; attribute, thereby allowing for the</em>
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">    * CAS server to be ahead of the client by as much as the value defined here.</em>
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">    *</em>
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">    * &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Skewing of the issue instant via setting this property</em>
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">    * applies to all saml assertions that are issued by CAS and it</em>
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">    * currently cannot be controlled on a per relying party basis.</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">    * Before configuring this, it is recommended that each service provider</em>
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">    * attempt to correctly sync their system time with an NTP server</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">    * so as to match the CAS server's issue instant config and to</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">    * avoid applying this setting globally. This should only</em>
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">    * be used in situations where the NTP server is unresponsive to</em>
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">    * sync time on the client, or the client is simply unable</em>
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">    * to adjust their server time configuration.&lt;/p&gt;</em>
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">    *</em>
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">    * @param skewAllowance Number of seconds to allow for variance.</em>
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">    */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSkewAllowance(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> skewAllowance) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>          logger.debug(<span class="jxr_string">"Using {} seconds as skew allowance."</span>, skewAllowance);
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">this</strong>.skewAllowance = skewAllowance;
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      }
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>  
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      @Override
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> renderMergedOutputModel(
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model, <strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L102" href="#L102">102</a> 
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         response.setCharacterEncoding(<strong class="jxr_keyword">this</strong>.encoding);
-<a class="jxr_linenumber" name="L104" href="#L104">104</a> 
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = <strong class="jxr_keyword">this</strong>.samlArgumentExtractor.extractService(request);
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">final</strong> String serviceId = service != <strong class="jxr_keyword">null</strong> ? service.getId() : <span class="jxr_string">"UNKNOWN"</span>;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.html">SamlArgumentExtractor</a> samlArgumentExtractor = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../org/jasig/cas/support/saml/web/support/SamlArgumentExtractor.html">SamlArgumentExtractor</a>();
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      @NotNull
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> String encoding = DEFAULT_ENCODING;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <em class="jxr_javadoccomment">/** Defaults to 0. */</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> skewAllowance;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">static</strong> {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">if</strong> (XMLObjectProviderRegistrySupport.getParserPool() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  InitializationService.initialize();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InitializationException e) {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Error initializing OpenSAML library."</span>, e);
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          }
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * Sets the character encoding in the HTTP response.</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * @param encoding Response character encoding.</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEncoding(<strong class="jxr_keyword">final</strong> String encoding) {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">this</strong>.encoding = encoding;
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">    * Sets the allowance for time skew in seconds</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">    * between CAS and the client server.  Default 0s.</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">    * This value will be subtracted from the current time when setting the SAML</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">    * &lt;code&gt;NotBeforeDate&lt;/code&gt; attribute, thereby allowing for the</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">    * CAS server to be ahead of the client by as much as the value defined here.</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">    *</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">    * &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Skewing of the issue instant via setting this property</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">    * applies to all saml assertions that are issued by CAS and it</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">    * currently cannot be controlled on a per relying party basis.</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">    * Before configuring this, it is recommended that each service provider</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">    * attempt to correctly sync their system time with an NTP server</em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">    * so as to match the CAS server's issue instant config and to</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">    * avoid applying this setting globally. This should only</em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">    * be used in situations where the NTP server is unresponsive to</em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">    * sync time on the client, or the client is simply unable</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">    * to adjust their server time configuration.&lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">    *</em>
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">    * @param skewAllowance Number of seconds to allow for variance.</em>
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">    */</em>
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setSkewAllowance(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> skewAllowance) {
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         logger.debug(<span class="jxr_string">"Using {} seconds as skew allowance."</span>, skewAllowance);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">this</strong>.skewAllowance = skewAllowance;
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>     }
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> 
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>     @Override
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> renderMergedOutputModel(
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model, <strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/principal/Response.html">Response</a> samlResponse = <strong class="jxr_keyword">this</strong>.samlObjectBuilder.newResponse(
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                     <strong class="jxr_keyword">this</strong>.samlObjectBuilder.generateSecureRandomId(),
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>                     DateTime.now().minusSeconds(<strong class="jxr_keyword">this</strong>.skewAllowance), serviceId, service);
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         response.setCharacterEncoding(<strong class="jxr_keyword">this</strong>.encoding);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a> 
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = <strong class="jxr_keyword">this</strong>.samlArgumentExtractor.extractService(request);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">final</strong> String serviceId = service != <strong class="jxr_keyword">null</strong> ? service.getId() : <span class="jxr_string">"UNKNOWN"</span>;
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>             prepareResponse(samlResponse, model);
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> 
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>             <strong class="jxr_keyword">this</strong>.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>             logger.error(<span class="jxr_string">"Error generating SAML response for service {}."</span>, serviceId);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>             <strong class="jxr_keyword">throw</strong> e;
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         }
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
-<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">     * Subclasses must implement this method by adding child elements (status, assertion, etc) to</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     * the given empty SAML 1 response message.  Impelmenters need not be concerned with error handling.</em>
-<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     * @param response SAML 1 response message to be filled.</em>
-<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     * @param model Spring MVC model map containing data needed to prepare response.</em>
-<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> prepareResponse(<a href="../../../../../../../org/jasig/cas/authentication/principal/Response.html">Response</a> response, Map&lt;String, Object&gt; model);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
-<a class="jxr_linenumber" name="L131" href="#L131">131</a> }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../../org/jasig/cas/authentication/principal/Response.html">Response</a> samlResponse = <strong class="jxr_keyword">this</strong>.samlObjectBuilder.newResponse(
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>                     <strong class="jxr_keyword">this</strong>.samlObjectBuilder.generateSecureRandomId(),
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>                     DateTime.now().minusSeconds(<strong class="jxr_keyword">this</strong>.skewAllowance), serviceId, service);
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> 
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>             prepareResponse(samlResponse, model);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>             <strong class="jxr_keyword">this</strong>.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>             logger.error(<span class="jxr_string">"Error generating SAML response for service {}."</span>, serviceId);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">throw</strong> e;
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         }
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>     }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> 
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     * Subclasses must implement this method by adding child elements (status, assertion, etc) to</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">     * the given empty SAML 1 response message.  Impelmenters need not be concerned with error handling.</em>
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">     * @param response SAML 1 response message to be filled.</em>
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> <em class="jxr_javadoccomment">     * @param model Spring MVC model map containing data needed to prepare response.</em>
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> prepareResponse(<a href="../../../../../../../org/jasig/cas/authentication/principal/Response.html">Response</a> response, Map&lt;String, Object&gt; model);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

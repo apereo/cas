@@ -25,7 +25,7 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2004 - 2015 Jasig</copyright>
     <item>
-      <title>File: 24,
+      <title>File: 27,
              Errors: 0,
              Warnings: 2,
              Infos: 0
@@ -60,35 +60,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.Saml10ObjectBuilder.java">org/jasig/cas/support/saml/util/Saml10ObjectBuilder.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10FailureResponseView.java">org/jasig/cas/support/saml/web/view/Saml10FailureResponseView.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator.java">org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulator.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder.java">org/jasig/cas/support/saml/util/AbstractSaml20ObjectBuilder.java</a>
                 </td>
                 <td>
                   0
@@ -116,7 +88,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder.java">org/jasig/cas/support/saml/util/AbstractSaml20ObjectBuilder.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.AbstractOpenSamlTests.java">org/jasig/cas/support/saml/AbstractOpenSamlTests.java</a>
                 </td>
                 <td>
                   0
@@ -186,6 +158,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.OpenSamlConfigBean.java">org/jasig/cas/support/saml/OpenSamlConfigBean.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.WebUtilTests.java">org/jasig/cas/support/saml/web/support/WebUtilTests.java</a>
                 </td>
                 <td>
@@ -201,20 +187,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulatorTests.java">org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulatorTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView.java">org/jasig/cas/support/saml/web/view/Saml10SuccessResponseView.java</a>
                 </td>
                 <td>
                   0
@@ -256,6 +228,104 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10SuccessResponseViewTests.java">org/jasig/cas/support/saml/web/view/Saml10SuccessResponseViewTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder.java">org/jasig/cas/support/saml/util/CasHTTPSOAP11Encoder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.SamlAuthenticationRequestTests.java">org/jasig/cas/support/saml/authentication/SamlAuthenticationRequestTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.Saml10ObjectBuilder.java">org/jasig/cas/support/saml/util/Saml10ObjectBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10FailureResponseView.java">org/jasig/cas/support/saml/web/view/Saml10FailureResponseView.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator.java">org/jasig/cas/support/saml/authentication/SamlAuthenticationMetaDataPopulator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView.java">org/jasig/cas/support/saml/web/view/Saml10SuccessResponseView.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.AbstractSamlObjectBuilder.java">org/jasig/cas/support/saml/util/AbstractSamlObjectBuilder.java</a>
                 </td>
                 <td>
@@ -271,20 +341,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.support.SamlArgumentExtractorTests.java">org/jasig/cas/support/saml/web/support/SamlArgumentExtractorTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10SuccessResponseViewTests.java">org/jasig/cas/support/saml/web/view/Saml10SuccessResponseViewTests.java</a>
                 </td>
                 <td>
                   0
@@ -340,20 +396,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10FailureResponseViewTests.java">org/jasig/cas/support/saml/web/view/Saml10FailureResponseViewTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.authentication.principal.SamlService.java">org/jasig/cas/support/saml/authentication/principal/SamlService.java</a>
                 </td>
                 <td>
@@ -368,13 +410,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder.java">org/jasig/cas/support/saml/util/CasHTTPSOAP11Encoder.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-saml//checkstyle.html#org.jasig.cas.support.saml.web.view.Saml10FailureResponseViewTests.java">org/jasig/cas/support/saml/web/view/Saml10FailureResponseViewTests.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0
