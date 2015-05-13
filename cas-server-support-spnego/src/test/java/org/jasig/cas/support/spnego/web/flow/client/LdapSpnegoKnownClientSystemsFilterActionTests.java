@@ -37,8 +37,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Collection;
-
 import static org.junit.Assert.assertEquals;
 
 /**
