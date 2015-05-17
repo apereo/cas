@@ -26,7 +26,6 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-compatibility</artifactId>
     <packaging>jar</packaging>
     <name>Apereo CAS Compatibility Tests</name>
