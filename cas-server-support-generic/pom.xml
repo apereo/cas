@@ -25,7 +25,6 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-generic</artifactId>
     <packaging>jar</packaging>
     <name>Apereo CAS Generic Support</name>
