@@ -19,12 +19,9 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
-       xmlns:p="http://www.springframework.org/schema/p"       
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       					   http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
- 	<bean id="jsonView" class="org.springframework.web.servlet.view.json.JsonView" />
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.JsonView"/>
 </beans>

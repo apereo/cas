@@ -21,9 +21,9 @@
 -->
 <!-- See http://findbugs.sourceforge.net/manual/filter.html -->
 <FindBugsFilter>
-     <Match>
-     	<Confidence value="2" />
-        <Rank value="15" />
-        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE" />
-     </Match>
+    <Match>
+        <Confidence value="2"/>
+        <Rank value="15"/>
+        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE"/>
+    </Match>
 </FindBugsFilter>

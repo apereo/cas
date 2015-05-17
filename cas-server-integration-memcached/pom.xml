@@ -17,32 +17,33 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-integration-memcached</artifactId>
-	<packaging>jar</packaging>
-	<name>Apereo CAS Memcached Integration</name>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-memcached</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS Memcached Integration</name>
 
     <repositories>
-      <repository>
-        <id>couchbase</id>
-        <name>Couchbase Maven Repository</name>
-        <url>http://files.couchbase.com/maven2</url>
-      </repository>
+        <repository>
+            <id>couchbase</id>
+            <name>Couchbase Maven Repository</name>
+            <url>http://files.couchbase.com/maven2</url>
+        </repository>
     </repositories>
-	
-	<dependencies>
-		<dependency>
+
+    <dependencies>
+        <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core</artifactId>
             <version>${project.version}</version>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
@@ -50,12 +51,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-		
-		<dependency>
+
+        <dependency>
             <groupId>net.spy</groupId>
             <artifactId>spymemcached</artifactId>
             <version>${spy.memcached.version}</version>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>com.esotericsoftware</groupId>

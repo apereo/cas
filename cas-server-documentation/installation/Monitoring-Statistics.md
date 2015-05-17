@@ -26,7 +26,7 @@ cas.securityContext.status.access=hasIpAddress('127.0.0.1')
 {% highlight bash %}
 Health: OK
 
-	1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
+    1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
 
@@ -122,7 +122,7 @@ All performance data and metrics are routed to a log file via the Log4j configur
 ...
 
 <Logger name="perfStatsLogger" level="info" additivity="false">
-	<AppenderRef ref="perfFileAppender"/>
+    <AppenderRef ref="perfFileAppender"/>
 </Logger>
 
 {% endhighlight %}
