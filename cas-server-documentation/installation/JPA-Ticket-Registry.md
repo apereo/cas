@@ -20,22 +20,22 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
 <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-	<property name="dataSource" ref="dataSource"/>
-	<property name="jpaVendorAdapter">
-	  <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-	    <property name="generateDdl" value="true"/>
-	    <property name="showSql" value="true" />
-	  </bean>
-	</property>
-	<property name="jpaProperties">
-	  <props>
-	    <prop key="hibernate.hbm2ddl.auto">update</prop>
-	  </props>
-	</property>
+    <property name="dataSource" ref="dataSource"/>
+    <property name="jpaVendorAdapter">
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true"/>
+        <property name="showSql" value="true" />
+      </bean>
+    </property>
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+      </props>
+    </property>
 </bean>
 
 <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-		p:entityManagerFactory-ref="entityManagerFactory" />
+        p:entityManagerFactory-ref="entityManagerFactory" />
 
 <tx:annotation-driven transaction-manager="transactionManager" />
 
@@ -45,8 +45,8 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
       c:logoutManager-ref="logoutManager" />
 
 <bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
-		p:uniqueId="${host.name}"
-		p:applicationId="cas-ticket-registry-cleaner" />
+        p:uniqueId="${host.name}"
+        p:applicationId="cas-ticket-registry-cleaner" />
 
 <bean id="jobDetailTicketRegistryCleaner"
        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
@@ -70,17 +70,17 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 {% highlight xml %}
 ...
 <dependency>
-	<groupId>org.hibernate</groupId>
-	<artifactId>hibernate-core</artifactId>
-	<version>${hibernate.core.version}</version>
-	<scope>runtime</scope>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>${hibernate.core.version}</version>
+    <scope>runtime</scope>
 </dependency>
 
 <dependency>
-	<groupId>org.hibernate</groupId>
-	<artifactId>hibernate-entitymanager</artifactId>
-	<version>${hibernate.core.version}</version>
-	<scope>runtime</scope>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-entitymanager</artifactId>
+    <version>${hibernate.core.version}</version>
+    <scope>runtime</scope>
 </dependency>
 ...
 {% endhighlight %}
@@ -237,10 +237,10 @@ database.pool.acquireRetryDelay=2000
 The following maven dependency for the library must be included in your Maven overlay:
 {% highlight xml %}
 <dependency>
-	<groupId>c3p0</groupId>
-	<artifactId>c3p0</artifactId>
-	<version>${c3p0.version}</version>
-	<scope>runtime</scope>
+    <groupId>c3p0</groupId>
+    <artifactId>c3p0</artifactId>
+    <version>${c3p0.version}</version>
+    <scope>runtime</scope>
 </dependency>
 {% endhighlight %}
 

@@ -100,7 +100,7 @@ head.ready(document, function() {
 });
 
 function resourceLoadedSuccessfully() {
-	...
+    ...
 }
 {% endhighlight %}
 
@@ -113,7 +113,7 @@ functions that depend on JQuery inside the actual page.
 
 {% highlight javascript %}
 function jqueryReady() {
-	//Custom Javascript tasks can be carried out now via JQuery...
+    //Custom Javascript tasks can be carried out now via JQuery...
 }
 {% endhighlight %}
 
@@ -363,7 +363,7 @@ Views associated with a particular theme by default are expected to be found at:
 <bean id="themeResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
     c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
     c:servicesManager-ref="servicesManager"
-	p:pathPrefix="/WEB-INF/view/jsp" />
+    p:pathPrefix="/WEB-INF/view/jsp" />
 {% endhighlight %}
 
 ####Configuration
