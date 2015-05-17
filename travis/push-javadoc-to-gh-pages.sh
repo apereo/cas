@@ -28,9 +28,9 @@ invokeDoc=false
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
-  		echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-  		invokeJavadoc=true;
-  		invokeDoc=true;;
+        echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
+        invokeJavadoc=true;
+        invokeDoc=true;;
   esac
 fi
 

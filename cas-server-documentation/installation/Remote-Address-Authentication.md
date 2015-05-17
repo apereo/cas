@@ -30,7 +30,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 ### Configuring Authentication
 {% highlight xml %}
 <bean class="org.jasig.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler">
-	<property name="ipNetworkRange" value="{network_range_goes_here}"/>
+    <property name="ipNetworkRange" value="{network_range_goes_here}"/>
 </bean>
 {% endhighlight %}
 
