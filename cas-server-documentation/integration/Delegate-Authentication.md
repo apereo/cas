@@ -18,9 +18,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-pac4j</artifactId>
-	<version>${cas.version}</version>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-pac4j</artifactId>
+    <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -90,7 +90,7 @@ As the identifier stores the kind of profile in its own definition (`*clientName
 
 {% highlight java %}
 final FacebookProfile rebuiltProfileOnCasClientSide =
-	(FacebookProfile) ProfileHelper.buildProfile(id, attributes);
+    (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 {% endhighlight %}
 
 and then use it in your application!
@@ -103,9 +103,9 @@ To add CAS client support, add the following dependency:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.pac4j</groupId>
-	<artifactId>pac4j-cas</artifactId>
-	<version>${pac4j.version}</version>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-cas</artifactId>
+    <version>${pac4j.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -113,9 +113,9 @@ To add OAuth client support, add the following dependency:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.pac4j</groupId>
-	<artifactId>pac4j-oauth</artifactId>
-	<version>${pac4j.version}</version>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-oauth</artifactId>
+    <version>${pac4j.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -123,9 +123,9 @@ To add OpenID client support, add the following dependency:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.pac4j</groupId>
-	<artifactId>pac4j-openid</artifactId>
-	<version>${pac4j.version}</version>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-openid</artifactId>
+    <version>${pac4j.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -133,9 +133,9 @@ To add OpenID Connect client support, add the following dependency:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.pac4j</groupId>
-	<artifactId>pac4j-oidc</artifactId>
-	<version>${pac4j.version}</version>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-oidc</artifactId>
+    <version>${pac4j.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -143,9 +143,9 @@ To add SAML support, add the following dependency:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.pac4j</groupId>
-	<artifactId>pac4j-saml</artifactId>
-	<version>${pac4j.version}</version>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-saml</artifactId>
+    <version>${pac4j.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -160,9 +160,9 @@ All the needed clients to authenticate against providers must be declared in the
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
   <property name="scope" 
-  	value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
+    value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
   <property name="fields" 
-  	value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
+    value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
  
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
@@ -223,8 +223,8 @@ This `ClientAction` has to be defined in the `cas-servlet.xml` file with all the
 
 {% highlight xml %}
 <bean id="clientAction" class="org.jasig.cas.support.pac4j.web.flow.ClientAction"
-	c:theCentralAuthenticationService-ref="centralAuthenticationService"
-	c:theClients-ref="clients"/>
+    c:theCentralAuthenticationService-ref="centralAuthenticationService"
+    c:theClients-ref="clients"/>
 {% endhighlight %}
 
 This `ClientAction` uses the *centralAuthenticationService* bean to finish the CAS authentication and references all the clients.
@@ -236,10 +236,10 @@ To be able to finish authenticating users in the CAS server after a remote authe
 {% highlight xml %}
 <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
     <constructor-arg>
-	<map>
+    <map>
            <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
            <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
-    	</map>
+        </map>
     </constructor-arg>
     <property name="authenticationMetaDataPopulators">
         <util:list>
@@ -252,17 +252,17 @@ To be able to finish authenticating users in the CAS server after a remote authe
 </bean>
 
 <bean id="primaryAuthenticationHandler" 		
-	class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
-	c:clients-ref="clients">
+    class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
+    c:clients-ref="clients">
 {% endhighlight %}
 
 By default, the identifier returned by a delegated authentication is composed of the profile name and the technical identifier of the provider, like `FacebookProfile#1234`, to ensure the identifier uniqueness. Though, you can remove this behaviour and only return the technical identifier by using:
 
 {% highlight xml %}
 <bean id="primaryAuthenticationHandler"
-	class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
-	c:clients-ref="clients"
-	p:typeIdUsed="false" />
+    class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
+    c:clients-ref="clients"
+    p:typeIdUsed="false" />
 {% endhighlight %}
 
 
