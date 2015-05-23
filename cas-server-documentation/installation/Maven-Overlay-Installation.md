@@ -305,7 +305,7 @@ Also, note that for any custom Java component to compile and be included in the 
                         <groupId>org.jasig.cas</groupId>
                         <artifactId>cas-server-webapp</artifactId>
                         <excludes>
-			    <exclude>WEB-INF/cas.properties</exclude>
+                <exclude>WEB-INF/cas.properties</exclude>
                             <exclude>WEB-INF/classes/log4j.xml</exclude>
                             <exclude>...</exclude>
                         </excludes>

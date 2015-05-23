@@ -80,19 +80,19 @@ This resolver extracts the Subject Alternative Name UPN extension from the provi
 
 {% highlight xml %}
 <bean id="authenticationManager"
-	  class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-	<constructor-arg>
-		<map>
-		    <entry key-ref="x509AuthenticationHandler"
-				   value-ref="x509UPNPrincipalResolver" />
-			...
-		</map>
-	</constructor-arg>
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+    <constructor-arg>
+        <map>
+            <entry key-ref="x509AuthenticationHandler"
+                   value-ref="x509UPNPrincipalResolver" />
+            ...
+        </map>
+    </constructor-arg>
 </bean>
 ...
 
 <bean id="x509AuthenticationHandler"
-	  class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
 
 <bean id="x509UPNPrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver">
