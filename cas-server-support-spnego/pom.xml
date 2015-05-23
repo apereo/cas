@@ -37,12 +37,12 @@
         </dependency>
 
         <dependency>
-			<groupId>org.ldaptive</groupId>
-			<artifactId>ldaptive</artifactId>
-			<version>${ldaptive.version}</version>
-		</dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+            <version>${ldaptive.version}</version>
+        </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>org.samba.jcifs</groupId>
             <artifactId>jcifs</artifactId>
             <version>${jcifs.version}</version>
@@ -60,31 +60,31 @@
             <scope>compile</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-support-ldap</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-ldap</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.unboundid</groupId>
-			<artifactId>unboundid-ldapsdk</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.ldaptive</groupId>
-			<artifactId>ldaptive-unboundid</artifactId>
-			<version>${ldaptive.version}</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive-unboundid</artifactId>
+            <version>${ldaptive.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
-	<jcifs.version>1.2.25</jcifs.version>
-	<jcifs.ext.version>0.9.4</jcifs.ext.version>
+    <jcifs.version>1.2.25</jcifs.version>
+    <jcifs.ext.version>0.9.4</jcifs.ext.version>
     </properties>
 </project>
