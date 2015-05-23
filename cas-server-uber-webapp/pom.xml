@@ -18,7 +18,8 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>cas-server</artifactId>
         <groupId>org.jasig.cas</groupId>
@@ -29,21 +30,22 @@
     <name>Apereo CAS - Uber WAR - DEPRECATED</name>
     <description>
         The CAS uber-webapp module is deprecated and will be removed from subsequent CAS releases.
-        You should not attempt to include this module in your CAS Maven overlays, and rather try to use the cas-server-webapp
+        You should not attempt to include this module in your CAS Maven overlays, and rather try to use the
+        cas-server-webapp
         module instead, and include dependencies that are required for your build.
     </description>
     <artifactId>cas-server-uber-webapp</artifactId>
 
     <build>
-		<plugins>
-			<plugin>
-			     <artifactId>maven-war-plugin</artifactId>
-                 <configuration>
-                     <warName>cas</warName>
-                 </configuration>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>cas</warName>
+                </configuration>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -104,7 +106,7 @@
         </dependency>
     </dependencies>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+    </properties>
 </project>
