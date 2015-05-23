@@ -51,7 +51,7 @@ The `log4j2.xml` itself controls the refresh interval of the logging configurati
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="60">
     <Appenders>
-		...
+        ...
 {% endhighlight %}
 
 ###Appenders
@@ -154,15 +154,15 @@ Audit functionality is specifically controlled by the `WEB-INF/spring-configurat
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
 {% highlight xml %}
 <bean id="auditCleanupCriteria"
-	class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
-	<constructor-arg index="0" value="180" />
+    class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
+    <constructor-arg index="0" value="180" />
 </bean>
 
 <bean id="auditTrailManager"
       class="com.github.inspektr.audit.support.JdbcAuditTrailManager"
       c:transactionTemplate-ref="inspektrTransactionTemplate"
       p:dataSource-ref="dataSource"
-	  p:cleanupCriteria-ref="auditCleanupCriteria" />
+      p:cleanupCriteria-ref="auditCleanupCriteria" />
 
 <bean id="inspektrTransactionManager"
       class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
@@ -180,8 +180,8 @@ demonstrates a data source that connects to HSQLDB v1.8:
 
 {% highlight xml %}
 <bean id="dataSource" 
-	  class="org.apache.commons.dbcp.BasicDataSource" 
-	  destroy-method="close" lazy-init="true"
+      class="org.apache.commons.dbcp.BasicDataSource" 
+      destroy-method="close" lazy-init="true"
       p:poolPreparedStatements="true"
       p:url="jdbc:hsqldb:hsql://localhost:9001/misagh"
       p:username="SA"
@@ -195,23 +195,23 @@ in the `pom.xml` file that deal with creating connections.
 
 {% highlight xml %}
 <dependency>
-	<groupId>commons-dbcp</groupId>
-	<artifactId>commons-dbcp</artifactId>
-	<version>${dbcp.version}</version>
-	<scope>runtime</scope>
+    <groupId>commons-dbcp</groupId>
+    <artifactId>commons-dbcp</artifactId>
+    <version>${dbcp.version}</version>
+    <scope>runtime</scope>
 </dependency>
 <dependency>
-	<groupId>commons-pool</groupId>
-	<artifactId>commons-pool</artifactId>
-	<version>${commons.pool.version}</version>
-	<scope>runtime</scope>
+    <groupId>commons-pool</groupId>
+    <artifactId>commons-pool</artifactId>
+    <version>${commons.pool.version}</version>
+    <scope>runtime</scope>
 </dependency>
 <!-- Replace with your specific database of choice. -->
 <dependency>
-	<groupId>org.hsqldb</groupId>
-	<artifactId>hsqldb</artifactId>
-	<version>${hsqldb.version}</version>
-	<scope>runtime</scope>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>${hsqldb.version}</version>
+    <scope>runtime</scope>
 </dependency>
 {% endhighlight %}
 
@@ -222,13 +222,13 @@ Finally, the following database table needs to be created beforehand:
 {% highlight sql %}
 CREATE TABLE COM_AUDIT_TRAIL
 (
-	AUD_USER      VARCHAR(100) NOT NULL,
-	AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
-	AUD_SERVER_IP VARCHAR(15)   NOT NULL,
-	AUD_RESOURCE  VARCHAR(100) NOT NULL,
-	AUD_ACTION    VARCHAR(100) NOT NULL,
-	APPLIC_CD     VARCHAR(15)   NOT NULL,
-	AUD_DATE      TIMESTAMP     NOT NULL
+    AUD_USER      VARCHAR(100) NOT NULL,
+    AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
+    AUD_SERVER_IP VARCHAR(15)   NOT NULL,
+    AUD_RESOURCE  VARCHAR(100) NOT NULL,
+    AUD_ACTION    VARCHAR(100) NOT NULL,
+    APPLIC_CD     VARCHAR(15)   NOT NULL,
+    AUD_DATE      TIMESTAMP     NOT NULL
 );
 {% endhighlight %}
 
