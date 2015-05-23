@@ -18,13 +18,13 @@
     under the License.
 
 -->
-<property file="properties/canoo.properties" />
+<property file="properties/canoo.properties"/>
 
 <taskdef file="${webtest.home}/webtestTaskdefs.properties">
-	<classpath>
-		<fileset dir="${webtest.home}">
-			<include name="lib/**/*.jar" />
-		</fileset>
-		<pathelement path="${webtest.home}/lib" />
-	</classpath>
+<classpath>
+    <fileset dir="${webtest.home}">
+        <include name="lib/**/*.jar"/>
+    </fileset>
+    <pathelement path="${webtest.home}/lib"/>
+</classpath>
 </taskdef>

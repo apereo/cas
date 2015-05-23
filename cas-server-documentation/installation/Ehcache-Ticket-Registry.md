@@ -245,15 +245,15 @@ The Ehcache JGroups confguration itself needs to be altered to be similar to the
 Your maven overlay `pom.xml` will also need to declare the following dependencies:
 {% highlight xml %}
 <dependency>
-	<groupId>org.jgroups</groupId>
-	<artifactId>jgroups</artifactId>
-	<version>${jgroups.version}</version>
+    <groupId>org.jgroups</groupId>
+    <artifactId>jgroups</artifactId>
+    <version>${jgroups.version}</version>
 </dependency>
 
 <dependency>
-	<groupId>net.sf.ehcache</groupId>
-	<artifactId>ehcache-jgroupsreplication</artifactId>
-	<version>${ehcache-jgroups.version}</version>
+    <groupId>net.sf.ehcache</groupId>
+    <artifactId>ehcache-jgroupsreplication</artifactId>
+    <version>${ehcache-jgroups.version}</version>
 </dependency>                   
 {% endhighlight %}
 

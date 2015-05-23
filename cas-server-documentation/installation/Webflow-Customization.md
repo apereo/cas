@@ -68,9 +68,9 @@ Handling authentication failures, mapping the result of which event to a new sta
 ...
 
 <action-state id="realSubmit">
-	<evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
+    <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
 
-  	<transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="success" to="sendTicketGrantingTicket" />
     <transition on="authenticationFailure" to="handleAuthenticationFailure" />
     <transition on="error" to="generateLoginTicket" />
 </action-state>
@@ -115,7 +115,7 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 ...
 
 <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
-	<webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
 </webflow:flow-registry>
 
 {% endhighlight %}
@@ -154,7 +154,7 @@ By default, the conversational state of Spring Webflow is managed inside the app
 
 {% highlight xml %}
 <bean id="loginFlowExecutionRepository" 
-	class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+    class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
     c:flowExecutionFactory-ref="loginFlowExecutionFactory"
     c:flowDefinitionLocator-ref="loginFlowRegistry"
     c:transcoder-ref="loginFlowStateTranscoder" />
@@ -198,9 +198,9 @@ Once the action bean is configured, you may define it inside the `login-webflow.
 
 {% highlight xml %}
 <action-state id="actionStateId">
-	<action bean="customActionBeanId" />
-	<transition on="success" to="doThis" />
-	<transition on="error" to="doThat" />
+    <action bean="customActionBeanId" />
+    <transition on="success" to="doThis" />
+    <transition on="error" to="doThat" />
 </action-state>
 {% endhighlight %}
 
@@ -238,9 +238,9 @@ CAS presents the ability to allow the user to accept the usage policy before mov
 {% highlight xml %}
 <!-- Enable AUP flow	
 <action-state id="acceptableUsagePolicyCheck">
-	<evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
-	<transition on="success" to="sendTicketGrantingTicket" />
-	<transition to="acceptableUsagePolicyView" />
+    <evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition to="acceptableUsagePolicyView" />
 </action-state>
 ...
 
