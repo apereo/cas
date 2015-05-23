@@ -47,10 +47,10 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-extension-clearpass</artifactId>
-	<version>${cas.version}</version>
-	<scope>runtime</scope>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-extension-clearpass</artifactId>
+    <version>${cas.version}</version>
+    <scope>runtime</scope>
 </dependency>
 {% endhighlight %}
 
@@ -228,13 +228,13 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 
 <bean id="handlerMappingClearPass" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
     p:alwaysUseFullPath="true">
-	<property name="mappings">
-		<props>
-			<prop key="/clearPass">
+    <property name="mappings">
+        <props>
+            <prop key="/clearPass">
                 clearPassController
             </prop>
         </props>
-	</property>
+    </property>
 </bean>
 {% endhighlight %}
 
@@ -246,8 +246,8 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
          xsi:noNamespaceSchemaLocation="http://ehcache.sf.net/ehcache.xsd">
 
    <diskStore path="java.io.tmpdir/cas"/>
-	
-	 <cacheManagerPeerProviderFactory 
+    
+     <cacheManagerPeerProviderFactory 
                 class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
                 properties="peerDiscovery=manual,
                 rmiUrls=//10.1.1.123:40002/org.jasig.cas.extension.clearpass.CACHE" />

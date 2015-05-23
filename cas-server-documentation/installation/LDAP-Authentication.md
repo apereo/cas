@@ -586,9 +586,9 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
 
 {% highlight xml %}
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-	c:resolver-ref="dnResolver"
-	c:handler-ref="authHandler">
-	<property name="authenticationResponseHandlers">
+    c:resolver-ref="dnResolver"
+    c:handler-ref="authHandler">
+    <property name="authenticationResponseHandlers">
         <util:list>
             <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
         </util:list>
@@ -602,12 +602,12 @@ Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `Bin
 
 {% highlight xml %}
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-	p:connectionFactory-ref="bindPooledLdapConnectionFactory">
-	<property name="authenticationControls">
+    p:connectionFactory-ref="bindPooledLdapConnectionFactory">
+    <property name="authenticationControls">
         <util:list>
                 <bean class="org.ldaptive.control.PasswordPolicyControl" />
         </util:list>
-	</property>
+    </property>
 </bean>
 {% endhighlight %}  
 
