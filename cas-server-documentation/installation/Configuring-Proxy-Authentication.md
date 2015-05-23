@@ -173,17 +173,17 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
 
 {% highlight xml %}
 <bean id="cas3ServiceSuccessView" 
-	class="org.jasig.cas.web.view.Cas30ResponseView"
+    class="org.jasig.cas.web.view.Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
     p:successResponse="true"
     p:servicesManager-ref="servicesManager"
     p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
 <bean id="casRegisteredServiceCipherExecutor" 
-	class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
+    class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
 
 <bean id="casAttributeEncoder" 
-	class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+    class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
-	c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
+    c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
 {% endhighlight %} 
