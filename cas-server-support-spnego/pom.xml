@@ -17,41 +17,42 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cas-server-support-spnego</artifactId>
-	<packaging>jar</packaging>
-	<name>Apereo CAS SPNEGO/NTLM Support</name>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cas-server-support-spnego</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS SPNEGO/NTLM Support</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
+        <dependency>
 			<groupId>org.ldaptive</groupId>
 			<artifactId>ldaptive</artifactId>
 			<version>${ldaptive.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.samba.jcifs</groupId>
-			<artifactId>jcifs</artifactId>
-			<version>${jcifs.version}</version>
-		</dependency>
+            <groupId>org.samba.jcifs</groupId>
+            <artifactId>jcifs</artifactId>
+            <version>${jcifs.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.samba.jcifs</groupId>
-			<artifactId>jcifs-ext</artifactId>
-			<version>${jcifs.ext.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.samba.jcifs</groupId>
+            <artifactId>jcifs-ext</artifactId>
+            <version>${jcifs.ext.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.webflow</groupId>
@@ -79,11 +80,11 @@
 			<version>${ldaptive.version}</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
 	<jcifs.version>1.2.25</jcifs.version>
 	<jcifs.ext.version>0.9.4</jcifs.ext.version>
-  </properties>
+    </properties>
 </project>

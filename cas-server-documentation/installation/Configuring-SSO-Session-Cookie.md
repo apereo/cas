@@ -11,16 +11,16 @@ The generation of the ticket-granting cookie is controlled by the file `cas-serv
 
 {% highlight xml %}
 <bean id="ticketGrantingTicketCookieGenerator" 
-	class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+    class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
     c:casCookieValueManager-ref="cookieValueManager"
     p:cookieSecure="true"
-	p:cookieMaxAge="-1"
-	p:cookieName="TGC"
-	p:cookiePath="/cas" />
+    p:cookieMaxAge="-1"
+    p:cookieName="TGC"
+    p:cookiePath="/cas" />
 
 <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
-	c:secretKeyEncryption="${tgc.encryption.key}"
-	c:secretKeySigning="${tgc.signing.key}" />
+    c:secretKeyEncryption="${tgc.encryption.key}"
+    c:secretKeySigning="${tgc.signing.key}" />
 
 <bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
       c:cipherExecutor-ref="cookieCipherExecutor" />

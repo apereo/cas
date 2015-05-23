@@ -79,9 +79,9 @@ One service is needed to make the OAuth wrapper works in CAS. It defines the cal
       <!-- A dedicated component to recognize OAuth Callback Authorization requests -->
       <!-- By default, service ids only support regex patterns if/when needed -->
       <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService"
-        	p:id="0"
-        	p:name="HTTP" 
-        	p:description="oauth wrapper callback url" 
+            p:id="0"
+            p:name="HTTP" 
+            p:description="oauth wrapper callback url" 
             p:serviceId="${server.prefix}/oauth2.0/callbackAuthorize" />
 ...
 {% endhighlight %}
@@ -97,13 +97,13 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
     <list>
       <!-- Supports regex patterns by default for service ids --> 
       <bean class="org.jasig.cas.support.oauth.services.OAuthRegisteredService"
-	        p:id="1"
-	        p:name="serviceName" 
-	        p:description="Service Description"
-	        p:serviceId="oauth client service url"
-	        p:bypassApprovalPrompt="false" 
-	        p:clientId="client id goes here" 
-	        p:clientSecret="client secret goes here" /> 
+            p:id="1"
+            p:name="serviceName" 
+            p:description="Service Description"
+            p:serviceId="oauth client service url"
+            p:bypassApprovalPrompt="false" 
+            p:clientId="client id goes here" 
+            p:clientSecret="client secret goes here" /> 
 ...
 {% endhighlight %}
 
