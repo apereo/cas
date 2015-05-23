@@ -19,9 +19,8 @@
 
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.authentication.Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -35,13 +34,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class AcceptableUsagePolicyFormAction {
 
     /** Event id to signal the policy needs to be accepted. **/
     protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
-
-    /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 

@@ -18,9 +18,8 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -37,6 +36,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 1.0
  */
+@Slf4j
 @Deprecated
 public final class ClearPassController extends AbstractController {
 
@@ -51,8 +51,6 @@ public final class ClearPassController extends AbstractController {
 
     /** key under which failure descriptions are placed into the model. */
     protected static final String MODEL_FAILURE_DESCRIPTION = "description";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
 
     @NotNull
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;

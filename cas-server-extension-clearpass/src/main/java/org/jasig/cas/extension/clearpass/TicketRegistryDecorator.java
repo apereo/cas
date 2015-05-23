@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.extension.clearpass;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 1.0.7
  */
+@Slf4j
 @Deprecated
 public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
@@ -66,7 +68,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
             final String ticketId = ticketGrantingTicket.getId();
             final String userName = ticketGrantingTicket.getAuthentication().getPrincipal().getId().toLowerCase();
 
-            logger.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
+            LOGGER.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
 
             this.cache.put(ticketId, userName);
         }
@@ -84,7 +86,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         final String userName = this.cache.get(ticketId);
 
         if (userName != null) {
-            logger.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
+            LOGGER.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
             this.cache.remove(userName);
         }
 
@@ -101,7 +103,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).sessionCount();
         }
-        logger.debug("Ticket registry {} does not report the sessionCount() operation of the registry state.",
+        LOGGER.debug("Ticket registry {} does not report the sessionCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.sessionCount();
     }
@@ -111,7 +113,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).serviceTicketCount();
         }
-        logger.debug("Ticket registry {} does not report the serviceTicketCount() operation of the registry state.",
+        LOGGER.debug("Ticket registry {} does not report the serviceTicketCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.serviceTicketCount();
     }

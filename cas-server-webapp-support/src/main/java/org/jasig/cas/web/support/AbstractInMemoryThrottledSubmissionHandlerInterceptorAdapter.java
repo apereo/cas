@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Iterator;
@@ -36,6 +38,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Scott Battaglia
  * @since 3.0.0.5
  */
+@Slf4j
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
@@ -69,17 +72,17 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     public final void decrementCounts() {
         final Set<Map.Entry<String, Date>> keys = this.ipMap.entrySet();
-        logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
+        LOGGER.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final Date now = new Date();
         for (final Iterator<Map.Entry<String, Date>> iter = keys.iterator(); iter.hasNext();) {
             final Map.Entry<String, Date> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
-                logger.trace("Removing entry for key {}", entry.getKey());
+                LOGGER.trace("Removing entry for key {}", entry.getKey());
                 iter.remove();
             }
         }
-        logger.debug("Done decrementing count for throttler.");
+        LOGGER.debug("Done decrementing count for throttler.");
     }
 
     /**

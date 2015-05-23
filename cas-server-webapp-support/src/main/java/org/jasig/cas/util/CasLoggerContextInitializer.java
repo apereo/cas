@@ -19,13 +19,12 @@
 
 package org.jasig.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
@@ -47,11 +46,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 @Component
 public final class CasLoggerContextInitializer implements ServletContextAware {
-    private static AtomicBoolean INITIALIZED = new AtomicBoolean(false);
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasLoggerContextInitializer.class);
+    private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
     private ServletContext context;
 

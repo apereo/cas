@@ -22,12 +22,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.functors.TruePredicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +49,7 @@ import java.util.Queue;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 @Controller("statisticsController")
 @RequestMapping("/statistics")
 public final class StatisticsController implements ServletContextAware {
@@ -65,8 +65,6 @@ public final class StatisticsController implements ServletContextAware {
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
     private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 
@@ -136,7 +134,7 @@ public final class StatisticsController implements ServletContextAware {
                 }
             }
         } catch (final UnsupportedOperationException e) {
-            logger.trace("The ticket registry doesn't support this information.");
+            LOGGER.trace("The ticket registry doesn't support this information.");
         }
 
         modelAndView.addObject("unexpiredTgts", unexpiredTgts);

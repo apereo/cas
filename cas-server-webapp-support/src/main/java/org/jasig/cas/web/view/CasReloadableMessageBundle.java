@@ -20,9 +20,8 @@ package org.jasig.cas.web.view;
 
 import java.util.Locale;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
@@ -42,17 +41,17 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;
     
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Override
     protected String getDefaultMessage(final String code) {
         final String messageToReturn = super.getDefaultMessage(code);
         if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
-            logger.warn("The code [{}] cannot be found in the default language bundle and will "
+            LOGGER.warn("The code [{}] cannot be found in the default language bundle and will "
                     + "be used as the message itself.", code);
         }
         return messageToReturn;
@@ -65,15 +64,15 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         if (!locale.equals(Locale.ENGLISH)) {
           for (int i = 0; !foundCode && i < this.basenames.length; i++) {
               final String filename = this.basenames[i] + "_" + locale;
-              
-              logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
+
+              LOGGER.debug("Examining language bundle [{}] for the code [{}]", filename, code);
               final PropertiesHolder holder = this.getProperties(filename);
               foundCode =  holder != null && holder.getProperties() != null
                                      && holder.getProperty(code) != null;  
           }       
           
           if (!foundCode) {
-              logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]",
+              LOGGER.debug("The code [{}] cannot be found in the language bundle for the locale [{}]",
                       code, locale);
           }
         }

@@ -18,8 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.exception.JsonExceptionResolver;
 
@@ -33,9 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String ajaxRequestHeaderName ="x-requested-with";
     private String ajaxRequestHeaderValue = "XMLHttpRequest";
@@ -62,16 +60,17 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
     @Override
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
             final Object handler, final Exception ex) {
+
         final String contentType = request.getHeader(this.ajaxRequestHeaderName);
         if (contentType != null && contentType.equals(this.ajaxRequestHeaderValue)) {
-            logger.debug("Handling exception {} for ajax request indicated by header {}",
+            LOGGER.debug("Handling exception {} for ajax request indicated by header {}",
                     ex.getClass().getName(), this.ajaxRequestHeaderName);
             return super.resolveException(request, response, handler, ex);
         } else {
-            logger.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
+            LOGGER.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
                     ex.getClass().getName(), this.ajaxRequestHeaderName);
         }
-        logger.debug(ex.getMessage(), ex);
+        LOGGER.debug(ex.getMessage(), ex);
         return null;
     }
 

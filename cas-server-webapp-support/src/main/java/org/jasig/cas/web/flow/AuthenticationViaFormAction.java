@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
@@ -32,8 +33,6 @@ import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.util.CookieGenerator;
@@ -53,6 +52,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0.4
  */
+@Slf4j
 public class AuthenticationViaFormAction {
 
     /** Authentication success result. */
@@ -72,9 +72,6 @@ public class AuthenticationViaFormAction {
 
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
-
-    /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
@@ -119,7 +116,7 @@ public class AuthenticationViaFormAction {
         final String loginTicketFromFlowScope = WebUtils.getLoginTicketFromFlowScope(context);
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
 
-        logger.trace("Comparing login ticket in the flow scope [{}] with login ticket in the request [{}]",
+        LOGGER.trace("Comparing login ticket in the flow scope [{}] with login ticket in the request [{}]",
                 loginTicketFromFlowScope, loginTicketFromRequest);
         return StringUtils.equals(loginTicketFromFlowScope, loginTicketFromRequest);
     }
@@ -134,7 +131,7 @@ public class AuthenticationViaFormAction {
      */
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
-        logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
+        LOGGER.warn("Invalid login ticket [{}]", loginTicketFromRequest);
         messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
         return newEvent(ERROR);
     }
@@ -175,7 +172,7 @@ public class AuthenticationViaFormAction {
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
-            logger.warn(
+            LOGGER.warn(
                     "Invalid attempt to access service using renew=true with different credential. "
                             + "Ending SSO session.");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
@@ -297,7 +294,7 @@ public class AuthenticationViaFormAction {
      */
     @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
+        LOGGER.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
     }
 
     /**

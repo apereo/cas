@@ -19,11 +19,10 @@
 
 package org.jasig.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -34,13 +33,13 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public final class DefaultCasCookieValueManager implements CookieValueManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final String COOKIE_FIELD_SEPARATOR = "@";
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private CipherExecutor cipherExecutor;
+    private final CipherExecutor cipherExecutor;
 
     /**
      * Instantiates a new Cas cookie value manager.

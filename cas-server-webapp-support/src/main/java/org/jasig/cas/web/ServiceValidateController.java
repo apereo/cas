@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -62,6 +63,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
 public class ServiceValidateController extends DelegateController {
     /** View if Service Ticket Validation Fails. */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
@@ -114,7 +116,7 @@ public class ServiceValidateController extends DelegateController {
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing pgtUrl", e);
+                LOGGER.error("Error constructing pgtUrl", e);
             }
         }
 
@@ -138,7 +140,7 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
+            LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                     CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null);
         }
@@ -151,12 +153,12 @@ public class ServiceValidateController extends DelegateController {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                                 serviceCredential);
-                    logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+                    LOGGER.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
                             proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
                 } catch (final AuthenticationException e) {
-                    logger.info("Failed to authenticate service credential {}", serviceCredential);
+                    LOGGER.info("Failed to authenticate service credential {}", serviceCredential);
                 } catch (final TicketException e) {
-                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                    LOGGER.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
                 }
                 
                 if (proxyGrantingTicketId == null) {
@@ -174,7 +176,7 @@ public class ServiceValidateController extends DelegateController {
             binder.bind(request);
 
             if (!validationSpecification.isSatisfiedBy(assertion)) {
-                logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+                LOGGER.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
                         CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null);
             }
@@ -190,7 +192,7 @@ public class ServiceValidateController extends DelegateController {
             }
 
             onSuccessfulValidation(serviceTicketId, assertion);
-            logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+            LOGGER.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
         } catch (final TicketValidationException e) {
             final String code = e.getCode();
@@ -356,14 +358,14 @@ public class ServiceValidateController extends DelegateController {
         if (registeredService == null) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not found in service registry.", service.getId());
-            logger.warn(msg);
+            LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
             
-            logger.warn(msg);
+            LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
     }

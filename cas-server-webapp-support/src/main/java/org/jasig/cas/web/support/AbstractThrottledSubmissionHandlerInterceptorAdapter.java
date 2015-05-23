@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,6 +37,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
@@ -47,9 +47,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
 
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
-
-    /** Logger object. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
@@ -144,7 +141,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
+        LOGGER.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
                 + "Authentication attempt exceeds the failure threshold {}",
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);

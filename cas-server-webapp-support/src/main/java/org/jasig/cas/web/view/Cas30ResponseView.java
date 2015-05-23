@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
@@ -40,6 +41,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class Cas30ResponseView extends Cas20ResponseView {
 
     /** The attribute encoder instance. */
@@ -137,17 +139,17 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                                                        final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {
         if (StringUtils.isNotBlank(attributeValue)) {
-            logger.debug("Obtained [{}] as an authentication attribute", attributeName);
+            LOGGER.debug("Obtained [{}] as an authentication attribute", attributeName);
 
             if (doesAttributePolicyAllow) {
-                logger.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
+                LOGGER.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
                 attributes.put(attributeName, Collections.singleton(attributeValue));
             } else {
-                logger.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
+                LOGGER.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
                         service.getServiceId(), attributeName);
             }
         } else {
-            logger.trace("[{}] is not available and will not be released to the validation response.", attributeName);
+            LOGGER.trace("[{}] is not available and will not be released to the validation response.", attributeName);
         }
     }
 

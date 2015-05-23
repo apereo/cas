@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.Ticket;
@@ -41,6 +42,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /**
@@ -96,7 +98,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
                 eventId = VALID;
             }
         } catch (final TicketException e) {
-            logger.trace("Could not retrieve ticket id {} from registry.", e);
+            LOGGER.trace("Could not retrieve ticket id {} from registry.", e);
         }
         return new Event(this,  eventId);
     }

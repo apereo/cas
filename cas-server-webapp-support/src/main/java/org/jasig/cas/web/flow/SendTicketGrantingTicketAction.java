@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -25,8 +26,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,8 +41,8 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public final class SendTicketGrantingTicketAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
@@ -107,7 +106,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      */
     @Deprecated
     public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        logger.warn("setTicketGrantingTicketCookieGenerator() is deprecated and has no effect. Use constructors instead.");
+        LOGGER.warn("setTicketGrantingTicketCookieGenerator() is deprecated and has no effect. Use constructors instead.");
     }
 
     /**
@@ -117,7 +116,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     @Deprecated
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
-        logger.warn("setCentralAuthenticationService() is deprecated and has no effect. Use constructors instead.");
+        LOGGER.warn("setCentralAuthenticationService() is deprecated and has no effect. Use constructors instead.");
     }
 
     public void setCreateSsoSessionCookieOnRenewAuthentications(final boolean createSsoSessionCookieOnRenewAuthentications) {
@@ -130,7 +129,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      */
     @Deprecated
     public void setServicesManager(final ServicesManager servicesManager) {
-        logger.warn("setServicesManager() is deprecated and has no effect. Use constructors instead.");
+        LOGGER.warn("setServicesManager() is deprecated and has no effect. Use constructors instead.");
     }
 
     /**

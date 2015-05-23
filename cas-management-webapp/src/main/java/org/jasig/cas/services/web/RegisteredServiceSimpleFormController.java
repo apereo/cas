@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -54,10 +53,9 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 @Controller
 public final class RegisteredServiceSimpleFormController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceSimpleFormController.class);
 
     private static final String COMMAND_NAME = "registeredService";
 
@@ -165,7 +163,7 @@ public final class RegisteredServiceSimpleFormController {
     }
 
     /**
-     * Render the page noted by {@link #VIEW_NAME}.
+     * Render the page.
      * The view is first updated by {@link #updateModelMap(ModelMap, HttpServletRequest)}.
      * @param request the request
      * @param model the model

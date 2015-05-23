@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContext;
@@ -48,9 +47,8 @@ import java.util.regex.Pattern;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public final class ServiceThemeResolver extends AbstractThemeResolver {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 
     /** The ServiceRegistry to look up the service. */
     private ServicesManager servicesManager;
@@ -129,7 +127,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
             try {
                 final ResourceBundle bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
-                if (bundle != null && bundle.keySet().size() > 0) {
+                if (bundle != null && bundle.keySet().isEmpty()) {
                     return bundle;
                 }
             } catch (final Exception e) {
