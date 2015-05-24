@@ -211,7 +211,7 @@ CAS provides a set of components that attempt to activate the SPNEGO flow condit
 
 The activation strategies are as follows:
 
-### BaseSpnegoKnownClientSystemsFilterAction
+### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
 
 ```xml
@@ -221,7 +221,7 @@ Checks to see if the request's remote ip address matches a predefine pattern.
       c:alternativeRemoteHostAttribute="alternateRemoteHeader" />
 ```
 
-### HostNameSpnegoKnownClientSystemsFilterAction
+### By Hostname
 Checks to see if the request's remote hostname matches a predefine pattern. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
 
 ```xml
@@ -230,7 +230,7 @@ Checks to see if the request's remote hostname matches a predefine pattern. This
       c:hostNamePatternString="something.+" />
 ```
 
-### LdapSpnegoKnownClientSystemsFilterAction
+### By LDAP Attribute
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence would allow the webflow to resume to SPNEGO. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
 
 
