@@ -36,7 +36,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.jasig" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.ldaptive" level="warn" additivity="false">

@@ -114,10 +114,18 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
+        logger.debug("Resolved remote hostname {} based on ip {}",
+                remoteHostName, remoteIp);
+
         try {
             connection = createConnection();
             final Operation searchOperation = new SearchOperation(connection);
             this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
+
+            logger.debug("Using search filter {} on baseDn {}",
+                    this.searchRequest.getSearchFilter().format(),
+                    this.searchRequest.getBaseDn());
+
             final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return processSpnegoAttribute(searchResult);
