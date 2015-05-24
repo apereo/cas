@@ -35,7 +35,7 @@
 
     <bean id="searchRequest" class="org.ldaptive.SearchRequest"
           p:baseDn-ref="baseDn"
-          p:searchFilter-ref="searchFilter" />
+          p:searchFilter-ref="searchFilter"/>
 
     <bean id="searchFilter" class="org.ldaptive.SearchFilter"
           c:filter="host={0}" />
