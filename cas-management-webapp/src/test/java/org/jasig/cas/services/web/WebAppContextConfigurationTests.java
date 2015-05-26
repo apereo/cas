@@ -116,8 +116,7 @@ public class WebAppContextConfigurationTests {
                 .andReturn().getModelAndView();
         assertNotNull(mv);
         
-        assertNotNull(mv.getModel().get("defaultServiceUrl"));    
-        assertEquals(mv.getModel().get("pageTitle"), ManageRegisteredServicesMultiActionController.VIEW_NAME);
+        assertNotNull(mv.getModel().get("defaultServiceUrl"));
         final List<?> svcs = (List<?>) mv.getModel().get("services");
         assertEquals(svcs.size(), 1);
     }

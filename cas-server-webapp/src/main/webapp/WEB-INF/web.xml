@@ -65,6 +65,10 @@
             <param-name>allowMultiValuedParameters</param-name>
             <param-value>false</param-value>
         </init-param>
+        <init-param>
+            <param-name>onlyPostParameters</param-name>
+            <param-value>username password</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>requestParameterSecurityFilter</filter-name>
@@ -205,6 +209,16 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/status/config</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>metrics-ping</servlet-name>
         <url-pattern>/statistics/ping</url-pattern>
     </servlet-mapping>
@@ -233,6 +247,13 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
+
+    <!--
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/samlValidate</url-pattern>
+    </servlet-mapping>
+    -->
 
     <session-config>
         <!-- Default to 5 minute session timeouts -->
