@@ -19,21 +19,27 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-	<description>
-		Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e. CAS, SAML, SAML2,
-		OpenId, etc.).  By default, only CAS is enabled.
-	</description>
- 	<bean
- 		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
+    <description>
+        Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e.
+        CAS, SAML, SAML2,
+        OpenId, etc.). By default, only CAS is enabled.
+    </description>
 
- 	<util:list id="argumentExtractors">
-		<ref bean="casArgumentExtractor" />
- 	</util:list>
+    <!--
+    <bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
+    -->
+
+    <bean
+            id="casArgumentExtractor"
+            class="org.jasig.cas.web.support.CasArgumentExtractor"/>
+
+    <util:list id="argumentExtractors">
+        <!-- <ref bean="samlArgumentExtractor" /> -->
+        <ref bean="casArgumentExtractor"/>
+    </util:list>
 </beans>

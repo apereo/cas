@@ -38,4 +38,10 @@ public interface SamlProtocolConstants {
     /** Constant representing the saml relay state. */
     String PARAMETER_SAML_RELAY_STATE = "RelayState";
 
+    /** Constant representing artifact. */
+    String CONST_PARAM_ARTIFACT = "SAMLart";
+
+    /** Constant representing service. */
+    String CONST_PARAM_TARGET = "TARGET";
+
 }

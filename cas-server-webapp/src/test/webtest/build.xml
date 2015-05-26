@@ -21,17 +21,17 @@
 -->
 <project name="CAS WebTests" basedir="." default="all">
 
-	<property file="properties/local.properties" />
+    <property file="properties/local.properties"/>
 
-	<taskdef file="${webtest.home}/webtestTaskdefs.properties">
-		<classpath>
-			<fileset dir="${webtest.home}" includes="**/lib/*.jar" />
-		</classpath>
-	</taskdef>
+    <taskdef file="${webtest.home}/webtestTaskdefs.properties">
+        <classpath>
+            <fileset dir="${webtest.home}" includes="**/lib/*.jar"/>
+        </classpath>
+    </taskdef>
 
-	<target name="all">
-		<ant antfile="logintests.xml" dir="." />
-		<ant antfile="validationtests.xml" dir="." />
-	</target>
+    <target name="all">
+        <ant antfile="logintests.xml" dir="."/>
+        <ant antfile="validationtests.xml" dir="."/>
+    </target>
 
 </project>

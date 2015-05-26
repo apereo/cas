@@ -147,7 +147,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void verifyLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new LogoutRequest("", null);
+        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -159,7 +159,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void verifyLogoutRequestFront() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new LogoutRequest("", null);
+        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());

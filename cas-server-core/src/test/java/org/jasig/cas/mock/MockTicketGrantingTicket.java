@@ -35,6 +35,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private boolean expired;
 
+    private Map<String, Service> services = new HashMap<>();
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -128,7 +130,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public Map<String, Service> getServices() {
-        return Collections.emptyMap();
+        return this.services;
     }
 
     @Override

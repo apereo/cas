@@ -35,15 +35,18 @@ distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 userPassword: misagh
 unicodePwd: ignoredForTests
 
+
 dn: CN=casTest,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
 objectClass: ad
+objectClass: account
 cn: CAS Test
 givenName: CAS
 sn: CAS
+uid: CASTest
 displayName: CAS Test
 sAMAccountName: casTest
 distinguishedName: CN=casTest,ou=people,dc=example,dc=org
@@ -52,6 +55,7 @@ userPassword: thePassw0rd
 unicodePwd: ignoredForTests
 userPrincipalName: castest@example.org
 userAccountControl: 66048
+host: localhost
 
 dn: cn=Administrators,ou=people,dc=example,dc=org
 cn: Administrators

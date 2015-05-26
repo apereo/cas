@@ -30,6 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +55,7 @@ public class LogoutManagerImplTests {
 
     private LogoutManagerImpl logoutManager;
 
+    @Mock
     private TicketGrantingTicket tgt;
 
     private Map<String, Service> services;
@@ -61,23 +64,39 @@ public class LogoutManagerImplTests {
 
     private RegisteredServiceImpl registeredService;
 
+    @Mock
+    private ServicesManager servicesManager;
+
+    @Mock
+    private HttpClient client;
+
+    public LogoutManagerImplTests() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Before
     public void setUp() {
 
-        final HttpClient client = mock(HttpClient.class);
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
-
-        final ServicesManager servicesManager = mock(ServicesManager.class);
         this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
-        this.tgt = mock(TicketGrantingTicket.class);
+
         this.services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);
+
         this.registeredService = new RegisteredServiceImpl();
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
+    }
+
+    @Test
+    public void verifyServiceLogoutUrlIsUsed() throws Exception {
+        this.registeredService.setLogoutUrl(new URL("https://www.apereo.org"));
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        assertEquals(logoutRequest.getLogoutUrl(), this.registeredService.getLogoutUrl());
     }
 
     @Test
