@@ -34,8 +34,8 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-* `regExTrustedIssuerDnPattern` - Regular expression defining allowed issuer DNs. (must be specified)
-* `regExSubjectDnPattern` - Regular expression defining allowed subject DNs. (default=`.*`)
+* `trustedIssuerDnPattern` - Regular expression defining allowed issuer DNs. (must be specified)
+* `subjectDnPattern` - Regular expression defining allowed subject DNs. (default=`.*`)
 * `maxPathLength` - Maximum number of certs allowed in certificate chain. (default=1)
 * `maxPathLengthAllowUnspecified` - True to allow unspecified path length, false otherwise. (default=false)
 * `checkKeyUsage` - True to enforce certificate `keyUsage` field (if present), false otherwise. (default=false)
