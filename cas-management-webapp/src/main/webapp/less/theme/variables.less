@@ -18,6 +18,9 @@
  */
 
 // Basic Color Variables
+
+@import "../base/vendor/bootstrap/bootstrap.less";
+
 @white: #fff;
 @black: #000;
 @red:   #DF041E;
@@ -80,8 +83,20 @@
 @brand-primary:         @color1-light;
 @brand-success:         @color2-dark;
 @brand-info:            @color1-lighter;
-@brand-warning:         @color3-lighter;
+@brand-warning:         @color3-light;
 @brand-danger:          @color4-light;
+
+@state-success-text:             darken(@brand-success, 15%);
+@state-success-bg:               lighten(@brand-success, 42%);
+
+@state-info-text:                darken(@brand-info, 13%);
+@state-info-bg:                  lighten(@brand-info, 40%);
+
+@state-warning-text:             darken(@brand-warning, 12%);
+@state-warning-bg:               lighten(@brand-warning, 42%);
+
+@state-danger-text:              darken(@brand-danger, 15%);
+@state-danger-bg:                lighten(@brand-danger, 45%);
 
 // Anchors, links
 @link-color:                            @color1-light;
