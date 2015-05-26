@@ -273,7 +273,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         final X509Certificate[] certs = new X509Certificate[files.length];
 
         int i = 0;
-        for (String file : files) {
+        for (final String file : files) {
             try {
                 certs[i++] = (X509Certificate) CryptReader.readCertificate(
                         new ClassPathResource(file).getInputStream());

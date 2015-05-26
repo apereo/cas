@@ -18,11 +18,11 @@ additional work.
 X.509 support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-x509</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-x509</artifactId>
+  <version>${cas.version}</version>
+</dependency>
 {% endhighlight %}
 
 CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
@@ -80,21 +80,21 @@ This resolver extracts the Subject Alternative Name UPN extension from the provi
 
 {% highlight xml %}
 <bean id="authenticationManager"
-	  class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-	<constructor-arg>
-		<map>                
-		    <entry key-ref="x509AuthenticationHandler" 
-				   value-ref="x509UPNPrincipalResolver" />
-			...
-		</map>
-	</constructor-arg>
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+    <constructor-arg>
+        <map>
+            <entry key-ref="x509AuthenticationHandler"
+                   value-ref="x509UPNPrincipalResolver" />
+            ...
+        </map>
+    </constructor-arg>
 </bean>
 ...
 
-<bean id="x509AuthenticationHandler" 
-	  class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+<bean id="x509AuthenticationHandler"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
 
-<bean id="x509UPNPrincipalResolver" 
+<bean id="x509UPNPrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver">
 {% endhighlight %}
 
@@ -103,22 +103,34 @@ This resolver extracts the Subject Alternative Name UPN extension from the provi
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
 configurability in the revocation machinery built into the JSSE.
 
-######`ResourceCRLRevocationChecker`
+The following configuration is shared by all components:
+
+| Field                             | Description
+|-----------------------------------+---------------------------------------------------------+
+| `unavailableCRLPolicy`   | Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
+| `expiredCRLPolicy`   | Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+
+The following policies are available by default:
+
+| Policy                             | Description
+|-----------------------------------+---------------------------------------------------------+
+| `AllowRevocationPolicy`   | Allow policy
+| `DenyRevocationPolicy`   | Deny policy
+| `ThresholdExpiredCRLRevocationPolicy`   | Deny if CRL is more than X seconds expired.
+
+
+####`ResourceCRLRevocationChecker`
 Performs a certificate revocation check against a CRL hosted at a fixed location. Any resource type supported by the
 Spring [`Resource`]() class may be specified for the CRL resource. The CRL is fetched at periodic intervals and cached.
 
 Configuration properties:
 
-* `crl` - Spring resource describing the location/kind of CRL resource. (must be specified)
-* `refreshInterval` - Periodic CRL refresh interval in seconds. (default=3600)
-* `unavailableCRLPolicy` - Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
-* `expiredCRLPolicy` - Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+| Field                             | Description
+|-----------------------------------+---------------------------------------------------------+
+| `crls`              | Spring resource describing the location/kind of CRL resource. This MUST be specified. A single CRL resource can be alternatively specified via the `crl` parameter.
+| `refreshInterval`   | Periodic CRL refresh interval in seconds. (default=3600)
+| `fetcher`           | Component responsible for fetching of the CRL resource. (default=`ResourceCRLFetcher`)
 
-The following policies are available by default:
-
-* `AllowRevocationPolicy` - Deny policy
-* `DenyRevocationPolicy` - Deny policy
-* `ThresholdExpiredCRLRevocationPolicy` - Deny if CRL is more than X seconds expired.
 
 `ResourceCRLRevocationChecker` Example:
 {% highlight xml %}
@@ -142,18 +154,21 @@ The following policies are available by default:
 {% endhighlight %}
 
 
-######`CRLDistributionPointRevocationChecker`
+####`CRLDistributionPointRevocationChecker`
 Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
 extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
 if does not exist in the cache or if it is expired.
 
 Configuration properties:
 
-* `cache` - Ehcache `Cache` component.
-* `unavailableCRLPolicy` - Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
-* `expiredCRLPolicy` - Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+| Field                             | Description
+|-----------------------------------+---------------------------------------------------------+
+| `cache`               | Ehcache `Cache` component.
+| `fetcher`             | Component responsible for fetching of the CRL resource. (default=`ResourceCRLFetcher`)
+| `throwOnFetchFailure` | Throws errors if fetching of the CRL resource fails.
 
 `CRLDistributionPointRevocationChecker` Example:
+
 {% highlight xml %}
 <!-- timeToLive, timeToIdle are in seconds -->
 <bean id="crlCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
@@ -182,6 +197,105 @@ Configuration properties:
       p:thresholdPolicy-ref="thresholdPolicy" />
 {% endhighlight %}
 
+#### CRL Fetching Configuration
+By default, all revocation checks use the `ResourceCRLFetcher` component to fetch the CRL resource from the specified location. The following alternatives are available:
+
+#####`LdaptiveResourceCRLFetcher`
+Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance:
+
+
+#####`PoolingLdaptiveResourceCRLFetcher`
+Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. This component is able to use connection pooling.
+
+##### Example Configuration
+The following example demonstrates the configuration required to fetch a CRL resource from LDAP. Both fetchers are demonstrated here, but only one generally is necessary.
+
+The example below searches an LDAP instance found in the X509 certificate, based on the filter and the baseDN given. It then attempts to obtain the binary attribute `certificateRevocationList` and fetch the resource. The value will be decoded to Base64 first by the fetcher.
+
+{% highlight xml %}
+<context:component-scan base-package="org.jasig.cas" />
+<context:annotation-config />
+
+<context:property-placeholder location="classpath:/ldap.properties"/>
+
+<bean id="ldapCertFetcher"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+      c:connectionConfig-ref="provisioningConnectionConfig"
+      c:searchExecutor-ref="searchExecutor"  />
+
+<!-- Enabled connection pooling -->
+<bean id="poolingLdapCertFetcher"
+      class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+      c:connectionConfig-ref="provisioningConnectionConfig"
+      c:searchExecutor-ref="searchExecutor"
+      c:connectionPool-ref="connectionPool"/>
+
+<bean id="baseDn" class="java.lang.String">
+    <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+</bean>
+
+<util:list id="returnAttributes">
+    <value>certificateRevocationList</value>
+</util:list>
+
+<bean id="searchFilter" class="org.ldaptive.SearchFilter"
+      p:filter="${ldap.searchfilter.cert}" />
+
+<bean id="searchExecutor" class="org.ldaptive.SearchExecutor"
+      p:baseDn-ref="baseDn"
+      p:searchFilter-ref="searchFilter"
+      p:returnAttributes-ref="returnAttributes"
+      p:binaryAttributes-ref="returnAttributes" />
+
+<bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="provisioningConnectionConfig"
+      p:provider-ref="unboundidLdapProvider"  />
+
+<bean id="unboundidLdapProvider"
+      class="org.ldaptive.provider.unboundid.UnboundIDProvider"/>
+
+<bean id="provisioningConnectionConfig" class="org.ldaptive.ConnectionConfig"
+      p:connectTimeout="${ldap.connectTimeout}"
+      p:useStartTLS="${ldap.useStartTLS: false}"
+      p:connectionInitializer-ref="bindConnectionInitializer"
+      p:sslConfig-ref="provisionSslConfig"/>
+
+<bean id="provisionSslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
+    </property>
+</bean>
+
+<bean id="bindConnectionInitializer"
+      class="org.ldaptive.BindConnectionInitializer"
+      p:bindDn="${ldap.managerDn}">
+    <property name="bindCredential">
+        <bean class="org.ldaptive.Credential"
+              c:password="${ldap.managerPassword}" />
+    </property>
+</bean>
+
+<bean id="connectionPool"
+      class="org.ldaptive.pool.BlockingConnectionPool"
+      lazy-init="true"
+      p:poolConfig-ref="ldapPoolConfig"
+      p:blockWaitTime="${ldap.pool.blockWaitTime}"
+      p:validator-ref="searchValidator"
+      p:pruneStrategy-ref="pruneStrategy" />
+
+<bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+      p:prunePeriod="${ldap.pool.prunePeriod}"
+      p:idleTime="${ldap.pool.idleTime}" />
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+<bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+      p:minPoolSize="${ldap.pool.minSize}"
+      p:maxPoolSize="${ldap.pool.maxSize}"
+      p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+      p:validatePeriodically="${ldap.pool.validatePeriodically}"
+      p:validatePeriod="${ldap.pool.validatePeriod}" />
+{% endhighlight %}
 
 ### Webflow Components
 A single Webflow component, `X509CertificateCredentialsNonInteractiveAction`, is required to extract the certificate
@@ -228,7 +342,7 @@ Use the following template to configure authentication in `deployerConfigContext
       p:maxPathLengthAllowUnspecified="true"
       p:checkKeyUsage="true"
       p:requireKeyUsage="true"
-      p:revocationChecker-ref="revocationChecker">      
+      p:revocationChecker-ref="revocationChecker">
 
 <bean id="x509PrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
@@ -260,7 +374,7 @@ Uncomment the `startAuthenticate` state in `login-webflow.xml`:
   <transition on="warn" to="warn" />
   <transition on="error" to="generateLoginTicket" />
 </action-state>
-{% endhighlight %} 
+{% endhighlight %}
 
 Replace all instances of the `generateLoginTicket` transition in other states with `startAuthenticate`.
 

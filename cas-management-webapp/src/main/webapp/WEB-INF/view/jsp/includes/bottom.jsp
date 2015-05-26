@@ -27,10 +27,10 @@
   <div>
     <h4><spring:message code="footer.links" /></h4>
     <ul id="nav-campus-sites">
-      <li><a href="http://www.apereo.org/cas" rel="_blank"><spring:message code="footer.homePage" /></a>,</li>
-      <li><a href="http://wiki.jasig.org" rel="_blank"><spring:message code="footer.wiki" /></a>,</li>
-      <li><a href="http://issues.jasig.org" rel="_blank"><spring:message code="footer.issueTracker" /></a>,</li>
-      <li><a href="http://www.apereo.org/cas/mailing-lists" rel="_blank"><spring:message code="footer.mailingLists" /></a>.</li>
+      <li><a href="https://www.apereo.org/cas" rel="_blank"><spring:message code="footer.homePage" /></a>,</li>
+      <li><a href="https://jasig.github.io/cas" rel="_blank"><spring:message code="footer.wiki" /></a>,</li>
+      <li><a href="https://github.com/Jasig/cas/issues" rel="_blank"><spring:message code="footer.issueTracker" /></a>,</li>
+      <li><a href="http://jasig.github.io/cas/Mailing-Lists.html" rel="_blank"><spring:message code="footer.mailingLists" /></a>.</li>
     </ul>
   </div>
   <div id="copyright">
